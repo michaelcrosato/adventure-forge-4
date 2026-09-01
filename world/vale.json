@@ -105,7 +105,7 @@
             {
               "id": "get_bearings",
               "label": "get your bearings",
-              "fx": [["say", "You picture the wood as it lies: a loose square of trails around this oak. The village lanterns stay south, behind you. The tower and the drowned chapel lie east. The barrow trail runs north. Lost, just backtrack the way you came."]]
+              "fx": [["say", "You picture the wood as it lies: a loose square of trails around this oak. The village lanterns stay south, behind you. The tower and the drowned shrine lie east. The barrow trail runs north. Lost, just backtrack the way you came."]]
             }
           ]
         },
@@ -234,7 +234,7 @@
         },
         {
           "id": "trail_to_chapel",
-          "label": "follow the trail east to the drowned chapel",
+          "label": "follow the trail east to the drowned shrine",
           "if": [["flag", "found_chapel_trail"]],
           "fx": [["goto", "drowned_chapel"]]
         },
@@ -267,7 +267,7 @@
           "id": "notice_board",
           "label": "read the notice board",
           "fx": [
-            ["say", "Notice board: three old verses are said to lie in the drowned chapel and the old watchtower — both east through the ash wood — and in the barrow's own walls, spoken together at the throne to let the dead king sleep. Elsewhere: the reeve wants the barrow sealed, and the gray priest remembers the old king's grief. Old talk holds the elder's locked coffer keeps the king's own crown, taken from him long ago and the reason his rest won't come — hear his grief from him at the throne first, then press the elder for it, and setting the crown back in his hands works just as well as the verses. Either path ends it on its own — you need not walk both, though word is the two together leave nothing unresolved."]
+            ["say", "Notice board: three old verses are said to lie in the drowned shrine and the old watchtower — both east through the ash wood — and in the barrow's own walls, spoken together at the throne to let the dead king sleep. Elsewhere: the reeve wants the barrow sealed, and the gray priest remembers the old king's grief. Old talk holds the elder's locked coffer keeps the king's own crown, taken from him long ago and the reason his rest won't come — hear his grief from him at the throne first, then press the elder for it, and setting the crown back in his hands works just as well as the verses. Either path ends it on its own — you need not walk both, though word is the two together leave nothing unresolved."]
           ]
         },
         {
@@ -278,7 +278,7 @@
         },
         {
           "id": "trail_to_chapel_from_square",
-          "label": "follow the trail east to the drowned chapel",
+          "label": "follow the trail east to the drowned shrine",
           "if": [["flag", "found_chapel_trail"]],
           "fx": [["goto", "drowned_chapel"]]
         },
@@ -342,7 +342,7 @@
       ]
     },
     "drowned_chapel": {
-      "name": "Drowned Chapel",
+      "name": "Drowned Shrine",
       "desc": "Half a chapel, sunk to its windows in black water. A stone psalter stands above the waterline.",
       "brief": "Black water, stone psalter.",
       "onEnterOnce": [["xp", 2], ["set", "found_chapel_trail"]],
@@ -616,7 +616,7 @@
           "id": "recall_verse_water",
           "label": "the water verse is still unspoken",
           "if": [["!flag", "verse_water"], ["!npcDead", "hollow_king"]],
-          "fx": [["say", "It waits in the drowned chapel, east of the wood."]]
+          "fx": [["say", "It waits in the drowned shrine, east of the wood."]]
         },
         {
           "id": "recall_verse_wind",
@@ -757,7 +757,7 @@
           "label": "rumors",
           "if": [["class", "scholar"]],
           "once": true,
-          "say": "Verses, they say. One in the drowned chapel east of the wood, one up the old watchtower north of that, one cut into the barrow stone itself. And the hunter at the west edge trades herbs. A scholar's eye reads them quick — anyone else will have to puzzle them out slow, and it may take a few tries.",
+          "say": "Verses, they say. One in the drowned shrine east of the wood, one up the old watchtower north of that, one cut into the barrow stone itself. And the hunter at the west edge trades herbs. A scholar's eye reads them quick — anyone else will have to puzzle them out slow, and it may take a few tries.",
           "fx": [["score", 5], ["xp", 2]]
         },
         {
@@ -765,7 +765,7 @@
           "label": "rumors",
           "if": [["class", "envoy"]],
           "once": true,
-          "say": "Verses, they say — one in the drowned chapel, one up the old watchtower, one cut into the barrow stone, slow going without a scholar's eye. Word is the elder holds something taken from the old king himself; a silver tongue might settle that debt quicker than any verse. The hunter west trades herbs.",
+          "say": "Verses, they say — one in the drowned shrine, one up the old watchtower, one cut into the barrow stone, slow going without a scholar's eye. Word is the elder holds something taken from the old king himself; a silver tongue might settle that debt quicker than any verse. The hunter west trades herbs.",
           "fx": [["score", 5], ["xp", 2]]
         },
         {
@@ -773,7 +773,7 @@
           "label": "rumors",
           "if": [["class", "scout"]],
           "once": true,
-          "say": "Verses, they say — one in the drowned chapel, one up the old watchtower, one cut into the barrow stone, slow going without a scholar's eye. But quiet hands find their own ways in where doors won't open. The hunter west trades herbs.",
+          "say": "Verses, they say — one in the drowned shrine, one up the old watchtower, one cut into the barrow stone, slow going without a scholar's eye. But quiet hands find their own ways in where doors won't open. The hunter west trades herbs.",
           "fx": [["score", 5], ["xp", 2]]
         },
         {
@@ -781,7 +781,7 @@
           "label": "rumors",
           "if": [["class", "warden"]],
           "once": true,
-          "say": "Verses, they say — one in the drowned chapel, one up the old watchtower, one cut into the barrow stone, slow going without a scholar's eye. Whatever's down there, plenty would rather you just settle it with steel. The hunter west trades herbs.",
+          "say": "Verses, they say — one in the drowned shrine, one up the old watchtower, one cut into the barrow stone, slow going without a scholar's eye. Whatever's down there, plenty would rather you just settle it with steel. The hunter west trades herbs.",
           "fx": [["score", 5], ["xp", 2]]
         }
       ]
