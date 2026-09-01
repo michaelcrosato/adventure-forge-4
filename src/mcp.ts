@@ -44,6 +44,13 @@ type Session = {
 const sessions = new Map<string, Session>();
 let counter = 0;
 
+// new_game prints the id as "s=<id>" (a readable label); accept that copied
+// verbatim too, so a session id round-trips regardless of which part an
+// agent copies.
+function resolveSession(s: string): Session | undefined {
+  return sessions.get(s) ?? sessions.get(s.replace(/^s=/, ""));
+}
+
 function flush(sess: Session): void {
   if (sess.state.ended) sess.trace.receipt = receipt(world, sess.state);
   writeFileSync(join(RUNS, `${sess.id}.json`), JSON.stringify(sess.trace));
@@ -98,7 +105,7 @@ server.registerTool(
     },
   },
   async ({ s, a }) => {
-    const sess = sessions.get(s);
+    const sess = resolveSession(s);
     if (!sess) return text(`No such session ${s}. Call new_game.`);
     if (sess.state.ended)
       return text(`Game over.\n${render(world, sess.state, []).text}`);
@@ -123,7 +130,7 @@ server.registerTool(
     inputSchema: { s: z.string().describe("Session id.") },
   },
   async ({ s }) => {
-    const sess = sessions.get(s);
+    const sess = resolveSession(s);
     if (!sess) return text(`No such session ${s}. Call new_game.`);
     return text(view(sess, [], true));
   },
