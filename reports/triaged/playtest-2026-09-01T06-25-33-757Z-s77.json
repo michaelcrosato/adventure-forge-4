@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-01T06-25-33-757Z",
+  "seed": 77,
+  "build": {
+    "rev": "23aa891",
+    "world": "59da39a6"
+  },
+  "cost_usd": 0.5409044000000001,
+  "verified": true,
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 3,
+  "turns": 41,
+  "receipt": "lighthouse.77.41.55.beacon_lit.b9d76c20",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "'oil the mechanism' action was available and consumed a turn/HP even though I hadn't used the oil flask on it yet — the flask sat unused in inventory with no visible effect on success odds; the action seems to be a flat STR check independent of having the right item, which undercuts the point of collecting the oil flask.",
+      "where": "Lamp Room / oil the mechanism"
+    }
+  ],
+  "confusions": [
+    "No inventory-view action exists, so I couldn't confirm whether the oil flask, tinderbox, cutlass, or iron key were actually being used by contextual actions — items seem to vanish into an invisible inventory with no way to check their state.",
+    "No healing/rest mechanic anywhere (tavern, cottage) despite combat and repeated STR-check failures draining HP steadily; at hp3/10 I had no recovery option and had to gamble on a ~55% mechanism check.",
+    "'oil the mechanism' failure message ('the wrench slips') implies a specific tool (wrench) that was never given to or mentioned to the player, making the fail state feel arbitrary rather than skill-based."
+  ],
+  "suggestions": [
+    "Add a way to inspect current inventory/items without spending a turn.",
+    "Show item requirements or success-odds hints before risky HP-costing actions (combat, STR checks) so players can decide whether to retreat and prepare.",
+    "Add at least one low-cost healing/rest option, since repeated skill-check failures can chain into death with no recovery path.",
+    "Make the oil flask visibly required/consumed by the 'oil the mechanism' action so collecting it feels causally connected to success."
+  ]
+}

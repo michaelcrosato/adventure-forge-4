@@ -1,0 +1,239 @@
+{
+  "id": "lighthouse",
+  "title": "The Lighthouse",
+  "intro": "Storm tonight. The great light on the cliff is dark, and every ship on this coast is sailing at the rocks. Someone has to climb up there and light it.",
+  "start": "cove",
+  "hp": 10,
+  "maxScore": 55,
+  "skills": { "str": 2 },
+  "rooms": {
+    "cove": {
+      "name": "Wrecker's Cove",
+      "desc": "Salt spray and black rocks. Your rowboat lies stove-in on the shingle. A boardwalk leads north toward the wharf.",
+      "brief": "Black rocks, wrecked rowboat.",
+      "exits": { "north": { "to": "wharf" } },
+      "actions": [
+        {
+          "id": "wait_rescue",
+          "label": "wait for rescue",
+          "fx": [
+            ["end", "lose", "gave_up", "You huddle by the wreck till dawn. No rescue comes; out past the point, timbers split on the reef all night."]
+          ]
+        }
+      ]
+    },
+    "wharf": {
+      "name": "Old Wharf",
+      "desc": "Rotten planks and tarred nets. The village tavern glows east; a stair cut into the cliff face climbs west toward the dark tower.",
+      "brief": "Nets, planks, gull-cries.",
+      "exits": {
+        "south": { "to": "cove" },
+        "east": { "to": "tavern" },
+        "west": { "to": "cliff_path" }
+      }
+    },
+    "tavern": {
+      "name": "The Bell & Anchor",
+      "desc": "Low beams, peat smoke, one lamp. The innkeep polishes a glass and watches the weather-glass fall.",
+      "brief": "Smoke and lamplight.",
+      "exits": {
+        "west": { "to": "wharf" },
+        "north": { "to": "keeper_cottage" }
+      }
+    },
+    "keeper_cottage": {
+      "name": "Keeper's Cottage",
+      "desc": "Dust sheets, a cold hearth, charts of the reef pinned to every wall. Something pale waits by the window.",
+      "brief": "Cold hearth, reef charts.",
+      "exits": { "south": { "to": "tavern" } }
+    },
+    "cliff_path": {
+      "name": "Cliff Stair",
+      "desc": "A hundred worn steps, wind tearing at your coat. The lighthouse door is a black slab above.",
+      "brief": "Worn steps, hard wind.",
+      "exits": {
+        "east": { "to": "wharf" },
+        "up": { "to": "lighthouse_base" }
+      }
+    },
+    "lighthouse_base": {
+      "name": "Lighthouse Door",
+      "desc": "The tower's base, iron-banded oak door streaked with salt. Above, the lamp room stands dark against the running clouds.",
+      "brief": "Iron-banded door.",
+      "exits": {
+        "down": { "to": "cliff_path" },
+        "in": {
+          "to": "stair",
+          "if": [["has", "iron_key"]],
+          "lockedMsg": "The iron lock holds fast. You need the keeper's key."
+        }
+      }
+    },
+    "stair": {
+      "name": "Spiral Stair",
+      "desc": "Stone steps corkscrew up into the tower. An oil store opens off the landing east; the lamp room is up.",
+      "brief": "Corkscrew steps.",
+      "dark": true,
+      "exits": {
+        "out": { "to": "lighthouse_base" },
+        "east": { "to": "oil_store" },
+        "up": { "to": "lamp_room" }
+      }
+    },
+    "oil_store": {
+      "name": "Oil Store",
+      "desc": "Casks and coiled chain. The air is cold in a way that has nothing to do with the sea.",
+      "brief": "Casks, chain, cold air.",
+      "dark": true,
+      "exits": { "west": { "to": "stair" } }
+    },
+    "lamp_room": {
+      "name": "Lamp Room",
+      "desc": "The great mirrored lamp, cold and still. Its winding mechanism is orange with rust. The whole coast lies black below.",
+      "brief": "The great cold lamp.",
+      "exits": { "down": { "to": "stair" } },
+      "actions": [
+        {
+          "id": "oil_mechanism",
+          "label": "oil the mechanism",
+          "if": [["has", "oil_flask"], ["!flag", "oiled"]],
+          "fx": [
+            ["check", "str", 11,
+              [["set", "oiled"], ["score", 10], ["say", "Oil works into the gears and the mechanism turns free."]],
+              [["hp", -1], ["say", "The wrench slips and bites your hand. The gears stay seized."]]
+            ]
+          ]
+        },
+        {
+          "id": "light_beacon",
+          "label": "light the beacon",
+          "if": [["flag", "oiled"], ["has", "lantern"], ["flag", "lantern_lit"]],
+          "fx": [
+            ["score", 15],
+            ["end", "win", "beacon_lit", "Flame takes the wick; mirrors catch it and hurl it out to sea. The beam sweeps the reef, and far out in the dark a ship leans away to safety."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "cutlass": {
+      "name": "notched cutlass",
+      "loc": "wharf",
+      "takeable": true,
+      "hit": 2,
+      "dmg": 3
+    },
+    "tinderbox": {
+      "name": "tinderbox",
+      "loc": "tavern",
+      "takeable": true,
+      "use": [
+        {
+          "target": "lantern",
+          "if": [["has", "lantern"], ["!flag", "lantern_lit"]],
+          "fx": [["set", "lantern_lit"], ["say", "The lantern flares to life."]]
+        }
+      ]
+    },
+    "lantern": {
+      "name": "storm lantern",
+      "loc": "keeper_cottage",
+      "takeable": true,
+      "light": true
+    },
+    "oil_flask": {
+      "name": "oil flask",
+      "loc": "nowhere",
+      "takeable": true
+    },
+    "iron_key": {
+      "name": "iron key",
+      "loc": "nowhere"
+    }
+  },
+  "npcs": {
+    "innkeep": {
+      "name": "innkeep",
+      "room": "tavern",
+      "topics": [
+        {
+          "id": "tower",
+          "label": "the dark tower",
+          "once": true,
+          "say": "Old Maren kept that light forty years. Her cottage is just north — and she never parted with the key, not even dead. Go gentle if you go.",
+          "fx": [["set", "heard_rumor"], ["score", 5]]
+        },
+        {
+          "id": "tale",
+          "label": "a sailor's tale",
+          "once": true,
+          "say": "They say the thing in the oil store came off a wreck in '09. Take iron if you go up there.",
+          "fx": [["score", 5]]
+        },
+        {
+          "id": "bye",
+          "label": "farewell",
+          "say": "Mind the stair. And light it, lad."
+        }
+      ]
+    },
+    "keeper_ghost": {
+      "name": "keeper's ghost",
+      "room": "keeper_cottage",
+      "topics": [
+        {
+          "id": "key",
+          "label": "the iron key",
+          "if": [["flag", "heard_rumor"]],
+          "once": true,
+          "say": "You spoke to Aldun first. Good. Take it — and take my lantern. Light her one last time.",
+          "fx": [["move", "iron_key", "inv"], ["score", 10], ["say", "Cold iron presses into your palm."]]
+        },
+        {
+          "id": "her",
+          "label": "her lighthouse",
+          "once": true,
+          "say": "Forty winters I climbed those stairs. The gears want oil; the store keeps it. Mind what the store keeps besides."
+        }
+      ]
+    },
+    "sea_wight": {
+      "name": "sea-wight",
+      "room": "oil_store",
+      "hostile": true,
+      "hp": 6,
+      "atk": 2,
+      "df": 8,
+      "onDeath": [
+        ["move", "oil_flask", "oil_store"],
+        ["score", 10],
+        ["say", "The wight collapses into brine and weed. Behind where it stood: an oil flask."]
+      ]
+    }
+  },
+  "walkthrough": [
+    "go north",
+    "take notched cutlass",
+    "go east",
+    "take tinderbox",
+    "ask innkeep: the dark tower",
+    "ask innkeep: a sailor's tale",
+    "go north",
+    "ask keeper's ghost: the iron key",
+    "take storm lantern",
+    "use tinderbox on storm lantern",
+    "go south",
+    "go west",
+    "go west",
+    "go up",
+    "go in",
+    "go east",
+    { "repeat": "attack sea-wight with notched cutlass", "until": ["npcDead", "sea_wight"], "max": 12 },
+    "take oil flask",
+    "go west",
+    "go up",
+    { "repeat": "oil the mechanism", "until": ["flag", "oiled"], "max": 8 },
+    "light the beacon"
+  ]
+}

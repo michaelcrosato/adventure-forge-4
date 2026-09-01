@@ -1,0 +1,33 @@
+{
+  "name": "tinyforge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AI-coded text RPG: tiny deterministic engine -> MCP server -> playtest loop. Minimal rebuild of the zork-unlimited flywheel.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "mcp": "tsx src/mcp.ts",
+    "play": "tsx src/play.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test test/*.test.ts",
+    "validate": "tsx src/validate.ts world/lighthouse.json",
+    "crawl": "tsx src/crawl.ts --smoke",
+    "verify": "npm run -s typecheck && npm run -s test && npm run -s validate && npm run -s crawl",
+    "mock": "node loop/mock-player.mjs",
+    "measure": "node loop/mock-player.mjs --measure",
+    "playtest": "bash loop/playtest.sh",
+    "fleet": "tsx src/player.ts",
+    "devloop": "bash loop/dev.sh"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

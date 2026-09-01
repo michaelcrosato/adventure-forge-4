@@ -1,0 +1,83 @@
+/**
+ * tinyforge observation format — the token budget lives here.
+ *
+ * One plain-text block per turn is the ENTIRE interface: header, events, scene,
+ * numbered menu. No JSON envelope, no legend, no second tool call. Numbered
+ * replies keep the agent's answer to a couple of tokens.
+ *
+ * render() is PURE — whether to show the full room prose (first sight) or the
+ * brief line (revisit) is the caller's memo (per-session, not game state), so
+ * traces replay identically no matter how the text was rendered.
+ */
+import { actionLabel, hashState, legalActions, receipt, roomIsDark } from "./engine.ts";
+import type { Action, State, World } from "./types.ts";
+
+export function renderMenu(world: World, s: State): { text: string; actions: Action[] } {
+  const actions = legalActions(world, s);
+  const text = actions.map((a, i) => `${i + 1} ${actionLabel(world, a, s)}`).join("\n");
+  return { text, actions };
+}
+
+export function render(
+  world: World,
+  s: State,
+  events: string[],
+  opts: { full?: boolean } = {},
+): { text: string; actions: Action[] } {
+  if (s.ended) {
+    const e = s.ended;
+    const lines = [
+      ...events.map((x) => `[${x}]`),
+      `*** ${e.kind.toUpperCase()}: ${e.id} ***`,
+      e.text,
+      `score:${s.score}/${world.maxScore} turns:${s.turn} seed:${s.seed}`,
+      `receipt:${receipt(world, s)}`,
+    ];
+    return { text: lines.join("\n"), actions: [] };
+  }
+
+  const room = world.rooms[s.room];
+  const dark = roomIsDark(world, s);
+  const lines: string[] = [];
+  lines.push(
+    `=${room?.name ?? s.room} | hp${s.hp}/${world.hp} sc${s.score}/${world.maxScore} t${s.turn}`,
+  );
+  if (events.length) lines.push(`[${events.join(" ")}]`);
+
+  if (dark) {
+    lines.push("Pitch dark. You can only feel for the exits.");
+  } else {
+    if (opts.full) lines.push(room?.desc ?? "");
+    else if (room?.brief) lines.push(room.brief);
+    const here = Object.keys(world.items)
+      .filter((id) => s.itemLoc[id] === s.room)
+      .map((id) => world.items[id]?.name ?? id);
+    if (here.length) lines.push(`here: ${here.join(", ")}`);
+    const npcs = Object.entries(world.npcs)
+      .filter(([id]) => s.npcRoom[id] === s.room)
+      .map(([id, d]) => {
+        const hp = s.npcHp[id] ?? d.hp ?? 1;
+        if (hp <= 0) return `${d.name} (dead)`;
+        return d.hostile ? `${d.name} (hostile, hp${hp})` : `${d.name} is here`;
+      });
+    if (npcs.length) lines.push(npcs.join("; "));
+  }
+
+  const menu = renderMenu(world, s);
+  lines.push(menu.text);
+  return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+}
+
+export function renderIntro(
+  world: World,
+  s: State,
+  events: string[],
+): { text: string; actions: Action[] } {
+  const body = render(world, s, events, { full: true });
+  const head = [
+    `${world.title} (seed ${s.seed})`,
+    world.intro,
+    `Goal: reach an ending. hp0 = death. One action per turn: act(s, n) with a menu number. look(s) re-shows the room. hash ${hashState(s)}.`,
+  ].join("\n");
+  return { text: `${head}\n${body.text}`, actions: body.actions };
+}

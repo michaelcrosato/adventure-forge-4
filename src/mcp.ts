@@ -1,0 +1,122 @@
+/**
+ * tinyforge MCP server — the whole play surface in 3 tools.
+ *
+ * new_game -> intro + first menu. act -> one turn (narration + status + next
+ * menu in ONE response, so a whole turn is ONE tool call). look -> resync.
+ * Every session appends to a replayable trace in runs/, and the end-of-game
+ * receipt is verifiable by `tsx src/crawl.ts --replay <trace>`.
+ */
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { z } from "zod";
+import { receipt, step } from "./engine.ts";
+import { newState } from "./engine.ts";
+import { render, renderIntro } from "./format.ts";
+import { loadWorld } from "./validate.ts";
+import type { Action, State, Trace, World } from "./types.ts";
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const RUNS = join(ROOT, "runs");
+mkdirSync(RUNS, { recursive: true });
+
+const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "lighthouse.json");
+const world: World = loadWorld(WORLD_PATH);
+
+type Session = {
+  id: string;
+  state: State;
+  actions: Action[]; // menu offered for the CURRENT state
+  trace: Trace;
+  seen: Set<string>; // rooms fully rendered (render memo, not game state)
+};
+const sessions = new Map<string, Session>();
+let counter = 0;
+
+function flush(sess: Session): void {
+  if (sess.state.ended) sess.trace.receipt = receipt(world, sess.state);
+  writeFileSync(join(RUNS, `${sess.id}.json`), JSON.stringify(sess.trace));
+}
+
+function view(sess: Session, events: string[], full: boolean): string {
+  const first = !sess.seen.has(sess.state.room);
+  if (!sess.state.ended) sess.seen.add(sess.state.room);
+  const r = render(world, sess.state, events, { full: full || first });
+  sess.actions = r.actions;
+  return r.text;
+}
+
+const text = (t: string) => ({ content: [{ type: "text" as const, text: t }] });
+
+const server = new McpServer({ name: "tinyforge", version: "0.1.0" });
+
+server.registerTool(
+  "new_game",
+  {
+    description:
+      "Start a session. Returns the intro, the scene, and a numbered action menu. Play by calling act with a menu number — every act response already contains the next scene and menu, so you never need a second call per turn.",
+    inputSchema: { seed: z.number().int().optional().describe("Determinism seed (default: random).") },
+  },
+  async ({ seed }) => {
+    const s = seed ?? Math.floor(Math.random() * 1e9);
+    const id = `g${++counter}-${s}-${Date.now().toString(36)}`; // nonce keeps trace files distinct across server restarts
+    const out = newState(world, s);
+    const sess: Session = {
+      id,
+      state: out.state,
+      actions: [],
+      trace: { world: world.id, seed: s, actions: [] },
+      seen: new Set(),
+    };
+    sessions.set(id, sess);
+    const intro = renderIntro(world, sess.state, out.events);
+    sess.actions = intro.actions;
+    sess.seen.add(sess.state.room);
+    flush(sess);
+    return text(`s=${id}\n${intro.text}`);
+  },
+);
+
+server.registerTool(
+  "act",
+  {
+    description: "Take ONE action by menu number. Returns what happened, the scene, and the next numbered menu.",
+    inputSchema: {
+      s: z.string().describe("Session id from new_game."),
+      a: z.number().int().describe("Menu number (1-based) from the latest response."),
+    },
+  },
+  async ({ s, a }) => {
+    const sess = sessions.get(s);
+    if (!sess) return text(`No such session ${s}. Call new_game.`);
+    if (sess.state.ended)
+      return text(`Game over.\n${render(world, sess.state, []).text}`);
+    const action = sess.actions[a - 1];
+    if (!action)
+      return text(`No action ${a}. Menu:\n${view(sess, [], false)}`);
+    const before = sess.state.room;
+    const out = step(world, sess.state, action);
+    sess.state = out.state;
+    sess.trace.actions.push(action);
+    flush(sess);
+    const moved = sess.state.room !== before;
+    return text(view(sess, out.events, moved && !sess.seen.has(sess.state.room)));
+  },
+);
+
+server.registerTool(
+  "look",
+  {
+    description: "Re-show the current scene in full, with the menu. Costs no turn.",
+    inputSchema: { s: z.string().describe("Session id.") },
+  },
+  async ({ s }) => {
+    const sess = sessions.get(s);
+    if (!sess) return text(`No such session ${s}. Call new_game.`);
+    return text(view(sess, [], true));
+  },
+);
+
+await server.connect(new StdioServerTransport());
