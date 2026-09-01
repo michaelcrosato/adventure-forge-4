@@ -869,6 +869,24 @@
           ]
         },
         {
+          "id": "break_crown",
+          "label": "break the crown instead of returning it, leaving the barrow open",
+          "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
+          "fx": [
+            ["score", 30],
+            ["end", "win", "crown_broken", "You set the crown on the stone and bring your heel down until the iron gives. He does not move to stop you — you already believed him; that was the debt, more than the metal. He lies down without ceremony, gone before the dust settles. The gray goes out of the trees like a tide. The barrow doors stand open behind you — you made the reeve no promise to shut them. No notice goes up this time; there is no thief left to name."]
+          ]
+        },
+        {
+          "id": "break_crown_sealed",
+          "label": "break the crown instead of returning it, sealing the barrow after, as you promised the reeve",
+          "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["flag", "promised_seal"]],
+          "fx": [
+            ["score", 30],
+            ["end", "win", "crown_broken", "You set the crown on the stone and bring your heel down until the iron gives. He does not move to stop you — you already believed him; that was the debt, more than the metal. He lies down without ceremony, gone before the dust settles. The gray goes out of the trees like a tide. True to your word, the barrow doors seal shut behind you for good. No notice goes up this time; there is no thief left to name."]
+          ]
+        },
+        {
           "id": "full_rite",
           "label": "return the crown and speak the three verses, leaving the barrow open",
           "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
@@ -1352,6 +1370,50 @@
       "go north",
       "go up",
       "return the crown, leaving the barrow open"
+    ],
+    "crown_broken": [
+      "be an Envoy — best suited to the crown path — words open doors that iron cannot, a silver tongue may win it quicker than any verse",
+      "go south",
+      "go south",
+      "ask gray priest: the old king",
+      "ask gray priest: a blessing for the barrow",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "perk: Second Wind (+3 max hp)",
+      "go north",
+      "go north",
+      { "repeat": "work out the stone verse", "until": ["flag", "verse_stone"], "max": 25 },
+      "go up",
+      "ask hollow king: why do you linger",
+      "go down",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go east",
+      { "repeat": "ask elder: the sealed coffer", "until": ["has", "crown"], "max": 25 },
+      "go west",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go up",
+      "break the crown instead of returning it, leaving the barrow open"
     ],
     "true_rest": [
       "be a Scholar — best suited to the verse path — reads the old tongue, recalls each verse outright, no check or puzzle needed — no tougher in a fight than the rest",
