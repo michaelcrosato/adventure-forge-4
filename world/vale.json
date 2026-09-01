@@ -507,7 +507,7 @@
           "id": "barrow",
           "label": "the barrow",
           "once": true,
-          "say": "Seal it. Whatever is down there, promise me you'll seal it under stone, and the watch stands with you.",
+          "say": "Seal it. Whatever is down there, promise me you'll seal it under stone, and the watch stands with you. (Mind — the gray priest keeps his own counsel on this. You cannot stand with both of us.)",
           "fx": [["set", "promised_seal"], ["addvar", "rep_reeve", 1]]
         },
         {
@@ -540,9 +540,18 @@
         {
           "id": "old_king",
           "label": "the old king",
+          "if": [["!flag", "promised_seal"]],
           "once": true,
           "say": "He was a good king, long ago, and he was robbed in his grave. Grief like that does not lie quiet. Ask me for a blessing and I will open the barrow doors myself — no strength needed.",
           "fx": [["set", "heard_oldking"], ["score", 5], ["xp", 3], ["addvar", "rep_priest", 1]]
+        },
+        {
+          "id": "old_king_sealed",
+          "label": "the old king",
+          "if": [["flag", "promised_seal"]],
+          "once": true,
+          "say": "He was a good king, long ago, and he was robbed in his grave. Grief like that does not lie quiet. You have already given the reeve your word, though — I will not offer what undoes it. The doors must open some other way now.",
+          "fx": [["score", 5], ["xp", 3]]
         },
         {
           "id": "blessing",
