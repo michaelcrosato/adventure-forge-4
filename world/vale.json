@@ -92,9 +92,13 @@
           "Old stumps and new shoots, all of them gray.",
           "The path forks around a fallen ash.",
           "Bracken to the waist. Something small runs off.",
-          "Leaning trees. The wind speaks through them."
+          "Leaning trees. The wind speaks through them.",
+          "Pale mushrooms crowd a rotted log.",
+          "Bare rock through thin soil. The trees thin out here.",
+          "Crows lift off at your step and do not come back.",
+          "A deer trail, well used, crossing north to south."
         ],
-        "briefs": ["Gray trees.", "Ash and silence.", "Cold woods.", "Gray light."]
+        "briefs": ["Gray trees.", "Ash and silence.", "Cold woods.", "Gray light.", "Bare rock.", "A deer trail."]
       },
       "links": [
         { "cell": [4, 7], "dir": "south", "to": "gate", "back": "north" },
@@ -121,6 +125,30 @@
         {
           "cell": [3, 5],
           "npcs": ["ash_wolf"]
+        },
+        {
+          "cell": [1, 4],
+          "name": "Broken Bridge",
+          "desc": "A footbridge, half fallen into the streambed below. The far rail is gone.",
+          "onEnterOnce": [["xp", 1], ["say", "Someone crossed this, once."]]
+        },
+        {
+          "cell": [6, 3],
+          "name": "Charcoal Ring",
+          "desc": "A ring of blackened stone. Someone camped here, and not recently.",
+          "onEnterOnce": [["xp", 1], ["say", "Old ash, cold to the touch."]]
+        },
+        {
+          "cell": [2, 6],
+          "name": "Antler Stake",
+          "desc": "A stag's antlers, lashed to a stake at the trail's edge. A marker, not a kill.",
+          "onEnterOnce": [["xp", 1], ["say", "Someone left this to be seen."]]
+        },
+        {
+          "cell": [3, 2],
+          "name": "The Leaning Stone",
+          "desc": "A standing stone, tipped by root growth. Old marks on it, worn smooth.",
+          "onEnterOnce": [["xp", 1], ["say", "Older than the wood around it."]]
         }
       ]
     }
