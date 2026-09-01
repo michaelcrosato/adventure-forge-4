@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-01T10-34-44-517Z",
+  "seed": 58656,
+  "build": {
+    "rev": "e1a784c",
+    "world": "3f1267ac"
+  },
+  "cost_usd": 0.5770500000000002,
+  "verified": true,
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 3,
+  "turns": 81,
+  "receipt": "vale.58656.81.95.blight_bound.51eb1735",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Faction commitment tracked silently — asking reeve about the barrow locked me into sealing path with no explicit confirmation. Gray priest later said 'you have already given your word' but I only asked questions, never accepted aid.",
+      "where": "Last Light Square / reeve dialogue"
+    }
+  ],
+  "confusions": [
+    "Path choice system: unclear when/how I committed to reeve's sealing path vs priest's verses path — only discovered the lock when doors stopped opening",
+    "Elder's locked coffer: sat in Elder's House but never had interaction options to open or ask about it, despite notice board mentioning it held something taken from the king",
+    "Option 4 'kneel and take his crown (surrender)' appeared at the throne but was never explained — unclear what outcome this would trigger"
+  ],
+  "suggestions": [
+    "Add explicit confirmation dialog when committing to a faction path (e.g., 'Will you accept the watch's aid?')",
+    "Make locked containers interactive — let player attempt to open the coffer, or add dialogue asking the elder about it",
+    "Clarify what the surrender/crown option does, either through NPC dialogue or UI hints before choosing it",
+    "Add UI indicator showing current faction/path status to reduce confusion about which timeline you're in"
+  ]
+}

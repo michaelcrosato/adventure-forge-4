@@ -560,7 +560,15 @@
           "id": "barrow",
           "label": "the barrow",
           "once": true,
-          "say": "Seal it. Whatever is down there, promise me you'll seal it under stone, and the watch stands with you. (Mind — the gray priest keeps his own counsel on this. You cannot stand with both of us.)",
+          "say": "Seal it. Whatever is down there, promise me you'll seal it under stone and the watch stands with you. Mind — the gray priest keeps his own counsel on this. Promise us both and you'll have promised neither.",
+          "fx": [["set", "heard_reeve_ask"]]
+        },
+        {
+          "id": "promise_seal",
+          "label": "promise to seal the barrow",
+          "if": [["flag", "heard_reeve_ask"], ["!flag", "promised_seal"]],
+          "once": true,
+          "say": "Good. The watch stands with you now.",
           "fx": [["set", "promised_seal"], ["addvar", "rep_reeve", 1]]
         },
         {
@@ -762,6 +770,7 @@
       "be a Warden — strong, steady, hard to kill",
       "go south",
       "ask reeve: the barrow",
+      "ask reeve: promise to seal the barrow",
       "ask reeve: the watch's aid",
       "go north",
       "go north",
