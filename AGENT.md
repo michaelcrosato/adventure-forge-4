@@ -24,7 +24,11 @@ this file. The driver reverts any cycle that tries.
   run. The I/O edges (mcp, play, player, triage, crawl) may read the clock.
   test/determinism.test.ts enforces the line.
 - **Every world carries its proof.** The walkthrough must replay to a win with
-  score === maxScore. Change content ⇒ update the walkthrough in the same change.
+  score === maxScore. Every other ending needs a replay-proof in `proofs`.
+  Change content ⇒ update the walkthrough and proofs in the same change.
+- **Character rules are engine, flavor is data.** Classes, perks, and xp live
+  in the world file. New DSL ops need validator + tests in the same change.
+  Generated regions (`gen`) expand before validation — same file, same world.
 
 ## Cycle contract
 
