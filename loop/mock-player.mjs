@@ -79,10 +79,10 @@ const rnd = () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-// Menu text may carry a display-only " (d20 needs N+)" or " (locked)" hint
-// (see oddsHint in src/engine.ts) that is never part of the canonical label
-// walkthroughs match on.
-const stripHints = (label) => label.replace(/ \((?:d20 needs \d+\+|locked)\)$/, "");
+// Menu text may carry a display-only " (roll N+ on the die)" or
+// " (locked[: hint])" suffix (see oddsHint in src/engine.ts) that is never
+// part of the canonical label walkthroughs match on.
+const stripHints = (label) => label.replace(/ \((?:roll \d+\+ on the die|locked(?::[^)]*)?)\)$/, "");
 
 const menuOf = (text) =>
   text

@@ -36,7 +36,7 @@ test("a check-first custom action previews the d20 threshold, net of mods", () =
   let { state } = newState(world, 1);
   state = step(world, state, { kind: "classpick", id: "sage" }).state;
   const a = { kind: "custom", room: "a", id: "riddle" } as Action;
-  assert.equal(oddsHint(world, state, a), " (d20 needs 8+)"); // dc 11 - wits 3 = 8
+  assert.equal(oddsHint(world, state, a), " (roll 8+ on the die)"); // dc 11 - wits 3 = 8
   // the canonical label never changes, so authored walkthroughs keep matching
   assert.equal(actionLabel(world, a, state), "riddle");
 });
@@ -48,7 +48,7 @@ test("an attack previews the roll needed against the target's defense", () => {
   });
   const { state } = newState(world, 1);
   const a: Action = { kind: "attack", npc: "rat" };
-  assert.equal(oddsHint(world, state, a), " (d20 needs 11+)"); // df 12 - hit 1 = 11
+  assert.equal(oddsHint(world, state, a), " (roll 11+ on the die)"); // df 12 - hit 1 = 11
 });
 
 test("a guaranteed action clamps to need 1+, never a number below 1", () => {
@@ -58,7 +58,7 @@ test("a guaranteed action clamps to need 1+, never a number below 1", () => {
   });
   let { state } = newState(world, 1);
   state = step(world, state, { kind: "classpick", id: "giant" }).state;
-  assert.equal(oddsHint(world, state, { kind: "custom", room: "a", id: "lift" }), " (d20 needs 1+)");
+  assert.equal(oddsHint(world, state, { kind: "custom", room: "a", id: "lift" }), " (roll 1+ on the die)");
 });
 
 test("a locked exit is flagged before a turn is wasted on it", () => {
@@ -126,7 +126,7 @@ test("a check-first use action previews too, matching the def step() would run",
   });
   let { state } = newState(world, 1);
   state = step(world, state, { kind: "classpick", id: "sage" }).state;
-  assert.equal(oddsHint(world, state, { kind: "use", item: "scroll" }), " (d20 needs 6+)");
+  assert.equal(oddsHint(world, state, { kind: "use", item: "scroll" }), " (roll 6+ on the die)");
 });
 
 test("odds text does not appear in actionByLabel matching (walkthroughs stay stable)", () => {

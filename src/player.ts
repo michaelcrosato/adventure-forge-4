@@ -83,10 +83,10 @@ export function apiProvider(model: string): Provider {
   };
 }
 
-// Menu text may carry a display-only " (d20 needs N+)" or " (locked)" hint
-// (see oddsHint in engine.ts) that is never part of the canonical label
-// walkthroughs match on.
-const stripHints = (label: string) => label.replace(/ \((?:d20 needs \d+\+|locked)\)$/, "");
+// Menu text may carry a display-only " (roll N+ on the die)" or
+// " (locked[: hint])" suffix (see oddsHint in engine.ts) that is never part
+// of the canonical label walkthroughs match on.
+const stripHints = (label: string) => label.replace(/ \((?:roll \d+\+ on the die|locked(?::[^)]*)?)\)$/, "");
 
 /** Scripted stand-in: follows the world's walkthrough by menu label, then files a canned report quoting the real receipt. Proves the whole driver for zero tokens. */
 export function mockProvider(world: World): Provider {

@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-01T21-29-29-785Z",
+  "seed": 97946,
+  "build": {
+    "rev": "3b72406",
+    "world": "7e38a874"
+  },
+  "cost_usd": 0.5717120000000001,
+  "verified": true,
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 3,
+  "turns": 71,
+  "receipt": "vale.97946.71.75.debt_paid.c7ca0454",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Grace check display confusing: rolled d20:6+3=9 (should pass >=7) but said fail; same with d20:5+3=8 at watchtower",
+      "where": "Drowned Shrine, Old Watchtower verse tracing"
+    },
+    {
+      "sev": "P2",
+      "what": "Scout keeper's crack search roll d20:1+3=4 failed appropriately, but overall verse path felt blocked by RNG rather than difficulty",
+      "where": "Barrow Field entrance"
+    }
+  ],
+  "confusions": [
+    "Grace checks had unclear pass/fail logic—the math seemed to pass but system rejected it",
+    "Verse tracing puzzles are designed for Scouts but appeared almost impossible (0/3 verses obtained)",
+    "Initially unclear that crown path was more viable than verse path—early guidance could help"
+  ],
+  "suggestions": [
+    "Fix d20 check display—clearly show total vs. threshold or use unambiguous language",
+    "Consider verse tracing as a 'learning' mechanic: first attempt teaches, second attempt easier",
+    "Add hint if player struggles: 'The verses are slow going—the crown path lies open instead'",
+    "Great use of alternate routes (crypt bypass, priest blessing)—keep that flexibility"
+  ]
+}

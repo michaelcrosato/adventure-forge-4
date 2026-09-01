@@ -242,7 +242,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         const roll = d20(s);
         const ok = roll + mod >= dc;
         const need = Math.max(1, dc - mod);
-        events.push(`${skill.toUpperCase()} d20:${roll}+${mod} (needed ${need}+) — ${ok ? "success" : "fail"}.`);
+        events.push(`${skill.toUpperCase()} d20:${roll}+${mod} (needed to roll ${need}+ on the die) — ${ok ? "success" : "fail"}.`);
         applyFx(world, s, ok ? okFx : failFx, events);
         break;
       }
@@ -435,12 +435,14 @@ function fxFor(world: World, s: State, a: Action): Fx[] | undefined {
 }
 
 /**
- * A short "(d20 needs N+)" preview for a risky action, so a player can weigh
- * it before spending a turn (and possibly hp) on it. Named after the die, not
- * the stat, so it reads as a per-attempt roll target rather than a fixed
- * attribute requirement. Display-only: it never touches actionLabel, so
- * walkthroughs and proofs — which match on the canonical label — are
- * unaffected by odds text or by attribute/perk changes.
+ * A short "(roll N+ on the die)" preview for a risky action, so a player can
+ * weigh it before spending a turn (and possibly hp) on it. Says "on the die"
+ * explicitly — not "needs a total of N+" — because real players read an
+ * ambiguous "needs N+" as the roll-plus-modifier total and then called a
+ * correct fail a bug when their raw roll fell short but their total didn't.
+ * Display-only: it never touches actionLabel, so walkthroughs and proofs —
+ * which match on the canonical label — are unaffected by odds text or by
+ * attribute/perk changes.
  */
 export function oddsHint(world: World, s: State, a: Action): string {
   if (a.kind === "attack") {
@@ -448,7 +450,7 @@ export function oddsHint(world: World, s: State, a: Action): string {
     if (!def) return "";
     const hit = bestWeapon(world, s).hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit");
     const need = Math.max(1, (def.df ?? 10) - hit);
-    return ` (d20 needs ${need}+)`;
+    return ` (roll ${need}+ on the die)`;
   }
   if (a.kind === "go") {
     // legalActions lists every exit regardless of its gate, so a locked one
@@ -462,7 +464,7 @@ export function oddsHint(world: World, s: State, a: Action): string {
   const chk = fx?.[0];
   if (!chk || chk[0] !== "check") return "";
   const need = Math.max(1, chk[2] - checkMod(world, s, chk[1]));
-  return ` (d20 needs ${need}+)`;
+  return ` (roll ${need}+ on the die)`;
 }
 
 export function step(world: World, prev: State, action: Action): StepOut {
