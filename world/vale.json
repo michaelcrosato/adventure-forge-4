@@ -686,10 +686,35 @@
       "room": "inn",
       "topics": [
         {
-          "id": "rumors",
+          "id": "rumors_scholar",
           "label": "rumors",
+          "if": [["class", "scholar"]],
           "once": true,
           "say": "Verses, they say. One in the drowned chapel east of the wood, one up the old watchtower north of that, one cut into the barrow stone itself. And the hunter at the west edge trades herbs. A scholar's eye reads them quick — anyone else will have to puzzle them out slow, and it may take a few tries.",
+          "fx": [["score", 5], ["xp", 2]]
+        },
+        {
+          "id": "rumors_envoy",
+          "label": "rumors",
+          "if": [["class", "envoy"]],
+          "once": true,
+          "say": "Verses, they say — one in the drowned chapel, one up the old watchtower, one cut into the barrow stone, slow going without a scholar's eye. Word is the elder holds something taken from the old king himself; a silver tongue might settle that debt quicker than any verse. The hunter west trades herbs.",
+          "fx": [["score", 5], ["xp", 2]]
+        },
+        {
+          "id": "rumors_scout",
+          "label": "rumors",
+          "if": [["class", "scout"]],
+          "once": true,
+          "say": "Verses, they say — one in the drowned chapel, one up the old watchtower, one cut into the barrow stone, slow going without a scholar's eye. But quiet hands find their own ways in where doors won't open. The hunter west trades herbs.",
+          "fx": [["score", 5], ["xp", 2]]
+        },
+        {
+          "id": "rumors_warden",
+          "label": "rumors",
+          "if": [["class", "warden"]],
+          "once": true,
+          "say": "Verses, they say — one in the drowned chapel, one up the old watchtower, one cut into the barrow stone, slow going without a scholar's eye. Whatever's down there, plenty would rather you just settle it with steel. The hunter west trades herbs.",
           "fx": [["score", 5], ["xp", 2]]
         }
       ]
