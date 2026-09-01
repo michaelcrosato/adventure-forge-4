@@ -747,6 +747,11 @@
       "onEnterOnce": [["say", "So this is where it ends. Whatever you choose here decides how."]],
       "actions": [
         {
+          "id": "trail_to_gate_from_throne",
+          "label": "leave the barrow and head back to the village gate",
+          "fx": [["goto", "gate"]]
+        },
+        {
           "id": "rite",
           "label": "speak the three verses at the throne",
           "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
