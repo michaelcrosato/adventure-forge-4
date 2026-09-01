@@ -334,11 +334,22 @@
         {
           "id": "force_doors",
           "label": "force the doors",
-          "if": [["!flag", "barrow_open"]],
+          "if": [["!flag", "barrow_open"], ["!flag", "promised_seal"]],
           "fx": [
             ["check", "might", 12,
               [["set", "barrow_open"], ["xp", 2], ["say", "Stone grinds on stone. The doors open."]],
               [["say", "The doors do not move. Try again, or find another way in — the village may have one."]]
+            ]
+          ]
+        },
+        {
+          "id": "force_doors_sealed",
+          "label": "force the doors",
+          "if": [["!flag", "barrow_open"], ["flag", "promised_seal"]],
+          "fx": [
+            ["check", "might", 12,
+              [["set", "barrow_open"], ["xp", 2], ["say", "Stone grinds on stone. The doors open."]],
+              [["say", "The doors do not move. Sworn to the reeve now, there is no other way in — brace and try again."]]
             ]
           ]
         },
