@@ -9,12 +9,14 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, hashState, inClassPhase, legalActions, receipt, roomIsDark } from "./engine.ts";
+import { actionLabel, hashState, inClassPhase, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
 import type { Action, State, World } from "./types.ts";
 
 export function renderMenu(world: World, s: State): { text: string; actions: Action[] } {
   const actions = legalActions(world, s);
-  const text = actions.map((a, i) => `${i + 1} ${actionLabel(world, a, s)}`).join("\n");
+  const text = actions
+    .map((a, i) => `${i + 1} ${actionLabel(world, a, s)}${oddsHint(world, s, a)}`)
+    .join("\n");
   return { text, actions };
 }
 

@@ -15,6 +15,7 @@ import type {
   State,
   StepOut,
   TopicDef,
+  UseDef,
   World,
 } from "./types.ts";
 
@@ -403,6 +404,50 @@ function bestWeapon(world: World, s: State): { hit: number; dmg: number; item: s
       best = { hit: it.hit ?? 0, dmg: it.dmg, item: id };
   }
   return best;
+}
+
+/** The check a "use" action would actually run, mirroring step()'s own def search. */
+function useDefFor(world: World, s: State, item: string): UseDef | undefined {
+  return (world.items[item]?.use ?? []).find((d) => {
+    if (!condsOk(world, s, d.if)) return false;
+    const t = d.target;
+    return !t || s.inv.includes(t) || s.itemLoc[t] === s.room || s.npcRoom[t] === s.room;
+  });
+}
+
+/** The fx list an action would run, if it has one and a leading check is worth previewing. */
+function fxFor(world: World, s: State, a: Action): Fx[] | undefined {
+  switch (a.kind) {
+    case "custom":
+      return world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.fx;
+    case "talk":
+      return world.npcs[a.npc]?.topics?.find((x) => x.id === a.topic)?.fx;
+    case "use":
+      return useDefFor(world, s, a.item)?.fx;
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * A short "(need N+)" preview for a risky action, so a player can weigh it
+ * before spending a turn (and possibly hp) on it. Display-only: it never
+ * touches actionLabel, so walkthroughs and proofs — which match on the
+ * canonical label — are unaffected by odds text or by attribute/perk changes.
+ */
+export function oddsHint(world: World, s: State, a: Action): string {
+  if (a.kind === "attack") {
+    const def = world.npcs[a.npc];
+    if (!def) return "";
+    const hit = bestWeapon(world, s).hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit");
+    const need = Math.max(1, (def.df ?? 10) - hit);
+    return ` (need ${need}+)`;
+  }
+  const fx = fxFor(world, s, a);
+  const chk = fx?.[0];
+  if (!chk || chk[0] !== "check") return "";
+  const need = Math.max(1, chk[2] - checkMod(world, s, chk[1]));
+  return ` (need ${need}+)`;
 }
 
 export function step(world: World, prev: State, action: Action): StepOut {

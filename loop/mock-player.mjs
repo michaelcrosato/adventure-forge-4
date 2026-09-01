@@ -79,12 +79,16 @@ const rnd = () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
+// Menu text may carry a display-only " (need N+)" odds hint (see oddsHint in
+// src/engine.ts) that is never part of the canonical label walkthroughs match on.
+const stripOdds = (label) => label.replace(/ \(need \d+\+\)$/, "");
+
 const menuOf = (text) =>
   text
     .split("\n")
     .map((l) => /^(\d+) (.+)$/.exec(l))
     .filter(Boolean)
-    .map((m) => ({ n: Number(m[1]), label: m[2] }));
+    .map((m) => ({ n: Number(m[1]), label: stripOdds(m[2]) }));
 
 function expandWalkthrough() {
   const path = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");

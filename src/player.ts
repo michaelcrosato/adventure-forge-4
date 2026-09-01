@@ -83,6 +83,10 @@ export function apiProvider(model: string): Provider {
   };
 }
 
+// Menu text may carry a display-only " (need N+)" odds hint (see oddsHint in
+// engine.ts) that is never part of the canonical label walkthroughs match on.
+const stripOdds = (label: string) => label.replace(/ \(need \d+\+\)$/, "");
+
 /** Scripted stand-in: follows the world's walkthrough by menu label, then files a canned report quoting the real receipt. Proves the whole driver for zero tokens. */
 export function mockProvider(world: World): Provider {
   const script = [...world.walkthrough];
@@ -98,7 +102,7 @@ export function mockProvider(world: World): Provider {
         usage,
       };
     }
-    const menu = [...last.matchAll(/^(\d+) (.+)$/gm)].map((m) => ({ n: m[1]!, label: m[2]! }));
+    const menu = [...last.matchAll(/^(\d+) (.+)$/gm)].map((m) => ({ n: m[1]!, label: stripOdds(m[2]!) }));
     const want = () => {
       if (repeat) return repeat.repeat;
       const s = script[0];
