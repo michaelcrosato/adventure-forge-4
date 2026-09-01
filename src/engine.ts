@@ -241,7 +241,8 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         const mod = checkMod(world, s, skill);
         const roll = d20(s);
         const ok = roll + mod >= dc;
-        events.push(`${skill.toUpperCase()} d20:${roll}+${mod} vs ${dc} — ${ok ? "success" : "fail"}.`);
+        const need = Math.max(1, dc - mod);
+        events.push(`${skill.toUpperCase()} d20:${roll}+${mod} (needed ${need}+) — ${ok ? "success" : "fail"}.`);
         applyFx(world, s, ok ? okFx : failFx, events);
         break;
       }
