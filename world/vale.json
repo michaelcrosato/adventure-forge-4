@@ -398,6 +398,30 @@
           "label": "follow the trail west to the hunter's camp",
           "if": [["flag", "found_camp_trail"]],
           "fx": [["goto", "hunters_camp"]]
+        },
+        {
+          "id": "verse_tally_0",
+          "label": "take stock of the verses",
+          "if": [["var", "verses_known", "=", 0]],
+          "fx": [["say", "None of the three verses are yours yet."]]
+        },
+        {
+          "id": "verse_tally_1",
+          "label": "take stock of the verses",
+          "if": [["var", "verses_known", "=", 1]],
+          "fx": [["say", "Verses gathered: 1/3."]]
+        },
+        {
+          "id": "verse_tally_2",
+          "label": "take stock of the verses",
+          "if": [["var", "verses_known", "=", 2]],
+          "fx": [["say", "Verses gathered: 2/3."]]
+        },
+        {
+          "id": "verse_tally_3",
+          "label": "take stock of the verses",
+          "if": [["var", "verses_known", "=", 3]],
+          "fx": [["say", "All three verses are yours."]]
         }
       ]
     },
@@ -462,7 +486,7 @@
           "id": "water_scholar",
           "label": "recall the water verse (scholar)",
           "if": [["class", "scholar"], ["!flag", "verse_water"]],
-          "fx": [["set", "verse_water"], ["score", 10], ["xp", 3], ["say", "The water verse comes back to you, line by line. Water Verse: obtained."]]
+          "fx": [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The water verse comes back to you, line by line. Water Verse: obtained."]]
         },
         {
           "id": "water_scout",
@@ -470,7 +494,7 @@
           "if": [["class", "scout"], ["!flag", "verse_water"]],
           "fx": [
             ["check", "grace", 11,
-              [["set", "verse_water"], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the worn grooves, reading the shape of the words by feel. Water Verse: obtained."]],
+              [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the worn grooves, reading the shape of the words by feel. Water Verse: obtained."]],
               [["say", "The grooves give up nothing yet. Slow going without a scholar's eye — not shut to one. Try again."]]
             ]
           ]
@@ -481,7 +505,7 @@
           "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_water"]],
           "fx": [
             ["check", "wits", 12,
-              [["set", "verse_water"], ["score", 10], ["xp", 3], ["say", "The worn lines give up their meaning. Water Verse: obtained."]],
+              [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The worn lines give up their meaning. Water Verse: obtained."]],
               [["say", "The water has taken too much. Slow going without a scholar's eye — not shut to one. Try again."]]
             ]
           ]
@@ -504,7 +528,7 @@
           "id": "wind_scholar",
           "label": "recall the wind verse (scholar)",
           "if": [["class", "scholar"], ["!flag", "verse_wind"]],
-          "fx": [["set", "verse_wind"], ["score", 10], ["xp", 3], ["say", "The wind verse comes back to you, whole. Wind Verse: obtained."]]
+          "fx": [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The wind verse comes back to you, whole. Wind Verse: obtained."]]
         },
         {
           "id": "wind_puzzle",
@@ -512,7 +536,7 @@
           "if": [["!class", "scholar"], ["!flag", "verse_wind"]],
           "fx": [
             ["check", "wits", 12,
-              [["set", "verse_wind"], ["score", 10], ["xp", 3], ["say", "The carvings give up their meaning. Wind Verse: obtained."]],
+              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The carvings give up their meaning. Wind Verse: obtained."]],
               [["say", "The lines blur. Slow going without a scholar's eye — not shut to one. Try again."]]
             ]
           ]
@@ -657,7 +681,7 @@
           "id": "stone_scholar",
           "label": "study the stone walls (scholar)",
           "if": [["class", "scholar"], ["!flag", "verse_stone"]],
-          "fx": [["set", "verse_stone"], ["score", 10], ["xp", 3], ["say", "The stone verse reads itself to you: a stair is cut into the wall right here, leading up. Stone Verse: obtained."]]
+          "fx": [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The stone verse reads itself to you: a stair is cut into the wall right here, leading up. Stone Verse: obtained."]]
         },
         {
           "id": "stone_puzzle",
@@ -665,7 +689,7 @@
           "if": [["!class", "scholar"], ["!flag", "verse_stone"]],
           "fx": [
             ["check", "wits", 11,
-              [["set", "verse_stone"], ["score", 10], ["xp", 3], ["say", "The verse comes clear: a stair is cut into the wall right here, leading up. Stone Verse: obtained."]],
+              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The verse comes clear: a stair is cut into the wall right here, leading up. Stone Verse: obtained."]],
               [["say", "The old letters swim. Slow going without a scholar's eye — not shut to one. Try again."]]
             ]
           ]
