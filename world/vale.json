@@ -74,6 +74,11 @@
       "desc": "+1 grace checks",
       "require": { "level": 2 },
       "bonus": { "check": { "grace": 1 } }
+    },
+    "scholars_tip": {
+      "name": "Scholar's Tip",
+      "desc": "+1 wits checks",
+      "bonus": { "check": { "wits": 1 } }
     }
   },
   "gen": [
@@ -929,6 +934,19 @@
           "once": true,
           "say": "Verses, they say — one in the drowned shrine, one up the old watchtower, one cut into the barrow stone, slow going without a scholar's eye. Whatever's down there, plenty would rather you just settle it with steel. The hunter west trades herbs.",
           "fx": [["score", 5], ["xp", 2]]
+        }
+      ]
+    },
+    "wandering_scholar": {
+      "name": "wandering scholar",
+      "room": "inn",
+      "topics": [
+        {
+          "id": "old_tongue",
+          "label": "ask about reading the old tongue",
+          "once": true,
+          "say": "I've spent years on stones like these. Watch how the marks repeat, and the pattern starts to show. Carry that with you — it should ease any verse you find out there.",
+          "fx": [["perk", "scholars_tip"], ["score", 5], ["xp", 2]]
         }
       ]
     },
