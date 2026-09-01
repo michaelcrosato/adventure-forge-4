@@ -94,7 +94,7 @@ export function render(
     const here = Object.keys(world.items)
       .filter((id) => s.itemLoc[id] === s.room)
       .map((id) => world.items[id]?.name ?? id);
-    if (here.length) lines.push(`here: ${here.join(", ")}`);
+    if (here.length) lines.push(`you notice ${here.join(", ")} here`);
     const npcs = Object.entries(world.npcs)
       .filter(([id]) => s.npcRoom[id] === s.room)
       .map(([id, d]) => {
