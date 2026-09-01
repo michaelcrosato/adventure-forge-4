@@ -4,9 +4,10 @@
  * receipt survives the replay-verification an honest report must pass.
  */
 import assert from "node:assert/strict";
+import { readFileSync, rmSync } from "node:fs";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { mockProvider, playOne, turnWarning } from "../src/player.ts";
+import { fileReport, mockProvider, playOne, turnWarning } from "../src/player.ts";
 import { loadWorld } from "../src/validate.ts";
 import type { World } from "../src/types.ts";
 
@@ -19,6 +20,19 @@ test("direct player wins via walkthrough policy and files a verified report", as
   assert.equal(r.verified, true, "receipt verified by in-process replay");
   assert.ok(r.receipt?.includes("beacon_lit"));
   assert.ok(r.apiCalls === r.turns + 1 || r.apiCalls <= r.turns + 3, "≈1 model call per turn + report");
+});
+
+test("filed report records the ground-truth ending id, for path/route analysis across playtests", async () => {
+  const r = await playOne(world, 7, mockProvider(world), 80);
+  const worldPath = fileURLToPath(new URL("../world/lighthouse.json", import.meta.url));
+  const file = fileReport(r, "mock", worldPath);
+  assert.ok(file, "report file written");
+  try {
+    const item = JSON.parse(readFileSync(file!, "utf8"));
+    assert.equal(item.ending, "beacon_lit");
+  } finally {
+    rmSync(file!, { force: true });
+  }
 });
 
 test("a session that cannot parse replies ends stuck but still reports", async () => {

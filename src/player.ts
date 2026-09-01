@@ -241,12 +241,15 @@ export async function playOne(
 }
 
 // ---------- fleet CLI ----------
-function fileReport(r: SessionResult, model: string, worldPath: string): string | null {
+/** Ground-truth ending id (distinct per ending, e.g. multiple ids per world when a
+ * world offers more than one route to a win) — lets analysis across playtests see
+ * which route players actually took without parsing the receipt string. */
+export function fileReport(r: SessionResult, model: string, worldPath: string): string | null {
   if (!r.report) return null;
   const ts = new Date().toISOString().replace(/[:.]/g, "-");
   const item = {
     schema: 1, kind: "playtest", lane: "api", model, ts, seed: r.seed, stalled: r.stalled,
-    build: buildId(worldPath), usage: r.usage, api_calls: r.apiCalls, verified: r.verified, ...r.report,
+    build: buildId(worldPath), usage: r.usage, api_calls: r.apiCalls, verified: r.verified, ending: r.ended, ...r.report,
   };
   mkdirSync(join(ROOT, "reports"), { recursive: true });
   const file = join(ROOT, "reports", `playtest-${ts}-s${r.seed}.json`);
