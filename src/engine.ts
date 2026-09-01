@@ -240,9 +240,12 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         const [, skill, dc, okFx, failFx] = fx;
         const mod = checkMod(world, s, skill);
         const roll = d20(s);
-        const ok = roll + mod >= dc;
-        const need = Math.max(1, dc - mod);
-        events.push(`${skill.toUpperCase()} d20:${roll}+${mod} (needed to roll ${need}+ on the die) — ${ok ? "success" : "fail"}.`);
+        const total = roll + mod;
+        const ok = total >= dc;
+        // States the total vs DC directly (the exact comparison `ok` runs) so
+        // there is no derived "needed N+" number to mistranslate back into a
+        // total — see oddsHint's comment for the report this replaced.
+        events.push(`${skill.toUpperCase()} d20:${roll}+${mod}=${total} vs DC ${dc} — ${ok ? "success" : "fail"}.`);
         applyFx(world, s, ok ? okFx : failFx, events);
         break;
       }

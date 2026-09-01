@@ -129,11 +129,13 @@ test("a check-first use action previews too, matching the def step() would run",
   assert.equal(oddsHint(world, state, { kind: "use", item: "scroll" }), " (roll 6+ on the die)");
 });
 
-test("a check's post-roll event names the die roll needed, not a total, and success tracks the raw roll", () => {
-  // Regression for a report where a player read "d20:6+3=9 (needed 7+)" as a
-  // passing total (9 >= 7) and called the resulting fail a bug — the check
-  // was really roll >= 7 on the die, and 6 < 7. The event text must spell out
-  // "on the die" so the number it names can't be mistaken for the total.
+test("a check's post-roll event states the total vs DC directly, and success tracks that comparison", () => {
+  // Regression for reports where a player derived a "needed N+" number from
+  // the DC and modifier, then re-derived a total to compare against it, and
+  // lost track of which frame (die-only vs total) a given number was in. The
+  // event text now names only numbers a player already has (roll, mod, DC)
+  // plus their sum, so pass/fail reads directly off "total vs DC" — no mental
+  // subtraction, no re-derivation, no second frame to mix up.
   const world = mini({
     classes: { sage: { name: "Sage", desc: "wise", attrs: { wits: 3 } } },
     rooms: {
@@ -149,11 +151,12 @@ test("a check's post-roll event names the die roll needed, not a total, and succ
   const { events } = step(world, state, { kind: "custom", room: "a", id: "riddle" });
   const line = events.find((e) => e.startsWith("WITS d20:"));
   assert.ok(line, "check emits a WITS d20 event");
-  const m = line!.match(/^WITS d20:(\d+)\+(\d+) \(needed to roll (\d+)\+ on the die\) — (success|fail)\.$/);
-  assert.ok(m, `event text names the die roll, not the total: "${line}"`);
-  const [, roll, mod, need, verdict] = m!;
-  assert.equal(Number(need), 11 - Number(mod)); // dc 11 - wits 3 = 8
-  assert.equal(verdict === "success", Number(roll) >= Number(need));
+  const m = line!.match(/^WITS d20:(\d+)\+(\d+)=(\d+) vs DC (\d+) — (success|fail)\.$/);
+  assert.ok(m, `event text states total vs DC directly: "${line}"`);
+  const [, roll, mod, total, dc, verdict] = m!;
+  assert.equal(Number(total), Number(roll) + Number(mod));
+  assert.equal(Number(dc), 11);
+  assert.equal(verdict === "success", Number(total) >= Number(dc));
 });
 
 test("odds text does not appear in actionByLabel matching (walkthroughs stay stable)", () => {
