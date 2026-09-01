@@ -172,6 +172,8 @@ export type World = {
   rooms: Record<string, RoomDef>;
   items: Record<string, ItemDef>;
   npcs: Record<string, NpcDef>;
+  /** Optional persistent counter shown in the status line every turn (e.g. quest items gathered). */
+  progress?: { var: string; label: string; max: number };
   /** Authored proof: must reach a win ending with score === maxScore (validator replays it). */
   walkthrough: WalkStep[];
   /** Ending proofs: each must replay (seed 1) to a game ended with exactly that ending id. */

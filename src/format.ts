@@ -74,6 +74,10 @@ export function render(
     `=${room?.name ?? s.room} | hp${s.hp}/${s.maxHp}${lvl} score${s.score}/${world.maxScore} t${s.turn}`,
   );
   if (events.length) lines.push(`[${events.join(" ")}]`);
+  if (world.progress) {
+    const v = s.vars[world.progress.var] ?? 0;
+    lines.push(`${world.progress.label}: ${v}/${world.progress.max}`);
+  }
   if (s.inv.length) {
     const carried = s.inv.map((id) => world.items[id]?.name ?? id);
     lines.push(`carrying: ${carried.join(", ")}`);
