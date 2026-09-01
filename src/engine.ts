@@ -244,8 +244,11 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         const ok = total >= dc;
         // States the total vs DC directly (the exact comparison `ok` runs) so
         // there is no derived "needed N+" number to mistranslate back into a
-        // total — see oddsHint's comment for the report this replaced.
-        events.push(`${skill.toUpperCase()} d20:${roll}+${mod}=${total} vs DC ${dc} — ${ok ? "success" : "fail"}.`);
+        // total — see oddsHint's comment for the report this replaced. "(ties
+        // win)" spells out the >= in `ok` itself — a total equal to the DC
+        // succeeds, not just one that beats it — since playtesters kept
+        // asking whether meeting a DC exactly was enough.
+        events.push(`${skill.toUpperCase()} d20:${roll}+${mod}=${total} vs DC ${dc} (ties win) — ${ok ? "success" : "fail"}.`);
         applyFx(world, s, ok ? okFx : failFx, events);
         break;
       }

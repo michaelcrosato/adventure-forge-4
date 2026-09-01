@@ -151,7 +151,7 @@ test("a check's post-roll event states the total vs DC directly, and success tra
   const { events } = step(world, state, { kind: "custom", room: "a", id: "riddle" });
   const line = events.find((e) => e.startsWith("WITS d20:"));
   assert.ok(line, "check emits a WITS d20 event");
-  const m = line!.match(/^WITS d20:(\d+)\+(\d+)=(\d+) vs DC (\d+) — (success|fail)\.$/);
+  const m = line!.match(/^WITS d20:(\d+)\+(\d+)=(\d+) vs DC (\d+) \(ties win\) — (success|fail)\.$/);
   assert.ok(m, `event text states total vs DC directly: "${line}"`);
   const [, roll, mod, total, dc, verdict] = m!;
   assert.equal(Number(total), Number(roll) + Number(mod));
