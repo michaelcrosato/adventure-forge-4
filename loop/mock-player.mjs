@@ -79,16 +79,17 @@ const rnd = () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-// Menu text may carry a display-only " (d20 needs N+)" odds hint (see oddsHint
-// in src/engine.ts) that is never part of the canonical label walkthroughs match on.
-const stripOdds = (label) => label.replace(/ \(d20 needs \d+\+\)$/, "");
+// Menu text may carry a display-only " (d20 needs N+)" or " (locked)" hint
+// (see oddsHint in src/engine.ts) that is never part of the canonical label
+// walkthroughs match on.
+const stripHints = (label) => label.replace(/ \((?:d20 needs \d+\+|locked)\)$/, "");
 
 const menuOf = (text) =>
   text
     .split("\n")
     .map((l) => /^(\d+) (.+)$/.exec(l))
     .filter(Boolean)
-    .map((m) => ({ n: Number(m[1]), label: stripOdds(m[2]) }));
+    .map((m) => ({ n: Number(m[1]), label: stripHints(m[2]) }));
 
 function expandWalkthrough() {
   const path = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");

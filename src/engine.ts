@@ -446,6 +446,13 @@ export function oddsHint(world: World, s: State, a: Action): string {
     const need = Math.max(1, (def.df ?? 10) - hit);
     return ` (d20 needs ${need}+)`;
   }
+  if (a.kind === "go") {
+    // legalActions lists every exit regardless of its gate, so a locked one
+    // reads as a real choice; flag it before a turn is wasted walking into it
+    const exit = world.rooms[s.room]?.exits?.[a.dir];
+    if (exit?.if && !condsOk(world, s, exit.if)) return " (locked)";
+    return "";
+  }
   const fx = fxFor(world, s, a);
   const chk = fx?.[0];
   if (!chk || chk[0] !== "check") return "";

@@ -61,6 +61,26 @@ test("a guaranteed action clamps to need 1+, never a number below 1", () => {
   assert.equal(oddsHint(world, state, { kind: "custom", room: "a", id: "lift" }), " (d20 needs 1+)");
 });
 
+test("a locked exit is flagged before a turn is wasted on it", () => {
+  const world = mini({
+    rooms: {
+      a: { name: "A", desc: "A.", exits: { north: { to: "b", if: [["has", "key"]], lockedMsg: "Locked." } } },
+      b: { name: "B", desc: "B." },
+    },
+    items: { key: { name: "key", loc: "nowhere" } },
+  });
+  const { state } = newState(world, 1);
+  assert.equal(oddsHint(world, state, { kind: "go", dir: "north" }), " (locked)");
+  state.inv.push("key");
+  assert.equal(oddsHint(world, state, { kind: "go", dir: "north" }), "", "unlocked once the key is held");
+});
+
+test("an unconditional exit previews nothing", () => {
+  const world = mini({ rooms: { a: { name: "A", desc: "A.", exits: { north: { to: "a" } } } } });
+  const { state } = newState(world, 1);
+  assert.equal(oddsHint(world, state, { kind: "go", dir: "north" }), "");
+});
+
 test("actions with no check preview nothing", () => {
   const world = mini({
     rooms: {
