@@ -268,7 +268,7 @@
           "id": "notice_board",
           "label": "read the notice board",
           "fx": [
-            ["say", "Notice board: three old verses are said to lie in the drowned chapel and the old watchtower — both east through the ash wood — and in the barrow's own walls, spoken together at the throne to let the dead king sleep. Elsewhere: the reeve wants the barrow sealed, and the gray priest remembers the old king's grief. Old talk holds the elder's locked coffer keeps the king's own crown, taken from him long ago and the reason his rest won't come — hear his grief from him at the throne first, then press the elder for it, and setting the crown back in his hands works just as well as the verses. Either path ends it; you need not walk both."]
+            ["say", "Notice board: three old verses are said to lie in the drowned chapel and the old watchtower — both east through the ash wood — and in the barrow's own walls, spoken together at the throne to let the dead king sleep. Elsewhere: the reeve wants the barrow sealed, and the gray priest remembers the old king's grief. Old talk holds the elder's locked coffer keeps the king's own crown, taken from him long ago and the reason his rest won't come — hear his grief from him at the throne first, then press the elder for it, and setting the crown back in his hands works just as well as the verses. Either path ends it on its own — you need not walk both, though word is the two together leave nothing unresolved."]
           ]
         }
       ]
@@ -617,6 +617,24 @@
           "fx": [
             ["score", 30],
             ["end", "win", "debt_paid", "You set the crown in his hands. He stands, bows once, and lies down at last. The gray goes out of the trees like a tide. True to your word, the barrow doors seal shut behind you for good."]
+          ]
+        },
+        {
+          "id": "full_rite",
+          "label": "return the crown and speak the three verses",
+          "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
+          "fx": [
+            ["score", 40],
+            ["end", "win", "true_rest", "You set the crown in his hands and speak the three verses over him, all at once. He listens through them with the crown finally where it belongs, and something in his face settles the rest of the way. The gray lifts from the vale by morning and does not come back. The barrow doors stand open behind you — you made the reeve no promise to shut them."]
+          ]
+        },
+        {
+          "id": "full_rite_sealed",
+          "label": "return the crown and speak the three verses",
+          "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["flag", "promised_seal"]],
+          "fx": [
+            ["score", 40],
+            ["end", "win", "true_rest", "You set the crown in his hands and speak the three verses over him, all at once. He listens through them with the crown finally where it belongs, and something in his face settles the rest of the way. The gray lifts from the vale by morning and does not come back. True to your word, the barrow doors seal shut behind you for good."]
           ]
         },
         {
@@ -995,6 +1013,65 @@
       "go north",
       "go up",
       "return the crown"
+    ],
+    "true_rest": [
+      "be a Scholar — reads the old tongue; the scattered verses will come easy",
+      "go south",
+      "ask reeve: the blight",
+      "go west",
+      "ask innkeep: rumors",
+      "go east",
+      "go south",
+      "ask gray priest: the old king",
+      "ask gray priest: a blessing for the barrow",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "perk: Second Wind (+3 max hp)",
+      "go east",
+      "go east",
+      "go east",
+      "recall the water verse (scholar)",
+      "go west",
+      "go north",
+      "go east",
+      "recall the wind verse (scholar)",
+      "go west",
+      "go west",
+      "go west",
+      "go north",
+      "go north",
+      "perk: Iron Skin (+1 armor)",
+      "go north",
+      "go north",
+      "study the stone walls (scholar)",
+      "go up",
+      "ask hollow king: why do you linger",
+      "go down",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go east",
+      { "repeat": "ask elder: the sealed coffer", "until": ["has", "crown"], "max": 25 },
+      "go west",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go up",
+      "return the crown and speak the three verses"
     ],
     "crowned_hollow": [
       "be a Scholar — reads the old tongue; the scattered verses will come easy",
