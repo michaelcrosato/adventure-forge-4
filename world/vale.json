@@ -1064,8 +1064,15 @@
         {
           "id": "coffer_sealed",
           "label": "the sealed coffer",
-          "if": [["!flag", "heard_grievance"]],
+          "if": [["!flag", "heard_grievance"], ["!has", "kings_seal"]],
           "say": "You ask about the coffer. The elder's hand covers the ledger. \"That's not open to asking — not from you, not yet. Go hear what the dead king himself grieves over, up in the barrow, and come back with a better reason.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "coffer_sealed_seal_early",
+          "label": "the sealed coffer",
+          "if": [["!flag", "heard_grievance"], ["has", "kings_seal"]],
+          "say": "You set the king's seal on the table between you. The elder's hand stills on the ledger — recognition, not surprise. \"That mark is real. I know it.\" But their grip doesn't loosen. \"Metal doesn't settle what's between him and me. Go hear what he grieves over yourself, up in the barrow — then come back and we'll speak of the coffer.\"",
           "fx": [["xp", 1]]
         },
         {
