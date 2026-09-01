@@ -794,7 +794,7 @@
         },
         {
           "id": "rite",
-          "label": "speak the three verses at the throne",
+          "label": "speak the three verses at the throne, leaving the barrow open",
           "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
           "fx": [
             ["score", 35],
@@ -803,7 +803,7 @@
         },
         {
           "id": "rite_sealed",
-          "label": "speak the three verses at the throne",
+          "label": "speak the three verses at the throne, sealing the barrow after, as you promised the reeve",
           "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["!npcDead", "hollow_king"], ["flag", "promised_seal"]],
           "fx": [
             ["score", 35],
@@ -830,7 +830,7 @@
         },
         {
           "id": "return_crown",
-          "label": "return the crown",
+          "label": "return the crown, leaving the barrow open",
           "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
           "fx": [
             ["score", 30],
@@ -839,7 +839,7 @@
         },
         {
           "id": "return_crown_sealed",
-          "label": "return the crown",
+          "label": "return the crown, sealing the barrow after, as you promised the reeve",
           "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["flag", "promised_seal"]],
           "fx": [
             ["score", 30],
@@ -848,7 +848,7 @@
         },
         {
           "id": "full_rite",
-          "label": "return the crown and speak the three verses",
+          "label": "return the crown and speak the three verses, leaving the barrow open",
           "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
           "fx": [
             ["score", 40],
@@ -857,7 +857,7 @@
         },
         {
           "id": "full_rite_sealed",
-          "label": "return the crown and speak the three verses",
+          "label": "return the crown and speak the three verses, sealing the barrow after, as you promised the reeve",
           "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["flag", "promised_seal"]],
           "fx": [
             ["score", 40],
@@ -1263,7 +1263,7 @@
     "study the stone walls (scholar)",
     "go up",
     "ask hollow king: why do you linger",
-    "speak the three verses at the throne"
+    "speak the three verses at the throne, leaving the barrow open"
   ],
   "proofs": {
     "king_slain": [
@@ -1329,7 +1329,7 @@
       "go north",
       "go north",
       "go up",
-      "return the crown"
+      "return the crown, leaving the barrow open"
     ],
     "true_rest": [
       "be a Scholar — best suited to the verse path — reads the old tongue, recalls each verse outright, no check or puzzle needed — no tougher in a fight than the rest",
@@ -1388,7 +1388,7 @@
       "go north",
       "go north",
       "go up",
-      "return the crown and speak the three verses"
+      "return the crown and speak the three verses, leaving the barrow open"
     ],
     "crowned_hollow": [
       "be a Scholar — best suited to the verse path — reads the old tongue, recalls each verse outright, no check or puzzle needed — no tougher in a fight than the rest",
