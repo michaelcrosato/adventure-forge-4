@@ -61,7 +61,7 @@ export function crawl(world: World, walks: number, maxSteps: number): {
       state = out.state;
       steps++;
       roomsSeen.add(state.room);
-      if (state.hp < 0 || state.hp > world.hp) findings.push(`BOUNDS hp=${state.hp} walk ${w}`);
+      if (state.hp < 0 || state.hp > state.maxHp) findings.push(`BOUNDS hp=${state.hp}/${state.maxHp} walk ${w}`);
       if (state.score < 0 || state.score > world.maxScore) findings.push(`BOUNDS score=${state.score} walk ${w}`);
     }
   }

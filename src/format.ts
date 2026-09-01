@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, hashState, legalActions, receipt, roomIsDark } from "./engine.ts";
+import { actionLabel, hashState, inClassPhase, legalActions, receipt, roomIsDark } from "./engine.ts";
 import type { Action, State, World } from "./types.ts";
 
 export function renderMenu(world: World, s: State): { text: string; actions: Action[] } {
@@ -36,13 +36,31 @@ export function render(
     return { text: lines.join("\n"), actions: [] };
   }
 
+  if (inClassPhase(world, s)) {
+    const lines = [
+      ...(events.length ? [`[${events.join(" ")}]`] : []),
+      "Choose who you are.",
+    ];
+    const menu = renderMenu(world, s);
+    lines.push(menu.text);
+    return { text: lines.join("\n"), actions: menu.actions };
+  }
+
   const room = world.rooms[s.room];
   const dark = roomIsDark(world, s);
   const lines: string[] = [];
+  const lvl = world.classes ? ` L${s.level}` : "";
   lines.push(
-    `=${room?.name ?? s.room} | hp${s.hp}/${world.hp} sc${s.score}/${world.maxScore} t${s.turn}`,
+    `=${room?.name ?? s.room} | hp${s.hp}/${s.maxHp}${lvl} sc${s.score}/${world.maxScore} t${s.turn}`,
   );
   if (events.length) lines.push(`[${events.join(" ")}]`);
+
+  if (s.perkPicks > 0 && legalActions(world, s)[0]?.kind === "perkpick") {
+    const menu = renderMenu(world, s);
+    lines.push("Level up. Pick a perk.");
+    lines.push(menu.text);
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+  }
 
   if (dark) {
     lines.push("Pitch dark. You can only feel for the exits.");

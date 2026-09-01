@@ -12,7 +12,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
-import { receipt, step } from "./engine.ts";
+import { inClassPhase, receipt, step } from "./engine.ts";
 import { newState } from "./engine.ts";
 import { render, renderIntro } from "./format.ts";
 import { loadWorld, validateWorld } from "./validate.ts";
@@ -51,7 +51,7 @@ function flush(sess: Session): void {
 
 function view(sess: Session, events: string[], full: boolean): string {
   const first = !sess.seen.has(sess.state.room);
-  if (!sess.state.ended) sess.seen.add(sess.state.room);
+  if (!sess.state.ended && !inClassPhase(world, sess.state)) sess.seen.add(sess.state.room);
   const r = render(world, sess.state, events, { full: full || first });
   sess.actions = r.actions;
   return r.text;
@@ -82,7 +82,7 @@ server.registerTool(
     sessions.set(id, sess);
     const intro = renderIntro(world, sess.state, out.events);
     sess.actions = intro.actions;
-    sess.seen.add(sess.state.room);
+    if (!inClassPhase(world, sess.state)) sess.seen.add(sess.state.room);
     flush(sess);
     return text(`s=${id}\n${intro.text}`);
   },

@@ -4,14 +4,14 @@
  */
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
-import { actionByLabel, newState, step } from "./engine.ts";
+import { actionByLabel, inClassPhase, newState, step } from "./engine.ts";
 import { render, renderIntro } from "./format.ts";
 import { loadWorld } from "./validate.ts";
 
 const seed = Number(process.argv[2] ?? Math.floor(Math.random() * 1e9));
 const world = loadWorld(process.env.TF_WORLD ?? fileURLToPath(new URL("../world/lighthouse.json", import.meta.url)));
 let { state, events } = newState(world, seed);
-const seen = new Set<string>([state.room]);
+const seen = new Set<string>(inClassPhase(world, state) ? [] : [state.room]);
 let out = renderIntro(world, state, events);
 console.log(out.text);
 
@@ -33,10 +33,9 @@ rl.on("line", (line) => {
     rl.prompt();
     return;
   }
-  const before = state.room;
   const res = step(world, state, action);
   state = res.state;
-  const first = state.room !== before && !seen.has(state.room);
+  const first = !seen.has(state.room);
   seen.add(state.room);
   out = render(world, state, res.events, { full: first });
   console.log(out.text);

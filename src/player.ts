@@ -19,7 +19,7 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { newState, receipt as receiptOf, step } from "./engine.ts";
+import { inClassPhase, newState, receipt as receiptOf, step } from "./engine.ts";
 import { render, renderIntro } from "./format.ts";
 import { replayTrace } from "./crawl.ts";
 import { loadWorld } from "./validate.ts";
@@ -164,7 +164,7 @@ export async function playOne(
 
   let out = newState(world, seed);
   let state: State = out.state;
-  seen.add(state.room);
+  if (!inClassPhase(world, state)) seen.add(state.room);
   msgs.push({ role: "user", content: renderIntro(world, state, out.events).text });
 
   let stalled = false;
@@ -186,11 +186,10 @@ export async function playOne(
     }
     const action = menu[n - 1]!;
     actions.push(action);
-    const before = state.room;
     const beforeScore = state.score;
     const res = step(world, state, action);
     state = res.state;
-    const first = state.room !== before && !seen.has(state.room);
+    const first = !seen.has(state.room);
     if (first || state.score > beforeScore) lastProgress = state.turn;
     seen.add(state.room);
     msgs.push({ role: "user", content: render(world, state, res.events, { full: first }).text });

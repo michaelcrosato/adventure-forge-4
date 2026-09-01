@@ -11,6 +11,7 @@ import type {
   Cond,
   CustomAction,
   Fx,
+  PerkDef,
   State,
   StepOut,
   TopicDef,
@@ -92,11 +93,89 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       const v = s.vars[c[1]] ?? 0;
       return c[2] === "<" ? v < c[3] : c[2] === ">" ? v > c[3] : c[2] === ">=" ? v >= c[3] : v === c[3];
     }
+    case "class":
+      return s.classId === c[1];
+    case "!class":
+      return s.classId !== c[1];
+    case "perk":
+      return s.perks.includes(c[1]);
+    case "!perk":
+      return !s.perks.includes(c[1]);
   }
 }
 
 const condsOk = (world: World, s: State, cs?: Cond[]) =>
   !cs || cs.every((c) => condOk(world, s, c));
+
+// ---------- characters ----------
+/** Cumulative xp needed to reach a level: 10 for 2, 30 for 3, 60 for 4, 100 for 5... */
+export const xpForLevel = (level: number): number => 5 * level * (level - 1);
+
+/** Sum a numeric perk bonus ("hit" | "dmg" | "armor" | "maxhp") over owned perks. */
+function perkBonus(world: World, s: State, key: "hit" | "dmg" | "armor" | "maxhp"): number {
+  let n = 0;
+  for (const id of s.perks) n += world.perks?.[id]?.bonus?.[key] ?? 0;
+  return n;
+}
+
+/** Modifier for a named check: world skill + attribute + perk check bonuses. */
+export function checkMod(world: World, s: State, name: string): number {
+  let n = (world.skills?.[name] ?? 0) + (s.attrs[name] ?? 0);
+  for (const id of s.perks) n += world.perks?.[id]?.bonus?.check?.[name] ?? 0;
+  return n;
+}
+
+/** Damage reduction: best carried armor item + perk armor. */
+export function armorOf(world: World, s: State): number {
+  let best = 0;
+  for (const id of s.inv) best = Math.max(best, world.items[id]?.armor ?? 0);
+  return best + perkBonus(world, s, "armor");
+}
+
+export function perkEligible(world: World, s: State, id: string, def: PerkDef): boolean {
+  if (s.perks.includes(id)) return false;
+  const r = def.require;
+  if (!r) return true;
+  if (r.level !== undefined && s.level < r.level) return false;
+  if (r.class && (!s.classId || !r.class.includes(s.classId))) return false;
+  if (r.attr && (s.attrs[r.attr[0]] ?? 0) < r.attr[1]) return false;
+  return true;
+}
+
+function eligiblePerks(world: World, s: State): string[] {
+  return Object.keys(world.perks ?? {}).filter((id) => perkEligible(world, s, id, world.perks![id]!));
+}
+
+/** Grant a perk: record it and apply its maxhp bonus (with the matching heal). */
+function grantPerk(world: World, s: State, id: string, events: string[]): void {
+  if (s.perks.includes(id)) return;
+  const def = world.perks?.[id];
+  if (!def) return;
+  s.perks.push(id);
+  const extraHp = def.bonus?.maxhp ?? 0;
+  if (extraHp) {
+    s.maxHp += extraHp;
+    s.hp = Math.min(s.hp + extraHp, s.maxHp);
+  }
+  events.push(`Perk gained: ${def.name}.`);
+}
+
+/** Add xp and apply any level-ups: +2 max hp, heal 2, one perk pick each. */
+function grantXp(world: World, s: State, n: number, events: string[]): void {
+  s.xp += n;
+  if (n > 0) events.push(`(+${n}xp)`);
+  while (s.xp >= xpForLevel(s.level + 1)) {
+    s.level += 1;
+    s.maxHp += 2;
+    s.hp = Math.min(s.hp + 2, s.maxHp);
+    events.push(`Level ${s.level}!`);
+    // only queue a pick if something is actually pickable; eligibility never shrinks
+    if (eligiblePerks(world, s).length) s.perkPicks += 1;
+  }
+}
+
+export const inClassPhase = (world: World, s: State): boolean =>
+  s.classId === null && !!world.classes && Object.keys(world.classes).length > 0;
 
 // ---------- effects ----------
 function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
@@ -119,7 +198,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         break;
       }
       case "hp": {
-        s.hp = clamp(s.hp + fx[1], 0, world.hp);
+        s.hp = clamp(s.hp + fx[1], 0, s.maxHp);
         if (fx[1] < 0) events.push(`(hp${fx[1]})`);
         if (s.hp <= 0) {
           s.ended = { kind: "lose", id: "dead", text: "You have died." };
@@ -152,13 +231,19 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         break;
       case "check": {
         const [, skill, dc, okFx, failFx] = fx;
-        const mod = world.skills?.[skill] ?? 0;
+        const mod = checkMod(world, s, skill);
         const roll = d20(s);
         const ok = roll + mod >= dc;
         events.push(`${skill.toUpperCase()} d20:${roll}+${mod} vs ${dc} — ${ok ? "success" : "fail"}.`);
         applyFx(world, s, ok ? okFx : failFx, events);
         break;
       }
+      case "xp":
+        grantXp(world, s, fx[1], events);
+        break;
+      case "perk":
+        grantPerk(world, s, fx[1], events);
+        break;
       case "end":
         s.ended = { kind: fx[1], id: fx[2], text: fx[3] };
         break;
@@ -184,7 +269,14 @@ export function newState(world: World, seed: number): StepOut {
     turn: 0,
     room: world.start,
     hp: world.hp,
+    maxHp: world.hp,
     score: 0,
+    classId: null,
+    attrs: {},
+    perks: [],
+    xp: 0,
+    level: 1,
+    perkPicks: 0,
     inv: [],
     flags: {},
     vars: {},
@@ -196,7 +288,8 @@ export function newState(world: World, seed: number): StepOut {
   };
   for (const id of Object.keys(world.items)) if (s.itemLoc[id] === "inv") s.inv.push(id);
   const events: string[] = [];
-  enterRoom(world, s, world.start, events);
+  // with classes, the start room waits until the player picks who they are
+  if (!inClassPhase(world, s)) enterRoom(world, s, world.start, events);
   return { state: s, events };
 }
 
@@ -223,6 +316,14 @@ function topicVisible(world: World, s: State, npc: string, t: TopicDef): boolean
 
 export function legalActions(world: World, s: State): Action[] {
   if (s.ended) return [];
+  // class first: nothing else is legal until the player picks who they are
+  if (inClassPhase(world, s))
+    return Object.keys(world.classes!).map((id) => ({ kind: "classpick", id }));
+  // a pending level-up perk choice blocks the menu until spent
+  if (s.perkPicks > 0) {
+    const picks = eligiblePerks(world, s).sort();
+    if (picks.length) return picks.slice(0, 12).map((id) => ({ kind: "perkpick", id }));
+  }
   const out: Action[] = [];
   const room = world.rooms[s.room];
   if (!room) return out;
@@ -279,6 +380,14 @@ export function actionLabel(world: World, a: Action, s?: State): string {
     }
     case "custom":
       return world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.label ?? a.id;
+    case "classpick": {
+      const c = world.classes?.[a.id];
+      return c ? `be a ${c.name} — ${c.desc}` : a.id;
+    }
+    case "perkpick": {
+      const p = world.perks?.[a.id];
+      return p ? `perk: ${p.name} (${p.desc})` : a.id;
+    }
   }
 }
 
@@ -287,7 +396,9 @@ function bestWeapon(world: World, s: State): { hit: number; dmg: number; item: s
   let best: { hit: number; dmg: number; item: string | null } = { hit: 0, dmg: 1, item: null };
   for (const id of s.inv) {
     const it = world.items[id];
-    if (it?.dmg && it.dmg > best.dmg) best = { hit: it.hit ?? 0, dmg: it.dmg, item: id };
+    if (!it?.dmg) continue;
+    if (it.dmg > best.dmg || (it.dmg === best.dmg && (it.hit ?? 0) > best.hit))
+      best = { hit: it.hit ?? 0, dmg: it.dmg, item: id };
   }
   return best;
 }
@@ -341,10 +452,11 @@ export function step(world: World, prev: State, action: Action): StepOut {
     case "attack": {
       const def = world.npcs[action.npc]!;
       const w = bestWeapon(world, s);
+      const hit = w.hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit");
       const roll = d20(s);
       const df = def.df ?? 10;
-      if (roll + w.hit >= df) {
-        const dmg = roll === 20 ? w.dmg * 2 : w.dmg;
+      if (roll + hit >= df) {
+        const dmg = (roll === 20 ? w.dmg * 2 : w.dmg) + perkBonus(world, s, "dmg");
         s.npcHp[action.npc] = (s.npcHp[action.npc] ?? 1) - dmg;
         events.push(`You hit the ${def.name} (d20:${roll}, -${dmg}hp).`);
       } else {
@@ -354,8 +466,9 @@ export function step(world: World, prev: State, action: Action): StepOut {
         events.push(`The ${def.name} is destroyed.`);
         if (def.onDeath) applyFx(world, s, def.onDeath, events);
       } else if (def.atk) {
+        const taken = Math.max(1, def.atk - armorOf(world, s));
         events.push(`The ${def.name} strikes back.`);
-        applyFx(world, s, [["hp", -def.atk]], events);
+        applyFx(world, s, [["hp", -taken]], events);
       }
       break;
     }
@@ -364,6 +477,28 @@ export function step(world: World, prev: State, action: Action): StepOut {
       if (!a) break;
       if (a.once) s.flags[`did_${a.id}`] = true;
       applyFx(world, s, a.fx, events);
+      break;
+    }
+    case "classpick": {
+      const def = world.classes?.[action.id];
+      if (!def) break;
+      s.classId = action.id;
+      for (const [k, v] of Object.entries(def.attrs ?? {})) s.attrs[k] = v;
+      s.maxHp += def.hp ?? 0;
+      s.hp = s.maxHp;
+      for (const id of def.items ?? []) {
+        if (!s.inv.includes(id)) s.inv.push(id);
+        s.itemLoc[id] = "inv";
+      }
+      for (const id of def.perks ?? []) grantPerk(world, s, id, events);
+      events.push(`You are a ${def.name}.`);
+      enterRoom(world, s, world.start, events);
+      break;
+    }
+    case "perkpick": {
+      if (s.perkPicks <= 0) break;
+      s.perkPicks -= 1;
+      grantPerk(world, s, action.id, events);
       break;
     }
   }
