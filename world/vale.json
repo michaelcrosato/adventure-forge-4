@@ -585,7 +585,7 @@
         {
           "id": "force_doors",
           "label": "force the doors",
-          "if": [["!flag", "barrow_open"], ["!flag", "promised_seal"]],
+          "if": [["!class", "warden"], ["!flag", "barrow_open"], ["!flag", "promised_seal"]],
           "fx": [
             ["check", "might", 12,
               [["set", "barrow_open"], ["xp", 2], ["say", "Stone grinds on stone. The doors open."]],
@@ -596,13 +596,19 @@
         {
           "id": "force_doors_sealed",
           "label": "force the doors",
-          "if": [["!flag", "barrow_open"], ["flag", "promised_seal"]],
+          "if": [["!class", "warden"], ["!flag", "barrow_open"], ["flag", "promised_seal"]],
           "fx": [
             ["check", "might", 12,
               [["set", "barrow_open"], ["xp", 2], ["say", "Stone grinds on stone. The doors open."]],
               [["say", "The doors do not move. The priest won't help now, sworn as you are — brace and try again, or search the hillside for another way in."]]
             ]
           ]
+        },
+        {
+          "id": "force_doors_warden",
+          "label": "force the doors (warden)",
+          "if": [["class", "warden"], ["!flag", "barrow_open"]],
+          "fx": [["set", "barrow_open"], ["xp", 2], ["say", "One good shoulder is all it takes. Stone grinds on stone and gives way at once — steel and muscle settle it without a verse or a blessing. The doors open."]]
         },
         {
           "id": "keepers_crack",
@@ -1186,7 +1192,7 @@
       "go north",
       "go north",
       "go north",
-      { "repeat": "force the doors", "until": ["flag", "barrow_open"], "max": 15 },
+      "force the doors (warden)",
       "perk: Heavy Hand (+1 damage)",
       "go north",
       "go down",
