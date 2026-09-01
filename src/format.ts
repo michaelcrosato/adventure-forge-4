@@ -20,6 +20,24 @@ export function renderMenu(world: World, s: State): { text: string; actions: Act
   return { text, actions };
 }
 
+// Compass abbreviations for the "exits:" orientation line — every direction
+// word a world actually uses (see world/*.json); anything else falls back to
+// its capitalized self.
+const DIR_ABBR: Record<string, string> = {
+  north: "N",
+  south: "S",
+  east: "E",
+  west: "W",
+  up: "U",
+  down: "D",
+  in: "In",
+  out: "Out",
+};
+
+function exitAbbr(dir: string): string {
+  return DIR_ABBR[dir] ?? dir.charAt(0).toUpperCase() + dir.slice(1);
+}
+
 export function render(
   world: World,
   s: State,
@@ -86,6 +104,9 @@ export function render(
       });
     if (npcs.length) lines.push(npcs.join("; "));
   }
+
+  const exitDirs = Object.keys(room?.exits ?? {});
+  if (exitDirs.length) lines.push(`exits: ${exitDirs.map(exitAbbr).join(" ")}`);
 
   const menu = renderMenu(world, s);
   lines.push(menu.text);
