@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-01T12-37-27-322Z",
+  "seed": 66078,
+  "build": {
+    "rev": "1cbe9f7",
+    "world": "7e38a874"
+  },
+  "cost_usd": 0.36249129999999996,
+  "verified": true,
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 3,
+  "turns": 47,
+  "receipt": "vale.66078.47.75.debt_paid.72370891",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Sealed coffer remains shown as sealed after successful will check to open it; no visual inventory or 'you have the crown' feedback. Game state tracked it correctly, but UI was confusing.",
+      "where": "Elder's House, after ask elder: sealed coffer success"
+    }
+  ],
+  "confusions": [
+    "After opening the coffer via will check, the scene still showed 'sealed iron coffer' with no 'take crown' option; crown was obtained but not explicitly displayed",
+    "The 'kneel and take his crown (surrender)' option was unclear — unclear if it meant something different than 'return the crown'"
+  ],
+  "suggestions": [
+    "Add explicit 'you obtain: crown' message or inventory line when picking up key items",
+    "Update scene descriptions after major state changes (e.g., 'the coffer lies open' after successful will check)",
+    "Clarify what the 'surrender' option does or rename it to match its actual mechanic",
+    "Consider showing a brief status line with carried items, especially key quest objects"
+  ]
+}
