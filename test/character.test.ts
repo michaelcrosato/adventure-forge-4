@@ -38,6 +38,15 @@ test("a class world starts with only the class menu", () => {
   assert.deepEqual(state.visited, []);
 });
 
+test("a vowel-starting class name gets 'an', both in the menu and on pick", () => {
+  const world = mini({ classes: { envoy: { name: "Envoy", desc: "talks" } } });
+  let { state } = newState(world, 1);
+  const legal = legalActions(world, state);
+  assert.match(actionLabel(world, legal[0]!, state), /^be an Envoy/);
+  const out = step(world, state, { kind: "classpick", id: "envoy" });
+  assert.match(out.events.join(" "), /You are an Envoy\./);
+});
+
 test("picking a class applies attrs, hp, and items, then enters the start room", () => {
   const world = mini({ classes: CLASSES, items: { sword: { name: "sword", loc: "nowhere", dmg: 3 } } });
   let { state } = newState(world, 1);

@@ -79,9 +79,9 @@ const rnd = () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-// Menu text may carry a display-only " (need N+)" odds hint (see oddsHint in
-// src/engine.ts) that is never part of the canonical label walkthroughs match on.
-const stripOdds = (label) => label.replace(/ \(need \d+\+\)$/, "");
+// Menu text may carry a display-only " (d20 needs N+)" odds hint (see oddsHint
+// in src/engine.ts) that is never part of the canonical label walkthroughs match on.
+const stripOdds = (label) => label.replace(/ \(d20 needs \d+\+\)$/, "");
 
 const menuOf = (text) =>
   text

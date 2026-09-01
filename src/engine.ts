@@ -61,6 +61,7 @@ export function receipt(world: World, s: State): string {
 
 // ---------- helpers ----------
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
+const article = (name: string) => (/^[aeiou]/i.test(name) ? "an" : "a");
 
 export function hasLight(world: World, s: State): boolean {
   return s.inv.some((id) => world.items[id]?.light && s.flags[`${id}_lit`]);
@@ -383,9 +384,7 @@ export function actionLabel(world: World, a: Action, s?: State): string {
       return world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.label ?? a.id;
     case "classpick": {
       const c = world.classes?.[a.id];
-      if (!c) return a.id;
-      const article = /^[aeiou]/i.test(c.name) ? "an" : "a";
-      return `be ${article} ${c.name} — ${c.desc}`;
+      return c ? `be ${article(c.name)} ${c.name} — ${c.desc}` : a.id;
     }
     case "perkpick": {
       const p = world.perks?.[a.id];
@@ -430,10 +429,12 @@ function fxFor(world: World, s: State, a: Action): Fx[] | undefined {
 }
 
 /**
- * A short "(need N+)" preview for a risky action, so a player can weigh it
- * before spending a turn (and possibly hp) on it. Display-only: it never
- * touches actionLabel, so walkthroughs and proofs — which match on the
- * canonical label — are unaffected by odds text or by attribute/perk changes.
+ * A short "(d20 needs N+)" preview for a risky action, so a player can weigh
+ * it before spending a turn (and possibly hp) on it. Named after the die, not
+ * the stat, so it reads as a per-attempt roll target rather than a fixed
+ * attribute requirement. Display-only: it never touches actionLabel, so
+ * walkthroughs and proofs — which match on the canonical label — are
+ * unaffected by odds text or by attribute/perk changes.
  */
 export function oddsHint(world: World, s: State, a: Action): string {
   if (a.kind === "attack") {
@@ -441,13 +442,13 @@ export function oddsHint(world: World, s: State, a: Action): string {
     if (!def) return "";
     const hit = bestWeapon(world, s).hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit");
     const need = Math.max(1, (def.df ?? 10) - hit);
-    return ` (need ${need}+)`;
+    return ` (d20 needs ${need}+)`;
   }
   const fx = fxFor(world, s, a);
   const chk = fx?.[0];
   if (!chk || chk[0] !== "check") return "";
   const need = Math.max(1, chk[2] - checkMod(world, s, chk[1]));
-  return ` (need ${need}+)`;
+  return ` (d20 needs ${need}+)`;
 }
 
 export function step(world: World, prev: State, action: Action): StepOut {
@@ -538,7 +539,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
         s.itemLoc[id] = "inv";
       }
       for (const id of def.perks ?? []) grantPerk(world, s, id, events);
-      events.push(`You are a ${def.name}.`);
+      events.push(`You are ${article(def.name)} ${def.name}.`);
       enterRoom(world, s, world.start, events);
       break;
     }
