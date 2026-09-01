@@ -39,6 +39,7 @@ export function validateWorld(world: World): string[] {
       if (!COND_OPS.has(c[0])) err(`${where}: unknown cond op ${String(c[0])}`);
       else if ((c[0] === "has" || c[0] === "!has") && !itemOk(c[1])) err(`${where}: unknown item ${c[1]}`);
       else if ((c[0] === "npcDead" || c[0] === "!npcDead") && !npcOk(c[1])) err(`${where}: unknown npc ${c[1]}`);
+      else if (c[0] === "var" && !["<", ">", "=", ">="].includes(c[2])) err(`${where}: bad var comparator ${String(c[2])}`);
     }
   };
   const checkFx = (where: string, fxs?: Fx[]) => {

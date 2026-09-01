@@ -15,7 +15,7 @@ import { z } from "zod";
 import { receipt, step } from "./engine.ts";
 import { newState } from "./engine.ts";
 import { render, renderIntro } from "./format.ts";
-import { loadWorld } from "./validate.ts";
+import { loadWorld, validateWorld } from "./validate.ts";
 import type { Action, State, Trace, World } from "./types.ts";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -24,6 +24,15 @@ mkdirSync(RUNS, { recursive: true });
 
 const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "lighthouse.json");
 const world: World = loadWorld(WORLD_PATH);
+{
+  // refuse a bad world at boot instead of crashing mid-session
+  const errs = validateWorld(world);
+  if (errs.length) {
+    console.error(`world ${WORLD_PATH} failed validation:`);
+    for (const e of errs) console.error(`  - ${e}`);
+    process.exit(1);
+  }
+}
 
 type Session = {
   id: string;

@@ -72,7 +72,9 @@ if (errs.length) {
   process.exit(1);
 }
 
-// Verify the receipt against the recorded trace, by replay.
+// Verify the receipt against the recorded trace, by replay. The trace's seed
+// must also match the seed this player was assigned — a receipt from some other
+// session in runs/ does not count.
 let verified = false;
 const runsDir = join(ROOT, "runs");
 try {
@@ -80,7 +82,8 @@ try {
     if (!f.endsWith(".json")) continue;
     const trace = JSON.parse(readFileSync(join(runsDir, f), "utf8"));
     if (trace.receipt === report.receipt) {
-      const replayed = execFileSync("npx", ["tsx", join(ROOT, "src", "crawl.ts"), "--replay", join(runsDir, f)], {
+      if (seed !== null && trace.seed !== seed) continue;
+      const replayed = execFileSync(process.execPath, ["--import", "tsx", join(ROOT, "src", "crawl.ts"), "--replay", join(runsDir, f)], {
         cwd: ROOT,
         encoding: "utf8",
       }).trim();
@@ -88,7 +91,8 @@ try {
       break;
     }
   }
-} catch {
+} catch (e) {
+  console.error(`verify: replay failed (${e.message}) — filing as verified:false`);
   verified = false;
 }
 

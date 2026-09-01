@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import {
   actionByLabel,
   condOk,
@@ -13,7 +14,7 @@ import { replayTrace } from "../src/crawl.ts";
 import { loadWorld, replayWalkthrough } from "../src/validate.ts";
 import type { Action, State, World } from "../src/types.ts";
 
-const world: World = loadWorld(new URL("../world/lighthouse.json", import.meta.url).pathname);
+const world: World = loadWorld(fileURLToPath(new URL("../world/lighthouse.json", import.meta.url)));
 
 /** Play the walkthrough at a seed, recording canonical actions + hash sequence. */
 function playWalkthrough(seed: number): { actions: Action[]; hashes: string[]; state: State } {
@@ -105,13 +106,14 @@ test("hp reaching 0 ends the game as a loss", () => {
   state.itemLoc["lantern"] = "inv";
   state.flags["lantern_lit"] = true;
   state.hp = 1;
-  // attack until the wight's counterattack (or victory) resolves the fight
-  for (let i = 0; i < 20 && !state.ended; i++) {
-    const a = actionByLabel(world, state, "attack sea-wight with bare hands");
-    if (!a) break;
-    state = step(world, state, a).state;
-  }
-  if (state.ended) assert.ok(["dead"].includes(state.ended.id) || state.ended.kind === "win" || state.hp > 0);
+  // the wight (6 hp) cannot die to one bare-hand blow, so it always strikes
+  // back for 2 — at hp 1 a single attack deterministically kills the player
+  const a = actionByLabel(world, state, "attack sea-wight with bare hands");
+  assert.ok(a, "attack is on the menu");
+  state = step(world, state, a).state;
+  assert.equal(state.ended?.kind, "lose");
+  assert.equal(state.ended?.id, "dead");
+  assert.equal(state.hp, 0);
 });
 
 test("score is clamped to maxScore", () => {

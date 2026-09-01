@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import { loadWorld, validateWorld } from "../src/validate.ts";
 
 const fixture = (name: string) =>
-  loadWorld(new URL(`./fixtures/${name}.json`, import.meta.url).pathname);
+  loadWorld(fileURLToPath(new URL(`./fixtures/${name}.json`, import.meta.url)));
 
 test("shipped world validates clean", () => {
-  const world = loadWorld(new URL("../world/lighthouse.json", import.meta.url).pathname);
+  const world = loadWorld(fileURLToPath(new URL("../world/lighthouse.json", import.meta.url)));
   assert.deepEqual(validateWorld(world), []);
 });
 

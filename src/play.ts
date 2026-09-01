@@ -3,12 +3,13 @@
  * Type a menu number (or an action label). `look` re-shows the room. `q` quits.
  */
 import { createInterface } from "node:readline";
+import { fileURLToPath } from "node:url";
 import { actionByLabel, newState, step } from "./engine.ts";
 import { render, renderIntro } from "./format.ts";
 import { loadWorld } from "./validate.ts";
 
 const seed = Number(process.argv[2] ?? Math.floor(Math.random() * 1e9));
-const world = loadWorld(new URL("../world/lighthouse.json", import.meta.url).pathname);
+const world = loadWorld(process.env.TF_WORLD ?? fileURLToPath(new URL("../world/lighthouse.json", import.meta.url)));
 let { state, events } = newState(world, seed);
 const seen = new Set<string>([state.room]);
 let out = renderIntro(world, state, events);

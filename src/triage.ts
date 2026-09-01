@@ -140,12 +140,18 @@ export function triage(opts?: { reportsDir?: string; queueDir?: string; dedupeDi
 
   const files = readdirSync(reportsDir).filter((f) => f.endsWith(".json")).sort();
   const units: Unit[] = [];
+  const readable: string[] = []; // only these get archived; unreadable/foreign files stay put
   for (const f of files) {
     try {
       const r = JSON.parse(readFileSync(join(reportsDir, f), "utf8")) as Record<string, unknown>;
-      if (r.kind === "playtest") units.push(...unitsFromReport(f, r));
+      if (r.kind === "playtest") {
+        units.push(...unitsFromReport(f, r));
+        readable.push(f);
+      } else {
+        console.error(`triage: leaving ${f} (kind is not "playtest")`);
+      }
     } catch {
-      /* unreadable report stays put */
+      console.error(`triage: leaving ${f} (not valid JSON)`);
     }
   }
   const existing = new Set(
@@ -162,8 +168,8 @@ export function triage(opts?: { reportsDir?: string; queueDir?: string; dedupeDi
     writeFileSync(join(queueDir, `${issue.priority}-issue-${issue.id}.json`), JSON.stringify(issue, null, 2));
     filed.push(issue);
   }
-  for (const f of files) renameSync(join(reportsDir, f), join(reportsDir, "triaged", f));
-  return { consumed: files.length, filed, skipped };
+  for (const f of readable) renameSync(join(reportsDir, f), join(reportsDir, "triaged", f));
+  return { consumed: readable.length, filed, skipped };
 }
 
 if (process.argv[1]?.endsWith("triage.ts")) {

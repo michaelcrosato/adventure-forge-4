@@ -19,8 +19,10 @@ this file. The driver reverts any cycle that tries.
 - **Content before engine.** Prefer editing `world/*.json`; touch `src/` only
   when the DSL genuinely can't express the fix. Keep the DSL closed — new ops
   need validator + tests in the same change.
-- **Determinism is sacred.** No Date.now, no Math.random in src/ — all
-  randomness flows through the state's PRNG cursor. Same seed = same run.
+- **Determinism is sacred.** No Date.now, no Math.random in the engine core —
+  all game randomness flows through the state's PRNG cursor. Same seed = same
+  run. The I/O edges (mcp, play, player, triage, crawl) may read the clock.
+  test/determinism.test.ts enforces the line.
 - **Every world carries its proof.** The walkthrough must replay to a win with
   score === maxScore. Change content ⇒ update the walkthrough in the same change.
 

@@ -22,7 +22,8 @@ const SEED = Number(opt("--seed", 7));
 const MEASURE = flag("--measure");
 const MAX_STEPS = Number(opt("--max-steps", 200));
 
-const child = spawn("npx", ["tsx", join(ROOT, "src", "mcp.ts")], {
+// node --import tsx (not npx) so this works on Windows too, where spawn("npx") fails
+const child = spawn(process.execPath, ["--import", "tsx", join(ROOT, "src", "mcp.ts")], {
   cwd: ROOT,
   stdio: ["pipe", "pipe", "inherit"],
 });

@@ -5,11 +5,12 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import { mockProvider, playOne } from "../src/player.ts";
 import { loadWorld } from "../src/validate.ts";
 import type { World } from "../src/types.ts";
 
-const world: World = loadWorld(new URL("../world/lighthouse.json", import.meta.url).pathname);
+const world: World = loadWorld(fileURLToPath(new URL("../world/lighthouse.json", import.meta.url)));
 
 test("direct player wins via walkthrough policy and files a verified report", async () => {
   const r = await playOne(world, 7, mockProvider(world), 80);

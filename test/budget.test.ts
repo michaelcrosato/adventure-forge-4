@@ -5,12 +5,13 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import { actionByLabel, condOk, newState, step } from "../src/engine.ts";
 import { render, renderIntro } from "../src/format.ts";
 import { loadWorld } from "../src/validate.ts";
 import type { State, World } from "../src/types.ts";
 
-const world: World = loadWorld(new URL("../world/lighthouse.json", import.meta.url).pathname);
+const world: World = loadWorld(fileURLToPath(new URL("../world/lighthouse.json", import.meta.url)));
 
 const AVG_CHARS_MAX = 450; // avg act-response size along the walkthrough
 const MAX_CHARS_MAX = 1100; // no single response may exceed this

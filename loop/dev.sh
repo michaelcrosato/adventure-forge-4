@@ -13,6 +13,7 @@ cd "$ROOT"
 CYCLES="${1:-1}"
 MAX_TURNS="${TF_DEV_MAX_TURNS:-50}"
 FAILS=0
+mkdir -p runs
 
 command -v claude >/dev/null || { echo "claude CLI not found — install Claude Code"; exit 1; }
 git rev-parse HEAD >/dev/null 2>&1 || { echo "not a git repo — run: git init && git add -A && git commit -m init"; exit 1; }
