@@ -242,7 +242,8 @@
           "name": "Wolf Scrape",
           "desc": "Claw marks score deep into an ash trunk, fresh enough to still weep sap. Trails run every way: north toward the barrow, south back toward the village, east toward the watchtower, west into the deeper wood.",
           "brief": "The wolf scrape.",
-          "onEnterOnce": [["xp", 1]],
+          "npcs": ["gaunt_wolf"],
+          "onEnterOnce": [["xp", 1], ["say", "A low growl. The scrape's maker hasn't gone far."]],
           "actions": [
             {
               "id": "get_bearings",
@@ -1056,6 +1057,15 @@
       "atk": 1,
       "df": 8,
       "onDeath": [["xp", 3], ["say", "The wolf drops. Its gray coat goes to dust."]]
+    },
+    "gaunt_wolf": {
+      "name": "gaunt wolf",
+      "room": null,
+      "hostile": true,
+      "hp": 4,
+      "atk": 1,
+      "df": 8,
+      "onDeath": [["xp", 3], ["say", "The gaunt wolf falls still. Its ribs show plain through the gray coat."]]
     },
     "barrow_wight": {
       "name": "barrow-wight",
