@@ -568,10 +568,19 @@
         {
           "id": "rite",
           "label": "speak the three verses at the throne",
-          "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["!npcDead", "hollow_king"]],
+          "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
           "fx": [
             ["score", 35],
-            ["end", "win", "blight_bound", "You speak the three verses. The king closes his eyes like a man finally allowed to sleep. The gray lifts from the vale by morning."]
+            ["end", "win", "blight_bound", "You speak the three verses. The king closes his eyes like a man finally allowed to sleep. The gray lifts from the vale by morning. The barrow doors stand open behind you — you made the reeve no promise to shut them."]
+          ]
+        },
+        {
+          "id": "rite_sealed",
+          "label": "speak the three verses at the throne",
+          "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["!npcDead", "hollow_king"], ["flag", "promised_seal"]],
+          "fx": [
+            ["score", 35],
+            ["end", "win", "blight_bound", "You speak the three verses. The king closes his eyes like a man finally allowed to sleep. The gray lifts from the vale by morning. True to your word, the barrow doors seal shut behind you for good."]
           ]
         },
         {
@@ -595,18 +604,35 @@
         {
           "id": "return_crown",
           "label": "return the crown",
-          "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"]],
+          "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
           "fx": [
             ["score", 30],
-            ["end", "win", "debt_paid", "You set the crown in his hands. He stands, bows once, and lies down at last. The gray goes out of the trees like a tide."]
+            ["end", "win", "debt_paid", "You set the crown in his hands. He stands, bows once, and lies down at last. The gray goes out of the trees like a tide. The barrow doors stand open behind you — you made the reeve no promise to shut them."]
+          ]
+        },
+        {
+          "id": "return_crown_sealed",
+          "label": "return the crown",
+          "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["flag", "promised_seal"]],
+          "fx": [
+            ["score", 30],
+            ["end", "win", "debt_paid", "You set the crown in his hands. He stands, bows once, and lies down at last. The gray goes out of the trees like a tide. True to your word, the barrow doors seal shut behind you for good."]
           ]
         },
         {
           "id": "kneel",
           "label": "kneel and become the vale's new hollow king",
-          "if": [["!npcDead", "hollow_king"]],
+          "if": [["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
           "fx": [
-            ["end", "lose", "crowned_hollow", "You kneel. The crown of nothing settles on you, light as ash. The vale will have a king after all — and no dawn."]
+            ["end", "lose", "crowned_hollow", "You kneel. The crown of nothing settles on you, light as ash. The vale will have a king after all — and no dawn. No one promised to seal this place; now no one needs to."]
+          ]
+        },
+        {
+          "id": "kneel_sealed",
+          "label": "kneel and become the vale's new hollow king",
+          "if": [["!npcDead", "hollow_king"], ["flag", "promised_seal"]],
+          "fx": [
+            ["end", "lose", "crowned_hollow", "You kneel. The crown of nothing settles on you, light as ash. The vale will have a king after all — and no dawn. The seal you promised the reeve no longer matters — you are what the doors would have kept in."]
           ]
         }
       ]
