@@ -996,8 +996,17 @@
       "room": "inn",
       "topics": [
         {
+          "id": "old_tongue_scholar",
+          "label": "ask about reading the old tongue",
+          "if": [["class", "scholar"]],
+          "once": true,
+          "say": "You've the trick already — a scholar's eye reads these stones outright, no tip of mine needed there. Still, carry it with you: a sharper mind serves wherever else you must puzzle a way through by wits alone.",
+          "fx": [["perk", "scholars_tip"], ["score", 5], ["xp", 2]]
+        },
+        {
           "id": "old_tongue",
           "label": "ask about reading the old tongue",
+          "if": [["!class", "scholar"]],
           "once": true,
           "say": "I've spent years on stones like these. Watch how the marks repeat, and the pattern starts to show. Carry that with you — it should ease any verse you find out there.",
           "fx": [["perk", "scholars_tip"], ["score", 5], ["xp", 2]]
