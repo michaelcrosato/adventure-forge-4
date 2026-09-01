@@ -6,7 +6,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { mockProvider, playOne } from "../src/player.ts";
+import { mockProvider, playOne, turnWarning } from "../src/player.ts";
 import { loadWorld } from "../src/validate.ts";
 import type { World } from "../src/types.ts";
 
@@ -34,6 +34,14 @@ test("stall guard ends a wandering session early instead of funding it", async (
   const r = await playOne(world, 11, wanderer, 80);
   assert.equal(r.stalled, true);
   assert.ok(r.turns < 80, `ended at t${r.turns}, not the full budget`);
+});
+
+test("turnWarning stays silent until the session nears its turn cap, then counts down", () => {
+  assert.equal(turnWarning(50, 80), "", "far from the cap: no warning");
+  assert.equal(turnWarning(69, 80), "", "11 left: still quiet");
+  assert.equal(turnWarning(70, 80), "\n(10 turns left before this session ends.)");
+  assert.equal(turnWarning(79, 80), "\n(1 turn left before this session ends.)");
+  assert.equal(turnWarning(80, 80), "", "at/past the cap: loop has already ended, nothing to warn about");
 });
 
 // NOTE: a one-shot plan lane (model plans the whole game from the opening scene,

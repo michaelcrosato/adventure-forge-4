@@ -146,6 +146,18 @@ export type SessionResult = {
  * "stalled at X" is itself a finding. */
 export const STALL_AFTER = 12;
 
+/** Start reminding the player it's running low on turns this many turns before
+ * the session's cap — the cap was previously silent, so a session could hit it
+ * with zero warning (a real playtest finding). */
+export const TURN_WARNING_AT = 10;
+
+/** Countdown line appended to a turn's scene once close to the turn budget, or "" otherwise. */
+export function turnWarning(turn: number, maxGameTurns: number): string {
+  const remaining = maxGameTurns - turn;
+  if (remaining <= 0 || remaining > TURN_WARNING_AT) return "";
+  return `\n(${remaining} turn${remaining === 1 ? "" : "s"} left before this session ends.)`;
+}
+
 export async function playOne(
   world: World,
   seed: number,
@@ -196,7 +208,8 @@ export async function playOne(
     const first = !seen.has(state.room);
     if (first || state.score > beforeScore) lastProgress = state.turn;
     seen.add(state.room);
-    msgs.push({ role: "user", content: render(world, state, res.events, { full: first }).text });
+    const scene = render(world, state, res.events, { full: first }).text;
+    msgs.push({ role: "user", content: scene + turnWarning(state.turn, maxGameTurns) });
   }
 
   msgs.push({
