@@ -269,6 +269,30 @@
           "fx": [
             ["say", "Notice board: three old verses are said to lie in the drowned chapel and the old watchtower — both east through the ash wood — and in the barrow's own walls, spoken together at the throne to let the dead king sleep. Elsewhere: the reeve wants the barrow sealed, and the gray priest remembers the old king's grief. Old talk holds the elder's locked coffer keeps the king's own crown, taken from him long ago and the reason his rest won't come — hear his grief from him at the throne first, then press the elder for it, and setting the crown back in his hands works just as well as the verses. Either path ends it on its own — you need not walk both, though word is the two together leave nothing unresolved."]
           ]
+        },
+        {
+          "id": "trail_to_barrow_from_square",
+          "label": "follow the trail straight to the barrow",
+          "if": [["flag", "found_barrow_trail"]],
+          "fx": [["goto", "barrow_field"]]
+        },
+        {
+          "id": "trail_to_chapel_from_square",
+          "label": "follow the trail straight to the drowned chapel",
+          "if": [["flag", "found_chapel_trail"]],
+          "fx": [["goto", "drowned_chapel"]]
+        },
+        {
+          "id": "trail_to_tower_from_square",
+          "label": "follow the trail straight to the old watchtower",
+          "if": [["flag", "found_tower_trail"]],
+          "fx": [["goto", "watchtower"]]
+        },
+        {
+          "id": "trail_to_camp_from_square",
+          "label": "follow the trail straight to the hunter's camp",
+          "if": [["flag", "found_camp_trail"]],
+          "fx": [["goto", "hunters_camp"]]
         }
       ]
     },
