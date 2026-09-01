@@ -295,7 +295,7 @@
           "id": "stone_scholar",
           "label": "study the stone walls (scholar)",
           "if": [["class", "scholar"], ["!flag", "verse_stone"]],
-          "fx": [["set", "verse_stone"], ["score", 10], ["xp", 3], ["say", "The stone verse reads itself to you — and names a hidden stair."]]
+          "fx": [["set", "verse_stone"], ["score", 10], ["xp", 3], ["say", "The stone verse reads itself to you: a stair is cut into the wall right here, leading up."]]
         },
         {
           "id": "stone_puzzle",
@@ -303,7 +303,7 @@
           "if": [["!class", "scholar"], ["!flag", "verse_stone"]],
           "fx": [
             ["check", "wits", 11,
-              [["set", "verse_stone"], ["score", 10], ["xp", 3], ["say", "The verse comes clear — and it names a hidden stair."]],
+              [["set", "verse_stone"], ["score", 10], ["xp", 3], ["say", "The verse comes clear: a stair is cut into the wall right here, leading up."]],
               [["say", "The old letters swim. Try again."]]
             ]
           ]
