@@ -579,9 +579,20 @@
           "fx": [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The wind verse comes back to you, whole. Wind Verse: obtained."]]
         },
         {
+          "id": "wind_scout",
+          "label": "trace the wind carvings by touch (scout)",
+          "if": [["class", "scout"], ["!flag", "verse_wind"]],
+          "fx": [
+            ["check", "grace", 10,
+              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the wind-worn cuts, reading the shape of the words by feel. Wind Verse: obtained."]],
+              [["say", "The cuts give up nothing yet. Slow going without a scholar's eye — not shut to one; a defter touch (grace) reads it faster, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse."]]
+            ]
+          ]
+        },
+        {
           "id": "wind_puzzle",
           "label": "work out the wind carvings",
-          "if": [["!class", "scholar"], ["!flag", "verse_wind"]],
+          "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_wind"]],
           "fx": [
             ["check", "wits", 10,
               [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The carvings give up their meaning. Wind Verse: obtained."]],
@@ -738,9 +749,20 @@
           "fx": [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The stone verse reads itself to you: a stair is cut into the wall right here, leading up. Stone Verse: obtained."]]
         },
         {
+          "id": "stone_scout",
+          "label": "trace the stone walls by touch (scout)",
+          "if": [["class", "scout"], ["!flag", "verse_stone"]],
+          "fx": [
+            ["check", "grace", 10,
+              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the deep-cut letters, reading the shape of the words by feel: a stair is cut into the wall right here, leading up. Stone Verse: obtained."]],
+              [["say", "The cuts give up nothing yet. Slow going without a scholar's eye — not shut to one; a defter touch (grace) reads it faster, and nothing is lost by trying again. Or leave it: the crypt north of the antechamber reaches the throne without this verse, if the crown is your road."]]
+            ]
+          ]
+        },
+        {
           "id": "stone_puzzle",
           "label": "work out the stone verse",
-          "if": [["!class", "scholar"], ["!flag", "verse_stone"]],
+          "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_stone"]],
           "fx": [
             ["check", "wits", 10,
               [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The verse comes clear: a stair is cut into the wall right here, leading up. Stone Verse: obtained."]],
