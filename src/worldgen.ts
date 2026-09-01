@@ -78,6 +78,7 @@ function expandRegion(world: World, g: GenDef): void {
     const room = world.rooms[id]!;
     if (spot.name) room.name = spot.name;
     if (spot.desc) room.desc = spot.desc;
+    if (spot.brief) room.brief = spot.brief;
     if (spot.onEnterOnce) room.onEnterOnce = spot.onEnterOnce;
     if (spot.actions) room.actions = spot.actions;
     for (const item of spot.items ?? []) {

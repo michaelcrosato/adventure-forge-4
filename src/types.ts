@@ -138,6 +138,7 @@ export type GenSpot = {
   cell: [number, number];
   name?: string; // override the generated room name
   desc?: string;
+  brief?: string; // shown on revisits; a named spot should usually set this too
   items?: string[]; // item ids placed here (their loc is rewritten)
   npcs?: string[]; // npc ids placed here (their room is rewritten)
   onEnterOnce?: Fx[];

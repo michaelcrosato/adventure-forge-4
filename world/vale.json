@@ -81,152 +81,134 @@
       "id": "ashwood",
       "name": "Ashwood",
       "seed": 11,
-      "w": 8,
-      "h": 8,
+      "w": 4,
+      "h": 4,
       "pools": {
-        "descs": [
-          "Ash trees stand close. Gray light, gray ground.",
-          "A dry streambed. Nothing drinks here now.",
-          "Burned ground where the blight passed. It crunches underfoot.",
-          "Thin woods and cold air.",
-          "Old stumps and new shoots, all of them gray.",
-          "The path forks around a fallen ash.",
-          "Bracken to the waist. Something small runs off.",
-          "Leaning trees. The wind speaks through them.",
-          "Pale mushrooms crowd a rotted log.",
-          "Bare rock through thin soil. The trees thin out here.",
-          "Crows lift off at your step and do not come back.",
-          "A deer trail, well used, crossing north to south.",
-          "Fog pools low between the trees, gray on gray.",
-          "A raven's nest, empty, tucked in a fork of branches.",
-          "The blight-grass crunches underfoot, brittle as old paper.",
-          "Roots break the ground in long gray ridges.",
-          "A hush here, thicker than the trees can explain.",
-          "Broken antlers, shed and forgotten, half-buried in ash."
-        ],
-        "briefs": ["Gray trees.", "Ash and silence.", "Cold woods.", "Gray light.", "Bare rock.", "A deer trail.", "Low fog.", "Broken roots.", "A hush."]
+        "descs": ["Ash trees close in, gray on gray."],
+        "briefs": ["Gray trees."]
       },
       "links": [
-        { "cell": [4, 7], "dir": "south", "to": "gate", "back": "north" },
-        { "cell": [4, 0], "dir": "north", "to": "barrow_field", "back": "south" },
-        { "cell": [0, 3], "dir": "west", "to": "hunters_camp", "back": "east" },
-        { "cell": [7, 5], "dir": "east", "to": "drowned_chapel", "back": "west" },
-        { "cell": [7, 1], "dir": "east", "to": "watchtower", "back": "west" }
+        { "cell": [1, 3], "dir": "south", "to": "gate", "back": "north" },
+        { "cell": [1, 0], "dir": "north", "to": "barrow_field", "back": "south" },
+        { "cell": [0, 2], "dir": "west", "to": "hunters_camp", "back": "east" },
+        { "cell": [3, 2], "dir": "east", "to": "drowned_chapel", "back": "west" },
+        { "cell": [3, 1], "dir": "east", "to": "watchtower", "back": "west" }
       ],
       "spots": [
         {
+          "cell": [1, 3],
+          "name": "The Split Oak",
+          "desc": "An oak split clean by old lightning right at the wood's edge. The village lanterns still show through the gap behind you.",
+          "brief": "The split oak.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 3],
+          "name": "Broken Bridge",
+          "desc": "A footbridge, half fallen into a dry streambed. The far rail is gone.",
+          "brief": "The broken bridge.",
+          "onEnterOnce": [["xp", 1], ["say", "Someone crossed this, once."]]
+        },
+        {
+          "cell": [2, 3],
+          "name": "Charcoal Ring",
+          "desc": "A ring of blackened stone. Someone camped here, and not recently.",
+          "brief": "The charcoal ring.",
+          "onEnterOnce": [["xp", 1], ["say", "Old ash, cold to the touch."]]
+        },
+        {
+          "cell": [3, 3],
+          "name": "Antler Stake",
+          "desc": "A stag's antlers, lashed to a stake at the trail's edge. A marker, not a kill.",
+          "brief": "The antler stake.",
+          "onEnterOnce": [["xp", 1], ["say", "Someone left this to be seen."]]
+        },
+        {
+          "cell": [1, 2],
+          "name": "The Ashfall Clearing",
+          "desc": "A wide clearing where the gray ash lies thickest, drifted like snow that never melts. Paths lead off in every direction.",
+          "brief": "The ashfall clearing.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 2],
+          "name": "Camp Smoke",
+          "desc": "A thread of smoke shows through the trees. The hunter's lean-to stands just beyond, to the west.",
+          "brief": "Camp smoke.",
+          "onEnterOnce": [["xp", 1], ["say", "Woodsmoke, this deep in the gray."]]
+        },
+        {
           "cell": [2, 2],
+          "name": "Twin Stones",
+          "desc": "Two standing stones lean together, worn faces touching, like old friends caught mid-word.",
+          "brief": "The twin stones.",
+          "npcs": ["ash_wolf"],
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 2],
+          "name": "Sodden Verge",
+          "desc": "The ground turns soft and cold underfoot. Black water glints through the trees to the east, and something stone breaks its surface.",
+          "brief": "The sodden verge.",
+          "onEnterOnce": [["xp", 1], ["say", "The wood ends in water just ahead."]]
+        },
+        {
+          "cell": [0, 1],
           "name": "Gray Cairn",
           "desc": "A cairn of flat stones, older than the wood. Travelers left charms here once.",
+          "brief": "The gray cairn.",
           "items": ["river_charm"],
           "onEnterOnce": [["xp", 2], ["say", "Someone built this to be found."]]
         },
         {
-          "cell": [5, 4],
+          "cell": [1, 1],
+          "name": "The Hollow Path",
+          "desc": "The ground dips into a sunken trail, walls of root and stone rising to either side.",
+          "brief": "The hollow path.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 1],
+          "name": "Wolf Scrape",
+          "desc": "Claw marks score deep into an ash trunk, fresh enough to still weep sap.",
+          "brief": "The wolf scrape.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 1],
+          "name": "Tower Shadow",
+          "desc": "The watchtower's shadow falls long across the path here, even at midday. The tower itself stands just to the east.",
+          "brief": "Tower shadow.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 0],
+          "name": "Widow's Well",
+          "desc": "A stone well, dry and capped with a warped board. No one has drawn water here in years.",
+          "brief": "The dry well.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 0],
+          "name": "The Last Trees",
+          "desc": "The ash wood thins to nothing here. Beyond, the hill rises bare toward the barrow.",
+          "brief": "The last trees.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 0],
           "name": "Herb Hollow",
           "desc": "A sunken hollow out of the wind. Green things still grow here, just barely.",
+          "brief": "Herb hollow.",
           "items": ["herbs"],
           "onEnterOnce": [["xp", 2], ["say", "Green, in all this gray."]]
         },
         {
-          "cell": [3, 5],
-          "npcs": ["ash_wolf"]
-        },
-        {
-          "cell": [0, 3],
-          "name": "Camp Smoke",
-          "desc": "A thread of smoke shows through the trees to the west. Someone tends a fire close by.",
-          "onEnterOnce": [["xp", 1], ["say", "Woodsmoke, this deep in the gray."]]
-        },
-        {
-          "cell": [1, 4],
-          "name": "Broken Bridge",
-          "desc": "A footbridge, half fallen into the streambed below. The far rail is gone.",
-          "onEnterOnce": [["xp", 1], ["say", "Someone crossed this, once."]]
-        },
-        {
-          "cell": [6, 3],
-          "name": "Charcoal Ring",
-          "desc": "A ring of blackened stone. Someone camped here, and not recently.",
-          "onEnterOnce": [["xp", 1], ["say", "Old ash, cold to the touch."]]
-        },
-        {
-          "cell": [2, 6],
-          "name": "Antler Stake",
-          "desc": "A stag's antlers, lashed to a stake at the trail's edge. A marker, not a kill.",
-          "onEnterOnce": [["xp", 1], ["say", "Someone left this to be seen."]]
-        },
-        {
-          "cell": [3, 2],
-          "name": "The Leaning Stone",
-          "desc": "A standing stone, tipped by root growth. Old marks on it, worn smooth.",
-          "onEnterOnce": [["xp", 1], ["say", "Older than the wood around it."]]
-        },
-        {
-          "cell": [7, 5],
-          "name": "Sodden Verge",
-          "desc": "The ground turns soft and cold underfoot. Black water glints through the trees to the east, and something stone breaks its surface.",
-          "onEnterOnce": [["xp", 1], ["say", "The wood ends in water just ahead."]]
-        },
-        {
-          "cell": [4, 6],
-          "name": "The Split Oak",
-          "desc": "An oak split clean by old lightning. One half is rotted through; the other still holds green leaves."
-        },
-        {
-          "cell": [4, 5],
-          "name": "Widow's Well",
-          "desc": "A stone well, dry and capped with a warped board. No one has drawn water here in years."
-        },
-        {
-          "cell": [5, 5],
-          "name": "The Tanglewood",
-          "desc": "Vines and deadfall choke the path here, ash-pale and dry as bone."
-        },
-        {
-          "cell": [6, 5],
+          "cell": [3, 0],
           "name": "Crow Perch",
-          "desc": "A blasted, leafless tree stands alone, hung with black feathers instead of leaves."
-        },
-        {
-          "cell": [4, 4],
-          "name": "The Ashfall Clearing",
-          "desc": "A wide clearing where the gray ash lies thickest, drifted like snow that never melts."
-        },
-        {
-          "cell": [4, 3],
-          "name": "Twin Stones",
-          "desc": "Two standing stones lean together, worn faces touching, like old friends caught mid-word."
-        },
-        {
-          "cell": [4, 2],
-          "name": "The Hollow Path",
-          "desc": "The ground dips into a sunken trail, walls of root and stone rising to either side."
-        },
-        {
-          "cell": [4, 1],
-          "name": "Wolf Scrape",
-          "desc": "Claw marks score deep into an ash trunk, fresh enough to still weep sap."
-        },
-        {
-          "cell": [5, 1],
-          "name": "Stacked Stones",
-          "desc": "Small stones stand piled one atop another, waist-high, marking a way through."
-        },
-        {
-          "cell": [6, 1],
-          "name": "The Narrows",
-          "desc": "The trees pinch tight here, trunks black with old fire, barely room to pass."
-        },
-        {
-          "cell": [7, 1],
-          "name": "Tower Shadow",
-          "desc": "The watchtower's shadow falls long across the path here, even at midday."
-        },
-        {
-          "cell": [4, 0],
-          "name": "The Last Trees",
-          "desc": "The ash wood thins to nothing here. Beyond, the hill rises bare toward the barrow."
+          "desc": "A blasted, leafless tree stands alone, hung with black feathers instead of leaves.",
+          "brief": "Crow perch.",
+          "onEnterOnce": [["xp", 1]]
         }
       ]
     }
@@ -691,22 +673,15 @@
     "go north",
     "go north",
     "go north",
-    "go north",
-    "go east",
-    "go east",
-    "go east",
-    "go east",
     "perk: Second Wind (+3 max hp)",
+    "go east",
+    "go east",
+    "go east",
     "recall the water verse (scholar)",
     "go west",
     "go west",
     "go west",
-    "go west",
     "go north",
-    "go north",
-    "go north",
-    "go north",
-    "go east",
     "go east",
     "go east",
     "go east",
@@ -714,15 +689,14 @@
     "go west",
     "go west",
     "go west",
-    "go west",
     "go north",
     "go north",
+    "perk: Iron Skin (+1 armor)",
     "go north",
     "go north",
     "study the stone walls (scholar)",
     "go up",
     "ask hollow king: why do you linger",
-    "perk: Iron Skin (+1 armor)",
     "speak the binding rite"
   ],
   "proofs": {
@@ -737,15 +711,11 @@
       "go north",
       "go north",
       "go north",
-      "go north",
-      "go north",
-      "go north",
-      "go north",
       { "repeat": "force the doors", "until": ["flag", "barrow_open"], "max": 15 },
+      "perk: Heavy Hand (+1 damage)",
       "go north",
       "go down",
       { "repeat": "attack barrow-wight with short sword", "until": ["npcDead", "barrow_wight"], "max": 25 },
-      "perk: Heavy Hand (+1 damage)",
       "take mail shirt",
       "go north",
       { "repeat": "attack hollow king with short sword", "until": ["npcDead", "hollow_king"], "max": 30 }
@@ -763,14 +733,10 @@
       "go north",
       "go north",
       "go north",
-      "go north",
-      "go north",
-      "go north",
-      "go north",
+      "perk: Second Wind (+3 max hp)",
       "go north",
       "go north",
       { "repeat": "work out the stone verse", "until": ["flag", "verse_stone"], "max": 25 },
-      "perk: Second Wind (+3 max hp)",
       "go up",
       "ask hollow king: why do you linger",
       "go down",
@@ -783,17 +749,9 @@
       "go south",
       "go south",
       "go south",
-      "go south",
-      "go south",
-      "go south",
-      "go south",
       "go east",
       { "repeat": "ask elder: the sealed coffer", "until": ["has", "crown"], "max": 25 },
       "go west",
-      "go north",
-      "go north",
-      "go north",
-      "go north",
       "go north",
       "go north",
       "go north",
@@ -819,14 +777,10 @@
       "go north",
       "go north",
       "go north",
-      "go north",
-      "go north",
-      "go north",
-      "go north",
+      "perk: Second Wind (+3 max hp)",
       "go north",
       "go north",
       "study the stone walls (scholar)",
-      "perk: Second Wind (+3 max hp)",
       "go up",
       "kneel and take his crown"
     ]
