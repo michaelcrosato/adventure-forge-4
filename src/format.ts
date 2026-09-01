@@ -56,6 +56,10 @@ export function render(
     `=${room?.name ?? s.room} | hp${s.hp}/${s.maxHp}${lvl} score${s.score}/${world.maxScore} t${s.turn}`,
   );
   if (events.length) lines.push(`[${events.join(" ")}]`);
+  if (s.inv.length) {
+    const carried = s.inv.map((id) => world.items[id]?.name ?? id);
+    lines.push(`carrying: ${carried.join(", ")}`);
+  }
 
   if (s.perkPicks > 0 && legalActions(world, s)[0]?.kind === "perkpick") {
     const menu = renderMenu(world, s);
