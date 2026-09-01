@@ -41,6 +41,7 @@ export type ExitDef = {
   to: string;
   if?: Cond[]; // all must pass, else lockedMsg
   lockedMsg?: string;
+  hint?: string; // short "what's missing" clue shown in the menu while locked, before a turn is wasted
 };
 
 export type CustomAction = {

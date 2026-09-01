@@ -75,6 +75,22 @@ test("a locked exit is flagged before a turn is wasted on it", () => {
   assert.equal(oddsHint(world, state, { kind: "go", dir: "north" }), "", "unlocked once the key is held");
 });
 
+test("a locked exit with an authored hint explains what's missing", () => {
+  const world = mini({
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        exits: { north: { to: "b", if: [["has", "key"]], lockedMsg: "Locked.", hint: "find the key" } },
+      },
+      b: { name: "B", desc: "B." },
+    },
+    items: { key: { name: "key", loc: "nowhere" } },
+  });
+  const { state } = newState(world, 1);
+  assert.equal(oddsHint(world, state, { kind: "go", dir: "north" }), " (locked: find the key)");
+});
+
 test("an unconditional exit previews nothing", () => {
   const world = mini({ rooms: { a: { name: "A", desc: "A.", exits: { north: { to: "a" } } } } });
   const { state } = newState(world, 1);

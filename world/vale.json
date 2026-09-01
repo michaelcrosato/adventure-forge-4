@@ -388,7 +388,8 @@
         "north": {
           "to": "antechamber",
           "if": [["flag", "barrow_open"]],
-          "lockedMsg": "The stone doors are shut fast. Force might open them, ask the gray priest for a blessing, or search the hillside — roots and old rain may have hollowed a way in somewhere else."
+          "lockedMsg": "The stone doors are shut fast. Force might open them, ask the gray priest for a blessing, or search the hillside — roots and old rain may have hollowed a way in somewhere else.",
+          "hint": "force the doors, get the priest's blessing, or search the hillside"
         }
       },
       "onEnterOnce": [["score", 10], ["xp", 4], ["say", "So this is where the gray begins."], ["set", "found_barrow_trail"]],
@@ -503,7 +504,8 @@
         "up": {
           "to": "throne",
           "if": [["flag", "verse_stone"]],
-          "lockedMsg": "There is a stair here somewhere. The walls say where."
+          "lockedMsg": "There is a stair here somewhere. The walls say where.",
+          "hint": "read the stone verse on these walls first"
         }
       },
       "actions": [
@@ -535,7 +537,8 @@
         "north": {
           "to": "throne",
           "if": [["npcDead", "barrow_wight"]],
-          "lockedMsg": "The wight bars the way north."
+          "lockedMsg": "The wight bars the way north.",
+          "hint": "defeat or slip past the wight first"
         }
       },
       "actions": [
