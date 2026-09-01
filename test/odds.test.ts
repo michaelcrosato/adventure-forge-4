@@ -129,6 +129,33 @@ test("a check-first use action previews too, matching the def step() would run",
   assert.equal(oddsHint(world, state, { kind: "use", item: "scroll" }), " (roll 6+ on the die)");
 });
 
+test("a check's post-roll event names the die roll needed, not a total, and success tracks the raw roll", () => {
+  // Regression for a report where a player read "d20:6+3=9 (needed 7+)" as a
+  // passing total (9 >= 7) and called the resulting fail a bug — the check
+  // was really roll >= 7 on the die, and 6 < 7. The event text must spell out
+  // "on the die" so the number it names can't be mistaken for the total.
+  const world = mini({
+    classes: { sage: { name: "Sage", desc: "wise", attrs: { wits: 3 } } },
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        actions: [{ id: "riddle", label: "riddle", fx: [["check", "wits", 11, [["say", "ok"]], [["say", "no"]]]] }],
+      },
+    },
+  });
+  let { state } = newState(world, 1);
+  state = step(world, state, { kind: "classpick", id: "sage" }).state;
+  const { events } = step(world, state, { kind: "custom", room: "a", id: "riddle" });
+  const line = events.find((e) => e.startsWith("WITS d20:"));
+  assert.ok(line, "check emits a WITS d20 event");
+  const m = line!.match(/^WITS d20:(\d+)\+(\d+) \(needed to roll (\d+)\+ on the die\) — (success|fail)\.$/);
+  assert.ok(m, `event text names the die roll, not the total: "${line}"`);
+  const [, roll, mod, need, verdict] = m!;
+  assert.equal(Number(need), 11 - Number(mod)); // dc 11 - wits 3 = 8
+  assert.equal(verdict === "success", Number(roll) >= Number(need));
+});
+
 test("odds text does not appear in actionByLabel matching (walkthroughs stay stable)", () => {
   const world = mini({
     rooms: {
