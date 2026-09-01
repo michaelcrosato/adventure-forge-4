@@ -59,7 +59,7 @@ export function render(
 
   if (s.perkPicks > 0 && legalActions(world, s)[0]?.kind === "perkpick") {
     const menu = renderMenu(world, s);
-    lines.push("Level up. Pick a perk.");
+    lines.push("Level up. Pick a perk — permanent passive bonus, not a one-time use.");
     lines.push(menu.text);
     return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
   }
