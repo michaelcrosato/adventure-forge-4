@@ -218,7 +218,15 @@
       "name": "Village Gate",
       "desc": "The last gate before the wood. Lanterns burn all day here now. The square lies south; the Ashwood waits north.",
       "brief": "Lanterns at the gate.",
-      "exits": { "south": { "to": "square" } }
+      "exits": { "south": { "to": "square" } },
+      "actions": [
+        {
+          "id": "trail_to_barrow",
+          "label": "follow the worn trail straight to the barrow",
+          "if": [["flag", "found_barrow_trail"]],
+          "fx": [["goto", "barrow_field"]]
+        }
+      ]
     },
     "square": {
       "name": "Last Light Square",
@@ -338,8 +346,14 @@
           "lockedMsg": "The stone doors are shut fast."
         }
       },
-      "onEnterOnce": [["score", 10], ["xp", 4], ["say", "So this is where the gray begins."]],
+      "onEnterOnce": [["score", 10], ["xp", 4], ["say", "So this is where the gray begins."], ["set", "found_barrow_trail"]],
       "actions": [
+        {
+          "id": "trail_to_gate",
+          "label": "follow the worn trail straight back to the village gate",
+          "if": [["flag", "found_barrow_trail"]],
+          "fx": [["goto", "gate"]]
+        },
         {
           "id": "force_doors",
           "label": "force the doors",
