@@ -100,7 +100,8 @@
         { "cell": [1, 0], "dir": "north", "to": "barrow_field", "back": "south" },
         { "cell": [0, 2], "dir": "west", "to": "hunters_camp", "back": "east" },
         { "cell": [3, 2], "dir": "east", "to": "drowned_chapel", "back": "west" },
-        { "cell": [3, 1], "dir": "east", "to": "watchtower", "back": "west" }
+        { "cell": [3, 1], "dir": "east", "to": "watchtower", "back": "west" },
+        { "cell": [3, 0], "dir": "east", "to": "watchtower", "back": "north" }
       ],
       "spots": [
         {
@@ -320,8 +321,8 @@
         {
           "cell": [3, 0],
           "name": "Crow Perch",
-          "desc": "A blasted, leafless tree stands alone, hung with black feathers instead of leaves. Bare sky north and east — nothing that way. The barrow trail lies west, past the thinning trees; the watchtower's shadow falls south.",
-          "brief": "Crow perch. Nothing north or east but bare sky. The barrow trail lies west; the watchtower's shadow falls south.",
+          "desc": "A blasted, leafless tree stands alone, hung with black feathers instead of leaves. Bare sky north — nothing that way. East, a narrow track loops down along the watchtower's north face, quicker than doubling back through its shadow. The barrow trail lies west, past the thinning trees; the watchtower's shadow falls south.",
+          "brief": "Crow perch. A track east loops straight to the watchtower. Barrow trail west; the watchtower's shadow falls south.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
             {
@@ -562,7 +563,7 @@
     },
     "watchtower": {
       "name": "Old Watchtower",
-      "desc": "An old watchtower, stairs still sound. Wind carvings ring the bell room at the top, words meant for the same king's ear. The trail south leads back to the village gate.",
+      "desc": "An old watchtower, stairs still sound. Wind carvings ring the bell room at the top, words meant for the same king's ear. The trail south leads back to the village gate. A narrower track drops north, looping past a lone crow's perch instead of back through the tower's shadow.",
       "brief": "Wind in the bell room.",
       "onEnterOnce": [["xp", 2], ["set", "found_tower_trail"]],
       "actions": [
