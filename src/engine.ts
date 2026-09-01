@@ -200,8 +200,10 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         break;
       }
       case "hp": {
+        const beforeHp = s.hp;
         s.hp = clamp(s.hp + fx[1], 0, s.maxHp);
-        if (fx[1] < 0) events.push(`(hp${fx[1]})`);
+        const delta = s.hp - beforeHp;
+        if (delta !== 0) events.push(`(hp${delta > 0 ? "+" : ""}${delta})`);
         if (s.hp <= 0) {
           s.ended = { kind: "lose", id: "dead", text: "You have died." };
           events.push("You have died.");

@@ -116,6 +116,23 @@ test("hp reaching 0 ends the game as a loss", () => {
   assert.equal(state.hp, 0);
 });
 
+test("healing reports its actual effect, same as damage and score do", () => {
+  const mini: World = {
+    id: "mini", title: "M", intro: "x", start: "a", hp: 10, maxScore: 5,
+    rooms: { a: { name: "A", desc: "A.", actions: [{ id: "heal", label: "heal", fx: [["hp", 3]] }] } },
+    items: {}, npcs: {}, walkthrough: [],
+  };
+  let { state } = newState(mini, 1);
+  state.hp = 5;
+  const healed = step(mini, state, { kind: "custom", room: "a", id: "heal" });
+  assert.match(healed.events.join(" "), /\(hp\+3\)/);
+  // already at full hp: the same heal has nothing left to report
+  state = healed.state;
+  state.hp = state.maxHp;
+  const noop = step(mini, state, { kind: "custom", room: "a", id: "heal" });
+  assert.doesNotMatch(noop.events.join(" "), /\(hp/);
+});
+
 test("score is clamped to maxScore", () => {
   const a = playWalkthrough(1);
   assert.ok(a.state.score <= world.maxScore);
