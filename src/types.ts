@@ -77,6 +77,7 @@ export type ItemDef = {
   dmg?: number; // damage when carried (best weapon wins; unarmed = 1)
   armor?: number; // reduces damage taken while carried (best armor wins)
   use?: UseDef[]; // first matching def runs; else "Nothing happens."
+  hint?: string; // shown on pickup: what the item is for
 };
 
 export type TopicDef = {

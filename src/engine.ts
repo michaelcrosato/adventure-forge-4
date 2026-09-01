@@ -484,7 +484,9 @@ export function step(world: World, prev: State, action: Action): StepOut {
     case "take": {
       s.itemLoc[action.item] = "inv";
       s.inv.push(action.item);
-      events.push(`${world.items[action.item]?.name ?? action.item}: taken.`);
+      const def = world.items[action.item];
+      const label = def?.name ?? action.item;
+      events.push(def?.hint ? `${label}: taken. (${def.hint})` : `${label}: taken.`);
       break;
     }
     case "use": {
