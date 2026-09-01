@@ -101,7 +101,7 @@ export function renderIntro(
   const head = [
     `${world.title} (seed ${s.seed})`,
     world.intro,
-    `Goal: reach an ending. hp0 = death. One action per turn: act(s, n) with a menu number. look(s) re-shows the room. hash ${hashState(s)}.`,
+    `Goal: reach an ending. hp0 = death. One action per turn: act(s, n) with a menu number. look(s) re-shows the room and your inventory for free — no turn spent. hash ${hashState(s)}.`,
   ].join("\n");
   return { text: `${head}\n${body.text}`, actions: body.actions };
 }

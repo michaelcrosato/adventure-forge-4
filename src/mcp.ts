@@ -118,7 +118,8 @@ server.registerTool(
 server.registerTool(
   "look",
   {
-    description: "Re-show the current scene in full, with the menu. Costs no turn.",
+    description:
+      "Re-show the current scene, your inventory, and the menu in full. Costs no turn — call it any time, including just to check what you're carrying.",
     inputSchema: { s: z.string().describe("Session id.") },
   },
   async ({ s }) => {
