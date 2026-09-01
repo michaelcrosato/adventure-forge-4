@@ -1076,6 +1076,34 @@
           "fx": [["xp", 2]]
         },
         {
+          "id": "case_tally_none",
+          "label": "what proof he wants",
+          "if": [["!flag", "heard_grievance"], ["!has", "kings_seal"], ["!has", "crown"]],
+          "say": "\"Proof,\" the elder says. \"His grievance, in his own words, or something bearing his mark. You have neither yet.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "case_tally_seal",
+          "label": "what proof he wants",
+          "if": [["!flag", "heard_grievance"], ["has", "kings_seal"], ["!has", "crown"]],
+          "say": "\"You have his seal,\" the elder says, \"but not his grievance. Words carry more weight with me than metal.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "case_tally_grief",
+          "label": "what proof he wants",
+          "if": [["flag", "heard_grievance"], ["!has", "kings_seal"], ["!has", "crown"]],
+          "say": "\"You've heard his grief,\" the elder says. \"His seal would settle it outright — but your word alone may yet be enough.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "case_tally_both",
+          "label": "what proof he wants",
+          "if": [["flag", "heard_grievance"], ["has", "kings_seal"], ["!has", "crown"]],
+          "say": "\"You have both,\" the elder says. \"His grievance, and his seal to back it. Nothing holds this coffer shut now but my own doubt.\"",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "coffer_sealed",
           "label": "the sealed coffer",
           "if": [["!flag", "heard_grievance"], ["!has", "kings_seal"]],
