@@ -385,8 +385,28 @@
         {
           "id": "notice_board",
           "label": "read the notice board",
+          "if": [["!flag", "notice_board_1"]],
           "fx": [
-            ["say", "Notice board: three old verses are said to lie in the drowned shrine and the old watchtower — through the gate, then north into the ash wood, then east — and in the barrow's own walls, spoken together at the throne to let the dead king sleep. Elsewhere: the reeve wants the barrow sealed, and the gray priest, in the chapel south past the well, remembers the old king's grief. Old talk holds the elder's locked coffer keeps the king's own crown, taken from him long ago and the reason his rest won't come — hear his grief from him at the throne first, then press the elder for it, and setting the crown back in his hands works just as well as the verses. Either path ends it on its own — you need not walk both, though word is the two together leave nothing unresolved. Mind: the verses read quick only for a scholar's eye — anyone else puzzles them out slow, deep in the wood. The crown is the steadier road if that's not your gift."]
+            ["set", "notice_board_1"],
+            ["say", "Notice board: the dead king in the barrow won't rest, and the reeve wants it sealed. The gray priest, in the chapel south past the well, remembers the old king's grief."]
+          ]
+        },
+        {
+          "id": "notice_board_2",
+          "label": "read the notice board again",
+          "if": [["flag", "notice_board_1"], ["!flag", "notice_board_2"]],
+          "fx": [
+            ["set", "notice_board_2"],
+            ["say", "More, in a finer hand: two paths are said to end it. Three old verses lie in the drowned shrine, the old watchtower — through the gate, north into the ash wood, then east — and the barrow's own walls, spoken together at the throne. Or: the elder's locked coffer holds the king's own crown, taken from him long ago and the reason his rest won't come — hear his grief at the throne first, then press the elder for it."]
+          ]
+        },
+        {
+          "id": "notice_board_3",
+          "label": "read the notice board again",
+          "if": [["flag", "notice_board_2"], ["!flag", "notice_board_3"]],
+          "fx": [
+            ["set", "notice_board_3"],
+            ["say", "A last line, added later: either path ends it alone, though the two together leave nothing unresolved. Mind — the verses read quick only for a scholar's eye; anyone else puzzles them out slow, deep in the wood. The crown is the steadier road if that's not your gift."]
           ]
         },
         {
