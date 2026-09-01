@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { readdirSync } from "node:fs";
+import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { loadWorld, validateWorld } from "../src/validate.ts";
@@ -6,9 +8,13 @@ import { loadWorld, validateWorld } from "../src/validate.ts";
 const fixture = (name: string) =>
   loadWorld(fileURLToPath(new URL(`./fixtures/${name}.json`, import.meta.url)));
 
-test("shipped world validates clean", () => {
-  const world = loadWorld(fileURLToPath(new URL("../world/lighthouse.json", import.meta.url)));
-  assert.deepEqual(validateWorld(world), []);
+test("every shipped world validates clean", () => {
+  const dir = fileURLToPath(new URL("../world", import.meta.url));
+  const files = readdirSync(dir).filter((f) => f.endsWith(".json"));
+  assert.ok(files.length >= 2, "expected at least lighthouse and vale");
+  for (const f of files) {
+    assert.deepEqual(validateWorld(loadWorld(join(dir, f))), [], f);
+  }
 });
 
 test("rejects unknown room and item references", () => {

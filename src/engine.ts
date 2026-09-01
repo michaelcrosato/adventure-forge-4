@@ -382,7 +382,9 @@ export function actionLabel(world: World, a: Action, s?: State): string {
       return world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.label ?? a.id;
     case "classpick": {
       const c = world.classes?.[a.id];
-      return c ? `be a ${c.name} — ${c.desc}` : a.id;
+      if (!c) return a.id;
+      const article = /^[aeiou]/i.test(c.name) ? "an" : "a";
+      return `be ${article} ${c.name} — ${c.desc}`;
     }
     case "perkpick": {
       const p = world.perks?.[a.id];

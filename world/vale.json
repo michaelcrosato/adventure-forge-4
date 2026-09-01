@@ -1,0 +1,728 @@
+{
+  "id": "vale",
+  "title": "The Vale of Ash",
+  "intro": "The barrow on the hill has opened, and a gray blight creeps down the vale. Crops fail. Roads empty. The village of Last Light holds on at the wood's edge. Someone must go up to the barrow and end this. You walked in at dusk.",
+  "start": "gate",
+  "hp": 10,
+  "maxScore": 100,
+  "classes": {
+    "warden": {
+      "name": "Warden",
+      "desc": "strong, steady, hard to kill",
+      "attrs": { "might": 2, "will": 1 },
+      "hp": 4,
+      "items": ["short_sword"]
+    },
+    "scout": {
+      "name": "Scout",
+      "desc": "quick and quiet; finds hidden ways",
+      "attrs": { "grace": 2, "wits": 1 },
+      "hp": 2,
+      "items": ["hunting_knife"]
+    },
+    "scholar": {
+      "name": "Scholar",
+      "desc": "reads the old tongue; knows the rites",
+      "attrs": { "wits": 2, "will": 1 },
+      "perks": ["old_lore"]
+    },
+    "envoy": {
+      "name": "Envoy",
+      "desc": "words open doors that iron cannot",
+      "attrs": { "will": 2, "wits": 1 },
+      "perks": ["silver_tongue"]
+    }
+  },
+  "perks": {
+    "old_lore": {
+      "name": "Old Lore",
+      "desc": "+1 wits checks",
+      "require": { "attr": ["wits", 2] },
+      "bonus": { "check": { "wits": 1 } }
+    },
+    "silver_tongue": {
+      "name": "Silver Tongue",
+      "desc": "+1 will checks",
+      "require": { "attr": ["will", 2] },
+      "bonus": { "check": { "will": 1 } }
+    },
+    "keen_edge": {
+      "name": "Keen Edge",
+      "desc": "+1 to hit",
+      "bonus": { "hit": 1 }
+    },
+    "iron_skin": {
+      "name": "Iron Skin",
+      "desc": "+1 armor",
+      "require": { "level": 2 },
+      "bonus": { "armor": 1 }
+    },
+    "heavy_hand": {
+      "name": "Heavy Hand",
+      "desc": "+1 damage",
+      "require": { "level": 2, "attr": ["might", 1] },
+      "bonus": { "dmg": 1 }
+    },
+    "second_wind": {
+      "name": "Second Wind",
+      "desc": "+3 max hp",
+      "require": { "level": 2 },
+      "bonus": { "maxhp": 3 }
+    },
+    "fleetfoot": {
+      "name": "Fleetfoot",
+      "desc": "+1 grace checks",
+      "require": { "level": 2 },
+      "bonus": { "check": { "grace": 1 } }
+    }
+  },
+  "gen": [
+    {
+      "id": "ashwood",
+      "name": "Ashwood",
+      "seed": 11,
+      "w": 8,
+      "h": 8,
+      "pools": {
+        "descs": [
+          "Ash trees stand close. Gray light, gray ground.",
+          "A dry streambed. Nothing drinks here now.",
+          "Burned ground where the blight passed. It crunches underfoot.",
+          "Thin woods and cold air.",
+          "Old stumps and new shoots, all of them gray.",
+          "The path forks around a fallen ash.",
+          "Bracken to the waist. Something small runs off.",
+          "Leaning trees. The wind speaks through them."
+        ],
+        "briefs": ["Gray trees.", "Ash and silence.", "Cold woods.", "Gray light."]
+      },
+      "links": [
+        { "cell": [4, 7], "dir": "south", "to": "gate", "back": "north" },
+        { "cell": [4, 0], "dir": "north", "to": "barrow_field", "back": "south" },
+        { "cell": [0, 3], "dir": "west", "to": "hunters_camp", "back": "east" },
+        { "cell": [7, 5], "dir": "east", "to": "drowned_chapel", "back": "west" },
+        { "cell": [7, 1], "dir": "east", "to": "watchtower", "back": "west" }
+      ],
+      "spots": [
+        {
+          "cell": [2, 2],
+          "name": "Gray Cairn",
+          "desc": "A cairn of flat stones, older than the wood. Travelers left charms here once.",
+          "items": ["river_charm"],
+          "onEnterOnce": [["xp", 2], ["say", "Someone built this to be found."]]
+        },
+        {
+          "cell": [5, 4],
+          "name": "Herb Hollow",
+          "desc": "A sunken hollow out of the wind. Green things still grow here, just barely.",
+          "items": ["herbs"],
+          "onEnterOnce": [["xp", 2], ["say", "Green, in all this gray."]]
+        },
+        {
+          "cell": [3, 5],
+          "npcs": ["ash_wolf"]
+        }
+      ]
+    }
+  ],
+  "rooms": {
+    "gate": {
+      "name": "Village Gate",
+      "desc": "The last gate before the wood. Lanterns burn all day here now. The square lies south; the Ashwood waits north.",
+      "brief": "Lanterns at the gate.",
+      "exits": { "south": { "to": "square" } }
+    },
+    "square": {
+      "name": "Last Light Square",
+      "desc": "Packed earth and a dry well. The reeve stands watch by the notice board. Inn west, forge east, chapel south.",
+      "brief": "The dry well.",
+      "exits": {
+        "north": { "to": "gate" },
+        "west": { "to": "inn" },
+        "east": { "to": "forge" },
+        "south": { "to": "chapel" }
+      }
+    },
+    "inn": {
+      "name": "The Last Light Inn",
+      "desc": "A low fire, empty tables, and an innkeep glad of any face.",
+      "brief": "Low fire.",
+      "exits": { "east": { "to": "square" } },
+      "actions": [
+        {
+          "id": "rest",
+          "label": "rest by the fire",
+          "fx": [["hp", 10], ["say", "You sleep without dreams and wake steadier."]]
+        }
+      ]
+    },
+    "forge": {
+      "name": "The Forge",
+      "desc": "Coals banked low. The smith works with the door open, watching the road.",
+      "brief": "Banked coals.",
+      "exits": { "west": { "to": "square" } }
+    },
+    "chapel": {
+      "name": "Gray Chapel",
+      "desc": "A small stone chapel. Candles against the dark. The priest wears ash on both hands.",
+      "brief": "Candles in the dark.",
+      "exits": { "north": { "to": "square" }, "east": { "to": "elder_house" } }
+    },
+    "elder_house": {
+      "name": "Elder's House",
+      "desc": "Ledgers, dust, and a sealed iron coffer on the mantel. The elder receives you without a smile.",
+      "brief": "The sealed coffer.",
+      "exits": { "west": { "to": "chapel" } }
+    },
+    "hunters_camp": {
+      "name": "Hunter's Camp",
+      "desc": "A lean-to and a smoke rack at the wood's west edge. The hunter watches the trees, not you.",
+      "brief": "Lean-to and smoke.",
+      "onEnterOnce": [["xp", 2]]
+    },
+    "drowned_chapel": {
+      "name": "Drowned Chapel",
+      "desc": "Half a chapel, sunk to its windows in black water. A stone psalter stands above the waterline.",
+      "brief": "Black water, stone psalter.",
+      "onEnterOnce": [["xp", 2]],
+      "actions": [
+        {
+          "id": "water_scholar",
+          "label": "recall the water verse (scholar)",
+          "if": [["class", "scholar"], ["!flag", "verse_water"]],
+          "fx": [["set", "verse_water"], ["score", 10], ["xp", 3], ["say", "The water verse comes back to you, line by line."]]
+        },
+        {
+          "id": "water_puzzle",
+          "label": "work out the water verse",
+          "if": [["!class", "scholar"], ["!flag", "verse_water"]],
+          "fx": [
+            ["check", "wits", 12,
+              [["set", "verse_water"], ["score", 10], ["xp", 3], ["say", "The worn lines give up their meaning."]],
+              [["say", "The water has taken too much. Try again."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "watchtower": {
+      "name": "Old Watchtower",
+      "desc": "An old watchtower, stairs still sound. Wind carvings ring the bell room at the top.",
+      "brief": "Wind in the bell room.",
+      "onEnterOnce": [["xp", 2]],
+      "actions": [
+        {
+          "id": "wind_scholar",
+          "label": "recall the wind verse (scholar)",
+          "if": [["class", "scholar"], ["!flag", "verse_wind"]],
+          "fx": [["set", "verse_wind"], ["score", 10], ["xp", 3], ["say", "The wind verse comes back to you, whole."]]
+        },
+        {
+          "id": "wind_puzzle",
+          "label": "work out the wind carvings",
+          "if": [["!class", "scholar"], ["!flag", "verse_wind"]],
+          "fx": [
+            ["check", "wits", 12,
+              [["set", "verse_wind"], ["score", 10], ["xp", 3], ["say", "The carvings give up their meaning."]],
+              [["say", "The lines blur. Try again."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "barrow_field": {
+      "name": "Barrow Field",
+      "desc": "A bare hill and two stone doors set into it. The grass here is white, not gray.",
+      "brief": "White grass, stone doors.",
+      "exits": {
+        "north": {
+          "to": "antechamber",
+          "if": [["flag", "barrow_open"]],
+          "lockedMsg": "The stone doors are shut fast."
+        }
+      },
+      "onEnterOnce": [["score", 10], ["xp", 4], ["say", "So this is where the gray begins."]],
+      "actions": [
+        {
+          "id": "force_doors",
+          "label": "force the doors",
+          "if": [["!flag", "barrow_open"]],
+          "fx": [
+            ["check", "might", 12,
+              [["set", "barrow_open"], ["xp", 2], ["say", "Stone grinds on stone. The doors open."]],
+              [["say", "The doors do not move."]]
+            ]
+          ]
+        },
+        {
+          "id": "keepers_crack",
+          "label": "search for the keeper's crack (scout)",
+          "if": [["class", "scout"], ["!flag", "barrow_open"]],
+          "fx": [
+            ["check", "grace", 12,
+              [["set", "barrow_open"], ["xp", 2], ["say", "A narrow gap behind the ivy. You work it wider."]],
+              [["say", "Nothing yet. The hill keeps its secrets."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "antechamber": {
+      "name": "Barrow Antechamber",
+      "desc": "Cut stone, older than the village. Shelf niches stand empty. Cold air moves up from below.",
+      "brief": "Empty niches.",
+      "exits": {
+        "south": { "to": "barrow_field" },
+        "north": { "to": "hall_of_verses" },
+        "down": { "to": "crypt" }
+      },
+      "onEnterOnce": [["xp", 2]]
+    },
+    "hall_of_verses": {
+      "name": "Hall of Verses",
+      "desc": "Every wall is cut with lines of old writing. Some of it almost reads itself.",
+      "brief": "Walls of old writing.",
+      "exits": {
+        "south": { "to": "antechamber" },
+        "up": {
+          "to": "throne",
+          "if": [["flag", "verse_stone"]],
+          "lockedMsg": "There is a stair here somewhere. The walls say where."
+        }
+      },
+      "actions": [
+        {
+          "id": "stone_scholar",
+          "label": "study the stone walls (scholar)",
+          "if": [["class", "scholar"], ["!flag", "verse_stone"]],
+          "fx": [["set", "verse_stone"], ["score", 10], ["xp", 3], ["say", "The stone verse reads itself to you — and names a hidden stair."]]
+        },
+        {
+          "id": "stone_puzzle",
+          "label": "work out the stone verse",
+          "if": [["!class", "scholar"], ["!flag", "verse_stone"]],
+          "fx": [
+            ["check", "wits", 11,
+              [["set", "verse_stone"], ["score", 10], ["xp", 3], ["say", "The verse comes clear — and it names a hidden stair."]],
+              [["say", "The old letters swim. Try again."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "crypt": {
+      "name": "Crypt",
+      "desc": "Low vaults and stone boxes. Something stands between you and the north passage.",
+      "brief": "Low vaults.",
+      "exits": {
+        "up": { "to": "antechamber" },
+        "north": {
+          "to": "throne",
+          "if": [["npcDead", "barrow_wight"]],
+          "lockedMsg": "The wight bars the way north."
+        }
+      },
+      "actions": [
+        {
+          "id": "slip_past",
+          "label": "slip past the wight (scout)",
+          "if": [["class", "scout"], ["!npcDead", "barrow_wight"]],
+          "fx": [
+            ["check", "grace", 13,
+              [["say", "You keep to the shadow and slip by."], ["goto", "throne"]],
+              [["hp", -1], ["say", "Claws rake you as you dart back."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "throne": {
+      "name": "Throne of the Barrow",
+      "desc": "The Hollow King sits on a stone seat. Where a crown should be, there is nothing. The air is very still.",
+      "brief": "The stone seat.",
+      "exits": {
+        "south": { "to": "crypt" },
+        "down": { "to": "hall_of_verses" }
+      },
+      "actions": [
+        {
+          "id": "rite",
+          "label": "speak the binding rite",
+          "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["!npcDead", "hollow_king"]],
+          "fx": [
+            ["score", 35],
+            ["end", "win", "blight_bound", "You speak the three verses. The king closes his eyes like a man finally allowed to sleep. The gray lifts from the vale by morning."]
+          ]
+        },
+        {
+          "id": "return_crown",
+          "label": "return the crown",
+          "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"]],
+          "fx": [
+            ["score", 30],
+            ["end", "win", "debt_paid", "You set the crown in his hands. He stands, bows once, and lies down at last. The gray goes out of the trees like a tide."]
+          ]
+        },
+        {
+          "id": "kneel",
+          "label": "kneel and take his crown",
+          "if": [["!npcDead", "hollow_king"]],
+          "fx": [
+            ["end", "lose", "crowned_hollow", "You kneel. The crown of nothing settles on you, light as ash. The vale will have a king after all — and no dawn."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "short_sword": { "name": "short sword", "loc": "nowhere", "hit": 1, "dmg": 3 },
+    "hunting_knife": { "name": "hunting knife", "loc": "nowhere", "hit": 1, "dmg": 2 },
+    "plain_sword": { "name": "plain sword", "loc": "nowhere", "dmg": 3 },
+    "mail_shirt": { "name": "mail shirt", "loc": "crypt", "takeable": true, "armor": 2 },
+    "watch_shield": { "name": "watch shield", "loc": "nowhere", "armor": 1 },
+    "river_charm": { "name": "river charm", "loc": "nowhere", "takeable": true, "armor": 1 },
+    "herbs": {
+      "name": "wild herbs",
+      "loc": "nowhere",
+      "takeable": true,
+      "use": [
+        {
+          "fx": [["hp", 3], ["move", "herbs", "nowhere"], ["say", "Bitter, but they help."]]
+        }
+      ]
+    },
+    "herbs2": {
+      "name": "dried herbs",
+      "loc": "nowhere",
+      "takeable": true,
+      "use": [
+        {
+          "fx": [["hp", 3], ["move", "herbs2", "nowhere"], ["say", "Bitter, but they help."]]
+        }
+      ]
+    },
+    "crown": { "name": "iron crown", "loc": "nowhere" }
+  },
+  "npcs": {
+    "reeve": {
+      "name": "reeve",
+      "room": "square",
+      "topics": [
+        {
+          "id": "blight",
+          "label": "the blight",
+          "once": true,
+          "say": "It kills slow. Crops first, then cattle, then the will to stay. It started the night the barrow opened.",
+          "fx": [["score", 5], ["xp", 3]]
+        },
+        {
+          "id": "barrow",
+          "label": "the barrow",
+          "once": true,
+          "say": "Seal it. Whatever is down there, promise me you'll seal it under stone, and the watch stands with you.",
+          "fx": [["set", "promised_seal"], ["addvar", "rep_reeve", 1]]
+        },
+        {
+          "id": "aid",
+          "label": "the watch's aid",
+          "if": [["flag", "promised_seal"]],
+          "once": true,
+          "say": "Then take the watch shield. It has stopped worse than claws.",
+          "fx": [["move", "watch_shield", "inv"]]
+        }
+      ]
+    },
+    "innkeep": {
+      "name": "innkeep",
+      "room": "inn",
+      "topics": [
+        {
+          "id": "rumors",
+          "label": "rumors",
+          "once": true,
+          "say": "Verses, they say. One in the drowned chapel east of the wood, one up the old watchtower, one cut into the barrow stone itself. And the hunter at the west edge trades herbs.",
+          "fx": [["score", 5], ["xp", 2]]
+        }
+      ]
+    },
+    "gray_priest": {
+      "name": "gray priest",
+      "room": "chapel",
+      "topics": [
+        {
+          "id": "old_king",
+          "label": "the old king",
+          "once": true,
+          "say": "He was a good king, long ago, and he was robbed in his grave. Grief like that does not lie quiet. Honor him, and doors open.",
+          "fx": [["set", "heard_oldking"], ["score", 5], ["xp", 3], ["addvar", "rep_priest", 1]]
+        },
+        {
+          "id": "blessing",
+          "label": "a blessing for the barrow",
+          "if": [["flag", "heard_oldking"], ["!flag", "promised_seal"]],
+          "once": true,
+          "say": "Go with the gray blessing, then. The doors will know it.",
+          "fx": [["set", "barrow_open"]]
+        }
+      ]
+    },
+    "smith": {
+      "name": "smith",
+      "room": "forge",
+      "topics": [
+        {
+          "id": "edge",
+          "label": "steel for the barrow",
+          "once": true,
+          "say": "Take the plain sword — and hold still, I'll put a working edge on whatever you carry.",
+          "fx": [["move", "plain_sword", "inv"], ["perk", "keen_edge"], ["xp", 2]]
+        }
+      ]
+    },
+    "elder": {
+      "name": "elder",
+      "room": "elder_house",
+      "topics": [
+        {
+          "id": "vale",
+          "label": "the vale",
+          "once": true,
+          "say": "Four hundred years this village has kept the wood's edge. It will not end on my page of the ledger.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "coffer",
+          "label": "the sealed coffer",
+          "if": [["flag", "heard_grievance"], ["!has", "crown"]],
+          "say": "You ask about the coffer. The elder's hands close on the ledger.",
+          "fx": [
+            ["check", "will", 13,
+              [["move", "crown", "inv"], ["score", 5], ["xp", 3], ["say", "At last the elder unlocks the coffer. The crown is old iron, heavy for its size."]],
+              [["say", "The elder shakes their head. Not yet. Find better words."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "hunter": {
+      "name": "hunter",
+      "room": "hunters_camp",
+      "topics": [
+        {
+          "id": "wood",
+          "label": "the wood",
+          "once": true,
+          "say": "Wolves gone gray and wrong. Keep moving and keep iron close.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "herbs",
+          "label": "trade for herbs",
+          "once": true,
+          "say": "Take them. Pay me by ending this.",
+          "fx": [["move", "herbs2", "inv"]]
+        }
+      ]
+    },
+    "ash_wolf": {
+      "name": "ash wolf",
+      "room": null,
+      "hostile": true,
+      "hp": 4,
+      "atk": 1,
+      "df": 9,
+      "onDeath": [["xp", 3], ["say", "The wolf drops. Its gray coat goes to dust."]]
+    },
+    "barrow_wight": {
+      "name": "barrow-wight",
+      "room": "crypt",
+      "hostile": true,
+      "hp": 8,
+      "atk": 2,
+      "df": 11,
+      "onDeath": [["xp", 5], ["score", 5], ["say", "The wight comes apart into rag and bone."]]
+    },
+    "hollow_king": {
+      "name": "hollow king",
+      "room": "throne",
+      "hostile": true,
+      "hp": 12,
+      "atk": 3,
+      "df": 13,
+      "topics": [
+        {
+          "id": "linger",
+          "label": "why do you linger",
+          "once": true,
+          "say": "My crown. The first reeve took it from my barrow, and my rest went with it. Bring it back — or finish what the thief began.",
+          "fx": [["set", "heard_grievance"], ["score", 10], ["xp", 3]]
+        },
+        {
+          "id": "blight_talk",
+          "label": "the blight",
+          "once": true,
+          "say": "It is my grief, spilled over the land. It will not stop while I wake.",
+          "fx": [["xp", 2]]
+        }
+      ],
+      "onDeath": [
+        ["score", 30],
+        ["end", "win", "king_slain", "The king breaks apart into dust and old iron. The blight dies with him. The vale will not know why, only that the light came back."]
+      ]
+    }
+  },
+  "walkthrough": [
+    "be a Scholar — reads the old tongue; knows the rites",
+    "go south",
+    "ask reeve: the blight",
+    "go west",
+    "ask innkeep: rumors",
+    "go east",
+    "go south",
+    "ask gray priest: the old king",
+    "ask gray priest: a blessing for the barrow",
+    "go north",
+    "go north",
+    "go north",
+    "go north",
+    "go north",
+    "go east",
+    "go east",
+    "go east",
+    "go east",
+    "perk: Second Wind (+3 max hp)",
+    "recall the water verse (scholar)",
+    "go west",
+    "go west",
+    "go west",
+    "go west",
+    "go north",
+    "go north",
+    "go north",
+    "go north",
+    "go east",
+    "go east",
+    "go east",
+    "go east",
+    "recall the wind verse (scholar)",
+    "go west",
+    "go west",
+    "go west",
+    "go west",
+    "go north",
+    "go north",
+    "go north",
+    "go north",
+    "study the stone walls (scholar)",
+    "go up",
+    "ask hollow king: why do you linger",
+    "perk: Iron Skin (+1 armor)",
+    "speak the binding rite"
+  ],
+  "proofs": {
+    "king_slain": [
+      "be a Warden — strong, steady, hard to kill",
+      "go south",
+      "ask reeve: the barrow",
+      "ask reeve: the watch's aid",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      { "repeat": "force the doors", "until": ["flag", "barrow_open"], "max": 15 },
+      "go north",
+      "go down",
+      { "repeat": "attack barrow-wight with short sword", "until": ["npcDead", "barrow_wight"], "max": 25 },
+      "perk: Heavy Hand (+1 damage)",
+      "take mail shirt",
+      "go north",
+      { "repeat": "attack hollow king with short sword", "until": ["npcDead", "hollow_king"], "max": 30 }
+    ],
+    "debt_paid": [
+      "be an Envoy — words open doors that iron cannot",
+      "go south",
+      "go south",
+      "ask gray priest: the old king",
+      "ask gray priest: a blessing for the barrow",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      { "repeat": "work out the stone verse", "until": ["flag", "verse_stone"], "max": 25 },
+      "perk: Second Wind (+3 max hp)",
+      "go up",
+      "ask hollow king: why do you linger",
+      "go down",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go east",
+      { "repeat": "ask elder: the sealed coffer", "until": ["has", "crown"], "max": 25 },
+      "go west",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go up",
+      "return the crown"
+    ],
+    "crowned_hollow": [
+      "be a Scholar — reads the old tongue; knows the rites",
+      "go south",
+      "go south",
+      "ask gray priest: the old king",
+      "ask gray priest: a blessing for the barrow",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "study the stone walls (scholar)",
+      "perk: Second Wind (+3 max hp)",
+      "go up",
+      "kneel and take his crown"
+    ]
+  }
+}

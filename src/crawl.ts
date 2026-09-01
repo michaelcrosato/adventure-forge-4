@@ -10,7 +10,7 @@
  * Exit 0 = green. `--replay <trace.json>` re-runs a recorded session and
  * prints its receipt (used to verify playtest reports).
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { hashState, legalActions, newState, receipt, step } from "./engine.ts";
 import { loadWorld, replayWalkthrough } from "./validate.ts";
 import type { Trace, World } from "./types.ts";
@@ -77,7 +77,6 @@ export function replayTrace(world: World, trace: Trace): string {
 // ---------- CLI ----------
 if (process.argv[1]?.endsWith("crawl.ts")) {
   const args = process.argv.slice(2);
-  const worldPath = args.find((a) => a.endsWith(".json") && !a.includes("runs/")) ?? "world/lighthouse.json";
 
   if (args.includes("--replay")) {
     const tracePath = args[args.indexOf("--replay") + 1]!;
@@ -87,20 +86,27 @@ if (process.argv[1]?.endsWith("crawl.ts")) {
     process.exit(0);
   }
 
-  const world = loadWorld(worldPath);
+  const explicit = args.find((a) => a.endsWith(".json") && !a.includes("runs/"));
+  const paths = explicit
+    ? [explicit]
+    : readdirSync("world").filter((f) => f.endsWith(".json")).map((f) => `world/${f}`);
   const walks = args.includes("--deep") ? 400 : 60;
   const maxSteps = args.includes("--deep") ? 300 : 120;
-  const t0 = Date.now();
-  const r = crawl(world, walks, maxSteps);
-  const wt = replayWalkthrough(world, 1);
-  if (wt.error) r.findings.push(`WALKTHROUGH ${wt.error}`);
-  const rooms = Object.keys(world.rooms).length;
-  console.log(
-    `crawl: ${walks} walks, ${r.steps} steps, ${Date.now() - t0}ms | rooms ${r.roomsSeen.size}/${rooms} | endings seen: ${[...r.endingsSeen].join(",") || "none"} | walkthrough: ${wt.error ?? `win in ${wt.turns}t`}`,
-  );
-  if (r.findings.length) {
-    for (const f of r.findings) console.error(`  ✗ ${f}`);
-    process.exit(1);
+  let bad = 0;
+  for (const p of paths) {
+    const world = loadWorld(p);
+    const t0 = Date.now();
+    const r = crawl(world, walks, maxSteps);
+    const wt = replayWalkthrough(world, 1);
+    if (wt.error) r.findings.push(`WALKTHROUGH ${wt.error}`);
+    const rooms = Object.keys(world.rooms).length;
+    console.log(
+      `crawl ${world.id}: ${walks} walks, ${r.steps} steps, ${Date.now() - t0}ms | rooms ${r.roomsSeen.size}/${rooms} | endings seen: ${[...r.endingsSeen].join(",") || "none"} | walkthrough: ${wt.error ?? `win in ${wt.turns}t`}`,
+    );
+    if (r.findings.length) {
+      bad++;
+      for (const f of r.findings) console.error(`  ✗ ${f}`);
+    }
   }
-  process.exit(0);
+  process.exit(bad ? 1 : 0);
 }

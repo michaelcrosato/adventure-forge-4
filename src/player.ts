@@ -245,7 +245,7 @@ if (process.argv[1]?.endsWith("player.ts")) {
   const maxGameTurns = Number(opt("--max-game-turns", "80"));
   const model = opt("--model", process.env.TF_PLAYER_MODEL ?? "claude-haiku-4-5");
   const mock = args.includes("--mock");
-  const worldPath = process.env.TF_WORLD ?? join(ROOT, "world", "lighthouse.json");
+  const worldPath = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
   const world = loadWorld(worldPath);
 
   const run = async () => {

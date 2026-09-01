@@ -87,7 +87,7 @@ const menuOf = (text) =>
     .map((m) => ({ n: Number(m[1]), label: m[2] }));
 
 function expandWalkthrough() {
-  const path = process.env.TF_WORLD ?? join(ROOT, "world", "lighthouse.json");
+  const path = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
   const world = JSON.parse(readFileSync(path, "utf8"));
   // repeats are expanded lazily at play time by label matching
   return world.walkthrough;
