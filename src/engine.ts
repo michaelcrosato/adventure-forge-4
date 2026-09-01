@@ -213,7 +213,10 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
       case "move": {
         const [, item, loc] = fx;
         if (loc === "inv") {
-          if (!s.inv.includes(item)) s.inv.push(item);
+          if (!s.inv.includes(item)) {
+            s.inv.push(item);
+            events.push(`${world.items[item]?.name ?? item}: obtained.`);
+          }
           s.itemLoc[item] = "inv";
         } else {
           s.inv = s.inv.filter((i) => i !== item);
