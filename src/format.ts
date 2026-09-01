@@ -61,6 +61,10 @@ export function render(
       ...(events.length ? [`[${events.join(" ")}]`] : []),
       "Choose who you are.",
     ];
+    if (world.progress) {
+      const v = s.vars[world.progress.var] ?? 0;
+      lines.push(`${world.progress.label}: ${v}/${world.progress.max}`);
+    }
     const menu = renderMenu(world, s);
     lines.push(menu.text);
     return { text: lines.join("\n"), actions: menu.actions };
