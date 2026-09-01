@@ -388,7 +388,7 @@
         "north": {
           "to": "antechamber",
           "if": [["flag", "barrow_open"]],
-          "lockedMsg": "The stone doors are shut fast. Force might open them — or ask the gray priest for a blessing, no strength needed."
+          "lockedMsg": "The stone doors are shut fast. Force might open them, ask the gray priest for a blessing, or search the hillside — roots and old rain may have hollowed a way in somewhere else."
         }
       },
       "onEnterOnce": [["score", 10], ["xp", 4], ["say", "So this is where the gray begins."], ["set", "found_barrow_trail"]],
@@ -406,7 +406,7 @@
           "fx": [
             ["check", "might", 12,
               [["set", "barrow_open"], ["xp", 2], ["say", "Stone grinds on stone. The doors open."]],
-              [["say", "The doors do not move. Try again, or ask the gray priest for a blessing — the doors would open for that, no strength needed."]]
+              [["say", "The doors do not move. Try again, ask the gray priest for a blessing, or search the hillside for another way in."]]
             ]
           ]
         },
@@ -417,7 +417,7 @@
           "fx": [
             ["check", "might", 12,
               [["set", "barrow_open"], ["xp", 2], ["say", "Stone grinds on stone. The doors open."]],
-              [["say", "The doors do not move. Sworn to the reeve now, there is no other way in — brace and try again."]]
+              [["say", "The doors do not move. The priest won't help now, sworn as you are — brace and try again, or search the hillside for another way in."]]
             ]
           ]
         },
@@ -429,6 +429,17 @@
             ["check", "grace", 12,
               [["set", "barrow_open"], ["xp", 2], ["say", "A narrow gap behind the ivy. You work it wider."]],
               [["say", "Nothing yet. The hill keeps its secrets."]]
+            ]
+          ]
+        },
+        {
+          "id": "hidden_passage",
+          "label": "search the hillside for a hidden passage",
+          "if": [["!class", "scout"], ["!flag", "barrow_open"]],
+          "fx": [
+            ["check", "wits", 12,
+              [["set", "barrow_open"], ["xp", 2], ["say", "Roots and old rain have hollowed a gap beneath a fallen lintel stone. You squeeze through into the dark below."]],
+              [["say", "The hillside holds its shape. Nothing gives way yet."]]
             ]
           ]
         }
