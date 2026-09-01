@@ -159,7 +159,7 @@ function grantPerk(world: World, s: State, id: string, events: string[]): void {
     s.maxHp += extraHp;
     s.hp = Math.min(s.hp + extraHp, s.maxHp);
   }
-  events.push(`Perk gained: ${def.name}.`);
+  events.push(`Perk gained: ${def.name} (${def.desc}).`);
 }
 
 /** Add xp and apply any level-ups: +2 max hp, heal 2, one perk pick each. */
