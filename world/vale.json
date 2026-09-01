@@ -958,6 +958,14 @@
           "once": true,
           "say": "Go with the gray blessing, then. Far off on the hill, the stone doors glow faintly and creak open — go whenever you're ready.",
           "fx": [["set", "barrow_open"]]
+        },
+        {
+          "id": "break_promise",
+          "label": "ask to be released from your promise to the reeve",
+          "if": [["flag", "promised_seal"]],
+          "once": true,
+          "say": "Vows are not mine to unmake, only to witness broken. I'll say nothing to the reeve of it — but you will have to, in the end. Go with a clear path, if not a clear conscience.",
+          "fx": [["clear", "promised_seal"], ["addvar", "rep_reeve", -1], ["addvar", "rep_priest", 1]]
         }
       ]
     },
