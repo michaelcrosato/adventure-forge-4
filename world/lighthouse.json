@@ -96,7 +96,7 @@
         {
           "id": "oil_mechanism",
           "label": "oil the mechanism",
-          "if": [["has", "oil_flask"], ["!flag", "oiled"]],
+          "if": [["flag", "oil_applied"], ["!flag", "oiled"]],
           "fx": [
             ["check", "str", 11,
               [["set", "oiled"], ["score", 10], ["say", "Oil works into the gears and the mechanism turns free."]],
@@ -145,7 +145,17 @@
     "oil_flask": {
       "name": "oil flask",
       "loc": "nowhere",
-      "takeable": true
+      "takeable": true,
+      "use": [
+        {
+          "if": [["!flag", "oil_applied"]],
+          "fx": [
+            ["set", "oil_applied"],
+            ["move", "oil_flask", "nowhere"],
+            ["say", "You work the oil into the rusted mechanism."]
+          ]
+        }
+      ]
     },
     "iron_key": {
       "name": "iron key",
@@ -236,6 +246,7 @@
     "take oil flask",
     "go west",
     "go up",
+    "use oil flask",
     { "repeat": "oil the mechanism", "until": ["flag", "oiled"], "max": 8 },
     "light the beacon"
   ]
