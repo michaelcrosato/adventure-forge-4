@@ -53,7 +53,7 @@ export function render(
   const lines: string[] = [];
   const lvl = world.classes ? ` L${s.level}` : "";
   lines.push(
-    `=${room?.name ?? s.room} | hp${s.hp}/${s.maxHp}${lvl} sc${s.score}/${world.maxScore} t${s.turn}`,
+    `=${room?.name ?? s.room} | hp${s.hp}/${s.maxHp}${lvl} score${s.score}/${world.maxScore} t${s.turn}`,
   );
   if (events.length) lines.push(`[${events.join(" ")}]`);
 

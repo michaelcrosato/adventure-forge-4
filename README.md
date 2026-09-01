@@ -44,7 +44,7 @@ regression world instead.
 One tool call, one plain-text block:
 
 ```
-=Last Light Square | hp10/10 L1 sc5/100 t3
+=Last Light Square | hp10/10 L1 score5/100 t3
 [reeve: "It kills slow. Crops first, then cattle..." (+5) (+3xp)]
 The dry well.
 1 go north
