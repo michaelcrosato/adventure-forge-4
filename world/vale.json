@@ -743,18 +743,18 @@
           "id": "coffer_envoy",
           "label": "the sealed coffer",
           "if": [["class", "envoy"], ["flag", "heard_grievance"], ["!has", "crown"]],
-          "say": "You ask about the coffer. The elder's hands close on the ledger.",
+          "say": "No lock holds this shut, only the elder's own doubt. You press the old king's grievance, word against will, and the elder's hands close on the ledger.",
           "fx": [["move", "crown", "inv"], ["score", 5], ["xp", 3], ["say", "Your words find the old argument the elder has been having with themself, and settle it. The coffer creaks open. The crown is old iron, heavy for its size."]]
         },
         {
           "id": "coffer",
           "label": "the sealed coffer",
           "if": [["!class", "envoy"], ["flag", "heard_grievance"], ["!has", "crown"]],
-          "say": "You ask about the coffer. The elder's hands close on the ledger.",
+          "say": "No lock holds this shut, only the elder's own doubt. You press the old king's grievance, word against will, and the elder's hands close on the ledger.",
           "fx": [
             ["check", "will", 13,
-              [["move", "crown", "inv"], ["score", 5], ["xp", 3], ["say", "At last the elder unlocks the coffer. The crown is old iron, heavy for its size."]],
-              [["say", "The elder shakes their head. Not yet — ask again, the same question, and press harder."]]
+              [["move", "crown", "inv"], ["score", 5], ["xp", 3], ["say", "At last your will outlasts the elder's. Their hands unclench, and they open the coffer. The crown is old iron, heavy for its size."]],
+              [["say", "The elder's resolve holds, this time. Ask again, the same question, and press harder."]]
             ]
           ]
         }
