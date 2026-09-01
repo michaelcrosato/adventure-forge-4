@@ -117,6 +117,16 @@ test("might adds to attack rolls and armor reduces damage taken", () => {
   assert.match(out.events.join(" "), /You hit the troll/);
   // troll survives and strikes back for max(1, 3 - 2) = 1
   assert.equal(before - out.state.hp, 1);
+  assert.match(out.events.join(" "), /armor takes 2 of it/);
+});
+
+test("armor absorption is silent when there is no armor to report", () => {
+  const world = mini({
+    npcs: { rat: { name: "rat", room: "a", hostile: true, hp: 1000, atk: 2, df: 20 } },
+  });
+  const { state } = newState(world, 1);
+  const out = step(world, state, { kind: "attack", npc: "rat" });
+  assert.doesNotMatch(out.events.join(" "), /armor takes/);
 });
 
 test("xp crosses a threshold: level up, +2 max hp, a perk pick blocks the menu", () => {

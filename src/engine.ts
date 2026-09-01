@@ -529,8 +529,14 @@ export function step(world: World, prev: State, action: Action): StepOut {
         events.push(`The ${def.name} is destroyed.`);
         if (def.onDeath) applyFx(world, s, def.onDeath, events);
       } else if (def.atk) {
-        const taken = Math.max(1, def.atk - armorOf(world, s));
-        events.push(`The ${def.name} strikes back.`);
+        const armor = armorOf(world, s);
+        const taken = Math.max(1, def.atk - armor);
+        const absorbed = def.atk - taken;
+        events.push(
+          absorbed > 0
+            ? `The ${def.name} strikes back — your armor takes ${absorbed} of it.`
+            : `The ${def.name} strikes back.`,
+        );
         applyFx(world, s, [["hp", -taken]], events);
       }
       break;
