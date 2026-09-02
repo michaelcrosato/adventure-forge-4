@@ -432,6 +432,15 @@
           ]
         },
         {
+          "id": "notice_board_5",
+          "label": "read the notice board again",
+          "if": [["flag", "notice_board_4"], ["!flag", "notice_board_5"]],
+          "fx": [
+            ["set", "notice_board_5"],
+            ["say", "Smaller print at the bottom: past the antechamber, the barrow's own crypt still holds an old mail shirt for whoever fetches it — armor enough to blunt every blow after, plunder alone, no bearing on how the king rests. Whichever road you take there, verse or crown, it settles which doors you're free to promise shut later — the reeve and the gray priest each want a different one, and you can't swear both."]
+          ]
+        },
+        {
           "id": "trail_to_barrow_from_square",
           "label": "follow the trail north to the barrow",
           "if": [["flag", "found_barrow_trail"]],
