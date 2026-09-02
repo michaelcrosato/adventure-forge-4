@@ -1166,7 +1166,7 @@
           "label": "the blight",
           "once": true,
           "say": "It kills slow. Crops first, then cattle, then the will to stay. It started the night the barrow opened. I want it sealed once the king rests — the priest wants it open — ask about the barrow, if you mean to see this through.",
-          "fx": [["score", 5], ["xp", 3]]
+          "fx": [["score", 5], ["xp", 3], ["set", "heard_reeve_blight"]]
         },
         {
           "id": "barrow",
@@ -1276,6 +1276,14 @@
           "once": true,
           "say": "Verses, they say — one in the drowned shrine, one up the old watchtower, one cut into the barrow stone, slow going without a scholar's eye — there's a wandering scholar warming their hands by this very fire, if you ask them the trick of it. Whatever's down there, plenty would rather you just settle it with steel. Others skip the verses entirely and press the elder for the old king's locked crown instead. The hunter west in the wood is worth a stop — herbs, and a way into the barrow.",
           "fx": [["score", 5], ["xp", 2]]
+        },
+        {
+          "id": "factions",
+          "label": "the reeve and the gray priest",
+          "if": [["!flag", "heard_reeve_blight"]],
+          "once": true,
+          "say": "Those two haven't agreed on a thing in years. The reeve wants the barrow shut for good once the king's settled; the priest wants it left open, still grieving him. Ask either one plain and you'll hear the same split — you can't promise both.",
+          "fx": [["xp", 1]]
         }
       ]
     },
