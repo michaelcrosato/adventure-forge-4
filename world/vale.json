@@ -682,13 +682,13 @@
     },
     "antechamber": {
       "name": "Barrow Antechamber",
-      "desc": "Cut stone, older than the village. Shelf niches stand empty. A passage north leads deeper into the barrow — the way on, toward the throne. A heavy door stands east, iron-strapped like a vault holding some locked prize. A passage down breathes cold air up from a crypt of low vaults, old gear worth taking, and whatever still guards it. Neither lies on the way through, but skip them and you skip only plunder, not progress.",
+      "desc": "Cut stone, older than the village. Shelf niches stand empty. A passage north leads deeper into the barrow — the way on, toward the throne. A heavy door stands east, iron-strapped like a vault holding some locked prize. A passage down breathes cold air up from a crypt of low vaults, old gear worth taking, and whatever still guards it. Neither lies on the way through, but skip them and you skip only plunder, not progress. (A * on an exit below marks one of these you haven't explored yet.)",
       "brief": "Empty niches.",
       "exits": {
         "south": { "to": "barrow_field" },
         "north": { "to": "hall_of_verses" },
-        "down": { "to": "crypt" },
-        "east": { "to": "vault" }
+        "down": { "to": "crypt", "sideTrip": true },
+        "east": { "to": "vault", "sideTrip": true }
       },
       "onEnterOnce": [["xp", 2], ["say", "These niches once held tokens for the dead. He will not come for you — but kneel before him with nothing to offer, no verse, no crown, and you take his place instead."]]
     },

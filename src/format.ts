@@ -114,7 +114,14 @@ export function render(
   }
 
   const exitDirs = Object.keys(room?.exits ?? {});
-  if (exitDirs.length) lines.push(`exits: ${exitDirs.map(exitAbbr).join(" ")}`);
+  if (exitDirs.length) {
+    const marked = exitDirs.map((dir) => {
+      const ex = room!.exits![dir]!;
+      const unexplored = ex.sideTrip && !s.visited.includes(ex.to);
+      return exitAbbr(dir) + (unexplored ? "*" : "");
+    });
+    lines.push(`exits: ${marked.join(" ")}`);
+  }
 
   const menu = renderMenu(world, s);
   lines.push(menu.text);

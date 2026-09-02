@@ -42,6 +42,7 @@ export type ExitDef = {
   if?: Cond[]; // all must pass, else lockedMsg
   lockedMsg?: string;
   hint?: string; // short "what's missing" clue shown in the menu while locked, before a turn is wasted
+  sideTrip?: boolean; // optional content off the main path; exits line marks it unexplored until the destination is visited
 };
 
 export type CustomAction = {
