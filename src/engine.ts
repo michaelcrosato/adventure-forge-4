@@ -529,12 +529,13 @@ export function step(world: World, prev: State, action: Action): StepOut {
       const hit = w.hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit");
       const roll = d20(s);
       const df = def.df ?? 10;
-      if (roll + hit >= df) {
+      const total = roll + hit;
+      if (total >= df) {
         const dmg = (roll === 20 ? w.dmg * 2 : w.dmg) + perkBonus(world, s, "dmg");
         s.npcHp[action.npc] = (s.npcHp[action.npc] ?? 1) - dmg;
-        events.push(`You hit the ${def.name} (d20:${roll}, -${dmg}hp).`);
+        events.push(`You hit the ${def.name} (d20:${roll}+${hit}=${total} vs DF ${df}, -${dmg}hp).`);
       } else {
-        events.push(`You miss the ${def.name} (d20:${roll}).`);
+        events.push(`You miss the ${def.name} (d20:${roll}+${hit}=${total} vs DF ${df}).`);
       }
       if ((s.npcHp[action.npc] ?? 0) <= 0) {
         events.push(`The ${def.name} is destroyed.`);
