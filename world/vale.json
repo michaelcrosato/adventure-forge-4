@@ -724,13 +724,19 @@
         {
           "id": "force_vault",
           "label": "force the strongbox",
-          "if": [["!class", "scout"], ["!flag", "vault_opened"]],
+          "if": [["!class", "scout"], ["!class", "warden"], ["!flag", "vault_opened"]],
           "fx": [
             ["check", "might", 12,
               [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "The rusted lock snaps at last. Inside: a seal of office, wrapped around a scrap of the king's own writing."]],
               [["say", "The lock holds, this time. Rusted iron, not sealed magic — keep at it and it will give."]]
             ]
           ]
+        },
+        {
+          "id": "force_vault_warden",
+          "label": "force the strongbox (warden)",
+          "if": [["class", "warden"], ["!flag", "vault_opened"]],
+          "fx": [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "One good strike and the rusted lock gives at once — no need to keep at it. Inside: a seal of office, wrapped around a scrap of the king's own writing."]]
         },
         {
           "id": "pick_vault",
