@@ -95,7 +95,7 @@ export type NpcDef = {
   name: string;
   room: string | null;
   desc?: string;
-  hostile?: boolean;
+  hostile?: boolean; // display flavor only: shows "(hostile, hp)" in room text. Attackability comes from `hp`.
   hp?: number;
   atk?: number; // damage dealt to the player per round while alive
   df?: number; // player must roll d20 + weapon hit >= df

@@ -351,7 +351,7 @@ export function legalActions(world: World, s: State): Action[] {
     const def = world.npcs[npc]!;
     for (const t of def.topics ?? [])
       if (topicVisible(world, s, npc, t)) out.push({ kind: "talk", npc, topic: t.id });
-    if (def.hostile) out.push({ kind: "attack", npc });
+    if (def.hp !== undefined) out.push({ kind: "attack", npc });
   }
   for (const id of s.inv) {
     for (const u of world.items[id]?.use ?? []) {
