@@ -35,9 +35,17 @@ fi
 command -v claude >/dev/null || { echo "claude CLI not found — install Claude Code or run with --mock"; exit 1; }
 
 # MCP config with absolute paths so the player can run from anywhere.
+# The CLI spawns this command without a shell, so npx (a .cmd shim on
+# Windows) fails silently; use bare "node" instead, same fix as
+# mock-player.mjs/report-check.mjs. $ROOT is an MSYS path under Git Bash
+# (e.g. /c/dev/...), which the CLI — a native Windows process — can't
+# resolve either, so convert it and double its backslashes for valid JSON.
+MCP_ENTRY="$ROOT/src/mcp.ts"
+command -v cygpath >/dev/null && MCP_ENTRY="$(cygpath -w "$MCP_ENTRY")"
+MCP_ENTRY="${MCP_ENTRY//\\/\\\\}"
 CFG="$WAVE_DIR/mcp.json"
 cat > "$CFG" <<EOF
-{ "mcpServers": { "tinyforge": { "command": "npx", "args": ["tsx", "$ROOT/src/mcp.ts"] } } }
+{ "mcpServers": { "tinyforge": { "command": "node", "args": ["--import", "tsx", "$MCP_ENTRY"] } } }
 EOF
 
 run_player() {
