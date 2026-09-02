@@ -1709,6 +1709,12 @@
             ["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 10], ["xp", 3],
             ["say", "Patience does what a quick word couldn't — the elder's resolve finally breaks. Their hands unclench, and they open the coffer. The crown is old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]
           ]
+        },
+        {
+          "id": "recall_crown_unread_elder",
+          "label": "read the crown's band before you decide",
+          "if": [["has", "crown"], ["!flag", "read_crown"], ["!npcDead", "hollow_king"]],
+          "fx": [["set", "read_crown"], ["xp", 2], ["say", "Turning the iron over, you find words worked into the inside of the band, worn thin but legible — the same refrain cut into stone, water, and wind elsewhere in the vale, verse after verse: 'Let the crown remember whose grief it bore; lay it down, and rest.' Iron makes one more."]]
         }
       ]
     },
