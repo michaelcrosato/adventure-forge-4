@@ -3,7 +3,7 @@
  *
  * new_game -> intro + first menu. act -> one turn (narration + status + next
  * menu in ONE response, so a whole turn is ONE tool call). look -> resync.
- * status -> progress on every tracked path, any time.
+ * status -> objectives recap + progress on every tracked path, any time.
  * Every session appends to a replayable trace in runs/, and the end-of-game
  * receipt is verifiable by `tsx src/crawl.ts --replay <trace>`.
  */
@@ -143,7 +143,7 @@ server.registerTool(
   "status",
   {
     description:
-      "Show progress on every tracked path (e.g. verses vs crown). Costs no turn — call it any time.",
+      "Recap the objectives and show progress on every tracked path (e.g. verses vs crown). Costs no turn — call it any time, not just at character select.",
     inputSchema: { s: z.string().describe("Session id.") },
   },
   async ({ s }) => {

@@ -24,3 +24,19 @@ test("renderStatus: reports nothing to track when the world has neither", () => 
   const world = {} as World;
   assert.equal(renderStatus(world, stateWithVars({})), "No progress to report.");
 });
+
+test("renderStatus: leads with objectives when the world sets them, ahead of tracked paths", () => {
+  const world = {
+    objectives: "Find the crown or speak the verses.",
+    statusTracks: [{ var: "verses_known", label: "Verses", max: 3 }],
+  } as World;
+  assert.equal(
+    renderStatus(world, stateWithVars({ verses_known: 1 })),
+    "Find the crown or speak the verses.\nVerses: 1/3",
+  );
+});
+
+test("renderStatus: falls back to intro for the recap when objectives is absent", () => {
+  const world = { intro: "A storm is coming." } as World;
+  assert.equal(renderStatus(world, stateWithVars({})), "A storm is coming.");
+});
