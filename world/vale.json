@@ -1230,6 +1230,14 @@
           "once": true,
           "say": "The reeve turns it over, and the color goes out of their face. \"Watch gray. Fine-woven — a reeve's cloth, not a common one's.\" A long pause. \"There was a reeve before me, generations back, who went up to the barrow alone and never came down the same road. Records say he took something that wasn't his to take. We always thought the wood took him for it.\" They hand it back. \"Bury it proper, if you pass that way again. He's earned that much.\"",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "reeve_trust_grown",
+          "label": "what the watch says about you now",
+          "if": [["var", "rep_reeve", ">=", 2]],
+          "once": true,
+          "say": "You'll have noticed the watch stopped stopping you at the gate. Word travels fast in a square this small — say a thing and keep it, and it follows you the rest of the way through.",
+          "fx": [["xp", 2]]
         }
       ]
     },
@@ -1351,6 +1359,14 @@
           "if": [["flag", "promised_seal"], ["var", "verses_known", ">=", 1]],
           "once": true,
           "say": "So the old words are opening to you after all, and you never needed my blessing for it. Good — the king rests either way, and the reeve gets his sealed doors regardless of what I think of them. I'd rather he'd never asked you first, but I'll not begrudge you the verses for it.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "priest_trust_grown",
+          "label": "what the priest says about you now",
+          "if": [["var", "rep_priest", ">=", 2]],
+          "once": true,
+          "say": "You come back to this chapel more than most do. I don't mistake that for faith — but I've stopped bracing for an argument each time you do.",
           "fx": [["xp", 2]]
         }
       ]
