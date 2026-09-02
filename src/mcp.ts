@@ -99,7 +99,9 @@ server.registerTool(
 server.registerTool(
   "act",
   {
-    description: "Take ONE action by menu number. Returns what happened, the scene, and the next numbered menu.",
+    description:
+      "Take ONE action by menu number. Returns what happened, the scene, and the next numbered menu. " +
+      "On a game-ending response, the receipt: line is a verification code proving your reported outcome matches this run (not a game score) — copy it verbatim if you file a report.",
     inputSchema: {
       s: z.string().describe("Session id from new_game."),
       a: z.number().int().describe("Menu number (1-based) from the latest response."),
