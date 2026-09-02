@@ -482,43 +482,43 @@
           "id": "verse_tally_0",
           "label": "take stock of the verses",
           "if": [["var", "verses_known", "=", 0]],
-          "fx": [["say", "None of the three verses are yours yet — look for them in the drowned shrine, the old watchtower, and the barrow's own walls. Or leave them: the elder's crown reaches the same end without a verse."]]
+          "fx": [["say", "None of the three verses are yours yet — look for them in the drowned shrine, the old watchtower, and the barrow's own walls. Or leave them: the elder's crown reaches the same end without a verse, deeper together."]]
         },
         {
           "id": "verse_tally_1_stone",
           "label": "take stock of the verses",
           "if": [["var", "verses_known", "=", 1], ["flag", "verse_stone"]],
-          "fx": [["say", "Verses gathered: 1/3. Two remain — one in the drowned shrine, one atop the old watchtower. Not required — the elder's crown alone reaches the same end."]]
+          "fx": [["say", "Verses gathered: 1/3. Two remain — one in the drowned shrine, one atop the old watchtower. Not required — the elder's crown alone reaches the same end, deeper together."]]
         },
         {
           "id": "verse_tally_1_water",
           "label": "take stock of the verses",
           "if": [["var", "verses_known", "=", 1], ["flag", "verse_water"]],
-          "fx": [["say", "Verses gathered: 1/3. Two remain — one atop the old watchtower, one cut into the barrow's own walls. Not required — the elder's crown alone reaches the same end."]]
+          "fx": [["say", "Verses gathered: 1/3. Two remain — one atop the old watchtower, one cut into the barrow's own walls. Not required — the elder's crown alone reaches the same end, deeper together."]]
         },
         {
           "id": "verse_tally_1_wind",
           "label": "take stock of the verses",
           "if": [["var", "verses_known", "=", 1], ["flag", "verse_wind"]],
-          "fx": [["say", "Verses gathered: 1/3. Two remain — one in the drowned shrine, one cut into the barrow's own walls. Not required — the elder's crown alone reaches the same end."]]
+          "fx": [["say", "Verses gathered: 1/3. Two remain — one in the drowned shrine, one cut into the barrow's own walls. Not required — the elder's crown alone reaches the same end, deeper together."]]
         },
         {
           "id": "verse_tally_2_stone",
           "label": "take stock of the verses",
           "if": [["var", "verses_known", "=", 2], ["!flag", "verse_stone"]],
-          "fx": [["say", "Verses gathered: 2/3. One remains, cut into the barrow's own walls. Still not required — the elder's crown alone reaches the same end."]]
+          "fx": [["say", "Verses gathered: 2/3. One remains, cut into the barrow's own walls. Still not required — the elder's crown alone reaches the same end, deeper together."]]
         },
         {
           "id": "verse_tally_2_water",
           "label": "take stock of the verses",
           "if": [["var", "verses_known", "=", 2], ["!flag", "verse_water"]],
-          "fx": [["say", "Verses gathered: 2/3. One remains, in the drowned shrine. Still not required — the elder's crown alone reaches the same end."]]
+          "fx": [["say", "Verses gathered: 2/3. One remains, in the drowned shrine. Still not required — the elder's crown alone reaches the same end, deeper together."]]
         },
         {
           "id": "verse_tally_2_wind",
           "label": "take stock of the verses",
           "if": [["var", "verses_known", "=", 2], ["!flag", "verse_wind"]],
-          "fx": [["say", "Verses gathered: 2/3. One remains, atop the old watchtower. Still not required — the elder's crown alone reaches the same end."]]
+          "fx": [["say", "Verses gathered: 2/3. One remains, atop the old watchtower. Still not required — the elder's crown alone reaches the same end, deeper together."]]
         },
         {
           "id": "verse_tally_3",
@@ -700,7 +700,7 @@
           "fx": [
             ["check", "wits", 9,
               [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the water take what grief the living cannot; lay it down, and rest.' The worn lines give up their meaning. Water Verse: obtained."]],
-              [["say", "The water has taken too much. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse."]]
+              [["say", "The water has taken too much. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse, deeper together."]]
             ]
           ]
         }
@@ -722,7 +722,7 @@
           "id": "wind_scholar",
           "label": "recall the wind verse (scholar)",
           "if": [["class", "scholar"], ["!flag", "verse_wind"]],
-          "fx": [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; lay it down, and rest.' The wind verse returns whole — two of three. Not required — the elder's crown alone reaches the same end. Wind Verse: obtained."]]
+          "fx": [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; lay it down, and rest.' The wind verse returns whole — two of three. Not required — crown alone reaches the same end, deeper together. Wind Verse: obtained."]]
         },
         {
           "id": "wind_scout",
@@ -753,7 +753,7 @@
           "fx": [
             ["check", "wits", 11,
               [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; lay it down, and rest.' The carvings give up their meaning. Wind Verse: obtained."]],
-              [["say", "The wind won't let the lines sit still long enough to read. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse."]]
+              [["say", "The wind won't let the lines sit still long enough to read. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse, deeper together."]]
             ]
           ]
         }
@@ -1623,7 +1623,7 @@
           "fx": [
             ["check", "will", 11,
               [["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 10], ["xp", 3], ["say", "At last your will outlasts the elder's. Their hands unclench, and they open the coffer. The crown is old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]],
-              [["addvar", "coffer_will_tries", 1], ["say", "The elder's resolve holds, this time. Ask again, the same question, and press harder — the coffer will give eventually. Or leave it: the barrow verses reach the same end without the crown."]]
+              [["addvar", "coffer_will_tries", 1], ["say", "The elder's resolve holds, this time. Ask again, the same question, and press harder — the coffer will give eventually. Or leave it: the barrow verses reach the same end without the crown, deeper together."]]
             ]
           ]
         },
