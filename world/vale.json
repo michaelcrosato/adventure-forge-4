@@ -961,6 +961,12 @@
           "fx": [["say", "It waits atop the old watchtower — leave the barrow, back through the gate, then north into the ashwood and keep bearing east (get your bearings once you're among the trees); it's real, and it's close."]]
         },
         {
+          "id": "recall_crown_unread",
+          "label": "the crown's band still holds words you haven't read",
+          "if": [["has", "crown"], ["!flag", "read_crown"], ["!npcDead", "hollow_king"]],
+          "fx": [["say", "You've never turned it over. Use the iron crown to read the band before you decide how this ends."]]
+        },
+        {
           "id": "return_crown",
           "label": "return the crown, leaving the barrow open (ends it now)",
           "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
