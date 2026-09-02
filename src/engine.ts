@@ -148,8 +148,15 @@ function eligiblePerks(world: World, s: State): string[] {
   return Object.keys(world.perks ?? {}).filter((id) => perkEligible(world, s, id, world.perks![id]!));
 }
 
-/** Grant a perk: record it and apply its maxhp bonus (with the matching heal). */
-function grantPerk(world: World, s: State, id: string, events: string[]): void {
+/**
+ * Grant a perk: record it and apply its maxhp bonus (with the matching heal).
+ * `picked` marks a perk chosen at a level-up (as opposed to one granted by
+ * class or script) — for those, a check-boosting perk gets one extra line
+ * spelling out that the bonus already counts in the roll odds shown before
+ * every check from here on, since a player who just picked it has no other
+ * way to know that without spending a turn to test it.
+ */
+function grantPerk(world: World, s: State, id: string, events: string[], picked = false): void {
   if (s.perks.includes(id)) return;
   const def = world.perks?.[id];
   if (!def) return;
@@ -159,7 +166,8 @@ function grantPerk(world: World, s: State, id: string, events: string[]): void {
     s.maxHp += extraHp;
     s.hp = Math.min(s.hp + extraHp, s.maxHp);
   }
-  events.push(`Perk gained: ${def.name} (${def.desc}).`);
+  const hint = picked && def.bonus?.check ? " Already counted in check odds shown." : "";
+  events.push(`Perk gained: ${def.name} (${def.desc}).${hint}`);
 }
 
 /** Add xp and apply any level-ups: +2 max hp, heal 2, one perk pick each. */
@@ -595,7 +603,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
     case "perkpick": {
       if (s.perkPicks <= 0) break;
       s.perkPicks -= 1;
-      grantPerk(world, s, action.id, events);
+      grantPerk(world, s, action.id, events, true);
       break;
     }
   }
