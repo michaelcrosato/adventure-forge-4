@@ -1120,6 +1120,22 @@
           "once": true,
           "say": "Then take the watch shield. It has stopped worse than claws.",
           "fx": [["move", "watch_shield", "inv"]]
+        },
+        {
+          "id": "doors_open_promised",
+          "label": "the open barrow doors",
+          "if": [["flag", "barrow_open"], ["flag", "promised_seal"]],
+          "once": true,
+          "say": "Open, for now. That's the king's doing, not yours breaking your word — the promise still holds. Seal them once he rests, same as you told me, and the watch won't forget it either way.",
+          "fx": [["addvar", "rep_reeve", 1]]
+        },
+        {
+          "id": "doors_open_unpromised",
+          "label": "the open barrow doors",
+          "if": [["flag", "barrow_open"], ["!flag", "promised_seal"]],
+          "once": true,
+          "say": "So they're open. No promise of yours says they close again after — I told you I wouldn't count silence as one, and I meant it. Doesn't mean I've stopped hoping.",
+          "fx": [["addvar", "rep_reeve", -1]]
         }
       ]
     },
@@ -1218,6 +1234,22 @@
           "once": true,
           "say": "Vows are not mine to unmake, only to witness broken. I'll say nothing to the reeve of it — but you will have to, in the end. Go with a clear path, if not a clear conscience.",
           "fx": [["clear", "promised_seal"], ["addvar", "rep_reeve", -1], ["addvar", "rep_priest", 1]]
+        },
+        {
+          "id": "doors_open_promised_priest",
+          "label": "the open barrow doors",
+          "if": [["flag", "barrow_open"], ["flag", "found_barrow_trail"], ["flag", "promised_seal"]],
+          "once": true,
+          "say": "Open now, sealed later — the reeve's word, not mine. I'll not pretend that pleases me. A door is a poor answer to grief, whichever side of it stays shut.",
+          "fx": [["addvar", "rep_priest", -1]]
+        },
+        {
+          "id": "doors_open_unpromised_priest",
+          "label": "the open barrow doors",
+          "if": [["flag", "barrow_open"], ["flag", "found_barrow_trail"], ["!flag", "promised_seal"]],
+          "once": true,
+          "say": "Open, and no promise waiting to shut them again. Good. Let him have his air, whatever comes of him after.",
+          "fx": [["addvar", "rep_priest", 1]]
         }
       ]
     },
