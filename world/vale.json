@@ -626,7 +626,7 @@
         },
         {
           "id": "wind_scout",
-          "label": "trace the wind carvings by touch (scout, grace)",
+          "label": "trace the wind carvings by touch (scout, grace, DC 9)",
           "if": [["class", "scout"], ["!flag", "verse_wind"], ["var", "wind_trace_tries", "<", 3]],
           "fx": [
             ["check", "grace", 9,
@@ -637,7 +637,7 @@
         },
         {
           "id": "wind_scout_persist",
-          "label": "trace the wind carvings by touch (scout, grace)",
+          "label": "trace the wind carvings by touch (scout, grace, DC 9)",
           "if": [["class", "scout"], ["!flag", "verse_wind"], ["var", "wind_trace_tries", ">=", 3]],
           "fx": [
             ["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3],
@@ -712,7 +712,7 @@
         },
         {
           "id": "keepers_crack",
-          "label": "search for the keeper's crack (scout)",
+          "label": "search for the keeper's crack (scout, DC 10)",
           "if": [["class", "scout"], ["!flag", "barrow_open"]],
           "fx": [
             ["check", "grace", 10,
