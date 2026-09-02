@@ -127,6 +127,23 @@ export function checkMod(world: World, s: State, name: string): number {
   return n;
 }
 
+/**
+ * Named parts behind a check's modifier (base skill+attribute, then each
+ * contributing perk), for a breakdown shown when more than one thing stacks
+ * into it — a player who sees only the final total has no way to tell how
+ * much a given perk (e.g. Fleetfoot) is actually adding.
+ */
+function checkModParts(world: World, s: State, name: string): { label: string; n: number }[] {
+  const parts: { label: string; n: number }[] = [];
+  const base = (world.skills?.[name] ?? 0) + (s.attrs[name] ?? 0);
+  if (base) parts.push({ label: "base", n: base });
+  for (const id of s.perks) {
+    const n = world.perks?.[id]?.bonus?.check?.[name] ?? 0;
+    if (n) parts.push({ label: world.perks![id]!.name, n });
+  }
+  return parts;
+}
+
 /** Damage reduction: best carried armor item + perk armor. */
 export function armorOf(world: World, s: State): number {
   let best = 0;
@@ -258,7 +275,15 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         // spelling the rule out as "(DC+ succeeds)", reusing the DC number
         // already in the line, states the same >= rule without a second,
         // mistranslatable frame.
-        events.push(`${skill.toUpperCase()} d20:${roll}+${mod}=${total} vs DC ${dc} (${dc}+ succeeds) — ${ok ? "success" : "fail"}.`);
+        // Only spelled out when more than one thing stacks into `mod` (base
+        // plus at least one perk) — a plain attribute-only modifier needs no
+        // breakdown, and most checks stay exactly as short as before.
+        const parts = checkModParts(world, s, skill);
+        const breakdown =
+          parts.length > 1 ? ` (${parts.map((p) => `${p.n > 0 ? "+" : ""}${p.n} ${p.label}`).join(", ")})` : "";
+        events.push(
+          `${skill.toUpperCase()} d20:${roll}+${mod}${breakdown}=${total} vs DC ${dc} (${dc}+ succeeds) — ${ok ? "success" : "fail"}.`,
+        );
         applyFx(world, s, ok ? okFx : failFx, events);
         break;
       }
