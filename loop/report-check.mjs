@@ -80,7 +80,12 @@ const runsDir = join(ROOT, "runs");
 try {
   for (const f of readdirSync(runsDir)) {
     if (!f.endsWith(".json")) continue;
-    const trace = JSON.parse(readFileSync(join(runsDir, f), "utf8"));
+    let trace;
+    try {
+      trace = JSON.parse(readFileSync(join(runsDir, f), "utf8"));
+    } catch {
+      continue; // a concurrent player may be mid-write to this file; it isn't our receipt either way
+    }
     if (trace.receipt === report.receipt) {
       if (seed !== null && trace.seed !== seed) continue;
       const replayed = execFileSync(process.execPath, ["--import", "tsx", join(ROOT, "src", "crawl.ts"), "--replay", join(runsDir, f)], {
