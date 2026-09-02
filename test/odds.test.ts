@@ -166,6 +166,23 @@ test("a check-first use action previews too, matching the def step() would run",
   assert.equal(oddsHint(world, state, { kind: "use", item: "scroll" }), " (roll 6+ on the die, +4 wits)");
 });
 
+test("a use action with no check previews the item's own hint instead", () => {
+  const world = mini({
+    items: {
+      crown: {
+        name: "iron crown",
+        loc: "inv",
+        hint: "worth reading",
+        use: [{ fx: [["say", "worn words"]] }],
+      },
+      plain: { name: "plain rock", loc: "inv", use: [{ fx: [["say", "a rock"]] }] },
+    },
+  });
+  const { state } = newState(world, 1);
+  assert.equal(oddsHint(world, state, { kind: "use", item: "crown" }), " (worth reading)");
+  assert.equal(oddsHint(world, state, { kind: "use", item: "plain" }), "", "no hint, no preview");
+});
+
 test("a check's post-roll event states the total vs DC directly, and success tracks that comparison", () => {
   // Regression for reports where a player derived a "needed N+" number from
   // the DC and modifier, then re-derived a total to compare against it, and

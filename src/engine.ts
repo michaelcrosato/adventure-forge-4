@@ -452,6 +452,10 @@ function fxFor(world: World, s: State, a: Action): Fx[] | undefined {
  * later "vs DC 12" in the post-roll event doesn't read as a different, higher
  * number than the "roll 8+" just previewed — same check, two frames (die-only
  * here, total-vs-DC there), bridged by the modifier appearing in both.
+ * A "use" action with no check instead previews the item's own `hint` (if
+ * any), e.g. "use iron crown (worth reading)" — an inventory item's use
+ * option can appear in every room, far from wherever it was picked up, so
+ * without this its effect stays unknown until a player spends a turn on it.
  * Display-only: it never touches actionLabel, so walkthroughs and proofs —
  * which match on the canonical label — are unaffected by odds text or by
  * attribute/perk changes.
@@ -474,11 +478,17 @@ export function oddsHint(world: World, s: State, a: Action): string {
   }
   const fx = fxFor(world, s, a);
   const chk = fx?.[0];
-  if (!chk || chk[0] !== "check") return "";
-  const mod = checkMod(world, s, chk[1]);
-  const need = Math.max(1, chk[2] - mod);
-  if (!mod) return ` (roll ${need}+ on the die)`;
-  return ` (roll ${need}+ on the die, ${mod > 0 ? "+" : ""}${mod} ${chk[1]})`;
+  if (chk && chk[0] === "check") {
+    const mod = checkMod(world, s, chk[1]);
+    const need = Math.max(1, chk[2] - mod);
+    if (!mod) return ` (roll ${need}+ on the die)`;
+    return ` (roll ${need}+ on the die, ${mod > 0 ? "+" : ""}${mod} ${chk[1]})`;
+  }
+  if (a.kind === "use") {
+    const hint = world.items[a.item]?.hint;
+    return hint ? ` (${hint})` : "";
+  }
+  return "";
 }
 
 export function step(world: World, prev: State, action: Action): StepOut {
