@@ -20,7 +20,7 @@
     },
     "scout": {
       "name": "Scout",
-      "desc": "handles either path — quick and quiet; locks take a grace roll, verses trace by touch, no roll needed",
+      "desc": "handles either path — quick and quiet; locks and verses alike trace by touch, a grace roll",
       "attrs": { "grace": 2, "wits": 1 },
       "hp": 2,
       "items": ["hunting_knife"]
@@ -677,9 +677,14 @@
         },
         {
           "id": "water_scout",
-          "label": "trace the water verse by touch (scout)",
+          "label": "trace the water verse by touch (scout, DC 7)",
           "if": [["class", "scout"], ["!flag", "verse_water"]],
-          "fx": [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the worn grooves — a scout's touch never misses a verse: 'Let the water take what grief the living cannot; lay it down, and rest.' Water Verse: obtained."]]
+          "fx": [
+            ["check", "grace", 7,
+              [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers find the worn grooves and trace them true: 'Let the water take what grief the living cannot; lay it down, and rest.' Water Verse: obtained."]],
+              [["say", "The grooves stay unreadable this pass — quiet hands don't always find their mark. Nothing is lost by trying again."]]
+            ]
+          ]
         },
         {
           "id": "water_puzzle",
@@ -714,9 +719,14 @@
         },
         {
           "id": "wind_scout",
-          "label": "trace the wind carvings by touch (scout)",
+          "label": "trace the wind carvings by touch (scout, DC 7)",
           "if": [["class", "scout"], ["!flag", "verse_wind"]],
-          "fx": [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the wind-worn cuts — a scout's touch never misses a verse: 'Let the wind take what iron could not; lay it down, and rest.' Wind Verse: obtained."]]
+          "fx": [
+            ["check", "grace", 7,
+              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers find the wind-worn cuts and trace them true: 'Let the wind take what iron could not; lay it down, and rest.' Wind Verse: obtained."]],
+              [["say", "The cuts stay unreadable this pass — quiet hands don't always find their mark. Nothing is lost by trying again."]]
+            ]
+          ]
         },
         {
           "id": "wind_puzzle",
@@ -907,9 +917,14 @@
         },
         {
           "id": "stone_scout",
-          "label": "trace the stone walls by touch (scout)",
+          "label": "trace the stone walls by touch (scout, DC 7)",
           "if": [["class", "scout"], ["!flag", "verse_stone"]],
-          "fx": [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the deep-cut letters — a scout's touch never misses a verse: 'Let the stone remember what flesh forgets; lay it down, and rest.' Cut beneath it, a stair leads up. Stone Verse: obtained."]]
+          "fx": [
+            ["check", "grace", 7,
+              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers find the deep-cut letters and trace them true: 'Let the stone remember what flesh forgets; lay it down, and rest.' Cut beneath it, a stair leads up. Stone Verse: obtained."]],
+              [["say", "The letters stay unreadable this pass — quiet hands don't always find their mark. Nothing is lost by trying again."]]
+            ]
+          ]
         },
         {
           "id": "stone_puzzle",
