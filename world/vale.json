@@ -803,12 +803,21 @@
         {
           "id": "stone_scout",
           "label": "trace the stone walls by touch (scout, grace)",
-          "if": [["class", "scout"], ["!flag", "verse_stone"]],
+          "if": [["class", "scout"], ["!flag", "verse_stone"], ["var", "stone_trace_tries", "<", 3]],
           "fx": [
             ["check", "grace", 9,
               [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the deep-cut letters, reading the shape of the words by feel: 'Let the stone remember what flesh forgets; lay it down, and rest.' Cut beneath it, a stair leads up. Stone Verse: obtained."]],
-              [["say", "The cuts give up nothing yet. Slow going without a scholar's eye — not shut to one; a defter touch (grace) reads it faster, and nothing is lost by trying again. Or leave it: the crypt north of the antechamber reaches the throne without this verse, if the crown is your road."]]
+              [["addvar", "stone_trace_tries", 1], ["say", "The cuts give up nothing yet. Slow going without a scholar's eye — not shut to one; a defter touch (grace) reads it faster, and nothing is lost by trying again. Or leave it: the crypt north of the antechamber reaches the throne without this verse, if the crown is your road."]]
             ]
+          ]
+        },
+        {
+          "id": "stone_scout_persist",
+          "label": "trace the stone walls by touch (scout, grace)",
+          "if": [["class", "scout"], ["!flag", "verse_stone"], ["var", "stone_trace_tries", ">=", 3]],
+          "fx": [
+            ["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3],
+            ["say", "Patience does what a quick touch couldn't — the shape of the letters finally gives itself up: 'Let the stone remember what flesh forgets; lay it down, and rest.' Cut beneath it, a stair leads up. Stone Verse: obtained."]
           ]
         },
         {
