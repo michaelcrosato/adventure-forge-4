@@ -156,7 +156,7 @@ export type GenDef = {
   w: number;
   h: number;
   pools: { descs: string[]; briefs?: string[] }; // text is data, drawn by seeded PRNG
-  links: { cell: [number, number]; dir: string; to: string; back?: string; landmark?: string }[];
+  links: { cell: [number, number]; dir: string; to: string; back?: string; landmark?: string; sideTrip?: boolean }[];
   spots?: GenSpot[];
 };
 

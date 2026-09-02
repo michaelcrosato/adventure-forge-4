@@ -60,6 +60,14 @@ test("a link's landmark carries through to the resulting exit", () => {
   assert.equal(w.rooms["wild_0_0"]!.exits!["west"]?.landmark, "the old mill");
 });
 
+test("a link's sideTrip carries through to the resulting exit", () => {
+  const w = expandWorld({
+    ...base(),
+    gen: [region({ links: [{ cell: [0, 0], dir: "west", to: "home", back: "east", sideTrip: true }] })],
+  });
+  assert.equal(w.rooms["wild_0_0"]!.exits!["west"]?.sideTrip, true);
+});
+
 test("expansion is deterministic", () => {
   const a = expandWorld({ ...base(), gen: [region()] });
   const b = expandWorld({ ...base(), gen: [region()] });
