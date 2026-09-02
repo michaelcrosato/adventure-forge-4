@@ -960,7 +960,7 @@
         "up": { "to": "antechamber" },
         "north": {
           "to": "throne",
-          "if": [["npcDead", "barrow_wight"]],
+          "if": [["flag", "wight_passed"]],
           "lockedMsg": "The wight bars the way north. No need to force it — go up and reach the throne through the hall of verses instead.",
           "hint": "defeat it, slip past it (scout), or go up and around"
         }
@@ -969,10 +969,10 @@
         {
           "id": "slip_past",
           "label": "slip past the wight (scout, DC 13)",
-          "if": [["class", "scout"], ["!npcDead", "barrow_wight"]],
+          "if": [["class", "scout"], ["!flag", "wight_passed"]],
           "fx": [
             ["check", "grace", 13,
-              [["say", "You keep to the shadow and slip by."], ["goto", "throne"]],
+              [["set", "wight_passed"], ["say", "You keep to the shadow and slip by. The passage north stands open now."]],
               [["hp", -1], ["say", "Claws rake you as you dart back. Quiet hands can try again — or stand and fight it here."]]
             ]
           ]
@@ -1640,7 +1640,7 @@
       "hp": 8,
       "atk": 1,
       "df": 5,
-      "onDeath": [["xp", 5], ["score", 5], ["say", "The wight comes apart into rag and bone. The passage north stands open now."]]
+      "onDeath": [["xp", 5], ["score", 5], ["set", "wight_passed"], ["say", "The wight comes apart into rag and bone. The passage north stands open now."]]
     },
     "hollow_king": {
       "name": "hollow king",
