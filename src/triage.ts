@@ -9,7 +9,13 @@
  * alone; subjective units (confusions, suggestions) file at P2 and rise to P1
  * only when 2+ independent reports corroborate. Consumed reports move to
  * reports/triaged/. Re-running is idempotent: an issue id already present in
- * queue/, queue/failed/ or done/ is not re-filed.
+ * queue/, queue/failed/ or done/ is not re-filed. Subjective units (confusion/
+ * suggestion) get a second, fuzzier check: a wave over wave restates the same
+ * concern in different words, so a new one is also dropped when its title
+ * overlaps >= 0.5 with any already-filed confusion/suggestion — the same
+ * threshold clusterUnits uses within one wave, just applied across waves too.
+ * Bug reports skip this fuzzy check and always need an exact id match, so a
+ * recurring bug (maybe a regression) is never silently swallowed.
  */
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
@@ -34,7 +40,7 @@ const STOP = new Set(
   "the a an to of in on for and or is was are it that this with at be as i you your it's not no never would should could".split(" "),
 );
 
-function bag(text: string): Set<string> {
+export function bag(text: string): Set<string> {
   const words = text
     .toLowerCase()
     .replace(/[^a-z0-9 ]+/g, " ")
@@ -45,7 +51,7 @@ function bag(text: string): Set<string> {
 }
 
 /** Overlap coefficient |A∩B| / min(|A|,|B|) — robust to one side being wordier. */
-function overlap(a: Set<string>, b: Set<string>): number {
+export function overlap(a: Set<string>, b: Set<string>): number {
   if (!a.size || !b.size) return 0;
   let inter = 0;
   for (const w of a) if (b.has(w)) inter++;
@@ -154,17 +160,31 @@ export function triage(opts?: { reportsDir?: string; queueDir?: string; dedupeDi
       console.error(`triage: leaving ${f} (not valid JSON)`);
     }
   }
-  const existing = new Set(
-    dedupeDirs.flatMap((d) => (existsSync(d) ? readdirSync(d) : [])).flatMap((f) => {
+  const existingIds = new Set<string>();
+  const priorSubjective: Set<string>[] = []; // title+where bags of already-filed confusion/suggestion issues
+  for (const d of dedupeDirs) {
+    if (!existsSync(d)) continue;
+    for (const f of readdirSync(d)) {
       const m = /-issue-([0-9a-f]{8})\.json$/.exec(f);
-      return m ? [m[1]!] : [];
-    }),
-  );
+      if (!m) continue;
+      existingIds.add(m[1]!);
+      try {
+        const prior = JSON.parse(readFileSync(join(d, f), "utf8")) as Issue;
+        if (prior.unit_kind !== "bug") priorSubjective.push(bag(`${prior.title} ${prior.where ?? ""}`));
+      } catch {
+        // unreadable entry: id-dedup above still applies, just no title to fuzzy-compare against
+      }
+    }
+  }
   const issues = clusterUnits(units);
   const filed: Issue[] = [];
   let skipped = 0;
   for (const issue of issues) {
-    if (existing.has(issue.id)) { skipped++; continue; }
+    if (existingIds.has(issue.id)) { skipped++; continue; }
+    if (issue.unit_kind !== "bug") {
+      const titleBag = bag(`${issue.title} ${issue.where ?? ""}`);
+      if (priorSubjective.some((b) => overlap(b, titleBag) >= 0.5)) { skipped++; continue; }
+    }
     writeFileSync(join(queueDir, `${issue.priority}-issue-${issue.id}.json`), JSON.stringify(issue, null, 2));
     filed.push(issue);
   }
