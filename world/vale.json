@@ -503,7 +503,15 @@
       "name": "Gray Chapel",
       "desc": "A small stone chapel. Candles against the dark. The priest wears ash on both hands. Wax and damp stone smell like the inside of a well. A door east leads to the elder's house.",
       "brief": "Candles in the dark.",
-      "exits": { "north": { "to": "square" }, "east": { "to": "elder_house" } }
+      "exits": { "north": { "to": "square" }, "east": { "to": "elder_house" } },
+      "actions": [
+        {
+          "id": "trail_to_barrow_from_chapel",
+          "label": "take the back trail to the barrow field",
+          "if": [["flag", "found_barrow_trail"]],
+          "fx": [["goto", "barrow_field"]]
+        }
+      ]
     },
     "elder_house": {
       "name": "Elder's House",
