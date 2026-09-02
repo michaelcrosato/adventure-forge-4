@@ -86,6 +86,56 @@ test("locked exit refuses until the key is held", () => {
   assert.match(out.events.join(" "), /locked|key/i);
 });
 
+test("a flag set by an NPC in a different room clears gated actions on return — no stale menu", () => {
+  // Mirrors a triaged confusion report: force-the-doors stayed offered after
+  // a blessing (set elsewhere) was supposed to have opened them. legalActions
+  // recomputes from current state on every call, so a remotely-set flag must
+  // already clear the gated action by the time the player is back in the room.
+  const gateWorld: World = {
+    id: "gate-flag-test",
+    title: "Gate Flag Test",
+    intro: "A test.",
+    start: "field",
+    hp: 10,
+    maxScore: 10,
+    rooms: {
+      field: {
+        name: "Field",
+        desc: "Sealed doors.",
+        exits: { east: { to: "shrine" } },
+        actions: [
+          {
+            id: "force_doors",
+            label: "force the doors",
+            if: [["!flag", "doors_open"]],
+            fx: [["say", "They do not budge."]],
+          },
+        ],
+      },
+      shrine: {
+        name: "Shrine",
+        desc: "A quiet shrine.",
+        exits: { west: { to: "field" } },
+      },
+    },
+    items: {},
+    npcs: {
+      priest: {
+        name: "priest",
+        room: "shrine",
+        topics: [{ id: "blessing", label: "a blessing", say: "Go with my blessing.", fx: [["set", "doors_open"]] }],
+      },
+    },
+    walkthrough: [],
+  };
+  let { state } = newState(gateWorld, 1);
+  assert.ok(legalActions(gateWorld, state).some((a) => a.kind === "custom" && a.id === "force_doors"));
+  state = step(gateWorld, state, { kind: "go", dir: "east" }).state;
+  state = step(gateWorld, state, { kind: "talk", npc: "priest", topic: "blessing" }).state;
+  state = step(gateWorld, state, { kind: "go", dir: "west" }).state;
+  assert.ok(!legalActions(gateWorld, state).some((a) => a.kind === "custom" && a.id === "force_doors"));
+});
+
 test("dark room exposes only exits until a lit light is carried", () => {
   let { state } = newState(world, 1);
   state = structuredClone(state);
