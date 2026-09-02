@@ -143,7 +143,7 @@ server.registerTool(
   "status",
   {
     description:
-      "Recap the objectives and show progress on every tracked path (e.g. verses vs crown). Costs no turn — call it any time, not just at character select.",
+      "Recap the objectives, show progress on every tracked path (e.g. verses vs crown), and confirm what you're carrying. Costs no turn — call it any time, not just at character select, e.g. right before a major choice.",
     inputSchema: { s: z.string().describe("Session id.") },
   },
   async ({ s }) => {

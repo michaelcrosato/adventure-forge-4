@@ -128,13 +128,21 @@ export function render(
   return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
 }
 
-/** Free, any-time check (no turn cost) — recaps the objectives, then every tracked path, e.g. verses vs crown. */
+/**
+ * Free, any-time check (no turn cost) — recaps the objectives, every tracked
+ * path (e.g. verses vs crown), and what's carried, so a player can confirm
+ * their inventory right before committing to a major choice.
+ */
 export function renderStatus(world: World, s: State): string {
   const lines: string[] = [];
   const recap = world.objectives ?? world.intro;
   if (recap) lines.push(recap);
   const tracks = world.statusTracks ?? (world.progress ? [world.progress] : []);
   for (const t of tracks) lines.push(`${t.label}: ${s.vars[t.var] ?? 0}/${t.max}`);
+  if (s.inv.length) {
+    const carried = s.inv.map((id) => world.items[id]?.name ?? id);
+    lines.push(`carrying: ${carried.join(", ")}`);
+  }
   return lines.length ? lines.join("\n") : "No progress to report.";
 }
 

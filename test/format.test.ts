@@ -3,7 +3,8 @@ import test from "node:test";
 import { renderStatus } from "../src/format.ts";
 import type { State, World } from "../src/types.ts";
 
-const stateWithVars = (vars: Record<string, number>) => ({ vars }) as unknown as State;
+const stateWithVars = (vars: Record<string, number>, inv: string[] = []) =>
+  ({ vars, inv }) as unknown as State;
 
 test("renderStatus: reports every statusTracks entry, falling back to 0", () => {
   const world = {
@@ -39,4 +40,15 @@ test("renderStatus: leads with objectives when the world sets them, ahead of tra
 test("renderStatus: falls back to intro for the recap when objectives is absent", () => {
   const world = { intro: "A storm is coming." } as World;
   assert.equal(renderStatus(world, stateWithVars({})), "A storm is coming.");
+});
+
+test("renderStatus: lists what you're carrying, so it doubles as a pre-decision inventory check", () => {
+  const world = {
+    objectives: "Find the crown or speak the verses.",
+    items: { crown: { name: "the crown" }, dagger: { name: "a rusty dagger" } },
+  } as unknown as World;
+  assert.equal(
+    renderStatus(world, stateWithVars({}, ["crown", "dagger"])),
+    "Find the crown or speak the verses.\ncarrying: the crown, a rusty dagger",
+  );
 });
