@@ -922,9 +922,9 @@
         },
         {
           "id": "recall_crown_unread",
-          "label": "the crown's band still holds words you haven't read",
+          "label": "read the crown's band before you decide",
           "if": [["has", "crown"], ["!flag", "read_crown"], ["!npcDead", "hollow_king"]],
-          "fx": [["say", "You've never turned it over. Use the iron crown to read the band before you decide how this ends."]]
+          "fx": [["set", "read_crown"], ["xp", 2], ["say", "Turning the iron over, you find words worked into the inside of the band, worn thin but legible: 'Let the crown remember whose grief it bore; lay it down, and rest.'"]]
         },
         {
           "id": "return_crown",
