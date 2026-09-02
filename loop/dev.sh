@@ -69,7 +69,10 @@ for ((c = 1; c <= CYCLES; c++)); do
 
   if [[ -n "$REASON" ]]; then
     echo "✗ cycle $c FAILED: $REASON — reverting"
-    git checkout -- . && git clean -fd src world test queue done reports >/dev/null 2>&1 || true
+    # whole-repo clean, not just src/world/test/queue/done/reports: a failed
+    # agent can leave scratch files anywhere (e.g. repo root), and .gitignore
+    # already protects node_modules/, runs/, and *.log from removal here.
+    git checkout -- . && git clean -fd >/dev/null 2>&1 || true
     mkdir -p queue/failed && mv "$FINDING" "queue/failed/$(basename "$FINDING")"
     git add -A >/dev/null 2>&1 && git -c user.email="loop@tinyforge" -c user.name="tinyforge-loop" \
       commit -qm "loop: quarantine $(basename "$FINDING") ($REASON)" >/dev/null 2>&1 || true
