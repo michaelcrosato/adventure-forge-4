@@ -6,7 +6,7 @@ green changes. Content is data. Every claim about the game is proven by a
 replay, not asserted.
 
 The shipped game is **The Vale of Ash**: four character classes, perks,
-levels, dice, two factions, a generated overworld region, and four different
+levels, dice, two factions, a generated overworld region, and six different
 endings — every one of them replay-proven reachable by the validator.
 
 ```
@@ -70,7 +70,8 @@ along the proven walkthrough: ~170 chars (~45 tokens).
   give +2 max hp and a perk pick from a menu of what you qualify for.
 - **Choices that matter.** Promise the Reeve to seal the barrow and the
   priest's blessing is closed to you. Learn why the king lingers and a
-  third road opens. Four endings: bind him, kill him, repay him, join him.
+  third road opens. Six endings: bind him, kill him, repay him, break his
+  crown, do both rites for a deeper rest, or join him.
 - **The overworld.** The Ashwood between the village and the barrow is
   generated: a seeded grid with text pools, stitched to authored sites
   (hunter's camp, drowned chapel, watchtower). The generator is proven to
@@ -82,7 +83,7 @@ along the proven walkthrough: ~170 chars (~45 tokens).
 `npm run verify` (~10s) enforces:
 
 - **Typecheck** — strict, no unchecked indexing.
-- **Tests** (45) — determinism (same seed = byte-identical run, and an engine
+- **Tests** (62) — determinism (same seed = byte-identical run, and an engine
   core that provably never reads the clock), the character layer, worldgen,
   triage promotion rules, and the token budget along every world's walkthrough.
 - **Validator** — every reference resolves, the DSL is closed, the primary
@@ -90,8 +91,10 @@ along the proven walkthrough: ~170 chars (~45 tokens).
   ending carries its own replay-proof**. "Choice matters" is checked, not
   claimed.
 - **Crawler** — seeded random walks over the real engine checking crash,
-  empty-menu, purity, and bounds invariants every step. All 78 vale rooms
-  reached.
+  empty-menu, purity, and bounds invariants every step. All 31 vale rooms
+  reached. (60 random walks land on the same lose ending almost every time —
+  that's expected of undirected play, not a coverage gap; the win endings
+  are proven by the validator's replay-proofs, not the crawler.)
 
 Every session writes a trace. A playtest report's receipt must equal an
 engine replay of that trace, or the report files as unverified. Neither
@@ -122,7 +125,7 @@ src/triage.ts     reports -> atomic corroborated issues
 src/play.ts       human CLI
 world/vale.json   The Vale of Ash (the game)
 world/lighthouse.json  the small regression world
-test/             45 tests, including the token budget and determinism rules
+test/             62 tests, including the token budget and determinism rules
 loop/             playtest wave, dev cycle, mock player, report checker
 queue/ done/      the one inbox (issues) and its archive
 AGENT.md          the charter the dev agent is prompted with
