@@ -1290,6 +1290,22 @@
           "fx": [["set", "heard_reeve_ask"]]
         },
         {
+          "id": "roads",
+          "label": "the two roads",
+          "if": [["flag", "heard_reeve_ask"]],
+          "once": true,
+          "say": "Two ways up that hill, if you want it plain. The old words are cut in stone — shrine, tower, barrow wall, three of them — read a verse in the old tongue or trace it by hand, and you needn't chase the other one at all. Or there's his crown, locked in the elder's coffer, though the elder wants proof of his grief before it opens. Either road ends this alone. Walk both, if your legs hold out, and he rests deeper for it.",
+          "fx": [["set", "heard_reeve_roads"]]
+        },
+        {
+          "id": "roads_more",
+          "label": "which road suits me",
+          "if": [["flag", "heard_reeve_roads"], ["!flag", "heard_reeve_roads_more"]],
+          "once": true,
+          "say": "The wood won't hand the verses over at a glance — not unless the old tongue comes easy to you, or you've a scholar's ear at the inn to teach you the trick of it. The crown road's steadier for the rest of us: one lock to spring, then the elder's patience to wear down. Steadier, but slighter — the vale remembers three hard verses longer than one quick key.",
+          "fx": [["set", "heard_reeve_roads_more"]]
+        },
+        {
           "id": "promise_seal",
           "label": "promise to seal the barrow",
           "if": [["flag", "heard_reeve_ask"], ["!flag", "promised_seal"]],
