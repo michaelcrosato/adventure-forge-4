@@ -478,6 +478,30 @@
           "label": "take stock of the verses",
           "if": [["var", "verses_known", "=", 3]],
           "fx": [["say", "All three verses are yours."]]
+        },
+        {
+          "id": "weigh_roads_scout_crown_done",
+          "label": "weigh the two roads (scout)",
+          "if": [["class", "scout"], ["has", "crown"]],
+          "fx": [["say", "The crown's in hand — that road's finished, whatever state the verses are in. Nothing closer to done than a thing already carried."]]
+        },
+        {
+          "id": "weigh_roads_scout_verses_done",
+          "label": "weigh the two roads (scout)",
+          "if": [["class", "scout"], ["!has", "crown"], ["var", "verses_known", "=", 3]],
+          "fx": [["say", "All three verses are yours — that road's finished. The crown's still behind a locked coffer and the king's own grief, unheard. Verses are your surer road now."]]
+        },
+        {
+          "id": "weigh_roads_scout_crown_open",
+          "label": "weigh the two roads (scout)",
+          "if": [["class", "scout"], ["!has", "crown"], ["var", "verses_known", "<", 3], ["flag", "heard_grievance"]],
+          "fx": [["say", "The elder's coffer is open to you now — quicker from here than the verses you've yet to finish. Quiet hands make short work of that lock."]]
+        },
+        {
+          "id": "weigh_roads_scout_neither",
+          "label": "weigh the two roads (scout)",
+          "if": [["class", "scout"], ["!has", "crown"], ["var", "verses_known", "<", 3], ["!flag", "heard_grievance"]],
+          "fx": [["say", "Neither road's far along, and for quiet hands it makes little difference which — a verse traces as easily as a lock springs. Chase whichever crosses your path first: shrine, tower, and barrow wall for the verses, or the throne first to hear the old king's grief, then the coffer."]]
         }
       ]
     },
