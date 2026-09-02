@@ -672,6 +672,12 @@
           ]
         },
         {
+          "id": "trail_to_throne_from_elder",
+          "label": "cut straight back to the throne, crown in hand",
+          "if": [["has", "crown"], ["!npcDead", "hollow_king"]],
+          "fx": [["goto", "throne"]]
+        },
+        {
           "id": "pick_coffer_perk",
           "label": "pick the coffer's lock (fleetfoot, DC 11)",
           "if": [["!class", "scout"], ["perk", "fleetfoot"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", "<", 3]],
