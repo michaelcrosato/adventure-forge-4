@@ -1136,6 +1136,14 @@
           "once": true,
           "say": "So they're open. No promise of yours says they close again after — I told you I wouldn't count silence as one, and I meant it. Doesn't mean I've stopped hoping.",
           "fx": [["addvar", "rep_reeve", -1]]
+        },
+        {
+          "id": "confess_broken_promise",
+          "label": "tell the reeve the priest released you from your word",
+          "if": [["flag", "broke_promise"]],
+          "once": true,
+          "say": "He said as much himself, then, in his own way — no need to spell it out further. I'd rather have heard it from you first, but I'll take it plain over hearing it from no one. Doesn't undo the asking. Just means I know where I stand with you now.",
+          "fx": [["xp", 2]]
         }
       ]
     },
@@ -1233,7 +1241,7 @@
           "if": [["flag", "promised_seal"]],
           "once": true,
           "say": "Vows are not mine to unmake, only to witness broken. I'll say nothing to the reeve of it — but you will have to, in the end. Go with a clear path, if not a clear conscience.",
-          "fx": [["clear", "promised_seal"], ["addvar", "rep_reeve", -1], ["addvar", "rep_priest", 1]]
+          "fx": [["clear", "promised_seal"], ["set", "broke_promise"], ["addvar", "rep_reeve", -1], ["addvar", "rep_priest", 1]]
         },
         {
           "id": "doors_open_promised_priest",
@@ -1250,6 +1258,14 @@
           "once": true,
           "say": "Open, and no promise waiting to shut them again. Good. Let him have his air, whatever comes of him after.",
           "fx": [["addvar", "rep_priest", 1]]
+        },
+        {
+          "id": "verses_while_bound",
+          "label": "the verses you carry",
+          "if": [["flag", "promised_seal"], ["var", "verses_known", ">=", 1]],
+          "once": true,
+          "say": "So the old words are opening to you after all, and you never needed my blessing for it. Good — the king rests either way, and the reeve gets his sealed doors regardless of what I think of them. I'd rather he'd never asked you first, but I'll not begrudge you the verses for it.",
+          "fx": [["xp", 2]]
         }
       ]
     },
