@@ -1504,13 +1504,23 @@
         {
           "id": "coffer",
           "label": "the sealed coffer",
-          "if": [["!class", "envoy"], ["!has", "kings_seal"], ["flag", "heard_grievance"], ["!has", "crown"]],
+          "if": [["!class", "envoy"], ["!has", "kings_seal"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_will_tries", "<", 3]],
           "say": "No lock holds this shut, only the elder's own doubt. You press the old king's grievance on them, your word against their will, and the elder's hands close on the ledger.",
           "fx": [
             ["check", "will", 11,
               [["move", "crown", "inv"], ["score", 5], ["xp", 3], ["say", "At last your will outlasts the elder's. Their hands unclench, and they open the coffer. The crown is old iron, heavy for its size — words are worked into the band; turn it over before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]],
-              [["say", "The elder's resolve holds, this time. Ask again, the same question, and press harder — the coffer will give eventually. Or leave it: the barrow verses reach the same end without the crown."]]
+              [["addvar", "coffer_will_tries", 1], ["say", "The elder's resolve holds, this time. Ask again, the same question, and press harder — the coffer will give eventually. Or leave it: the barrow verses reach the same end without the crown."]]
             ]
+          ]
+        },
+        {
+          "id": "coffer_persist",
+          "label": "the sealed coffer",
+          "if": [["!class", "envoy"], ["!has", "kings_seal"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_will_tries", ">=", 3]],
+          "say": "No lock holds this shut, only the elder's own doubt. You press the old king's grievance on them, your word against their will, and the elder's hands close on the ledger.",
+          "fx": [
+            ["move", "crown", "inv"], ["score", 5], ["xp", 3],
+            ["say", "Patience does what a quick word couldn't — the elder's resolve finally breaks. Their hands unclench, and they open the coffer. The crown is old iron, heavy for its size — words are worked into the band; turn it over before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]
           ]
         }
       ]
