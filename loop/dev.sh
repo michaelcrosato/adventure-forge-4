@@ -14,6 +14,7 @@ CYCLES="${1:-1}"
 MAX_TURNS="${TF_DEV_MAX_TURNS:-50}"
 FAILS=0
 mkdir -p runs
+RUN_ID="$(date +%Y%m%dT%H%M%S)"  # else dev-cycle-N.json is overwritten by the next invocation's cycle N
 
 command -v claude >/dev/null || { echo "claude CLI not found — install Claude Code"; exit 1; }
 git rev-parse HEAD >/dev/null 2>&1 || { echo "not a git repo — run: git init && git add -A && git commit -m init"; exit 1; }
@@ -49,7 +50,7 @@ for ((c = 1; c <= CYCLES; c++)); do
     --output-format json --max-turns "$MAX_TURNS" \
     ${TF_DEV_MODEL:+--model "$TF_DEV_MODEL"} \
     ${TF_DEV_FLAGS:-} \
-    > "runs/dev-cycle-$c.json" 2>&1 < /dev/null
+    > "runs/dev-cycle-$RUN_ID-$c.json" 2>&1 < /dev/null
   AGENT_RC=$?
   set -e
 
