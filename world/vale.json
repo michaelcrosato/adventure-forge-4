@@ -655,6 +655,12 @@
           "label": "follow the trail south to the village square",
           "if": [["flag", "found_camp_trail"]],
           "fx": [["goto", "square"]]
+        },
+        {
+          "id": "camp_barrow_shortcut",
+          "label": "follow the hunter's directions to the barrow's hidden way in",
+          "if": [["flag", "said_hunter_old_barrow"], ["!flag", "barrow_open"]],
+          "fx": [["set", "barrow_open"], ["xp", 2], ["say", "The hunter's directions hold true — the gap behind the fallen stone is right where they said. No need to test the doors, or the priest's patience."], ["goto", "barrow_field"]]
         }
       ]
     },
