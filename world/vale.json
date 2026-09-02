@@ -502,6 +502,30 @@
           "label": "weigh the two roads (scout)",
           "if": [["class", "scout"], ["!has", "crown"], ["var", "verses_known", "<", 3], ["!flag", "heard_grievance"]],
           "fx": [["say", "Neither road's far along, and for quiet hands it makes little difference which — a verse traces as easily as a lock springs. Chase whichever crosses your path first: shrine, tower, and barrow wall for the verses, or the throne first to hear the old king's grief, then the coffer."]]
+        },
+        {
+          "id": "weigh_roads_crown_done",
+          "label": "weigh the two roads",
+          "if": [["flag", "notice_board_1"], ["!class", "scout"], ["has", "crown"]],
+          "fx": [["say", "The crown's in hand — that road's finished, whatever state the verses are in. Nothing closer to done than a thing already carried."]]
+        },
+        {
+          "id": "weigh_roads_verses_done",
+          "label": "weigh the two roads",
+          "if": [["flag", "notice_board_1"], ["!class", "scout"], ["!has", "crown"], ["var", "verses_known", "=", 3]],
+          "fx": [["say", "All three verses are yours — that road's finished. The crown's still behind a locked coffer and the king's own grief, unheard. A quiet case or a stubborn one, either still opens it, if you'd rather carry both home."]]
+        },
+        {
+          "id": "weigh_roads_crown_open",
+          "label": "weigh the two roads",
+          "if": [["flag", "notice_board_1"], ["!class", "scout"], ["!has", "crown"], ["var", "verses_known", "<", 3], ["flag", "heard_grievance"]],
+          "fx": [["say", "The elder's coffer is open to argument now — press your case at the elder's house, east past the chapel, and it gives eventually, sooner still with the king's seal from the barrow vault in hand. Or keep after the verses, if the wood suits you better."]]
+        },
+        {
+          "id": "weigh_roads_neither",
+          "label": "weigh the two roads",
+          "if": [["flag", "notice_board_1"], ["!class", "scout"], ["!has", "crown"], ["var", "verses_known", "<", 3], ["!flag", "heard_grievance"]],
+          "fx": [["say", "Neither road's far along yet. Chase whichever crosses your path first: shrine, tower, and barrow wall for the verses, or the throne first to hear the old king's grief, then the elder's house east past the chapel for the crown."]]
         }
       ]
     },
