@@ -612,6 +612,12 @@
       "exits": { "west": { "to": "chapel" } },
       "actions": [
         {
+          "id": "study_ledgers",
+          "label": "study the elder's ledgers",
+          "once": true,
+          "fx": [["say", "The ledgers go back generations: tithes, harvests, a line for every reeve. One entry is different — the year the crown went missing, the ink pressed hard enough to tear the page. Whoever wrote it wanted it remembered."], ["xp", 1]]
+        },
+        {
           "id": "pick_coffer",
           "label": "pick the coffer's lock (scout, DC 11)",
           "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", "<", 3]],
