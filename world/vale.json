@@ -561,7 +561,7 @@
         },
         {
           "id": "water_scout",
-          "label": "trace the water verse by touch (scout)",
+          "label": "trace the water verse by touch (scout, grace)",
           "if": [["class", "scout"], ["!flag", "verse_water"]],
           "fx": [
             ["check", "grace", 9,
@@ -572,7 +572,7 @@
         },
         {
           "id": "water_puzzle",
-          "label": "work out the water verse",
+          "label": "work out the water verse (wits)",
           "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_water"]],
           "fx": [
             ["check", "wits", 10,
@@ -603,7 +603,7 @@
         },
         {
           "id": "wind_scout",
-          "label": "trace the wind carvings by touch (scout)",
+          "label": "trace the wind carvings by touch (scout, grace)",
           "if": [["class", "scout"], ["!flag", "verse_wind"]],
           "fx": [
             ["check", "grace", 9,
@@ -614,7 +614,7 @@
         },
         {
           "id": "wind_puzzle",
-          "label": "work out the wind carvings",
+          "label": "work out the wind carvings (wits)",
           "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_wind"]],
           "fx": [
             ["check", "wits", 10,
@@ -782,7 +782,7 @@
         },
         {
           "id": "stone_scout",
-          "label": "trace the stone walls by touch (scout)",
+          "label": "trace the stone walls by touch (scout, grace)",
           "if": [["class", "scout"], ["!flag", "verse_stone"]],
           "fx": [
             ["check", "grace", 9,
@@ -793,7 +793,7 @@
         },
         {
           "id": "stone_puzzle",
-          "label": "work out the stone verse",
+          "label": "work out the stone verse (wits)",
           "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_stone"]],
           "fx": [
             ["check", "wits", 10,
@@ -1455,7 +1455,7 @@
       "perk: Second Wind (+3 max hp)",
       "go north",
       "go north",
-      { "repeat": "work out the stone verse", "until": ["flag", "verse_stone"], "max": 25 },
+      { "repeat": "work out the stone verse (wits)", "until": ["flag", "verse_stone"], "max": 25 },
       "go up",
       "ask hollow king: why do you linger",
       "go down",
@@ -1499,7 +1499,7 @@
       "perk: Second Wind (+3 max hp)",
       "go north",
       "go north",
-      { "repeat": "work out the stone verse", "until": ["flag", "verse_stone"], "max": 25 },
+      { "repeat": "work out the stone verse (wits)", "until": ["flag", "verse_stone"], "max": 25 },
       "go up",
       "ask hollow king: why do you linger",
       "go down",
