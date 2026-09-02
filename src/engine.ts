@@ -448,6 +448,10 @@ function fxFor(world: World, s: State, a: Action): Fx[] | undefined {
  * explicitly — not "needs a total of N+" — because real players read an
  * ambiguous "needs N+" as the roll-plus-modifier total and then called a
  * correct fail a bug when their raw roll fell short but their total didn't.
+ * For a skill check with a nonzero modifier, also names it ("+3 wits") so a
+ * later "vs DC 12" in the post-roll event doesn't read as a different, higher
+ * number than the "roll 8+" just previewed — same check, two frames (die-only
+ * here, total-vs-DC there), bridged by the modifier appearing in both.
  * Display-only: it never touches actionLabel, so walkthroughs and proofs —
  * which match on the canonical label — are unaffected by odds text or by
  * attribute/perk changes.
@@ -471,8 +475,10 @@ export function oddsHint(world: World, s: State, a: Action): string {
   const fx = fxFor(world, s, a);
   const chk = fx?.[0];
   if (!chk || chk[0] !== "check") return "";
-  const need = Math.max(1, chk[2] - checkMod(world, s, chk[1]));
-  return ` (roll ${need}+ on the die)`;
+  const mod = checkMod(world, s, chk[1]);
+  const need = Math.max(1, chk[2] - mod);
+  if (!mod) return ` (roll ${need}+ on the die)`;
+  return ` (roll ${need}+ on the die, ${mod > 0 ? "+" : ""}${mod} ${chk[1]})`;
 }
 
 export function step(world: World, prev: State, action: Action): StepOut {

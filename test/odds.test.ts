@@ -36,9 +36,24 @@ test("a check-first custom action previews the d20 threshold, net of mods", () =
   let { state } = newState(world, 1);
   state = step(world, state, { kind: "classpick", id: "sage" }).state;
   const a = { kind: "custom", room: "a", id: "riddle" } as Action;
-  assert.equal(oddsHint(world, state, a), " (roll 8+ on the die)"); // dc 11 - wits 3 = 8
+  assert.equal(oddsHint(world, state, a), " (roll 8+ on the die, +3 wits)"); // dc 11 - wits 3 = 8
   // the canonical label never changes, so authored walkthroughs keep matching
   assert.equal(actionLabel(world, a, state), "riddle");
+});
+
+test("a check with no modifier previews the die threshold alone", () => {
+  const world = mini({
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        actions: [{ id: "riddle", label: "riddle", fx: [["check", "wits", 11, [["say", "ok"]], [["say", "no"]]]] }],
+      },
+    },
+  });
+  const { state } = newState(world, 1);
+  const a = { kind: "custom", room: "a", id: "riddle" } as Action;
+  assert.equal(oddsHint(world, state, a), " (roll 11+ on the die)"); // no class picked, mod 0
 });
 
 test("an attack previews the roll needed against the target's defense", () => {
@@ -58,7 +73,7 @@ test("a guaranteed action clamps to need 1+, never a number below 1", () => {
   });
   let { state } = newState(world, 1);
   state = step(world, state, { kind: "classpick", id: "giant" }).state;
-  assert.equal(oddsHint(world, state, { kind: "custom", room: "a", id: "lift" }), " (roll 1+ on the die)");
+  assert.equal(oddsHint(world, state, { kind: "custom", room: "a", id: "lift" }), " (roll 1+ on the die, +20 might)");
 });
 
 test("a locked exit is flagged before a turn is wasted on it", () => {
@@ -148,7 +163,7 @@ test("a check-first use action previews too, matching the def step() would run",
   });
   let { state } = newState(world, 1);
   state = step(world, state, { kind: "classpick", id: "sage" }).state;
-  assert.equal(oddsHint(world, state, { kind: "use", item: "scroll" }), " (roll 6+ on the die)");
+  assert.equal(oddsHint(world, state, { kind: "use", item: "scroll" }), " (roll 6+ on the die, +4 wits)");
 });
 
 test("a check's post-roll event states the total vs DC directly, and success tracks that comparison", () => {
