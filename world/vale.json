@@ -1057,7 +1057,19 @@
         }
       ]
     },
-    "crown": { "name": "iron crown", "loc": "nowhere" },
+    "crown": {
+      "name": "iron crown",
+      "loc": "nowhere",
+      "use": [
+        {
+          "if": [["!flag", "read_crown"]],
+          "fx": [["set", "read_crown"], ["xp", 2], ["say", "Turning the iron over, you find words worked into the inside of the band, worn thin but legible: 'Let the crown remember whose grief it bore; lay it down, and rest.'"]]
+        },
+        {
+          "fx": [["say", "The band's worn words: 'Let the crown remember whose grief it bore; lay it down, and rest.'"]]
+        }
+      ]
+    },
     "kings_seal": { "name": "king's seal", "loc": "nowhere", "armor": 1 }
   },
   "npcs": {
