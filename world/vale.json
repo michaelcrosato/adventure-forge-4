@@ -1607,7 +1607,7 @@
           "id": "linger",
           "label": "why do you linger",
           "once": true,
-          "say": "My crown. The first reeve took it from my barrow, and my rest went with it — the elder keeps it sealed away now. Bring it back or speak the old verses — either rests me, both together deeper. Break it instead, or draw your blade and end me, if patience has run out. Or kneel and take the crown for your own — that ends your story, you linger in my place, no dawn for you.",
+          "say": "My crown. The first reeve took it from my barrow, and my rest went with it — the elder keeps it sealed away now. Bring it back or speak the old verses — either rests me, both together deeper. Break it instead, or draw your blade and end me, if patience runs out. Or kneel and take the crown for your own — that ends your story, no dawn for you.",
           "fx": [["set", "heard_grievance"], ["score", 10], ["xp", 3]]
         },
         {
@@ -1615,6 +1615,14 @@
           "label": "the blight",
           "once": true,
           "say": "It is my grief, spilled over the land. It will not stop while I wake. Ask why I linger, if you want the whole of it.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "memories",
+          "label": "memories",
+          "once": true,
+          "if": [["flag", "heard_grievance"]],
+          "say": "Faces, mostly, and a good harvest the year they crowned me. This mound was already cut into the hill by then. I remember losing the crown far more clearly than wearing it.",
           "fx": [["xp", 2]]
         },
         {
