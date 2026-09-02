@@ -680,7 +680,7 @@
           "id": "water_scholar",
           "label": "recall the water verse (scholar)",
           "if": [["class", "scholar"], ["!flag", "verse_water"]],
-          "fx": [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The water verse comes back to you, line by line — a scholar's ease; another hand would have to puzzle it out: 'Let the water take what grief the living cannot; lay it down, and rest.' Water Verse: obtained."]]
+          "fx": [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the water take what grief the living cannot; lay it down, and rest.' The verse comes back to you, line by line — a scholar's ease; another hand would have to puzzle it out. Water Verse: obtained."]]
         },
         {
           "id": "water_scout",
@@ -688,7 +688,7 @@
           "if": [["class", "scout"], ["!flag", "verse_water"]],
           "fx": [
             ["check", "grace", 7,
-              [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers find the worn grooves and trace them true: 'Let the water take what grief the living cannot; lay it down, and rest.' Water Verse: obtained."]],
+              [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the water take what grief the living cannot; lay it down, and rest.' Quiet fingers find the worn grooves and trace them true. Water Verse: obtained."]],
               [["say", "The grooves stay unreadable this pass — quiet hands don't always find their mark. Nothing is lost by trying again."]]
             ]
           ]
@@ -699,7 +699,7 @@
           "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_water"]],
           "fx": [
             ["check", "wits", 9,
-              [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The worn lines give up their meaning: 'Let the water take what grief the living cannot; lay it down, and rest.' Water Verse: obtained."]],
+              [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the water take what grief the living cannot; lay it down, and rest.' The worn lines give up their meaning. Water Verse: obtained."]],
               [["say", "The water has taken too much. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse."]]
             ]
           ]
@@ -722,7 +722,7 @@
           "id": "wind_scholar",
           "label": "recall the wind verse (scholar)",
           "if": [["class", "scholar"], ["!flag", "verse_wind"]],
-          "fx": [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The wind verse returns whole — two of three. Not required — the elder's crown alone reaches the same end. 'Let the wind take what iron could not; lay it down, and rest.' Wind Verse: obtained."]]
+          "fx": [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; lay it down, and rest.' The wind verse returns whole — two of three. Not required — the elder's crown alone reaches the same end. Wind Verse: obtained."]]
         },
         {
           "id": "wind_scout",
@@ -730,7 +730,7 @@
           "if": [["class", "scout"], ["!flag", "verse_wind"], ["!flag", "wind_scout_failed"]],
           "fx": [
             ["check", "grace", 7,
-              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers find the wind-worn cuts and trace them true: 'Let the wind take what iron could not; lay it down, and rest.' Wind Verse: obtained."]],
+              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; lay it down, and rest.' Quiet fingers find the wind-worn cuts and trace them true. Wind Verse: obtained."]],
               [["set", "wind_scout_failed"], ["say", "The cuts stay unreadable this pass — quiet hands don't always find their mark, and the wind's scoured the grooves shallower. Nothing is lost by trying again, but the next reading wants a steadier touch."]]
             ]
           ]
@@ -741,7 +741,7 @@
           "if": [["class", "scout"], ["!flag", "verse_wind"], ["flag", "wind_scout_failed"]],
           "fx": [
             ["check", "grace", 9,
-              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers find the wind-worn cuts and trace them true: 'Let the wind take what iron could not; lay it down, and rest.' Wind Verse: obtained."]],
+              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; lay it down, and rest.' Quiet fingers find the wind-worn cuts and trace them true. Wind Verse: obtained."]],
               [["say", "The cuts stay unreadable this pass — quiet hands don't always find their mark. Nothing is lost by trying again."]]
             ]
           ]
@@ -752,7 +752,7 @@
           "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_wind"]],
           "fx": [
             ["check", "wits", 11,
-              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The carvings give up their meaning: 'Let the wind take what iron could not; lay it down, and rest.' Wind Verse: obtained."]],
+              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; lay it down, and rest.' The carvings give up their meaning. Wind Verse: obtained."]],
               [["say", "The wind won't let the lines sit still long enough to read. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse."]]
             ]
           ]
@@ -931,7 +931,7 @@
           "id": "stone_scholar",
           "label": "study the stone walls (scholar)",
           "if": [["class", "scholar"], ["!flag", "verse_stone"]],
-          "fx": [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The stone verse reads itself to you, plain as speech — others would have to work it out by hand or wit: 'Let the stone remember what flesh forgets; lay it down, and rest.' Cut beneath it, a stair leads up. Stone Verse: obtained."]]
+          "fx": [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the stone remember what flesh forgets; lay it down, and rest.' The verse reads itself to you, plain as speech — others would have to work it out by hand or wit. Cut beneath it, a stair leads up. Stone Verse: obtained."]]
         },
         {
           "id": "stone_scout",
@@ -939,7 +939,7 @@
           "if": [["class", "scout"], ["!flag", "verse_stone"]],
           "fx": [
             ["check", "grace", 7,
-              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers find the deep-cut letters and trace them true: 'Let the stone remember what flesh forgets; lay it down, and rest.' Cut beneath it, a stair leads up. Stone Verse: obtained."]],
+              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the stone remember what flesh forgets; lay it down, and rest.' Quiet fingers find the deep-cut letters and trace them true. Cut beneath it, a stair leads up. Stone Verse: obtained."]],
               [["say", "The letters stay unreadable this pass — quiet hands don't always find their mark. Nothing is lost by trying again."]]
             ]
           ]
@@ -950,7 +950,7 @@
           "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_stone"]],
           "fx": [
             ["check", "wits", 10,
-              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "The verse comes clear: 'Let the stone remember what flesh forgets; lay it down, and rest.' Cut beneath it, a stair leads up. Stone Verse: obtained."]],
+              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the stone remember what flesh forgets; lay it down, and rest.' The verse comes clear. Cut beneath it, a stair leads up. Stone Verse: obtained."]],
               [["say", "The old letters swim. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the crypt below the antechamber reaches the throne without this verse, if the crown is your road."]]
             ]
           ]
