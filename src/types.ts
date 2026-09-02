@@ -176,6 +176,8 @@ export type World = {
   npcs: Record<string, NpcDef>;
   /** Optional persistent counter shown in the status line every turn (e.g. quest items gathered). */
   progress?: { var: string; label: string; max: number };
+  /** Optional extra counters for the free `status` check (any time, no turn cost) — e.g. multiple parallel paths to an ending. Not shown on the per-turn line. */
+  statusTracks?: { var: string; label: string; max: number }[];
   /** Authored proof: must reach a win ending with score === maxScore (validator replays it). */
   walkthrough: WalkStep[];
   /** Ending proofs: each must replay (seed 1) to a game ended with exactly that ending id. */

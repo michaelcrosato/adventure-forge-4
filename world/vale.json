@@ -6,6 +6,10 @@
   "hp": 10,
   "maxScore": 100,
   "progress": { "var": "verses_known", "label": "Verses", "max": 3 },
+  "statusTracks": [
+    { "var": "verses_known", "label": "Verses", "max": 3 },
+    { "var": "crown_progress", "label": "Crown", "max": 2 }
+  ],
   "classes": {
     "warden": {
       "name": "Warden",
@@ -623,7 +627,7 @@
           "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", "<", 3]],
           "fx": [
             ["check", "grace", 11,
-              [["move", "crown", "inv"], ["score", 5], ["xp", 3], ["say", "Quiet fingers find the old lock's give while the elder's back is turned — quicker than any argument. Inside: the crown, old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]],
+              [["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 5], ["xp", 3], ["say", "Quiet fingers find the old lock's give while the elder's back is turned — quicker than any argument. Inside: the crown, old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]],
               [["addvar", "coffer_pick_tries", 1], ["say", "Not yet, but the pins are turning. Keep working the lock, or press your case instead."]]
             ]
           ]
@@ -633,7 +637,7 @@
           "label": "pick the coffer's lock (scout, DC 11)",
           "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", ">=", 3]],
           "fx": [
-            ["move", "crown", "inv"], ["score", 5], ["xp", 3],
+            ["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 5], ["xp", 3],
             ["say", "Patience does what a quick try couldn't — the old pins finally give. Inside: the crown, old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]
           ]
         }
@@ -1523,14 +1527,14 @@
           "label": "the sealed coffer",
           "if": [["class", "envoy"], ["flag", "heard_grievance"], ["!has", "crown"]],
           "say": "No lock holds this shut, only the elder's own doubt. You press the old king's grievance on them, your word against their will, and the elder's hands close on the ledger.",
-          "fx": [["move", "crown", "inv"], ["score", 5], ["xp", 3], ["say", "Your words find the old argument the elder has been having with themself, and settle it. The coffer creaks open. The crown is old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]]
+          "fx": [["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 5], ["xp", 3], ["say", "Your words find the old argument the elder has been having with themself, and settle it. The coffer creaks open. The crown is old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]]
         },
         {
           "id": "coffer_seal",
           "label": "the sealed coffer",
           "if": [["!class", "envoy"], ["has", "kings_seal"], ["flag", "heard_grievance"], ["!has", "crown"]],
           "say": "You set the king's own seal on the ledger, his hand plain in the scrap beneath it — proof no words could match. The elder's doubt has nowhere left to stand.",
-          "fx": [["move", "crown", "inv"], ["score", 5], ["xp", 3], ["say", "The coffer opens without another word. The crown is old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]]
+          "fx": [["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 5], ["xp", 3], ["say", "The coffer opens without another word. The crown is old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]]
         },
         {
           "id": "coffer",
@@ -1539,7 +1543,7 @@
           "say": "No lock holds this shut, only the elder's own doubt. You press the old king's grievance on them, your word against their will, and the elder's hands close on the ledger.",
           "fx": [
             ["check", "will", 11,
-              [["move", "crown", "inv"], ["score", 5], ["xp", 3], ["say", "At last your will outlasts the elder's. Their hands unclench, and they open the coffer. The crown is old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]],
+              [["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 5], ["xp", 3], ["say", "At last your will outlasts the elder's. Their hands unclench, and they open the coffer. The crown is old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]],
               [["addvar", "coffer_will_tries", 1], ["say", "The elder's resolve holds, this time. Ask again, the same question, and press harder — the coffer will give eventually. Or leave it: the barrow verses reach the same end without the crown."]]
             ]
           ]
@@ -1550,7 +1554,7 @@
           "if": [["!class", "envoy"], ["!has", "kings_seal"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_will_tries", ">=", 3]],
           "say": "No lock holds this shut, only the elder's own doubt. You press the old king's grievance on them, your word against their will, and the elder's hands close on the ledger.",
           "fx": [
-            ["move", "crown", "inv"], ["score", 5], ["xp", 3],
+            ["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 5], ["xp", 3],
             ["say", "Patience does what a quick word couldn't — the elder's resolve finally breaks. Their hands unclench, and they open the coffer. The crown is old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]
           ]
         }
@@ -1623,7 +1627,7 @@
           "label": "why do you linger",
           "once": true,
           "say": "My crown. The first reeve took it from my barrow, and my rest went with it — the elder keeps it sealed away now. Bring it back or speak the old verses — either rests me, both together deeper. Break it instead, or draw your blade and end me, if patience runs out. Or kneel and take the crown for your own — that ends your story, no dawn for you.",
-          "fx": [["set", "heard_grievance"], ["score", 10], ["xp", 3]]
+          "fx": [["set", "heard_grievance"], ["setvar", "crown_progress", 1], ["score", 10], ["xp", 3]]
         },
         {
           "id": "blight_talk",

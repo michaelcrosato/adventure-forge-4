@@ -3,6 +3,7 @@
  *
  * new_game -> intro + first menu. act -> one turn (narration + status + next
  * menu in ONE response, so a whole turn is ONE tool call). look -> resync.
+ * status -> progress on every tracked path, any time.
  * Every session appends to a replayable trace in runs/, and the end-of-game
  * receipt is verifiable by `tsx src/crawl.ts --replay <trace>`.
  */
@@ -14,7 +15,7 @@ import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import { inClassPhase, receipt, step } from "./engine.ts";
 import { newState } from "./engine.ts";
-import { render, renderIntro } from "./format.ts";
+import { render, renderIntro, renderStatus } from "./format.ts";
 import { loadWorld, validateWorld } from "./validate.ts";
 import type { Action, State, Trace, World } from "./types.ts";
 
@@ -133,6 +134,20 @@ server.registerTool(
     const sess = resolveSession(s);
     if (!sess) return text(`No such session ${s}. Call new_game.`);
     return text(view(sess, [], true));
+  },
+);
+
+server.registerTool(
+  "status",
+  {
+    description:
+      "Show progress on every tracked path (e.g. verses vs crown). Costs no turn — call it any time.",
+    inputSchema: { s: z.string().describe("Session id.") },
+  },
+  async ({ s }) => {
+    const sess = resolveSession(s);
+    if (!sess) return text(`No such session ${s}. Call new_game.`);
+    return text(renderStatus(world, sess.state));
   },
 );
 

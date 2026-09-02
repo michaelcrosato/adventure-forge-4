@@ -128,6 +128,13 @@ export function render(
   return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
 }
 
+/** Free, any-time progress check (no turn cost) — shows every tracked path, e.g. verses vs crown. */
+export function renderStatus(world: World, s: State): string {
+  const tracks = world.statusTracks ?? (world.progress ? [world.progress] : []);
+  if (!tracks.length) return "No progress to report.";
+  return tracks.map((t) => `${t.label}: ${s.vars[t.var] ?? 0}/${t.max}`).join("\n");
+}
+
 export function renderIntro(
   world: World,
   s: State,

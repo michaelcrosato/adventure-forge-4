@@ -1,7 +1,7 @@
 # tinyforge
 
 An AI-coded, AI-playtested text RPG. A small deterministic engine, an MCP
-server with 3 tools, blind AI playtesters, and a dev loop that only lands
+server with 4 tools, blind AI playtesters, and a dev loop that only lands
 green changes. Content is data. Every claim about the game is proven by a
 replay, not asserted.
 
@@ -119,7 +119,7 @@ src/worldgen.ts   seeded region generator (structure only; text from pools)
 src/format.ts     the token budget lives here
 src/validate.ts   closed-DSL checks + walkthrough and ending proofs
 src/crawl.ts      mechanical crawler + trace replay
-src/mcp.ts        3 tools: new_game / act / look
+src/mcp.ts        4 tools: new_game / act / look / status
 src/player.ts     direct-API fleet lane
 src/triage.ts     reports -> atomic corroborated issues
 src/play.ts       human CLI
