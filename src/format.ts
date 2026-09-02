@@ -137,8 +137,14 @@ export function renderStatus(world: World, s: State): string {
   const lines: string[] = [];
   const recap = world.objectives ?? world.intro;
   if (recap) lines.push(recap);
-  const tracks = world.statusTracks ?? (world.progress ? [world.progress] : []);
-  for (const t of tracks) lines.push(`${t.label}: ${s.vars[t.var] ?? 0}/${t.max}`);
+  type Track = { var: string; label: string; max: number; remaining?: { flag: string; label: string }[] };
+  const tracks: Track[] = world.statusTracks ?? (world.progress ? [world.progress] : []);
+  for (const t of tracks) {
+    let line = `${t.label}: ${s.vars[t.var] ?? 0}/${t.max}`;
+    const remaining = t.remaining?.filter((r) => !s.flags[r.flag]);
+    if (remaining?.length) line += ` (unexplored: ${remaining.map((r) => r.label).join(", ")})`;
+    lines.push(line);
+  }
   if (s.inv.length) {
     const carried = s.inv.map((id) => world.items[id]?.name ?? id);
     lines.push(`carrying: ${carried.join(", ")}`);
