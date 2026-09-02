@@ -521,7 +521,7 @@
       "actions": [
         {
           "id": "pick_coffer",
-          "label": "pick the coffer's lock (scout)",
+          "label": "pick the coffer's lock (scout, DC 11)",
           "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", "<", 3]],
           "fx": [
             ["check", "grace", 11,
@@ -532,7 +532,7 @@
         },
         {
           "id": "pick_coffer_persist",
-          "label": "pick the coffer's lock (scout)",
+          "label": "pick the coffer's lock (scout, DC 11)",
           "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", ">=", 3]],
           "fx": [
             ["move", "crown", "inv"], ["score", 5], ["xp", 3],
@@ -575,7 +575,7 @@
         },
         {
           "id": "water_scout",
-          "label": "trace the water verse by touch (scout, grace)",
+          "label": "trace the water verse by touch (scout, grace, DC 9)",
           "if": [["class", "scout"], ["!flag", "verse_water"], ["var", "water_trace_tries", "<", 3]],
           "fx": [
             ["check", "grace", 9,
@@ -586,7 +586,7 @@
         },
         {
           "id": "water_scout_persist",
-          "label": "trace the water verse by touch (scout, grace)",
+          "label": "trace the water verse by touch (scout, grace, DC 9)",
           "if": [["class", "scout"], ["!flag", "verse_water"], ["var", "water_trace_tries", ">=", 3]],
           "fx": [
             ["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3],
@@ -772,7 +772,7 @@
         },
         {
           "id": "pick_vault",
-          "label": "pick the strongbox's lock (scout)",
+          "label": "pick the strongbox's lock (scout, DC 11)",
           "if": [["class", "scout"], ["!flag", "vault_opened"], ["var", "vault_pick_tries", "<", 3]],
           "fx": [
             ["check", "grace", 11,
@@ -783,7 +783,7 @@
         },
         {
           "id": "pick_vault_persist",
-          "label": "pick the strongbox's lock (scout)",
+          "label": "pick the strongbox's lock (scout, DC 11)",
           "if": [["class", "scout"], ["!flag", "vault_opened"], ["var", "vault_pick_tries", ">=", 3]],
           "fx": [
             ["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3],
@@ -820,7 +820,7 @@
         },
         {
           "id": "stone_scout",
-          "label": "trace the stone walls by touch (scout, grace)",
+          "label": "trace the stone walls by touch (scout, grace, DC 9)",
           "if": [["class", "scout"], ["!flag", "verse_stone"], ["var", "stone_trace_tries", "<", 3]],
           "fx": [
             ["check", "grace", 9,
@@ -831,7 +831,7 @@
         },
         {
           "id": "stone_scout_persist",
-          "label": "trace the stone walls by touch (scout, grace)",
+          "label": "trace the stone walls by touch (scout, grace, DC 9)",
           "if": [["class", "scout"], ["!flag", "verse_stone"], ["var", "stone_trace_tries", ">=", 3]],
           "fx": [
             ["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3],
@@ -867,7 +867,7 @@
       "actions": [
         {
           "id": "slip_past",
-          "label": "slip past the wight (scout)",
+          "label": "slip past the wight (scout, DC 13)",
           "if": [["class", "scout"], ["!npcDead", "barrow_wight"]],
           "fx": [
             ["check", "grace", 13,
