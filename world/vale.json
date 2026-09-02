@@ -666,13 +666,13 @@
     },
     "drowned_chapel": {
       "name": "Drowned Shrine",
-      "desc": "Half a chapel, sunk to its windows in black water. A stone psalter stands above the waterline, its verses cut for a king who cannot rest.",
+      "desc": "Half a chapel, sunk to its windows in black water. A stone psalter stands above the waterline, its verses cut for a king who cannot rest. West climbs to the barrow.",
       "brief": "Black water, stone psalter.",
       "onEnterOnce": [["xp", 2], ["set", "found_chapel_trail"]],
       "actions": [
         {
           "id": "trail_to_gate_from_chapel",
-          "label": "follow the trail south to the village square",
+          "label": "follow the trail back to the square",
           "if": [["flag", "found_chapel_trail"]],
           "fx": [["goto", "square"]]
         },
