@@ -14,5 +14,7 @@ RULES
 - If you changed content, keep the walkthrough a true full-score win (the
   validator replays it — update the walkthrough in the same change if needed).
 - Never edit loop/, AGENT.md, or delete tests. You may ADD tests.
-- Do NOT commit — the driver commits after re-verifying.
+- Do NOT commit, and do NOT move, rename, or delete anything under queue/ or
+  done/ (including the finding file above) — the driver does all of that
+  itself after you finish, whether you land a change or not.
 - End with 2-3 lines: what you changed, why, and what verify said.

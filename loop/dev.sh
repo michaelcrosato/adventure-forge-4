@@ -83,8 +83,15 @@ for ((c = 1; c <= CYCLES; c++)); do
   fi
 
   FAILS=0
-  TITLE="$(node -e 'const f=JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"));console.log((f.title||f.bugs?.[0]?.what||f.kind||"finding").slice(0,60))' "$FINDING")"
-  mkdir -p done && mv "$FINDING" "done/$(basename "$FINDING")"
+  mkdir -p done
+  DEST="done/$(basename "$FINDING")"
+  # the agent is told never to touch queue/done itself, but stay resilient if
+  # $FINDING is already gone from queue/ (e.g. an earlier interrupted run) —
+  # read wherever it actually is rather than crash on a stale queue/ path
+  READ_FROM="$FINDING"; [[ -f "$FINDING" ]] || READ_FROM="$DEST"
+  TITLE="finding"
+  [[ -f "$READ_FROM" ]] && TITLE="$(node -e 'const f=JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"));console.log((f.title||f.bugs?.[0]?.what||f.kind||"finding").slice(0,60))' "$READ_FROM")"
+  [[ -f "$FINDING" ]] && mv "$FINDING" "$DEST"
   git add -A
   git commit -q -m "loop: $TITLE" -m "finding: $(basename "$FINDING") | verified: npm run verify green"
   echo "✓ cycle $c landed: $(git log -1 --format=%h) loop: $TITLE"
