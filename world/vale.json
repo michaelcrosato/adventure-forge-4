@@ -994,6 +994,14 @@
           "fx": [["set", "promised_seal"], ["addvar", "rep_reeve", 1]]
         },
         {
+          "id": "decline_seal",
+          "label": "tell the reeve you won't promise that",
+          "if": [["flag", "heard_reeve_ask"], ["!flag", "promised_seal"]],
+          "once": true,
+          "say": "Then say so plain, and I'll hold nothing against you for it. The doors stay open when the king rests — no promise made, none broken. Ask again before you're done, if you change your mind.",
+          "fx": [["addvar", "rep_reeve", -1]]
+        },
+        {
           "id": "aid",
           "label": "the watch's aid",
           "if": [["flag", "promised_seal"]],
