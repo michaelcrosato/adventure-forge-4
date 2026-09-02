@@ -97,6 +97,28 @@ test("an unconditional exit previews nothing", () => {
   assert.equal(oddsHint(world, state, { kind: "go", dir: "north" }), "");
 });
 
+test("an unlocked exit with a landmark previews the destination", () => {
+  const world = mini({
+    rooms: { a: { name: "A", desc: "A.", exits: { west: { to: "a", landmark: "hunter's camp" } } } },
+  });
+  const { state } = newState(world, 1);
+  assert.equal(oddsHint(world, state, { kind: "go", dir: "west" }), " (toward hunter's camp)");
+});
+
+test("a locked exit's own hint takes priority over a landmark on the same exit", () => {
+  const world = mini({
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        exits: { west: { to: "a", if: [["has", "key"]], hint: "find the key", landmark: "hunter's camp" } },
+      },
+    },
+  });
+  const { state } = newState(world, 1);
+  assert.equal(oddsHint(world, state, { kind: "go", dir: "west" }), " (locked: find the key)");
+});
+
 test("actions with no check preview nothing", () => {
   const world = mini({
     rooms: {

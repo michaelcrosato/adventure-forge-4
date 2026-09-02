@@ -464,7 +464,7 @@ export function oddsHint(world: World, s: State, a: Action): string {
     const exit = world.rooms[s.room]?.exits?.[a.dir];
     if (exit?.if && !condsOk(world, s, exit.if))
       return exit.hint ? ` (locked: ${exit.hint})` : " (locked)";
-    return "";
+    return exit?.landmark ? ` (toward ${exit.landmark})` : "";
   }
   const fx = fxFor(world, s, a);
   const chk = fx?.[0];

@@ -42,6 +42,7 @@ export type ExitDef = {
   if?: Cond[]; // all must pass, else lockedMsg
   lockedMsg?: string;
   hint?: string; // short "what's missing" clue shown in the menu while locked, before a turn is wasted
+  landmark?: string; // short destination preview shown in the menu once unlocked, e.g. "hunter's camp"
   sideTrip?: boolean; // optional content off the main path; exits line marks it unexplored until the destination is visited
 };
 
@@ -155,7 +156,7 @@ export type GenDef = {
   w: number;
   h: number;
   pools: { descs: string[]; briefs?: string[] }; // text is data, drawn by seeded PRNG
-  links: { cell: [number, number]; dir: string; to: string; back?: string }[];
+  links: { cell: [number, number]; dir: string; to: string; back?: string; landmark?: string }[];
   spots?: GenSpot[];
 };
 

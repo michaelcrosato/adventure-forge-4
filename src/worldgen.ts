@@ -59,7 +59,7 @@ function expandRegion(world: World, g: GenDef): void {
     if (!inBounds(x, y)) throw new Error(`gen ${g.id}: link cell ${x},${y} out of bounds`);
     const from = world.rooms[cellId(g, x, y)]!;
     if (from.exits![link.dir]) throw new Error(`gen ${g.id}: link overwrites exit ${link.dir} at ${x},${y}`);
-    from.exits![link.dir] = { to: link.to };
+    from.exits![link.dir] = { to: link.to, landmark: link.landmark };
     if (link.back) {
       const target = world.rooms[link.to];
       if (target) {
