@@ -16,7 +16,7 @@
     },
     "scout": {
       "name": "Scout",
-      "desc": "handles either path — quick and quiet; springs locks, and can puzzle out a verse by touch (grace), though a scholar reads one faster",
+      "desc": "handles either path — quick and quiet; springs locks, and traces any verse by touch, no roll needed",
       "attrs": { "grace": 2, "wits": 1 },
       "hp": 2,
       "items": ["hunting_knife"]
@@ -577,23 +577,9 @@
         },
         {
           "id": "water_scout",
-          "label": "trace the water verse by touch (scout, grace, DC 9)",
-          "if": [["class", "scout"], ["!flag", "verse_water"], ["var", "water_trace_tries", "<", 3]],
-          "fx": [
-            ["check", "grace", 9,
-              [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the worn grooves, reading the shape of the words by feel: 'Let the water take what grief the living cannot; lay it down, and rest.' Water Verse: obtained."]],
-              [["addvar", "water_trace_tries", 1], ["say", "The grooves give up nothing yet. Slow going without a scholar's eye — not shut to one; a defter touch (grace) reads it faster, and nothing is lost by trying again: patience alone carries the third try. Or leave it: the elder's crown reaches the same end without a verse."]]
-            ]
-          ]
-        },
-        {
-          "id": "water_scout_persist",
-          "label": "trace the water verse by touch (scout, grace, DC 9)",
-          "if": [["class", "scout"], ["!flag", "verse_water"], ["var", "water_trace_tries", ">=", 3]],
-          "fx": [
-            ["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3],
-            ["say", "Patience does what a quick touch couldn't — the grooves finally give up their shape: 'Let the water take what grief the living cannot; lay it down, and rest.' Water Verse: obtained."]
-          ]
+          "label": "trace the water verse by touch (scout)",
+          "if": [["class", "scout"], ["!flag", "verse_water"]],
+          "fx": [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the worn grooves — a scout's touch never misses a verse: 'Let the water take what grief the living cannot; lay it down, and rest.' Water Verse: obtained."]]
         },
         {
           "id": "water_puzzle",
@@ -628,23 +614,9 @@
         },
         {
           "id": "wind_scout",
-          "label": "trace the wind carvings by touch (scout, grace, DC 9)",
-          "if": [["class", "scout"], ["!flag", "verse_wind"], ["var", "wind_trace_tries", "<", 3]],
-          "fx": [
-            ["check", "grace", 9,
-              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the wind-worn cuts, reading the shape of the words by feel: 'Let the wind take what iron could not; lay it down, and rest.' Wind Verse: obtained."]],
-              [["addvar", "wind_trace_tries", 1], ["say", "The cuts give up nothing yet. Slow going without a scholar's eye — not shut to one; a defter touch (grace) reads it faster, and nothing is lost by trying again: patience alone carries the third try. Or leave it: the elder's crown reaches the same end without a verse."]]
-            ]
-          ]
-        },
-        {
-          "id": "wind_scout_persist",
-          "label": "trace the wind carvings by touch (scout, grace, DC 9)",
-          "if": [["class", "scout"], ["!flag", "verse_wind"], ["var", "wind_trace_tries", ">=", 3]],
-          "fx": [
-            ["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3],
-            ["say", "Patience does what a quick touch couldn't — the cuts finally give up their shape: 'Let the wind take what iron could not; lay it down, and rest.' Wind Verse: obtained."]
-          ]
+          "label": "trace the wind carvings by touch (scout)",
+          "if": [["class", "scout"], ["!flag", "verse_wind"]],
+          "fx": [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the wind-worn cuts — a scout's touch never misses a verse: 'Let the wind take what iron could not; lay it down, and rest.' Wind Verse: obtained."]]
         },
         {
           "id": "wind_puzzle",
@@ -835,23 +807,9 @@
         },
         {
           "id": "stone_scout",
-          "label": "trace the stone walls by touch (scout, grace, DC 9)",
-          "if": [["class", "scout"], ["!flag", "verse_stone"], ["var", "stone_trace_tries", "<", 3]],
-          "fx": [
-            ["check", "grace", 9,
-              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the deep-cut letters, reading the shape of the words by feel: 'Let the stone remember what flesh forgets; lay it down, and rest.' Cut beneath it, a stair leads up. Stone Verse: obtained."]],
-              [["addvar", "stone_trace_tries", 1], ["say", "The cuts give up nothing yet. Slow going without a scholar's eye — not shut to one; a defter touch (grace) reads it faster, and nothing is lost by trying again: patience alone carries the third try. Or leave it: the crypt below the antechamber reaches the throne without this verse, if the crown is your road."]]
-            ]
-          ]
-        },
-        {
-          "id": "stone_scout_persist",
-          "label": "trace the stone walls by touch (scout, grace, DC 9)",
-          "if": [["class", "scout"], ["!flag", "verse_stone"], ["var", "stone_trace_tries", ">=", 3]],
-          "fx": [
-            ["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3],
-            ["say", "Patience does what a quick touch couldn't — the shape of the letters finally gives itself up: 'Let the stone remember what flesh forgets; lay it down, and rest.' Cut beneath it, a stair leads up. Stone Verse: obtained."]
-          ]
+          "label": "trace the stone walls by touch (scout)",
+          "if": [["class", "scout"], ["!flag", "verse_stone"]],
+          "fx": [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers trace the deep-cut letters — a scout's touch never misses a verse: 'Let the stone remember what flesh forgets; lay it down, and rest.' Cut beneath it, a stair leads up. Stone Verse: obtained."]]
         },
         {
           "id": "stone_puzzle",
