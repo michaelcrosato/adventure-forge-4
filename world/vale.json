@@ -471,16 +471,40 @@
           "fx": [["say", "None of the three verses are yours yet — look for them in the drowned shrine, the old watchtower, and the barrow's own walls. Or leave them: the elder's crown reaches the same end without a verse."]]
         },
         {
-          "id": "verse_tally_1",
+          "id": "verse_tally_1_stone",
           "label": "take stock of the verses",
-          "if": [["var", "verses_known", "=", 1]],
-          "fx": [["say", "Verses gathered: 1/3. Not required — the elder's crown alone reaches the same end."]]
+          "if": [["var", "verses_known", "=", 1], ["flag", "verse_stone"]],
+          "fx": [["say", "Verses gathered: 1/3. Two remain — one in the drowned shrine, one atop the old watchtower. Not required — the elder's crown alone reaches the same end."]]
         },
         {
-          "id": "verse_tally_2",
+          "id": "verse_tally_1_water",
           "label": "take stock of the verses",
-          "if": [["var", "verses_known", "=", 2]],
-          "fx": [["say", "Verses gathered: 2/3. Still not required — the elder's crown alone reaches the same end."]]
+          "if": [["var", "verses_known", "=", 1], ["flag", "verse_water"]],
+          "fx": [["say", "Verses gathered: 1/3. Two remain — one atop the old watchtower, one cut into the barrow's own walls. Not required — the elder's crown alone reaches the same end."]]
+        },
+        {
+          "id": "verse_tally_1_wind",
+          "label": "take stock of the verses",
+          "if": [["var", "verses_known", "=", 1], ["flag", "verse_wind"]],
+          "fx": [["say", "Verses gathered: 1/3. Two remain — one in the drowned shrine, one cut into the barrow's own walls. Not required — the elder's crown alone reaches the same end."]]
+        },
+        {
+          "id": "verse_tally_2_stone",
+          "label": "take stock of the verses",
+          "if": [["var", "verses_known", "=", 2], ["!flag", "verse_stone"]],
+          "fx": [["say", "Verses gathered: 2/3. One remains, cut into the barrow's own walls. Still not required — the elder's crown alone reaches the same end."]]
+        },
+        {
+          "id": "verse_tally_2_water",
+          "label": "take stock of the verses",
+          "if": [["var", "verses_known", "=", 2], ["!flag", "verse_water"]],
+          "fx": [["say", "Verses gathered: 2/3. One remains, in the drowned shrine. Still not required — the elder's crown alone reaches the same end."]]
+        },
+        {
+          "id": "verse_tally_2_wind",
+          "label": "take stock of the verses",
+          "if": [["var", "verses_known", "=", 2], ["!flag", "verse_wind"]],
+          "fx": [["say", "Verses gathered: 2/3. One remains, atop the old watchtower. Still not required — the elder's crown alone reaches the same end."]]
         },
         {
           "id": "verse_tally_3",
