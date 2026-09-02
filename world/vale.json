@@ -721,9 +721,20 @@
         {
           "id": "wind_scout",
           "label": "trace the wind carvings by touch (scout, DC 7)",
-          "if": [["class", "scout"], ["!flag", "verse_wind"]],
+          "if": [["class", "scout"], ["!flag", "verse_wind"], ["!flag", "wind_scout_failed"]],
           "fx": [
             ["check", "grace", 7,
+              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers find the wind-worn cuts and trace them true: 'Let the wind take what iron could not; lay it down, and rest.' Wind Verse: obtained."]],
+              [["set", "wind_scout_failed"], ["say", "The cuts stay unreadable this pass — quiet hands don't always find their mark, and the wind's scoured the grooves shallower. Nothing is lost by trying again, but the next reading wants a steadier touch."]]
+            ]
+          ]
+        },
+        {
+          "id": "wind_scout_retry",
+          "label": "trace the wind carvings again, steadier now (scout, DC 9)",
+          "if": [["class", "scout"], ["!flag", "verse_wind"], ["flag", "wind_scout_failed"]],
+          "fx": [
+            ["check", "grace", 9,
               [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "Quiet fingers find the wind-worn cuts and trace them true: 'Let the wind take what iron could not; lay it down, and rest.' Wind Verse: obtained."]],
               [["say", "The cuts stay unreadable this pass — quiet hands don't always find their mark. Nothing is lost by trying again."]]
             ]
