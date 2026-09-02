@@ -442,7 +442,7 @@
           "if": [["flag", "notice_board_4"], ["!flag", "notice_board_5"]],
           "fx": [
             ["set", "notice_board_5"],
-            ["say", "Smaller print at the bottom: past the antechamber, the barrow's own crypt still holds an old mail shirt for whoever fetches it — armor enough to blunt every blow after, plunder alone, no bearing on how the king rests. Whichever road you take there, verse or crown, it settles which doors you're free to promise shut later — the reeve and the gray priest each want a different one, and you can't swear both."]
+            ["say", "Smaller print at the bottom: past the antechamber, the barrow's own crypt still holds an old mail shirt for whoever fetches it — real armor, worth the detour, though it settles nothing about how the king rests. Whichever road you take there, verse or crown, it settles which doors you're free to promise shut later — the reeve and the gray priest each want a different one, and you can't swear both."]
           ]
         },
         {
@@ -832,7 +832,7 @@
     },
     "antechamber": {
       "name": "Barrow Antechamber",
-      "desc": "Cut stone, older than the village, cold and faintly echoing. Shelf niches stand empty, robbed bare long before you arrived. A passage north leads to the Hall of Verses, then on toward the throne. Two side trips branch off here, optional loot no ending needs, verse or crown alike: east, a heavy door iron-strapped like a vault holds a locked strongbox — force or pick it for the king's seal, a shortcut past the elder's doubt on the crown road, though the crown opens either way. Down, a crypt holds a mail shirt for the taking, armor and nothing more. (A * on an exit below marks one of these, unexplored.)",
+      "desc": "Cut stone, older than the village, cold and faintly echoing. Shelf niches stand empty, robbed bare long before you arrived. A passage north leads to the Hall of Verses, then on toward the throne. Two side trips branch off here, worth the detour before the fights ahead, verse or crown alike: east, a heavy door iron-strapped like a vault holds a locked strongbox — force or pick it for the king's seal, real armor once carried, plus a shortcut past the elder's doubt on the crown road. Down, a crypt holds a mail shirt, armor enough to blunt every blow after. Neither is needed for any ending. (A * on an exit below marks one of these, unexplored.)",
       "brief": "Empty niches. (A * below marks an unexplored side path — optional, nothing the ending needs.)",
       "exits": {
         "south": { "to": "barrow_field" },
@@ -855,7 +855,7 @@
           "if": [["!class", "scout"], ["!class", "warden"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_force_tries", "<", 2]],
           "fx": [
             ["check", "might", 12,
-              [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "The rusted lock snaps at last. Inside: a seal of office, wrapped around a scrap of the king's own writing."]],
+              [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "The rusted lock snaps at last. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
               [["addvar", "vault_force_tries", 1], ["say", "The lock holds, this time. Rusted iron, not sealed magic — but it won't take much more before it warps past use."]]
             ]
           ]
@@ -866,7 +866,7 @@
           "if": [["!class", "scout"], ["!class", "warden"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_force_tries", ">=", 2]],
           "fx": [
             ["check", "might", 12,
-              [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "One last heave and the rusted lock snaps. Inside: a seal of office, wrapped around a scrap of the king's own writing."]],
+              [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "One last heave and the rusted lock snaps. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
               [["set", "vault_jammed"], ["say", "One blow too many — the lock warps shut, iron folding on itself. Whatever's inside stays inside now. Nothing else is lost — the elder still opens the coffer for grief alone, no seal needed."]]
             ]
           ]
@@ -875,7 +875,7 @@
           "id": "force_vault_warden",
           "label": "force the strongbox (warden)",
           "if": [["class", "warden"], ["!flag", "vault_opened"]],
-          "fx": [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "One good strike and the rusted lock gives at once — no need to keep at it. Inside: a seal of office, wrapped around a scrap of the king's own writing."]]
+          "fx": [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "One good strike and the rusted lock gives at once — no need to keep at it. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]]
         },
         {
           "id": "pick_vault",
@@ -883,7 +883,7 @@
           "if": [["class", "scout"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", "<", 2]],
           "fx": [
             ["check", "grace", 11,
-              [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "The old pins give way, one by one. Inside: a seal of office, wrapped around a scrap of the king's own writing."]],
+              [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "The old pins give way, one by one. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
               [["addvar", "vault_pick_tries", 1], ["say", "Not yet, but the pins are turning. Keep at it — though a lock this old won't forgive too many failed tries."]]
             ]
           ]
@@ -894,7 +894,7 @@
           "if": [["class", "scout"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", ">=", 2]],
           "fx": [
             ["check", "grace", 11,
-              [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "Patience does what the first tries couldn't — the old pins finally give way, one by one. Inside: a seal of office, wrapped around a scrap of the king's own writing."]],
+              [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "Patience does what the first tries couldn't — the old pins finally give way, one by one. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
               [["set", "vault_jammed"], ["say", "The last pin snaps under too much strain. The lock seizes for good — whatever's inside stays inside now. Nothing else is lost — the elder still opens the coffer for grief alone, no seal needed."]]
             ]
           ]
@@ -1610,7 +1610,7 @@
           "id": "old_barrow",
           "label": "the old barrow",
           "once": true,
-          "say": "Doors face north, sealed since before me. But roots and old rain hollowed the hill's flank some seasons back — a gap under a fallen stone, if the doors ever give you trouble. Talk is there's a locked strongbox in there too, and a crypt with an old suit of mail — no one I know has come back with either. Just plunder, though; neither one stands between you and the throne, or how it ends.",
+          "say": "Doors face north, sealed since before me. But roots and old rain hollowed the hill's flank some seasons back — a gap under a fallen stone, if the doors ever give you trouble. Talk is there's a locked strongbox in there too, and a crypt with an old suit of mail — real armor, both of them, worth the trouble if you can crack the lock or reach the crypt. Neither one stands between you and the throne, or how it ends.",
           "fx": [["xp", 2]]
         }
       ]
