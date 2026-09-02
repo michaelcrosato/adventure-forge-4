@@ -1474,6 +1474,14 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "tell_stolen_crown",
+          "label": "tell the elder about the king's stolen crown",
+          "if": [["flag", "heard_grievance"], ["!has", "crown"]],
+          "once": true,
+          "say": "You tell the elder what the old king grieves for: his crown, taken from the barrow. \"I know,\" the elder says. \"Bring me proof of that grief — his own words, or his seal — and the coffer opens.\"",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "coffer_sealed",
           "label": "the sealed coffer",
           "if": [["!flag", "heard_grievance"], ["!has", "kings_seal"]],
