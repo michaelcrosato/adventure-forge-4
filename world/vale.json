@@ -441,6 +441,15 @@
           ]
         },
         {
+          "id": "notice_board_6",
+          "label": "read the notice board again",
+          "if": [["flag", "notice_board_5"], ["!flag", "notice_board_6"]],
+          "fx": [
+            ["set", "notice_board_6"],
+            ["say", "One more scrap, pinned below the rest: the forge east keeps its smith glad of the company — a plain sword and a proper edge for whoever asks, no charge, no strings, blade or verse or crown notwithstanding."]
+          ]
+        },
+        {
           "id": "trail_to_barrow_from_square",
           "label": "follow the trail north to the barrow",
           "if": [["flag", "found_barrow_trail"]],
