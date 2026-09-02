@@ -503,7 +503,29 @@
       "name": "Elder's House",
       "desc": "Ledgers, dust, and an iron coffer on the mantel, locked over some old claim. The elder receives you without a smile. The shutters are closed against the wood. The chapel lies west.",
       "brief": "The locked coffer.",
-      "exits": { "west": { "to": "chapel" } }
+      "exits": { "west": { "to": "chapel" } },
+      "actions": [
+        {
+          "id": "pick_coffer",
+          "label": "pick the coffer's lock (scout)",
+          "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", "<", 3]],
+          "fx": [
+            ["check", "grace", 11,
+              [["move", "crown", "inv"], ["score", 5], ["xp", 3], ["say", "Quiet fingers find the old lock's give while the elder's back is turned — quicker than any argument. Inside: the crown, old iron, heavy for its size. The road back feels shorter now — you know these trails, and don't need to think about each turn."]],
+              [["addvar", "coffer_pick_tries", 1], ["say", "Not yet, but the pins are turning. Keep working the lock, or press your case instead."]]
+            ]
+          ]
+        },
+        {
+          "id": "pick_coffer_persist",
+          "label": "pick the coffer's lock (scout)",
+          "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", ">=", 3]],
+          "fx": [
+            ["move", "crown", "inv"], ["score", 5], ["xp", 3],
+            ["say", "Patience does what a quick try couldn't — the old pins finally give. Inside: the crown, old iron, heavy for its size. The road back feels shorter now — you know these trails, and don't need to think about each turn."]
+          ]
+        }
+      ]
     },
     "hunters_camp": {
       "name": "Hunter's Camp",
