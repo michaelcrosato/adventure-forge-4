@@ -1492,7 +1492,7 @@
       "use": [
         {
           "if": [["!flag", "opened_locket"]],
-          "fx": [["set", "opened_locket"], ["xp", 2], ["say", "The clasp gives with a little coaxing. Inside, a lock of hair gone gray and a name scratched into the tin backing — no one you've heard mentioned in the square. Whoever dropped this down the well meant it to stay lost."]]
+          "fx": [["set", "opened_locket"], ["xp", 2], ["say", "The clasp gives with a little coaxing. Inside, a lock of hair gone gray and a name scratched into the tin backing — no one you've heard mentioned in the square. Whoever dropped this down the well meant it to stay lost. Worth asking after, back at the inn."]]
         },
         {
           "fx": [["say", "A lock of gray hair, and a scratched name you don't know."]]
@@ -1704,6 +1704,14 @@
           "once": true,
           "say": "Even the reeve's watch drink here on their nights off — you'd be surprised what loosens over a second cup. Ask around long enough and half the vale's secrets end up on this counter, one way or another.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "show_locket",
+          "label": "the locket from the well",
+          "if": [["has", "widows_locket"]],
+          "once": true,
+          "say": "The innkeep turns it over once, thumb catching on the scratched name, and shakes their head. \"Not one I know, and I know most who've passed through this square.\" A pause. \"Half the vale's secrets end up on this counter eventually. Guess that one never did.\"",
+          "fx": [["xp", 2]]
         }
       ]
     },
