@@ -214,6 +214,40 @@ test("a check's post-roll event states the total vs DC directly, and success tra
   assert.equal(verdict === "success", Number(total) >= Number(dc));
 });
 
+test("a near-miss fail (within 2 of the DC) gets an extra cue; other outcomes don't", () => {
+  // Regression for a playtest report: "pins are turning" read the same on a
+  // roll that missed by 1 as one that missed by 10. Swept across seeds
+  // (rather than pinned to one hand-picked roll) so the assertion tracks the
+  // actual near-miss/fail logic, not one lucky die.
+  const world = mini({
+    classes: { sage: { name: "Sage", desc: "wise", attrs: { wits: 3 } } },
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        actions: [{ id: "riddle", label: "riddle", fx: [["check", "wits", 11, [["say", "ok"]], [["say", "no"]]]] }],
+      },
+    },
+  });
+  let sawNearMiss = false;
+  let sawFarMiss = false;
+  for (let seed = 1; seed <= 40; seed++) {
+    let { state } = newState(world, seed);
+    state = step(world, state, { kind: "classpick", id: "sage" }).state;
+    const { events } = step(world, state, { kind: "custom", room: "a", id: "riddle" });
+    const line = events.find((e) => e.startsWith("WITS d20:"))!;
+    const m = line.match(/=(\d+) vs DC (\d+) .* — (success|fail)\./)!;
+    const [, totalStr, dcStr, verdict] = m;
+    const near = verdict === "fail" && Number(dcStr) - Number(totalStr) <= 2;
+    const cue = events[events.indexOf(line) + 1];
+    assert.equal(cue === "So close — that one nearly landed.", near, `seed ${seed}: "${line}" -> cue "${cue}"`);
+    if (near) sawNearMiss = true;
+    if (verdict === "fail" && !near) sawFarMiss = true;
+  }
+  assert.ok(sawNearMiss, "sweep never hit a near-miss fail — widen the seed range");
+  assert.ok(sawFarMiss, "sweep never hit a wide-miss fail — widen the seed range");
+});
+
 test("odds text does not appear in actionByLabel matching (walkthroughs stay stable)", () => {
   const world = mini({
     rooms: {

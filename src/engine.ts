@@ -284,6 +284,12 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         events.push(
           `${skill.toUpperCase()} d20:${roll}+${mod}${breakdown}=${total} vs DC ${dc} (${dc}+ succeeds) — ${ok ? "success" : "fail"}.`,
         );
+        // A separate line, not appended to the one above, so it can't perturb
+        // odds.test.ts's line-anchored regex on the roll event. Fires only on
+        // a fail within 2 of the DC — close enough that a player weighing
+        // "try again?" benefits from knowing the attempt nearly landed,
+        // distinct from a wide miss that says nothing more.
+        if (!ok && dc - total <= 2) events.push("So close — that one nearly landed.");
         applyFx(world, s, ok ? okFx : failFx, events);
         break;
       }
