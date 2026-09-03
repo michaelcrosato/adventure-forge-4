@@ -1750,9 +1750,17 @@
           ]
         },
         {
+          "id": "old_tongue_scout",
+          "label": "about the old tongue",
+          "if": [["class", "scout"]],
+          "once": true,
+          "say": "You've a trick of your own already, and a stranger one than mine — quiet fingers finding the shape of a word the same way they'd find a lock's give, no eye needed at all. There's no tip of mine that improves on that. Carry a sharper mind with you regardless; it never hurts.",
+          "fx": [["perk", "scholars_tip"], ["score", 5], ["xp", 2]]
+        },
+        {
           "id": "old_tongue",
           "label": "about the old tongue",
-          "if": [["!class", "scholar"]],
+          "if": [["!class", "scholar"], ["!class", "scout"]],
           "once": true,
           "say": "I've spent years on stones like these. Watch how the marks repeat, and the pattern starts to show. Carry that with you — it should ease any verse you find out there.",
           "fx": [["perk", "scholars_tip"], ["score", 5], ["xp", 2]]
