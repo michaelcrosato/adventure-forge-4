@@ -321,8 +321,9 @@
         {
           "cell": [0, 0],
           "name": "Widow's Well",
-          "desc": "A stone well, dry and capped with a warped board. No one has drawn water here in years. East, the trees thin toward the barrow hill.",
+          "desc": "A stone well, dry and capped with a warped board. Someone pried up one corner once and never set it right — a tarnished locket glints in the gap. No one has drawn water here in years. East, the trees thin toward the barrow hill.",
           "brief": "The dry well. The barrow hill lies east; the wood continues south.",
+          "items": ["widows_locket"],
           "onEnterOnce": [["xp", 1]],
           "actions": [
             {
@@ -1402,6 +1403,21 @@
         },
         {
           "fx": [["say", "The band's worn words: 'Let the crown remember whose grief it bore; lay it down, and rest.'"]]
+        }
+      ]
+    },
+    "widows_locket": {
+      "name": "tarnished locket",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "Open it to see what's inside.",
+      "use": [
+        {
+          "if": [["!flag", "opened_locket"]],
+          "fx": [["set", "opened_locket"], ["xp", 2], ["say", "The clasp gives with a little coaxing. Inside, a lock of hair gone gray and a name scratched into the tin backing — no one you've heard mentioned in the square. Whoever dropped this down the well meant it to stay lost."]]
+        },
+        {
+          "fx": [["say", "A lock of gray hair, and a scratched name you don't know."]]
         }
       ]
     },
