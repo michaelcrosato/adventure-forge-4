@@ -496,10 +496,12 @@ function fxFor(world: World, s: State, a: Action): Fx[] | undefined {
  * explicitly — not "needs a total of N+" — because real players read an
  * ambiguous "needs N+" as the roll-plus-modifier total and then called a
  * correct fail a bug when their raw roll fell short but their total didn't.
- * For a skill check with a nonzero modifier, also names it ("+3 wits") so a
- * later "vs DC 12" in the post-roll event doesn't read as a different, higher
- * number than the "roll 8+" just previewed — same check, two frames (die-only
- * here, total-vs-DC there), bridged by the modifier appearing in both.
+ * Always names the stat it checks ("wits") so a player can judge whether
+ * they should attempt it before rolling, even with no modifier; a nonzero
+ * modifier is shown too ("+3 wits") so a later "vs DC 12" in the post-roll
+ * event doesn't read as a different, higher number than the "roll 8+" just
+ * previewed — same check, two frames (die-only here, total-vs-DC there),
+ * bridged by the modifier appearing in both.
  * A "use" action with no check instead previews the item's own `hint` (if
  * any), e.g. "use iron crown (worth reading)" — an inventory item's use
  * option can appear in every room, far from wherever it was picked up, so
@@ -529,7 +531,7 @@ export function oddsHint(world: World, s: State, a: Action): string {
   if (chk && chk[0] === "check") {
     const mod = checkMod(world, s, chk[1]);
     const need = Math.max(1, chk[2] - mod);
-    if (!mod) return ` (roll ${need}+ on the die)`;
+    if (!mod) return ` (roll ${need}+ on the die, ${chk[1]})`;
     return ` (roll ${need}+ on the die, ${mod > 0 ? "+" : ""}${mod} ${chk[1]})`;
   }
   if (a.kind === "use") {

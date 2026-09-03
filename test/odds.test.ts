@@ -41,7 +41,7 @@ test("a check-first custom action previews the d20 threshold, net of mods", () =
   assert.equal(actionLabel(world, a, state), "riddle");
 });
 
-test("a check with no modifier previews the die threshold alone", () => {
+test("a check with no modifier still names the stat it uses", () => {
   const world = mini({
     rooms: {
       a: {
@@ -53,7 +53,7 @@ test("a check with no modifier previews the die threshold alone", () => {
   });
   const { state } = newState(world, 1);
   const a = { kind: "custom", room: "a", id: "riddle" } as Action;
-  assert.equal(oddsHint(world, state, a), " (roll 11+ on the die)"); // no class picked, mod 0
+  assert.equal(oddsHint(world, state, a), " (roll 11+ on the die, wits)"); // no class picked, mod 0
 });
 
 test("an attack previews the roll needed against the target's defense", () => {
