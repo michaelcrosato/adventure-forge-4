@@ -1299,6 +1299,18 @@
           "fx": [["set", "mail_shirt_worth_noted"], ["xp", 2], ["say", "It never needed a fight to earn its keep. Every step since the crypt, it's been doing its work regardless — you just never felt the difference, because it never let a blow land hard enough for you to."]]
         },
         {
+          "id": "consider_wolf_fang",
+          "label": "turn the ash wolf's fang over in your hand",
+          "if": [["has", "wolf_fang"], ["!flag", "wolf_fang_worth_noted"], ["!npcDead", "hollow_king"]],
+          "fx": [["set", "wolf_fang_worth_noted"], ["xp", 2], ["say", "You took its fang, not its choosing — it was already unmade by the same grief leaking out of this hill, same as the fields, same as everything else gone gray in the wood. One less thing starving out there won't rest him. But whether the barrow keeps making more of them, past tonight, is still yours to decide."]]
+        },
+        {
+          "id": "consider_wolf_rib",
+          "label": "turn the gaunt wolf's rib-bone over in your hand",
+          "if": [["has", "wolf_rib"], ["!flag", "wolf_rib_worth_noted"], ["!npcDead", "hollow_king"]],
+          "fx": [["set", "wolf_rib_worth_noted"], ["xp", 2], ["say", "Ribs, not a relic — you took more from a starving thing than it ever could have taken from you. It never asked to go gaunt for a grief that isn't its own. Whether the wood keeps thinning after tonight is the question in front of you now, not behind."]]
+        },
+        {
           "id": "return_crown",
           "label": "(ends it now) return the crown, leaving the barrow open",
           "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
