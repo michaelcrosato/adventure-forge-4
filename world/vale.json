@@ -1489,7 +1489,8 @@
     },
     "wight_relic": { "name": "ward-token", "loc": "nowhere", "hint": "Cold iron, worked into a rough sun — hung over a door to keep grief from walking in. Nothing left for it to guard now, but the barrow-wight would not simply hand it over." },
     "crow_scrap": { "name": "faded scrap of cloth", "loc": "nowhere", "hint": "Red-brown stains gone dark with age, fine-woven — never a hunter's or shepherd's. Worth asking after, back in the village." },
-    "wolf_fang": { "name": "ash-pale fang", "loc": "nowhere", "hint": "Pulled from the ash wolf at Twin Stones. Might be worth showing to the hunter, west through the wood." }
+    "wolf_fang": { "name": "ash-pale fang", "loc": "nowhere", "hint": "Pulled from the ash wolf at Twin Stones. Might be worth showing to the hunter, west through the wood." },
+    "wolf_rib": { "name": "gaunt rib-bone", "loc": "nowhere", "hint": "Pulled from the gaunt wolf at Wolf Scrape. Might be worth showing to the hunter, west through the wood." }
   },
   "npcs": {
     "reeve": {
@@ -1978,6 +1979,14 @@
           "fx": [["xp", 2], ["hp", 3], ["say", "The bitter herbs ease old aches before you've even eaten them (+3 hp)."]]
         },
         {
+          "id": "show_wolf_rib",
+          "label": "show the wolf's rib-bone",
+          "if": [["has", "wolf_rib"]],
+          "once": true,
+          "say": "The hunter weighs it in one palm, jaw tight. \"Starving, that one — but starving things bite harder, not softer. Good you ended it clean.\" They press a fresh bundle into your hands, more than the usual trade.",
+          "fx": [["xp", 2], ["hp", 3], ["say", "The bitter herbs ease old aches before you've even eaten them (+3 hp)."]]
+        },
+        {
           "id": "herbs",
           "label": "trade for herbs",
           "once": true,
@@ -2017,7 +2026,7 @@
       "hp": 4,
       "atk": 1,
       "df": 8,
-      "onDeath": [["score", 3], ["xp", 3], ["say", "The gaunt wolf falls still, ribs plain through the gray coat. Whatever's starving it started the night the barrow opened, same as the rest."]]
+      "onDeath": [["score", 3], ["xp", 3], ["move", "wolf_rib", "inv"], ["say", "The gaunt wolf falls still, ribs plain through the gray coat. Whatever's starving it started the night the barrow opened, same as the rest. One rib-bone comes away clean. Might be worth showing to the hunter, west through the wood."]]
     },
     "lean_wolf": {
       "name": "lean wolf",
