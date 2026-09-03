@@ -767,6 +767,12 @@
           "fx": [["set", "barrow_open"], ["xp", 2], ["say", "The hunter's directions hold true — the gap behind the fallen stone is right where they said. No need to test the doors, or the priest's patience."], ["goto", "barrow_field"]]
         },
         {
+          "id": "camp_markings_scholar",
+          "label": "read the tally marks by the smoke rack (scholar)",
+          "if": [["class", "scholar"], ["!flag", "said_hunter_old_barrow"]],
+          "fx": [["xp", 1], ["set", "said_hunter_old_barrow"], ["say", "Not idle scratches — a hunter's shorthand, plain as print to a trained eye: a gap under a fallen stone, north face, doors skipped entirely. A scholar's eye reads this outright, same as the verses, no need to ask."]]
+        },
+        {
           "id": "search_camp_brush",
           "label": "search the brush past the smoke rack",
           "once": true,
