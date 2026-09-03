@@ -792,12 +792,21 @@
         {
           "id": "water_puzzle",
           "label": "work out the water verse (wits)",
-          "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_water"]],
+          "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_water"], ["var", "water_wits_tries", "<", 3]],
           "fx": [
             ["check", "wits", 9,
               [["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the water take what grief the living cannot; lay it down, and rest.' The worn lines give up their meaning. Water Verse: obtained."]],
-              [["say", "The water has taken too much. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse, deeper together."]]
+              [["addvar", "water_wits_tries", 1], ["say", "The water has taken too much. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse, deeper together."]]
             ]
+          ]
+        },
+        {
+          "id": "water_puzzle_persist",
+          "label": "work out the water verse (wits)",
+          "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_water"], ["var", "water_wits_tries", ">=", 3]],
+          "fx": [
+            ["set", "verse_water"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3],
+            ["say", "Patience does what a quick read couldn't — the worn lines finally give up their meaning. 'Let the water take what grief the living cannot; lay it down, and rest.' Water Verse: obtained."]
           ]
         }
       ]
@@ -851,12 +860,21 @@
         {
           "id": "wind_puzzle",
           "label": "work out the wind carvings (wits)",
-          "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_wind"]],
+          "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_wind"], ["var", "wind_wits_tries", "<", 3]],
           "fx": [
             ["check", "wits", 11,
               [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; let it go, and rest.' The carvings give up their meaning. Wind Verse: obtained."]],
-              [["say", "The wind won't let the lines sit still long enough to read. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse, deeper together."]]
+              [["addvar", "wind_wits_tries", 1], ["say", "The wind won't let the lines sit still long enough to read. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse, deeper together."]]
             ]
+          ]
+        },
+        {
+          "id": "wind_puzzle_persist",
+          "label": "work out the wind carvings (wits)",
+          "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_wind"], ["var", "wind_wits_tries", ">=", 3]],
+          "fx": [
+            ["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3],
+            ["say", "Patience does what a quick read couldn't — the carvings finally give up their meaning. 'Let the wind take what iron could not; let it go, and rest.' Wind Verse: obtained."]
           ]
         }
       ]
@@ -1077,12 +1095,21 @@
         {
           "id": "stone_puzzle",
           "label": "work out the stone verse (wits)",
-          "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_stone"]],
+          "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_stone"], ["var", "stone_wits_tries", "<", 3]],
           "fx": [
             ["check", "wits", 10,
               [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the stone remember what flesh forgets; set it down, and rest.' The verse comes clear. Cut beneath it, a stair leads up. Stone Verse: obtained."]],
-              [["say", "The old letters swim. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the crypt below the antechamber reaches the throne without this verse, if the crown is your road."]]
+              [["addvar", "stone_wits_tries", 1], ["say", "The old letters swim. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the crypt below the antechamber reaches the throne without this verse, if the crown is your road."]]
             ]
+          ]
+        },
+        {
+          "id": "stone_puzzle_persist",
+          "label": "work out the stone verse (wits)",
+          "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_stone"], ["var", "stone_wits_tries", ">=", 3]],
+          "fx": [
+            ["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3],
+            ["say", "Patience does what a quick read couldn't — the old letters finally hold still. 'Let the stone remember what flesh forgets; set it down, and rest.' Cut beneath it, a stair leads up. Stone Verse: obtained."]
           ]
         }
       ]
