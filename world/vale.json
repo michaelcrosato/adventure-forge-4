@@ -1296,6 +1296,14 @@
           "fx": [
             ["end", "lose", "crowned_hollow", "You kneel. The crown of nothing settles on you, light as ash. The vale will have a king after all — and no dawn. The seal you promised the reeve no longer matters — you are what the doors would have kept in."]
           ]
+        },
+        {
+          "id": "keep_crown_forsake",
+          "label": "(ends it now, a bad end) pocket the crown and leave him unrested, grieving",
+          "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"]],
+          "fx": [
+            ["end", "lose", "king_forsaken", "You pocket the crown and turn for the stairs, leaving him exactly as you found him — no verse spoken, nothing returned, nothing settled. He doesn't call after you. Back on the surface the gray does not lift; it thickens by the week, crops failing further, the well running low, the vale still waiting on a dawn you never bring. Somewhere below, he's still sitting on that stone seat, and he will go on sitting there long after you've left the vale for good."]
+          ]
         }
       ]
     }
@@ -2085,6 +2093,50 @@
       "study the stone walls (scholar)",
       "go up",
       "(ends your story, no dawn) kneel and become the vale's new hollow king"
+    ],
+    "king_forsaken": [
+      "be an Envoy — best suited to the crown path — words open doors that iron cannot, a silver tongue may win it quicker than any verse",
+      "go south",
+      "go south",
+      "ask gray priest: the old king",
+      "ask gray priest: a blessing for the barrow",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "perk: Second Wind (+3 max hp)",
+      "go north",
+      "go north",
+      { "repeat": "work out the stone verse (wits)", "until": ["flag", "verse_stone"], "max": 25 },
+      "go up",
+      "ask hollow king: why do you linger",
+      "go down",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go south",
+      "go east",
+      { "repeat": "ask elder: the sealed coffer", "until": ["has", "crown"], "max": 25 },
+      "go west",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go north",
+      "go up",
+      "(ends it now, a bad end) pocket the crown and leave him unrested, grieving"
     ]
   }
 }
