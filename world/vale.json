@@ -989,7 +989,7 @@
           "if": [["class", "scout"], ["!flag", "barrow_open"], ["var", "keepers_crack_tries", "<", 1]],
           "fx": [
             ["check", "grace", 10,
-              [["set", "barrow_open"], ["xp", 2], ["move", "keeper_token", "inv"], ["say", "Just as your training taught you to expect, that loose stone by the ivy roots was the key — you work it free and squeeze through the narrow gap behind it, no need for the priest's blessing after all. Wedged into the gap, a snapped half-token, its stamp worn to a raised hand."], ["goto", "antechamber"]],
+              [["set", "barrow_open"], ["xp", 2], ["move", "keeper_token", "inv"], ["say", "Just as your training taught you to expect, that loose stone by the ivy roots was the key — you work it free and squeeze through the narrow gap behind it, no need for the priest's blessing after all. Wedged into the gap, a snapped half-token, its stamp worn to a raised hand — worth showing to the gray priest, south of the square."], ["goto", "antechamber"]],
               [["hp", -1], ["addvar", "keepers_crack_tries", 1], ["say", "Even a trained eye finds nothing yet, not even that loose stone by the ivy roots — it bites your fingers as you pull back (-1 hp). The stone itself never jams or wears out, so try again whenever you like, or force the doors, or find a blessing instead."]]
             ]
           ]
@@ -998,7 +998,7 @@
           "id": "keepers_crack_persist",
           "label": "trust your scout's eye and work the loose stone by the ivy roots — a hidden way into the barrow (scout)",
           "if": [["class", "scout"], ["!flag", "barrow_open"], ["var", "keepers_crack_tries", ">=", 1]],
-          "fx": [["set", "barrow_open"], ["xp", 2], ["move", "keeper_token", "inv"], ["say", "This time your fingers find the give straightaway — the loose stone by the ivy roots was the key all along. You work it free and squeeze through the narrow gap behind it, no need for the priest's blessing after all. Wedged into the gap, a snapped half-token, its stamp worn to a raised hand."], ["goto", "antechamber"]]
+          "fx": [["set", "barrow_open"], ["xp", 2], ["move", "keeper_token", "inv"], ["say", "This time your fingers find the give straightaway — the loose stone by the ivy roots was the key all along. You work it free and squeeze through the narrow gap behind it, no need for the priest's blessing after all. Wedged into the gap, a snapped half-token, its stamp worn to a raised hand — worth showing to the gray priest, south of the square."], ["goto", "antechamber"]]
         },
         {
           "id": "hidden_passage",
@@ -1006,7 +1006,7 @@
           "if": [["!class", "scout"], ["!flag", "barrow_open"]],
           "fx": [
             ["check", "wits", 11,
-              [["set", "barrow_open"], ["xp", 2], ["move", "keeper_token", "inv"], ["say", "That loose stone by the ivy roots gives way when you lean on it, and roots and old rain have hollowed a gap beneath. You squeeze through into the dark below, no need for the priest's blessing after all. Wedged into the gap, a snapped half-token, its stamp worn to a raised hand."], ["goto", "antechamber"]],
+              [["set", "barrow_open"], ["xp", 2], ["move", "keeper_token", "inv"], ["say", "That loose stone by the ivy roots gives way when you lean on it, and roots and old rain have hollowed a gap beneath. You squeeze through into the dark below, no need for the priest's blessing after all. Wedged into the gap, a snapped half-token, its stamp worn to a raised hand — worth showing to the gray priest, south of the square."], ["goto", "antechamber"]],
               [["hp", -1], ["say", "The hillside holds its shape, even the loose stone by the ivy roots — it bites your fingers as you pull back (-1 hp). The stone itself never jams or wears out, so try again whenever you like, or force the doors, or find a blessing instead."]]
             ]
           ]
