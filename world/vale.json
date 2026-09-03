@@ -884,13 +884,19 @@
         {
           "id": "keepers_crack",
           "label": "trust your scout's eye and work the loose stone by the ivy roots — a hidden way into the barrow (scout, DC 10)",
-          "if": [["class", "scout"], ["!flag", "barrow_open"]],
+          "if": [["class", "scout"], ["!flag", "barrow_open"], ["var", "keepers_crack_tries", "<", 1]],
           "fx": [
             ["check", "grace", 10,
               [["set", "barrow_open"], ["xp", 2], ["say", "Just as your training taught you to expect, that loose stone by the ivy roots was the key — you work it free and find a narrow gap behind it, no need for the priest's blessing after all."]],
-              [["hp", -1], ["say", "Even a trained eye finds nothing yet, not even that loose stone by the ivy roots — it bites your fingers as you pull back (-1 hp). The stone itself never jams or wears out, so try again whenever you like, or force the doors, or find a blessing instead."]]
+              [["hp", -1], ["addvar", "keepers_crack_tries", 1], ["say", "Even a trained eye finds nothing yet, not even that loose stone by the ivy roots — it bites your fingers as you pull back (-1 hp). The stone itself never jams or wears out, so try again whenever you like, or force the doors, or find a blessing instead."]]
             ]
           ]
+        },
+        {
+          "id": "keepers_crack_persist",
+          "label": "trust your scout's eye and work the loose stone by the ivy roots — a hidden way into the barrow (scout, DC 10)",
+          "if": [["class", "scout"], ["!flag", "barrow_open"], ["var", "keepers_crack_tries", ">=", 1]],
+          "fx": [["set", "barrow_open"], ["xp", 2], ["say", "This time your fingers find the give straightaway — the loose stone by the ivy roots was the key all along. You work it free and find a narrow gap behind it, no need for the priest's blessing after all."]]
         },
         {
           "id": "hidden_passage",
