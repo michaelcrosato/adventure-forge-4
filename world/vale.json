@@ -1072,6 +1072,13 @@
           ]
         },
         {
+          "id": "vault_shade_opens",
+          "label": "show the shade your worn half-token",
+          "if": [["has", "keeper_token"], ["!flag", "vault_opened"]],
+          "once": true,
+          "fx": [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "The shade stills at the sight of it — the same raised-hand ward it once wore. \"One of ours,\" it says, and the rusted lock falls open at a touch, no force or pick needed. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]]
+        },
+        {
           "id": "read_seal",
           "label": "read the king's writing",
           "if": [["has", "kings_seal"], ["!flag", "read_seal"]],
