@@ -1291,6 +1291,12 @@
           "fx": [["set", "read_crown"], ["xp", 2], ["say", "Turning the iron over, you find words worked into the inside of the band, worn thin but legible — the same plea cut into stone, water, and wind elsewhere in the vale, each closing the same way: 'Let the crown remember whose grief it bore; lay it down, and rest.' Iron makes one more — not required; the three cut verses and the crown already finish the rite, this just says why."]]
         },
         {
+          "id": "consider_ward_token",
+          "label": "turn the ward-token from the crypt over in your hand",
+          "if": [["has", "wight_relic"], ["!flag", "read_ward_token"], ["!npcDead", "hollow_king"]],
+          "fx": [["set", "read_ward_token"], ["xp", 2], ["say", "Cold iron, worked into a rough sun. Whoever hung it over the crypt passage meant to keep grief from walking in — and stood guard on that same undecided question you're facing now, seal or leave open, until the wight took their place instead. Their answer died with them. Yours doesn't have to."]]
+        },
+        {
           "id": "return_crown",
           "label": "(ends it now) return the crown, leaving the barrow open",
           "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
