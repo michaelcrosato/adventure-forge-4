@@ -45,7 +45,7 @@ for ((c = 1; c <= CYCLES; c++)); do
   PROMPT="$(cat AGENT.md; echo; sed -e "/{{FINDING}}/{r $FINDING" -e "d}" loop/dev-prompt.md)"
   set +e
   claude -p "$PROMPT" \
-    --allowedTools "Read,Glob,Grep,Edit,Write,Bash(npm *),Bash(npx *),Bash(node *)" \
+    --allowedTools "Read,Glob,Grep,Edit,Write,Bash(npm *),Bash(npx *),Bash(node *),Bash(git log*),Bash(git show*),Bash(git diff*),Bash(git blame*),Bash(git merge-base*)" \
     --permission-mode acceptEdits \
     --output-format json --max-turns "$MAX_TURNS" \
     ${TF_DEV_MODEL:+--model "$TF_DEV_MODEL"} \
