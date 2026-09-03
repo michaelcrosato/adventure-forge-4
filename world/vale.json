@@ -739,6 +739,12 @@
           "label": "follow the hunter's directions to the barrow's hidden way in",
           "if": [["flag", "said_hunter_old_barrow"], ["!flag", "barrow_open"]],
           "fx": [["set", "barrow_open"], ["xp", 2], ["say", "The hunter's directions hold true — the gap behind the fallen stone is right where they said. No need to test the doors, or the priest's patience."], ["goto", "barrow_field"]]
+        },
+        {
+          "id": "trail_to_barrow_from_camp",
+          "label": "follow the trail straight to the barrow field",
+          "if": [["flag", "found_barrow_trail"]],
+          "fx": [["goto", "barrow_field"]]
         }
       ]
     },
