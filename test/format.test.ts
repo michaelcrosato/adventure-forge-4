@@ -73,6 +73,27 @@ test("renderStatus: omits the visited line when nothing has been visited yet", (
   assert.equal(renderStatus(world, state), "Find the crown.");
 });
 
+test("renderStatus: lists held perks with their effects, so a player can recall what each does", () => {
+  const world = {
+    objectives: "Find the crown.",
+    perks: {
+      old_lore: { name: "Old Lore", desc: "+1 other wits checks" },
+      fleetfoot: { name: "Fleetfoot", desc: "+2 grace checks (locks)" },
+    },
+  } as unknown as World;
+  const state = { vars: {}, inv: [], perks: ["old_lore", "fleetfoot"] } as unknown as State;
+  assert.equal(
+    renderStatus(world, state),
+    "Find the crown.\nPerks: Old Lore (+1 other wits checks), Fleetfoot (+2 grace checks (locks))",
+  );
+});
+
+test("renderStatus: omits the perks line when the player holds none", () => {
+  const world = { objectives: "Find the crown." } as World;
+  const state = { vars: {}, inv: [], perks: [] } as unknown as State;
+  assert.equal(renderStatus(world, state), "Find the crown.");
+});
+
 test("renderStatus: reports a statusPaths fallback when no state's conditions match", () => {
   const world = {
     statusPaths: [

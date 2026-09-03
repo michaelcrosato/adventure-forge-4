@@ -162,6 +162,13 @@ export function renderStatus(world: World, s: State): string {
     const carried = s.inv.map((id) => world.items[id]?.name ?? id);
     lines.push(`carrying: ${carried.join(", ")}`);
   }
+  if (s.perks?.length) {
+    const perks = s.perks.map((id) => {
+      const p = world.perks?.[id];
+      return p ? `${p.name} (${p.desc})` : id;
+    });
+    lines.push(`Perks: ${perks.join(", ")}`);
+  }
   return lines.length ? lines.join("\n") : "No progress to report.";
 }
 
