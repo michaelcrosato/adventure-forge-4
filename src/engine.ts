@@ -531,8 +531,8 @@ export function oddsHint(world: World, s: State, a: Action): string {
   if (chk && chk[0] === "check") {
     const mod = checkMod(world, s, chk[1]);
     const need = Math.max(1, chk[2] - mod);
-    if (!mod) return ` (roll ${need}+ on the die, ${chk[1]})`;
-    return ` (roll ${need}+ on the die, ${mod > 0 ? "+" : ""}${mod} ${chk[1]})`;
+    if (!mod) return ` (roll ${need}+ on the die; ${chk[1]})`;
+    return ` (roll ${need}+ on the die; ${mod > 0 ? "+" : ""}${mod} ${chk[1]})`;
   }
   if (a.kind === "use") {
     const hint = world.items[a.item]?.hint;
