@@ -636,7 +636,15 @@
       "name": "The Forge",
       "desc": "Coals banked low, breathing orange when the bellows sigh. The smith works with the door open, watching the road more than the anvil — old habit, this close to the wood. Iron and old smoke hang thick in the air, and blades in every stage of mending lean along the wall. The square lies west.",
       "brief": "Banked coals.",
-      "exits": { "west": { "to": "square" } }
+      "exits": { "west": { "to": "square" } },
+      "actions": [
+        {
+          "id": "take_free_blade",
+          "label": "take the free blade from the wall",
+          "if": [["!has", "plain_sword"]],
+          "fx": [["move", "plain_sword", "inv"], ["perk", "keen_edge"], ["xp", 2], ["say", "You lift a plain sword from the wall and test the edge — sound work, ready for the wood."]]
+        }
+      ]
     },
     "chapel": {
       "name": "Gray Chapel",
