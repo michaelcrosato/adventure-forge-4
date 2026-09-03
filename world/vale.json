@@ -687,7 +687,7 @@
         },
         {
           "id": "pick_coffer",
-          "label": "pick the coffer's lock (scout)",
+          "label": "pick the coffer's lock — safe to try as many times as you like (scout)",
           "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", "<", 3]],
           "fx": [
             ["check", "grace", 9,
@@ -713,7 +713,7 @@
         },
         {
           "id": "pick_coffer_perk",
-          "label": "pick the coffer's lock (fleetfoot)",
+          "label": "pick the coffer's lock — safe to try as many times as you like (fleetfoot)",
           "if": [["!class", "scout"], ["perk", "fleetfoot"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", "<", 3]],
           "fx": [
             ["check", "grace", 9,
@@ -911,7 +911,7 @@
         },
         {
           "id": "force_doors",
-          "label": "force the doors",
+          "label": "force the doors — safe to try as many times as you like",
           "if": [["!class", "warden"], ["!flag", "barrow_open"], ["!flag", "promised_seal"]],
           "fx": [
             ["check", "might", 11,
@@ -922,7 +922,7 @@
         },
         {
           "id": "force_doors_sealed",
-          "label": "force the doors",
+          "label": "force the doors — safe to try as many times as you like",
           "if": [["!class", "warden"], ["!flag", "barrow_open"], ["flag", "promised_seal"]],
           "fx": [
             ["check", "might", 11,
