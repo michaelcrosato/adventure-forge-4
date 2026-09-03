@@ -1431,9 +1431,17 @@
           "fx": [["addvar", "rep_reeve", -1]]
         },
         {
+          "id": "confess_broken_promise_shield",
+          "label": "the priest's release",
+          "if": [["flag", "broke_promise"], ["has", "watch_shield"]],
+          "once": true,
+          "say": "He said as much himself, then, in his own way — no need to spell it out further. I'd rather have heard it from you first, but I'll take it plain over hearing it from no one. Doesn't undo the asking. Just means I know where I stand with you now. He asks for the shield back, too — the watch's, not yours to keep on a broken word. You hand it over.",
+          "fx": [["xp", 2], ["move", "watch_shield", "nowhere"]]
+        },
+        {
           "id": "confess_broken_promise",
           "label": "the priest's release",
-          "if": [["flag", "broke_promise"]],
+          "if": [["flag", "broke_promise"], ["!has", "watch_shield"]],
           "once": true,
           "say": "He said as much himself, then, in his own way — no need to spell it out further. I'd rather have heard it from you first, but I'll take it plain over hearing it from no one. Doesn't undo the asking. Just means I know where I stand with you now.",
           "fx": [["xp", 2]]
