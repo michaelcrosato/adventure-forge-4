@@ -1388,7 +1388,16 @@
         {
           "id": "kneel",
           "label": "(ends your story, no dawn) kneel and become the vale's new hollow king",
-          "if": [["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
+          "if": [["!npcDead", "hollow_king"], ["!flag", "promised_seal"], ["!flag", "kneel_warned"]],
+          "fx": [
+            ["set", "kneel_warned"],
+            ["say", "You lower yourself toward the stone seat — and stop, one knee still free. This is the one door here that doesn't open back: no verse, no crown, just you taking his place. Kneel again to go through with it, or choose anything else to stand back up."]
+          ]
+        },
+        {
+          "id": "kneel_confirm",
+          "label": "(ends your story, no dawn) finish kneeling and become the vale's new hollow king",
+          "if": [["!npcDead", "hollow_king"], ["!flag", "promised_seal"], ["flag", "kneel_warned"]],
           "fx": [
             ["end", "lose", "crowned_hollow", "You kneel. The crown of nothing settles on you, light as ash. The vale will have a king after all — and no dawn. No promise of yours seals this place; none is needed now."]
           ]
@@ -1396,7 +1405,16 @@
         {
           "id": "kneel_sealed",
           "label": "(ends your story, no dawn) kneel and become the vale's new hollow king",
-          "if": [["!npcDead", "hollow_king"], ["flag", "promised_seal"]],
+          "if": [["!npcDead", "hollow_king"], ["flag", "promised_seal"], ["!flag", "kneel_warned"]],
+          "fx": [
+            ["set", "kneel_warned"],
+            ["say", "You lower yourself toward the stone seat — and stop, one knee still free. This is the one door here that doesn't open back: no verse, no crown, just you taking his place. Kneel again to go through with it, or choose anything else to stand back up."]
+          ]
+        },
+        {
+          "id": "kneel_sealed_confirm",
+          "label": "(ends your story, no dawn) finish kneeling and become the vale's new hollow king",
+          "if": [["!npcDead", "hollow_king"], ["flag", "promised_seal"], ["flag", "kneel_warned"]],
           "fx": [
             ["end", "lose", "crowned_hollow", "You kneel. The crown of nothing settles on you, light as ash. The vale will have a king after all — and no dawn. The seal you promised the reeve no longer matters — you are what the doors would have kept in."]
           ]
@@ -2370,7 +2388,8 @@
       "go north",
       "study the stone walls (scholar)",
       "go up",
-      "(ends your story, no dawn) kneel and become the vale's new hollow king"
+      "(ends your story, no dawn) kneel and become the vale's new hollow king",
+      "(ends your story, no dawn) finish kneeling and become the vale's new hollow king"
     ],
     "king_forsaken": [
       "be an Envoy — best suited to the crown path — words open doors that iron cannot, a silver tongue may win it quicker than any verse",
