@@ -109,7 +109,7 @@ export function render(
       .map(([id, d]) => {
         const hp = s.npcHp[id] ?? d.hp ?? 1;
         if (hp <= 0) return `${d.name} (dead)`;
-        return d.hostile ? `${d.name} (hostile, hp${hp})` : `${d.name} is here`;
+        return d.hostile ? `${d.name} (hostile, hp${hp}/${d.hp ?? 1})` : `${d.name} is here`;
       });
     if (npcs.length) lines.push(npcs.join("; "));
   }

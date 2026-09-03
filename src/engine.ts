@@ -607,7 +607,9 @@ export function step(world: World, prev: State, action: Action): StepOut {
       if (total >= df) {
         const dmg = (roll === 20 ? w.dmg * 2 : w.dmg) + perkBonus(world, s, "dmg");
         s.npcHp[action.npc] = (s.npcHp[action.npc] ?? 1) - dmg;
-        events.push(`You hit the ${def.name} (d20:${roll}+${hit}=${total} vs DF ${df}, -${dmg}hp).`);
+        const left = s.npcHp[action.npc]!;
+        const leftText = left > 0 ? `, ${left}/${def.hp ?? 1}hp left` : "";
+        events.push(`You hit the ${def.name} (d20:${roll}+${hit}=${total} vs DF ${df}, -${dmg}hp${leftText}).`);
       } else {
         events.push(`You miss the ${def.name} (d20:${roll}+${hit}=${total} vs DF ${df}).`);
       }
