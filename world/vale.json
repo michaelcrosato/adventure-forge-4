@@ -499,6 +499,12 @@
           "fx": [["goto", "barrow_field"]]
         },
         {
+          "id": "trail_to_throne_from_square",
+          "label": "cut straight down to the throne, you know the way now",
+          "if": [["flag", "heard_grievance"], ["!npcDead", "hollow_king"]],
+          "fx": [["goto", "throne"]]
+        },
+        {
           "id": "trail_to_chapel_from_square",
           "label": "follow the trail east to the drowned shrine",
           "if": [["flag", "found_chapel_trail"]],
