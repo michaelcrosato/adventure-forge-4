@@ -114,7 +114,7 @@ test("renderStatus: totals check and combat modifiers for worlds with a characte
   assert.equal(
     renderStatus(world, state),
     "Find the crown.\ncarrying: sword\nPerks: Keen Edge (+1 to hit), Old Lore (+1 wits)\n" +
-      "Checks: might+2 grace+0 wits+2 will+0\nCombat: hit+4 dmg+3 armor+0",
+      "Checks: might+2 grace+0 wits+2 (+1 base, +1 Old Lore) will+0\nCombat: hit+4 dmg+3 armor+0",
   );
 });
 

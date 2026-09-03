@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, combatMods, condOk, hashState, inClassPhase, inPerkPickPhase, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inPerkPickPhase, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
 import { ATTRS } from "./types.ts";
 import type { Action, State, World } from "./types.ts";
 
@@ -177,7 +177,15 @@ export function renderStatus(world: World, s: State): string {
   // classless world's s.attrs stays empty all game, so this would be an
   // all-zero, meaningless line there.
   if (world.classes && s.attrs) {
-    const checks = ATTRS.map((a) => `${a}${signed(checkMod(world, s, a))}`).join(" ");
+    // Breakdown only shown when more than one thing stacks into a check
+    // (base plus at least one perk) — matches the same "+N label" style as
+    // the post-roll check event, so the two frames read as one system.
+    const checks = ATTRS.map((a) => {
+      const parts = checkModParts(world, s, a);
+      const breakdown =
+        parts.length > 1 ? ` (${parts.map((p) => `${p.n > 0 ? "+" : ""}${p.n} ${p.label}`).join(", ")})` : "";
+      return `${a}${signed(checkMod(world, s, a))}${breakdown}`;
+    }).join(" ");
     lines.push(`Checks: ${checks}`);
     const cm = combatMods(world, s);
     lines.push(`Combat: hit${signed(cm.hit)} dmg${signed(cm.dmg)} armor${signed(cm.armor)}`);

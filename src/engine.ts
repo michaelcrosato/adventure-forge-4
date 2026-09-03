@@ -131,9 +131,10 @@ export function checkMod(world: World, s: State, name: string): number {
  * Named parts behind a check's modifier (base skill+attribute, then each
  * contributing perk), for a breakdown shown when more than one thing stacks
  * into it — a player who sees only the final total has no way to tell how
- * much a given perk (e.g. Fleetfoot) is actually adding.
+ * much a given perk (e.g. Fleetfoot) is actually adding. Used both by the
+ * post-roll check event below and by status's "Checks:" summary.
  */
-function checkModParts(world: World, s: State, name: string): { label: string; n: number }[] {
+export function checkModParts(world: World, s: State, name: string): { label: string; n: number }[] {
   const parts: { label: string; n: number }[] = [];
   const base = (world.skills?.[name] ?? 0) + (s.attrs[name] ?? 0);
   if (base) parts.push({ label: "base", n: base });
