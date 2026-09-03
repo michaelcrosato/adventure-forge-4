@@ -1478,7 +1478,8 @@
       ]
     },
     "wight_relic": { "name": "ward-token", "loc": "nowhere", "hint": "Cold iron, worked into a rough sun — hung over a door to keep grief from walking in. Nothing left for it to guard now, but the barrow-wight would not simply hand it over." },
-    "crow_scrap": { "name": "faded scrap of cloth", "loc": "nowhere", "hint": "Red-brown stains gone dark with age, fine-woven — never a hunter's or shepherd's. Worth asking after, back in the village." }
+    "crow_scrap": { "name": "faded scrap of cloth", "loc": "nowhere", "hint": "Red-brown stains gone dark with age, fine-woven — never a hunter's or shepherd's. Worth asking after, back in the village." },
+    "wolf_fang": { "name": "ash-pale fang", "loc": "nowhere", "hint": "Pulled from the ash wolf at Twin Stones. Might be worth showing to the hunter, west through the wood." }
   },
   "npcs": {
     "reeve": {
@@ -1959,6 +1960,14 @@
           "fx": [["xp", 2]]
         },
         {
+          "id": "show_wolf_fang",
+          "label": "show the wolf's fang",
+          "if": [["has", "wolf_fang"]],
+          "once": true,
+          "say": "The hunter turns it over, thumb finding the worn root where it's ground down, not broken. \"That one. Circled my snares three nights running, never sprung one — smarter than the rest of the gray, and closer to the trail than I liked. Good riddance.\" They press a fresh bundle into your hands, more than the usual trade.",
+          "fx": [["xp", 2], ["hp", 3], ["say", "The bitter herbs ease old aches before you've even eaten them (+3 hp)."]]
+        },
+        {
           "id": "herbs",
           "label": "trade for herbs",
           "once": true,
@@ -1989,7 +1998,7 @@
       "hp": 6,
       "atk": 2,
       "df": 10,
-      "onDeath": [["score", 3], ["xp", 3], ["say", "The wolf drops. Its gray coat goes to dust — the same gray spreading over the fields since the barrow opened."]]
+      "onDeath": [["score", 3], ["xp", 3], ["move", "wolf_fang", "inv"], ["say", "The wolf drops. Its gray coat goes to dust — the same gray spreading over the fields since the barrow opened. One fang holds its shape, ash-pale and unbroken. Might be worth showing to the hunter, west through the wood."]]
     },
     "gaunt_wolf": {
       "name": "gaunt wolf",
