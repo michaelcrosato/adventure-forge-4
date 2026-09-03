@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-03T05-07-36-303Z",
+  "seed": 11866,
+  "build": {
+    "rev": "d149bea",
+    "world": "7e38a874"
+  },
+  "cost_usd": 0.47068020000000005,
+  "verified": true,
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 59,
+  "receipt": "vale.11866.59.100.true_rest.282be072",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "Location/passage clarity: After successfully working the loose stone at Barrow Field (Turn 37), the description says 'You squeeze through into the dark below' but the UI still shows Barrow Field until next action",
+      "where": "Barrow Field → Barrow Antechamber transition"
+    },
+    {
+      "sev": "P2",
+      "what": "Lock DC description unclear: Elder's coffer lists 'fleetfoot, DC 9' then '(roll 7+ on the die, +2 grace)' — formatting could be clearer about whether 7+ is the raw die roll or already accounting for bonus",
+      "where": "Elder's House coffer lock"
+    }
+  ],
+  "confusions": [
+    "Strongbox lock felt frustrating and unrewarding when both lock-pick attempts failed — unclear if player is meant to force it or skip it entirely",
+    "The distinction between 'hearing the king grieve' and 'getting a token' as proof wasn't immediately clear (though elder clarified it)"
+  ],
+  "suggestions": [
+    "Make strongbox slightly easier (DC 10 instead of 11?) or add more reward text to justify the attempt",
+    "Explicitly state location transitions in UI when using special methods (loose stones, hidden passages)",
+    "Clarify lock DC format consistently: e.g. 'DC 9 (roll 7+ on die with +2 grace)' to avoid ambiguity",
+    "Consider adding an additional permutation ending to explore (verses + crown but leave barrow open) as a discovery reward"
+  ]
+}
