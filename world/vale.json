@@ -1117,8 +1117,8 @@
     },
     "crypt": {
       "name": "Barrow Crypt",
-      "desc": "Low vaults and stone boxes, the air gone sour and the mold black instead of green — whatever is killing the fields above pools thickest right here. A mail shirt is draped over one box, there for the taking. A barrow-wight blocks the north passage, drawn up out of that same rot. Fighting it isn't required — go up and reach the throne through the hall of verses instead, if you'd rather not.",
-      "brief": "Low vaults, air gone sour.",
+      "desc": "Low vaults and stone boxes, the air gone sour and the mold black instead of green — whatever is killing the fields above pools thickest right here. Blight-rats scatter between the boxes, more nuisance than threat. A mail shirt is draped over one box, there for the taking. A barrow-wight blocks the north passage, drawn up out of that same rot. Fighting it isn't required — go up and reach the throne through the hall of verses instead, if you'd rather not.",
+      "brief": "Low vaults, air gone sour. Blight-rats underfoot.",
       "onEnterOnce": [["xp", 2], ["say", "Whoever wore this mail last never got clear of the barrow. The same blight pooling in the fields above runs thickest right here — no shame taking iron against it, no need to wear it either, it wards off blows riding in your pack. Worth the extra turns down here only if that armor matters more to you than moving fast. The wight ahead: beat it for its relic and the way north, slip by instead if quiet's your way (scout), or skip it clean — the hall of verses reaches the throne just as well, no cost to leaving it be."]],
       "exits": {
         "up": { "to": "antechamber" },
@@ -2026,6 +2026,15 @@
       "atk": 2,
       "df": 9,
       "onDeath": [["score", 3], ["xp", 3], ["say", "The husk crumbles to gray dust over the stones. Whatever held it together came apart the same night the barrow opened."]]
+    },
+    "blight_rats": {
+      "name": "blight rats",
+      "room": "crypt",
+      "hostile": true,
+      "hp": 3,
+      "atk": 1,
+      "df": 7,
+      "onDeath": [["score", 2], ["xp", 2], ["say", "The rats scatter into the dark between the boxes. Small work, but the vaults feel a little quieter for it."]]
     },
     "barrow_wight": {
       "name": "barrow-wight",
