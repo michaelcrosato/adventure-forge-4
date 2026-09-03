@@ -908,14 +908,14 @@
       "desc": "A side chamber the wight never had to guard — the old king trusted iron more than claws. A strongbox sits under years of dust, its lock long rusted. The antechamber lies west.",
       "brief": "The rusted strongbox.",
       "exits": { "west": { "to": "antechamber" } },
-      "onEnterOnce": [["xp", 2], ["say", "Whatever this held, no one has touched it in a long time — if it's proof of the old king's word, someone back in the vale might still want to see it. The lock looks temperamental; push it too hard or too many times and it may jam shut for good, seal and all."]],
+      "onEnterOnce": [["xp", 2], ["say", "Whatever this held, no one has touched it in a long time — the old king's seal, if it's still inside, could ease your case with the elder later on the crown road. Nothing here is needed to finish the tale, and losing it costs nothing else. The lock looks temperamental; push it too hard or too many times and it may jam shut for good, seal and all."]],
       "actions": [
         {
           "id": "force_vault",
           "label": "force the strongbox",
           "if": [["!class", "scout"], ["!class", "warden"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_force_tries", "<", 2]],
           "fx": [
-            ["check", "might", 12,
+            ["check", "might", 11,
               [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "The rusted lock snaps at last. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
               [["addvar", "vault_force_tries", 1], ["say", "The lock holds, this time. Rusted iron, not sealed magic — but it won't take much more before it warps past use."]]
             ]
@@ -926,7 +926,7 @@
           "label": "force the strongbox",
           "if": [["!class", "scout"], ["!class", "warden"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_force_tries", ">=", 2]],
           "fx": [
-            ["check", "might", 12,
+            ["check", "might", 11,
               [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "One last heave and the rusted lock snaps. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
               [["set", "vault_jammed"], ["say", "One blow too many — the lock warps shut, iron folding on itself. Whatever's inside stays inside now. Nothing else is lost — the elder still opens the coffer for grief alone, no seal needed."]]
             ]
