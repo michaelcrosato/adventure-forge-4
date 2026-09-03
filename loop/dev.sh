@@ -93,6 +93,7 @@ for ((c = 1; c <= CYCLES; c++)); do
   [[ -f "$READ_FROM" ]] && TITLE="$(node -e 'const f=JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"));console.log((f.title||f.bugs?.[0]?.what||f.kind||"finding").slice(0,60))' "$READ_FROM")"
   [[ -f "$FINDING" ]] && mv "$FINDING" "$DEST"
   git add -A
-  git commit -q -m "loop: $TITLE" -m "finding: $(basename "$FINDING") | verified: npm run verify green"
+  git -c user.email="loop@tinyforge" -c user.name="tinyforge-loop" \
+    commit -q -m "loop: $TITLE" -m "finding: $(basename "$FINDING") | verified: npm run verify green"
   echo "✓ cycle $c landed: $(git log -1 --format=%h) loop: $TITLE"
 done
