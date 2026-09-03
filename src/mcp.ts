@@ -144,7 +144,7 @@ server.registerTool(
   "status",
   {
     description:
-      "Recap the objectives, show progress on every tracked path (e.g. verses vs crown), and confirm what you're carrying. The counts shown are always exact and current, never stale. Costs no turn — call it any time, not just at character select, e.g. right before a major choice or whenever you want to double-check a count instead of recounting by hand.",
+      "Recap the objectives, show progress on every tracked path (e.g. verses vs crown), list every location you've visited so far, and confirm what you're carrying. The counts shown are always exact and current, never stale. Costs no turn — call it any time, not just at character select, e.g. right before a major choice, whenever you want a 'show verses' summary of what you've found and where you've been, or whenever you want to double-check a count instead of recounting by hand.",
     inputSchema: { s: z.string().describe("Session id.") },
   },
   async ({ s }) => {
