@@ -452,7 +452,7 @@
           "if": [["flag", "notice_board_1"], ["!flag", "notice_board_2"]],
           "fx": [
             ["set", "notice_board_2"],
-            ["say", "More, in a finer hand: one path is the old verses. Three lie in the drowned shrine, the old watchtower — through the gate, then east into the ash wood (get your bearings once you're among the trees) — and the barrow's own walls; speak all three together at the throne. The other path is the king's crown, sealed in the village elder's coffer — though the elder won't yield it until you've heard the old king's own grief at the throne first, then carried the proof back down; the crown road circles through the barrow twice where the verses need it once. Water, wind, stone, and the crown besides — all four carry the same old refrain, worked into each in turn: lay it down, and rest."]
+            ["say", "More, in a finer hand: one path is the old verses. Three lie in the drowned shrine, the old watchtower — through the gate, then east into the ash wood (get your bearings once you're among the trees) — and the barrow's own walls; speak all three together at the throne. The other path is the king's crown, sealed in the village elder's coffer — though the elder won't yield it until you've heard the old king's own grief at the throne first, then carried the proof back down; the crown road circles through the barrow twice where the verses need it once. Water, wind, stone, and the crown besides — all four carry the same old refrain, each closing the same way: '...and rest.'"]
           ]
         },
         {
@@ -811,7 +811,7 @@
           "id": "wind_scholar",
           "label": "recall the wind verse (scholar)",
           "if": [["class", "scholar"], ["!flag", "verse_wind"]],
-          "fx": [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; lay it down, and rest.' The wind verse returns whole — two of three. Not required — crown alone reaches the same end, deeper together. Wind Verse: obtained."]]
+          "fx": [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; let it go, and rest.' The wind verse returns whole — two of three. Not required — crown alone reaches the same end, deeper together. Wind Verse: obtained."]]
         },
         {
           "id": "wind_scout",
@@ -819,7 +819,7 @@
           "if": [["class", "scout"], ["!flag", "verse_wind"], ["!flag", "wind_scout_failed"]],
           "fx": [
             ["check", "grace", 7,
-              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; lay it down, and rest.' Quiet fingers find the wind-worn cuts and trace them true. Wind Verse: obtained."]],
+              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; let it go, and rest.' Quiet fingers find the wind-worn cuts and trace them true. Wind Verse: obtained."]],
               [["set", "wind_scout_failed"], ["say", "The cuts stay unreadable this pass — quiet hands don't always find their mark, and the wind's scoured the grooves shallower. Nothing is lost by trying again, but the next reading wants a steadier touch."]]
             ]
           ]
@@ -830,7 +830,7 @@
           "if": [["class", "scout"], ["!flag", "verse_wind"], ["flag", "wind_scout_failed"]],
           "fx": [
             ["check", "grace", 9,
-              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; lay it down, and rest.' Quiet fingers find the wind-worn cuts and trace them true. Wind Verse: obtained."]],
+              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; let it go, and rest.' Quiet fingers find the wind-worn cuts and trace them true. Wind Verse: obtained."]],
               [["say", "The cuts stay unreadable this pass — quiet hands don't always find their mark. Nothing is lost by trying again."]]
             ]
           ]
@@ -841,7 +841,7 @@
           "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_wind"]],
           "fx": [
             ["check", "wits", 11,
-              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; lay it down, and rest.' The carvings give up their meaning. Wind Verse: obtained."]],
+              [["set", "verse_wind"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the wind take what iron could not; let it go, and rest.' The carvings give up their meaning. Wind Verse: obtained."]],
               [["say", "The wind won't let the lines sit still long enough to read. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the elder's crown reaches the same end without a verse, deeper together."]]
             ]
           ]
@@ -1048,7 +1048,7 @@
           "id": "stone_scholar",
           "label": "study the stone walls (scholar)",
           "if": [["class", "scholar"], ["!flag", "verse_stone"]],
-          "fx": [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the stone remember what flesh forgets; lay it down, and rest.' The verse reads itself to you, plain as speech — others would have to work it out by hand or wit. Cut beneath it, a stair leads up. Stone Verse: obtained."]]
+          "fx": [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the stone remember what flesh forgets; set it down, and rest.' The verse reads itself to you, plain as speech — others would have to work it out by hand or wit. Cut beneath it, a stair leads up. Stone Verse: obtained."]]
         },
         {
           "id": "stone_scout",
@@ -1056,7 +1056,7 @@
           "if": [["class", "scout"], ["!flag", "verse_stone"]],
           "fx": [
             ["check", "grace", 7,
-              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the stone remember what flesh forgets; lay it down, and rest.' Quiet fingers find the deep-cut letters and trace them true. Cut beneath it, a stair leads up. Stone Verse: obtained."]],
+              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the stone remember what flesh forgets; set it down, and rest.' Quiet fingers find the deep-cut letters and trace them true. Cut beneath it, a stair leads up. Stone Verse: obtained."]],
               [["say", "The letters stay unreadable this pass — quiet hands don't always find their mark. Nothing is lost by trying again."]]
             ]
           ]
@@ -1067,7 +1067,7 @@
           "if": [["!class", "scholar"], ["!class", "scout"], ["!flag", "verse_stone"]],
           "fx": [
             ["check", "wits", 10,
-              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the stone remember what flesh forgets; lay it down, and rest.' The verse comes clear. Cut beneath it, a stair leads up. Stone Verse: obtained."]],
+              [["set", "verse_stone"], ["addvar", "verses_known", 1], ["score", 10], ["xp", 3], ["say", "'Let the stone remember what flesh forgets; set it down, and rest.' The verse comes clear. Cut beneath it, a stair leads up. Stone Verse: obtained."]],
               [["say", "The old letters swim. Slow going without a scholar's eye — not shut to one; a sharper mind (wits) reads it faster, the wandering scholar at the inn may lend you one, and nothing is lost by trying again. Or leave it: the crypt below the antechamber reaches the throne without this verse, if the crown is your road."]]
             ]
           ]
@@ -1224,7 +1224,7 @@
           "id": "recall_crown_unread",
           "label": "read the crown's band before you decide",
           "if": [["has", "crown"], ["!flag", "read_crown"], ["!npcDead", "hollow_king"]],
-          "fx": [["set", "read_crown"], ["xp", 2], ["say", "Turning the iron over, you find words worked into the inside of the band, worn thin but legible — the same refrain cut into stone, water, and wind elsewhere in the vale, verse after verse: 'Let the crown remember whose grief it bore; lay it down, and rest.' Iron makes one more — not required; the three cut verses and the crown already finish the rite, this just says why."]]
+          "fx": [["set", "read_crown"], ["xp", 2], ["say", "Turning the iron over, you find words worked into the inside of the band, worn thin but legible — the same plea cut into stone, water, and wind elsewhere in the vale, each closing the same way: 'Let the crown remember whose grief it bore; lay it down, and rest.' Iron makes one more — not required; the three cut verses and the crown already finish the rite, this just says why."]]
         },
         {
           "id": "return_crown",
@@ -1398,7 +1398,7 @@
       "use": [
         {
           "if": [["!flag", "read_crown"]],
-          "fx": [["set", "read_crown"], ["xp", 2], ["say", "Turning the iron over, you find words worked into the inside of the band, worn thin but legible — the same refrain cut into stone, water, and wind elsewhere in the vale, verse after verse: 'Let the crown remember whose grief it bore; lay it down, and rest.' Iron makes one more — not required; the three cut verses and the crown already finish the rite, this just says why."]]
+          "fx": [["set", "read_crown"], ["xp", 2], ["say", "Turning the iron over, you find words worked into the inside of the band, worn thin but legible — the same plea cut into stone, water, and wind elsewhere in the vale, each closing the same way: 'Let the crown remember whose grief it bore; lay it down, and rest.' Iron makes one more — not required; the three cut verses and the crown already finish the rite, this just says why."]]
         },
         {
           "fx": [["say", "The band's worn words: 'Let the crown remember whose grief it bore; lay it down, and rest.'"]]
@@ -1803,7 +1803,7 @@
           "id": "recall_crown_unread_elder",
           "label": "read the crown's band before you decide",
           "if": [["has", "crown"], ["!flag", "read_crown"], ["!npcDead", "hollow_king"]],
-          "fx": [["set", "read_crown"], ["xp", 2], ["say", "Turning the iron over, you find words worked into the inside of the band, worn thin but legible — the same refrain cut into stone, water, and wind elsewhere in the vale, verse after verse: 'Let the crown remember whose grief it bore; lay it down, and rest.' Iron makes one more — not required; the three cut verses and the crown already finish the rite, this just says why."]]
+          "fx": [["set", "read_crown"], ["xp", 2], ["say", "Turning the iron over, you find words worked into the inside of the band, worn thin but legible — the same plea cut into stone, water, and wind elsewhere in the vale, each closing the same way: 'Let the crown remember whose grief it bore; lay it down, and rest.' Iron makes one more — not required; the three cut verses and the crown already finish the rite, this just says why."]]
         }
       ]
     },
