@@ -746,6 +746,12 @@
           "fx": [["goto", "square"]]
         },
         {
+          "id": "trail_to_barrow_from_shrine",
+          "label": "climb the west trail straight to the barrow field",
+          "if": [["flag", "found_barrow_trail"]],
+          "fx": [["goto", "barrow_field"]]
+        },
+        {
           "id": "water_scholar",
           "label": "recall the water verse (scholar)",
           "if": [["class", "scholar"], ["!flag", "verse_water"]],
@@ -786,6 +792,12 @@
           "label": "follow the trail south to the village square",
           "if": [["flag", "found_tower_trail"]],
           "fx": [["goto", "square"]]
+        },
+        {
+          "id": "trail_to_barrow_from_tower",
+          "label": "follow the trail straight to the barrow field",
+          "if": [["flag", "found_barrow_trail"]],
+          "fx": [["goto", "barrow_field"]]
         },
         {
           "id": "wind_scholar",
