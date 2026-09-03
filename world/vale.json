@@ -1017,8 +1017,8 @@
     },
     "vault": {
       "name": "The King's Strongroom",
-      "desc": "A side chamber the wight never had to guard — the old king trusted iron more than claws. A strongbox sits under years of dust, its lock long rusted. The antechamber lies west.",
-      "brief": "The rusted strongbox.",
+      "desc": "A side chamber the wight never had to guard — the old king trusted iron more than claws. A strongbox sits under years of dust, its lock long rusted, and in the corner a robed shade sits so still you take it for shadow until it speaks. The antechamber lies west.",
+      "brief": "The rusted strongbox. A robed shade sits in the corner.",
       "exits": { "west": { "to": "antechamber" } },
       "onEnterOnce": [["xp", 2], ["say", "Whatever this held, no one has touched it in a long time — the old king's seal, if it's still inside, could ease your case with the elder later on the crown road, and like the mail shirt in the crypt, it counts as light armor too: no need to wear it, just carrying it blunts blows from here on. Nothing here is needed to finish the tale, and losing it costs nothing else — skip it if you'd rather press on than spend the turns. The lock looks temperamental, but iron doesn't wear out from trying — safe to force or pick as many times as you like."]],
       "actions": [
@@ -2084,6 +2084,28 @@
       "onDeath": [
         ["score", 30],
         ["end", "win", "king_slain", "Your blade finds him and he breaks apart into dust and old iron, a king who never got his crown back. The blight dies with him — the gray thins out of the trees by morning. The vale will not know why. Only that the light came back. By spring, wildflowers crowd the barrow mound, and children dare each other to touch the door that used to keep them awake at night. The doors stand open behind you still — no one comes down to seal them, and whatever you told the reeve about it goes unasked and unanswered."]
+      ]
+    },
+    "steward_shade": {
+      "name": "steward's shade",
+      "room": "vault",
+      "hostile": false,
+      "topics": [
+        {
+          "id": "duty",
+          "label": "who kept this room",
+          "once": true,
+          "say": "Forty years I held this key, and the king's trust with it. I do not haunt the box — only what it meant, that a man's word once needed iron behind it to be believed at all.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "the_seal",
+          "label": "the seal you broke",
+          "once": true,
+          "if": [["flag", "vault_opened"]],
+          "say": "His own blood pried the crown loose that same week — I heard both locks give, his and mine, one after the other. I kept faith with the wrong door.",
+          "fx": [["xp", 2]]
+        }
       ]
     }
   },
