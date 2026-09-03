@@ -9,8 +9,11 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, condOk, hashState, inClassPhase, inPerkPickPhase, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
+import { actionLabel, checkMod, combatMods, condOk, hashState, inClassPhase, inPerkPickPhase, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
+import { ATTRS } from "./types.ts";
 import type { Action, State, World } from "./types.ts";
+
+const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 
 export function renderMenu(world: World, s: State): { text: string; actions: Action[] } {
   const actions = legalActions(world, s);
@@ -133,8 +136,9 @@ export function render(
  * Free, any-time check (no turn cost) — recaps the objectives, every tracked
  * path (e.g. verses vs crown), which faction/branch choices currently stand
  * (e.g. sealed vs open), which rooms have already been visited (a memory aid
- * against repetitive backtracking), and what's carried, so a player can
- * confirm their inventory right before committing to a major choice.
+ * against repetitive backtracking), what's carried, held perks, and current
+ * check/combat modifier totals, so a player can confirm their build right
+ * before committing to a major choice instead of re-summing perks by hand.
  */
 export function renderStatus(world: World, s: State): string {
   const lines: string[] = [];
@@ -168,6 +172,15 @@ export function renderStatus(world: World, s: State): string {
       return p ? `${p.name} (${p.desc})` : id;
     });
     lines.push(`Perks: ${perks.join(", ")}`);
+  }
+  // Only worlds with a character system carry attrs/perks worth summing; a
+  // classless world's s.attrs stays empty all game, so this would be an
+  // all-zero, meaningless line there.
+  if (world.classes && s.attrs) {
+    const checks = ATTRS.map((a) => `${a}${signed(checkMod(world, s, a))}`).join(" ");
+    lines.push(`Checks: ${checks}`);
+    const cm = combatMods(world, s);
+    lines.push(`Combat: hit${signed(cm.hit)} dmg${signed(cm.dmg)} armor${signed(cm.armor)}`);
   }
   return lines.length ? lines.join("\n") : "No progress to report.";
 }

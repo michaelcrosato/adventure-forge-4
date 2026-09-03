@@ -94,6 +94,36 @@ test("renderStatus: omits the perks line when the player holds none", () => {
   assert.equal(renderStatus(world, state), "Find the crown.");
 });
 
+test("renderStatus: totals check and combat modifiers for worlds with a character system", () => {
+  const world = {
+    objectives: "Find the crown.",
+    classes: { warden: { name: "Warden", desc: "strong" } },
+    items: { sword: { name: "sword", dmg: 3, hit: 1 } },
+    perks: {
+      keen_edge: { name: "Keen Edge", desc: "+1 to hit", bonus: { hit: 1 } },
+      old_lore: { name: "Old Lore", desc: "+1 wits", bonus: { check: { wits: 1 } } },
+    },
+  } as unknown as World;
+  const state = {
+    vars: {},
+    flags: {},
+    inv: ["sword"],
+    perks: ["keen_edge", "old_lore"],
+    attrs: { might: 2, wits: 1 },
+  } as unknown as State;
+  assert.equal(
+    renderStatus(world, state),
+    "Find the crown.\ncarrying: sword\nPerks: Keen Edge (+1 to hit), Old Lore (+1 wits)\n" +
+      "Checks: might+2 grace+0 wits+2 will+0\nCombat: hit+4 dmg+3 armor+0",
+  );
+});
+
+test("renderStatus: omits check/combat totals for a classless world", () => {
+  const world = { objectives: "Find the crown." } as World;
+  const state = stateWithVars({});
+  assert.equal(renderStatus(world, state), "Find the crown.");
+});
+
 test("renderStatus: reports a statusPaths fallback when no state's conditions match", () => {
   const world = {
     statusPaths: [

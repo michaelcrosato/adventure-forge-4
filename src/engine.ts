@@ -151,6 +151,16 @@ export function armorOf(world: World, s: State): number {
   return best + perkBonus(world, s, "armor");
 }
 
+/** Attack-roll and damage totals an `attack` action would actually use, for the free `status` check. */
+export function combatMods(world: World, s: State): { hit: number; dmg: number; armor: number } {
+  const w = bestWeapon(world, s);
+  return {
+    hit: w.hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit"),
+    dmg: w.dmg + perkBonus(world, s, "dmg"),
+    armor: armorOf(world, s),
+  };
+}
+
 export function perkEligible(world: World, s: State, id: string, def: PerkDef): boolean {
   if (s.perks.includes(id)) return false;
   const r = def.require;
