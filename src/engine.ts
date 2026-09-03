@@ -204,6 +204,15 @@ function grantXp(world: World, s: State, n: number, events: string[]): void {
 export const inClassPhase = (world: World, s: State): boolean =>
   s.classId === null && !!world.classes && Object.keys(world.classes).length > 0;
 
+// true while a level-up perk pick is blocking the menu — the room's own
+// desc/exits don't render during this screen (see format.ts render()), so
+// callers deciding whether a room's full description has been "seen" must
+// treat this the same as inClassPhase, or a level-up on room entry burns the
+// room's one full-desc reveal on a perk menu the player never connects to
+// the room they just walked into.
+export const inPerkPickPhase = (world: World, s: State): boolean =>
+  s.perkPicks > 0 && eligiblePerks(world, s).length > 0;
+
 // ---------- effects ----------
 function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
   for (const fx of fxs) {

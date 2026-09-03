@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, hashState, inClassPhase, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
+import { actionLabel, hashState, inClassPhase, inPerkPickPhase, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
 import type { Action, State, World } from "./types.ts";
 
 export function renderMenu(world: World, s: State): { text: string; actions: Action[] } {
@@ -87,7 +87,7 @@ export function render(
     lines.push(`carrying: ${carried.join(", ")}`);
   }
 
-  if (s.perkPicks > 0 && legalActions(world, s)[0]?.kind === "perkpick") {
+  if (inPerkPickPhase(world, s)) {
     const menu = renderMenu(world, s);
     lines.push("Level up. Pick 1 perk/lvl for fights & checks (perm).");
     lines.push(menu.text);

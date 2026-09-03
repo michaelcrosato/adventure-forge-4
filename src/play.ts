@@ -4,7 +4,7 @@
  */
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
-import { actionByLabel, inClassPhase, newState, step } from "./engine.ts";
+import { actionByLabel, inClassPhase, inPerkPickPhase, newState, step } from "./engine.ts";
 import { render, renderIntro } from "./format.ts";
 import { loadWorld } from "./validate.ts";
 
@@ -36,7 +36,7 @@ rl.on("line", (line) => {
   const res = step(world, state, action);
   state = res.state;
   const first = !seen.has(state.room);
-  seen.add(state.room);
+  if (!inClassPhase(world, state) && !inPerkPickPhase(world, state)) seen.add(state.room);
   out = render(world, state, res.events, { full: first });
   console.log(out.text);
   if (state.ended) process.exit(0);

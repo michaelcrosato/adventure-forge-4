@@ -13,7 +13,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
-import { inClassPhase, receipt, step } from "./engine.ts";
+import { inClassPhase, inPerkPickPhase, receipt, step } from "./engine.ts";
 import { newState } from "./engine.ts";
 import { render, renderIntro, renderStatus } from "./format.ts";
 import { loadWorld, validateWorld } from "./validate.ts";
@@ -59,7 +59,8 @@ function flush(sess: Session): void {
 
 function view(sess: Session, events: string[], full: boolean): string {
   const first = !sess.seen.has(sess.state.room);
-  if (!sess.state.ended && !inClassPhase(world, sess.state)) sess.seen.add(sess.state.room);
+  if (!sess.state.ended && !inClassPhase(world, sess.state) && !inPerkPickPhase(world, sess.state))
+    sess.seen.add(sess.state.room);
   const r = render(world, sess.state, events, { full: full || first });
   sess.actions = r.actions;
   return r.text;
