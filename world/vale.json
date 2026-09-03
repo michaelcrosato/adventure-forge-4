@@ -1078,6 +1078,13 @@
           "fx": [["goto", "square"]]
         },
         {
+          "id": "ask_about_barrow_doors",
+          "label": "ask what sealing or leaving the barrow doors means",
+          "if": [["!flag", "heard_reeve_ask"], ["!flag", "heard_oldking"], ["!npcDead", "hollow_king"]],
+          "once": true,
+          "fx": [["say", "Two people in the vale care which way these doors end up, though neither's here to say so. The reeve, back in the square, wants them sealed once he rests — give your word early and keep it, and the watch trusts you further; break it and word travels the other way. The gray priest, in the chapel, wants them left open for the grief to breathe, and his own blessing can open them for you first. Neither visit is required — choose freely here, seal or open, and it costs you nothing if you never gave your word."]]
+        },
+        {
           "id": "rite",
           "label": "(ends it now) speak the three verses at the throne, leaving the barrow open",
           "if": [["flag", "verse_stone"], ["flag", "verse_water"], ["flag", "verse_wind"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"], ["!has", "crown"]],
