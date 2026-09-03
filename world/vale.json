@@ -682,7 +682,7 @@
         },
         {
           "id": "pick_coffer",
-          "label": "pick the coffer's lock (scout, DC 9)",
+          "label": "pick the coffer's lock (scout)",
           "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", "<", 3]],
           "fx": [
             ["check", "grace", 9,
@@ -693,7 +693,7 @@
         },
         {
           "id": "pick_coffer_persist",
-          "label": "pick the coffer's lock (scout, DC 9)",
+          "label": "pick the coffer's lock (scout)",
           "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", ">=", 3]],
           "fx": [
             ["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 10], ["xp", 3],
@@ -708,7 +708,7 @@
         },
         {
           "id": "pick_coffer_perk",
-          "label": "pick the coffer's lock (fleetfoot, DC 9)",
+          "label": "pick the coffer's lock (fleetfoot)",
           "if": [["!class", "scout"], ["perk", "fleetfoot"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", "<", 3]],
           "fx": [
             ["check", "grace", 9,
@@ -719,7 +719,7 @@
         },
         {
           "id": "pick_coffer_perk_persist",
-          "label": "pick the coffer's lock (fleetfoot, DC 9)",
+          "label": "pick the coffer's lock (fleetfoot)",
           "if": [["!class", "scout"], ["perk", "fleetfoot"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", ">=", 3]],
           "fx": [
             ["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 10], ["xp", 3],
@@ -780,7 +780,7 @@
         },
         {
           "id": "water_scout",
-          "label": "trace the water verse by touch (scout, DC 7)",
+          "label": "trace the water verse by touch (scout)",
           "if": [["class", "scout"], ["!flag", "verse_water"]],
           "fx": [
             ["check", "grace", 7,
@@ -837,7 +837,7 @@
         },
         {
           "id": "wind_scout",
-          "label": "trace the wind carvings by touch (scout, DC 7)",
+          "label": "trace the wind carvings by touch (scout)",
           "if": [["class", "scout"], ["!flag", "verse_wind"], ["!flag", "wind_scout_failed"]],
           "fx": [
             ["check", "grace", 7,
@@ -848,7 +848,7 @@
         },
         {
           "id": "wind_scout_retry",
-          "label": "trace the wind carvings again, steadier now (scout, DC 9)",
+          "label": "trace the wind carvings again, steadier now (scout)",
           "if": [["class", "scout"], ["!flag", "verse_wind"], ["flag", "wind_scout_failed"]],
           "fx": [
             ["check", "grace", 9,
@@ -934,7 +934,7 @@
         },
         {
           "id": "keepers_crack",
-          "label": "trust your scout's eye and work the loose stone by the ivy roots — a hidden way into the barrow (scout, DC 10)",
+          "label": "trust your scout's eye and work the loose stone by the ivy roots — a hidden way into the barrow (scout)",
           "if": [["class", "scout"], ["!flag", "barrow_open"], ["var", "keepers_crack_tries", "<", 1]],
           "fx": [
             ["check", "grace", 10,
@@ -945,7 +945,7 @@
         },
         {
           "id": "keepers_crack_persist",
-          "label": "trust your scout's eye and work the loose stone by the ivy roots — a hidden way into the barrow (scout, DC 10)",
+          "label": "trust your scout's eye and work the loose stone by the ivy roots — a hidden way into the barrow (scout)",
           "if": [["class", "scout"], ["!flag", "barrow_open"], ["var", "keepers_crack_tries", ">=", 1]],
           "fx": [["set", "barrow_open"], ["xp", 2], ["say", "This time your fingers find the give straightaway — the loose stone by the ivy roots was the key all along. You work it free and squeeze through the narrow gap behind it, no need for the priest's blessing after all."], ["goto", "antechamber"]]
         },
@@ -1011,7 +1011,7 @@
         },
         {
           "id": "pick_vault",
-          "label": "pick the strongbox's lock (scout, DC 11)",
+          "label": "pick the strongbox's lock (scout)",
           "if": [["class", "scout"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", "<", 2]],
           "fx": [
             ["check", "grace", 11,
@@ -1022,7 +1022,7 @@
         },
         {
           "id": "pick_vault_final",
-          "label": "pick the strongbox's lock — this old lock may break if you fail again (scout, DC 11)",
+          "label": "pick the strongbox's lock — this old lock may break if you fail again (scout)",
           "if": [["class", "scout"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", ">=", 2]],
           "fx": [
             ["check", "grace", 11,
@@ -1033,7 +1033,7 @@
         },
         {
           "id": "pick_vault_perk",
-          "label": "pick the strongbox's lock (fleetfoot, DC 11)",
+          "label": "pick the strongbox's lock (fleetfoot)",
           "if": [["!class", "scout"], ["perk", "fleetfoot"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", "<", 2]],
           "fx": [
             ["check", "grace", 11,
@@ -1044,7 +1044,7 @@
         },
         {
           "id": "pick_vault_perk_final",
-          "label": "pick the strongbox's lock — this old lock may break if you fail again (fleetfoot, DC 11)",
+          "label": "pick the strongbox's lock — this old lock may break if you fail again (fleetfoot)",
           "if": [["!class", "scout"], ["perk", "fleetfoot"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", ">=", 2]],
           "fx": [
             ["check", "grace", 11,
@@ -1083,7 +1083,7 @@
         },
         {
           "id": "stone_scout",
-          "label": "trace the stone walls by touch (scout, DC 7)",
+          "label": "trace the stone walls by touch (scout)",
           "if": [["class", "scout"], ["!flag", "verse_stone"]],
           "fx": [
             ["check", "grace", 7,
@@ -1131,7 +1131,7 @@
       "actions": [
         {
           "id": "slip_past",
-          "label": "slip past the wight (scout, DC 13)",
+          "label": "slip past the wight (scout)",
           "if": [["class", "scout"], ["!flag", "wight_passed"]],
           "fx": [
             ["check", "grace", 13,
