@@ -943,7 +943,7 @@
         },
         {
           "id": "force_vault_final",
-          "label": "force the strongbox",
+          "label": "force the strongbox — this old lock may break if you fail again",
           "if": [["!class", "scout"], ["!class", "warden"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_force_tries", ">=", 2]],
           "fx": [
             ["check", "might", 11,
@@ -971,7 +971,7 @@
         },
         {
           "id": "pick_vault_final",
-          "label": "pick the strongbox's lock (scout, DC 11)",
+          "label": "pick the strongbox's lock — this old lock may break if you fail again (scout, DC 11)",
           "if": [["class", "scout"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", ">=", 2]],
           "fx": [
             ["check", "grace", 11,
@@ -993,7 +993,7 @@
         },
         {
           "id": "pick_vault_perk_final",
-          "label": "pick the strongbox's lock (fleetfoot, DC 11)",
+          "label": "pick the strongbox's lock — this old lock may break if you fail again (fleetfoot, DC 11)",
           "if": [["!class", "scout"], ["perk", "fleetfoot"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", ">=", 2]],
           "fx": [
             ["check", "grace", 11,
