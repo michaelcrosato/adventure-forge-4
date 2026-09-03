@@ -653,10 +653,10 @@
         },
         {
           "id": "pick_coffer",
-          "label": "pick the coffer's lock (scout, DC 11)",
+          "label": "pick the coffer's lock (scout, DC 9)",
           "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", "<", 3]],
           "fx": [
-            ["check", "grace", 11,
+            ["check", "grace", 9,
               [["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 10], ["xp", 3], ["say", "Quiet fingers find the old lock's give while the elder's back is turned — quicker than any argument. Inside: the crown, old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]],
               [["addvar", "coffer_pick_tries", 1], ["say", "Not yet, but the pins are turning. Keep working the lock, or press your case instead."]]
             ]
@@ -664,7 +664,7 @@
         },
         {
           "id": "pick_coffer_persist",
-          "label": "pick the coffer's lock (scout, DC 11)",
+          "label": "pick the coffer's lock (scout, DC 9)",
           "if": [["class", "scout"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", ">=", 3]],
           "fx": [
             ["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 10], ["xp", 3],
@@ -679,10 +679,10 @@
         },
         {
           "id": "pick_coffer_perk",
-          "label": "pick the coffer's lock (fleetfoot, DC 11)",
+          "label": "pick the coffer's lock (fleetfoot, DC 9)",
           "if": [["!class", "scout"], ["perk", "fleetfoot"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", "<", 3]],
           "fx": [
-            ["check", "grace", 11,
+            ["check", "grace", 9,
               [["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 10], ["xp", 3], ["say", "Fleet fingers find the old lock's give while the elder's back is turned — quicker than any argument. Inside: the crown, old iron, heavy for its size — something is engraved inside the band. Read it before you decide how this ends. The road back feels shorter now — you know these trails, and don't need to think about each turn."]],
               [["addvar", "coffer_pick_tries", 1], ["say", "Not yet, but the pins are turning. Keep working the lock, or press your case instead."]]
             ]
@@ -690,7 +690,7 @@
         },
         {
           "id": "pick_coffer_perk_persist",
-          "label": "pick the coffer's lock (fleetfoot, DC 11)",
+          "label": "pick the coffer's lock (fleetfoot, DC 9)",
           "if": [["!class", "scout"], ["perk", "fleetfoot"], ["flag", "heard_grievance"], ["!has", "crown"], ["var", "coffer_pick_tries", ">=", 3]],
           "fx": [
             ["move", "crown", "inv"], ["setvar", "crown_progress", 2], ["score", 10], ["xp", 3],
