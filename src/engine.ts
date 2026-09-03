@@ -276,6 +276,14 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         const roll = d20(s);
         const total = roll + mod;
         const ok = total >= dc;
+        // Fires once, before the very first check a run ever makes, so the
+        // "d20:9+2=11 vs DC 9" notation below isn't the player's first sight
+        // of it — a separate leading line (not a prefix on that line) so it
+        // can't perturb odds.test.ts's line-anchored regex on the roll event.
+        if (!s.flags["_seenCheck"]) {
+          s.flags["_seenCheck"] = true;
+          events.push("(First check: d20 is a 20-sided die roll; DC is the total — roll plus skill — that must reach it.)");
+        }
         // States the total vs DC directly (the exact comparison `ok` runs) so
         // there is no derived "needed N+" number to mistranslate back into a
         // total — see oddsHint's comment for the report this replaced. The
