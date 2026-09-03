@@ -261,15 +261,23 @@
         {
           "cell": [0, 1],
           "name": "Gray Cairn",
-          "desc": "A cairn of flat stones, older than the wood, the air over it gone cold and mineral. A river charm rests loose among them — plunder only, nothing the ending needs. Camp smoke shows south, a dry well waits north, and the trail continues east.",
-          "brief": "The gray cairn. A dry well north; camp smoke south; the trail continues east.",
+          "desc": "A cairn of flat stones, older than the wood, the air over it gone cold and mineral. A gray husk crouches over the stones, guarding a river charm loose among them — passive unless struck; the charm is plunder only, nothing the ending needs. Camp smoke shows south, a dry well waits north, and the trail continues east.",
+          "brief": "The gray cairn. A husk guards the loose river charm, passive unless attacked. A dry well north; camp smoke south; the trail continues east.",
           "items": ["river_charm"],
-          "onEnterOnce": [["xp", 2], ["say", "Someone built this to be found."]],
+          "npcs": ["cairn_husk"],
+          "onEnterOnce": [["xp", 2], ["say", "Someone built this to be found — and something else has made it a den since. Passive unless struck — study it, walk on, or fight."]],
           "actions": [
             {
               "id": "get_bearings",
               "label": "get your bearings",
               "fx": [["say", "You picture the wood as it lies: a loose square of trails, not a straight one — only the Split Oak, where lantern light shows through a gap in the branches, leads back to the village. The barrow trail lies north, the drowned shrine and the old watchtower east, the hunter's camp west. Lost, just backtrack the way you came — that always works."]]
+            },
+            {
+              "id": "study_cairn_husk",
+              "label": "study the husk",
+              "if": [["!npcDead", "cairn_husk"]],
+              "once": true,
+              "fx": [["xp", 1], ["say", "Not flesh, not quite bone — the same gray that's thinned the wolves, further along. It doesn't breathe so much as sit still around the stones."]]
             }
           ]
         },
@@ -1943,6 +1951,15 @@
       "atk": 1,
       "df": 9,
       "onDeath": [["score", 3], ["xp", 3], ["say", "The lean wolf goes still, the last of the pack that watched the trail. Whatever's left of the gray thins with it."]]
+    },
+    "cairn_husk": {
+      "name": "gray husk",
+      "room": null,
+      "hostile": true,
+      "hp": 7,
+      "atk": 2,
+      "df": 9,
+      "onDeath": [["score", 3], ["xp", 3], ["say", "The husk crumbles to gray dust over the stones. Whatever held it together came apart the same night the barrow opened."]]
     },
     "barrow_wight": {
       "name": "barrow-wight",
