@@ -951,7 +951,7 @@
           "if": [["class", "scout"], ["!flag", "barrow_open"], ["var", "keepers_crack_tries", "<", 1]],
           "fx": [
             ["check", "grace", 10,
-              [["set", "barrow_open"], ["xp", 2], ["say", "Just as your training taught you to expect, that loose stone by the ivy roots was the key — you work it free and squeeze through the narrow gap behind it, no need for the priest's blessing after all."], ["goto", "antechamber"]],
+              [["set", "barrow_open"], ["xp", 2], ["move", "keeper_token", "inv"], ["say", "Just as your training taught you to expect, that loose stone by the ivy roots was the key — you work it free and squeeze through the narrow gap behind it, no need for the priest's blessing after all. Wedged into the gap, a snapped half-token, its stamp worn to a raised hand."], ["goto", "antechamber"]],
               [["hp", -1], ["addvar", "keepers_crack_tries", 1], ["say", "Even a trained eye finds nothing yet, not even that loose stone by the ivy roots — it bites your fingers as you pull back (-1 hp). The stone itself never jams or wears out, so try again whenever you like, or force the doors, or find a blessing instead."]]
             ]
           ]
@@ -960,7 +960,7 @@
           "id": "keepers_crack_persist",
           "label": "trust your scout's eye and work the loose stone by the ivy roots — a hidden way into the barrow (scout)",
           "if": [["class", "scout"], ["!flag", "barrow_open"], ["var", "keepers_crack_tries", ">=", 1]],
-          "fx": [["set", "barrow_open"], ["xp", 2], ["say", "This time your fingers find the give straightaway — the loose stone by the ivy roots was the key all along. You work it free and squeeze through the narrow gap behind it, no need for the priest's blessing after all."], ["goto", "antechamber"]]
+          "fx": [["set", "barrow_open"], ["xp", 2], ["move", "keeper_token", "inv"], ["say", "This time your fingers find the give straightaway — the loose stone by the ivy roots was the key all along. You work it free and squeeze through the narrow gap behind it, no need for the priest's blessing after all. Wedged into the gap, a snapped half-token, its stamp worn to a raised hand."], ["goto", "antechamber"]]
         },
         {
           "id": "hidden_passage",
@@ -968,7 +968,7 @@
           "if": [["!class", "scout"], ["!flag", "barrow_open"]],
           "fx": [
             ["check", "wits", 11,
-              [["set", "barrow_open"], ["xp", 2], ["say", "That loose stone by the ivy roots gives way when you lean on it, and roots and old rain have hollowed a gap beneath. You squeeze through into the dark below, no need for the priest's blessing after all."], ["goto", "antechamber"]],
+              [["set", "barrow_open"], ["xp", 2], ["move", "keeper_token", "inv"], ["say", "That loose stone by the ivy roots gives way when you lean on it, and roots and old rain have hollowed a gap beneath. You squeeze through into the dark below, no need for the priest's blessing after all. Wedged into the gap, a snapped half-token, its stamp worn to a raised hand."], ["goto", "antechamber"]],
               [["hp", -1], ["say", "The hillside holds its shape, even the loose stone by the ivy roots — it bites your fingers as you pull back (-1 hp). The stone itself never jams or wears out, so try again whenever you like, or force the doors, or find a blessing instead."]]
             ]
           ]
@@ -1441,6 +1441,21 @@
       ]
     },
     "kings_seal": { "name": "king's seal", "loc": "nowhere", "armor": 1 },
+    "keeper_token": {
+      "name": "worn half-token",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "Turn it over — one flat face is nearly rubbed smooth.",
+      "use": [
+        {
+          "if": [["!flag", "read_keeper_token"]],
+          "fx": [["set", "read_keeper_token"], ["xp", 2], ["say", "Snapped clean in half, long enough ago that the break itself has worn round. What's left of the stamp shows a hand raised flat — a ward-sign, the same kind hung over the barrow-wight's door. Someone kept this watch before you and broke their marker in two: one half left in the wall, one half carried off. No way to know now if they ever made it back to claim the other."]]
+        },
+        {
+          "fx": [["say", "A snapped half-token, its stamp worn to a raised hand."]]
+        }
+      ]
+    },
     "wight_relic": { "name": "ward-token", "loc": "nowhere", "hint": "Cold iron, worked into a rough sun — hung over a door to keep grief from walking in. Nothing left for it to guard now, but the barrow-wight would not simply hand it over." },
     "crow_scrap": { "name": "faded scrap of cloth", "loc": "nowhere", "hint": "Red-brown stains gone dark with age, fine-woven — never a hunter's or shepherd's. Worth asking after, back in the village." }
   },
