@@ -51,6 +51,7 @@ export function render(
       `*** ${e.kind.toUpperCase()}: ${e.id} ***`,
       e.text,
       `score:${s.score}/${world.maxScore} turns:${s.turn} seed:${s.seed}`,
+      `(score tallies discoveries and choices along the way — a bonus, not required)`,
       `receipt:${receipt(world, s)}`,
     ];
     return { text: lines.join("\n"), actions: [] };
