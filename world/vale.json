@@ -1669,7 +1669,20 @@
           "if": [["class", "scholar"]],
           "once": true,
           "say": "You've the trick already — a scholar's eye reads these stones outright, no tip of mine needed there. Still, carry it with you: a sharper mind serves wherever else you must puzzle a way through by wits alone.",
-          "fx": [["perk", "scholars_tip"], ["score", 5], ["xp", 2]]
+          "fx": [["perk", "scholars_tip"], ["score", 5], ["xp", 2], ["set", "asked_old_tongue"]]
+        },
+        {
+          "id": "old_tongue_scholar_secret",
+          "label": "ask about the one line that beat her",
+          "if": [["class", "scholar"], ["flag", "asked_old_tongue"]],
+          "once": true,
+          "say": "'Every scholar meets one line that won't sit still,' she says, testing you. 'Care to try the one that beat me?'",
+          "fx": [
+            ["check", "wits", 12,
+              [["score", 5], ["xp", 3], ["say", "The line gives before you've even sat down — faster than she managed, by her own account. 'Keep that ease,' she says. 'The barrow won't be as patient as I was.'"]],
+              [["xp", 1], ["say", "The line won't sit still for you either, not this time. 'Good,' she says, not unkindly. 'Means you're still reading, not just remembering.'"]]
+            ]
+          ]
         },
         {
           "id": "old_tongue",
