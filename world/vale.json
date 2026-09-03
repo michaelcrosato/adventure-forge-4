@@ -1422,9 +1422,17 @@
         {
           "id": "keep_crown_forsake",
           "label": "(ends it now, a bad end) pocket the crown and leave him unrested, grieving",
-          "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"]],
+          "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
           "fx": [
-            ["end", "lose", "king_forsaken", "You pocket the crown and turn for the stairs, leaving him exactly as you found him — no verse spoken, nothing returned, nothing settled. He doesn't call after you. Back on the surface the gray does not lift; it thickens by the week, crops failing further, the well running low, the vale still waiting on a dawn you never bring. Somewhere below, he's still sitting on that stone seat, and he will go on sitting there long after you've left the vale for good."]
+            ["end", "lose", "king_forsaken", "You pocket the crown and turn for the stairs, leaving him exactly as you found him — no verse spoken, nothing returned, nothing settled. He doesn't call after you. Back on the surface the gray does not lift; it thickens by the week, crops failing further, the well running low, the vale still waiting on a dawn you never bring. Somewhere below, he's still sitting on that stone seat, and he will go on sitting there long after you've left the vale for good. No verses, no crown returned, no doors sealed — nothing here was finished."]
+          ]
+        },
+        {
+          "id": "keep_crown_forsake_promised",
+          "label": "(ends it now, a bad end) pocket the crown and leave him unrested, grieving, your promise to the reeve broken too",
+          "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["flag", "promised_seal"]],
+          "fx": [
+            ["end", "lose", "king_forsaken", "You pocket the crown and turn for the stairs, leaving him exactly as you found him — no verse spoken, nothing returned, nothing settled, the doors you swore to the reeve you'd seal standing open behind you same as ever. He doesn't call after you. Back on the surface the gray does not lift; it thickens by the week, crops failing further, the well running low, the vale still waiting on a dawn you never bring — and a reeve who trusted your word once, and won't again. Somewhere below, he's still sitting on that stone seat, and he will go on sitting there long after you've left the vale for good. No verses, no crown returned, no doors sealed — nothing here was finished."]
           ]
         }
       ]
