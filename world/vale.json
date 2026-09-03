@@ -1069,6 +1069,12 @@
           "label": "read the king's writing",
           "if": [["has", "kings_seal"], ["!flag", "read_seal"]],
           "fx": [["set", "read_seal"], ["xp", 2], ["say", "\"Forty years I kept faith. It was my own blood who lifted the crown from my sleeping brow and called it inheritance. I do not want the vale to suffer for his theft. I only wanted to be believed.\""]]
+        },
+        {
+          "id": "trail_to_elder_from_vault",
+          "label": "make straight for the elder's house, seal in hand",
+          "if": [["has", "kings_seal"]],
+          "fx": [["goto", "elder_house"]]
         }
       ]
     },
