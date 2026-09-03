@@ -1406,6 +1406,7 @@
       ]
     },
     "kings_seal": { "name": "king's seal", "loc": "nowhere", "armor": 1 },
+    "wight_relic": { "name": "ward-token", "loc": "nowhere", "hint": "Cold iron, worked into a rough sun — hung over a door to keep grief from walking in. Nothing left for it to guard now, but the barrow-wight would not simply hand it over." },
     "crow_scrap": { "name": "faded scrap of cloth", "loc": "nowhere", "hint": "Red-brown stains gone dark with age, fine-woven — never a hunter's or shepherd's. Worth asking after, back in the village." }
   },
   "npcs": {
@@ -1876,7 +1877,7 @@
       "hp": 8,
       "atk": 1,
       "df": 5,
-      "onDeath": [["xp", 5], ["score", 5], ["set", "wight_passed"], ["say", "The wight comes apart into rag and bone. The passage north stands open now."]]
+      "onDeath": [["xp", 5], ["score", 5], ["move", "wight_relic", "inv"], ["set", "wight_passed"], ["say", "The wight comes apart into rag and bone — and among the scraps, a ward-token of cold iron, the kind hung over a door to keep grief from walking in. Whatever it stood that long, stubborn watch to guard, slipping past would have left buried with it. The passage north stands open now."]]
     },
     "hollow_king": {
       "name": "hollow king",
