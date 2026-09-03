@@ -1494,7 +1494,7 @@
       "name": "worn half-token",
       "loc": "nowhere",
       "takeable": true,
-      "hint": "Turn it over — one flat face is nearly rubbed smooth. A keepsake, not a key.",
+      "hint": "Turn it over — one flat face is nearly rubbed smooth. A keepsake, not a key — but the gray priest, south of the square, might know the ward-sign.",
       "use": [
         {
           "if": [["!flag", "read_keeper_token"]],
@@ -1815,6 +1815,14 @@
           "once": true,
           "say": "Every barrow I've opened leaves its mark. This one, before you're done, likely will too — on you as well as me, whichever road you take to it.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "show_keeper_token",
+          "label": "show the worn half-token",
+          "if": [["has", "keeper_token"]],
+          "once": true,
+          "say": "He goes still at the sight of it — the raised-hand ward, snapped in two. \"One of mine, or one who wore this collar before me. We each leave a token near that door, so the old king's never left without a keeper close by, even after we're gone.\" He presses your hand shut around it. \"Keep it. You've watched that door same as any of us now.\"",
+          "fx": [["xp", 2], ["addvar", "rep_priest", 1]]
         }
       ]
     },
