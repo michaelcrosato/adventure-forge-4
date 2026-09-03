@@ -130,8 +130,10 @@ export function render(
 
 /**
  * Free, any-time check (no turn cost) — recaps the objectives, every tracked
- * path (e.g. verses vs crown), and what's carried, so a player can confirm
- * their inventory right before committing to a major choice.
+ * path (e.g. verses vs crown), which rooms have already been visited (a
+ * memory aid against repetitive backtracking), and what's carried, so a
+ * player can confirm their inventory right before committing to a major
+ * choice.
  */
 export function renderStatus(world: World, s: State): string {
   const lines: string[] = [];
@@ -144,6 +146,11 @@ export function renderStatus(world: World, s: State): string {
     const remaining = t.remaining?.filter((r) => !s.flags[r.flag]);
     if (remaining?.length) line += ` (unexplored: ${remaining.map((r) => r.label).join(", ")})`;
     lines.push(line);
+  }
+  const visited = s.visited ?? [];
+  if (visited.length) {
+    const names = visited.map((id) => world.rooms?.[id]?.name ?? id);
+    lines.push(`Visited: ${names.join(", ")}`);
   }
   if (s.inv.length) {
     const carried = s.inv.map((id) => world.items[id]?.name ?? id);

@@ -52,3 +52,23 @@ test("renderStatus: lists what you're carrying, so it doubles as a pre-decision 
     "Find the crown or speak the verses.\ncarrying: the crown, a rusty dagger",
   );
 });
+
+test("renderStatus: lists visited rooms by name, as a memory aid against repetitive backtracking", () => {
+  const world = {
+    rooms: { square: { name: "Village Square" }, gate: { name: "Village Gate" } },
+  } as unknown as World;
+  const state = { vars: {}, inv: [], visited: ["square", "gate"] } as unknown as State;
+  assert.equal(renderStatus(world, state), "Visited: Village Square, Village Gate");
+});
+
+test("renderStatus: falls back to the room id if a visited room has no name (e.g. a stale id)", () => {
+  const world = { rooms: {} } as unknown as World;
+  const state = { vars: {}, inv: [], visited: ["ghost_room"] } as unknown as State;
+  assert.equal(renderStatus(world, state), "Visited: ghost_room");
+});
+
+test("renderStatus: omits the visited line when nothing has been visited yet", () => {
+  const world = { objectives: "Find the crown." } as World;
+  const state = { vars: {}, inv: [], visited: [] } as unknown as State;
+  assert.equal(renderStatus(world, state), "Find the crown.");
+});
