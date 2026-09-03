@@ -1304,6 +1304,18 @@
           "fx": [["set", "read_ward_token"], ["xp", 2], ["say", "Cold iron, worked into a rough sun. Whoever hung it over the crypt passage meant to keep grief from walking in — and stood guard on that same undecided question you're facing now, seal or leave open, until the wight took their place instead. Their answer died with them. Yours doesn't have to."]]
         },
         {
+          "id": "consider_seal_worth",
+          "label": "turn the king's own seal over in your hand",
+          "if": [["has", "kings_seal"], ["!flag", "seal_worth_noted"], ["!npcDead", "hollow_king"]],
+          "fx": [["set", "seal_worth_noted"], ["xp", 2], ["say", "It would have spoken for you at the elder's coffer, if that had been your road — this one doesn't need it. It's still doing quieter work all the same: the same weight that opens doors elsewhere blunts a blow just by riding in your pack."]]
+        },
+        {
+          "id": "consider_mail_shirt_worth",
+          "label": "shift the crypt's old mail on your back",
+          "if": [["has", "mail_shirt"], ["!flag", "mail_shirt_worth_noted"], ["!npcDead", "hollow_king"]],
+          "fx": [["set", "mail_shirt_worth_noted"], ["xp", 2], ["say", "It never needed a fight to earn its keep. Every step since the crypt, it's been doing its work regardless — you just never felt the difference, because it never let a blow land hard enough for you to."]]
+        },
+        {
           "id": "return_crown",
           "label": "(ends it now) return the crown, leaving the barrow open",
           "if": [["has", "crown"], ["flag", "heard_grievance"], ["!npcDead", "hollow_king"], ["!flag", "promised_seal"]],
