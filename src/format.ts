@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, hashState, inClassPhase, inPerkPickPhase, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
+import { actionLabel, condOk, hashState, inClassPhase, inPerkPickPhase, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
 import type { Action, State, World } from "./types.ts";
 
 export function renderMenu(world: World, s: State): { text: string; actions: Action[] } {
@@ -131,10 +131,10 @@ export function render(
 
 /**
  * Free, any-time check (no turn cost) — recaps the objectives, every tracked
- * path (e.g. verses vs crown), which rooms have already been visited (a
- * memory aid against repetitive backtracking), and what's carried, so a
- * player can confirm their inventory right before committing to a major
- * choice.
+ * path (e.g. verses vs crown), which faction/branch choices currently stand
+ * (e.g. sealed vs open), which rooms have already been visited (a memory aid
+ * against repetitive backtracking), and what's carried, so a player can
+ * confirm their inventory right before committing to a major choice.
  */
 export function renderStatus(world: World, s: State): string {
   const lines: string[] = [];
@@ -147,6 +147,11 @@ export function renderStatus(world: World, s: State): string {
     const remaining = t.remaining?.filter((r) => !s.flags[r.flag]);
     if (remaining?.length) line += ` (unexplored: ${remaining.map((r) => r.label).join(", ")})`;
     lines.push(line);
+  }
+  for (const p of world.statusPaths ?? []) {
+    const hit = p.states.find((st) => st.if.every((c) => condOk(world, s, c)));
+    const text = hit?.text ?? p.fallback;
+    if (text) lines.push(`${p.label}: ${text}`);
   }
   const visited = s.visited ?? [];
   if (visited.length) {

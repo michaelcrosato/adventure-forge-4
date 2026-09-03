@@ -4,7 +4,7 @@ import { renderStatus } from "../src/format.ts";
 import type { State, World } from "../src/types.ts";
 
 const stateWithVars = (vars: Record<string, number>, inv: string[] = []) =>
-  ({ vars, inv }) as unknown as State;
+  ({ vars, inv, flags: {} }) as unknown as State;
 
 test("renderStatus: reports every statusTracks entry, falling back to 0", () => {
   const world = {
@@ -71,4 +71,41 @@ test("renderStatus: omits the visited line when nothing has been visited yet", (
   const world = { objectives: "Find the crown." } as World;
   const state = { vars: {}, inv: [], visited: [] } as unknown as State;
   assert.equal(renderStatus(world, state), "Find the crown.");
+});
+
+test("renderStatus: reports a statusPaths fallback when no state's conditions match", () => {
+  const world = {
+    statusPaths: [
+      {
+        label: "Barrow",
+        states: [{ if: [["flag", "promised_seal"]], text: "promised to seal it" }],
+        fallback: "undecided",
+      },
+    ],
+  } as unknown as World;
+  assert.equal(renderStatus(world, stateWithVars({})), "Barrow: undecided");
+});
+
+test("renderStatus: reports the first matching statusPaths state, in order", () => {
+  const world = {
+    statusPaths: [
+      {
+        label: "Barrow",
+        states: [
+          { if: [["flag", "broke_promise"]], text: "promise broken" },
+          { if: [["flag", "promised_seal"]], text: "promised to seal it" },
+        ],
+        fallback: "undecided",
+      },
+    ],
+  } as unknown as World;
+  const state = { vars: {}, inv: [], flags: { promised_seal: true } } as unknown as State;
+  assert.equal(renderStatus(world, state), "Barrow: promised to seal it");
+});
+
+test("renderStatus: omits a statusPaths line when nothing matches and there is no fallback", () => {
+  const world = {
+    statusPaths: [{ label: "Barrow", states: [{ if: [["flag", "promised_seal"]], text: "promised" }] }],
+  } as unknown as World;
+  assert.equal(renderStatus(world, stateWithVars({})), "No progress to report.");
 });

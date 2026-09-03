@@ -88,6 +88,10 @@ export function validateWorld(world: World): string[] {
       if (!checkNameOk(n)) err(`perk ${pid}: unknown check name ${n}`);
   }
 
+  for (const p of world.statusPaths ?? []) {
+    for (const st of p.states) checkConds(`statusPaths ${p.label}`, st.if);
+  }
+
   if (!roomOk(world.start)) err(`start: unknown room ${world.start}`);
   for (const [rid, room] of Object.entries(world.rooms)) {
     for (const [dir, ex] of Object.entries(room.exits ?? {})) {

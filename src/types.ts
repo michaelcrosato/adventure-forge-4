@@ -186,6 +186,12 @@ export type World = {
     /** Optional flag -> location label breakdown; unset flags list as still-unexplored in the `status` recap. */
     remaining?: { flag: string; label: string }[];
   }[];
+  /** Optional faction/path indicators for the free `status` check — which branch of a choice currently applies (e.g. sealed vs open). States are checked top-to-bottom; the first one whose conditions all pass wins, else `fallback`. */
+  statusPaths?: {
+    label: string;
+    states: { if: Cond[]; text: string }[];
+    fallback?: string;
+  }[];
   /** Authored proof: must reach a win ending with score === maxScore (validator replays it). */
   walkthrough: WalkStep[];
   /** Ending proofs: each must replay (seed 1) to a game ended with exactly that ending id. */
