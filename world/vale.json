@@ -137,7 +137,8 @@
         { "cell": [0, 3], "dir": "west", "to": "hunters_camp", "landmark": "hunter's camp", "sideTrip": true },
         { "cell": [3, 2], "dir": "east", "to": "drowned_chapel", "back": "west", "landmark": "drowned shrine" },
         { "cell": [3, 1], "dir": "east", "to": "watchtower", "back": "west" },
-        { "cell": [3, 0], "dir": "east", "to": "watchtower", "back": "north" }
+        { "cell": [3, 0], "dir": "east", "to": "watchtower", "back": "north" },
+        { "cell": [3, 3], "dir": "east", "to": "drowned_chapel", "landmark": "drowned shrine, straight on" }
       ],
       "spots": [
         {
@@ -183,7 +184,7 @@
           "desc": "A ring of blackened stone. Someone camped here, and not recently — a boot-print stamped hard in the ash, a tin cup on its side, kindling stacked and never lit. A lean, blight-pale wolf crouches over the cold ash, hungry enough to lunge the instant it catches your scent — no waiting to be struck first. The village lies west, the barrow trail runs north, and the trail continues east past a marker stake.",
           "brief": "The charcoal ring. A lean wolf, already lunging. The village lies west, via the Split Oak; the barrow trail runs north; the trail continues east.",
           "npcs": ["lean_wolf"],
-          "onEnterOnce": [["xp", 1], ["hp", -1], ["say", "A third wolf, leaner than the last two, breaks for you before you've even stopped walking — its teeth find your arm (-1hp). No passive standoff this time: fight it here, or fall back the way you came."]],
+          "onEnterOnce": [["xp", 1], ["hp", -1], ["say", "A third wolf, leaner than the last two, breaks for you before you've even stopped walking — its teeth find your arm (-1hp). No passive standoff this time: fight it here, push on east and risk more of the same, or fall back the way you came."]],
           "actions": [
             {
               "id": "get_bearings",
@@ -195,8 +196,8 @@
         {
           "cell": [3, 3],
           "name": "Antler Stake",
-          "desc": "A stag's antlers, lashed to a stake at the trail's edge, click together in the wind — the only sound for a long way. A marker, not a kill; strips of faded cloth are tied below the rack, weathered past any color. North, the ground turns wet and low. West, the trail loops back toward the village.",
-          "brief": "The antler stake. Wet ground north; the trail loops back west toward the village.",
+          "desc": "A stag's antlers, lashed to a stake at the trail's edge, click together in the wind — the only sound for a long way. A marker, not a kill; strips of faded cloth are tied below the rack, weathered past any color. North, the ground turns wet and low. East, a hard push through the last trees reaches the drowned shrine straight on — quicker than circling north, if the wolf let you get this far. West, the trail loops back toward the village.",
+          "brief": "The antler stake. Shrine east, a hard push; wet ground north; the trail loops back west toward the village.",
           "onEnterOnce": [["xp", 1], ["say", "Someone left this to be seen."]],
           "actions": [
             {
