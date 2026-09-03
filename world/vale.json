@@ -1591,6 +1591,14 @@
           "once": true,
           "say": "You'll have noticed the watch holds you longer at the gate these days, and asks more of you than they used to. Word travels fast in a square this small — break a thing you swore to keep, or leave a door open against my hope, and it follows you the rest of the way through, same as keeping one would have.",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "priest_courted",
+          "label": "you know I've been to the chapel",
+          "if": [["flag", "heard_reeve_ask"], ["flag", "heard_oldking"], ["!flag", "promised_seal"]],
+          "once": true,
+          "say": "Word travels fast in a square this small — I heard you'd found the chapel before you came back to me. He'll have told you grief needs open air. I still say it needs a shut door. Hear us both out if you must, but don't make a habit of it — a promise means less to me the longer you keep the two of us guessing.",
+          "fx": [["xp", 1], ["addvar", "rep_reeve", -1]]
         }
       ]
     },
@@ -1737,6 +1745,14 @@
           "once": true,
           "say": "You come back to this chapel more than most do. I don't mistake that for faith — but I've stopped bracing for an argument each time you do.",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "reeve_courted",
+          "label": "you know I've spoken to the reeve",
+          "if": [["flag", "heard_oldking"], ["flag", "heard_reeve_ask"], ["!flag", "promised_seal"]],
+          "once": true,
+          "say": "Word travels faster than grief, in a square this small. I don't fault you for hearing him out — only for thinking there's a way to keep both of us pleased. There isn't, in the end. Ash and mud don't share a hearth.",
+          "fx": [["xp", 1], ["addvar", "rep_priest", -1]]
         },
         {
           "id": "priest_ash",
