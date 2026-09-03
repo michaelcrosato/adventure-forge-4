@@ -552,8 +552,14 @@
         {
           "id": "verse_tally_3",
           "label": "take stock: verses (3/3)",
-          "if": [["var", "verses_known", "=", 3]],
-          "fx": [["say", "All three verses are yours."]]
+          "if": [["var", "verses_known", "=", 3], ["!has", "crown"]],
+          "fx": [["say", "All three verses are yours — that road's done. Not required, but the elder's crown still waits in the sealed coffer, if you'd rather carry both home; he rests deeper for it."]]
+        },
+        {
+          "id": "verse_tally_3_crown_done",
+          "label": "take stock: verses (3/3)",
+          "if": [["var", "verses_known", "=", 3], ["has", "crown"]],
+          "fx": [["say", "All three verses are yours, and the crown besides — both roads walked."]]
         },
         {
           "id": "weigh_roads_scout_crown_done",
