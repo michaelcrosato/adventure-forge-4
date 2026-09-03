@@ -984,27 +984,16 @@
       "desc": "A side chamber the wight never had to guard — the old king trusted iron more than claws. A strongbox sits under years of dust, its lock long rusted. The antechamber lies west.",
       "brief": "The rusted strongbox.",
       "exits": { "west": { "to": "antechamber" } },
-      "onEnterOnce": [["xp", 2], ["say", "Whatever this held, no one has touched it in a long time — the old king's seal, if it's still inside, could ease your case with the elder later on the crown road, and like the mail shirt in the crypt, it counts as light armor too: no need to wear it, just carrying it blunts blows from here on. Nothing here is needed to finish the tale, and losing it costs nothing else — skip it if you'd rather press on than spend the turns. The lock looks temperamental; push it too hard or too many times and it may jam shut for good, seal and all."]],
+      "onEnterOnce": [["xp", 2], ["say", "Whatever this held, no one has touched it in a long time — the old king's seal, if it's still inside, could ease your case with the elder later on the crown road, and like the mail shirt in the crypt, it counts as light armor too: no need to wear it, just carrying it blunts blows from here on. Nothing here is needed to finish the tale, and losing it costs nothing else — skip it if you'd rather press on than spend the turns. The lock looks temperamental, but iron doesn't wear out from trying — safe to force or pick as many times as you like."]],
       "actions": [
         {
           "id": "force_vault",
-          "label": "force the strongbox",
-          "if": [["!class", "scout"], ["!class", "warden"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_force_tries", "<", 2]],
+          "label": "force the strongbox — safe to try as many times as you like",
+          "if": [["!class", "scout"], ["!class", "warden"], ["!flag", "vault_opened"]],
           "fx": [
             ["check", "might", 11,
               [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "The rusted lock snaps at last. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
-              [["addvar", "vault_force_tries", 1], ["say", "The lock holds, this time. Rusted iron, not sealed magic — but it won't take much more before it warps past use. Keep at it or walk away — either way, the elder's coffer still opens without the seal."]]
-            ]
-          ]
-        },
-        {
-          "id": "force_vault_final",
-          "label": "force the strongbox — this old lock may break if you fail again",
-          "if": [["!class", "scout"], ["!class", "warden"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_force_tries", ">=", 2]],
-          "fx": [
-            ["check", "might", 11,
-              [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "One last heave and the rusted lock snaps. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
-              [["set", "vault_jammed"], ["say", "One blow too many — the lock warps shut, iron folding on itself. Whatever's inside stays inside now. Nothing else is lost — the elder still opens the coffer for grief alone, no seal needed."]]
+              [["say", "The lock holds, this time. Rusted iron, not sealed magic — it won't break from the trying, so keep at it whenever you like, or walk away; either way, the elder's coffer still opens without the seal."]]
             ]
           ]
         },
@@ -1016,45 +1005,23 @@
         },
         {
           "id": "pick_vault",
-          "label": "pick the strongbox's lock (scout)",
-          "if": [["class", "scout"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", "<", 2]],
+          "label": "pick the strongbox's lock — safe to try as many times as you like (scout)",
+          "if": [["class", "scout"], ["!flag", "vault_opened"]],
           "fx": [
             ["check", "grace", 11,
               [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "The old pins give way, one by one. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
-              [["addvar", "vault_pick_tries", 1], ["say", "Not yet, but the pins are turning. Keep at it or walk away — either way, the elder's coffer still opens without the seal; a lock this old won't forgive too many failed tries."]]
-            ]
-          ]
-        },
-        {
-          "id": "pick_vault_final",
-          "label": "pick the strongbox's lock — this old lock may break if you fail again (scout)",
-          "if": [["class", "scout"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", ">=", 2]],
-          "fx": [
-            ["check", "grace", 11,
-              [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "Patience does what the first tries couldn't — the old pins finally give way, one by one. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
-              [["set", "vault_jammed"], ["say", "The last pin snaps under too much strain. The lock seizes for good — whatever's inside stays inside now. Nothing else is lost — the elder still opens the coffer for grief alone, no seal needed."]]
+              [["say", "Not yet, but the pins are turning. The lock won't seize from trying — keep at it whenever you like, or walk away; either way, the elder's coffer still opens without the seal."]]
             ]
           ]
         },
         {
           "id": "pick_vault_perk",
-          "label": "pick the strongbox's lock (fleetfoot)",
-          "if": [["!class", "scout"], ["perk", "fleetfoot"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", "<", 2]],
+          "label": "pick the strongbox's lock — safe to try as many times as you like (fleetfoot)",
+          "if": [["!class", "scout"], ["perk", "fleetfoot"], ["!flag", "vault_opened"]],
           "fx": [
             ["check", "grace", 11,
               [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "The old pins give way, one by one. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
-              [["addvar", "vault_pick_tries", 1], ["say", "Not yet, but the pins are turning. Keep at it or walk away — either way, the elder's coffer still opens without the seal; a lock this old won't forgive too many failed tries."]]
-            ]
-          ]
-        },
-        {
-          "id": "pick_vault_perk_final",
-          "label": "pick the strongbox's lock — this old lock may break if you fail again (fleetfoot)",
-          "if": [["!class", "scout"], ["perk", "fleetfoot"], ["!flag", "vault_opened"], ["!flag", "vault_jammed"], ["var", "vault_pick_tries", ">=", 2]],
-          "fx": [
-            ["check", "grace", 11,
-              [["set", "vault_opened"], ["move", "kings_seal", "inv"], ["score", 10], ["xp", 3], ["say", "Patience does what the first tries couldn't — the old pins finally give way, one by one. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap of the king's own writing."]],
-              [["set", "vault_jammed"], ["say", "The last pin snaps under too much strain. The lock seizes for good — whatever's inside stays inside now. Nothing else is lost — the elder still opens the coffer for grief alone, no seal needed."]]
+              [["say", "Not yet, but the pins are turning. The lock won't seize from trying — keep at it whenever you like, or walk away; either way, the elder's coffer still opens without the seal."]]
             ]
           ]
         },
