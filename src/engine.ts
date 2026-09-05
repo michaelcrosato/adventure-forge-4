@@ -232,6 +232,85 @@ function grantXp(world: World, s: State, n: number, events: string[]): void {
 export const inClassPhase = (world: World, s: State): boolean =>
   s.classId === null && !!world.classes && Object.keys(world.classes).length > 0;
 
+// ---------- rooms that change ----------
+/** The room as it currently looks: base fields, overridden by the first matching variant. */
+export function roomView(world: World, s: State, roomId = s.room): { name: string; desc: string; brief?: string } {
+  const room = world.rooms[roomId];
+  if (!room) return { name: roomId, desc: "" };
+  const v = room.variants?.find((x) => condsOk(world, s, x.if));
+  const brief = v?.brief ?? room.brief;
+  return { name: v?.name ?? room.name, desc: v?.desc ?? room.desc, ...(brief !== undefined ? { brief } : {}) };
+}
+
+// ---------- journal ----------
+export type QuestLine = { id: string; name: string; status: "active" | "done" | "failed"; text: string };
+
+/** Every quest that has started, with the line the player should read for it right now. */
+export function journal(world: World, s: State): QuestLine[] {
+  const out: QuestLine[] = [];
+  for (const [id, q] of Object.entries(world.quests ?? {})) {
+    if (!condsOk(world, s, q.start)) continue;
+    if (q.failed && condsOk(world, s, q.failed)) { out.push({ id, name: q.name, status: "failed", text: "" }); continue; }
+    if (q.done && condsOk(world, s, q.done)) { out.push({ id, name: q.name, status: "done", text: "" }); continue; }
+    const stage = q.stages.find((st) => condsOk(world, s, st.if));
+    out.push({ id, name: q.name, status: "active", text: stage?.text ?? "" });
+  }
+  return out;
+}
+
+/** One event per quest whose journal line changed this turn — the player sees the journal move without asking. */
+function journalEvents(world: World, before: State, after: State, events: string[]): void {
+  if (!world.quests) return;
+  const prev = new Map(journal(world, before).map((q) => [q.id, q]));
+  for (const q of journal(world, after)) {
+    const p = prev.get(q.id);
+    if (p && p.status === q.status && p.text === q.text) continue;
+    if (q.status === "done") events.push(`Quest done: ${q.name}.`);
+    else if (q.status === "failed") events.push(`Quest failed: ${q.name}.`);
+    else if (q.text) events.push(`Quest — ${q.name}: ${q.text}`);
+  }
+}
+
+// ---------- fast travel ----------
+/** Landmark rooms the player has stood in, other than the one they stand in now. */
+export function knownLandmarks(world: World, s: State): string[] {
+  return s.visited.filter((id) => id !== s.room && !!world.rooms[id]?.landmark);
+}
+
+/** Travel is offered from a landmark room with somewhere else known to go and no aggressive npc at hand. */
+export function travelAvailable(world: World, s: State): boolean {
+  if (!world.rooms[s.room]?.landmark) return false;
+  if (!knownLandmarks(world, s).length) return false;
+  for (const id of Object.keys(world.npcs)) {
+    const def = world.npcs[id]!;
+    if (def.aggressive && s.npcRoom[id] === s.room && !npcDead(world, s, id) && !s.party.includes(id)) return false;
+  }
+  return true;
+}
+
+export const inTravelMode = (world: World, s: State): boolean => s.travelMenu !== null && travelAvailable(world, s);
+
+/** Regions with at least one known landmark, in world order — the grouping used when the flat list would overflow the menu. */
+function travelRegions(world: World, s: State): string[] {
+  const seen = new Set<string>();
+  for (const id of knownLandmarks(world, s)) seen.add(world.rooms[id]?.region ?? "");
+  return Object.keys(world.regions ?? {}).filter((r) => seen.has(r)).concat(seen.has("") ? [""] : []);
+}
+
+/** The travel menu: flat destinations when they fit, else regions first, then one region's destinations. */
+function travelActions(world: World, s: State): Action[] {
+  const known = knownLandmarks(world, s);
+  const out: Action[] = [];
+  if (s.travelMenu === "") {
+    if (known.length <= MENU_CAP - 1) for (const id of known) out.push({ kind: "travelto", room: id });
+    else for (const r of travelRegions(world, s)) out.push({ kind: "travelregion", region: r });
+  } else {
+    for (const id of known) if ((world.rooms[id]?.region ?? "") === s.travelMenu) out.push({ kind: "travelto", room: id });
+  }
+  out.push({ kind: "traveldone" });
+  return out;
+}
+
 // true while a level-up perk pick is blocking the menu — the room's own
 // desc/exits don't render during this screen (see format.ts render()), so
 // callers deciding whether a room's full description has been "seen" must
@@ -462,6 +541,7 @@ export function newState(world: World, seed: number): StepOut {
     visited: [],
     party: [],
     talking: null,
+    travelMenu: null,
     ended: null,
   };
   for (const id of Object.keys(world.items)) if (s.itemLoc[id] === "inv") s.inv.push(id);
@@ -524,11 +604,14 @@ export function legalActions(world: World, s: State): Action[] {
     out.push({ kind: "endtalk" });
     return out;
   }
+  // the travel menu: destinations (or regions), and the way out of it
+  if (inTravelMode(world, s)) return travelActions(world, s);
   const out: Action[] = [];
   const room = world.rooms[s.room];
   if (!room) return out;
   for (const dir of Object.keys(room.exits ?? {})) out.push({ kind: "go", dir });
   if (roomIsDark(world, s)) return out; // in the dark you can only feel for exits
+  if (travelAvailable(world, s)) out.push({ kind: "travel" });
   for (const a of room.actions ?? [])
     if (customVisible(world, s, a)) out.push({ kind: "custom", room: s.room, id: a.id });
   for (const id of itemsHere(world, s))
@@ -583,6 +666,14 @@ export function actionLabel(world: World, a: Action, s?: State): string {
       return `talk to ${world.npcs[a.npc]?.name ?? a.npc}`;
     case "endtalk":
       return "end conversation";
+    case "travel":
+      return "travel to a known place";
+    case "travelregion":
+      return a.region ? `toward ${world.regions?.[a.region]?.name ?? a.region}` : "toward places elsewhere";
+    case "travelto":
+      return `to ${world.rooms[a.room]?.landmark ?? a.room}`;
+    case "traveldone":
+      return s?.travelMenu ? "back" : "stay here";
     case "attack": {
       const npcName = world.npcs[a.npc]?.name ?? a.npc;
       const weapon = s ? bestWeapon(world, s).item : null;
@@ -741,6 +832,22 @@ export function step(world: World, prev: State, action: Action): StepOut {
     case "endtalk":
       s.talking = null;
       break;
+    case "travel":
+      s.travelMenu = "";
+      break;
+    case "travelregion":
+      s.travelMenu = action.region;
+      break;
+    case "traveldone":
+      // from inside a region list, step back to the region list; else close
+      s.travelMenu = s.travelMenu && knownLandmarks(world, s).length > MENU_CAP - 1 ? "" : null;
+      break;
+    case "travelto": {
+      s.travelMenu = null;
+      events.push(`You travel to ${world.rooms[action.room]?.landmark ?? action.room}.`);
+      enterRoom(world, s, action.room, events);
+      break;
+    }
     case "attack": {
       const def = world.npcs[action.npc]!;
       const w = bestWeapon(world, s);
@@ -822,6 +929,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
     aggressivePass(world, s, events, attacked);
     partyRemarks(world, s, events);
   }
+  journalEvents(world, prev, s, events);
   return { state: s, events };
 }
 

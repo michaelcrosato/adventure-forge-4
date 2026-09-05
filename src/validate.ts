@@ -134,6 +134,43 @@ export function validateWorld(world: World): string[] {
     for (const st of p.states) checkConds(`statusPaths ${p.label}`, st.if);
   }
 
+  // ---------- journal, epilogue, hud ----------
+  for (const [qid, q] of Object.entries(world.quests ?? {})) {
+    need(`quest ${qid}`, q, [["name", "string"], ["stages", "array"]]);
+    if (Array.isArray(q.stages) && !q.stages.length) err(`quest ${qid}: needs at least one stage`);
+    checkConds(`quest ${qid} start`, q.start);
+    checkConds(`quest ${qid} done`, q.done);
+    checkConds(`quest ${qid} failed`, q.failed);
+    for (const [i, st] of (Array.isArray(q.stages) ? q.stages : []).entries()) {
+      need(`quest ${qid} stage ${i}`, st, [["if", "array"], ["text", "string"]]);
+      checkConds(`quest ${qid} stage ${i}`, st.if);
+    }
+  }
+  for (const [i, ep] of (world.epilogue ?? []).entries()) {
+    need(`epilogue ${i}`, ep, [["if", "array"], ["text", "string"]]);
+    checkConds(`epilogue ${i}`, ep.if);
+  }
+  for (const [i, h] of (world.hud ?? []).entries()) need(`hud ${i}`, h, [["var", "string"], ["label", "string"]]);
+
+  // ---------- regions and fast travel ----------
+  const regionOk = (id: string) => !!world.regions?.[id];
+  const landmarks = Object.entries(world.rooms).filter(([, r]) => r.landmark);
+  const perRegion = new Map<string, number>();
+  for (const [rid, room] of landmarks) {
+    const r = room.region ?? "";
+    perRegion.set(r, (perRegion.get(r) ?? 0) + 1);
+    if (world.regions && !room.region) err(`room ${rid}: a landmark needs a region when the world defines regions`);
+  }
+  for (const [rid, room] of Object.entries(world.rooms))
+    if (room.region !== undefined && !regionOk(room.region)) err(`room ${rid}: unknown region ${room.region}`);
+  // the travel menu must always fit: flat list when small, else regions then one region's list
+  if (landmarks.length > MENU_CAP - 1) {
+    if (!world.regions) err(`fast travel: ${landmarks.length} landmarks exceed the flat menu (${MENU_CAP - 1}) — define regions to group them`);
+    if (perRegion.size > MENU_CAP - 1) err(`fast travel: ${perRegion.size} regions with landmarks exceed the menu (${MENU_CAP - 1})`);
+    for (const [r, n] of perRegion) if (n > MENU_CAP - 1) err(`fast travel: region ${r || "(none)"} has ${n} landmarks, more than the menu holds (${MENU_CAP - 1})`);
+  }
+  for (const [rid, region] of Object.entries(world.regions ?? {})) need(`region ${rid}`, region, [["name", "string"]]);
+
   if (!roomOk(world.start)) err(`start: unknown room ${world.start}`);
   for (const [rid, room] of Object.entries(world.rooms)) {
     for (const [dir, ex] of Object.entries(room.exits ?? {})) {
@@ -145,6 +182,11 @@ export function validateWorld(world: World): string[] {
     for (const a of room.actions ?? []) {
       checkConds(`room ${rid} action ${a.id}`, a.if);
       checkFx(`room ${rid} action ${a.id}`, a.fx);
+    }
+    for (const [i, v] of (room.variants ?? []).entries()) {
+      need(`room ${rid} variant ${i}`, v, [["if", "array"]]);
+      if (v.desc === undefined && v.brief === undefined && v.name === undefined) err(`room ${rid} variant ${i}: changes nothing (needs desc, brief, or name)`);
+      checkConds(`room ${rid} variant ${i}`, v.if);
     }
   }
   for (const [iid, item] of Object.entries(world.items)) {

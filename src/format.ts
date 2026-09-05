@@ -9,8 +9,8 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inPerkPickPhase, inTalkMode, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
-import { ATTRS } from "./types.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inPerkPickPhase, inTalkMode, inTravelMode, journal, legalActions, oddsHint, receipt, roomIsDark, roomView } from "./engine.ts";
+import { ATTRS, EPILOGUE_CAP } from "./types.ts";
 import type { Action, State, World } from "./types.ts";
 
 const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
@@ -65,10 +65,17 @@ export function render(
 ): { text: string; actions: Action[] } {
   if (s.ended) {
     const e = s.ended;
+    // how the world remembers what you did: every epilogue line whose
+    // conditions hold, in authored order, up to the cap
+    const epilogue = (world.epilogue ?? [])
+      .filter((ep) => ep.if.every((c) => condOk(world, s, c)))
+      .slice(0, EPILOGUE_CAP)
+      .map((ep) => ep.text);
     const lines = [
       ...events.map((x) => `[${x}]`),
       `*** ${e.kind.toUpperCase()}: ${e.id} ***`,
       e.text,
+      ...epilogue,
       `score:${s.score}/${world.maxScore} turns:${s.turn} seed:${s.seed}`,
       `(score tallies discoveries and choices along the way — a bonus, not required)`,
       `receipt:${receipt(world, s)}`,
@@ -91,11 +98,13 @@ export function render(
   }
 
   const room = world.rooms[s.room];
+  const view = roomView(world, s);
   const dark = roomIsDark(world, s);
   const lines: string[] = [];
   const lvl = world.classes ? ` L${s.level}` : "";
+  const hud = (world.hud ?? []).map((h) => ` ${h.label}${s.vars[h.var] ?? 0}`).join("");
   lines.push(
-    `=${room?.name ?? s.room} | hp${s.hp}/${s.maxHp}${lvl} score${s.score}/${world.maxScore} t${s.turn}`,
+    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} score${s.score}/${world.maxScore} t${s.turn}${hud}`,
   );
   if (events.length) lines.push(`[${events.join(" ")}]`);
   if (world.progress) {
@@ -122,11 +131,19 @@ export function render(
     return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
   }
 
+  // the travel menu: known places, nothing else
+  if (inTravelMode(world, s)) {
+    const menu = renderMenu(world, s);
+    lines.push("Travel — places you know:");
+    lines.push(menu.text);
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+  }
+
   if (dark) {
     lines.push("Pitch dark. You can only feel for the exits.");
   } else {
-    if (opts.full) lines.push(room?.desc ?? "");
-    else if (room?.brief) lines.push(room.brief);
+    if (opts.full) lines.push(view.desc);
+    else if (view.brief) lines.push(view.brief);
     const here = Object.keys(world.items)
       .filter((id) => s.itemLoc[id] === s.room)
       .map((id) => world.items[id]?.name ?? id);
@@ -184,6 +201,17 @@ export function renderStatus(world: World, s: State): string {
     const text = hit?.text ?? p.fallback;
     if (text) lines.push(`${p.label}: ${text}`);
   }
+  // the journal: every active quest with its current line, then the closed ones by name
+  if (world.quests) {
+    const q = journal(world, s);
+    const active = q.filter((x) => x.status === "active");
+    if (active.length) lines.push(`Quests:\n${active.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
+    const done = q.filter((x) => x.status === "done").map((x) => x.name);
+    if (done.length) lines.push(`Done: ${done.join(", ")}`);
+    const failed = q.filter((x) => x.status === "failed").map((x) => x.name);
+    if (failed.length) lines.push(`Failed: ${failed.join(", ")}`);
+  }
+  for (const h of world.hud ?? []) lines.push(`${h.label}: ${s.vars[h.var] ?? 0}`);
   const visited = s.visited ?? [];
   if (visited.length) {
     const names = visited.map((id) => world.rooms?.[id]?.name ?? id);

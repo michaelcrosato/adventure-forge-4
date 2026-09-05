@@ -58,6 +58,14 @@ export type CustomAction = {
   fx: Fx[];
 };
 
+/** A room's face under some condition: the first matching variant overrides name/desc/brief. */
+export type RoomVariant = {
+  if: Cond[];
+  name?: string;
+  desc?: string;
+  brief?: string;
+};
+
 export type RoomDef = {
   name: string;
   desc: string; // full text, shown on first visit / look
@@ -67,6 +75,15 @@ export type RoomDef = {
   onEnter?: Fx[]; // every entry
   onEnterOnce?: Fx[]; // first entry only
   actions?: CustomAction[];
+  /** The world changes with the player's choices: a burned village, a rebuilt bridge. First match wins. */
+  variants?: RoomVariant[];
+  /** Region this room belongs to (a key of world.regions); groups fast-travel destinations. */
+  region?: string;
+  /**
+   * A fast-travel node. Once visited, the room can be travelled to from any
+   * other landmark room (with no aggressive npc present) by this short name.
+   */
+  landmark?: string;
 };
 
 export type UseDef = {
@@ -198,6 +215,23 @@ export type GenDef = {
   spots?: GenSpot[];
 };
 
+/**
+ * A journal entry. Active once `start` passes (default: from the beginning)
+ * and until `done` or `failed` does; the first matching stage is the line the
+ * player reads. A change in that line prints a "Quest" event the turn it
+ * happens, so a player who never calls `status` still sees the journal move.
+ */
+export type QuestDef = {
+  name: string;
+  start?: Cond[];
+  done?: Cond[];
+  failed?: Cond[];
+  stages: { if: Cond[]; text: string }[];
+};
+
+/** Most epilogue lines appended to an ending; the rest stay untold. */
+export const EPILOGUE_CAP = 8;
+
 export type World = {
   id: string;
   title: string;
@@ -214,6 +248,14 @@ export type World = {
   rooms: Record<string, RoomDef>;
   items: Record<string, ItemDef>;
   npcs: Record<string, NpcDef>;
+  /** Named regions that group fast-travel destinations (rooms point at them via `region`). */
+  regions?: Record<string, { name: string }>;
+  /** The journal, shown by the free `status` check; stage changes also print as events. */
+  quests?: Record<string, QuestDef>;
+  /** Lines appended to any ending whose conditions pass, in order (at most EPILOGUE_CAP): how the world remembers your choices. */
+  epilogue?: { if: Cond[]; text: string }[];
+  /** Extra counters shown compactly in the per-turn status line (e.g. gold). */
+  hud?: { var: string; label: string }[];
   /** Optional persistent counter shown in the status line every turn (e.g. quest items gathered). */
   progress?: { var: string; label: string; max: number };
   /** Optional extra counters for the free `status` check (any time, no turn cost) — e.g. multiple parallel paths to an ending. Not shown on the per-turn line. */
@@ -247,7 +289,11 @@ export type Action =
   | { kind: "classpick"; id: string } // choose who you are (first menu when a world has classes)
   | { kind: "perkpick"; id: string } // choose a perk after a level-up
   | { kind: "talkto"; npc: string } // open a conversation with a `dialogue` npc
-  | { kind: "endtalk" }; // close the open conversation
+  | { kind: "endtalk" } // close the open conversation
+  | { kind: "travel" } // open the fast-travel menu (from a landmark room)
+  | { kind: "travelregion"; region: string } // narrow the travel menu to one region
+  | { kind: "travelto"; room: string } // go to a discovered landmark
+  | { kind: "traveldone" }; // close the travel menu (or step back out of a region)
 
 export type Ending = { kind: "win" | "lose"; id: string; text: string };
 
@@ -275,6 +321,7 @@ export type State = {
   visited: string[];
   party: string[]; // companions travelling with the player, in join order
   talking: string | null; // npc id while a conversation is open (conversation mode)
+  travelMenu: string | null; // null: closed; "": destinations (or regions) listed; a region id: that region's destinations
   ended: Ending | null;
 };
 
