@@ -78,6 +78,34 @@
         },
         { "if": [["flag", "th_hollow_rested"]], "brief": "Packed dirt. Easier laughter than before." },
         { "if": [["flag", "lys_brother_lost"]], "brief": "Packed dirt. One less voice than there was." }
+      ],
+      "actions": [
+        {
+          "id": "th_spar_for_cal",
+          "label": "win his debt clear at the ring (might)",
+          "if": [
+            ["flag", "lys_brother_found"],
+            ["!flag", "lys_brother_home"],
+            ["!flag", "lys_brother_buried"],
+            ["!flag", "lys_brother_lost"]
+          ],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "lys_brother_home"],
+                ["score", 6],
+                ["xp", 4],
+                ["say", "You put a man twice Cal's size on his back before the ring's done cheering, and card enough of the pot to square his tally yourself. \"Go home,\" you tell him. \"It's paid.\""]
+              ],
+              [
+                ["say", "The bigger man plants you in the dirt before you've found your feet. The debt stands exactly where it was."]
+              ]
+            ]
+          ]
+        }
       ]
     },
     "th_captains_tent": {
@@ -140,6 +168,32 @@
                 ["say", "Under a decade of unsent requisitions, one letter never left camp: a pardon, signed at Marrowgate, addressed to a captain forty years dead. Nobody thought to burn it. Nobody thought to send it either."]
               ],
               [["say", "Paper on paper, none of it wants to be found. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "th_find_tally_error",
+          "label": "find the error in his tally (wits)",
+          "if": [
+            ["flag", "lys_brother_found"],
+            ["!flag", "lys_brother_home"],
+            ["!flag", "lys_brother_buried"],
+            ["!flag", "lys_brother_lost"]
+          ],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "lys_brother_home"],
+                ["score", 6],
+                ["xp", 4],
+                ["say", "The tally doesn't add the way Bray thinks it does — a column carried wrong, twice, always in the wagon's favor. Shown plain, he strikes Cal's debt without an argument."]
+              ],
+              [
+                ["say", "The figures are a mess, but an honest one. Whatever's owed, it's owed fair, and the columns won't say otherwise."]
+              ]
             ]
           ]
         }
@@ -228,6 +282,44 @@
                 ["say", "One root is worn paler than the rest, a path polished by feet that came this way on purpose, over years. You follow the polish, not the dark."]
               ],
               [["say", "Every root looks the same as every other. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "th_thorn_might",
+          "label": "force the roots apart (might)",
+          "if": [["!flag", "th_root_found"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "th_root_found"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "You put a shoulder to the roots and open a gap by main force, dark or no dark. Whatever the path once needed, plain wanting is enough tonight."]
+              ],
+              [["say", "The roots hold fast against you, and you've only torn your hands for the trying."]]
+            ]
+          ]
+        },
+        {
+          "id": "th_thorn_will",
+          "label": "steady your nerve and press on (will)",
+          "if": [["!flag", "th_root_found"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "th_root_found"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "You stop flinching from the dark and let it stay dark. Fear was the only thing in your way; without it, the path was always there."]
+              ],
+              [["say", "Your nerve breaks first. You're back at the thornbrake, no closer than before."]]
             ]
           ]
         }
@@ -1086,7 +1178,30 @@
           "desc": "Snares hang from low branches, most sprung and empty, one not. A cookfire smokes low behind a fallen trunk.",
           "brief": "Snares, and a wary poacher.",
           "npcs": ["th_rook"],
-          "onEnterOnce": [["xp", 1], ["set", "th_rook_found"], ["score", 2]]
+          "onEnterOnce": [["xp", 1], ["set", "th_rook_found"], ["score", 2]],
+          "actions": [
+            {
+              "id": "th_slip_rook",
+              "label": "slip past his snares unseen (grace)",
+              "if": [["!flag", "th_rook_dealt"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  10,
+                  [
+                    ["set", "th_rook_dealt"],
+                    ["set", "th_rook_slipped"],
+                    ["score", 4],
+                    ["xp", 3],
+                    ["addvar", "rep_free", 1],
+                    ["say", "You thread the sprung snares without a sound and the fallen trunk keeps you from his eyeline the whole way. Rook never looks up from his tally."]
+                  ],
+                  [["say", "A dry branch gives you away. Rook's already up, knife loose, before you've gone three steps."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 1],

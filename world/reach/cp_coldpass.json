@@ -423,6 +423,37 @@
           ]
         },
         {
+          "id": "cp_refuse_wits",
+          "label": "feed him a false location (wits)",
+          "if": [["flag", "said_cp_crell_demand"], ["!flag", "cp_fost_protected"], ["!flag", "cp_fost_betrayed"]],
+          "say": "Go on, then. Tell me where, and be convincing about it.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "cp_fost_protected"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_keepers", 2],
+                ["addvar", "rep_iron", -1],
+                ["addvar", "appr_osk", 1],
+                ["say", "You send him toward the old ice-cellar instead, detailed enough to be convincing, wrong enough to matter. Crell's men waste the whole afternoon before anyone thinks to ask why an ice-cellar never held a scriptorium."]
+              ],
+              [
+                ["set", "cp_fost_betrayed"],
+                ["xp", 1],
+                ["addvar", "rep_iron", 1],
+                ["addvar", "rep_keepers", -2],
+                ["addvar", "rep_church", -1],
+                ["addvar", "appr_osk", -1],
+                ["say", "He turns your directions over twice, finds the seam in them, and doesn't bother being polite about it. His own men have the real scriptorium out and burning by evening."]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "give_in",
           "label": "tell him where the texts are",
           "if": [["flag", "said_cp_crell_demand"], ["!flag", "cp_fost_protected"], ["!flag", "cp_fost_betrayed"]],
@@ -615,6 +646,14 @@
           "once": true,
           "say": "The old one snapped the day those pilgrims went up and didn't come down. I've kept the spare since — waiting for someone worth trusting it to.",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "cp_rumor_drift",
+          "label": "ask what she's found up there",
+          "if": [["flag", "said_cp_ness_greet"]],
+          "once": true,
+          "say": "There's an old drift cut into the bare rock past the avalanche field, one the maps don't name. Something in there still keeps its own hours. I leave it be, and it leaves me be.",
+          "fx": [["xp", 1]]
         }
       ]
     }
@@ -669,6 +708,52 @@
                     ["set", "cp_scree_dug"],
                     ["hp", -1],
                     ["say", "The shale gives all at once and takes your footing with it. Whatever's under there stays under there."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "cp_scree_might",
+              "label": "dig the shale — 1hp risk (might)",
+              "if": [["!flag", "cp_scree_dug"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  9,
+                  [
+                    ["set", "cp_scree_dug"],
+                    ["addvar", "gold", 3],
+                    ["xp", 1],
+                    ["say", "You don't pick at the shale, you shove through it, and the slide gives up three old coins along with a faceful of grit."]
+                  ],
+                  [
+                    ["set", "cp_scree_dug"],
+                    ["hp", -1],
+                    ["say", "The shale slides out from under you before you find purchase in it. Whatever's under there stays under there."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "cp_scree_will",
+              "label": "push through — 1hp risk (will)",
+              "if": [["!flag", "cp_scree_dug"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  9,
+                  [
+                    ["set", "cp_scree_dug"],
+                    ["addvar", "gold", 3],
+                    ["xp", 1],
+                    ["say", "You don't test each step. You commit to the crossing out of sheer refusal to fall, and the shifting shale gives up three old coins on the way."]
+                  ],
+                  [
+                    ["set", "cp_scree_dug"],
+                    ["hp", -1],
+                    ["say", "Your nerve holds the whole way; your footing doesn't. Whatever's under there stays under there."]
                   ]
                 ]
               ]
@@ -732,6 +817,46 @@
                     ["say", "The ice gives with a crack that echoes off every slope at once. Beneath: a sealed tin, someone's frost-balm, never used."]
                   ],
                   [["say", "The ice holds. Whatever's down there stays down there, for now."]]
+                ]
+              ]
+            },
+            {
+              "id": "cp_tarn_might",
+              "label": "break the ice by main force (might)",
+              "if": [["!has", "cp_frost_balm"], ["!flag", "cp_tarn_done"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  9,
+                  [
+                    ["set", "cp_tarn_done"],
+                    ["move", "cp_frost_balm", "inv"],
+                    ["xp", 2],
+                    ["say", "You don't work at it delicately. One good strike and the ice gives all at once, cracking off in every direction. Beneath: a sealed tin, someone's frost-balm, never used."]
+                  ],
+                  [["say", "The ice rings under the blow and holds anyway. Whatever's down there stays down there, for now."]]
+                ]
+              ]
+            },
+            {
+              "id": "cp_tarn_will",
+              "label": "trust the ice and go to it (will)",
+              "if": [["!has", "cp_frost_balm"], ["!flag", "cp_tarn_done"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  9,
+                  [
+                    ["set", "cp_tarn_done"],
+                    ["move", "cp_frost_balm", "inv"],
+                    ["xp", 2],
+                    ["say", "You walk out onto ice you have no business trusting, and it holds you exactly as long as you need it to. Beneath: a sealed tin, someone's frost-balm, never used."]
+                  ],
+                  [
+                    ["say", "Halfway out, your nerve goes, and you're back on solid ground before the ice can decide anything for you."]
+                  ]
                 ]
               ]
             }
@@ -807,6 +932,46 @@
                     ["say", "Your hands close on a haft first, then the whole of it: an ice axe, well kept, a stranger's initials scratched into the head."]
                   ],
                   [["say", "The old slide gives up nothing today. It can be tried again."]]
+                ]
+              ]
+            },
+            {
+              "id": "cp_slide_wits",
+              "label": "read where the drift's thinnest (wits)",
+              "if": [["!has", "cp_ice_axe"], ["!flag", "cp_slide_dug"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "cp_slide_dug"],
+                    ["move", "cp_ice_axe", "inv"],
+                    ["xp", 2],
+                    ["say", "You don't dig at random. You read where the drift piled thinnest, over a hollow the snow never quite filled, and your hands close on a haft: an ice axe, well kept, a stranger's initials scratched into the head."]
+                  ],
+                  [
+                    ["say", "Your reading holds up right until your hands close on packed snow and nothing else. It can be tried again."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "cp_slide_will",
+              "label": "keep digging past good sense (will)",
+              "if": [["!has", "cp_ice_axe"], ["!flag", "cp_slide_dug"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "cp_slide_dug"],
+                    ["move", "cp_ice_axe", "inv"],
+                    ["xp", 2],
+                    ["say", "You don't stop when your arms say stop. Past the point where digging further stops making sense, your hands close on a haft: an ice axe, well kept, a stranger's initials scratched into the head."]
+                  ],
+                  [["say", "You dig until you can't, and the slide gives up nothing for the effort. It can be tried again."]]
                 ]
               ]
             }
@@ -902,6 +1067,16 @@
       },
       "sideTrip": true,
       "landmark": "the Lookout"
+    },
+    {
+      "template": "mine",
+      "id": "cp_drift",
+      "at": "cp_spine_3_1",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the frostbound drift",
+      "vars": { "NAME": "the Frostbound Drift", "FOREMAN": "a frost-bound foreman" }
     }
   ],
   "quests": {

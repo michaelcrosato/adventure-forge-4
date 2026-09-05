@@ -191,6 +191,34 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "wm_break_record",
+          "label": "break the seal open, plainly (might)",
+          "if": [
+            ["flag", "wm_founding_known"],
+            ["!has", "wm_founding_record"],
+            ["!flag", "wm_record_unsealed"],
+            ["!flag", "wm_record_stolen"]
+          ],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "wm_record_stolen"],
+                ["move", "wm_founding_record", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_watch", -1],
+                ["say", "You don't wait for a quiet moment. The seal splits under your hands in plain view, and the archivist's pen finally stops."]
+              ],
+              [
+                ["say", "The seal is stouter than the shelf it's set in, and all you get for the trying is a bruised hand and her full attention."]
+              ]
+            ]
+          ]
         }
       ]
     },

@@ -250,6 +250,24 @@
               [["hp", -1], ["say", "A rock shifts under your hand and takes skin with it as you scramble back."]]
             ]
           ]
+        },
+        {
+          "id": "ir_push_fall",
+          "label": "go through before nerve fails (will)",
+          "if": [["!flag", "ir_hundred_passed"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "ir_hundred_passed"],
+                ["xp", 2],
+                ["say", "You don't test the gap twice. You go through in one motion, before your own good sense can talk you out of it, and you're clear before the fall can decide to finish moving."]
+              ],
+              [["say", "You freeze halfway, exactly where freezing is worst, and have to back out the way you came."]]
+            ]
+          ]
         }
       ]
     },
@@ -287,6 +305,27 @@
             ["move", "ir_marked_pick", "inv"],
             ["xp", 1],
             ["say", "Among the dropped tools, a pick with a haft notched in three places — marked so its owner would know it in the dark. Someone in Cinderhall might still want this back."]
+          ]
+        },
+        {
+          "id": "ir_force_evidence",
+          "label": "wrench the fallen crate apart (might)",
+          "if": [["!flag", "tamsin_mine_truth"], ["!flag", "ir_miners_sold"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "tamsin_mine_truth"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "You do not bother reading. You break the crate apart and find a second ledger beneath the first: timber ordered cheap, signed off by a hand that now wears the Preceptor's grey."]
+              ],
+              [
+                ["say", "The crate splinters, and whatever else it was hiding goes with it, pulped past reading. It can be tried again."]
+              ]
+            ]
           ]
         }
       ]
@@ -398,6 +437,33 @@
             ["xp", 2],
             ["say", "You say it plain, once, the way you'd hail someone across a room. Nothing answers. Something, all the same, seems to stop straining to be heard."],
             ["if", [["inParty", "tamsin"]], [["say", "Tamsin doesn't say anything. She doesn't have to."]], []]
+          ]
+        },
+        {
+          "id": "ir_hundred_collapse",
+          "label": "bring the gallery down for good (might)",
+          "if": [["!flag", "ir_hollow_resolved"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "ir_hollow_burned"],
+                ["set", "ir_hollow_resolved"],
+                ["addvar", "hollows_burned", 1],
+                ["score", 15],
+                ["xp", 8],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_keepers", -2],
+                ["addvar", "appr_tamsin", 1],
+                ["addvar", "appr_osk", -1],
+                ["say", "You don't wait on fire. You put your shoulder to the last standing prop and bring the whole gallery down on itself, timber and rail and all. Whatever the Hundred were waiting on, it isn't down there to wait for anymore."]
+              ],
+              [
+                ["say", "The prop holds, and the roof with it. Whatever's owed here, brute strength alone isn't going to collect it."]
+              ]
+            ]
           ]
         }
       ]
@@ -588,6 +654,66 @@
             ["set", "tamsin_mine_forgiven"],
             ["xp", 2],
             ["say", "You choose to let it lie. Aldous doesn't thank you for it — he's not sure yet whether it was mercy or just one more thing he wasn't made to pay for."]
+          ]
+        },
+        {
+          "id": "ir_corner_aldous",
+          "label": "corner him and make him admit it (might)",
+          "if": [
+            ["flag", "tamsin_mine_truth"],
+            ["!flag", "ir_aldous_ruined"],
+            ["!npcDead", "ir_aldous"],
+            ["!flag", "tamsin_mine_avenged"]
+          ],
+          "say": "You mean to force it out of him.",
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "tamsin_mine_avenged"],
+                ["set", "ir_aldous_ruined"],
+                ["set", "ir_aldous_gone"],
+                ["score", 5],
+                ["xp", 3],
+                ["addvar", "rep_iron", -2],
+                ["addvar", "rep_watch", 1],
+                ["say", "You back him into the corner of his own hall until the fear in the room isn't yours. He admits it, loud enough for the duty-clerk to hear every word — that's as good as a ledger, now."]
+              ],
+              [["say", "He doesn't scare, not here, not in front of his own men. You've only told the room you tried."]]
+            ]
+          ]
+        },
+        {
+          "id": "ir_denounce_aldous",
+          "label": "denounce him publicly (will)",
+          "if": [
+            ["flag", "tamsin_mine_truth"],
+            ["!flag", "ir_aldous_ruined"],
+            ["!npcDead", "ir_aldous"],
+            ["!flag", "tamsin_mine_avenged"]
+          ],
+          "say": "You mean to say this in front of everyone.",
+          "fx": [
+            [
+              "check",
+              "will",
+              12,
+              [
+                ["set", "tamsin_mine_avenged"],
+                ["set", "ir_aldous_ruined"],
+                ["set", "ir_aldous_gone"],
+                ["score", 5],
+                ["xp", 3],
+                ["addvar", "rep_iron", -2],
+                ["addvar", "rep_watch", 1],
+                ["say", "You say it in front of the whole chapterhouse, plain and unshaking, and let them watch him fail to deny it. By evening a Watch clerk has his desk."]
+              ],
+              [
+                ["say", "Your voice doesn't waver, but the room does — nobody here is ready to hear it from a stranger. Not yet."]
+              ]
+            ]
           ]
         },
         { "id": "bye", "label": "leave the chapterhouse", "say": "Mind the fires on your way out.", "end": true }
@@ -928,6 +1054,46 @@
                     ["say", "The board splits away. Wedged behind it, a handful of coin someone hid from a company tally, years back."]
                   ],
                   [["hp", -1], ["say", "The nail holds, and bites your palm for the trouble."]]
+                ]
+              ]
+            },
+            {
+              "id": "ir_adit_loose",
+              "label": "work the already-loosened corner (wits)",
+              "if": [["!flag", "ir_adit_pried"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "ir_adit_pried"],
+                    ["addvar", "gold", 4],
+                    ["xp", 1],
+                    ["say", "Someone's already worked this corner loose. You find the give and follow it, and the board comes away clean where theirs didn't quite finish the job."]
+                  ],
+                  [["say", "The board's stubborn everywhere you press, loosened corner or not. It can be tried again."]]
+                ]
+              ]
+            },
+            {
+              "id": "ir_adit_nerve",
+              "label": "reach through blind (will)",
+              "if": [["!flag", "ir_adit_pried"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "ir_adit_pried"],
+                    ["addvar", "gold", 4],
+                    ["xp", 1],
+                    ["say", "You don't look at what your hand might close on. You just reach, and trust the finding to whatever's still down there worth finding."]
+                  ],
+                  [
+                    ["say", "Your nerve gets your arm through the gap and no further. Whatever's behind the board stays behind it."]
+                  ]
                 ]
               ]
             }

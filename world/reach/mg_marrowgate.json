@@ -134,7 +134,47 @@
           "sideTrip": true
         },
         "north": { "to": "mg_chapel_undercroft", "sideTrip": true }
-      }
+      },
+      "actions": [
+        {
+          "id": "mg_pilgrim_door_might",
+          "label": "force the font's old bolt (might)",
+          "if": [["!flag", "mg_knows_pilgrim_door"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "mg_knows_pilgrim_door"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "You don't wait on her blessing. The old bolt's rusted through at the hasp, and it gives to a shoulder same as any other door. 'That works too, I suppose,' she says, more resigned than angry."]
+              ],
+              [["say", "The bolt holds, and you've only rattled the font doing it. She's watching now, and not kindly."]]
+            ]
+          ]
+        },
+        {
+          "id": "mg_pilgrim_door_wits",
+          "label": "find the old keeper's latch (wits)",
+          "if": [["!flag", "mg_knows_pilgrim_door"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "mg_knows_pilgrim_door"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "You don't ask. You read the wear on the stone sill instead -- a latch, half-hidden, worn smooth by keepers' hands that stopped coming generations back. It gives easily, once you know where."]
+              ],
+              [["say", "Whatever mechanism this door still answers to, it isn't obvious to a careful eye tonight."]]
+            ]
+          ]
+        }
+      ]
     },
     "mg_regents_way": {
       "name": "The Regent's Way",
@@ -427,6 +467,36 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "mg_break_chain",
+          "label": "snap the chain by main strength (might)",
+          "if": [["!flag", "mg_ledger_found"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              12,
+              [
+                ["set", "mg_ledger_found"],
+                ["move", "mg_founding_ledger", "inv"],
+                ["score", 15],
+                ["xp", 5],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["set", "vell_exposed"],
+                    ["say", "You don't work the lock. You haul on the chain until the old iron gives, links first. The founding ledger: the first Reeve's own account of the crown, and the names of his line -- one of them Vell's."]
+                  ],
+                  [
+                    ["say", "You don't work the lock. You haul on the chain until the old iron gives, links first. The founding ledger: the first Reeve's own account of the crown, in his own hand."]
+                  ]
+                ]
+              ],
+              [["say", "The chain doesn't give, and Penn's candle gets a little closer to your hands than is comfortable."]]
+            ]
+          ]
         }
       ]
     },
@@ -492,7 +562,30 @@
           "landmark": "the smugglers' cut"
         }
       },
-      "onEnterOnce": [["xp", 2]]
+      "onEnterOnce": [["xp", 2]],
+      "actions": [
+        {
+          "id": "mg_cut_wits",
+          "label": "puzzle out the chalk-mark's code (wits)",
+          "if": [["!flag", "mg_knows_cut"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              11,
+              [
+                ["set", "mg_knows_cut"],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "The chalk isn't just a mark, once you look -- it's a rhythm, scratched in three short strokes and a gap. You knock it out yourself, and the bolt slides back from beneath."]
+              ],
+              [
+                ["say", "Chalk on a floor is chalk on a floor as far as you can tell. Whatever it's supposed to mean, it isn't obvious tonight."]
+              ]
+            ]
+          ]
+        }
+      ]
     },
     "mg_old_crypts": {
       "name": "The Old Crypts",
@@ -532,6 +625,24 @@
                 ["say", "You wait for its swing and go under it. The passage north is yours."]
               ],
               [["hp", -2], ["say", "It is faster than four hundred years should allow."]]
+            ]
+          ]
+        },
+        {
+          "id": "mg_guard_will",
+          "label": "speak the old rest-rite at it (will)",
+          "if": [["!flag", "mg_guard_passed"], ["!npcDead", "mg_hollow_guard"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              12,
+              [
+                ["set", "mg_guard_passed"],
+                ["xp", 3],
+                ["say", "You don't run and you don't reach for a blade. You speak the old rest-rite instead, the one every honour guard was sworn under before it forgot everything else. Something in it remembers enough to stand down."]
+              ],
+              [["say", "Whatever's left of it doesn't remember rites anymore, only orders. It comes for you regardless."]]
             ]
           ]
         }
@@ -910,6 +1021,50 @@
           ]
         },
         {
+          "id": "mg_shake_might",
+          "label": "corner her, wordless and plain (might)",
+          "if": [["has", "mg_founding_ledger"], ["!flag", "mg_regent_shaken"]],
+          "say": "You don't set anything on the table. You just don't leave.",
+          "fx": [
+            [
+              "check",
+              "might",
+              12,
+              [
+                ["set", "mg_regent_shaken"],
+                ["score", 10],
+                ["xp", 4],
+                ["say", "You don't argue. You just stand there, closer than protocol allows, until the silence does what words couldn't. She looks away first. 'I knew,' she says, quieter than she means to."]
+              ],
+              [
+                ["say", "She's outlasted better intimidation than yours in forty years of audiences. 'Sit down,' she says, 'or leave. Standing there accomplishes nothing.'"]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "mg_shake_wits",
+          "label": "lay out the ledger's own numbers (wits)",
+          "if": [["has", "mg_founding_ledger"], ["!flag", "mg_regent_shaken"]],
+          "say": "You don't accuse her. You just read the numbers back to her, in order.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              11,
+              [
+                ["set", "mg_regent_shaken"],
+                ["score", 10],
+                ["xp", 4],
+                ["say", "You walk the tallies back to their source, the same way she would, until the ledger makes her case better than you could. 'I have always known,' she says. 'I did not know he wrote it down.'"]
+              ],
+              [
+                ["say", "Your numbers are sound. Hers are better rehearsed. She has an answer for every column before you finish it."]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "vale",
           "label": "what you did in the Vale",
           "if": [["flag", "va_king_resolved"]],
@@ -1250,6 +1405,50 @@
           ]
         },
         {
+          "id": "mg_proof_might",
+          "label": "corner him among the casks (might)",
+          "if": [["!flag", "mg_oath_proof_found"]],
+          "say": "You want to know exactly where that order is kept.",
+          "fx": [
+            [
+              "check",
+              "might",
+              12,
+              [
+                ["set", "mg_oath_proof_found"],
+                ["move", "mg_burn_manifest", "inv"],
+                ["set", "mg_oath_heard"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "He doesn't like being crowded in his own hall, and it shows. 'Third cask from the door,' he says at last, jaw tight. 'Now get out of my furnace.'"]
+              ],
+              [["say", "He doesn't crowd easy. 'Careful,' is all he says, and doesn't move an inch."]]
+            ]
+          ]
+        },
+        {
+          "id": "mg_proof_will",
+          "label": "appeal to his own principles (will)",
+          "if": [["!flag", "mg_oath_proof_found"]],
+          "say": "You tell him plainly: if the fire never lies, it shouldn't mind being looked at.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "mg_oath_proof_found"],
+                ["move", "mg_burn_manifest", "inv"],
+                ["set", "mg_oath_heard"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "Something in the argument catches him where threats wouldn't. 'Third cask from the door,' he says, almost to himself. 'If the fire's honest, let it be honest all the way.'"]
+              ],
+              [["say", "'The fire answers to me, not to arguments,' he says, and goes back to the roll."]]
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to the roll",
           "say": "Every name gets read. Even yours, in the end.",
@@ -1300,6 +1499,28 @@
                     ["say", "'And I would open it for a stranger why?' she says. 'Do the Church a kindness somewhere and come back.'"]
                   ]
                 ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "mg_pilgrim_door_will",
+          "label": "make your case, no favors needed (will)",
+          "if": [["!flag", "mg_knows_pilgrim_door"]],
+          "say": "Convince me, then. Not with a favor. With a reason.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "mg_knows_pilgrim_door"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "You don't lean on Osk or the holds. You just tell her, plain, why it matters, and something in the argument itself convinces her more than the argument's source would have. She pulls the bolt."]
+              ],
+              [
+                ["say", "She hears you out and shakes her head once. 'A reason isn't the same as a good one,' she says. 'Try again when you have one.'"]
               ]
             ]
           ]
@@ -1523,6 +1744,28 @@
                     ["say", "'A purse light by exactly what it should weigh doesn't go unnoticed forever,' he says. 'My cut on anything you need from me just went up.'"]
                   ]
                 ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "mg_cut_might",
+          "label": "press him for it, plainly (might)",
+          "if": [["!flag", "mg_knows_cut"]],
+          "say": "You make it plain you're not leaving without an answer.",
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "mg_knows_cut"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "Quill's smile doesn't reach his eyes, but he talks. 'Three knocks and a pause,' he says, flat. 'Under the Gray Steps. We never had this conversation.'"]
+              ],
+              [
+                ["say", "Quill doesn't scare easy in his own tavern, with his own crowd watching. 'Sit down,' he says, 'before you say something you'll owe for.'"]
               ]
             ]
           ]
@@ -1775,6 +2018,48 @@
             ["score", 15],
             ["xp", 5],
             ["say", "The gray coming off him thins to a thread."]
+          ]
+        },
+        {
+          "id": "mg_reeve_might",
+          "label": "make him say it, plain (might)",
+          "if": [["flag", "mg_heard_reeve"], ["!flag", "mg_reeve_confessed"]],
+          "say": "You don't let him look away.",
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "mg_reeve_confessed"],
+                ["score", 15],
+                ["xp", 5],
+                ["say", "You don't leave, and don't look away, until the silence gets heavier than words would be. 'I took it from his brow while he slept,' he says at last, 'and called it inheritance.' The gray thins to a thread."]
+              ],
+              [
+                ["say", "He outlasts you. Four hundred years of sitting with it have made him better at silence than you are at demanding."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "mg_reeve_will",
+          "label": "tell him confession is the rest (will)",
+          "if": [["flag", "mg_heard_reeve"], ["!flag", "mg_reeve_confessed"]],
+          "say": "You tell him plainly: whatever he's waiting for, it isn't coming. Only the saying is.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "mg_reeve_confessed"],
+                ["score", 15],
+                ["xp", 5],
+                ["say", "Something in the plainness of it reaches him where ritual and rank didn't. 'I took it from his brow while he slept,' he says, quiet, 'and called it inheritance.' The gray coming off him thins to a thread."]
+              ],
+              [["say", "He hears you out and says nothing at all. Whatever he's waiting for, your words weren't it."]]
+            ]
           ]
         },
         {

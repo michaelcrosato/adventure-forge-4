@@ -159,7 +159,31 @@
       "desc": "Charts of the bay and the reef beyond cover every wall, wrecks marked in a hand going back generations. Harbourmaster Joss Rennick works a ledger by the window, watching the stair more than the door.",
       "brief": "Charts of every wreck in the bay.",
       "region": "sk",
-      "exits": { "south": { "to": "sk_high_street" } }
+      "exits": { "south": { "to": "sk_high_street" } },
+      "actions": [
+        {
+          "id": "sk_bribe_wits",
+          "label": "read the wreck-charts for truth (wits)",
+          "if": [["flag", "sk_heard_harbourmaster"], ["!flag", "sk_bribe_admitted"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "sk_bribe_admitted"],
+                ["addvar", "rep_free", -1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "One wreck on the wall charts is marked wrong, on purpose, in a hand too careful to be a mistake: the reef, the year the free-towns paid to look away. The chart says what Rennick won't."]
+              ],
+              [
+                ["say", "Generations of wrecks, all marked the same careful hand. Whatever's wrong with this one, it isn't obvious yet."]
+              ]
+            ]
+          ]
+        }
+      ]
     },
     "sk_customs_post": {
       "name": "The Watch Customs Post",
@@ -184,6 +208,46 @@
             ["xp", 3],
             ["addvar", "appr_osk", 1],
             ["say", "Osk hums the first line, hesitant, and the widow's eyes go wide. 'That's it,' she says. 'That's the old verse, near enough.' Between them, word by word, it comes whole."]
+          ]
+        },
+        {
+          "id": "sk_verse_might",
+          "label": "break into his old sea-chest (might)",
+          "if": [["flag", "sk_widow_confided"], ["!flag", "sk_verse_known"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "sk_verse_known"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "The lock gives before she can stop you, and his letters are right where grief left them. The verse is written out in full, in a dead man's hand, at the bottom of the last one."]
+              ],
+              [
+                ["say", "The old chest is stouter than it looks, and she's already crossing the room toward you. It can be tried again, if she'll still let you."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sk_verse_wits",
+          "label": "reason out where he'd keep it (wits)",
+          "if": [["flag", "sk_widow_confided"], ["!flag", "sk_verse_known"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "sk_verse_known"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "A harbourmaster keeps his charts close and his conscience closer. You find the letters tucked behind the one thing she never moved: his old chart of the reef. The verse is written out whole."]
+              ],
+              [["say", "Nothing in the room gives itself up to a careful eye tonight. It can be tried again."]]
+            ]
           ]
         }
       ]
@@ -352,6 +416,27 @@
           "once": true,
           "say": "You made the coast own its own old bribe. Cost the Companies something, saying that aloud. I won't pretend I'm glad of it, but it's paid now, and paid is paid.",
           "fx": [["addvar", "appr_vell", 1]]
+        },
+        {
+          "id": "sk_bribe_might",
+          "label": "corner him and demand it (might)",
+          "if": [["flag", "sk_heard_harbourmaster"], ["!flag", "sk_bribe_admitted"]],
+          "say": "You mean to have it out of me plainly.",
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "sk_bribe_admitted"],
+                ["addvar", "rep_free", -1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "You don't give him room to reach for the ledger this time. 'The old free-towns paid the keeper to let the fleet break rather than land,' he says, fast, like it's easier out than in."]
+              ],
+              [["say", "He doesn't scare easy, not in his own house. You've only made an enemy of the morning."]]
+            ]
+          ]
         },
         {
           "id": "bye",

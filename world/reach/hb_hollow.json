@@ -71,6 +71,24 @@
             ["xp", 1],
             ["say", "The Keeper's Key turns something you cannot see. The slab door opens like it was only ever waiting to be asked properly."]
           ]
+        },
+        {
+          "id": "hb_words_door",
+          "label": "speak the old rest-formula (will)",
+          "if": [["!flag", "hb_kingsrest_open"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "hb_kingsrest_open"],
+                ["xp", 2],
+                ["say", "You don't ask it kindly. You speak the words a door like this was carved to hear regardless — let the road remember, let the door remember, and rest — and old dust sifts loose from the seal."]
+              ],
+              [["say", "The words you have aren't the words it wants. The slab does not so much as shift."]]
+            ]
+          ]
         }
       ]
     },
@@ -247,6 +265,32 @@
               [["inParty", "tamsin"]],
               [["say", "Tamsin: \"Quick. Ugly. Done. I won't pretend I mind an ending that doesn't argue with you.\""]],
               []
+            ]
+          ]
+        },
+        {
+          "id": "hb_break_court",
+          "label": "shatter the hearth-stone (might)",
+          "if": [["flag", "hb_heard_grievance"], ["!flag", "hb_kingsrest_resolved"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "hb_hollow_burned"],
+                ["set", "hb_kingsrest_resolved"],
+                ["addvar", "hollows_burned", 1],
+                ["score", 15],
+                ["xp", 8],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_keepers", -2],
+                ["addvar", "appr_tamsin", 1],
+                ["addvar", "appr_vell", -1],
+                ["npcgo", "hb_eldest_king", null],
+                ["say", "You don't wait on pitch. You put your full weight into the cold hearth-stone until it cracks clean in half, and whatever was sitting this court out finally has nowhere left to sit."]
+              ],
+              [["say", "The hearth-stone is older and harder than you are tonight. It doesn't so much as chip."]]
             ]
           ]
         }

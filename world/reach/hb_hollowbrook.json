@@ -95,13 +95,17 @@
           "if": [["!has", "hb_grave_good"], ["!flag", "hb_grave_good_gone"]],
           "fx": [
             [
-              "check", "grace", 10,
+              "check",
+              "grace",
+              10,
               [
                 ["set", "hb_grave_good_gone"],
                 ["move", "hb_grave_good", "inv"],
                 ["say", "The ring is off the shelf and in your pocket before the chandler turns back around."]
               ],
-              [["say", "He turns at exactly the wrong moment. 'Careful,' he says, not unkindly, and does not move it out of reach."]]
+              [
+                ["say", "He turns at exactly the wrong moment. 'Careful,' he says, not unkindly, and does not move it out of reach."]
+              ]
             ]
           ]
         },
@@ -114,6 +118,26 @@
             ["move", "hb_pitch_jar", "inv"],
             ["say", "He sets the jar down without a word about what it is for. Some things a chandler sells and does not discuss."]
           ]
+        },
+        {
+          "id": "hb_labor_ring",
+          "label": "haul his wood in trade for it (might)",
+          "if": [["!has", "hb_grave_good"], ["!flag", "hb_grave_good_gone"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "hb_grave_good_gone"],
+                ["move", "hb_grave_good", "inv"],
+                ["say", "You haul cordwood until your shoulders ache and he stops pretending to count it. 'Fair trade,' he says, and sets the ring in your hand without further discussion."]
+              ],
+              [
+                ["say", "You haul wood past when it stops being worth his while to watch. A ring's still a ring; effort doesn't spend the same as coin."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -125,7 +149,10 @@
       "landmark": "the Keepers' Hall",
       "exits": { "up": { "to": "hb_mere_shore" } },
       "variants": [
-        { "if": [["flag", "hb_keepers_key_found"], ["flag", "vell_ledger_found"]], "brief": "A roofless hall. The chest stands open; the shelves, gone through." }
+        {
+          "if": [["flag", "hb_keepers_key_found"], ["flag", "vell_ledger_found"]],
+          "brief": "A roofless hall. The chest stands open; the shelves, gone through."
+        }
       ],
       "actions": [
         {
@@ -134,11 +161,15 @@
           "if": [["!flag", "hb_keepers_key_found"]],
           "fx": [
             [
-              "check", "might", 11,
+              "check",
+              "might",
+              11,
               [
                 ["set", "hb_keepers_key_found"],
                 ["move", "hb_keepers_key", "inv"],
-                ["score", 4], ["xp", 3], ["addvar", "rep_keepers", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_keepers", 1],
                 ["say", "The old bronze gives with a crack. Inside, wrapped in oilcloth: a long iron key, cut for a lock far from here."]
               ],
               [["say", "The bronze dents. It does not open."]]
@@ -151,11 +182,15 @@
           "if": [["!flag", "hb_keepers_key_found"]],
           "fx": [
             [
-              "check", "grace", 10,
+              "check",
+              "grace",
+              10,
               [
                 ["set", "hb_keepers_key_found"],
                 ["move", "hb_keepers_key", "inv"],
-                ["score", 4], ["xp", 3], ["addvar", "rep_keepers", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_keepers", 1],
                 ["say", "The old pins give one by one. Inside, wrapped in oilcloth: a long iron key, cut for a lock far from here."]
               ],
               [["say", "A pin sticks fast. It can be tried again."]]
@@ -168,13 +203,37 @@
           "if": [["!flag", "vell_ledger_found"]],
           "fx": [
             [
-              "check", "wits", 9,
+              "check",
+              "wits",
+              9,
               [
                 ["set", "vell_ledger_found"],
-                ["score", 4], ["xp", 3], ["addvar", "rep_keepers", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_keepers", 1],
                 ["say", "Under ruined census rolls, one ledger kept dry: an exile's name struck from a Marrowgate line, and where the child was sent. The hand that wrote it signed itself only 'Keeper'."]
               ],
               [["say", "Mold has taken whole pages to paste. Whatever is in here, it can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "hb_force_shelves",
+          "label": "tear the shelves apart (might)",
+          "if": [["!flag", "vell_ledger_found"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "vell_ledger_found"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_keepers", 1],
+                ["say", "You don't bother being careful. Whole shelves come down before you find it: an exile's name struck from a Marrowgate line, and where the child was sent. Half the mold goes with it, at least."]
+              ],
+              [["say", "You bring down a shelf's worth of mold and rot and nothing worth reading. It can be tried again."]]
             ]
           ]
         }
@@ -205,16 +264,84 @@
       "dialogue": true,
       "desc": "Ink-stained fingers, and a way of looking at a stranger like one more mound to number.",
       "topics": [
-        { "id": "greet", "label": "who are you", "once": true, "say": "Mound-warden. I keep the count of what's under this ground — a hundred mounds, near enough, and every one somebody's kin.", "fx": [["xp", 1]] },
-        { "id": "kings", "label": "the old court under the great mound", "if": [["flag", "said_hb_warden_greet"]], "once": true, "say": "Older than the Hollow King's own line — kings before him, robbed the same way he was. They do not rest. Some nights you can hear it from here.", "fx": [["set", "hb_heard_warden_lore"], ["score", 2], ["xp", 2]] },
-        { "id": "verses", "label": "the old rite for them", "if": [["flag", "hb_heard_warden_lore"]], "once": true, "say": "Three verses were cut for that court, same custom as everywhere once: the ring-ditch, the king's causeway, and the mere-stone. Read them right and the old kings lie back down.", "fx": [["xp", 2]] },
-        { "id": "key", "label": "a shorter road than three verses", "if": [["flag", "hb_heard_warden_lore"]], "once": true, "say": "There's talk of a key cut for that mound once, before the doors were sealed proper. Keeper Wren would know, if she still trusts anyone that far.", "fx": [["xp", 1]] },
-        { "id": "surveyor", "label": "the Crown surveyor", "once": true, "say": "Been through staking mounds like they're timber to be sold. I've asked him to stop. He has not. Watch what you tell him.", "fx": [["xp", 1]] },
-        { "id": "react_sold", "label": "about the surveyor's stakes", "if": [["flag", "hb_mounds_sold"]], "once": true, "say": "So he got his map after all. I hope whatever he paid you covers what comes out of that ground once the diggers follow it.", "fx": [["xp", 1]] },
-        { "id": "react_protected", "label": "about the surveyor's stakes", "if": [["flag", "hb_mounds_protected"]], "once": true, "say": "He left with nothing true on his map. That is not nothing, coming from a stranger with a use for coin.", "fx": [["xp", 1], ["addvar", "rep_keepers", 1]] },
-        { "id": "react_rested", "label": "the old court, now", "if": [["flag", "hb_hollow_rested"]], "once": true, "say": "Quiet, the last few nights. First time in my life I've slept the whole night through in this house.", "fx": [["xp", 2]] },
-        { "id": "react_bargained", "label": "the old court, now", "if": [["flag", "hb_hollow_bargained"]], "once": true, "say": "Quieter, they tell me, since the ring went back. Not rested. Paid off. I'll take it.", "fx": [["xp", 2]] },
-        { "id": "react_burned", "label": "the old court, now", "if": [["flag", "hb_hollow_burned"]], "once": true, "say": "Three mounds fell in on themselves the night the smoke went up. However many kings that was, they're not sitting up anymore. Neither is anything else in that ground.", "fx": [["xp", 1]] },
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Mound-warden. I keep the count of what's under this ground — a hundred mounds, near enough, and every one somebody's kin.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "kings",
+          "label": "the old court under the great mound",
+          "if": [["flag", "said_hb_warden_greet"]],
+          "once": true,
+          "say": "Older than the Hollow King's own line — kings before him, robbed the same way he was. They do not rest. Some nights you can hear it from here.",
+          "fx": [["set", "hb_heard_warden_lore"], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "verses",
+          "label": "the old rite for them",
+          "if": [["flag", "hb_heard_warden_lore"]],
+          "once": true,
+          "say": "Three verses were cut for that court, same custom as everywhere once: the ring-ditch, the king's causeway, and the mere-stone. Read them right and the old kings lie back down.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "key",
+          "label": "a shorter road than three verses",
+          "if": [["flag", "hb_heard_warden_lore"]],
+          "once": true,
+          "say": "There's talk of a key cut for that mound once, before the doors were sealed proper. Keeper Wren would know, if she still trusts anyone that far.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "surveyor",
+          "label": "the Crown surveyor",
+          "once": true,
+          "say": "Been through staking mounds like they're timber to be sold. I've asked him to stop. He has not. Watch what you tell him.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_sold",
+          "label": "about the surveyor's stakes",
+          "if": [["flag", "hb_mounds_sold"]],
+          "once": true,
+          "say": "So he got his map after all. I hope whatever he paid you covers what comes out of that ground once the diggers follow it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_protected",
+          "label": "about the surveyor's stakes",
+          "if": [["flag", "hb_mounds_protected"]],
+          "once": true,
+          "say": "He left with nothing true on his map. That is not nothing, coming from a stranger with a use for coin.",
+          "fx": [["xp", 1], ["addvar", "rep_keepers", 1]]
+        },
+        {
+          "id": "react_rested",
+          "label": "the old court, now",
+          "if": [["flag", "hb_hollow_rested"]],
+          "once": true,
+          "say": "Quiet, the last few nights. First time in my life I've slept the whole night through in this house.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "react_bargained",
+          "label": "the old court, now",
+          "if": [["flag", "hb_hollow_bargained"]],
+          "once": true,
+          "say": "Quieter, they tell me, since the ring went back. Not rested. Paid off. I'll take it.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "react_burned",
+          "label": "the old court, now",
+          "if": [["flag", "hb_hollow_burned"]],
+          "once": true,
+          "say": "Three mounds fell in on themselves the night the smoke went up. However many kings that was, they're not sitting up anymore. Neither is anything else in that ground.",
+          "fx": [["xp", 1]]
+        },
         { "id": "bye", "label": "let him get back to his maps", "say": "Mind the ditches after dark.", "end": true }
       ]
     },
@@ -224,10 +351,37 @@
       "dialogue": true,
       "desc": "Wax under his nails, and an easy way of not quite answering a question.",
       "topics": [
-        { "id": "greet", "label": "who are you", "once": true, "say": "Chandler, and the closest thing this shore has to a curio dealer. Candles for the living, small mysteries for anyone who'll pay for them.", "fx": [["xp", 1]] },
-        { "id": "trade", "label": "what you're selling", "if": [["flag", "said_hb_chandler_npc_greet"]], "once": true, "say": "A ring off a barrow-queen's hand, if the warden hasn't scared you off buying it. Pitch too, if you've got a use that isn't candlelight. I don't ask.", "fx": [["xp", 1]] },
-        { "id": "react_stopped", "label": "about the digger you turned in", "if": [["flag", "hb_robber_stopped"]], "once": true, "say": "Fewer curios on my shelf this week. I won't say I'm not out the coin. I also won't say you were wrong.", "fx": [["xp", 1]] },
-        { "id": "react_bribed", "label": "about the digger on the downs", "if": [["flag", "hb_robber_bribed"]], "once": true, "say": "New crate came in, better than usual. I didn't ask where it came from before, and I'm not starting now.", "fx": [["xp", 1]] },
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Chandler, and the closest thing this shore has to a curio dealer. Candles for the living, small mysteries for anyone who'll pay for them.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "trade",
+          "label": "what you're selling",
+          "if": [["flag", "said_hb_chandler_npc_greet"]],
+          "once": true,
+          "say": "A ring off a barrow-queen's hand, if the warden hasn't scared you off buying it. Pitch too, if you've got a use that isn't candlelight. I don't ask.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_stopped",
+          "label": "about the digger you turned in",
+          "if": [["flag", "hb_robber_stopped"]],
+          "once": true,
+          "say": "Fewer curios on my shelf this week. I won't say I'm not out the coin. I also won't say you were wrong.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_bribed",
+          "label": "about the digger on the downs",
+          "if": [["flag", "hb_robber_bribed"]],
+          "once": true,
+          "say": "New crate came in, better than usual. I didn't ask where it came from before, and I'm not starting now.",
+          "fx": [["xp", 1]]
+        },
         { "id": "bye", "label": "leave him to his wax", "say": "Mind what you carry out of here.", "end": true }
       ]
     },
@@ -237,28 +391,141 @@
       "dialogue": true,
       "desc": "Old enough to remember when this hall had a roof, and steady enough that it hardly seems to matter that it doesn't.",
       "topics": [
-        { "id": "greet", "label": "who are you", "once": true, "say": "Last of the Barrow-Keepers this hold ever had, for whatever that's still worth. We tended every mound once, left a token at every door. Now there's just me and the roof that isn't.", "fx": [["xp", 1]] },
-        { "id": "order", "label": "what keepers actually did", "if": [["flag", "said_hb_keeper_wren_greet"]], "once": true, "say": "Kept the old covenant. Sat with the dead so the living didn't have to. Wrote down what we saw, so the next keeper wouldn't have to learn it twice. I'm the last line of that ledger.", "fx": [["xp", 2]] },
-        { "id": "ledger_hint", "label": "the ledgers on your shelves", "if": [["flag", "said_hb_keeper_wren_order"]], "once": true, "say": "Some of it's just harvests and burials. Some of it names people who'd rather not be named. Read carefully, if you go looking.", "fx": [["xp", 1]] },
-        { "id": "ask_key", "label": "ask her for the Keeper's Key (will)", "if": [["flag", "said_hb_keeper_wren_order"], ["!flag", "hb_keepers_key_found"]], "say": "That key opens a door I've spent my whole life guarding the memory of. Give me a reason I should trust a stranger with it.", "fx": [
-          ["check", "will", 11,
-            [["set", "hb_keepers_key_found"], ["move", "hb_keepers_key", "inv"], ["score", 4], ["xp", 3], ["addvar", "rep_keepers", 1], ["say", "She holds your eye a long moment, then goes to the chest herself. 'Bring the old court peace,' she says, 'and I'll call it well spent.'"]],
-            [["say", "She looks at you a while longer, and shakes her head. Not yet, her face says, more than her words do."]]
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Last of the Barrow-Keepers this hold ever had, for whatever that's still worth. We tended every mound once, left a token at every door. Now there's just me and the roof that isn't.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "order",
+          "label": "what keepers actually did",
+          "if": [["flag", "said_hb_keeper_wren_greet"]],
+          "once": true,
+          "say": "Kept the old covenant. Sat with the dead so the living didn't have to. Wrote down what we saw, so the next keeper wouldn't have to learn it twice. I'm the last line of that ledger.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "ledger_hint",
+          "label": "the ledgers on your shelves",
+          "if": [["flag", "said_hb_keeper_wren_order"]],
+          "once": true,
+          "say": "Some of it's just harvests and burials. Some of it names people who'd rather not be named. Read carefully, if you go looking.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "hb_rumor_chantry",
+          "label": "ask if every mound was accounted for",
+          "if": [["flag", "said_hb_keeper_wren_order"]],
+          "once": true,
+          "say": "Not the chantry out past the damp hollow. Whoever kept it stopped answering before I was born. I've never had the nerve to go finish the accounting myself.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask_key",
+          "label": "ask her for the Keeper's Key (will)",
+          "if": [["flag", "said_hb_keeper_wren_order"], ["!flag", "hb_keepers_key_found"]],
+          "say": "That key opens a door I've spent my whole life guarding the memory of. Give me a reason I should trust a stranger with it.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "hb_keepers_key_found"],
+                ["move", "hb_keepers_key", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_keepers", 1],
+                ["say", "She holds your eye a long moment, then goes to the chest herself. 'Bring the old court peace,' she says, 'and I'll call it well spent.'"]
+              ],
+              [
+                ["say", "She looks at you a while longer, and shakes her head. Not yet, her face says, more than her words do."]
+              ]
+            ]
           ]
-        ] },
-        { "id": "vell_party", "label": "why you're watching me so closely", "if": [["inParty", "vell"], ["flag", "vell_ledger_found"]], "once": true, "say": "Your companion has the look of someone I wrote down once, a long time ago, and never finished the sentence on. I expect they know that better than I do.", "fx": [["xp", 2]] },
-        { "id": "react_rested", "label": "the old court, now", "if": [["flag", "hb_hollow_rested"]], "once": true, "say": "I felt it from here, if you can believe an old woman saying so. Whatever you did up there, it was done properly.", "fx": [["xp", 2], ["addvar", "rep_keepers", 1]] },
-        { "id": "react_burned", "label": "the old court, now", "if": [["flag", "hb_hollow_burned"]], "once": true, "say": "Burned. Well. That's one kind of quiet, I suppose. Not the kind sixty years of keeping was for, but I'm told it's faster.", "fx": [["xp", 1]] },
-        { "id": "bye", "label": "leave her to the ledgers", "say": "Go carefully among the mounds. They notice who does.", "end": true }
+        },
+        {
+          "id": "vell_party",
+          "label": "why you're watching me so closely",
+          "if": [["inParty", "vell"], ["flag", "vell_ledger_found"]],
+          "once": true,
+          "say": "Your companion has the look of someone I wrote down once, a long time ago, and never finished the sentence on. I expect they know that better than I do.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "react_rested",
+          "label": "the old court, now",
+          "if": [["flag", "hb_hollow_rested"]],
+          "once": true,
+          "say": "I felt it from here, if you can believe an old woman saying so. Whatever you did up there, it was done properly.",
+          "fx": [["xp", 2], ["addvar", "rep_keepers", 1]]
+        },
+        {
+          "id": "react_burned",
+          "label": "the old court, now",
+          "if": [["flag", "hb_hollow_burned"]],
+          "once": true,
+          "say": "Burned. Well. That's one kind of quiet, I suppose. Not the kind sixty years of keeping was for, but I'm told it's faster.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "hb_ask_ledger",
+          "label": "ask Wren about the exile's ledger (will)",
+          "if": [["flag", "said_hb_keeper_wren_ledger_hint"], ["!flag", "vell_ledger_found"]],
+          "say": "You want the one about the exile.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "vell_ledger_found"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_keepers", 1],
+                ["say", "She studies you a moment, then finds it herself, faster than you'd have managed. 'An exile's name struck from a Marrowgate line,' she says, 'and where the child was sent. Make good use of it.'"]
+              ],
+              [
+                ["say", "She holds the look a while, then shakes her head. 'Not from me. Go looking yourself, if you mean to know it.'"]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the ledgers",
+          "say": "Go carefully among the mounds. They notice who does.",
+          "end": true
+        }
       ]
     },
     "hb_mere_fisher": {
       "name": "a mere-fisher",
       "room": "hb_mere_shore",
       "topics": [
-        { "id": "mere", "label": "the mere itself", "once": true, "say": "Deep enough in the middle that nobody's found the bottom. There's a stone out there worth talking to, if you don't mind wading. Old custom says it listens.", "fx": [["xp", 1]] },
-        { "id": "digger", "label": "trouble on the downs", "once": true, "say": "Someone's been digging where they shouldn't, out past the toll-stones. Warden knows. Warden hasn't caught them yet.", "fx": [["xp", 1]] },
-        { "id": "wight", "label": "what walks the downs at night", "once": true, "say": "Something does. Comes and goes, no fixed mound it favors. Carry iron if you're out after dark, and don't run — running just tells it where you are.", "fx": [["xp", 1]] }
+        {
+          "id": "mere",
+          "label": "the mere itself",
+          "once": true,
+          "say": "Deep enough in the middle that nobody's found the bottom. There's a stone out there worth talking to, if you don't mind wading. Old custom says it listens.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "digger",
+          "label": "trouble on the downs",
+          "once": true,
+          "say": "Someone's been digging where they shouldn't, out past the toll-stones. Warden knows. Warden hasn't caught them yet.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "wight",
+          "label": "what walks the downs at night",
+          "once": true,
+          "say": "Something does. Comes and goes, no fixed mound it favors. Carry iron if you're out after dark, and don't run — running just tells it where you are.",
+          "fx": [["xp", 1]]
+        }
       ]
     }
   },

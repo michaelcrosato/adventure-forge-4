@@ -349,6 +349,25 @@
           "fx": [
             ["say", "Gullhaven's quay far south-west; St. Mara's shrine south-west below, the salt-panner's hut west of it; the wreckers' roost south-east; the Weeping Caves east; the hidden shingle at the far south-east end of the coast."]
           ]
+        },
+        {
+          "id": "sk_light_will",
+          "label": "swear you'll tend it true (will)",
+          "if": [["!flag", "sk_lighthouse_lit"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "sk_lighthouse_lit"],
+                ["score", 8],
+                ["xp", 4],
+                ["say", "You say it plain, half to the room and half to whatever's left of the keeper who couldn't: this light won't go dark on your watch. Your hands steady around the mechanism, and it turns."]
+              ],
+              [["say", "The words are easy enough to say. Getting the gear to believe them is another matter tonight."]]
+            ]
+          ]
         }
       ]
     }

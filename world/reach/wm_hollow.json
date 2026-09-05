@@ -148,6 +148,58 @@
             ["npcgo", "wm_oath_captain", null],
             ["say", "The oil catches fast on stone that old, and the whole ring goes with it, standards and all. Whatever they were still guarding, there's nothing left now to guard it from."]
           ]
+        },
+        {
+          "id": "wm_oath_break",
+          "label": "break the stone by main strength (might)",
+          "if": [["flag", "wm_oath_heard"], ["!flag", "wm_oath_resolved"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "wm_oath_resolved"],
+                ["set", "wm_hollow_burned"],
+                ["addvar", "hollows_burned", 1],
+                ["score", 15],
+                ["xp", 8],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_watch", -2],
+                ["addvar", "appr_vell", -1],
+                ["npcgo", "wm_oath_captain", null],
+                ["say", "You put your shoulder to the oath-stone until the old cut face shears clean off. The ring has nothing left to guard, and stands down because there's nothing left to stand for."]
+              ],
+              [
+                ["say", "The stone doesn't give, and your shoulder does. Four centuries of weather have left it harder than you."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "wm_oath_plea",
+          "label": "plead the ring down, plain (will)",
+          "if": [["flag", "wm_oath_heard"], ["!flag", "wm_oath_resolved"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "wm_oath_resolved"],
+                ["set", "wm_hollow_bargained"],
+                ["addvar", "hollows_rested", 1],
+                ["score", 20],
+                ["xp", 8],
+                ["addvar", "rep_watch", 2],
+                ["addvar", "rep_iron", -2],
+                ["addvar", "appr_tamsin", 1],
+                ["npcgo", "wm_oath_captain", null],
+                ["say", "You ask it of them plainly, no standing to back the asking, only the asking itself. The captain studies you a long moment, then lowers the standard anyway. \"Close enough,\" he says, \"to an order.\""]
+              ],
+              [["say", "The ring hears you out and does not move. Whatever it's still waiting on, a plain ask wasn't it."]]
+            ]
+          ]
         }
       ]
     },

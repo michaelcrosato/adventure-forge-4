@@ -231,6 +231,29 @@
         ["xp", 2],
         ["score", 2],
         ["say", "The arithmetic is ugly and simple: burn the dead, and the ash has to go somewhere. Someone decided somewhere was here."]
+      ],
+      "actions": [
+        {
+          "id": "mg_ash_wits",
+          "label": "read the stamps on the sacks (wits)",
+          "if": [["!flag", "mg_ash_confirmed"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "mg_ash_confirmed"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "You don't need him to say it. The stamp's plain enough once you look: Ironbound issue, Preceptor's own seal, no Watch counter-mark anywhere on the manifest. Nobody signed off on this but the Preceptor himself."]
+              ],
+              [
+                ["say", "The stamps are smudged past reading in the wet ash. Whatever they'd tell you, it isn't legible tonight."]
+              ]
+            ]
+          ]
+        }
       ]
     },
     "mg_ropewalk_loft": {
@@ -571,6 +594,28 @@
           "once": true,
           "say": "Under the pass, the hidden way. He almost smiles. 'Didn't figure you for the type to use the front door either.'",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "mg_ash_might",
+          "label": "shove him against the sacks (might)",
+          "if": [["!flag", "mg_ash_confirmed"]],
+          "say": "You don't ask again. You make sure he understands the question matters.",
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "mg_ash_confirmed"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "He breaks fast, same as most men do once they understand you mean it. 'The Preceptor's,' he says, low. 'His own, not the Regent's.' Then he's gone, barrow and all."]
+              ],
+              [
+                ["say", "He sets his jaw and says nothing, and you're not about to find out what happens if you push further right here."]
+              ]
+            ]
+          ]
         }
       ]
     }

@@ -15,77 +15,357 @@
       },
       "links": [
         { "cell": [2, 4], "dir": "south", "to": "wm_parade", "back": "out", "landmark": "Highward" },
-        { "cell": [3, 0], "dir": "north", "to": "wm_oathstone_approach", "back": "south", "landmark": "the oath-stone" }
+        {
+          "cell": [3, 0],
+          "dir": "north",
+          "to": "wm_oathstone_approach",
+          "back": "south",
+          "landmark": "the oath-stone"
+        }
       ],
       "spots": [
-        { "cell": [1, 0], "name": "Windbreak Stones", "desc": "A ring of stones worn to stumps by wind that never fully stops. Nothing grows in their lee but a paler kind of moss. East, the ground climbs toward the moor's last cairn.", "brief": "Wind-worn stones.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [2, 0], "name": "The Long Sight", "desc": "High, open ground. On a clear day you can see the whole moor from here, and the mountains beyond it hard and white. Today is not quite a clear day.", "brief": "High open ground.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [3, 0], "name": "The Last Cairn", "desc": "A cairn taller than the rest, stones added by hands that never explained why. North the ground turns rough, unmarked, toward wherever it is the old oath was sworn.", "brief": "The last cairn. Rough ground north.", "onEnterOnce": [["xp", 2], ["score", 2]] },
-        { "cell": [4, 0], "name": "Cloudfoot", "desc": "Mist pools low here even at noon, thick enough to lose a boot-print in three strides. West the ground rises toward a tall cairn just visible through the murk.", "brief": "Low mist, noon or not.", "onEnterOnce": [["xp", 1]] },
-
-        { "cell": [0, 1], "name": "Cairnwatch", "desc": "A line of boundary cairns marches south, older than any border they were meant to keep. West the ground falls away toward smoke on the horizon — the Iron Downs, by the color of it.", "brief": "Boundary cairns.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [1, 1], "name": "Tower Rise", "desc": "A shoulder of higher ground, and on it a signal tower gone to ruin, roofless, its stair still climbing into the wet air. Sergeant Rook's dark beacon, if the rumor's true, stands south of here.", "brief": "The ruined tower rises here.", "onEnterOnce": [["xp", 2]] },
-        { "cell": [2, 1], "name": "Peat Score", "desc": "Black trenches, cut and abandoned, half-flooded now and smelling of old smoke that was never lit. A plank walkway, rotten in the middle, threads between them.", "brief": "Old peat trenches.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [3, 1], "name": "Boot-Track Hollow", "desc": "A shallow dip where the heather's beaten flat in a line, boot-tracks going in step and stopping nowhere in particular. Whoever left them is still walking, somewhere close.", "brief": "Boot-tracks, going nowhere.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [4, 1], "name": "Mistfall", "desc": "The mist sits so thick in this hollow it beads on your sleeves. Sound carries strangely — footsteps that are not yours, and then are not there at all.", "brief": "Thick standing mist.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [5, 1], "name": "The Elbow", "desc": "The moor's edge bends hard here, heather giving way to wetter, softer ground east. Hollowbrook's low country starts somewhere past the haze.", "brief": "The moor's edge bends east.", "onEnterOnce": [["xp", 1]] },
-
-        { "cell": [0, 2], "name": "Beacon Hill", "landmark": "the beacon hill", "desc": "A squat stone hill with an iron cresset at its crown, cold and rust-streaked. Whoever last tended it left the ladder in place, at least. East, a rough track runs toward the drovers' waystation.",
-          "brief": "The cold beacon on its hill.", "onEnterOnce": [["xp", 2]],
+        {
+          "cell": [1, 0],
+          "name": "Windbreak Stones",
+          "desc": "A ring of stones worn to stumps by wind that never fully stops. Nothing grows in their lee but a paler kind of moss. East, the ground climbs toward the moor's last cairn.",
+          "brief": "Wind-worn stones.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 0],
+          "name": "The Long Sight",
+          "desc": "High, open ground. On a clear day you can see the whole moor from here, and the mountains beyond it hard and white. Today is not quite a clear day.",
+          "brief": "High open ground.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 0],
+          "name": "The Last Cairn",
+          "desc": "A cairn taller than the rest, stones added by hands that never explained why. North the ground turns rough, unmarked, toward wherever it is the old oath was sworn.",
+          "brief": "The last cairn. Rough ground north.",
+          "onEnterOnce": [["xp", 2], ["score", 2]]
+        },
+        {
+          "cell": [4, 0],
+          "name": "Cloudfoot",
+          "desc": "Mist pools low here even at noon, thick enough to lose a boot-print in three strides. West the ground rises toward a tall cairn just visible through the murk.",
+          "brief": "Low mist, noon or not.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 1],
+          "name": "Cairnwatch",
+          "desc": "A line of boundary cairns marches south, older than any border they were meant to keep. West the ground falls away toward smoke on the horizon — the Iron Downs, by the color of it.",
+          "brief": "Boundary cairns.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 1],
+          "name": "Tower Rise",
+          "desc": "A shoulder of higher ground, and on it a signal tower gone to ruin, roofless, its stair still climbing into the wet air. Sergeant Rook's dark beacon, if the rumor's true, stands south of here.",
+          "brief": "The ruined tower rises here.",
+          "onEnterOnce": [["xp", 2]]
+        },
+        {
+          "cell": [2, 1],
+          "name": "Peat Score",
+          "desc": "Black trenches, cut and abandoned, half-flooded now and smelling of old smoke that was never lit. A plank walkway, rotten in the middle, threads between them.",
+          "brief": "Old peat trenches.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 1],
+          "name": "Boot-Track Hollow",
+          "desc": "A shallow dip where the heather's beaten flat in a line, boot-tracks going in step and stopping nowhere in particular. Whoever left them is still walking, somewhere close.",
+          "brief": "Boot-tracks, going nowhere.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 1],
+          "name": "Mistfall",
+          "desc": "The mist sits so thick in this hollow it beads on your sleeves. Sound carries strangely — footsteps that are not yours, and then are not there at all.",
+          "brief": "Thick standing mist.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [5, 1],
+          "name": "The Elbow",
+          "desc": "The moor's edge bends hard here, heather giving way to wetter, softer ground east. Hollowbrook's low country starts somewhere past the haze.",
+          "brief": "The moor's edge bends east.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 2],
+          "name": "Beacon Hill",
+          "landmark": "the beacon hill",
+          "desc": "A squat stone hill with an iron cresset at its crown, cold and rust-streaked. Whoever last tended it left the ladder in place, at least. East, a rough track runs toward the drovers' waystation.",
+          "brief": "The cold beacon on its hill.",
+          "onEnterOnce": [["xp", 2]],
           "actions": [
-            { "id": "wm_beacon_light", "label": "climb up and light the beacon (grace)", "if": [["!flag", "wm_beacon_lit"], ["!flag", "wm_beacon_reported"]],
-              "fx": [["check", "grace", 10,
-                [["set", "wm_beacon_lit"], ["score", 2], ["xp", 2], ["say", "The old brushwood catches on the third try, and flame climbs the cresset for the first time in a decade. It will be seen from the wall."]],
-                [["say", "The ladder holds, the kindling doesn't. Too damp through to catch. It can be tried again."]]
-              ]] },
-            { "id": "wm_beacon_judge", "label": "judge the beacon properly (wits)", "if": [["!flag", "wm_beacon_lit"], ["!flag", "wm_beacon_reported"]],
-              "fx": [["check", "wits", 9,
-                [["set", "wm_beacon_reported"], ["xp", 2], ["say", "The cresset's rusted through at the base — light it and it comes down with whoever's standing under it. Worth telling Sergeant Rook plainly."]],
-                [["say", "Rust and rot, but you can't be certain past that without climbing it yourself."]]
-              ]] }
+            {
+              "id": "wm_beacon_light",
+              "label": "climb up and light the beacon (grace)",
+              "if": [["!flag", "wm_beacon_lit"], ["!flag", "wm_beacon_reported"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  10,
+                  [
+                    ["set", "wm_beacon_lit"],
+                    ["score", 2],
+                    ["xp", 2],
+                    ["say", "The old brushwood catches on the third try, and flame climbs the cresset for the first time in a decade. It will be seen from the wall."]
+                  ],
+                  [["say", "The ladder holds, the kindling doesn't. Too damp through to catch. It can be tried again."]]
+                ]
+              ]
+            },
+            {
+              "id": "wm_beacon_judge",
+              "label": "judge the beacon properly (wits)",
+              "if": [["!flag", "wm_beacon_lit"], ["!flag", "wm_beacon_reported"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "wm_beacon_reported"],
+                    ["xp", 2],
+                    ["say", "The cresset's rusted through at the base — light it and it comes down with whoever's standing under it. Worth telling Sergeant Rook plainly."]
+                  ],
+                  [["say", "Rust and rot, but you can't be certain past that without climbing it yourself."]]
+                ]
+              ]
+            },
+            {
+              "id": "wm_beacon_force",
+              "label": "force the rusted cresset alight (might)",
+              "if": [["!flag", "wm_beacon_lit"], ["!flag", "wm_beacon_reported"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  10,
+                  [
+                    ["set", "wm_beacon_lit"],
+                    ["score", 2],
+                    ["xp", 2],
+                    ["say", "You don't wait on the wind or the damp. You wrench the ladder true, wedge the kindling home by hand, and make the old iron take a flame it hasn't held in a decade."]
+                  ],
+                  [
+                    ["say", "The ladder groans and the kindling scatters. Whatever this needs, brute handling isn't helping it."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "wm_beacon_will",
+              "label": "climb it on nerve alone (will)",
+              "if": [["!flag", "wm_beacon_lit"], ["!flag", "wm_beacon_reported"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "wm_beacon_lit"],
+                    ["score", 2],
+                    ["xp", 2],
+                    ["say", "You don't stop to weigh the rust. You climb before your nerve can talk you out of it, and get the flame going before doubt catches up with you."]
+                  ],
+                  [
+                    ["say", "Halfway up, your nerve goes first and your grip second. You're back on solid ground, no closer to a flame."]
+                  ]
+                ]
+              ]
+            }
           ],
-          "variants": [{ "if": [["flag", "wm_beacon_lit"]], "brief": "The beacon hill. Char still marks the cresset's rim." }] },
-        { "cell": [1, 2], "name": "The Waystation Track", "desc": "Wagon-ruts converge here, deep enough to twist an ankle in the dark. A waystation stands north, its palisade patched with whatever driftwood the moor gives up.", "brief": "Wagon-ruts converge.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [2, 2], "name": "Twin Ruts", "desc": "The drovers' road runs straight here for once, two deep ruts worn by centuries of cattle and coin both heading the same way south, toward Highward's market.", "brief": "The drovers' road, straight here.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [3, 2], "name": "Sedge Flat", "desc": "Coarse sedge grass, ankle-deep water hiding under most of it. Something has been through recently, flattening a path east that doesn't look like a drover's doing.", "brief": "Wet sedge, a strange path east.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [4, 2], "name": "The Hut Path", "desc": "A worn footpath, too narrow for a cart, climbing toward a squat turf-roofed hut just visible through the heather. Smoke rises from it, thin but steady.", "brief": "A footpath to a turf hut.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [5, 2], "name": "Cliff Edge", "desc": "The moor drops away here, a long scree slope down toward Hollowbrook's wetter ground. Cairns line the drop, warning rather than marking.", "brief": "The moor drops toward Hollowbrook.", "onEnterOnce": [["xp", 1]] },
-
-        { "cell": [0, 3], "name": "Old Sheepfold", "desc": "A drystone fold, roofless, its gate long since rotted off its hinge. Wool catches on the stones still, though no flock has passed through in years.", "brief": "A roofless sheepfold.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [1, 3], "name": "Drover's Rest", "desc": "A flat stone worn smooth as a bench, cold ash banked beside it from a hundred fires. Someone dropped a tally-stick here and never came back for it.", "brief": "A drover's cold fire-ring.", "items": ["wm_drovers_stick"], "onEnterOnce": [["xp", 1]] },
-        { "cell": [2, 3], "name": "The Cairn Field", "desc": "Dozens of small cairns, close-set, older than the Watch that now claims this ground. One, larger than the rest, has been opened at some point and never quite closed again.", "brief": "A field of small cairns.", "onEnterOnce": [["xp", 2]] },
-        { "cell": [3, 3], "name": "Wet Hollow", "desc": "Standing black water, reeds at its edge, and a smell of iron that has nothing to do with Cinderhall. South the last shielings mark the moor's edge before Highward.", "brief": "Black standing water.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [4, 3], "name": "Standing Stone", "desc": "A single worked stone, taller than a man, its carving worn past reading by weather that has had four centuries to try. It faces north, toward the last cairn, and nothing else.", "brief": "A worn standing stone.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [5, 3], "name": "The Grey Ford", "desc": "A shallow crossing, stones slick underfoot, water the color the moor gives everything eventually. East the ground softens toward Hollowbrook's dike country.", "brief": "A shallow, slick ford.", "onEnterOnce": [["xp", 1]] },
-
-        { "cell": [1, 4], "name": "West Shieling", "desc": "A herder's summer hut, empty and shuttered, close enough to Highward's wall to hear the changing of the watch-horn. West the road to the armoury cuts off toward the Iron Downs.", "brief": "An empty summer hut.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [2, 4], "name": "The Moor Road", "desc": "Where the heather gives out and a beaten track drops south toward Highward's wall, close enough that the watch-horn carries. North the moor opens out, wide and gray, cairn after cairn.", "brief": "The track down to Highward.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [3, 4], "name": "The Watch Cairn", "desc": "A cairn built by the Watch itself, recent by moor standards, marking the edge of ground they still bother to patrol. Highward's wall shows gray through the haze south.", "brief": "The Watch's own waymark.", "onEnterOnce": [["xp", 1]] },
-        { "cell": [4, 4], "name": "East Shieling", "desc": "A second summer hut, its roof half fallen in. East the road to the barracks cuts off toward Hollowbrook's dikes.", "brief": "A fallen-in summer hut.", "onEnterOnce": [["xp", 1]] }
+          "variants": [{ "if": [["flag", "wm_beacon_lit"]], "brief": "The beacon hill. Char still marks the cresset's rim." }]
+        },
+        {
+          "cell": [1, 2],
+          "name": "The Waystation Track",
+          "desc": "Wagon-ruts converge here, deep enough to twist an ankle in the dark. A waystation stands north, its palisade patched with whatever driftwood the moor gives up.",
+          "brief": "Wagon-ruts converge.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 2],
+          "name": "Twin Ruts",
+          "desc": "The drovers' road runs straight here for once, two deep ruts worn by centuries of cattle and coin both heading the same way south, toward Highward's market.",
+          "brief": "The drovers' road, straight here.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 2],
+          "name": "Sedge Flat",
+          "desc": "Coarse sedge grass, ankle-deep water hiding under most of it. Something has been through recently, flattening a path east that doesn't look like a drover's doing.",
+          "brief": "Wet sedge, a strange path east.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 2],
+          "name": "The Hut Path",
+          "desc": "A worn footpath, too narrow for a cart, climbing toward a squat turf-roofed hut just visible through the heather. Smoke rises from it, thin but steady.",
+          "brief": "A footpath to a turf hut.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [5, 2],
+          "name": "Cliff Edge",
+          "desc": "The moor drops away here, a long scree slope down toward Hollowbrook's wetter ground. Cairns line the drop, warning rather than marking.",
+          "brief": "The moor drops toward Hollowbrook.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 3],
+          "name": "Old Sheepfold",
+          "desc": "A drystone fold, roofless, its gate long since rotted off its hinge. Wool catches on the stones still, though no flock has passed through in years.",
+          "brief": "A roofless sheepfold.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 3],
+          "name": "Drover's Rest",
+          "desc": "A flat stone worn smooth as a bench, cold ash banked beside it from a hundred fires. Someone dropped a tally-stick here and never came back for it.",
+          "brief": "A drover's cold fire-ring.",
+          "items": ["wm_drovers_stick"],
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 3],
+          "name": "The Cairn Field",
+          "desc": "Dozens of small cairns, close-set, older than the Watch that now claims this ground. One, larger than the rest, has been opened at some point and never quite closed again.",
+          "brief": "A field of small cairns.",
+          "onEnterOnce": [["xp", 2]]
+        },
+        {
+          "cell": [3, 3],
+          "name": "Wet Hollow",
+          "desc": "Standing black water, reeds at its edge, and a smell of iron that has nothing to do with Cinderhall. South the last shielings mark the moor's edge before Highward.",
+          "brief": "Black standing water.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 3],
+          "name": "Standing Stone",
+          "desc": "A single worked stone, taller than a man, its carving worn past reading by weather that has had four centuries to try. It faces north, toward the last cairn, and nothing else.",
+          "brief": "A worn standing stone.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [5, 3],
+          "name": "The Grey Ford",
+          "desc": "A shallow crossing, stones slick underfoot, water the color the moor gives everything eventually. East the ground softens toward Hollowbrook's dike country.",
+          "brief": "A shallow, slick ford.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 4],
+          "name": "West Shieling",
+          "desc": "A herder's summer hut, empty and shuttered, close enough to Highward's wall to hear the changing of the watch-horn. West the road to the armoury cuts off toward the Iron Downs.",
+          "brief": "An empty summer hut.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 4],
+          "name": "The Moor Road",
+          "desc": "Where the heather gives out and a beaten track drops south toward Highward's wall, close enough that the watch-horn carries. North the moor opens out, wide and gray, cairn after cairn.",
+          "brief": "The track down to Highward.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 4],
+          "name": "The Watch Cairn",
+          "desc": "A cairn built by the Watch itself, recent by moor standards, marking the edge of ground they still bother to patrol. Highward's wall shows gray through the haze south.",
+          "brief": "The Watch's own waymark.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 4],
+          "name": "East Shieling",
+          "desc": "A second summer hut, its roof half fallen in. East the road to the barracks cuts off toward Hollowbrook's dikes.",
+          "brief": "A fallen-in summer hut.",
+          "onEnterOnce": [["xp", 1]]
+        }
       ],
       "cellFx": {
         "onEnter": [
-          ["chance", 8, [
-            ["if", [["!npcDead", "wm_lost_sentry"]],
-              [["npcgo", "wm_lost_sentry", "here"], ["say", "The mist thickens, and boots fall into step behind you — in time, unhurried, and not yours."]],
-              []]
-          ], []]
+          [
+            "chance",
+            8,
+            [
+              [
+                "if",
+                [["!npcDead", "wm_lost_sentry"]],
+                [
+                  ["npcgo", "wm_lost_sentry", "here"],
+                  ["say", "The mist thickens, and boots fall into step behind you — in time, unhurried, and not yours."]
+                ],
+                []
+              ]
+            ],
+            []
+          ]
         ]
       }
     }
   ],
   "stamps": [
-    { "template": "tower", "id": "wm_tower1", "at": "wm_moor_1_1", "dir": "in", "back": "out", "sideTrip": true, "landmark": "the ruined signal tower",
-      "vars": { "NAME": "the Ruined Signal Tower", "WATCHER": "a Watch-shade", "VIEW": "the whole moor spreads gray in every direction, and Coldpass is a white line north" } },
-    { "template": "barrow", "id": "wm_cairn1", "at": "wm_moor_2_3", "dir": "in", "back": "out", "sideTrip": true, "landmark": "the opened cairn",
-      "vars": { "NAME": "the Opened Cairn", "WIGHT": "a peat-black wight" } },
-    { "template": "camp", "id": "wm_waystation1", "at": "wm_moor_1_2", "dir": "in", "back": "out", "sideTrip": true, "landmark": "the drovers' waystation",
-      "vars": { "NAME": "the Drovers' Waystation", "CAPTAIN": "Odger Vane" } },
-    { "template": "hut", "id": "wm_hut1", "at": "wm_moor_4_2", "dir": "in", "back": "out", "sideTrip": true, "landmark": "the peat-cutter's hut",
-      "vars": { "NAME": "the Peat-Cutter's Hut", "HERMIT": "old Hesk" } }
+    {
+      "template": "tower",
+      "id": "wm_tower1",
+      "at": "wm_moor_1_1",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the ruined signal tower",
+      "vars": {
+        "NAME": "the Ruined Signal Tower",
+        "WATCHER": "a Watch-shade",
+        "VIEW": "the whole moor spreads gray in every direction, and Coldpass is a white line north"
+      }
+    },
+    {
+      "template": "barrow",
+      "id": "wm_cairn1",
+      "at": "wm_moor_2_3",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the opened cairn",
+      "vars": { "NAME": "the Opened Cairn", "WIGHT": "a peat-black wight" }
+    },
+    {
+      "template": "camp",
+      "id": "wm_waystation1",
+      "at": "wm_moor_1_2",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the drovers' waystation",
+      "vars": { "NAME": "the Drovers' Waystation", "CAPTAIN": "Odger Vane" }
+    },
+    {
+      "template": "hut",
+      "id": "wm_hut1",
+      "at": "wm_moor_4_2",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the peat-cutter's hut",
+      "vars": { "NAME": "the Peat-Cutter's Hut", "HERMIT": "old Hesk" }
+    }
   ],
   "items": {
-    "wm_drovers_stick": { "name": "a drover's tally-stick", "loc": "nowhere", "takeable": true, "hint": "notches for every head of cattle a drover never came back to collect on" }
+    "wm_drovers_stick": {
+      "name": "a drover's tally-stick",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "notches for every head of cattle a drover never came back to collect on"
+    }
   },
   "npcs": {
     "wm_lost_sentry": {

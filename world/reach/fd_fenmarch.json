@@ -157,6 +157,52 @@
           ]
         },
         {
+          "id": "fd_press_might",
+          "label": "loom over him until he breaks (might)",
+          "if": [["flag", "fd_read_tablet"], ["!flag", "fd_prior_confessed"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "fd_prior_confessed"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_church", -1],
+                ["addvar", "appr_osk", 1],
+                ["say", "You back him against the altar rail until the fear of you outweighs the fear of the water. 'Now you know,' he says, small. 'Do with it what you will.'"]
+              ],
+              [
+                ["say", "He goes rigid but says nothing, and you're not a man who beats confessions out of priests. Not today, anyway. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_press_wits",
+          "label": "lay the tablet against his words (wits)",
+          "if": [["flag", "fd_read_tablet"], ["!flag", "fd_prior_confessed"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "fd_prior_confessed"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_church", -1],
+                ["addvar", "appr_osk", 1],
+                ["say", "You lay the tablet's scraped confession next to his own account of the flood and let the dates do the arguing. He can't refute his own hand. 'Now you know,' he says. 'Do with it what you will.'"]
+              ],
+              [
+                ["say", "The dates almost line up, almost — not quite enough to pin him with. He watches you fail to make the case, and says nothing."]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "fd_expose_ironbound",
           "label": "tell Halm what the Ironbound mean to do",
           "if": [["flag", "fd_knows_ironbound_plan"], ["!flag", "fd_ironbound_sided"], ["!flag", "fd_ironbound_gone"]],
