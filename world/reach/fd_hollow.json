@@ -208,6 +208,25 @@
             ["xp", 2],
             ["say", "You lay the letter on the black water and it sinks before the ink can run. Whatever grief it carried joins the rest down here, uncounted and, at last, unhurried."]
           ]
+        },
+        {
+          "id": "fd_speak_of_flood",
+          "label": "say what you learned of the flood",
+          "if": [["flag", "fd_knows_hollow"]],
+          "once": true,
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "fd_knows_sexton_hint"]],
+              [
+                ["say", "You say it whole, out over the water: the Priory prayed instead of ringing the bell, twenty years gone — and the Prior who let it happen was barely more than a boy, watching, not choosing. The singing doesn't stop."]
+              ],
+              [
+                ["say", "You say it plain, over the water: the Priory prayed instead of ringing the warning, twenty years gone, same as everyone down there already knows. The singing doesn't change, but someone finally said it where they'd hear."]
+              ]
+            ]
+          ]
         }
       ]
     },

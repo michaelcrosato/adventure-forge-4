@@ -819,6 +819,14 @@
             ]
           ]
         },
+        {
+          "id": "ir_wayfire_named",
+          "label": "word from Thornwold's wayfire",
+          "if": [["flag", "th_wayfire_named"]],
+          "once": true,
+          "say": "\"Word came down the road that a stranger put a name on the Thornwold wayfire,\" Aldous says. \"That's the whole of the rite, done right — a name, a fire, nothing left to fester.\"",
+          "fx": [["addvar", "rep_iron", 1], ["xp", 1]]
+        },
         { "id": "bye", "label": "leave the chapterhouse", "say": "Mind the fires on your way out.", "end": true }
       ]
     },
@@ -1067,6 +1075,26 @@
           "once": true,
           "say": "Whatever you're owed, you've been paid. The company keeps better secrets than it keeps miners.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "ir_news_sk_passage",
+          "label": "word from the coast road",
+          "if": [["any", [["flag", "sk_passage_smuggled"], ["flag", "sk_passage_informed"]]]],
+          "once": true,
+          "say": "A carter off the coast road brings talk of Gullhaven's harbourmaster, the way carters always do.",
+          "fx": [
+            [
+              "if",
+              [["flag", "sk_passage_smuggled"]],
+              [
+                ["say", "\"Rennick's boats still run heavier than the manifest says, past Gullhaven's own customs post.\" Mirren doesn't look up from the ledger."]
+              ],
+              [
+                ["say", "\"Gullhaven's sergeant searched Rennick's boats stem to stern, on a stranger's word.\" Mirren makes a note of it, the way she notes everything."]
+              ]
+            ],
+            ["xp", 1]
+          ]
         }
       ]
     },
@@ -1678,6 +1706,11 @@
     {
       "if": [["flag", "rb_wm_ir_bought"]],
       "text": "A dead Watchman's ring left Cinderhall's store fairly bought, and Mirren still tells it as the one sale she didn't haggle.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "th_wayfire_named"]],
+      "text": "Cinderhall's Ironbound still tell of the stranger who named the dead at Thornwold's wayfire, proper and unflinching.",
       "weight": 1
     }
   ]

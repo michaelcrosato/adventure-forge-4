@@ -764,6 +764,8 @@
               "if": [["flag", "$done"], ["!flag", "$crypt_done"]],
               "fx": [
                 ["set", "$crypt_done"],
+                ["set", "$crypt_laid"],
+                ["addvar", "crypts_laid", 1],
                 ["move", "$loot", "inv"],
                 ["score", 3],
                 ["xp", 2],
@@ -778,12 +780,26 @@
               "if": [["flag", "$done"], ["!flag", "$crypt_done"]],
               "fx": [
                 ["set", "$crypt_done"],
+                ["set", "$crypt_robbed"],
+                ["addvar", "crypts_robbed", 1],
                 ["move", "$loot", "inv"],
                 ["score", 3],
                 ["xp", 2],
                 ["addvar", "rep_church", -1],
                 ["say", "You pry {{LOOT}} loose and pocket it. The congregation's rest is no better and no worse for your being quick about it."]
               ]
+            }
+          ],
+          "variants": [
+            {
+              "if": [["flag", "$crypt_laid"]],
+              "desc": "The crypt lies quiet now, the congregation settled at last; the shelf that held {{LOOT}} stands bare.",
+              "brief": "The crypt, quiet, the shelf bare."
+            },
+            {
+              "if": [["flag", "$crypt_robbed"]],
+              "desc": "The crypt stands picked over, {{LOOT}} long gone from its shelf; the congregation's bones lie exactly as they were left.",
+              "brief": "The crypt, picked over, the dead untouched."
             }
           ]
         }
@@ -923,5 +939,26 @@
         }
       }
     }
-  }
+  },
+  "statusTracks": [
+    { "var": "crypts_robbed", "label": "Crypts robbed", "max": 4, "if": [["var", "crypts_robbed", ">=", 1]] },
+    {
+      "var": "crypts_laid",
+      "label": "Crypts of the dead laid to rest",
+      "max": 4,
+      "if": [["var", "crypts_laid", ">=", 1]]
+    }
+  ],
+  "epilogue": [
+    {
+      "if": [["var", "crypts_robbed", ">=", 1]],
+      "text": "Chapel crypts keep coming up looted across the Reach, no rite spoken, no name left for the taking.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "crypts_laid", ">=", 3]],
+      "text": "Three chapels or more, they say, where a stranger spoke the proper rite before taking what the dead no longer needed.",
+      "weight": 1
+    }
+  ]
 }

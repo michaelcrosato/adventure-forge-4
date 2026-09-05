@@ -111,6 +111,7 @@
               10,
               [
                 ["set", "hb_grave_good_gone"],
+                ["set", "hb_ring_lifted"],
                 ["move", "hb_grave_good", "inv"],
                 ["say", "The ring is off the shelf and in your pocket before the chandler turns back around."]
               ],
@@ -448,6 +449,27 @@
           "say": "New crate came in, better than usual. I didn't ask where it came from before, and I'm not starting now.",
           "fx": [["xp", 1]]
         },
+        {
+          "id": "hb_ring_worked_out",
+          "label": "about the queen's ring, since",
+          "if": [["flag", "hb_grave_good_gone"]],
+          "once": true,
+          "say": "The chandler's expression when the ring comes up again tells you he's had time to think about it.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "hb_ring_lifted"]],
+              [
+                ["say", "\"Funny thing about that ring — my ledger never shows a sale. Funnier thing, you showing up right after.\" His prices, you notice, aren't what they were."],
+                ["addvar", "rep_keepers", -1]
+              ],
+              [
+                ["say", "\"A Keeper came through after, asking pointed questions about a chandler who sells grave goods for curios. I gave her an earful about tending mounds, not looting them.\""]
+              ]
+            ]
+          ]
+        },
         { "id": "bye", "label": "leave him to his wax", "say": "Mind what you carry out of here.", "end": true }
       ]
     },
@@ -640,6 +662,36 @@
           "say": "Wren only nods. \"She'll keep,\" she says. \"Or she won't. Either way, no sense hurrying grief.\""
         },
         {
+          "id": "hb_crypts_robbed",
+          "label": "word of a robbed crypt",
+          "if": [["var", "crypts_robbed", ">=", 1]],
+          "once": true,
+          "say": "A crypt robbed, somewhere on the road. The Keepers kept those doors so no one would have to ask that question again. Someone asked it anyway.",
+          "fx": [["addvar", "rep_keepers", -1]]
+        },
+        {
+          "id": "hb_crypts_laid",
+          "label": "word of the dead well kept",
+          "if": [["var", "crypts_laid", ">=", 2]],
+          "once": true,
+          "say": "Twice now, I hear, you've said the proper words over bones that weren't owed you. That's covenant-keeping, same as any I ever wrote down. Let me teach you a rite worth the name.",
+          "fx": [["addvar", "rep_keepers", 1], ["perk", "hb_wren_rite"], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "shrine_token",
+          "label": "leave the pilgrim's token here",
+          "if": [["has", "fd_shrine_token"]],
+          "once": true,
+          "say": "Wren turns the little clay token over once, reads whatever's scratched into it, and sets it among the Hall's own kept things. \"One more name the road didn't lose. My thanks for carrying it this far.\"",
+          "fx": [
+            ["move", "fd_shrine_token", "nowhere"],
+            ["set", "fd_shrine_token_keepers"],
+            ["addvar", "rep_keepers", 1],
+            ["score", 2],
+            ["xp", 1]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave her to the ledgers",
           "say": "Go carefully among the mounds. They notice who does.",
@@ -707,6 +759,23 @@
       "if": [["flag", "rb_sk_hb_mound"]],
       "text": "A ship's-bell hangs at the great mound's door now, unblessed by any Keeper, ringing faint when the wind finds it.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "fd_shrine_token_keepers"]],
+      "text": "The pilgrim's token reached the Keepers' Hall at Barrowmere, carried the whole way by a stranger's hand.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "hb_ring_lifted"]],
+      "text": "The chandler at Barrowmere still swears his queen's ring walked off the shelf on its own, and doesn't quite believe it either."
     }
-  ]
+  ],
+  "perks": {
+    "hb_wren_rite": {
+      "name": "Wren's Rest-Rite",
+      "desc": "+1 wits checks (a rite for the restless dead)",
+      "require": { "level": 99 },
+      "bonus": { "check": { "wits": 1 } }
+    }
+  }
 }

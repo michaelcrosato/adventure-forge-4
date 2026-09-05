@@ -306,8 +306,12 @@
       "text": "Marta Coyle still tells the story of the stranger who brought her nets back, whether you're there to hear it or not."
     },
     {
-      "if": [["flag", "sk_nets_sold"]],
+      "if": [["flag", "sk_nets_sold"], ["!flag", "sk_nets_amends"]],
       "text": "Marta Coyle mends her own nets now, and doesn't trust a stranger's hands near her racks."
+    },
+    {
+      "if": [["flag", "sk_nets_amends"]],
+      "text": "Marta Coyle banks the coin that came back after the fact, and keeps close count of it still."
     }
   ]
 }

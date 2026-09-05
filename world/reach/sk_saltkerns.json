@@ -66,6 +66,11 @@
         {
           "if": [["any", [["flag", "rb_ir_sk_home"], ["flag", "rb_ir_sk_stayed"], ["flag", "rb_ir_sk_guilted"]]]],
           "brief": "Boats over their wrecked kin. One Downs debt, settled."
+        },
+        { "if": [["flag", "sk_passage_smuggled"]], "brief": "Boats on the tide. Rennick's stair runs quiet still." },
+        {
+          "if": [["flag", "sk_passage_informed"]],
+          "brief": "Boats on the tide. Brann shut Rennick's stair for good."
         }
       ],
       "actions": [
@@ -368,6 +373,7 @@
               10,
               [
                 ["set", "sk_passage_done"],
+                ["set", "sk_passage_smuggled"],
                 ["set", "sk_helped_free"],
                 ["addvar", "rep_free", 2],
                 ["addvar", "rep_watch", -1],
@@ -482,6 +488,14 @@
           ]
         },
         {
+          "id": "sk_passage_paid",
+          "label": "your cut of the stair's trade",
+          "if": [["flag", "sk_passage_smuggled"]],
+          "once": true,
+          "say": "\"That cart of yours has paid for itself three times over since,\" Rennick says. \"Here — your share, same as any Company hand gets.\"",
+          "fx": [["addvar", "gold", 5], ["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave him to his charts",
           "say": "Mind the tide going out. It doesn't wait on strangers.",
@@ -517,6 +531,7 @@
           "say": "Now that's worth something. I'll see it stopped, and see you paid for the telling.",
           "fx": [
             ["set", "sk_passage_done"],
+            ["set", "sk_passage_informed"],
             ["set", "sk_sided_watch"],
             ["addvar", "rep_watch", 2],
             ["addvar", "rep_free", -1],
@@ -580,6 +595,14 @@
           ]
         },
         {
+          "id": "sk_passage_thanked",
+          "label": "since you told her of Rennick",
+          "if": [["flag", "sk_passage_informed"]],
+          "once": true,
+          "say": "\"That tip of yours held up under a second look,\" Brann says. \"Rennick's crew hasn't tried that cellar hatch again. I don't forget who made my job easier.\"",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave the post to its ledgers",
           "say": "Straight roads, stranger. Fewer questions that way.",
@@ -629,6 +652,22 @@
           "once": true,
           "say": "Rennick's crew is fishing with my own nets now, near as I can tell. I know exactly whose doing that was.",
           "fx": [["addvar", "appr_tamsin", -1]]
+        },
+        {
+          "id": "nets_amends",
+          "label": "pay Marta back for the nets (9 gold)",
+          "if": [["flag", "sk_nets_sold"], ["!flag", "sk_nets_amends"], ["var", "gold", ">=", 9]],
+          "once": true,
+          "say": "Marta weighs the coin twice, like she's checking it isn't more of Rennick's. \"Won't buy back trust. But it's more than he ever offered me himself.\"",
+          "fx": [["set", "sk_nets_amends"], ["addvar", "gold", -9], ["addvar", "appr_tamsin", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "nets_amends_reaction",
+          "label": "since the nets were paid for",
+          "if": [["flag", "sk_nets_amends"]],
+          "once": true,
+          "say": "\"Paid honest, after the fact, is still paid honest,\" Marta says, not quite smiling. \"I'll not forget you made it right, at least.\"",
+          "fx": [["xp", 1]]
         },
         {
           "id": "sk_news_th_toll",
@@ -752,6 +791,14 @@
           "once": true,
           "say": "Burned. Well. It's an ending, and I've had none for forty years. I find I don't grieve it as much as I thought I would.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "sk_tell_widow_admiral",
+          "label": "tell her what the Admiral confessed",
+          "if": [["flag", "sk_heard_admiral"], ["flag", "sk_widow_confided"]],
+          "once": true,
+          "say": "You carry it to her plain: the Admiral doesn't blame the living, only the coin that kept the light dark. She's quiet a long while. \"He always did try to be fair, even drowned. More than I manage, some days.\"",
+          "fx": [["xp", 2], ["score", 2], ["addvar", "appr_osk", 1]]
         },
         {
           "id": "bye",

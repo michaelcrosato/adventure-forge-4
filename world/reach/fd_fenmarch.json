@@ -106,6 +106,16 @@
             ["say", "The old paper catches fast and is ash before the words could trouble anyone further. Whatever the dead man meant to confess, the fire has it now instead of Reedholm."]
           ]
         }
+      ],
+      "variants": [
+        {
+          "if": [["flag", "fd_wayside_helped"]],
+          "brief": "Nets, a banked fire, and a driftwood-cart family warming through."
+        },
+        {
+          "if": [["flag", "fd_wayside_refused"]],
+          "brief": "Nets, a banked fire, a driftwood-cart family keeping to the corner."
+        }
       ]
     },
     "fd_eel_market": {
@@ -562,6 +572,7 @@
           "if": [["!flag", "fd_wayside_resolved"]],
           "fx": [
             ["set", "fd_wayside_resolved"],
+            ["set", "fd_wayside_refused"],
             ["addvar", "rep_church", -1],
             ["xp", 1],
             [
@@ -722,7 +733,29 @@
           "if": [["has", "fd_shrine_token"]],
           "once": true,
           "say": "Halm takes the token without a word and sets it among the others on the sill. \"One more name the water didn't get to keep quiet,\" he says. \"My thanks for carrying it.\"",
-          "fx": [["move", "fd_shrine_token", "nowhere"], ["addvar", "rep_church", 1], ["score", 2], ["xp", 1]]
+          "fx": [
+            ["move", "fd_shrine_token", "nowhere"],
+            ["addvar", "rep_church", 1],
+            ["score", 2],
+            ["xp", 1],
+            ["set", "fd_shrine_token_church"]
+          ]
+        },
+        {
+          "id": "fd_crypts_robbed",
+          "label": "word of a robbed crypt",
+          "if": [["var", "crypts_robbed", ">=", 1]],
+          "once": true,
+          "say": "Word travels a Church roof faster than you'd think. However it happened, wherever, a crypt robbed is a crypt robbed. That doesn't sit easy with me.",
+          "fx": [["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "fd_crypts_laid",
+          "label": "word of the dead well kept",
+          "if": [["var", "crypts_laid", ">=", 2]],
+          "once": true,
+          "say": "You've a habit of leaving the dead better than you found them. That's rarer than you'd think, and the Church remembers who does it. Take this — small, but it's meant.",
+          "fx": [["addvar", "rep_church", 1], ["perk", "fd_halm_blessing"], ["score", 2], ["xp", 2]]
         },
         {
           "id": "bye",
@@ -775,6 +808,26 @@
           "fx": [["xp", 2]]
         },
         {
+          "id": "drover_family",
+          "label": "the driftwood-cart family",
+          "if": [["any", [["flag", "fd_wayside_helped"], ["flag", "fd_wayside_refused"]]]],
+          "once": true,
+          "say": "The netkeep nods toward the corner where they've settled.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "fd_wayside_helped"]],
+              [
+                ["say", "\"Word reached us a stranger shared coin and bread with them on the coast road. That's why they trust this roof enough to stay,\" the netkeep says."]
+              ],
+              [
+                ["say", "\"They don't say much about the coast road,\" the netkeep says. \"Whatever happened out there, it's why they watch the door more than the fire.\""]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "after",
           "label": "the smoke over the water",
           "if": [["flag", "fd_hollow_burned"]],
@@ -793,7 +846,7 @@
           "id": "greet",
           "label": "the trade",
           "once": true,
-          "say": "Eels don't care whose water they're in. Been a leaner catch since something's been tearing my traps out past the reed-line, though. Worst of it's near the Eel-Run, if you know the place.",
+          "say": "Eels don't care whose water they're in. Been a leaner catch since something's been tearing my traps out past the reed-line — near the Eel-Run some nights, just as often nowhere close to it.",
           "fx": [["xp", 1]]
         },
         {
@@ -1096,6 +1149,16 @@
       "if": [["flag", "rb_th_fd_water"]],
       "text": "A sealed letter went down into the drowned nave's black water, joining a grief it never asked to keep.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "fd_shrine_token_church"]],
+      "text": "The pilgrim's token reached the Priory altar after all, one more name the water didn't keep quiet.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "fd_wayside_refused"]],
+      "text": "Travelers on the coast road still speak of a stranger who looked a hungry family over and kept walking.",
+      "weight": 1
     }
   ],
   "quests": {
@@ -1110,6 +1173,14 @@
           "text": "A Reedholm mother wants word of her son, pressed into the Watch at Highward, in Wardmoor."
         }
       ]
+    }
+  },
+  "perks": {
+    "fd_halm_blessing": {
+      "name": "Halm's Blessing",
+      "desc": "+1 will checks (a Prior's word, kept)",
+      "require": { "level": 99 },
+      "bonus": { "check": { "will": 1 } }
     }
   }
 }

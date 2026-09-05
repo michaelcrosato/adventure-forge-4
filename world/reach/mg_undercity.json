@@ -137,6 +137,21 @@
       ],
       "variants": [
         {
+          "if": [["flag", "mg_bell_rite"]],
+          "desc": "Water to the ankle, pews still ranked. The shapes between them are only shadows now; whatever this rite was owed, someone finally paid it.",
+          "brief": "Flooded pews, the rite finally said."
+        },
+        {
+          "if": [["flag", "mg_bell_sealed"]],
+          "desc": "Water to the ankle, pews still ranked. The grate below stands mortared shut, and the water no longer climbs toward it — walled quiet, not settled.",
+          "brief": "Flooded pews, the grate walled shut."
+        },
+        {
+          "if": [["flag", "mg_bell_burned"]],
+          "desc": "Water to the ankle, pews still ranked, scorched black along the waterline. Whatever stood here is ash now, and the water doesn't climb for it anymore.",
+          "brief": "Flooded pews, scorched black."
+        },
+        {
           "if": [["flag", "mg_third_bell_resolved"]],
           "desc": "Water to the ankle, pews still ranked. Whatever stood here has settled, one way or another, and the water no longer climbs toward the drains above.",
           "brief": "Flooded pews, settled now."
@@ -391,6 +406,35 @@
                 ["say", "She's back, telling the story different every time. I don't care which version's true. She's back."]
               ],
               [["say", "She's still in that cell, near as I know. I say a word for her too, now."]]
+            ]
+          ]
+        },
+        {
+          "id": "third_bell",
+          "label": "the flooded chapel, since",
+          "if": [["flag", "mg_third_bell_resolved"]],
+          "once": true,
+          "say": "Nyle already knows, somehow, before you've said a word.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "mg_bell_rite"]],
+              [
+                ["say", "\"The rite. Someone finally spoke it whole, down there, and it held.\" Something in her eases, just slightly, like a held breath let go."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "mg_bell_sealed"]],
+                  [
+                    ["say", "\"Walled shut, not settled, but quiet is quiet.\" She doesn't sound as sure as she wants to. \"I still say a word at that grate, some nights.\""]
+                  ],
+                  [
+                    ["say", "\"Burned.\" She's quiet a long moment. \"That's not a rite I know. But maybe it was the only one still left to try.\""]
+                  ]
+                ]
+              ]
             ]
           ]
         },

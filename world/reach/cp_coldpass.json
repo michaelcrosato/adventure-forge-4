@@ -282,6 +282,12 @@
           ]
         }
       ]
+    },
+    "cp_abbot_token": {
+      "name": "a small blessed rest-token",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "a keepsake from Abbot Corvin, worth little but the blessing"
     }
   },
   "npcs": {
@@ -688,6 +694,22 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "cp_crypts_robbed",
+          "label": "word of a robbed crypt",
+          "if": [["var", "crypts_robbed", ">=", 1]],
+          "once": true,
+          "say": "A shrine robbed somewhere on the pilgrim roads, they tell me. I've heard confessions kinder than that news. Whatever coin it bought you, I hope it was worth the telling.",
+          "fx": [["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "cp_crypts_laid",
+          "label": "word of the dead well kept",
+          "if": [["var", "crypts_laid", ">=", 2]],
+          "once": true,
+          "say": "Twice, now, you've left the dead better rested than you found them. Take this for the road — small, but it was blessed properly, which is more than most relics can claim.",
+          "fx": [["addvar", "rep_church", 1], ["move", "cp_abbot_token", "inv"], ["score", 2], ["xp", 2]]
         },
         {
           "id": "bye",

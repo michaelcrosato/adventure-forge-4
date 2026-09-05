@@ -78,7 +78,7 @@
           "id": "wm_bearings",
           "label": "get your bearings from the parade",
           "fx": [
-            ["say", "North up the middle, five stands: the Last Cairn, the oath-stone beyond. Opened Cairn one stand north; Beacon Hill west; signal tower north-west; hut east. Coldpass: the north road, from the record-house."]
+            ["say", "North across the moor, then east at the height: the Last Cairn, the oath-stone beyond. Opened Cairn one stand north; Beacon Hill west; signal tower north-west; hut east. Coldpass: the north road, from the record-house."]
           ]
         }
       ]
@@ -346,7 +346,7 @@
     },
     "wm_courier_hollow": {
       "name": "The Roadside Hollow",
-      "desc": "A dip below the road's shoulder, screened by gorse. A courier lies against the bank, one leg twisted wrong, a satchel spilled open beside her — a letter still sealed, addressed to Marrowgate.",
+      "desc": "A dip below the road's shoulder, screened by gorse. A courier lies against the bank, one leg twisted wrong, a satchel spilled open beside her — a letter still sealed, addressed to Highward's Watch post.",
       "brief": "A hurt courier, a sealed letter.",
       "region": "wm",
       "exits": { "north": { "to": "wm_east_road" } },
@@ -512,7 +512,7 @@
       "name": "the true founding record",
       "loc": "nowhere",
       "takeable": true,
-      "hint": "read it aloud at the oath-stone out on the moor",
+      "hint": "read it at the oath-stone: north from Highward, then east at the Last Cairn",
       "use": [
         {
           "if": [["!flag", "wm_read_founding_record"]],
@@ -525,7 +525,13 @@
       ],
       "variants": [{ "if": [["flag", "wm_oath_resolved"]], "hint": "" }]
     },
-    "wm_oil_flask": { "name": "flask of lamp oil", "loc": "nowhere", "takeable": true, "hint": "fuel enough for a stubborn fire" },
+    "wm_oil_flask": {
+      "name": "flask of lamp oil",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "burns the oath-stone on the moor, north past the last cairn",
+      "variants": [{ "if": [["flag", "wm_oath_resolved"]], "hint": "" }]
+    },
     "wm_peddler_blade": {
       "name": "Downs-forged shortsword",
       "loc": "nowhere",
@@ -534,7 +540,7 @@
       "hint": "tempered twice; a step above the armoury's own steel"
     },
     "wm_sealed_letter": {
-      "name": "the sealed dispatch for Marrowgate",
+      "name": "the sealed dispatch for Highward",
       "loc": "nowhere",
       "takeable": true,
       "hint": "meant for the Watch post at Highward"
@@ -613,7 +619,8 @@
             ["addvar", "gold", 6],
             ["addvar", "rep_watch", 1],
             ["score", 3],
-            ["xp", 2]
+            ["xp", 2],
+            ["set", "wm_dispatch_delivered"]
           ]
         },
         { "id": "bye", "label": "leave her to the drill", "say": "Keep to the cairns after dark.", "end": true }
@@ -663,7 +670,7 @@
           "label": "ask for lamp oil, plainly",
           "if": [["!has", "wm_oil_flask"], ["!flag", "wm_oath_resolved"]],
           "once": true,
-          "say": "You want it for the stone, don't you. I'll not pretend I like it. Take the flask and don't tell me what you did with it.",
+          "say": "You want it for the oath-stone out on the moor, don't you. I'll not pretend I like it. Take the flask and don't tell me what you did with it.",
           "fx": [
             ["move", "wm_oil_flask", "inv"],
             ["addvar", "rep_watch", -1],
@@ -1109,6 +1116,10 @@
       "if": [["flag", "rb_fd_wm_reported"]],
       "text": "Perrin still serves at Highward, watched a little closer than before, and writes his mother more than he used to.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "wm_dispatch_delivered"]],
+      "text": "Ferris's letter reached Highward after all, carried the last mile out of a roadside ditch by a stranger's hand."
     }
   ],
   "quests": {
