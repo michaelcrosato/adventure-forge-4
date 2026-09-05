@@ -69,7 +69,8 @@ test("talking opens a menu of that npc's topics plus 'end conversation', and hid
   let { state } = newState(world, 1);
   state = doLabel(world, state, "talk to elder");
   assert.ok(inTalkMode(world, state));
-  assert.deepEqual(labels(world, state), ["greet", "the vale", "take your leave", "end conversation"]);
+  // the farewell topic is the way out, so no separate "end conversation" appears
+  assert.deepEqual(labels(world, state), ["greet", "the vale", "take your leave"]);
   const shown = render(world, state, []).text;
   assert.match(shown, /talking with elder/);
   assert.doesNotMatch(shown, /Room A\./);
@@ -90,9 +91,12 @@ test("a topic marked end closes the conversation; so does 'end conversation'; so
   assert.equal(state.talking, null);
   assert.ok(labels(world, state).includes("talk to elder"), "back in the room");
 
-  state = doLabel(world, state, "talk to elder");
-  state = doLabel(world, state, "end conversation");
-  assert.equal(state.talking, null);
+  // an npc without a farewell topic gets the plain "end conversation"
+  const plain = mini({ npcs: { guard: { name: "guard", room: "a", dialogue: true, topics: [{ id: "pass", label: "the gate", say: "Closed." }] } } });
+  let g = doLabel(plain, newState(plain, 1).state, "talk to guard");
+  assert.deepEqual(labels(plain, g), ["the gate", "end conversation"]);
+  g = doLabel(plain, g, "end conversation");
+  assert.equal(g.talking, null);
 
   // exhaust the once topics: the last line closes it on its own
   state = doLabel(world, state, "talk to elder");
@@ -126,7 +130,7 @@ test("a conversation whose npc walks off (npcgo in a topic) closes and returns t
 test("walkthroughs can drive a conversation by label", () => {
   const world = talker();
   world.rooms["a"]!.actions = [{ id: "win", label: "win", fx: [["score", 10], ["end", "win", "done", "Done."]] }];
-  world.walkthrough = ["talk to elder", "greet", "end conversation", "win"];
+  world.walkthrough = ["talk to elder", "greet", "take your leave", "win"];
   assert.deepEqual(validateWorld(world), []);
 });
 

@@ -616,8 +616,11 @@ export function legalActions(world: World, s: State): Action[] {
   // an open conversation: only its topics, and the way out of it
   if (inTalkMode(world, s)) {
     const npc = s.talking!;
-    const out: Action[] = visibleTopics(world, s, npc).map((t) => ({ kind: "talk", npc, topic: t.id }));
-    out.push({ kind: "endtalk" });
+    const topics = visibleTopics(world, s, npc);
+    const out: Action[] = topics.map((t) => ({ kind: "talk", npc, topic: t.id }));
+    // a farewell line (a topic with `end`) is the way out; the plain "end
+    // conversation" only appears when the npc offers none
+    if (!topics.some((t) => t.end)) out.push({ kind: "endtalk" });
     return out;
   }
   // the travel menu: destinations (or regions), and the way out of it
