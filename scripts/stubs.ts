@@ -62,7 +62,7 @@ const REGIONS: Record<string, { name: string; gates: Gate[] }> = {
 const END_LABEL = "(scaffold) the road ends here for now";
 const END_FX = [["score", 100], ["end", "win", "zz_stub_win", "The realm is unfinished; this ending is a scaffold and will be removed."]];
 
-function stubsFor(exclude: Set<string>, withOracle: boolean): Record<string, unknown> {
+function stubsFor(exclude: Set<string>, withOracle: boolean, gatedOracle = true): Record<string, unknown> {
   const rooms: Record<string, unknown> = {};
   for (const [code, r] of Object.entries(REGIONS)) {
     if (exclude.has(code) || !r.gates.length) continue;
@@ -102,7 +102,7 @@ function stubsFor(exclude: Set<string>, withOracle: boolean): Record<string, unk
         room: "va_gate",
         desc: "A rider in road-dust who is not in the story yet.",
         // only once act 1 is settled, so a playtest of the Vale never meets the scaffolding early
-        topics: [{ id: "end", label: END_LABEL, if: [["flag", "act2_open"]], say: "This is as far as the road goes, for now.", fx: END_FX }],
+        topics: [{ id: "end", label: END_LABEL, ...(gatedOracle ? { if: [["flag", "act2_open"]] } : {}), say: "This is as far as the road goes, for now.", fx: END_FX }],
       },
     };
   }
@@ -145,7 +145,8 @@ if (mode === "master") {
     rooms[center] = { name: "TODO settlement", desc: "TODO — the region's settlement.", brief: "TODO.", region: code, exits: centerExits };
     writeFileSync(own, `${JSON.stringify({ rooms, items: {}, npcs: {}, quests: {}, epilogue: [] }, null, 2)}\n`);
   }
-  const stubs = stubsFor(new Set(["va", code]), true);
+  // an author's root ends at the oracle straight from the gate, so it is not gated there
+  const stubs = stubsFor(new Set(["va", code]), true, false);
   writeFileSync(`drafts/stubs_${code}.json`, `${JSON.stringify(stubs, null, 2)}\n`);
   const root = JSON.parse(readFileSync("drafts/reach.json", "utf8")) as Record<string, unknown>;
   root["include"] = [
@@ -155,7 +156,7 @@ if (mode === "master") {
     `../${own}`,
   ];
   const wt = root["walkthrough"] as unknown[];
-  root["walkthrough"] = [wt[0], `ask stub oracle: ${END_LABEL}`];
+  root["walkthrough"] = [wt[0], `ask gray rider: ${END_LABEL}`];
   writeFileSync(`drafts/reach_${code}.json`, `${JSON.stringify(root, null, 2)}\n`);
   console.log(`drafts/reach_${code}.json + drafts/stubs_${code}.json, author file ${own}`);
 } else {

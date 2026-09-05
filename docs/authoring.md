@@ -264,7 +264,9 @@ it standing somewhere.
   item) are written plain and stay shared. `{{VAR}}` is replaced from the
   stamp's `vars`; every var the template lists is required.
 - `at` may be an authored room or a generated cell; stamps expand after
-  regions. Stamped rooms inherit the host's `region`.
+  regions. Stamped rooms inherit the host's `region`. `entranceLandmark`
+  makes the copy's entrance a fast-travel destination by that name (it counts
+  toward the region's 11).
 - Shared templates (barrow, cave, tower, mine, camp, chapel, hut) live in
   `templates.json`; a region may add its own. Use 3–5 stamps per region.
   Give each copy a distinct `NAME` and a distinct inhabitant; vary which

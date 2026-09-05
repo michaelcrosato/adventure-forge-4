@@ -1,64 +1,606 @@
 {
   "rooms": {
     "ir_east_road": {
-      "name": "TODO Iron Downs east road",
-      "desc": "TODO — write this gateway room.",
-      "brief": "TODO.",
+      "name": "The East Road",
+      "desc": "Cinderhall's road climbs east onto open moor, slag giving way to peat underfoot. A Watch waymarker leans at the verge, half-swallowed by gorse. West, smoke over the tally gate marks the way back into town.",
+      "brief": "The waymarker. Wardmoor east.",
       "region": "ir",
-      "landmark": "Iron Downs east road",
+      "landmark": "the east road",
       "exits": {
-        "east": {
-          "to": "wm_west_road"
-        },
-        "in": {
-          "to": "ir_settlement"
-        }
+        "east": { "to": "wm_west_road", "landmark": "Wardmoor" },
+        "in": { "to": "ir_tally_gate", "landmark": "Cinderhall" }
       },
-      "onEnterOnce": [
-        [
-          "set",
-          "ir_entered"
-        ]
-      ]
+      "onEnterOnce": [["set", "ir_entered"], ["xp", 2]]
     },
     "ir_south_track": {
-      "name": "TODO Iron Downs south track",
-      "desc": "TODO — write this gateway room.",
-      "brief": "TODO.",
+      "name": "The South Track",
+      "desc": "The track drops south off the downs into old forest, spoil giving way to bracken underfoot. A Free Company toll-notice is nailed to a dead tree, weathered past reading. North, Cinderhall's slag hill smokes.",
+      "brief": "The toll-notice. Thornwold south.",
       "region": "ir",
-      "landmark": "Iron Downs south track",
+      "landmark": "the south track",
       "exits": {
-        "south": {
-          "to": "th_north_track"
-        },
-        "in": {
-          "to": "ir_settlement"
-        }
+        "south": { "to": "th_north_track", "landmark": "Thornwold" },
+        "in": { "to": "ir_tally_gate", "landmark": "Cinderhall" }
       },
-      "onEnterOnce": [
-        [
-          "set",
-          "ir_entered"
-        ]
+      "onEnterOnce": [["set", "ir_entered"], ["xp", 2]]
+    },
+    "ir_tally_gate": {
+      "name": "Cinderhall — Tally Gate",
+      "desc": "A slag-brick arch where every shift is counted in and out on a chalked board, more names crossed off than kept. The east road and the south track meet here; the town proper lies west, under a hill that never stops smoking.",
+      "brief": "The chalked tally board.",
+      "region": "ir",
+      "landmark": "Cinderhall tally gate",
+      "exits": {
+        "east": { "to": "ir_east_road", "landmark": "the east road" },
+        "south": { "to": "ir_south_track", "landmark": "the south track" },
+        "west": { "to": "ir_high_street", "landmark": "Cinderhall" }
+      },
+      "variants": [
+        { "if": [["flag", "ir_hollow_burned"]], "brief": "The chalked tally board. The hill still smells of the fire." },
+        { "if": [["flag", "ir_hollow_rested"]], "brief": "The chalked tally board. Someone has finally crossed through the old line." },
+        { "if": [["flag", "ir_hollow_bargained"]], "brief": "The chalked tally board, kept by the hall now, not the company." }
+      ],
+      "actions": [
+        {
+          "id": "ir_read_tally",
+          "label": "read the chalked tally board",
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "Names in chalk, crossed through as shifts end safe. One line, older than the rest, was never crossed through at all — a full hundred names, still owed a mark."]
+          ]
+        }
       ]
     },
-    "ir_settlement": {
-      "name": "TODO settlement",
-      "desc": "TODO — the region's settlement.",
-      "brief": "TODO.",
+    "ir_high_street": {
+      "name": "Cinderhall High Street",
+      "desc": "Slag-brick houses lean on each other under a hill that never stops smoking. The miners' hall, the company store, and the Ironbound chapterhouse all front this one short street, the head-frame's wheel turning above the roofs.",
+      "brief": "The one street, under the smoking hill.",
       "region": "ir",
       "exits": {
-        "to_ir_east_road": {
-          "to": "ir_east_road"
-        },
-        "to_ir_south_track": {
-          "to": "ir_south_track"
-        }
+        "east": { "to": "ir_tally_gate", "landmark": "the tally gate" },
+        "north": { "to": "ir_miners_hall", "landmark": "the miners' hall" },
+        "south": { "to": "ir_company_store", "landmark": "the company store" },
+        "west": { "to": "ir_chapterhouse", "landmark": "the chapterhouse" },
+        "down": { "to": "ir_headframe", "landmark": "the head-frame" }
       }
+    },
+    "ir_miners_hall": {
+      "name": "The Miners' Hall",
+      "desc": "Long tables, a banked fire, and the smell of tallow and wet wool. Off-shift miners eat in silence more often than not. Old Crick keeps his own chair by the fire and rarely leaves it. The street lies south; a row of shanties east.",
+      "brief": "Long tables, a banked fire.",
+      "region": "ir",
+      "exits": {
+        "south": { "to": "ir_high_street" },
+        "east": { "to": "ir_shanty_row", "landmark": "shanty row" }
+      },
+      "actions": [
+        {
+          "id": "ir_rest",
+          "label": "rest by the fire",
+          "fx": [["hp", 10], ["say", "You sleep without dreams and wake steadier."]]
+        }
+      ]
+    },
+    "ir_shanty_row": {
+      "name": "Shanty Row",
+      "desc": "A crooked line of one-room houses, patched more than built. Sella keeps the end house, its step swept clean past any reasonable need for it. The miners' hall lies west.",
+      "brief": "Patched, crooked houses.",
+      "region": "ir",
+      "exits": { "west": { "to": "ir_miners_hall" } }
+    },
+    "ir_company_store": {
+      "name": "The Company Store",
+      "desc": "Shelves of company-issue gear, priced high and docked from the next pay. Mirren keeps the ledger behind the counter and misses nothing that crosses it. The street lies north.",
+      "brief": "Company-issue gear, dear.",
+      "region": "ir",
+      "exits": { "north": { "to": "ir_high_street" } },
+      "actions": [
+        {
+          "id": "ir_buy_pick",
+          "label": "buy a reforged pick — 7 gold",
+          "if": [["!has", "ir_downs_pick"], ["var", "gold", ">=", 7]],
+          "fx": [["addvar", "gold", -7], ["move", "ir_downs_pick", "inv"], ["say", "Mirren wraps the head in sacking without being asked. 'Balanced better than it looks,' she says."]]
+        },
+        {
+          "id": "ir_buy_salve",
+          "label": "buy a tin of miner's salve — 3 gold",
+          "if": [["!has", "ir_miners_salve"], ["var", "gold", ">=", 3]],
+          "fx": [["addvar", "gold", -3], ["move", "ir_miners_salve", "inv"], ["say", "'Rub it in, don't eat it,' Mirren says, sliding the tin across the counter."]]
+        }
+      ]
+    },
+    "ir_chapterhouse": {
+      "name": "The Ironbound Chapterhouse",
+      "desc": "A hall of banked forges and hung armor, every wall scorched black on purpose. Preceptor Aldous keeps his desk where he can watch the door. The street lies east.",
+      "brief": "Banked forges, scorched walls.",
+      "region": "ir",
+      "exits": { "east": { "to": "ir_high_street" } },
+      "onEnter": [
+        ["if", [["inParty", "tamsin"], ["!flag", "ir_aldous_sees_tamsin"]],
+          [["set", "ir_aldous_sees_tamsin"], ["say", "Aldous's eyes go to your companion and stay there a beat too long. 'The Hundred took a lot of mothers,' he says, to no one in particular, and does not explain further."]],
+          []
+        ]
+      ],
+      "variants": [
+        { "if": [["flag", "ir_aldous_ruined"], ["!npcDead", "ir_aldous"]], "brief": "Banked forges. A junior officer minds Aldous's old desk now." },
+        { "if": [["npcDead", "ir_aldous"]], "brief": "Banked forges. The Preceptor's desk stands empty." }
+      ],
+      "actions": [
+        {
+          "id": "ir_buy_hauberk",
+          "label": "buy an Ironbound hauberk — 10 gold",
+          "if": [["!has", "ir_ironbound_hauberk"], ["var", "gold", ">=", 10]],
+          "fx": [["addvar", "gold", -10], ["move", "ir_ironbound_hauberk", "inv"], ["say", "Fire-blacked mail, heavier than it looks. 'Stopped worse than you'll meet on the downs,' says whoever's minding the racks."]]
+        },
+        {
+          "id": "ir_take_oil_fallback",
+          "label": "take a cask from the unwatched stores",
+          "if": [["flag", "ir_aldous_gone"], ["!has", "ir_oil"]],
+          "fx": [["move", "ir_oil", "inv"], ["say", "Nobody left minds the chapterhouse stores closely. You take what you came for."]]
+        }
+      ]
+    },
+    "ir_headframe": {
+      "name": "The Head-Frame",
+      "desc": "Iron lattice over the working shaft, the wheel turning, the cage rattling up and down all shift. Ness watches the tally from a lean-to at its foot. A track climbs north onto the bare downs; the street lies up.",
+      "brief": "The turning wheel, the cage.",
+      "region": "ir",
+      "landmark": "the head-frame",
+      "exits": {
+        "up": { "to": "ir_high_street" },
+        "north": { "to": "ir_downs_2_4", "landmark": "the bare downs" }
+      }
+    },
+    "ir_hundred_adit": {
+      "name": "The Hundred Gallery — Adit",
+      "desc": "Iron shoring frames a mouth in the hillside, old but sound. Cold air breathes out, carrying none of the ash-smell that hangs over everything else in the Downs. Whatever waits inside, the hill has held its shape for it.",
+      "brief": "The gallery-mouth, iron-shored.",
+      "region": "ir",
+      "landmark": "the Hundred Gallery",
+      "exits": {
+        "in": { "to": "ir_hundred_gallery" },
+        "out": { "to": "ir_downs_3_1" }
+      },
+      "onEnterOnce": [["score", 3], ["xp", 2], ["say", "The tally gate's crossed-out line comes back to you here, plain as the cold air on your face."]]
+    },
+    "ir_hundred_gallery": {
+      "name": "The Hundred Gallery — Fall",
+      "desc": "The gallery narrows and stops at a fall of old rock and timber, roof-props snapped clean through. Rail runs under the rubble and out the other side — dug through deliberately, in living memory, not by chance.",
+      "brief": "The gallery, choked with a fall.",
+      "region": "ir",
+      "exits": {
+        "out": { "to": "ir_hundred_adit" },
+        "in": {
+          "to": "ir_hundred_face",
+          "if": [["flag", "ir_hundred_passed"]],
+          "lockedMsg": "The fall blocks the way through, rock and broken timber packed tight.",
+          "hint": "shore the fall (might) or climb through the gap (grace)"
+        }
+      },
+      "actions": [
+        {
+          "id": "ir_shore_fall",
+          "label": "shore up the fall (might)",
+          "if": [["!flag", "ir_hundred_passed"]],
+          "fx": [
+            ["check", "might", 10,
+              [["set", "ir_hundred_passed"], ["xp", 2], ["say", "You wedge new timber under the worst of it and the fall settles, groaning once, then still. A gap opens through, safe enough to trust."]],
+              [["say", "The timber slips before it bites. The fall holds. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "ir_climb_fall",
+          "label": "climb through the gap — a failed try costs 1 hp (grace)",
+          "if": [["!flag", "ir_hundred_passed"]],
+          "fx": [
+            ["check", "grace", 9,
+              [["set", "ir_hundred_passed"], ["xp", 2], ["say", "You go up and over on hands and knees, testing each hold before you trust it, and come out the other side with your skin still whole."]],
+              [["hp", -1], ["say", "A rock shifts under your hand and takes skin with it as you scramble back."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "ir_hundred_face": {
+      "name": "The Hundred Gallery — Face",
+      "desc": "The working face, pick-marks stopped mid-swing. A ledger lies open on a fallen crate, its pages damp but whole. Tools lie scattered where they were dropped — a hundred years or a hundred days ago, down here it is hard to say which.",
+      "brief": "The face. A ledger, open.",
+      "region": "ir",
+      "exits": {
+        "out": { "to": "ir_hundred_gallery" },
+        "in": { "to": "ir_hundred_deep" }
+      },
+      "actions": [
+        {
+          "id": "ir_read_ledger",
+          "label": "read the true ledger (wits)",
+          "if": [["!flag", "tamsin_mine_truth"], ["!flag", "ir_miners_sold"]],
+          "fx": [
+            ["check", "wits", 10,
+              [["set", "tamsin_mine_truth"], ["score", 5], ["xp", 3], ["say", "The tallies make an ugly sense once followed: timber ordered cheap, the order signed off by a foreman's hand that now wears the Preceptor's grey. This gallery never should have opened that season."]],
+              [["say", "The ink has run where the damp got to it. Half the entries are guesswork. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "ir_search_tools",
+          "label": "search the abandoned tools",
+          "once": true,
+          "fx": [
+            ["move", "ir_marked_pick", "inv"],
+            ["xp", 1],
+            ["say", "Among the dropped tools, a pick with a haft notched in three places — marked so its owner would know it in the dark. Someone in Cinderhall might still want this back."]
+          ]
+        }
+      ]
+    },
+    "ir_hundred_deep": {
+      "name": "The Hundred Gallery — Deep",
+      "desc": "The gray pools ankle-deep here and does not stir. A hundred small sounds — a cough, a dropped tool, a name half-called — seem to come from every direction and none. Whatever is left of the Hundred is still waiting to be told it can stop.",
+      "brief": "The deep. The Hundred, waiting.",
+      "region": "ir",
+      "exits": { "out": { "to": "ir_hundred_face" } },
+      "onEnter": [
+        ["if", [["inParty", "tamsin"], ["!flag", "ir_tamsin_saw_deep"]],
+          [["set", "ir_tamsin_saw_deep"], ["say", "Tamsin stops just inside the door and doesn't come further. 'This is it,' she says, not really asking. She doesn't say anything else for a while."]],
+          []
+        ]
+      ],
+      "variants": [
+        { "if": [["flag", "ir_hollow_rested"]], "name": "The Hundred Gallery — Quiet", "desc": "The gray has thinned to nothing here. The small sounds are gone, and the silence that replaced them feels earned rather than empty.", "brief": "The deep, quiet now." },
+        { "if": [["flag", "ir_hollow_burned"]], "name": "The Hundred Gallery — Ash", "desc": "Scorched rock and a smell that will not leave your clothes. Whatever waited here is gone with the smoke, ledger and all.", "brief": "The deep, burned clean." },
+        { "if": [["flag", "ir_hollow_bargained"]], "name": "The Hundred Gallery — Held", "desc": "A hall notice, freshly nailed to a prop, claims this gallery for the miners now. The gray still pools here, but it feels watched over rather than abandoned.", "brief": "The deep, claimed by the hall." }
+      ],
+      "actions": [
+        {
+          "id": "ir_hundred_rest",
+          "label": "speak the truth over the Hundred",
+          "if": [["flag", "tamsin_mine_truth"], ["!flag", "ir_miners_sold"], ["!flag", "ir_hollow_resolved"]],
+          "fx": [
+            ["set", "ir_hollow_rested"], ["set", "ir_hollow_resolved"], ["addvar", "hollows_rested", 1],
+            ["score", 25], ["xp", 8], ["addvar", "rep_keepers", 2], ["addvar", "rep_iron", -2],
+            ["addvar", "appr_tamsin", 1], ["addvar", "appr_osk", 1],
+            ["say", "You say the true cause of the collapse aloud, names and all, the way it should have been said thirty years ago. The gray goes out of the deep like a held breath finally let go."]
+          ]
+        },
+        {
+          "id": "ir_hundred_bargain",
+          "label": "declare the miners' hall's claim (will)",
+          "if": [["flag", "ir_hall_backing"], ["!flag", "ir_hollow_resolved"]],
+          "fx": [
+            ["check", "will", 11,
+              [["set", "ir_hollow_bargained"], ["set", "ir_hollow_resolved"], ["addvar", "hollows_rested", 1],
+                ["score", 20], ["xp", 8], ["addvar", "rep_free", 2], ["addvar", "rep_iron", -2], ["addvar", "appr_tamsin", 1],
+                ["say", "You speak the claim plain, the hall's backing behind every word. The company's hold on this gallery breaks. The Hundred do not rest, exactly — but they are minded now, not abandoned."]],
+              [["say", "The words don't land the way they need to. The claim needs saying again, and better."]]
+            ]
+          ]
+        },
+        {
+          "id": "ir_hundred_burn",
+          "label": "put the Ironbound's oil to the gallery",
+          "if": [["has", "ir_oil"], ["!flag", "ir_hollow_resolved"]],
+          "fx": [
+            ["set", "ir_hollow_burned"], ["set", "ir_hollow_resolved"], ["addvar", "hollows_burned", 1],
+            ["score", 15], ["xp", 8], ["addvar", "rep_iron", 2], ["addvar", "rep_keepers", -2],
+            ["addvar", "appr_tamsin", 1], ["addvar", "appr_osk", -1],
+            ["say", "You break the cask over the old fall and put a torch to it. The gray burns fast and low, and the Hundred Gallery is only a burned hole in the hill by the time you climb back out."]
+          ]
+        },
+        {
+          "id": "ir_speak_wenna",
+          "label": "speak Wenna's name over the gray",
+          "if": [["flag", "ir_knows_wenna"], ["!flag", "ir_sella_closure"]],
+          "once": true,
+          "fx": [
+            ["set", "ir_sella_closure"], ["score", 3], ["xp", 2],
+            ["say", "You say it plain, once, the way you'd hail someone across a room. Nothing answers. Something, all the same, seems to stop straining to be heard."],
+            ["if", [["inParty", "tamsin"]], [["say", "Tamsin doesn't say anything. She doesn't have to."]], []]
+          ]
+        }
+      ]
     }
   },
-  "items": {},
-  "npcs": {},
-  "quests": {},
-  "epilogue": []
+  "items": {
+    "ir_downs_pick": { "name": "a reforged pick", "loc": "nowhere", "hit": 1, "dmg": 4 },
+    "ir_ironbound_hauberk": { "name": "an Ironbound hauberk", "loc": "nowhere", "armor": 2 },
+    "ir_miners_salve": {
+      "name": "a tin of miner's salve",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "rub it into a wound to ease it",
+      "use": [{ "fx": [["hp", 4], ["move", "ir_miners_salve", "nowhere"], ["say", "It stings first, then eases the ache to something bearable."]] }]
+    },
+    "ir_oil": { "name": "a cask of Ironbound oil", "loc": "nowhere", "hint": "meant for burning a hollow clean" },
+    "ir_marked_pick": { "name": "Hob's marked pick", "loc": "nowhere", "hint": "worn smooth where a friend's hand held it — Old Crick would want this back" },
+    "ir_faded_ribbon": { "name": "a faded hair-ribbon", "loc": "nowhere", "takeable": true, "hint": "someone tied this here, once, and never came back for it" }
+  },
+  "npcs": {
+    "ir_aldous": {
+      "name": "Preceptor Aldous",
+      "room": "ir_chapterhouse",
+      "dialogue": true,
+      "desc": "Burn-scarred hands, and a way of standing that dares you to ask what happened to them.",
+      "hp": 9,
+      "atk": 2,
+      "df": 11,
+      "onDeath": [
+        ["set", "tamsin_mine_avenged"], ["set", "ir_aldous_gone"],
+        ["addvar", "rep_iron", -2], ["addvar", "appr_tamsin", 1], ["score", 5], ["xp", 3],
+        ["say", "Aldous goes down still reaching for a blade he never once used on the Hundred. The chapterhouse will need a new Preceptor, and a new story to tell about the old one."]
+      ],
+      "topics": [
+        { "id": "greet", "label": "who are you", "once": true, "say": "Preceptor of the Ironbound chapterhouse, and before that — well. Ask the miners' hall who I was before. I won't stop you.", "fx": [["xp", 1]] },
+        { "id": "bg_ironbound", "label": "what the Ironbound believe", "if": [["flag", "said_ir_aldous_greet"]], "once": true, "say": "Fire ends what rites only postpone. Every hollow we burn is a grief that stops costing the living. I'd have thought Cinderhall taught you that already.", "fx": [["xp", 2]] },
+        { "id": "bg_hundred", "label": "the Hundred Gallery", "if": [["flag", "said_ir_aldous_bg_ironbound"]], "once": true, "say": "Came down on bad ground. Rock doesn't ask permission before it falls. I've heard every theory since, and none of them change what's under that hill.", "fx": [["xp", 2]] },
+        {
+          "id": "oil", "label": "ask for oil to burn a hollow", "if": [["!has", "ir_oil"]], "once": true,
+          "say": "Come for oil to finish a hollow? Take it, and my thanks — somebody in this Reach ought to be doing the clean work.",
+          "fx": [["move", "ir_oil", "inv"], ["xp", 2],
+            ["if", [["flag", "tamsin_mine_truth"]], [["say", "His hand doesn't quite steady on the cask as he hands it over. He knows exactly which hollow you mean."]], []]
+          ]
+        },
+        {
+          "id": "writ", "label": "the Regent's writ", "if": [["!flag", "regent_writ"]],
+          "say": "The Regent's writ isn't given. It's earned.",
+          "fx": [
+            ["if", [["var", "hollows_burned", ">=", 2]],
+              [["set", "regent_writ"], ["addvar", "rep_iron", 1], ["score", 5], ["xp", 2],
+                ["say", "'Two hollows burned clean,' Aldous says, already writing. 'The Regent will want Cinderhall's name on this.' He seals the writ and hands it over."]],
+              [["say", "'Burn two hollows clean, and it's yours. One doesn't count for much,' he says, and goes back to his ledger."]]
+            ]
+          ]
+        },
+        {
+          "id": "confront", "label": "press him on the Hundred (will)", "if": [["flag", "ir_suspects_aldous"], ["!flag", "tamsin_mine_truth"]],
+          "say": "You've been asking about the Hundred. Ask me straight, then, if you've got the nerve for the answer.",
+          "fx": [
+            ["check", "will", 12,
+              [["set", "tamsin_mine_truth"], ["score", 5], ["xp", 3], ["addvar", "rep_iron", -1],
+                ["say", "Something in him finally gives. 'I signed the order. Rotten timber, and I signed it anyway, because the company said the season couldn't wait. I've burned two hollows clean since. Ask yourself why.'"]],
+              [["say", "He looks at you a long moment and says nothing at all. Whatever nerve you needed, it wasn't enough this time."]]
+            ]
+          ]
+        },
+        {
+          "id": "expose", "label": "make the truth public (wits)",
+          "if": [["flag", "tamsin_mine_truth"], ["!flag", "ir_aldous_ruined"], ["!npcDead", "ir_aldous"], ["!flag", "tamsin_mine_avenged"]],
+          "say": "You mean to make this public.",
+          "fx": [
+            ["check", "wits", 11,
+              [["set", "tamsin_mine_avenged"], ["set", "ir_aldous_ruined"], ["set", "ir_aldous_gone"],
+                ["score", 5], ["xp", 3], ["addvar", "rep_iron", -2], ["addvar", "rep_watch", 1],
+                ["say", "You lay it out plain enough that even the chapterhouse can't look away. Aldous doesn't argue. By evening a Watch clerk has his desk, and Aldous has a cell, or a road out of Cinderhall — nobody will say which."]],
+              [["say", "You make the case, and the chapterhouse chooses its own, same as it always has. Aldous is still watching that door tomorrow."]]
+            ]
+          ]
+        },
+        {
+          "id": "forgive", "label": "let it lie",
+          "if": [["flag", "tamsin_mine_truth"], ["flag", "ir_hollow_rested"], ["!flag", "ir_aldous_ruined"], ["!npcDead", "ir_aldous"], ["!flag", "tamsin_mine_forgiven"], ["!flag", "tamsin_mine_avenged"]],
+          "once": true,
+          "say": "You could still make him answer for it.",
+          "fx": [["set", "tamsin_mine_forgiven"], ["xp", 2], ["say", "You choose to let it lie. Aldous doesn't thank you for it — he's not sure yet whether it was mercy or just one more thing he wasn't made to pay for."]]
+        },
+        { "id": "bye", "label": "leave the chapterhouse", "say": "Mind the fires on your way out.", "end": true }
+      ]
+    },
+    "ir_crick": {
+      "name": "Old Crick",
+      "room": "ir_miners_hall",
+      "dialogue": true,
+      "desc": "Chalk-dust pale even now, thirty years gone from the last shift he worked.",
+      "topics": [
+        { "id": "greet", "label": "who are you", "once": true, "say": "Crick. I still come to the hall out of habit more than hunger. Ask what you like — I've got nothing left worth guarding.", "fx": [["xp", 1]] },
+        { "id": "bg_survivor", "label": "why you still come here", "if": [["flag", "said_ir_crick_greet"]], "once": true, "say": "I was off-shift the day the Hundred Gallery came down. Traded shifts with Hob that morning for no better reason than I didn't feel like an early start. I've had thirty years to feel like I should have.", "fx": [["xp", 2]] },
+        { "id": "bg_suspicion", "label": "who signed off on the timbering", "if": [["flag", "said_ir_crick_bg_survivor"]], "once": true, "say": "The company called it bad ground. Maybe it was. But the boy who signed off on that season's timbering wears the Preceptor's grey now, and I've never once heard him say the word 'sorry.'", "fx": [["set", "ir_suspects_aldous"], ["xp", 2], ["score", 2]] },
+        { "id": "bg_hob", "label": "your friend Hob", "if": [["flag", "said_ir_crick_bg_suspicion"]], "once": true, "say": "Carried a marked pick, his father's before him, notched along the haft so he'd know it in the dark. It's down there still, if that gallery ever gives up anything it's owed.", "fx": [["set", "ir_crick_hook"], ["xp", 2]] },
+        { "id": "return_pick", "label": "give him the marked pick", "if": [["has", "ir_marked_pick"], ["!flag", "ir_crick_closure"]], "say": "Is that —", "fx": [["move", "ir_marked_pick", "nowhere"], ["set", "ir_crick_closure"], ["score", 5], ["xp", 3], ["addvar", "rep_keepers", 1], ["say", "He turns it over twice before his hands stop shaking. 'Thirty years,' he says, and doesn't finish the sentence. He doesn't need to."]] },
+        { "id": "return_pick_truth", "label": "give him the pick, and the truth", "if": [["has", "ir_marked_pick"], ["!flag", "ir_crick_closure"], ["flag", "tamsin_mine_truth"]], "say": "You tell him about Aldous, and give him the pick.", "fx": [["move", "ir_marked_pick", "nowhere"], ["set", "ir_crick_closure"], ["score", 5], ["xp", 3], ["addvar", "rep_keepers", 1], ["addvar", "rep_iron", -1], ["say", "His face doesn't change, which is somehow worse than if it had. 'I knew,' he says at last. 'I just needed someone to say it plain.' He takes the pick like it weighs more than iron should."]] },
+        { "id": "bye", "label": "leave him to his fire", "say": "Mind the gallery, if you go up there. It doesn't forget easy.", "end": true }
+      ]
+    },
+    "ir_ness": {
+      "name": "Ness",
+      "room": "ir_headframe",
+      "dialogue": true,
+      "desc": "Keeps the shift-tally in a hand steadier than the company's own.",
+      "topics": [
+        { "id": "greet", "label": "who are you", "once": true, "say": "Ness. I keep the shift-tally here, for what the company's own tally is worth these days.", "fx": [["xp", 1]] },
+        { "id": "bg_hall", "label": "the miners' hall", "if": [["flag", "said_ir_ness_greet"]], "once": true, "say": "The hall could run this mine better than the company ever has, if the company didn't own the deed. That's the whole of our trouble, in one sentence.", "fx": [["xp", 2]] },
+        { "id": "bounty", "label": "the trouble on the downs", "if": [["flag", "said_ir_ness_bg_hall"]], "once": true, "say": "There's a slag-hound working the downs north of here, bold enough to come right up to the track after dark. Deal with it and the hall won't forget the favor.", "fx": [["xp", 2]] },
+        { "id": "bargain_free", "label": "propose the hall claim the mine (free companies)", "if": [["flag", "said_ir_ness_bg_hall"], ["var", "rep_free", ">=", 1], ["!flag", "ir_hall_backing"]], "say": "You've dealt fair with the Free Companies. Speak for us plain, and I think the hall would back a claim on this mine.", "fx": [["set", "ir_hall_backing"], ["score", 3], ["xp", 2], ["addvar", "rep_free", 1], ["say", "Word goes round the hall quiet and quick. If it comes to declaring the claim, they're behind you."]] },
+        { "id": "bargain_watch", "label": "propose the hall claim the mine (the Watch)", "if": [["flag", "said_ir_ness_bg_hall"], ["var", "rep_watch", ">=", 1], ["!flag", "ir_hall_backing"]], "say": "The Watch keeps its word, when it gives one. If they'd stand behind a lawful claim, I think the hall could be persuaded to try one.", "fx": [["set", "ir_hall_backing"], ["score", 3], ["xp", 2], ["addvar", "rep_watch", 1], ["say", "Word goes round the hall quiet and quick. If it comes to declaring the claim, they're behind you."]] },
+        { "id": "hound_thanks", "label": "the slag-hound is dealt with", "if": [["npcDead", "ir_slaghound"]], "once": true, "say": "That hound won't trouble the night shift again. The hall's grateful, whatever else it can't give you.", "fx": [["xp", 1], ["addvar", "gold", 2]] },
+        { "id": "after_bargain", "label": "the mine, now", "if": [["flag", "ir_hollow_bargained"]], "once": true, "say": "The claim held. The hall runs the gallery now. It doesn't undo what happened there, but it's ours to answer for now, not the company's.", "fx": [["xp", 2]] },
+        { "id": "bye", "label": "leave Ness to the tally", "say": "Watch the cage on your way past. It doesn't wait for anyone.", "end": true }
+      ]
+    },
+    "ir_mirren": {
+      "name": "Mirren",
+      "room": "ir_company_store",
+      "desc": "Keeps the ledger behind the counter and never once looks like she's checking it.",
+      "topics": [
+        { "id": "greet", "label": "who are you", "once": true, "say": "Mirren. Everything here's priced fair for what it cost the company to bring up from Wardmoor. Which is to say, not cheap.", "fx": [["xp", 1]] },
+        {
+          "id": "bribe", "label": "take the company's gold to keep it quiet",
+          "if": [["flag", "tamsin_mine_truth"], ["!flag", "ir_miners_sold"], ["!flag", "ir_hollow_resolved"]],
+          "say": "She doesn't blink. 'Sensible,' she says, already reaching for a fresh page to enter you as an expense.",
+          "fx": [["set", "ir_miners_sold"], ["addvar", "gold", 15], ["addvar", "rep_iron", 1], ["addvar", "rep_free", -2], ["score", 3], ["say", "She counts it out without being asked twice. The tally stays exactly as wrong as it was."]]
+        },
+        { "id": "after_sold", "label": "about the gold", "if": [["flag", "ir_miners_sold"]], "once": true, "say": "Whatever you're owed, you've been paid. The company keeps better secrets than it keeps miners.", "fx": [["xp", 1]] }
+      ]
+    },
+    "ir_sella": {
+      "name": "Sella",
+      "room": "ir_shanty_row",
+      "dialogue": true,
+      "desc": "Sweeps a step that is already clean, and watches the road while she does it.",
+      "topics": [
+        { "id": "greet", "label": "who are you", "once": true, "say": "Sella. I keep this step swept because it's mine to keep, same as I keep everything else that's left.", "fx": [["xp", 1]] },
+        { "id": "bg_wenna", "label": "what's left", "if": [["flag", "said_ir_sella_greet"]], "once": true, "say": "My friend Wenna worked the Hundred Gallery, same shift as me, until the morning she traded me for the later one so I could see my boy off to Wardmoor. I've never stopped being glad and sorry for it both.", "fx": [["set", "ir_knows_wenna"], ["score", 2], ["xp", 2]] },
+        { "id": "request", "label": "the gallery, and Wenna", "if": [["flag", "said_ir_sella_bg_wenna"]], "once": true, "say": "If you go up to that gallery, say her name where it happened. Nobody has, in thirty years. I can't climb that track anymore, or I'd have done it myself.", "fx": [["xp", 1]] },
+        { "id": "closure", "label": "I said her name", "if": [["flag", "ir_sella_closure"]], "once": true, "say": "You said it. I felt it, somehow, all the way down here — like a held breath let go. Thank you for carrying what I couldn't.", "fx": [["xp", 3], ["score", 3], ["addvar", "rep_keepers", 1]] },
+        { "id": "bye", "label": "leave Sella to her step", "say": "Go on, then. Mind the fall on your way up.", "end": true }
+      ]
+    },
+    "ir_slaghound": {
+      "name": "slag-hound",
+      "room": null,
+      "hostile": true,
+      "aggressive": true,
+      "hp": 6,
+      "atk": 2,
+      "df": 9,
+      "desc": "Low and rangy, coat crusted gray with slag-dust, moving like it has never once been full-fed.",
+      "onDeath": [["score", 3], ["xp", 3], ["addvar", "gold", 3], ["say", "The slag-hound goes still. Whatever fed it up here, it won't be missed."]]
+    }
+  },
+  "gen": [
+    {
+      "id": "ir_downs",
+      "name": "the Iron Downs",
+      "seed": 53,
+      "w": 6,
+      "h": 5,
+      "region": "ir",
+      "pools": {
+        "descs": ["Bare, wind-scoured ground, slag underfoot in every direction you look."],
+        "briefs": ["Bare downs."],
+        "scenes": []
+      },
+      "walls": [[0, 0], [5, 0], [0, 4], [5, 4], [5, 2], [0, 2]],
+      "links": [
+        { "cell": [2, 4], "dir": "south", "to": "ir_headframe", "landmark": "Cinderhall" },
+        { "cell": [3, 1], "dir": "in", "to": "ir_hundred_adit", "landmark": "the Hundred Gallery" }
+      ],
+      "spots": [
+        { "cell": [1, 0], "name": "Windbreak Ridge", "desc": "Spoil banked into a second hill, wind-scoured to a hard gray crust. Nothing has rooted here in living memory.", "brief": "Wind-scoured spoil.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [2, 0], "name": "The High Cut", "desc": "An old surface working, shale stepped in benches too regular to be natural. Cart-rails, rusted to lace, still mark the grade downward.", "brief": "Benched shale, rusted rails.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [3, 0], "name": "Ashway Rise", "desc": "Cinder track underfoot, packed hard by cart-wheels that stopped running before you were born. The forge-smell of Cinderhall carries on the wind, from somewhere behind you.", "brief": "Cinder track, forge-smell on the wind.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [4, 0], "name": "Boneyard Spoil", "desc": "Pit-pony bones, tipped out with the tailings and bleached white against the gray. Whoever kept the tally here stopped caring which pile was which.", "brief": "Bones in the tailings.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [0, 1], "name": "Cinder Shrine Approach", "desc": "A path of fused clinker runs west to a squat chapel built entirely of scrap iron, its narrow windows rust-red in the low light.", "brief": "Clinker path. The iron chapel west.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [1, 1], "name": "The Tailings Flat", "desc": "Crushed ore-waste underfoot, packed hard and gray as a road going nowhere anyone chose to go.", "brief": "Packed ore-waste.", "onEnterOnce": [["xp", 1]] },
+        {
+          "cell": [2, 1], "name": "Cracked Adit", "desc": "A sealed mine-mouth, boarded over twice, a company notice nailed across both boardings: CONDEMNED, DO NOT ENTER. Someone has pried at one corner anyway.", "brief": "A boarded, condemned adit.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            { "id": "ir_adit_pry", "label": "pry the loosened board — a failed try costs 1 hp (might)", "if": [["!flag", "ir_adit_pried"]],
+              "fx": [["check", "might", 9,
+                [["set", "ir_adit_pried"], ["addvar", "gold", 4], ["xp", 1], ["say", "The board splits away. Wedged behind it, a handful of coin someone hid from a company tally, years back."]],
+                [["hp", -1], ["say", "The nail holds, and bites your palm for the trouble."]]
+              ]]
+            }
+          ]
+        },
+        { "cell": [3, 1], "name": "The Hundred's Mouth", "desc": "The old workings show plainest here: rail, prop-timber, and a gallery mouth shored with iron, standing open. Cold air breathes out of it, and does not smell of ash.", "brief": "The old gallery mouth, open.", "onEnterOnce": [["xp", 2]] },
+        { "cell": [4, 1], "name": "Spoil Terrace", "desc": "Waste rock terraced in shallow steps, each one a season's dumping. A fox's prints cross it, the only living thing that's bothered.", "brief": "Terraced spoil, fox-tracks.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [5, 1], "name": "Gallows Cut", "desc": "The ground drops away east into a narrow cut, and at its head a gibbet-frame leans black against the sky, chain still hanging, empty.", "brief": "A gibbet-frame, east, chain empty.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [1, 2], "name": "Cinder Hollow", "desc": "A shallow bowl scoured clean by wind, ash drifted into its lee like old snow that never melts.", "brief": "Ash drifted in a hollow.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [2, 2], "name": "The Long Spoil", "desc": "Tailings bank in a ridge running further than the eye wants to follow it, gray shading to black where the older dumping is.", "brief": "A long ridge of tailings.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [3, 2], "name": "Rope Yard", "desc": "Coiled winding-rope, rotted through, stacked where a cart last left it. Rust has fused the coils into one shape.", "brief": "Rotted, fused rope-coils.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [4, 2], "name": "Quarry Rim", "desc": "The ground opens east into a flooded cut, water black as the stone around it. Something has worn a path down to the waterline, and back up again, more than once.", "brief": "The flooded quarry's rim, east.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [0, 3], "name": "Cairn Path", "desc": "A track older than any mine climbs west between two lines of standing stones, half-swallowed by spoil from a working that never knew they were there.", "brief": "Standing stones, west.", "onEnterOnce": [["xp", 1]] },
+        {
+          "cell": [1, 3], "name": "Broken Tramway", "desc": "Iron rail, warped and split, running nowhere useful now. A cart lies on its side, wheels up, exactly where it derailed.", "brief": "A derailed ore-cart.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [{ "id": "ir_tramway_search", "label": "search the derailed cart", "once": true, "fx": [["addvar", "gold", 3], ["xp", 1], ["say", "The cart's box has rotted through, but a tin cup and a few coins have sat undisturbed since it went over."]] }]
+        },
+        {
+          "cell": [2, 3], "name": "The Marker Stone", "desc": "A company boundary-stone, CINDERHALL COMPANY LANDS cut deep and confident. Someone has scratched a tally of names beneath it, too many to be a coincidence.", "brief": "The company's boundary-stone.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [{ "id": "ir_marker_read", "label": "read the scratched tally beneath the stone", "once": true, "fx": [["xp", 2], ["say", "Names, dozens of them, scratched by hands that weren't company clerks. Whoever kept this count did it because the company's own count stopped mattering to them."]] }]
+        },
+        { "cell": [3, 3], "name": "Cinder Flat", "desc": "Flat, black ground, packed by feet that came this way in numbers once and haven't since.", "brief": "Packed black ground.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [4, 3], "name": "Spoil Gap", "desc": "A gap between two heaps just wide enough to walk, walled in gray on both sides like a passage that was never meant to be one.", "brief": "A gap between spoil-heaps.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [5, 3], "name": "Scrapper's Trail", "desc": "Boot-worn ground leads east toward a thread of woodsmoke and the clank of someone sorting scrap by hand.", "brief": "Woodsmoke and scrap-sorting, east.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [1, 4], "name": "Slag Shoulder", "desc": "The last rise before the flat, slag fused to glass in patches that catch what little light there is.", "brief": "Glass-fused slag.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [2, 4], "name": "Tally Rise", "desc": "The downs give way south to Cinderhall's slag hill and the smoke above it. A cairn of broken pick-heads marks where the track becomes a road again.", "brief": "The downs' edge. Cinderhall south.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [3, 4], "name": "Cart Ruts", "desc": "Deep-cut ruts, dry and hard, from carts that ran this ground longer than the company has kept count.", "brief": "Deep, dry cart-ruts.", "onEnterOnce": [["xp", 1]] },
+        { "cell": [4, 4], "name": "Widow's Bench", "desc": "A flat stone, worn smooth in one seat-shaped patch, facing back toward the slag hill. Someone still comes to sit here.", "brief": "A worn stone seat, facing the hill.", "items": ["ir_faded_ribbon"], "onEnterOnce": [["xp", 1]] }
+      ],
+      "cellFx": {
+        "onEnter": [
+          ["chance", 8,
+            [["if", [["!npcDead", "ir_slaghound"]],
+              [["npcgo", "ir_slaghound", "here"], ["say", "A slag-hound breaks from the spoil-heaps, low and fast, and has your scent before you have its measure."]],
+              []
+            ]],
+            []
+          ]
+        ]
+      }
+    }
+  ],
+  "stamps": [
+    { "template": "chapel", "id": "ir_chapel1", "at": "ir_downs_0_1", "dir": "west", "back": "east", "landmark": "the Chapel of Iron", "sideTrip": true, "vars": { "NAME": "the Chapel of Iron", "SAINT": "Saint Mora of the Vein" } },
+    { "template": "tower", "id": "ir_tower1", "at": "ir_downs_5_1", "dir": "east", "back": "west", "landmark": "the Gibbet Tower", "sideTrip": true, "vars": { "NAME": "the Gibbet Tower", "WATCHER": "the shade of a hanged tallyman", "VIEW": "the whole of the bare downs, smoke over Cinderhall, and west the dark line of Thornwold's trees" } },
+    { "template": "barrow", "id": "ir_barrow1", "at": "ir_downs_0_3", "dir": "west", "back": "east", "landmark": "the Old Cairn", "sideTrip": true, "vars": { "NAME": "the Old Cairn", "WIGHT": "a hunched grave-warden" } },
+    { "template": "camp", "id": "ir_camp1", "at": "ir_downs_5_3", "dir": "east", "back": "west", "landmark": "the Scrappers' Camp", "sideTrip": true, "vars": { "NAME": "the Scrappers' Camp", "CAPTAIN": "Scrap-captain Fitch" } },
+    { "template": "cave", "id": "ir_cave1", "at": "ir_downs_4_2", "dir": "east", "back": "west", "landmark": "the Flooded Quarry", "sideTrip": true, "vars": { "NAME": "the Flooded Quarry", "BEAST": "a scarred slag-hound" } }
+  ],
+  "quests": {
+    "q_ir_hollow": {
+      "name": "The Hundred",
+      "start": [["flag", "ir_entered"]],
+      "done": [["flag", "ir_hollow_resolved"]],
+      "stages": [
+        { "if": [["flag", "tamsin_mine_truth"]], "text": "The truth is out: Preceptor Aldous signed the order that doomed the Hundred. Decide the gallery's fate — and his — in Cinderhall." },
+        { "if": [["flag", "ir_hall_backing"]], "text": "The miners' hall is ready to claim the gallery from the company. Declare it at the Hundred Gallery, north of Cinderhall." },
+        { "if": [], "text": "A hundred miners died when the Hundred Gallery came down. The Ironbound blame the timber. Ask around Cinderhall." }
+      ]
+    },
+    "q_ir_writ": {
+      "name": "The Regent's Writ",
+      "start": [["flag", "ir_entered"]],
+      "done": [["flag", "regent_writ"]],
+      "stages": [
+        { "if": [["var", "hollows_burned", ">=", 2]], "text": "Two hollows burned in the Reach. Ask Preceptor Aldous for the Regent's writ, at Cinderhall's chapterhouse." },
+        { "if": [["var", "hollows_burned", "=", 1]], "text": "One hollow burned so far. The Ironbound will write the writ once two have burned." },
+        { "if": [], "text": "Cinderhall's chapterhouse will write the Regent's writ for the crown road, once two hollows of the Reach have burned." }
+      ]
+    },
+    "q_ir_crick": {
+      "name": "Hob's Marked Pick",
+      "start": [["flag", "ir_entered"]],
+      "done": [["flag", "ir_crick_closure"]],
+      "stages": [
+        { "if": [["has", "ir_marked_pick"]], "text": "Return Hob's marked pick to Old Crick, at the miners' hall in Cinderhall." },
+        { "if": [["flag", "ir_crick_hook"]], "text": "Hob's marked pick is still down in the Hundred Gallery, north of Cinderhall, past the fall." },
+        { "if": [], "text": "Old Crick survived the Hundred. His friend Hob did not. Ask him about it, at Cinderhall's miners' hall." }
+      ]
+    },
+    "q_ir_hound": {
+      "name": "The Slag-Hound",
+      "start": [["flag", "ir_entered"]],
+      "done": [["npcDead", "ir_slaghound"]],
+      "stages": [
+        { "if": [["flag", "ir_hound_bounty"]], "text": "A slag-hound is prowling the bare downs at night. Ness, at Cinderhall's head-frame, would be glad to see it dealt with." },
+        { "if": [["flag", "ir_entered"]], "text": "Miners at the head-frame complain of something prowling the downs after dark." },
+        { "if": [], "text": "The bare downs north of Cinderhall are said to hold worse than spoil-heaps." }
+      ]
+    },
+    "q_ir_sella": {
+      "name": "Wenna's Name",
+      "start": [["flag", "ir_entered"]],
+      "done": [["flag", "ir_sella_closure"]],
+      "stages": [
+        { "if": [["flag", "ir_knows_wenna"]], "text": "Speak Wenna's name at the Hundred Gallery, north of Cinderhall, for Sella." },
+        { "if": [["flag", "ir_entered"]], "text": "An old woman on Cinderhall's shanty row still grieves a friend lost in the Hundred. Ask after her." },
+        { "if": [], "text": "Cinderhall keeps its grief quiet. Some of it isn't yours to carry, but you could still listen." }
+      ]
+    }
+  },
+  "epilogue": [
+    { "if": [["flag", "ir_hollow_rested"]], "text": "The Hundred are named and rested. Cinderhall reads the true tally now, chalked plain, not the company's version of it." },
+    { "if": [["flag", "ir_hollow_burned"]], "text": "The Hundred Gallery burned clean. Cinderhall calls it mercy. Not everyone who lost someone there agrees." },
+    { "if": [["flag", "ir_hollow_bargained"]], "text": "The miners' hall holds the mine now, not the company. The Hundred stay unrested, but watched over, not abandoned." },
+    { "if": [["flag", "ir_entered"], ["!flag", "ir_hollow_resolved"]], "text": "The Hundred still walk the gallery under Cinderhall. Nobody has gone back to answer them." },
+    { "if": [["flag", "tamsin_mine_avenged"]], "text": "Preceptor Aldous answered for the Hundred, one way or another. Tamsin does not talk about it, and nobody asks twice." },
+    { "if": [["flag", "tamsin_mine_forgiven"]], "text": "Tamsin let Aldous keep his life, and his post. She says forgiveness costs more than the alternative, most days." },
+    { "if": [["flag", "ir_miners_sold"]], "text": "Cinderhall's miners were sold quiet for company gold, and never told why the tally never balanced again." },
+    { "if": [["flag", "ir_crick_closure"]], "text": "Old Crick keeps his friend's marked pick on the mantel now, and has mostly stopped apologizing for surviving." }
+  ]
 }

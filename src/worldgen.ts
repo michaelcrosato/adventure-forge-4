@@ -185,6 +185,7 @@ function expandStamp(world: World, st: StampDef): void {
   }
   const entrance = world.rooms[copy.entrance];
   if (!entrance || !(copy.entrance in copy.rooms)) throw new Error(`${where}: entrance ${tpl.entrance} is not a template room`);
+  if (st.entranceLandmark !== undefined) entrance.landmark = st.entranceLandmark;
   host.exits ??= {};
   if (host.exits[st.dir]) throw new Error(`${where}: host ${st.at} already has an exit ${st.dir}`);
   const ex: ExitDef = { to: copy.entrance };

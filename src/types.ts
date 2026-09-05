@@ -268,6 +268,7 @@ export type StampDef = {
   lockedMsg?: string;
   hint?: string;
   landmark?: string; // destination preview on the host's exit
+  entranceLandmark?: string; // make the copy's entrance room a fast-travel landmark by this name
   sideTrip?: boolean;
   vars?: Record<string, string>;
 };
