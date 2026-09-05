@@ -6,7 +6,11 @@
       "brief": "Old growth. Camp smoke west.",
       "region": "th",
       "landmark": "Thornwold's edge",
-      "exits": { "east": { "to": "va_west_road" }, "in": { "to": "th_settlement" } },
+      "exits": {
+        "east": { "to": "va_west_road" },
+        "in": { "to": "th_settlement" },
+        "south": { "to": "th_toll_stand", "sideTrip": true, "landmark": "a roadside toll stand" }
+      },
       "onEnterOnce": [["set", "th_entered"], ["xp", 1]]
     },
     "th_north_track": {
@@ -15,7 +19,11 @@
       "brief": "Spoil-dust on the wind.",
       "region": "th",
       "landmark": "Thornwold's north track",
-      "exits": { "north": { "to": "ir_south_track" }, "in": { "to": "th_settlement" } },
+      "exits": {
+        "north": { "to": "ir_south_track" },
+        "in": { "to": "th_settlement" },
+        "west": { "to": "th_wayfire", "sideTrip": true, "landmark": "an Ironbound wayfire" }
+      },
       "onEnterOnce": [["set", "th_entered"], ["xp", 1]]
     },
     "th_south_track": {
@@ -24,7 +32,11 @@
       "brief": "A taste of salt, gulls crying.",
       "region": "th",
       "landmark": "Thornwold's south track",
-      "exits": { "south": { "to": "sk_north_track" }, "in": { "to": "th_settlement" } },
+      "exits": {
+        "south": { "to": "sk_north_track" },
+        "in": { "to": "th_settlement" },
+        "east": { "to": "th_waymarker", "sideTrip": true, "landmark": "an old waymarker" }
+      },
       "onEnterOnce": [["set", "th_entered"], ["xp", 1]]
     },
     "th_settlement": {
@@ -595,6 +607,182 @@
           ]
         }
       ]
+    },
+    "th_toll_stand": {
+      "name": "The Toll Stand",
+      "desc": "A lean-to just off the road, roofed in bark shingle, a pole barring the trail between two posts. Two of the Company mind it, more bored than watchful, dicing on an upturned crate while they wait for someone worth stopping.",
+      "brief": "A lean-to, a barred pole, two bored toll-men.",
+      "region": "th",
+      "exits": { "north": { "to": "th_east_edge" } },
+      "onEnterOnce": [["xp", 1]],
+      "actions": [
+        {
+          "id": "th_toll_pay",
+          "label": "pay the toll (2 gold)",
+          "if": [["var", "gold", ">=", 2], ["!flag", "th_toll_resolved"]],
+          "fx": [
+            ["addvar", "gold", -2],
+            ["set", "th_toll_resolved"],
+            ["npcgo", "th_toll_men", null],
+            ["addvar", "rep_free", 1],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "The nearer one pockets the coin without breaking off the dice game. \"Pleasure doing business,\" he says, and hauls the pole up for you."]
+          ]
+        },
+        {
+          "id": "th_toll_bluff",
+          "label": "bluff your way past (will)",
+          "if": [["!flag", "th_toll_resolved"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "th_toll_resolved"],
+                ["npcgo", "th_toll_men", null],
+                ["addvar", "rep_free", 1],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "You talk like a courier already owed passage, dropping a captain's name you've never heard. It works — they wave you through rather than admit they don't know it."]
+              ],
+              [["say", "\"Nice try,\" the nearer one says, not even looking up from the dice. The pole stays down."]]
+            ]
+          ]
+        },
+        {
+          "id": "th_toll_standing",
+          "label": "show your Company standing",
+          "if": [["var", "rep_free", ">=", 1], ["!flag", "th_toll_resolved"]],
+          "fx": [
+            ["set", "th_toll_resolved"],
+            ["npcgo", "th_toll_men", null],
+            ["addvar", "rep_free", 1],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "One of them squints, then elbows the other. \"Vane's, this one. Let it go.\" The pole lifts before you've said a word more."]
+          ]
+        }
+      ]
+    },
+    "th_wayfire": {
+      "name": "The Ironbound Wayfire",
+      "desc": "A ring of fire-cracked stone just off the cart-ruts, a stack of iron discs at its edge. Some are scratched with names; most wait blank. The ash here never looks old, whatever the season.",
+      "brief": "A stone ring, iron discs, ash that never looks old.",
+      "region": "th",
+      "exits": { "east": { "to": "th_north_track" } },
+      "onEnterOnce": [["xp", 1]],
+      "actions": [
+        {
+          "id": "th_wayfire_name",
+          "label": "add a name to the wayfire",
+          "if": [["var", "hollows_burned", ">=", 1], ["!flag", "th_wayfire_resolved"]],
+          "fx": [
+            ["set", "th_wayfire_resolved"],
+            ["set", "th_wayfire_named"],
+            ["addvar", "rep_iron", 1],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "You scratch a name into a blank disc and set it among the others — one more grief given a fire and a word, the Ironbound's whole idea of mercy."]
+          ]
+        },
+        {
+          "id": "th_wayfire_refuse",
+          "label": "leave the iron cold",
+          "if": [["var", "hollows_burned", ">=", 1], ["!flag", "th_wayfire_resolved"]],
+          "fx": [
+            ["set", "th_wayfire_resolved"],
+            ["addvar", "rep_iron", -1],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "You set the blank disc back down. Whatever burned this year, it doesn't need your hand added to the counting of it."]
+          ]
+        }
+      ]
+    },
+    "th_waymarker": {
+      "name": "The Old Waymarker",
+      "desc": "A standing stone half-sunk in bramble where the south track bends. Verse-script rings it, worn to a whisper — old Keepers' work, older than the track itself.",
+      "brief": "A bramble-sunk stone, old verse-script.",
+      "region": "th",
+      "exits": { "west": { "to": "th_south_track" } },
+      "onEnterOnce": [
+        ["xp", 1],
+        [
+          "if",
+          [["flag", "sk_hollow_burned"]],
+          [
+            ["say", "Word off the south track already told you which way the coast went: the Saltkerns' own grief went to fire."]
+          ],
+          [
+            [
+              "if",
+              [["flag", "sk_hollow_rested"]],
+              [
+                ["say", "Word off the south track already told you the Saltkerns sang its grief to rest. The stone feels less lonely for it."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "sk_hollow_bargained"]],
+                  [
+                    ["say", "Word off the south track already reached you: the Saltkerns bought its grief quiet. Paid isn't rested, but it's something."]
+                  ],
+                  []
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "id": "th_waymarker_read",
+          "label": "read the waymarker's verse (wits)",
+          "if": [["!flag", "th_waymarker_resolved"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "th_waymarker_resolved"],
+                ["set", "th_waymarker_verse"],
+                ["addvar", "rep_keepers", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "The shallow script resolves under your fingertip into a fragment: \"what the fire forgets, the root remembers still.\" It settles into memory like it was always there."]
+              ],
+              [
+                ["xp", 1],
+                ["say", "The script stays stubbornly shapeless, worn past any single reading. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "th_waymarker_clear",
+          "label": "clear the bramble by force (might)",
+          "if": [["!flag", "th_waymarker_resolved"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "th_waymarker_resolved"],
+                ["set", "th_waymarker_verse"],
+                ["addvar", "rep_keepers", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "You tear the bramble back by the root and the verse stands clear in the stone: \"what the fire forgets, the root remembers still.\" Someone meant this to be found."]
+              ],
+              [["xp", 1], ["say", "The bramble's thicker than it looks, thorn for every handhold. It can be tried again."]]
+            ]
+          ]
+        }
+      ]
     }
   },
   "items": {
@@ -1139,6 +1327,14 @@
           "fx": [["addvar", "rep_keepers", -1]]
         },
         {
+          "id": "waymarker",
+          "label": "the verse from the old stone",
+          "if": [["flag", "th_waymarker_verse"]],
+          "once": true,
+          "say": "Rowan's eyes close a moment at the words. \"That fragment's older than this hall,\" they say. \"Fire forgets. The root doesn't. You found true work today.\"",
+          "fx": [["xp", 2]]
+        },
+        {
           "id": "bye",
           "label": "leave the Understory",
           "say": "Go careful. The old wood doesn't forgive twice, and neither do we.",
@@ -1159,6 +1355,30 @@
         ["xp", 3],
         ["move", "th_boar_tusk", "inv"],
         ["say", "The boar goes down hard. One tusk breaks free clean — Sergeant Coe might know it."]
+      ]
+    },
+    "th_toll_men": {
+      "name": "toll-men",
+      "room": "th_toll_stand",
+      "hostile": true,
+      "hp": 6,
+      "atk": 2,
+      "df": 9,
+      "desc": "Two in patched Company colors, a dicing crate between them and a pole they'd rather not lift for free.",
+      "onDeath": [
+        [
+          "if",
+          [["!flag", "th_toll_resolved"]],
+          [
+            ["set", "th_toll_resolved"],
+            ["addvar", "rep_free", -1],
+            ["addvar", "gold", 5],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "The toll-box splits under the second one's fall — five coin inside, and nobody left to mind the pole. Whatever this costs you with Vane, it's paid now."]
+          ],
+          [["say", "The toll-men were already settled with."]]
+        ]
       ]
     }
   },
@@ -1597,6 +1817,11 @@
     {
       "if": [["var", "hollows_rested", ">=", 3]],
       "text": "Camp Gallows keeps its own reckoning of every hold that rested its dead instead of burning it, and drinks to the count."
+    },
+    {
+      "if": [["flag", "th_wayfire_named"]],
+      "text": "The Ironbound wayfire on the north track carries one more name than it would have, scratched there by a stranger passing through.",
+      "weight": 1
     }
   ]
 }

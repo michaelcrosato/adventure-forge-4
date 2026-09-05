@@ -244,7 +244,11 @@
       "brief": "The rutted west road.",
       "region": "wm",
       "landmark": "Wardmoor west road",
-      "exits": { "west": { "to": "ir_east_road" }, "in": { "to": "wm_armoury" } },
+      "exits": {
+        "west": { "to": "ir_east_road" },
+        "in": { "to": "wm_armoury" },
+        "south": { "to": "wm_peddler_stop", "sideTrip": true, "landmark": "a peddler's stop" }
+      },
       "onEnterOnce": [["set", "wm_entered"]]
     },
     "wm_east_road": {
@@ -253,7 +257,11 @@
       "brief": "The road east, mile-cairns.",
       "region": "wm",
       "landmark": "Wardmoor east road",
-      "exits": { "east": { "to": "hb_west_road" }, "in": { "to": "wm_barracks" } },
+      "exits": {
+        "east": { "to": "hb_west_road" },
+        "in": { "to": "wm_barracks" },
+        "south": { "to": "wm_courier_hollow", "sideTrip": true, "landmark": "a hurt courier" }
+      },
       "onEnterOnce": [["set", "wm_entered"]]
     },
     "wm_north_road": {
@@ -262,8 +270,212 @@
       "brief": "The road north, into cloud.",
       "region": "wm",
       "landmark": "the north road to Coldpass",
-      "exits": { "north": { "to": "cp_south_stair" }, "in": { "to": "wm_record_house" } },
+      "exits": {
+        "north": { "to": "cp_south_stair" },
+        "in": { "to": "wm_record_house" },
+        "east": { "to": "wm_checkpoint", "sideTrip": true, "landmark": "a Watch checkpoint" }
+      },
       "onEnterOnce": [["set", "wm_entered"]]
+    },
+    "wm_peddler_stop": {
+      "name": "The Peddler's Stop",
+      "desc": "A two-wheeled cart pulled off the west road, its awning patched from three different tents. Wares are laid out on a blanket with the practiced order of someone who's done this at a hundred roadsides.",
+      "brief": "A cart, an awning, wares on a blanket.",
+      "region": "wm",
+      "exits": { "north": { "to": "wm_west_road" } },
+      "onEnterOnce": [
+        ["xp", 1],
+        [
+          "if",
+          [["flag", "ir_hollow_burned"]],
+          [
+            ["say", "\"Cinderhall's quieter than it was,\" the peddler says. \"Good for my nerves, bad for my prices — half my usual customers burned with it.\""]
+          ],
+          [
+            [
+              "if",
+              [["flag", "ir_hollow_rested"]],
+              [
+                ["say", "\"Cinderhall's an easier road than it's been in years,\" the peddler says. \"First time I've heard a miner whistle in a decade.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "ir_hollow_bargained"]],
+                  [
+                    ["say", "\"Cinderhall struck some bargain over its own grief,\" the peddler says. \"Didn't ask the terms. Coin's coin either way.\""]
+                  ],
+                  []
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "id": "wm_peddler_buy",
+          "label": "buy a Downs-forged blade (13 gold)",
+          "if": [["var", "gold", ">=", 13], ["!has", "wm_peddler_blade"]],
+          "fx": [
+            ["addvar", "gold", -13],
+            ["move", "wm_peddler_blade", "inv"],
+            ["score", 2],
+            ["say", "She hands it over grip-first. \"Downs steel, tempered twice. Better than anything Highward's armoury turns out, and I won't tell the quartermaster you heard it here.\""]
+          ]
+        },
+        {
+          "id": "wm_peddler_sell",
+          "label": "sell the lean wolf's pelt",
+          "if": [["has", "va_wolf_pelt"], ["!flag", "wm_peddler_pelt_sold"]],
+          "fx": [
+            ["move", "va_wolf_pelt", "nowhere"],
+            ["set", "wm_peddler_pelt_sold"],
+            ["addvar", "gold", 5],
+            ["xp", 1],
+            ["say", "She turns it over once, checks the fur against the light, and pays without haggling. \"Vale wolves. Don't see these out here.\""]
+          ]
+        }
+      ]
+    },
+    "wm_courier_hollow": {
+      "name": "The Roadside Hollow",
+      "desc": "A dip below the road's shoulder, screened by gorse. A courier lies against the bank, one leg twisted wrong, a satchel spilled open beside her — a letter still sealed, addressed to Marrowgate.",
+      "brief": "A hurt courier, a sealed letter.",
+      "region": "wm",
+      "exits": { "north": { "to": "wm_east_road" } },
+      "onEnterOnce": [
+        ["xp", 1],
+        [
+          "if",
+          [["flag", "hb_hollow_burned"]],
+          [
+            ["say", "\"Came up from Hollowbrook,\" the courier manages. \"Mound's still smoking behind me. Didn't stop to look twice.\""]
+          ],
+          [
+            [
+              "if",
+              [["flag", "hb_hollow_rested"]],
+              [
+                ["say", "\"Came up from Hollowbrook,\" the courier manages. \"Quiet there now, first time in memory. Wish I'd broken my leg somewhere that quiet.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "hb_hollow_bargained"]],
+                  [
+                    ["say", "\"Came up from Hollowbrook,\" the courier manages. \"They bought their grief's silence. Cheaper than my leg's going to be.\""]
+                  ],
+                  []
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "id": "wm_courier_carry",
+          "label": "agree to carry the sealed letter",
+          "if": [["!flag", "wm_courier_resolved"]],
+          "fx": [
+            ["set", "wm_courier_resolved"],
+            ["move", "wm_sealed_letter", "inv"],
+            ["score", 1],
+            ["xp", 1],
+            ["say", "\"Highward,\" the courier breathes, relieved. \"Watch post there will know what to do with it. Tell them Ferris sent you.\" She presses the letter into your hands."]
+          ]
+        },
+        {
+          "id": "wm_courier_read",
+          "label": "read the sealed letter (wits)",
+          "if": [["!flag", "wm_courier_resolved"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              11,
+              [
+                ["set", "wm_courier_resolved"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "The seal breaks clean. Grain counts, mostly — and beneath them, in a different hand, a tally of holds the Regent means to \"settle personally\" if their grief isn't dealt with soon."]
+              ],
+              [
+                ["set", "wm_courier_resolved"],
+                ["addvar", "rep_watch", -1],
+                ["xp", 1],
+                ["say", "The wax cracks wrong and tears the page with it. \"That was sealed for a reason,\" the courier says, watching you do it. Word of this will outpace you to Highward."]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "wm_checkpoint": {
+      "name": "The Watch Checkpoint",
+      "desc": "A flat shelf beside the climbing road, roped off between two cairns. Two of the Watch check every traveler's business here before the mountain narrows the choice to one road only.",
+      "brief": "A roped checkpoint, two of the Watch.",
+      "region": "wm",
+      "exits": { "west": { "to": "wm_north_road" } },
+      "onEnterOnce": [["xp", 1]],
+      "variants": [
+        {
+          "if": [["flag", "free_passage"], ["!flag", "regent_writ"]],
+          "desc": "A flat shelf beside the climbing road, roped off between two cairns. One of the Watch eyes your boots a beat too long. \"Seen that wear on a smuggler's foot before,\" she says, and waves the question off unasked.",
+          "brief": "A roped checkpoint. One eyes your boots."
+        }
+      ],
+      "actions": [
+        {
+          "id": "wm_checkpoint_writ",
+          "label": "show the Regent's writ",
+          "if": [["flag", "regent_writ"], ["!flag", "wm_checkpoint_resolved"]],
+          "fx": [
+            ["set", "wm_checkpoint_resolved"],
+            ["addvar", "rep_watch", 1],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "The nearer one reads the seal twice, then straightens like it matters. \"Regent's own hand. Go on through.\""]
+          ]
+        },
+        {
+          "id": "wm_checkpoint_talk",
+          "label": "talk your way past (will)",
+          "if": [["!flag", "wm_checkpoint_resolved"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "wm_checkpoint_resolved"],
+                ["addvar", "rep_watch", 1],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "You talk like someone with nothing to hide and everything to lose by delay. It works better than it should. They wave you past."]
+              ],
+              [
+                ["addvar", "rep_watch", -1],
+                ["say", "\"Try that again with a straighter face,\" the nearer one says. Neither of them moves the rope."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "wm_checkpoint_pay",
+          "label": "pay to cross (4 gold)",
+          "if": [["var", "gold", ">=", 4], ["!flag", "wm_checkpoint_resolved"]],
+          "fx": [
+            ["addvar", "gold", -4],
+            ["set", "wm_checkpoint_resolved"],
+            ["addvar", "rep_watch", -1],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "She pockets it fast and won't meet your eyes doing it. The rope comes down anyway."]
+          ]
+        }
+      ]
     }
   },
   "items": {
@@ -307,7 +519,20 @@
       ],
       "variants": [{ "if": [["flag", "wm_oath_resolved"]], "hint": "" }]
     },
-    "wm_oil_flask": { "name": "flask of lamp oil", "loc": "nowhere", "takeable": true, "hint": "fuel enough for a stubborn fire" }
+    "wm_oil_flask": { "name": "flask of lamp oil", "loc": "nowhere", "takeable": true, "hint": "fuel enough for a stubborn fire" },
+    "wm_peddler_blade": {
+      "name": "Downs-forged shortsword",
+      "loc": "nowhere",
+      "hit": 1,
+      "dmg": 5,
+      "hint": "tempered twice; a step above the armoury's own steel"
+    },
+    "wm_sealed_letter": {
+      "name": "the sealed dispatch for Marrowgate",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "meant for the Watch post at Highward"
+    }
   },
   "npcs": {
     "wm_sgt_rook": {
@@ -370,6 +595,20 @@
           "once": true,
           "say": "One less thing walking the mist tonight. Whatever it was chasing, it isn't anymore. Well done.",
           "fx": [["addvar", "rep_watch", 1], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "courier_letter",
+          "label": "hand over the sealed dispatch",
+          "if": [["has", "wm_sealed_letter"]],
+          "once": true,
+          "say": "Rook turns the seal over once, reads the address, and nods. \"Ferris's hand. Good — she'll have worried.\" She pays you out of her own purse rather than wait on the ledger.",
+          "fx": [
+            ["move", "wm_sealed_letter", "nowhere"],
+            ["addvar", "gold", 6],
+            ["addvar", "rep_watch", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
         },
         { "id": "bye", "label": "leave her to the drill", "say": "Keep to the cairns after dark.", "end": true }
       ]

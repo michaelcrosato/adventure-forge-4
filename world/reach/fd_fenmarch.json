@@ -6,7 +6,11 @@
       "brief": "The causeway sinks into reed and water.",
       "region": "fd",
       "landmark": "Fenmarch causeway",
-      "exits": { "west": { "to": "va_causeway" }, "in": { "to": "fd_settlement", "landmark": "Reedholm" } },
+      "exits": {
+        "west": { "to": "va_causeway" },
+        "in": { "to": "fd_settlement", "landmark": "Reedholm" },
+        "south": { "to": "fd_way_shrine", "sideTrip": true, "landmark": "a wayside shrine" }
+      },
       "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
     },
     "fd_north_dike": {
@@ -15,7 +19,11 @@
       "brief": "The dike holds back the fen.",
       "region": "fd",
       "landmark": "Fenmarch north dike",
-      "exits": { "north": { "to": "hb_south_dike" }, "in": { "to": "fd_settlement", "landmark": "Reedholm" } },
+      "exits": {
+        "north": { "to": "hb_south_dike" },
+        "in": { "to": "fd_settlement", "landmark": "Reedholm" },
+        "down": { "to": "fd_ford", "sideTrip": true, "landmark": "a washed-out ford" }
+      },
       "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
     },
     "fd_coast_road": {
@@ -24,7 +32,11 @@
       "brief": "Shingle spine, fen and sea.",
       "region": "fd",
       "landmark": "Fenmarch coast road",
-      "exits": { "south": { "to": "sk_coast_road" }, "in": { "to": "fd_settlement", "landmark": "Reedholm" } },
+      "exits": {
+        "south": { "to": "sk_coast_road" },
+        "in": { "to": "fd_settlement", "landmark": "Reedholm" },
+        "east": { "to": "fd_wayside_camp", "sideTrip": true, "landmark": "a roadside camp" }
+      },
       "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
     },
     "fd_settlement": {
@@ -290,6 +302,253 @@
           "brief": "Empty netshed, cold ash."
         }
       ]
+    },
+    "fd_way_shrine": {
+      "name": "The Wayside Shrine",
+      "desc": "A hump of dry ground beside the causeway, a gray-stone niche wedged with candle stubs. A shrine-keeper kneels by a pilgrim laid on a traveler's cloak, breath gone shallow and slow.",
+      "brief": "A candle-niche, a keeper, a dying pilgrim.",
+      "region": "fd",
+      "exits": { "north": { "to": "fd_causeway_west" } },
+      "onEnterOnce": [
+        ["xp", 1],
+        [
+          "if",
+          [["flag", "va_king_rested"]],
+          [
+            ["say", "Word crossed the causeway days back: the Vale's king sleeps easier now. The keeper lit an extra candle for it."]
+          ],
+          [
+            [
+              "if",
+              [["flag", "va_king_slain"]],
+              [
+                ["say", "Word crossed the causeway days back: the Vale's king fell to the blade. The keeper lights no extra candle for that kind of rest."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "va_king_forsaken"]],
+                  [
+                    ["say", "Word crossed the causeway days back: the Vale's king was left to his barrow, neither rested nor slain. The keeper only sighs at that."]
+                  ],
+                  []
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "id": "fd_shrine_sit",
+          "label": "sit with the dying pilgrim (will)",
+          "if": [["!flag", "fd_shrine_resolved"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              9,
+              [
+                ["set", "fd_shrine_resolved"],
+                ["set", "fd_shrine_sat"],
+                ["addvar", "rep_church", 1],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "You find the words, low and plain, and hold their hand until the breath just stops, easier than it was. The keeper says nothing. Nothing needs saying."]
+              ],
+              [
+                ["set", "fd_shrine_resolved"],
+                ["set", "fd_shrine_sat"],
+                ["xp", 1],
+                ["say", "You sit, but the words don't come, not the right ones. They go before you find them. The keeper closes the eyes for you, gently, like it's not the first time."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_shrine_carry",
+          "label": "offer to carry a token onward",
+          "if": [["!flag", "fd_shrine_resolved"]],
+          "fx": [
+            ["set", "fd_shrine_resolved"],
+            ["move", "fd_shrine_token", "inv"],
+            ["score", 1],
+            ["xp", 1],
+            ["say", "The keeper presses a small clay token into your hand, warm from the candle-niche. \"Leave it at the next chapel's altar,\" they say. \"Let the name travel that far.\""]
+          ]
+        }
+      ]
+    },
+    "fd_ford": {
+      "name": "The Washed Ford",
+      "desc": "A plank footbridge that isn't, not since the spring flood took its middle third. What's left leans toward a channel running faster than fen water has any right to.",
+      "brief": "A broken footbridge, a fast channel.",
+      "region": "fd",
+      "exits": { "up": { "to": "fd_north_dike" } },
+      "onEnterOnce": [
+        ["xp", 1],
+        [
+          "if",
+          [["flag", "hb_hollow_burned"]],
+          [
+            ["say", "Ash rides the current down from Hollowbrook some mornings, thin and gray. Nobody at the dike has said why out loud."]
+          ],
+          [
+            [
+              "if",
+              [["flag", "hb_hollow_rested"]],
+              [
+                ["say", "The channel's run clearer since word came down that Hollowbrook's mound went quiet. Small mercies, this far from the mere."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "hb_hollow_bargained"]],
+                  [
+                    ["say", "Word came down that Hollowbrook bought its grief quiet. The channel doesn't care either way, but you do."]
+                  ],
+                  []
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "id": "fd_ford_might",
+          "label": "force the ford — fail costs 2hp (might)",
+          "if": [["!flag", "fd_ford_crossed"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "fd_ford_crossed"],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "You put your shoulder into the current and cross by main strength, plank or no plank. It's cold, and it's done."]
+              ],
+              [
+                ["hp", -2],
+                ["say", "The current wants you more than the far bank does. You claw back out, soaked and short some strength for it."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_ford_grace",
+          "label": "cross the ford — fail costs 1hp (grace)",
+          "if": [["!flag", "fd_ford_crossed"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              10,
+              [
+                ["set", "fd_ford_crossed"],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "You find the give in each plank before it finds you, and cross light-footed over the gap the flood left."]
+              ],
+              [["hp", -1], ["say", "One plank answers your weight wrong, and you go down hard on the good one, winded."]]
+            ]
+          ]
+        },
+        {
+          "id": "fd_ford_detour",
+          "label": "backtrack for the long way round",
+          "if": [["!flag", "fd_ford_crossed"]],
+          "fx": [
+            ["set", "fd_ford_crossed"],
+            ["say", "You lose the better part of an hour finding a drier crossing upstream, but you cross dry, and that's worth something too."]
+          ]
+        }
+      ]
+    },
+    "fd_wayside_camp": {
+      "name": "The Drovers' Halt",
+      "desc": "A hollow off the shingle, sheltered by dune-grass. A family has pulled a handcart off the road and built a low fire, penny-pinching driftwood, watching the coast road both ways.",
+      "brief": "A driftwood fire, a handcart family.",
+      "region": "fd",
+      "exits": { "west": { "to": "fd_coast_road" } },
+      "onEnterOnce": [["xp", 1]],
+      "variants": [
+        {
+          "if": [["var", "hollows_burned", ">=", 1]],
+          "name": "The Refugees' Halt",
+          "desc": "A hollow off the shingle, sheltered by dune-grass. A family sits close around a driftwood fire, what they carried out of a burned hold stacked small beside them — not much, and all of it.",
+          "brief": "A driftwood fire, a burned hold's family."
+        }
+      ],
+      "actions": [
+        {
+          "id": "fd_wayside_coin",
+          "label": "share coin with the family",
+          "if": [["var", "gold", ">=", 2], ["!flag", "fd_wayside_resolved"]],
+          "fx": [
+            ["addvar", "gold", -2],
+            ["set", "fd_wayside_resolved"],
+            ["set", "fd_wayside_helped"],
+            ["addvar", "rep_church", 1],
+            ["score", 2],
+            ["xp", 1],
+            [
+              "if",
+              [["var", "hollows_burned", ">=", 1]],
+              [
+                ["say", "You press coin into the mother's hand. She doesn't thank you in words — just holds it a moment like it's heavier than coin should be."]
+              ],
+              [
+                ["say", "The drover nods you a real thanks and pockets it without counting. \"Every hold pays a toll somewhere,\" he says. \"Glad this one's kind.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_wayside_food",
+          "label": "share food with the family",
+          "if": [["!flag", "fd_wayside_resolved"]],
+          "fx": [
+            ["set", "fd_wayside_resolved"],
+            ["set", "fd_wayside_helped"],
+            ["addvar", "rep_church", 1],
+            ["score", 2],
+            ["xp", 1],
+            [
+              "if",
+              [["var", "hollows_burned", ">=", 1]],
+              [
+                ["say", "You hand over what's left of your own rations. The children don't wait for permission before eating."]
+              ],
+              [
+                ["say", "You share out your rations without being asked twice. The drover's wife insists on trading you a strip of dried meat for it anyway."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_wayside_refuse",
+          "label": "turn them away",
+          "if": [["!flag", "fd_wayside_resolved"]],
+          "fx": [
+            ["set", "fd_wayside_resolved"],
+            ["addvar", "rep_church", -1],
+            ["xp", 1],
+            [
+              "if",
+              [["var", "hollows_burned", ">=", 1]],
+              [
+                ["say", "You keep walking. Behind you, nobody calls out — they've learned better by now than to expect otherwise."]
+              ],
+              [
+                ["say", "You keep walking. The drover doesn't call out either, just watches you go with the look of a man revising his opinion of strangers."]
+              ]
+            ]
+          ]
+        }
+      ]
     }
   },
   "items": {
@@ -321,6 +580,12 @@
       "name": "skin of Ironbound pitch",
       "loc": "nowhere",
       "hint": "the Ironbound's own brand-oil, meant for burning what won't rest"
+    },
+    "fd_shrine_token": {
+      "name": "the pilgrim's clay token",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "leave it at the next chapel's altar"
     }
   },
   "npcs": {
@@ -422,6 +687,14 @@
             ["say", "\"Another hold rested its grief instead of burning it,\" he says, hands finally still. \"Then it can be done gently. Good.\""],
             ["addvar", "rep_church", 1]
           ]
+        },
+        {
+          "id": "shrine_token",
+          "label": "leave the pilgrim's token at the altar",
+          "if": [["has", "fd_shrine_token"]],
+          "once": true,
+          "say": "Halm takes the token without a word and sets it among the others on the sill. \"One more name the water didn't get to keep quiet,\" he says. \"My thanks for carrying it.\"",
+          "fx": [["move", "fd_shrine_token", "nowhere"], ["addvar", "rep_church", 1], ["score", 2], ["xp", 1]]
         },
         {
           "id": "bye",
@@ -697,6 +970,16 @@
     {
       "if": [["any", [["var", "hollows_rested", ">=", 1], ["var", "hollows_burned", ">=", 1]]]],
       "text": "The Priory prays a name for every hold's grief it hears was rested, and burns a candle, not a nave, for every one that wasn't."
+    },
+    {
+      "if": [["flag", "fd_shrine_sat"]],
+      "text": "The wayside shrine's keeper still tells travelers of the stranger who sat with a dying pilgrim rather than just walk on.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "fd_wayside_helped"]],
+      "text": "Travelers on the coast road still speak of a stranger who shared what little they had with a family on the road.",
+      "weight": 1
     }
   ]
 }

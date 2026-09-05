@@ -31,7 +31,8 @@
           "lockedMsg": "The stair is watched. Without the Free Companies' word, whoever's up there will put a knife in you before a lantern.",
           "hint": "earn the Free Companies' trust in Gullhaven first"
         },
-        "in": { "to": "sk_settlement" }
+        "in": { "to": "sk_settlement" },
+        "down": { "to": "sk_lookout_nook", "sideTrip": true, "landmark": "a lookout's nook" }
       },
       "onEnterOnce": [["set", "sk_entered"], ["xp", 2]]
     },
@@ -248,6 +249,39 @@
               ],
               [["say", "Nothing in the room gives itself up to a careful eye tonight. It can be tried again."]]
             ]
+          ]
+        }
+      ]
+    },
+    "sk_lookout_nook": {
+      "name": "The Lookout's Nook",
+      "desc": "A hollow in the cliff face below the stair's foot, screened by gorse-scrub. Someone's laid a bedroll and a spyglass here, watching the steps from where the steps can't watch back.",
+      "brief": "A hidden nook, a spyglass on the steps.",
+      "region": "sk",
+      "exits": { "up": { "to": "sk_smugglers_stair" } },
+      "onEnterOnce": [["xp", 1]],
+      "actions": [
+        {
+          "id": "sk_lookout_free",
+          "label": "ask the lookout for word of the road",
+          "if": [["flag", "sk_helped_free"], ["!flag", "sk_lookout_resolved"]],
+          "fx": [
+            ["set", "sk_lookout_resolved"],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "\"Rennick's word reached me before you did,\" the lookout says, not glancing up from the spyglass. \"Friends of his stair don't pay for talk.\" He tells you plenty anyway."]
+          ]
+        },
+        {
+          "id": "sk_lookout_paid",
+          "label": "buy word of the road (3 gold)",
+          "if": [["var", "gold", ">=", 3], ["!flag", "sk_helped_free"], ["!flag", "sk_lookout_resolved"]],
+          "fx": [
+            ["addvar", "gold", -3],
+            ["set", "sk_lookout_resolved"],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "He pockets the coin before naming a price for the rest. \"Customs post naps some nights more than others,\" he says. \"That's the whole of what three gold buys you.\""]
           ]
         }
       ]
