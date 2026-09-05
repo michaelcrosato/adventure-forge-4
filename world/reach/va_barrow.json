@@ -33,7 +33,7 @@
       "actions": [
         {
           "id": "va_force_doors",
-          "label": "force the doors — a failed try costs 1 hp",
+          "label": "force the doors — a failed try costs 1hp",
           "if": [["!class", "warden"], ["!flag", "va_barrow_open"]],
           "fx": [
             [
@@ -76,7 +76,7 @@
         },
         {
           "id": "va_hunters_gap",
-          "label": "find the hunter's gap under the loose stone",
+          "label": "use the hunter's gap under the stone",
           "if": [["!flag", "va_barrow_open"], ["flag", "va_knows_gap"]],
           "fx": [
             ["set", "va_barrow_open"],
@@ -257,7 +257,7 @@
       "actions": [
         {
           "id": "va_slip_past",
-          "label": "slip past the wight (grace) — a failed try costs 1 hp",
+          "label": "slip past the wight — a fail costs 1hp",
           "if": [["!flag", "va_wight_passed"], ["!npcDead", "va_barrow_wight"]],
           "fx": [
             [
@@ -330,7 +330,7 @@
         },
         {
           "id": "va_full_rite",
-          "label": "return the crown and speak the three verses",
+          "label": "give back the crown and speak the verses",
           "if": [
             ["flag", "va_verse_stone"],
             ["flag", "va_verse_water"],
@@ -354,7 +354,7 @@
             ["addvar", "appr_vell", 1],
             ["addvar", "appr_osk", 1],
             ["npcgo", "va_hollow_king", null],
-            ["say", "You set the crown in his hands and speak the three verses over him. He listens through them with the crown where it belongs, and something in his face settles that four hundred years could not. He lies down. The doors wait on your word."]
+            ["say", "You set the crown in his hands and speak the three verses over him. He listens with the crown where it belongs, and something in his face settles that four hundred years could not. He lies down. The doors wait on your word."]
           ]
         },
         {
@@ -614,7 +614,7 @@
           "id": "grieve",
           "label": "why do you grieve",
           "once": true,
-          "say": "My crown. The first reeve took it from my barrow, and my rest went with it. Bring it back, or speak the old verses over me — either rests me. Both together rests me deeper. Kneel, and you will have my seat and my grief for your own.",
+          "say": "My crown. The first reeve took it from my barrow, and my rest went with it. Bring it back, or speak the old verses over me — either rests me; both together rests me deeper. Kneel, and my seat and my grief are yours.",
           "fx": [["set", "va_heard_grievance"], ["score", 10], ["xp", 3]]
         },
         {
@@ -705,7 +705,7 @@
         },
         {
           "if": [],
-          "text": "Three verses were cut for the king: the drowned shrine, the old watchtower (both east of the wood), and the barrow's own hall."
+          "text": "Three verses were cut for the king: the drowned shrine and the old watchtower east of the wood, and the barrow's hall."
         }
       ]
     },
