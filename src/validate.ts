@@ -229,6 +229,7 @@ export function validateWorld(world: World): string[] {
   for (const [i, ep] of (world.epilogue ?? []).entries()) {
     need(`epilogue ${i}`, ep, [["if", "array"], ["text", "string"]]);
     checkConds(`epilogue ${i}`, ep.if);
+    if (ep.weight !== undefined && (typeof ep.weight !== "number" || !Number.isFinite(ep.weight))) err(`epilogue ${i}: weight must be a number`);
   }
   for (const [i, h] of (world.hud ?? []).entries()) need(`hud ${i}`, h, [["var", "string"], ["label", "string"]]);
   for (const [v, name] of Object.entries(world.factions ?? {})) if (typeof name !== "string" || !name) err(`factions ${v}: needs a display name`);
@@ -272,6 +273,11 @@ export function validateWorld(world: World): string[] {
   }
   for (const [iid, item] of Object.entries(world.items)) {
     if (!locOk(item.loc)) err(`item ${iid}: bad loc ${item.loc}`);
+    for (const [i, v] of (item.variants ?? []).entries()) {
+      need(`item ${iid} variant ${i}`, v, [["if", "array"]]);
+      if (v.hint !== undefined && typeof v.hint !== "string") err(`item ${iid} variant ${i}: hint must be a string`);
+      checkConds(`item ${iid} variant ${i}`, v.if);
+    }
     for (const u of item.use ?? []) {
       if (u.target && !itemOk(u.target) && !npcOk(u.target)) err(`item ${iid} use: unknown target ${u.target}`);
       checkConds(`item ${iid} use`, u.if);

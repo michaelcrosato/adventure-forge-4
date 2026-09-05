@@ -6,18 +6,8 @@
       "brief": "The switchback stair, cairns marking the way.",
       "region": "cp",
       "landmark": "Coldpass South Stair",
-      "exits": {
-        "south": {
-          "to": "wm_north_road"
-        },
-        "north": {
-          "to": "cp_courtyard"
-        }
-      },
-      "onEnterOnce": [
-        ["set", "cp_entered"],
-        ["xp", 1]
-      ]
+      "exits": { "south": { "to": "wm_north_road" }, "north": { "to": "cp_courtyard" } },
+      "onEnterOnce": [["set", "cp_entered"], ["xp", 1]]
     },
     "cp_smugglers_cave": {
       "name": "The Smugglers' Cave",
@@ -25,15 +15,8 @@
       "brief": "The cave, climbing from salt air to stone.",
       "region": "cp",
       "landmark": "the Smugglers' Cave",
-      "exits": {
-        "down": {
-          "to": "sk_smugglers_stair"
-        }
-      },
-      "onEnterOnce": [
-        ["set", "cp_entered"],
-        ["xp", 1]
-      ]
+      "exits": { "down": { "to": "sk_smugglers_stair" } },
+      "onEnterOnce": [["set", "cp_entered"], ["xp", 1]]
     },
     "cp_pass": {
       "name": "The Pass Gate",
@@ -41,22 +24,10 @@
       "brief": "The pass gate. Three ways, they say.",
       "region": "cp",
       "landmark": "the Pass Gate",
-      "onEnterOnce": [
-        ["set", "cp_entered"],
-        ["xp", 2]
-      ],
+      "onEnterOnce": [["set", "cp_entered"], ["xp", 2]],
       "variants": [
         {
-          "if": [
-            [
-              "any",
-              [
-                ["flag", "cp_came_by_stair"],
-                ["flag", "cp_came_by_writ"],
-                ["flag", "cp_came_by_cave"]
-              ]
-            ]
-          ],
+          "if": [["any", [["flag", "cp_came_by_stair"], ["flag", "cp_came_by_writ"], ["flag", "cp_came_by_cave"]]]],
           "brief": "The pass gate. You've already gone through, once."
         }
       ],
@@ -64,21 +35,10 @@
         {
           "id": "cp_door_stair",
           "label": "climb the Keepers' pilgrim stair",
-          "if": [
-            [
-              "any",
-              [
-                ["var", "hollows_rested", ">=", 3],
-                ["flag", "hb_keepers_key_found"]
-              ]
-            ]
-          ],
+          "if": [["any", [["var", "hollows_rested", ">=", 3], ["flag", "hb_keepers_key_found"]]]],
           "fx": [
             ["set", "cp_came_by_stair"],
-            [
-              "say",
-              "A narrow stair the guard doesn't see opens behind the grate. The Keepers still keep this door, quiet as they've always been."
-            ],
+            ["say", "A narrow stair the guard doesn't see opens behind the grate. The Keepers still keep this door, quiet as they've always been."],
             ["score", 5],
             ["xp", 3],
             ["goto", "mg_south_gate"]
@@ -90,10 +50,7 @@
           "if": [["flag", "regent_writ"]],
           "fx": [
             ["set", "cp_came_by_writ"],
-            [
-              "say",
-              "The guard reads the writ twice, then a third time, and swings the grate wide without another word for you."
-            ],
+            ["say", "The guard reads the writ twice, then a third time, and swings the grate wide without another word for you."],
             ["score", 5],
             ["xp", 3],
             ["goto", "mg_south_gate"]
@@ -105,10 +62,7 @@
           "if": [["flag", "free_passage"]],
           "fx": [
             ["set", "cp_came_by_cave"],
-            [
-              "say",
-              "A hatch behind the brazier, the one the guard is paid not to see. The word the Companies gave you opens it without a sound."
-            ],
+            ["say", "A hatch behind the brazier, the one the guard is paid not to see. The word the Companies gave you opens it without a sound."],
             ["score", 5],
             ["xp", 3],
             ["goto", "mg_south_gate"]
@@ -123,21 +77,11 @@
       "region": "cp",
       "landmark": "St. Ashwyn's Perch",
       "exits": {
-        "south": {
-          "to": "cp_south_stair"
-        },
-        "east": {
-          "to": "cp_pilgrims_hall"
-        },
-        "west": {
-          "to": "cp_scriptorium"
-        },
-        "up": {
-          "to": "cp_bell_tower"
-        },
-        "in": {
-          "to": "cp_guesthouse"
-        }
+        "south": { "to": "cp_south_stair" },
+        "east": { "to": "cp_pilgrims_hall" },
+        "west": { "to": "cp_scriptorium" },
+        "up": { "to": "cp_bell_tower" },
+        "in": { "to": "cp_guesthouse" }
       },
       "onEnterOnce": [["xp", 1]],
       "actions": [
@@ -147,10 +91,7 @@
           "once": true,
           "fx": [
             ["xp", 1],
-            [
-              "say",
-              "Old text re-cut more than once: 'Three ways stand past the Spine's shoulder — the Keepers' stair, for hollows rested three; the Regent's writ, for the guard; a way under, for those the Companies vouch.'"
-            ]
+            ["say", "Old text re-cut more than once: 'Three ways stand past the Spine's shoulder — the Keepers' stair, for hollows rested three; the Regent's writ, for the guard; a way under, for those the Companies vouch.'"]
           ]
         }
       ]
@@ -160,11 +101,7 @@
       "desc": "Long tables and a fire that never quite goes out, built for pilgrims by the dozen and hosting a handful now. Sister Enna ladles broth without being asked. Woodsmoke and wet wool hang in the air and never quite leave it.",
       "brief": "The long hall, fire and broth.",
       "region": "cp",
-      "exits": {
-        "west": {
-          "to": "cp_courtyard"
-        }
-      },
+      "exits": { "west": { "to": "cp_courtyard" } },
       "onEnterOnce": [["xp", 1]],
       "actions": [
         {
@@ -172,26 +109,17 @@
           "label": "rest in the pilgrims' hall",
           "fx": [
             ["hp", 10],
-            [
-              "say",
-              "Broth, a bench by the fire, and the first warmth you've felt in an hour. You wake steadier."
-            ]
+            ["say", "Broth, a bench by the fire, and the first warmth you've felt in an hour. You wake steadier."]
           ]
         },
         {
           "id": "cp_buy_cloak",
           "label": "buy a lined pilgrim's cloak (6 gold)",
-          "if": [
-            ["!has", "cp_pilgrim_cloak"],
-            ["var", "gold", ">=", 6]
-          ],
+          "if": [["!has", "cp_pilgrim_cloak"], ["var", "gold", ">=", 6]],
           "fx": [
             ["addvar", "gold", -6],
             ["move", "cp_pilgrim_cloak", "inv"],
-            [
-              "say",
-              "Sister Enna hands it over without haggling. 'Wind finds the gaps in a thin coat first,' she says. 'Don't let it find yours.'"
-            ]
+            ["say", "Sister Enna hands it over without haggling. 'Wind finds the gaps in a thin coat first,' she says. 'Don't let it find yours.'"]
           ]
         }
       ]
@@ -201,21 +129,14 @@
       "desc": "Shelves of ledgers gone soft with damp, and one dry corner where Brother Fost keeps the oldest of them under a loose flagstone only he seems to know about. Ink, cold stone, and a narrow window looking north into the Spine.",
       "brief": "Ledgers, damp, and one dry corner.",
       "region": "cp",
-      "exits": {
-        "east": {
-          "to": "cp_courtyard"
-        }
-      },
+      "exits": { "east": { "to": "cp_courtyard" } },
       "onEnterOnce": [["xp", 1]],
       "onEnter": [
         [
           "if",
           [["inParty", "vell"]],
           [
-            [
-              "say",
-              "Vell: \"Rite-texts, under a monastery roof, kept from a Church that half-forgot them — now that's worth a closer look.\""
-            ]
+            ["say", "Vell: \"Rite-texts, under a monastery roof, kept from a Church that half-forgot them — now that's worth a closer look.\""]
           ],
           []
         ]
@@ -227,10 +148,7 @@
           "once": true,
           "fx": [
             ["xp", 1],
-            [
-              "say",
-              "Beneath it, wrapped in oilcloth: pages in a hand older than the Church's own records. You set them back exactly as you found them."
-            ]
+            ["say", "Beneath it, wrapped in oilcloth: pages in a hand older than the Church's own records. You set them back exactly as you found them."]
           ]
         }
       ]
@@ -241,34 +159,17 @@
       "brief": "The silent bell, and the Abbot at the rail.",
       "region": "cp",
       "landmark": "the Bell Tower",
-      "exits": {
-        "down": {
-          "to": "cp_courtyard"
-        }
-      },
-      "onEnterOnce": [
-        ["xp", 2],
-        ["score", 2]
-      ],
+      "exits": { "down": { "to": "cp_courtyard" } },
+      "onEnterOnce": [["xp", 2], ["score", 2]],
       "variants": [
-        {
-          "if": [["flag", "cp_bell_rung"]],
-          "brief": "The bell tolls at dusk now, for the lost."
-        },
-        {
-          "if": [["flag", "cp_bell_sold"]],
-          "brief": "The bell hangs green and silent. It will stay that way."
-        }
+        { "if": [["flag", "cp_bell_rung"]], "brief": "The bell tolls at dusk now, for the lost." },
+        { "if": [["flag", "cp_bell_sold"]], "brief": "The bell hangs green and silent. It will stay that way." }
       ],
       "actions": [
         {
           "id": "cp_ring_bell",
           "label": "ring the bell for the lost pilgrims",
-          "if": [
-            ["has", "cp_bell_clapper"],
-            ["!flag", "cp_bell_rung"],
-            ["!flag", "cp_bell_sold"]
-          ],
+          "if": [["has", "cp_bell_clapper"], ["!flag", "cp_bell_rung"], ["!flag", "cp_bell_sold"]],
           "fx": [
             ["set", "cp_bell_rung"],
             ["move", "cp_bell_clapper", "nowhere"],
@@ -276,10 +177,7 @@
             ["xp", 3],
             ["addvar", "rep_church", 1],
             ["addvar", "appr_osk", 1],
-            [
-              "say",
-              "The bell swings, and sound goes out over the Spine for the first time in four winters. Abbot Corvin doesn't speak. He doesn't need to."
-            ]
+            ["say", "The bell swings, and sound goes out over the Spine for the first time in four winters. Abbot Corvin doesn't speak. He doesn't need to."]
           ]
         }
       ]
@@ -289,11 +187,7 @@
       "desc": "A low room kept for travelers with coin or a writ. Envoy Crell has taken the good chair by the fire and hasn't offered it back. A shelf holds someone's abandoned pilgrim gear, dust thick on the straps.",
       "brief": "The guesthouse. Crell by the fire.",
       "region": "cp",
-      "exits": {
-        "out": {
-          "to": "cp_courtyard"
-        }
-      },
+      "exits": { "out": { "to": "cp_courtyard" } },
       "onEnterOnce": [["xp", 1]]
     },
     "cp_ness_camp": {
@@ -307,12 +201,7 @@
         [
           "if",
           [["inParty", "lys"]],
-          [
-            [
-              "say",
-              "Lys: \"Goats and a windbreak — she's got a hunter's sense for shelter. I like her already.\""
-            ]
-          ],
+          [["say", "Lys: \"Goats and a windbreak — she's got a hunter's sense for shelter. I like her already.\""]],
           []
         ]
       ],
@@ -320,10 +209,7 @@
         {
           "id": "cp_ness_persuade",
           "label": "earn Old Ness's trust (will)",
-          "if": [
-            ["!has", "cp_bell_clapper"],
-            ["flag", "said_cp_ness_ask_clapper"]
-          ],
+          "if": [["!has", "cp_bell_clapper"], ["flag", "said_cp_ness_ask_clapper"]],
           "fx": [
             [
               "check",
@@ -332,35 +218,20 @@
               [
                 ["move", "cp_bell_clapper", "inv"],
                 ["xp", 2],
-                [
-                  "say",
-                  "She studies you a long moment, then presses the clapper into your hands. \"Mind you ring it for them, not for the Church.\""
-                ]
+                ["say", "She studies you a long moment, then presses the clapper into your hands. \"Mind you ring it for them, not for the Church.\""]
               ],
-              [
-                [
-                  "say",
-                  "She shakes her head, unmoved. \"Not yet. Ask me again once I've decided you mean it.\""
-                ]
-              ]
+              [["say", "She shakes her head, unmoved. \"Not yet. Ask me again once I've decided you mean it.\""]]
             ]
           ]
         },
         {
           "id": "cp_ness_buy",
           "label": "offer coin for the clapper (3 gold)",
-          "if": [
-            ["!has", "cp_bell_clapper"],
-            ["flag", "said_cp_ness_ask_clapper"],
-            ["var", "gold", ">=", 3]
-          ],
+          "if": [["!has", "cp_bell_clapper"], ["flag", "said_cp_ness_ask_clapper"], ["var", "gold", ">=", 3]],
           "fx": [
             ["addvar", "gold", -3],
             ["move", "cp_bell_clapper", "inv"],
-            [
-              "say",
-              "She takes the coin without much interest and hands the clapper over. \"Wasn't really about the coin. But it'll do.\""
-            ]
+            ["say", "She takes the coin without much interest and hands the clapper over. \"Wasn't really about the coin. But it'll do.\""]
           ]
         }
       ]
@@ -398,10 +269,7 @@
           "fx": [
             ["hp", 3],
             ["move", "cp_frost_balm", "nowhere"],
-            [
-              "say",
-              "Bitter-smelling stuff, but it eases the ache and stops the shivering."
-            ]
+            ["say", "Bitter-smelling stuff, but it eases the ache and stops the shivering."]
           ]
         }
       ]
@@ -459,12 +327,7 @@
           ],
           "once": true,
           "say": "\"Empty,\" you say. Bray studies you a moment too long, then nods slowly. \"If you say so.\" He doesn't press it — but he doesn't quite believe you either.",
-          "fx": [
-            ["set", "cp_covered_cleft"],
-            ["addvar", "rep_free", 1],
-            ["addvar", "rep_watch", -1],
-            ["xp", 2]
-          ]
+          "fx": [["set", "cp_covered_cleft"], ["addvar", "rep_free", 1], ["addvar", "rep_watch", -1], ["xp", 2]]
         },
         {
           "id": "bye",
@@ -498,11 +361,7 @@
         {
           "id": "refuse_force",
           "label": "make it plain you'll stop him (might)",
-          "if": [
-            ["flag", "said_cp_crell_demand"],
-            ["!flag", "cp_fost_protected"],
-            ["!flag", "cp_fost_betrayed"]
-          ],
+          "if": [["flag", "said_cp_crell_demand"], ["!flag", "cp_fost_protected"], ["!flag", "cp_fost_betrayed"]],
           "say": "Go on, then. Make your case with your fists, if that's the argument you're making.",
           "fx": [
             [
@@ -516,10 +375,7 @@
                 ["addvar", "rep_keepers", 2],
                 ["addvar", "rep_iron", -1],
                 ["addvar", "appr_tamsin", 1],
-                [
-                  "say",
-                  "You make it plain you'll stop him bodily if it comes to that. Crell weighs you, weighs the trouble, and decides the texts aren't worth the bruise."
-                ]
+                ["say", "You make it plain you'll stop him bodily if it comes to that. Crell weighs you, weighs the trouble, and decides the texts aren't worth the bruise."]
               ],
               [
                 ["set", "cp_fost_betrayed"],
@@ -528,10 +384,7 @@
                 ["addvar", "rep_keepers", -2],
                 ["addvar", "rep_church", -1],
                 ["addvar", "appr_osk", -1],
-                [
-                  "say",
-                  "Crell isn't moved by a stare. He has his own men search the scriptorium by evening, and finds exactly what he came for."
-                ]
+                ["say", "Crell isn't moved by a stare. He has his own men search the scriptorium by evening, and finds exactly what he came for."]
               ]
             ]
           ]
@@ -539,11 +392,7 @@
         {
           "id": "refuse_words",
           "label": "talk him out of it (will)",
-          "if": [
-            ["flag", "said_cp_crell_demand"],
-            ["!flag", "cp_fost_protected"],
-            ["!flag", "cp_fost_betrayed"]
-          ],
+          "if": [["flag", "said_cp_crell_demand"], ["!flag", "cp_fost_protected"], ["!flag", "cp_fost_betrayed"]],
           "say": "Go on, then. Talk. I've heard every argument the Church has for keeping its clutter.",
           "fx": [
             [
@@ -557,10 +406,7 @@
                 ["addvar", "rep_keepers", 2],
                 ["addvar", "rep_iron", -1],
                 ["addvar", "appr_vell", 1],
-                [
-                  "say",
-                  "You spend ten minutes convincing him the scriptorium holds nothing but water-damaged tithe rolls. He believes you, mostly out of boredom."
-                ]
+                ["say", "You spend ten minutes convincing him the scriptorium holds nothing but water-damaged tithe rolls. He believes you, mostly out of boredom."]
               ],
               [
                 ["set", "cp_fost_betrayed"],
@@ -569,10 +415,7 @@
                 ["addvar", "rep_keepers", -2],
                 ["addvar", "rep_church", -1],
                 ["addvar", "appr_osk", -1],
-                [
-                  "say",
-                  "Crell hears you out, unconvinced, and has his own men search the scriptorium by evening. They find exactly what he came for."
-                ]
+                ["say", "Crell hears you out, unconvinced, and has his own men search the scriptorium by evening. They find exactly what he came for."]
               ]
             ]
           ]
@@ -580,11 +423,7 @@
         {
           "id": "give_in",
           "label": "tell him where the texts are",
-          "if": [
-            ["flag", "said_cp_crell_demand"],
-            ["!flag", "cp_fost_protected"],
-            ["!flag", "cp_fost_betrayed"]
-          ],
+          "if": [["flag", "said_cp_crell_demand"], ["!flag", "cp_fost_protected"], ["!flag", "cp_fost_betrayed"]],
           "say": "You tell him where the loose flagstone is. Crell's men have the texts out and burning in the courtyard before dark, and he pays you well for the trouble of asking.",
           "fx": [
             ["set", "cp_fost_betrayed"],
@@ -600,11 +439,7 @@
         {
           "id": "sell_clapper",
           "label": "sell him the old bell-clapper",
-          "if": [
-            ["has", "cp_bell_clapper"],
-            ["!flag", "cp_bell_rung"],
-            ["!flag", "cp_bell_sold"]
-          ],
+          "if": [["has", "cp_bell_clapper"], ["!flag", "cp_bell_rung"], ["!flag", "cp_bell_sold"]],
           "say": "\"Good bronze,\" Crell says, turning it over. \"The Preceptor's fires can always use more.\" He pays fair and doesn't ask where you got it.",
           "fx": [
             ["set", "cp_bell_sold"],
@@ -725,10 +560,7 @@
           "if": [["flag", "said_cp_abbot_greet"]],
           "once": true,
           "say": "That bell hasn't rung since the storm swallowed a line of pilgrims whole. I want it rung again, for them. The clapper snapped that day — Old Ness kept the spare, out on the Goat Track. She's stubborn about giving it up.",
-          "fx": [
-            ["set", "cp_abbot_asked"],
-            ["xp", 1]
-          ]
+          "fx": [["set", "cp_abbot_asked"], ["xp", 1]]
         },
         {
           "id": "about_shrine",
@@ -793,39 +625,13 @@
       "w": 5,
       "h": 4,
       "region": "cp",
-      "pools": {
-        "descs": ["Gray rock and colder air; the trail climbs on regardless."]
-      },
-      "walls": [
-        [0, 0],
-        [4, 0],
-        [0, 3]
-      ],
+      "pools": { "descs": ["Gray rock and colder air; the trail climbs on regardless."] },
+      "walls": [[0, 0], [4, 0], [0, 3]],
       "links": [
-        {
-          "cell": [2, 3],
-          "dir": "south",
-          "to": "cp_courtyard",
-          "back": "north"
-        },
-        {
-          "cell": [4, 2],
-          "dir": "down",
-          "to": "cp_smugglers_cave",
-          "back": "up"
-        },
-        {
-          "cell": [0, 1],
-          "dir": "in",
-          "to": "cp_ness_camp",
-          "back": "out"
-        },
-        {
-          "cell": [2, 0],
-          "dir": "north",
-          "to": "cp_pass",
-          "back": "south"
-        }
+        { "cell": [2, 3], "dir": "south", "to": "cp_courtyard", "back": "north" },
+        { "cell": [4, 2], "dir": "down", "to": "cp_smugglers_cave", "back": "up" },
+        { "cell": [0, 1], "dir": "in", "to": "cp_ness_camp", "back": "out" },
+        { "cell": [2, 0], "dir": "north", "to": "cp_pass", "back": "south" }
       ],
       "spots": [
         {
@@ -855,18 +661,12 @@
                     ["set", "cp_scree_dug"],
                     ["addvar", "gold", 3],
                     ["xp", 1],
-                    [
-                      "say",
-                      "Something bright works loose from the shale: three old coins, dropped or spent by some pilgrim mid-climb."
-                    ]
+                    ["say", "Something bright works loose from the shale: three old coins, dropped or spent by some pilgrim mid-climb."]
                   ],
                   [
                     ["set", "cp_scree_dug"],
                     ["hp", -1],
-                    [
-                      "say",
-                      "The shale gives all at once and takes your footing with it. Whatever's under there stays under there."
-                    ]
+                    ["say", "The shale gives all at once and takes your footing with it. Whatever's under there stays under there."]
                   ]
                 ]
               ]
@@ -887,10 +687,7 @@
               "fx": [
                 ["xp", 1],
                 ["addvar", "gold", 2],
-                [
-                  "say",
-                  "You add a stone to the nearest cairn. Wedged beneath the one you moved: a coin, someone else's offering, forgotten or given up on."
-                ]
+                ["say", "You add a stone to the nearest cairn. Wedged beneath the one you moved: a coin, someone else's offering, forgotten or given up on."]
               ]
             }
           ]
@@ -920,10 +717,7 @@
             {
               "id": "cp_tarn_ice",
               "label": "break the ice for what's beneath (grace)",
-              "if": [
-                ["!has", "cp_frost_balm"],
-                ["!flag", "cp_tarn_done"]
-              ],
+              "if": [["!has", "cp_frost_balm"], ["!flag", "cp_tarn_done"]],
               "fx": [
                 [
                   "check",
@@ -933,17 +727,9 @@
                     ["set", "cp_tarn_done"],
                     ["move", "cp_frost_balm", "inv"],
                     ["xp", 2],
-                    [
-                      "say",
-                      "The ice gives with a crack that echoes off every slope at once. Beneath: a sealed tin, someone's frost-balm, never used."
-                    ]
+                    ["say", "The ice gives with a crack that echoes off every slope at once. Beneath: a sealed tin, someone's frost-balm, never used."]
                   ],
-                  [
-                    [
-                      "say",
-                      "The ice holds. Whatever's down there stays down there, for now."
-                    ]
-                  ]
+                  [["say", "The ice holds. Whatever's down there stays down there, for now."]]
                 ]
               ]
             }
@@ -961,10 +747,7 @@
               "if",
               [["inParty", "osk"]],
               [
-                [
-                  "say",
-                  "Osk: \"Pilgrims, unrested, this close to a working chapel. Someone should have come back for them.\""
-                ]
+                ["say", "Osk: \"Pilgrims, unrested, this close to a working chapel. Someone should have come back for them.\""]
               ],
               []
             ]
@@ -983,10 +766,7 @@
           "landmark": "the Smugglers' Cleft",
           "desc": "A crack in the rock, easy to miss but for the boot-scuffs worn into the stone at its lip — far too many for a place no map admits to. Cold, salt-tinged air breathes up out of the dark below.",
           "brief": "A hidden crack, boot-worn at the lip.",
-          "onEnterOnce": [
-            ["xp", 1],
-            ["set", "cp_found_cleft"]
-          ]
+          "onEnterOnce": [["xp", 1], ["set", "cp_found_cleft"]]
         },
         {
           "cell": [0, 1],
@@ -1012,10 +792,7 @@
             {
               "id": "cp_dig_slide",
               "label": "dig through the old slide (might)",
-              "if": [
-                ["!has", "cp_ice_axe"],
-                ["!flag", "cp_slide_dug"]
-              ],
+              "if": [["!has", "cp_ice_axe"], ["!flag", "cp_slide_dug"]],
               "fx": [
                 [
                   "check",
@@ -1025,17 +802,9 @@
                     ["set", "cp_slide_dug"],
                     ["move", "cp_ice_axe", "inv"],
                     ["xp", 2],
-                    [
-                      "say",
-                      "Your hands close on a haft first, then the whole of it: an ice axe, well kept, a stranger's initials scratched into the head."
-                    ]
+                    ["say", "Your hands close on a haft first, then the whole of it: an ice axe, well kept, a stranger's initials scratched into the head."]
                   ],
-                  [
-                    [
-                      "say",
-                      "The old slide gives up nothing today. It can be tried again."
-                    ]
-                  ]
+                  [["say", "The old slide gives up nothing today. It can be tried again."]]
                 ]
               ]
             }
@@ -1045,10 +814,7 @@
               "if",
               [["inParty", "tamsin"]],
               [
-                [
-                  "say",
-                  "Tamsin: \"Snow did this, not neglect. Different kind of grief. Still ought to dig properly, if we've time.\""
-                ]
+                ["say", "Tamsin: \"Snow did this, not neglect. Different kind of grief. Still ought to dig properly, if we've time.\""]
               ],
               []
             ]
@@ -1100,13 +866,7 @@
               [
                 "chance",
                 8,
-                [
-                  ["hp", -1],
-                  [
-                    "say",
-                    "The wind finds the one gap your cloak doesn't cover, and takes its due."
-                  ]
-                ],
+                [["hp", -1], ["say", "The wind finds the one gap your cloak doesn't cover, and takes its due."]],
                 []
               ]
             ],
@@ -1123,10 +883,7 @@
       "at": "cp_spine_2_2",
       "dir": "in",
       "back": "out",
-      "vars": {
-        "NAME": "The Pilgrims' Shrine",
-        "SAINT": "the frozen pilgrim"
-      },
+      "vars": { "NAME": "The Pilgrims' Shrine", "SAINT": "the frozen pilgrim" },
       "sideTrip": true,
       "landmark": "the Pilgrims' Shrine"
     },
@@ -1160,15 +917,7 @@
           "text": "The frozen pilgrim's vigil is ended. A crypt beneath the nave still waits, unsearched."
         },
         {
-          "if": [
-            [
-              "any",
-              [
-                ["flag", "said_cp_enna_lore_shrine"],
-                ["flag", "said_cp_abbot_about_shrine"]
-              ]
-            ]
-          ],
+          "if": [["any", [["flag", "said_cp_enna_lore_shrine"], ["flag", "said_cp_abbot_about_shrine"]]]],
           "text": "Somewhere past the tarn, high in the Spine, a shrine holds pilgrims who never came down."
         },
         {
@@ -1215,10 +964,7 @@
           "if": [["flag", "cp_bell_sold"]],
           "text": "The clapper is gone, sold. The bell will hang silent from here on."
         },
-        {
-          "if": [["has", "cp_bell_clapper"]],
-          "text": "You have the clapper. Ring the bell in the tower — or don't."
-        },
+        { "if": [["has", "cp_bell_clapper"]], "text": "You have the clapper. Ring the bell in the tower — or don't." },
         {
           "if": [],
           "text": "Abbot Corvin wants the tower bell rung again. Old Ness, on the Goat Track, has kept the spare clapper for years."
@@ -1228,15 +974,7 @@
     "cp_q_bray": {
       "name": "Bray's Watch",
       "start": [["flag", "said_cp_bray_worry"]],
-      "done": [
-        [
-          "any",
-          [
-            ["flag", "cp_reported_cleft"],
-            ["flag", "cp_covered_cleft"]
-          ]
-        ]
-      ],
+      "done": [["any", [["flag", "cp_reported_cleft"], ["flag", "cp_covered_cleft"]]]],
       "stages": [
         {
           "if": [["flag", "cp_reported_cleft"]],
@@ -1260,15 +998,18 @@
   "epilogue": [
     {
       "if": [["flag", "cp_came_by_stair"]],
-      "text": "You crossed into Marrowgate by the Keepers' old pilgrim stair, past St. Ashwyn's Perch, the quiet way."
+      "text": "You crossed into Marrowgate by the Keepers' old pilgrim stair, past St. Ashwyn's Perch, the quiet way.",
+      "weight": 2
     },
     {
       "if": [["flag", "cp_came_by_writ"]],
-      "text": "The Regent's writ opened Coldpass for you. The guard at the gate never once asked your name."
+      "text": "The Regent's writ opened Coldpass for you. The guard at the gate never once asked your name.",
+      "weight": 2
     },
     {
       "if": [["flag", "cp_came_by_cave"]],
-      "text": "You went under the pass with the Free Companies, through cold dark and older smuggled things."
+      "text": "You went under the pass with the Free Companies, through cold dark and older smuggled things.",
+      "weight": 2
     },
     {
       "if": [["flag", "cp_bell_rung"]],

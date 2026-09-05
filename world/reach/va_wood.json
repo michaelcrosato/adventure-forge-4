@@ -24,7 +24,7 @@
           "landmark": "the hunter's camp",
           "sideTrip": true
         },
-        { "cell": [3, 2], "dir": "east", "to": "va_drowned_chapel", "landmark": "the drowned shrine" },
+        { "cell": [3, 2], "dir": "east", "to": "va_drowned_chapel", "landmark": "the sunken shrine" },
         { "cell": [3, 1], "dir": "east", "to": "va_watchtower", "landmark": "the old watchtower" }
       ],
       "spots": [
@@ -103,7 +103,7 @@
         {
           "cell": [1, 1],
           "name": "The Hollow Path",
-          "desc": "The ground dips into a sunken trail, root and stone rising to either side. Through a gap in the trees east, black water marks the drowned shrine; past it the watchtower's broken crown breaks the skyline.",
+          "desc": "The ground dips into a sunken trail, root and stone rising to either side. Through a gap in the trees east, black water marks the sunken shrine; past it the watchtower's broken crown breaks the skyline.",
           "brief": "The sunken trail. Shrine and tower east.",
           "onEnterOnce": [["xp", 1]]
         },
@@ -152,7 +152,7 @@
           "cell": [2, 2],
           "npcs": ["va_ash_wolf"],
           "landmark": "Twin Stones",
-          "onEnterOnce": [["xp", 1]],
+          "onEnterOnce": [["xp", 1], ["set", "va_seen_ash_wolf"]],
           "name": "Twin Stones",
           "desc": "Two standing stones lean together, worn faces touching. An ash wolf lies between them, gray coat gone to dust at the edges, watching you with a patience that is not a wolf's.",
           "brief": "The leaning stones. The ash wolf watches."
@@ -212,7 +212,7 @@
               "once": true,
               "fx": [
                 ["xp", 1],
-                ["say", "Old keeper-knots, the priest would call them. Someone marked the way to the drowned shrine for pilgrims, long before the pilgrims stopped."]
+                ["say", "Old keeper-knots, the priest would call them. Someone marked the way to the sunken shrine for pilgrims, long before the pilgrims stopped."]
               ]
             }
           ]
@@ -261,11 +261,11 @@
       ]
     },
     "va_drowned_chapel": {
-      "name": "Drowned Shrine",
+      "name": "Sunken Shrine",
       "desc": "Half a chapel, sunk to its windows in black water. A stone psalter stands above the waterline, its verses cut for a king who cannot rest. The wood lies west.",
       "brief": "Black water, stone psalter.",
       "region": "va",
-      "landmark": "the drowned shrine",
+      "landmark": "the sunken shrine",
       "exits": { "west": { "to": "va_wood_3_2" } },
       "onEnterOnce": [["xp", 2], ["score", 2]],
       "variants": [{ "if": [["flag", "va_verse_water"]], "brief": "Black water. The water verse is yours." }],
@@ -390,7 +390,7 @@
           "id": "va_tower_bearings",
           "label": "get your bearings from the parapet",
           "fx": [
-            ["say", "Your map, in words: the drowned shrine's water glints south of here; the barrow hill is the bare rise north-west past the last trees; the village lies south-west; the fens spread east, toward Hollowbrook."]
+            ["say", "Your map, in words: the sunken shrine's water glints south of here; the barrow hill is the bare rise north-west past the last trees; the village lies south-west; the fens spread east, toward Hollowbrook."]
           ]
         }
       ]
@@ -442,14 +442,21 @@
     "va_wolf_fang": {
       "name": "ash-pale fang",
       "loc": "nowhere",
-      "hint": "pulled from the ash wolf — the hunter might want to see it"
+      "hint": "pulled from the ash wolf — the hunter might want to see it",
+      "variants": [{ "if": [["flag", "said_va_hunter_fang"]], "hint": "the hunter has seen it" }]
     },
     "va_wolf_rib": {
       "name": "gaunt rib-bone",
       "loc": "nowhere",
-      "hint": "pulled from the gaunt wolf — the hunter might want to see it"
+      "hint": "pulled from the gaunt wolf — the hunter might want to see it",
+      "variants": [{ "if": [["flag", "said_va_hunter_rib"]], "hint": "the hunter has seen it" }]
     },
-    "va_wolf_pelt": { "name": "lean wolf's pelt", "loc": "nowhere", "hint": "the lean wolf's — the hunter might want to see it" }
+    "va_wolf_pelt": {
+      "name": "lean wolf's pelt",
+      "loc": "nowhere",
+      "hint": "the lean wolf's — the hunter might want to see it",
+      "variants": [{ "if": [["flag", "said_va_hunter_pelt"]], "hint": "the hunter has seen it" }]
+    }
   },
   "npcs": {
     "va_hunter": {
@@ -541,7 +548,8 @@
         ["move", "va_wolf_fang", "inv"],
         ["addvar", "appr_lys", -1],
         ["say", "The wolf drops. Its gray coat goes to dust. One fang holds its shape, ash-pale."]
-      ]
+      ],
+      "desc": "Gray to the bone and patient. It holds its ground and will let you pass if you let it be."
     },
     "va_gaunt_wolf": {
       "name": "gaunt wolf",

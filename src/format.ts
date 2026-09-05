@@ -9,9 +9,9 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inPerkPickPhase, inTalkMode, inTravelMode, journal, legalActions, oddsHint, receipt, roomIsDark, roomView } from "./engine.ts";
-import { ATTRS, EPILOGUE_CAP } from "./types.ts";
-import type { Action, State, World } from "./types.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomView } from "./engine.ts";
+import { ATTRS, EPILOGUE_CAP, EPILOGUE_CHARS } from "./types.ts";
+import type { Action, Cond, State, World } from "./types.ts";
 
 const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 
@@ -70,11 +70,22 @@ export function render(
   if (s.ended) {
     const e = s.ended;
     // how the world remembers what you did: every epilogue line whose
-    // conditions hold, in authored order, up to the cap
-    const epilogue = (world.epilogue ?? [])
-      .filter((ep) => ep.if.every((c) => condOk(world, s, c)))
-      .slice(0, EPILOGUE_CAP)
-      .map((ep) => ep.text);
+    // conditions hold competes for EPILOGUE_CAP places — heavier lines first
+    // (weight, default 0), then file order — and the survivors print in file
+    // order, so a realm's telling still runs first act, holds, capital
+    const matching = (world.epilogue ?? [])
+      .map((ep, i) => ({ ep, i }))
+      .filter(({ ep }) => ep.if.every((c) => condOk(world, s, c)))
+      .sort((a, b) => (b.ep.weight ?? 0) - (a.ep.weight ?? 0) || a.i - b.i);
+    const chosen: typeof matching = [];
+    let chars = 0;
+    for (const m of matching) {
+      if (chosen.length >= EPILOGUE_CAP) break;
+      if (chars + m.ep.text.length + 1 > EPILOGUE_CHARS) continue; // a shorter line further down may still fit
+      chosen.push(m);
+      chars += m.ep.text.length + 1;
+    }
+    const epilogue = chosen.sort((a, b) => a.i - b.i).map(({ ep }) => ep.text);
     const lines = [
       ...events.map((x) => `[${x}]`),
       `*** ${e.kind.toUpperCase()}: ${e.id} ***`,
@@ -196,15 +207,17 @@ export function renderStatus(world: World, s: State): string {
   const lines: string[] = [];
   const recap = world.objectives ?? world.intro;
   if (recap) lines.push(recap);
-  type Track = { var: string; label: string; max: number; remaining?: { flag: string; label: string }[] };
+  type Track = { var: string; label: string; max: number; remaining?: { flag: string; label: string }[]; if?: Cond[] };
   const tracks: Track[] = world.statusTracks ?? (world.progress ? [world.progress] : []);
   for (const t of tracks) {
+    if (t.if && !t.if.every((c) => condOk(world, s, c))) continue;
     let line = `${t.label}: ${s.vars[t.var] ?? 0}/${t.max}`;
     const remaining = t.remaining?.filter((r) => !s.flags[r.flag]);
     if (remaining?.length) line += ` (unexplored: ${remaining.map((r) => r.label).join(", ")})`;
     lines.push(line);
   }
   for (const p of world.statusPaths ?? []) {
+    if (p.if && !p.if.every((c) => condOk(world, s, c))) continue;
     const hit = p.states.find((st) => st.if.every((c) => condOk(world, s, c)));
     const text = hit?.text ?? p.fallback;
     if (text) lines.push(`${p.label}: ${text}`);
@@ -233,7 +246,8 @@ export function renderStatus(world: World, s: State): string {
     // status is the one place every carried item's hint is always listed
     const carried = s.inv.map((id) => {
       const it = world.items[id];
-      return it ? (it.hint ? `${it.name} (${it.hint})` : it.name) : id;
+      const hint = itemHint(world, s, id);
+      return it ? (hint ? `${it.name} (${hint})` : it.name) : id;
     });
     lines.push(`carrying: ${carried.join(", ")}`);
   }

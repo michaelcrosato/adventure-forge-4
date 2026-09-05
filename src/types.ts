@@ -105,6 +105,8 @@ export type ItemDef = {
   armor?: number; // reduces damage taken while carried (best armor wins)
   use?: UseDef[]; // first matching def runs; else "Nothing happens."
   hint?: string; // shown on pickup, and (for a `use`-able item) as a menu preview of what "use" does
+  /** The hint while conditions hold (first match wins; an empty hint hides it) — a "show it to the hunter" goes quiet once shown. */
+  variants?: { if: Cond[]; hint?: string }[];
 };
 
 export type TopicDef = {
@@ -289,6 +291,8 @@ export type QuestDef = {
 
 /** Most epilogue lines appended to an ending; the rest stay untold. */
 export const EPILOGUE_CAP = 6;
+/** Most characters of epilogue an ending carries — the ending screen has to fit the token budget with its own text. */
+export const EPILOGUE_CHARS = 600;
 
 export type World = {
   id: string;
@@ -314,8 +318,12 @@ export type World = {
   regions?: Record<string, { name: string }>;
   /** The journal, shown by the free `status` check; stage changes also print as events. */
   quests?: Record<string, QuestDef>;
-  /** Lines appended to any ending whose conditions pass, in order (at most EPILOGUE_CAP): how the world remembers your choices. */
-  epilogue?: { if: Cond[]; text: string }[];
+  /**
+   * Lines appended to any ending whose conditions pass: how the world remembers
+   * your choices. At most EPILOGUE_CAP print — the heaviest `weight` first
+   * (default 0), ties in file order — and the survivors read in file order.
+   */
+  epilogue?: { if: Cond[]; text: string; weight?: number }[];
   /** Extra counters shown compactly in the per-turn status line (e.g. gold). */
   hud?: { var: string; label: string }[];
   /** Reputation vars by display name (e.g. rep_church -> "the Gray Church"): a change to one prints "(the Gray Church -1)" the turn it happens. */
@@ -329,12 +337,16 @@ export type World = {
     max: number;
     /** Optional flag -> location label breakdown; unset flags list as still-unexplored in the `status` recap. */
     remaining?: { flag: string; label: string }[];
+    /** Shown only while every condition holds (a hold's tracker waits until the hold is reached). */
+    if?: Cond[];
   }[];
   /** Optional faction/path indicators for the free `status` check — which branch of a choice currently applies (e.g. sealed vs open). States are checked top-to-bottom; the first one whose conditions all pass wins, else `fallback`. */
   statusPaths?: {
     label: string;
     states: { if: Cond[]; text: string }[];
     fallback?: string;
+    /** Shown only while every condition holds. */
+    if?: Cond[];
   }[];
   /** Authored proof: must reach a win ending with score === maxScore (validator replays it). */
   walkthrough: WalkStep[];

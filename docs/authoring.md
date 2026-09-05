@@ -148,6 +148,9 @@ rooms while flag `<id>_lit` is set. `use` entries run the first whose `if`
 passes and whose `target` (item or npc) is at hand; `hint` shows on pickup, as
 the menu preview for a use without a leading check where a place is first
 shown, and in `status` (a brief view spends its characters on what changed).
+`variants: [{ "if": [...], "hint": "..." }]` swaps the hint while the
+conditions hold (first match wins; an empty hint hides it), so "the hunter
+might want to see it" goes quiet once `said_va_hunter_pelt` is set.
 
 ## 7. Npcs, topics, conversations
 
@@ -295,9 +298,13 @@ it standing somewhere.
   beginning on one turn collapse to one `Journal: …` line); `status` lists
   the journal. Every region quest (4–6 per region) needs a stage for
   each state a player can be in.
-- Epilogue lines print after any ending when their conditions hold, in file
-  order, at most 6. Write 4–8 per region: rested / burned / bargained /
-  untouched, plus one or two for memorable side choices. One sentence each.
+- Epilogue lines print after any ending when their conditions hold, at most
+  6 and at most 600 characters together: the heaviest `weight` first (default
+  0, ties in file order), and the survivors read in file order. A realm has far more true lines than places,
+  so weight what must be told — the capital's outcome 3, a hold's fate or the
+  first act 2, a companion's ending 1, a side choice 0. Write 4–8 per region:
+  rested / burned / bargained / untouched, plus one or two for memorable side
+  choices. One sentence each.
 - `hud` (root) puts counters on the status line; `gold` is already there.
 - `factions` (root) names reputation vars (`rep_church` → "the Gray Church"):
   any `addvar` to a named var prints `(the Gray Church -1)` the turn it

@@ -24,9 +24,7 @@
             [
               "if",
               [["flag", "cp_came_by_stair"]],
-              [
-                ["say", "The pilgrim stair lets out behind the guards' backs. Nobody has watched it in a hundred years."]
-              ],
+              [["say", "The pilgrim stair lets out behind the guards' backs. Nobody has watched it in a hundred years."]],
               [["say", "The guards look you over, decide you are nobody, and wave you through with the carters."]]
             ]
           ]
@@ -468,6 +466,16 @@
       ],
       "actions": [
         {
+          "id": "mg_weigh_doors",
+          "label": "weigh the doors of the seat",
+          "if": [["!flag", "mg_throne_resolved"]],
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "Fill it: three holds rested, the Vale's king at rest, the Reeve's confession. Burn it: Ironbound oil. Sit in it: the Vale's crown. Read the ledger aloud: the Watch, Church or Companies must trust you."]
+          ]
+        },
+        {
           "id": "mg_great_rite",
           "label": "speak the Great Rite over the seat",
           "if": [
@@ -490,6 +498,7 @@
             ["set", "mg_throne_resolved"],
             ["addvar", "hollows_burned", 1],
             ["score", 25],
+            ["set", "mg_burned_throne"],
             ["end", "win", "reach_burned", "You break the casks over the seat and put the torch to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace, and mostly mean it."]
           ]
         },
@@ -825,6 +834,30 @@
           ]
         },
         {
+          "id": "burned_word",
+          "label": "what she makes of the burned holds",
+          "if": [["var", "hollows_burned", ">=", 1]],
+          "once": true,
+          "say": "Word of every hollow put to the torch reaches me before the smoke clears. One debt fewer on my ledger. I approve of debts paid, however they are paid.",
+          "fx": [["addvar", "rep_crown", 1], ["xp", 2]]
+        },
+        {
+          "id": "rested_word",
+          "label": "what she makes of the rested holds",
+          "if": [["var", "hollows_rested", ">=", 1]],
+          "once": true,
+          "say": "Verses and rites, where fire would have been quicker and cheaper. Slower mercy, I call it, most nights, and mean it as an insult. Not all of them.",
+          "fx": [["addvar", "rep_crown", -1], ["xp", 2]]
+        },
+        {
+          "id": "loyal_word",
+          "label": "Hollowbrook's map, Gullhaven's watch",
+          "if": [["any", [["flag", "hb_mounds_sold"], ["flag", "sk_sided_watch"]]]],
+          "once": true,
+          "say": "A surveyor's map out of Hollowbrook, a tip-off from Gullhaven's watch-house. Small loyalties, but I read every one. Not every hold has forgotten whose Reach this is.",
+          "fx": [["addvar", "rep_crown", 1], ["xp", 2]]
+        },
+        {
           "id": "bye",
           "label": "leave the Regent to her window",
           "say": "Mind the stair. Everyone who goes down it comes up changed, or does not come up.",
@@ -871,6 +904,22 @@
             ["set", "mg_marshal_token"],
             ["say", "He puts his token in your hand."]
           ]
+        },
+        {
+          "id": "watch_word",
+          "label": "the Watch's good work in the holds",
+          "if": [["any", [["flag", "wm_beacon_lit"], ["flag", "sk_sided_watch"], ["flag", "cp_reported_cleft"]]]],
+          "once": true,
+          "say": "A beacon lit on Wardmoor's moor after ten dark years. A tip that shut down smugglers at Gullhaven. A rider at Coldpass who told me true instead of easy. Good work finds me eventually.",
+          "fx": [["addvar", "rep_watch", 1], ["xp", 2]]
+        },
+        {
+          "id": "record_grievance",
+          "label": "the record stolen from Highward",
+          "if": [["flag", "wm_record_stolen"]],
+          "once": true,
+          "say": "A record lifted clean off a sealed shelf at Highward, and you were standing closer to it than most. That is not a debt the Watch forgets easily.",
+          "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
         },
         { "id": "bye", "label": "leave the Marshal to his map", "say": "Keep to the Way after dark.", "end": true }
       ]
@@ -930,6 +979,36 @@
           "once": true,
           "say": "Aldous was Preceptor at Cinderhall before he was anything. If he signed off on rotten timber, that is on him, not on the fire. The fire has never lied to anyone.",
           "fx": [["xp", 2], ["addvar", "appr_tamsin", -1]]
+        },
+        {
+          "id": "burned_roll",
+          "label": "which hollows the Reach has lost",
+          "if": [["var", "hollows_burned", ">=", 1]],
+          "once": true,
+          "say": "The roll of the burned grows with every hold that chooses fire. I keep every name in it.",
+          "fx": [
+            ["xp", 2],
+            ["if", [["flag", "th_hollow_burned"]], [["say", "Thornwold's hanging glade: burned, and quiet now."]], []],
+            ["if", [["flag", "fd_hollow_burned"]], [["say", "Fenmarch's drowned nave: burned, and quiet now."]], []],
+            ["if", [["flag", "wm_hollow_burned"]], [["say", "Wardmoor's oath-stone: burned, and quiet now."]], []],
+            [
+              "if",
+              [["flag", "ir_hollow_burned"]],
+              [["say", "The Iron Downs' collapsed mine: burned, and quiet now."]],
+              []
+            ],
+            ["if", [["flag", "hb_hollow_burned"]], [["say", "Hollowbrook's barrow-court: burned, and quiet now."]], []],
+            ["if", [["flag", "sk_hollow_burned"]], [["say", "The Saltkerns' drowned fleet: burned, and quiet now."]], []],
+            ["addvar", "rep_iron", 1]
+          ]
+        },
+        {
+          "id": "traitors",
+          "label": "Fenmarch, and Cinderhall's own",
+          "if": [["any", [["flag", "fd_ironbound_exposed"], ["flag", "ir_aldous_ruined"]]]],
+          "once": true,
+          "say": "Warders thrown off Stilt Row in Fenmarch. Aldous ruined in his own chapterhouse. Both reached me the same season. I do not forgive either quietly.",
+          "fx": [["addvar", "rep_iron", -1], ["xp", 1]]
         },
         {
           "id": "bye",
@@ -1000,6 +1079,30 @@
           "if": [["flag", "fd_hollow_rested"]],
           "once": true,
           "say": "The Prior wrote to me. The congregation sings no more at dusk, and the Priory admitted its part. That is a rite, whatever the Regent's roll calls it. The Church does not forget who held it.",
+          "fx": [["addvar", "rep_church", 1], ["xp", 2]]
+        },
+        {
+          "id": "holds_rested",
+          "label": "the rested holds, heard from afar",
+          "if": [["any", [["flag", "hb_hollow_rested"], ["flag", "sk_hollow_rested"]]]],
+          "once": true,
+          "say": "Word from Barrowmere, word from Gullhaven — rites held properly, congregations settled. The Church in this city hears less good news than that most years.",
+          "fx": [["addvar", "rep_church", 1], ["xp", 2]]
+        },
+        {
+          "id": "osk_rested",
+          "label": "Brother Osk's own family",
+          "if": [["flag", "osk_family_rested"]],
+          "once": true,
+          "say": "Osk said the rite over his own family and did not stumble it, they tell me. Whatever novice he was when he left here, he is not that anymore.",
+          "fx": [["addvar", "appr_osk", 1], ["xp", 2]]
+        },
+        {
+          "id": "pardon_word",
+          "label": "the true pardon read at Thornwold",
+          "if": [["flag", "th_pardon_used"]],
+          "once": true,
+          "say": "Forty years late, someone finally read a true pardon whole and named every man on it. That is a rite, whatever the Regent's roll calls it.",
           "fx": [["addvar", "rep_church", 1], ["xp", 2]]
         },
         {
@@ -1076,6 +1179,53 @@
           "once": true,
           "say": "Sorrel Vane's company? Then he is in the Thornwold, or under it. The Companies do not send men to Marrowgate; Marrowgate sends for them, and they do not come back the same.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "saltkerns_win",
+          "label": "what happened at Gullhaven",
+          "if": [["flag", "sk_helped_free"]],
+          "once": true,
+          "say": "Gullhaven's stair is ours now, thanks to you. Rennick still talks about it. That is the kind of debt the Companies actually pay back.",
+          "fx": [["addvar", "rep_free", 1], ["xp", 2]]
+        },
+        {
+          "id": "toll_word",
+          "label": "word of Rook's toll at Thornwold",
+          "if": [["any", [["flag", "th_rook_swayed"], ["flag", "th_rook_paid"], ["flag", "th_rook_beaten"]]]],
+          "once": true,
+          "say": "Rook's toll on the Thornwold track — everyone in the trade heard how that went.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "th_rook_swayed"]],
+              [["say", "Talked him straight into the Company proper. Vane still tells that one."]],
+              [
+                [
+                  "if",
+                  [["flag", "th_rook_paid"]],
+                  [["say", "Paid him off clean. Rook respects coin more than most respect people."]],
+                  [
+                    [
+                      "if",
+                      [["flag", "th_rook_beaten"]],
+                      [["say", "Put him down instead. The toll's gone quiet, one way or another."]],
+                      []
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            ["addvar", "rep_free", 1]
+          ]
+        },
+        {
+          "id": "small_trades",
+          "label": "a robbed grave, a hatch under the pass",
+          "if": [["any", [["flag", "hb_robber_bribed"], ["flag", "cp_came_by_cave"]]]],
+          "once": true,
+          "say": "A bribed grave-robber in Hollowbrook, a hatch under the Coldpass brazier — small trades, but the Companies remember who is good for them.",
+          "fx": [["addvar", "rep_free", 1], ["xp", 1]]
         },
         {
           "id": "bye",
@@ -1175,6 +1325,51 @@
           "fx": [["xp", 2], ["addvar", "appr_vell", 1]]
         },
         {
+          "id": "keepers_ledger",
+          "label": "what Hollowbrook's Keepers found",
+          "if": [["flag", "vell_ledger_found"]],
+          "once": true,
+          "say": "The Keepers' Hall found what we chained here — an exile's name struck from a Marrowgate line. Properly kept, properly found. I almost envy their shelf.",
+          "fx": [["addvar", "rep_keepers", 1], ["xp", 2]]
+        },
+        {
+          "id": "wardmoor_records",
+          "label": "the Wardmoor record, given or taken",
+          "if": [["any", [["flag", "wm_record_unsealed"], ["flag", "wm_record_stolen"]]]],
+          "once": true,
+          "say": "Highward's sealed shelf, opened one way or another. I heard which.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "wm_record_unsealed"]],
+              [
+                ["say", "Asked for honestly, and given. That is how a record ought to leave a shelf."],
+                ["addvar", "rep_watch", 1]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "wm_record_stolen"]],
+                  [
+                    ["say", "Taken without asking. I keep every ledger I can precisely so that does not happen."],
+                    ["addvar", "rep_watch", -1]
+                  ],
+                  []
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "hollowbrook_mounds",
+          "label": "Hollowbrook's mounds, sold to the Crown",
+          "if": [["flag", "hb_mounds_sold"]],
+          "once": true,
+          "say": "Every mound the surveyor mapped is a grave I will never get to read properly before someone digs it for its rings. I keep the ledgers. I do not have to like what fills them.",
+          "fx": [["addvar", "rep_keepers", -1], ["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave Penn to his candle",
           "say": "Mind the shelves. They are the only honest thing in this palace.",
@@ -1249,8 +1444,24 @@
           "label": "the Hollow Throne",
           "if": [["flag", "mg_heard_reeve"]],
           "once": true,
-          "say": "I had it cut with a hollow for his crown, meaning to set it there one day as a gift, not a theft. I never did. All that grieves in the Reach pours out of that hollow. Fill it, burn it, or sit in it. Those are the doors.",
+          "say": "I cut it hollow for his crown — a gift I never gave. All the Reach's grief pours from it. Fill it: three holds rested, my father at rest, my confession. Burn it: Ironbound oil. Sit: a crown. Or read my ledger aloud.",
           "fx": [["xp", 3], ["score", 2]]
+        },
+        {
+          "id": "burned_report",
+          "label": "how many hollows burned",
+          "if": [["var", "hollows_burned", ">=", 3]],
+          "once": true,
+          "say": "Three hollows or more, gone to fire while I sat this lid. Perhaps that is a mercy too. I have run out of certainty about which acts are which.",
+          "fx": [["addvar", "rep_keepers", -1], ["xp", 2]]
+        },
+        {
+          "id": "rested_report",
+          "label": "how many hollows rest",
+          "if": [["var", "hollows_rested", ">=", 5]],
+          "once": true,
+          "say": "Five hollows resting easy, and only the one under me still restless. I begin to think you might actually finish what I could not.",
+          "fx": [["addvar", "rep_keepers", 1], ["xp", 2]]
         },
         {
           "id": "bye",
@@ -1386,15 +1597,18 @@
   "epilogue": [
     {
       "if": [["flag", "mg_regent_shaken"]],
-      "text": "Ysolde Ashreeve kept the founding ledger on her own table after that, unchained, where anyone who came to her could read it."
+      "text": "Ysolde Ashreeve kept the founding ledger on her own table after that, unchained, where anyone who came to her could read it.",
+      "weight": 2
     },
     {
       "if": [["flag", "mg_regent_dead"]],
-      "text": "In Marrowgate they still argue whether the Regent's killing was justice. The argument is the closest thing the city has to a rite."
+      "text": "In Marrowgate they still argue whether the Regent's killing was justice. The argument is the closest thing the city has to a rite.",
+      "weight": 3
     },
     {
       "if": [["flag", "vell_took_crown"]],
-      "text": "Regent Vell rules the Reach from the Hollow Throne, precisely and without mercy, and has never once spoken your name."
+      "text": "Regent Vell rules the Reach from the Hollow Throne, precisely and without mercy, and has never once spoken your name.",
+      "weight": 3
     },
     {
       "if": [["npcDead", "mg_hollow_guard"]],
@@ -1402,7 +1616,23 @@
     },
     {
       "if": [["npcDead", "mg_gate_guard"]],
-      "text": "The gate captain's name is on the Watch's roll of honour. Yours is on a different roll, in the same hall."
+      "text": "The gate captain's name is on the Watch's roll of honour. Yours is on a different roll, in the same hall.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "hollows_rested", ">=", 6]],
+      "text": "All six hollows rest now — not one hold in the Reach still grieves by fire or by neglect.",
+      "weight": 3
+    },
+    {
+      "if": [["var", "hollows_burned", ">=", 3]],
+      "text": "Three holds or more went to the torch. The Ironbound call it mercy. Not everyone agrees.",
+      "weight": 3
+    },
+    {
+      "if": [["flag", "mg_reeve_confessed"], ["flag", "mg_burned_throne"]],
+      "text": "He confessed, four hundred years late — and the throne burned anyway. Some call that the cruelest mercy of all.",
+      "weight": 3
     }
   ],
   "stamps": [

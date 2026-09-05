@@ -192,8 +192,7 @@
     "sk_q_lost_fleet": {
       "name": "The Lost Fleet",
       "start": [["flag", "sk_entered"]],
-      "done": [["flag", "sk_hollow_good"]],
-      "failed": [["flag", "sk_hollow_burned"]],
+      "done": [["any", [["flag", "sk_hollow_good"], ["flag", "sk_hollow_burned"]]]],
       "stages": [
         {
           "if": [["flag", "sk_verse_known"], ["flag", "sk_lighthouse_lit"]],
@@ -220,8 +219,7 @@
     "sk_q_passage": {
       "name": "Passage Under the Pass",
       "start": [["any", [["flag", "sk_heard_passage"], ["flag", "sk_heard_customs"]]]],
-      "done": [["flag", "sk_helped_free"]],
-      "failed": [["flag", "sk_sided_watch"]],
+      "done": [["any", [["flag", "sk_helped_free"], ["flag", "sk_sided_watch"]]]],
       "stages": [
         {
           "if": [["flag", "sk_heard_passage"]],
@@ -275,15 +273,18 @@
   "epilogue": [
     {
       "if": [["flag", "sk_hollow_rested"]],
-      "text": "Gullhaven says the fog off the point runs thin now, and some nights the Farlight's beam shows clear across the whole bay."
+      "text": "Gullhaven says the fog off the point runs thin now, and some nights the Farlight's beam shows clear across the whole bay.",
+      "weight": 2
     },
     {
       "if": [["flag", "sk_hollow_bargained"]],
-      "text": "The wreck-right gets paid into the water every spring now, quiet and without ceremony. The drowned don't row anymore."
+      "text": "The wreck-right gets paid into the water every spring now, quiet and without ceremony. The drowned don't row anymore.",
+      "weight": 2
     },
     {
       "if": [["flag", "sk_hollow_burned"]],
-      "text": "The Reeve's Pride burned to the waterline and took the old story with it. Gullhaven doesn't much miss either one."
+      "text": "The Reeve's Pride burned to the waterline and took the old story with it. Gullhaven doesn't much miss either one.",
+      "weight": 2
     },
     {
       "if": [["!flag", "sk_hollow_resolved"]],

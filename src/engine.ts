@@ -798,6 +798,15 @@ function fxFor(world: World, s: State, a: Action): Fx[] | undefined {
  * which match on the canonical label — are unaffected by odds text or by
  * attribute/perk changes.
  */
+/** An item's hint as it stands now: the first variant whose conditions hold, else the base hint; "" means none. */
+export function itemHint(world: World, s: State, id: string): string | undefined {
+  const def = world.items[id];
+  if (!def) return undefined;
+  const v = def.variants?.find((x) => condsOk(world, s, x.if));
+  const hint = v ? v.hint : def.hint;
+  return hint ? hint : undefined;
+}
+
 export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: boolean } = {}): string {
   if (a.kind === "attack") {
     const def = world.npcs[a.npc];
@@ -811,7 +820,10 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     const exit = world.rooms[s.room]?.exits?.[a.dir];
     if (exit?.if && !condsOk(world, s, exit.if))
       return exit.hint ? ` (locked: ${exit.hint})` : " (locked)";
-    return exit?.landmark ? ` (toward ${exit.landmark})` : "";
+    // an unlabelled exit into a landmark room borrows the landmark's name, so a
+    // gateway's "go in" says where it goes like every authored exit around it
+    const toward = exit?.landmark ?? (exit ? world.rooms[exit.to]?.landmark : undefined);
+    return toward ? ` (toward ${toward})` : "";
   }
   const fx = fxFor(world, s, a);
   const chk = fx?.[0];
@@ -824,7 +836,7 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   if (a.kind === "use" && opts.itemHints !== false) {
     // an item's use can sit in the menu for the rest of the game, so its hint
     // is shown where a place is first shown (and in status), not on every screen
-    const hint = world.items[a.item]?.hint;
+    const hint = itemHint(world, s, a.item);
     return hint ? ` (${hint})` : "";
   }
   return "";
@@ -857,7 +869,8 @@ export function step(world: World, prev: State, action: Action): StepOut {
       s.inv.push(action.item);
       const def = world.items[action.item];
       const label = def?.name ?? action.item;
-      events.push(def?.hint ? `${label}: taken. (${def.hint})` : `${label}: taken.`);
+      const hint = itemHint(world, s, action.item);
+      events.push(hint ? `${label}: taken. (${hint})` : `${label}: taken.`);
       break;
     }
     case "use": {

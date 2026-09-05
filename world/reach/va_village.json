@@ -17,8 +17,15 @@
           "id": "va_gate_bearings",
           "label": "get your bearings",
           "fx": [
-            ["say", "North through the wood the trail climbs to the barrow. Bear east among the trees for the drowned shrine and the old watchtower; west for the hunter's camp. Last Light's square, inn, forge, and chapel lie south."]
+            ["say", "North through the wood the trail climbs to the barrow. Bear east among the trees for the sunken shrine and the old watchtower; west for the hunter's camp. Last Light's square, inn, forge, and chapel lie south."]
           ]
+        }
+      ],
+      "variants": [
+        {
+          "if": [["var", "hollows_rested", ">=", 3]],
+          "brief": "Lanterns at the gate. The gray past the wood is thinner now.",
+          "desc": "The last gate before the wood. Lanterns still burn all day, more from habit than need now — the gray past the trees has thinned with every hold that has found its rest."
         }
       ]
     },
@@ -69,7 +76,7 @@
           "fx": [
             ["set", "va_notice_2"],
             ["xp", 1],
-            ["say", "Beneath, in a finer hand: grief sealed in stone festers; leave the doors open. Three verses were cut for him — drowned shrine, old watchtower (east of the wood), the barrow's hall. Speak them and he sleeps. — the priest"]
+            ["say", "Beneath, in a finer hand: grief sealed in stone festers; leave the doors open. Three verses were cut for him — sunken shrine, old watchtower (east of the wood), the barrow's hall. Speak them and he sleeps. — the priest"]
           ]
         },
         {
@@ -178,7 +185,14 @@
         "east": { "to": "va_gate" },
         "north": { "to": "va_hunters_camp", "landmark": "the hunter's camp" },
         "west": { "to": "th_east_edge", "landmark": "Thornwold" }
-      }
+      },
+      "variants": [
+        {
+          "if": [["var", "hollows_rested", ">=", 3]],
+          "brief": "The milestone. Thornwold west, and a thinner gray behind it.",
+          "desc": "The old road west runs between the last fields and the wood's edge. The milestone still reads THORNWOLD, worn to a guess — and the gray that hung over these fields has thinned to almost nothing."
+        }
+      ]
     },
     "va_causeway": {
       "name": "The Fen Causeway",
@@ -315,6 +329,30 @@
           "say": "Dust. That's an ending the watch understands. Whether it's an ending the hill understands, we'll see by harvest.",
           "fx": [["xp", 2], ["addvar", "rep_watch", 1]]
         },
+        {
+          "id": "word_rested",
+          "label": "word from the rested holds",
+          "if": [["var", "hollows_rested", ">=", 1]],
+          "once": true,
+          "say": "Riders bring word some holds are settling their dead the slow way — verses, bargains, whatever holds. Last Light did the same, near enough. Good to hear we are not alone in it.",
+          "fx": [["addvar", "rep_watch", 1], ["xp", 2]]
+        },
+        {
+          "id": "word_burned",
+          "label": "word from the burned holds",
+          "if": [["var", "hollows_burned", ">=", 1]],
+          "once": true,
+          "say": "Word of holds put to the torch reaches even here. Quicker than what we did. I will not say it is wrong. I will not say I would have chosen it either.",
+          "fx": [["addvar", "rep_iron", 1], ["xp", 2]]
+        },
+        {
+          "id": "word_writ",
+          "label": "word of a Regent's writ",
+          "if": [["flag", "regent_writ"]],
+          "once": true,
+          "say": "A rider says someone is carrying the Regent's own writ now. That is not a paper Marrowgate hands out for nothing. You have been busy out there.",
+          "fx": [["addvar", "rep_crown", 1], ["xp", 2]]
+        },
         { "id": "bye", "label": "leave the reeve to the watch", "say": "Mind the wood.", "end": true }
       ]
     },
@@ -326,7 +364,7 @@
           "id": "rumors",
           "label": "rumors",
           "once": true,
-          "say": "Verses, they say — one in the drowned shrine, one up the old watchtower, one in the barrow stone. A scholar reads them quick; anyone else puzzles them out. The one by the hearth knows more about that than I do.",
+          "say": "Verses, they say — one in the sunken shrine, one up the old watchtower, one in the barrow stone. A scholar reads them quick; anyone else puzzles them out. The one by the hearth knows more about that than I do.",
           "fx": [["score", 5], ["xp", 2]]
         },
         {
@@ -477,6 +515,22 @@
           "say": "You killed a grieving man because he was already dead. I will pray over the dust. I will not pretend it was a rite.",
           "fx": [["xp", 1], ["addvar", "rep_church", -1]]
         },
+        {
+          "id": "grief_burned",
+          "label": "grief for the burned holds",
+          "if": [["var", "hollows_burned", ">=", 1]],
+          "once": true,
+          "say": "Every hold put to the fire is a door that will never open again, and grief with nowhere left to go. I light a candle for each one. It does not feel like enough.",
+          "fx": [["addvar", "rep_church", -1], ["xp", 2]]
+        },
+        {
+          "id": "three_rested",
+          "label": "three hollows settled gently",
+          "if": [["var", "hollows_rested", ">=", 3]],
+          "once": true,
+          "say": "Three holds now, quieted by rite instead of fire. I did not think I would live to hear that said of even one. Whatever you are doing out there, the Church is grateful for it.",
+          "fx": [["addvar", "rep_church", 1], ["xp", 2]]
+        },
         { "id": "bye", "label": "leave him to his candles", "say": "Go carefully.", "end": true }
       ]
     },
@@ -626,6 +680,22 @@
           "fx": [["xp", 2], ["addvar", "appr_vell", 1]]
         },
         {
+          "id": "writ_earned",
+          "label": "the writ two burned holds bought",
+          "if": [["var", "hollows_burned", ">=", 2], ["!npcDead", "va_herald"]],
+          "once": true,
+          "say": "Two hollows to the torch already. The chapterhouse at Cinderhall will have your writ waiting, if you go and claim it. The Regent keeps her word to those who keep theirs.",
+          "fx": [["addvar", "rep_crown", 1], ["xp", 2]]
+        },
+        {
+          "id": "free_disapproval",
+          "label": "word you went under with the Companies",
+          "if": [["flag", "free_passage"], ["!npcDead", "va_herald"]],
+          "once": true,
+          "say": "Word reaches me you have taken up with the Free Companies to move about the Reach. The Regent has a long memory for whose roads get used, and whose do not.",
+          "fx": [["addvar", "rep_crown", -1], ["xp", 2]]
+        },
+        {
           "id": "bye",
           "label": "leave the herald to his horse",
           "say": "The Regent will hear of you either way.",
@@ -633,5 +703,22 @@
         }
       ]
     }
-  }
+  },
+  "epilogue": [
+    {
+      "if": [["var", "hollows_rested", ">=", 1], ["var", "hollows_burned", ">=", 1]],
+      "text": "Some holds rest easier now; others only rest because the fire left nothing to grieve with.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "cp_came_by_writ"]],
+      "text": "Last Light heard you crossed at Coldpass on the Regent's own writ, not the pilgrim stair.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "free_passage"]],
+      "text": "Last Light heard you went under the mountain on the Free Companies' word, not the crown's.",
+      "weight": 1
+    }
+  ]
 }

@@ -2,7 +2,7 @@
   "rooms": {
     "va_barrow_field": {
       "name": "Barrow Field",
-      "desc": "A bare hill and two stone doors set into it, facing north. Ivy chokes a loose-looking stone off to one side. The grass here is white, not gray. The wood lies south; a road climbs north toward the moor.",
+      "desc": "A bare hill and two stone doors set into it, facing north. Ivy chokes a loose-looking stone off to one side; a hunter of this hill would know how it moves. The grass here is white, not gray. The wood lies south; a road climbs north toward the moor.",
       "brief": "White grass, stone doors.",
       "region": "va",
       "landmark": "the barrow field",
@@ -146,6 +146,26 @@
                 ["say", "The old pins give way one by one. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap in the king's own hand."]
               ],
               [["say", "A pin sticks. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "va_ask_vault",
+          "label": "ask the shade for the seal (will)",
+          "if": [["!flag", "va_vault_opened"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "va_vault_opened"],
+                ["move", "va_kings_seal", "inv"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "You ask as a steward is asked: plainly, on the king's business. The shade rises, turns a key that was never lost, and sits again. Inside: a seal of office, wrapped around a scrap in the king's own hand."]
+              ],
+              [["say", "The shade does not move. 'Iron,' it says, 'or a better reason.'"]]
             ]
           ]
         },
@@ -706,11 +726,11 @@
         },
         {
           "if": [["var", "va_verses_known", "=", 1]],
-          "text": "One verse known. Two more: the drowned shrine and the old watchtower east of the wood, and the barrow's hall."
+          "text": "One verse known. Two more: the sunken shrine and the old watchtower east of the wood, and the barrow's hall."
         },
         {
           "if": [],
-          "text": "Three verses were cut for the king: the drowned shrine and the old watchtower east of the wood, and the barrow's hall."
+          "text": "Three verses were cut for the king: the sunken shrine and the old watchtower east of the wood, and the barrow's hall."
         }
       ]
     },
@@ -741,10 +761,11 @@
       "label": "Verses",
       "max": 3,
       "remaining": [
-        { "flag": "va_verse_water", "label": "drowned shrine" },
+        { "flag": "va_verse_water", "label": "sunken shrine" },
         { "flag": "va_verse_wind", "label": "old watchtower" },
         { "flag": "va_verse_stone", "label": "barrow hall" }
-      ]
+      ],
+      "if": [["!flag", "va_king_resolved"]]
     }
   ],
   "epilogue": [

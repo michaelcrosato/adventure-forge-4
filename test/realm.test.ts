@@ -265,6 +265,53 @@ test("an ending appends every matching epilogue line in order, capped, and the h
   assert.match(text, /receipt:/);
 });
 
+test("epilogue weight decides which true lines survive the cap; survivors read in file order", () => {
+  const world: World = {
+    id: "w", title: "W", intro: "x", start: "a", hp: 10, maxScore: 1,
+    rooms: { a: { name: "A", desc: "A.", actions: [{ id: "win", label: "win", fx: [["score", 1], ["end", "win", "done", "Done."]] }] } },
+    items: {}, npcs: {}, walkthrough: [],
+    epilogue: [
+      ...Array.from({ length: EPILOGUE_CAP }, (_, i) => ({ if: [] as never[], text: `Filler ${i}.` })),
+      { if: [], text: "The capital fell quiet.", weight: 3 },
+      { if: [], text: "The hold burned.", weight: 2 },
+    ],
+  };
+  const { state } = newState(world, 1);
+  const end = step(world, state, actionByLabel(world, state, "win")!);
+  const text = render(world, end.state, end.events).text;
+  // the two weighted lines take places from the last fillers, and print where the file put them
+  assert.match(text, /Filler 3\.\nThe capital fell quiet\.\nThe hold burned\./);
+  assert.doesNotMatch(text, /Filler 4\./);
+  assert.doesNotMatch(text, /Filler 5\./);
+  assert.equal(text.split("\n").filter((l) => /^(Filler \d|The )/.test(l)).length, EPILOGUE_CAP);
+  const bad = validateWorld({ ...world, epilogue: [{ if: [], text: "x", weight: "heavy" as never }] });
+  assert.equal(bad.filter((e) => /weight must be a number/.test(e)).length, 1);
+});
+
+test("an item's hint follows its variants: a 'show it to X' goes quiet once shown", () => {
+  const world: World = {
+    id: "h", title: "H", intro: "x", start: "a", hp: 10, maxScore: 1,
+    rooms: { a: { name: "A", desc: "A.", actions: [{ id: "show", label: "show it", fx: [["set", "shown"]] }] } },
+    items: {
+      pelt: { name: "pelt", loc: "a", takeable: true, hint: "the hunter might want to see it", variants: [{ if: [["flag", "shown"]], hint: "" }] },
+      note: { name: "note", loc: "inv", hint: "read it at the stone", use: [{ fx: [["say", "Read."]] }], variants: [{ if: [["flag", "shown"]], hint: "read, and kept" }] },
+    },
+    npcs: {}, walkthrough: [],
+  };
+  assert.deepEqual(validateWorld(world).filter((e) => !/^walkthrough/.test(e)), []);
+  let { state } = newState(world, 1);
+  const took = step(world, state, actionByLabel(world, state, "take pelt")!);
+  assert.match(took.events.join(" "), /taken\. \(the hunter might want to see it\)/);
+  state = took.state;
+  assert.match(renderStatus(world, state), /carrying: note \(read it at the stone\), pelt \(the hunter might want to see it\)/);
+  assert.match(render(world, state, [], { full: true }).text, /use note \(read it at the stone\)/);
+  state = doLabel(world, state, "show it");
+  assert.match(renderStatus(world, state), /carrying: note \(read, and kept\), pelt$/m);
+  assert.match(render(world, state, [], { full: true }).text, /use note \(read, and kept\)/);
+  const bad = validateWorld({ ...world, items: { ...world.items, pelt: { ...world.items.pelt!, variants: [{ hint: "x" } as never] } } });
+  assert.ok(bad.some((e) => /item pelt variant 0/.test(e)));
+});
+
 test("the first time fast travel is on the menu, one hint says so — and never again", () => {
   const world = line(3);
   let { state } = newState(world, 1);

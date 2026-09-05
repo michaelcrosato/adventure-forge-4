@@ -2,7 +2,7 @@
   "id": "reach",
   "title": "The Gray Reach",
   "intro": "The barrow on the hill above Last Light has opened, and a gray blight creeps down the Vale of Ash — crops first, then cattle, then the will to stay. Someone must go up and settle the Hollow King, by verse or by crown or by steel. The Vale is one hold of nine. What you learn under that hill is only the beginning of it. Talk to people twice; carry what they give you; choose, and live with it.",
-  "objectives": "Act 1: settle the Hollow King in the barrow north of the Vale — speak his three verses, return his crown, or end him. Then the roads open: six holds, each with its own unrested grief, and the pass to Marrowgate beyond. Companions can be met in the Vale and asked to come along. Reputation with the Watch, the Church, the Ironbound, the Free Companies, the Keepers, and the Crown opens and closes doors. Kneeling to the king ends your story.",
+  "objectives": "Act 1: settle the Hollow King in the barrow north of the Vale — speak his three verses, return his crown, or end him. Then the roads open: six holds, each with its own unrested grief, and the pass to Marrowgate beyond. Companions can be met in the Vale and asked to come along. Reputation with the Watch, the Church, the Ironbound, the Free Companies, the Keepers, and the Crown opens and closes doors. Kneeling to the king ends your story. The realm is large: the straight road to Marrowgate runs near three hundred turns, a thorough one twice that.",
   "start": "va_gate",
   "hp": 10,
   "maxScore": 366,
@@ -220,19 +220,23 @@
   "epilogue": [
     {
       "if": [["flag", "va_king_rested"], ["flag", "va_sealed"]],
-      "text": "In the Vale the barrow doors stay shut, as you promised, and white grass grows back over the hill."
+      "text": "In the Vale the barrow doors stay shut, as you promised, and white grass grows back over the hill.",
+      "weight": 2
     },
     {
       "if": [["flag", "va_king_rested"], ["!flag", "va_sealed"]],
-      "text": "In the Vale the barrow stands open to the sky, and the gray priest goes up on feast days to sit with the king."
+      "text": "In the Vale the barrow stands open to the sky, and the gray priest goes up on feast days to sit with the king.",
+      "weight": 2
     },
     {
       "if": [["flag", "va_king_slain"]],
-      "text": "In the Vale they tell it that a stranger killed the Hollow King with a blade, and the grass came back gray-green and stayed so."
+      "text": "In the Vale they tell it that a stranger killed the Hollow King with a blade, and the grass came back gray-green and stayed so.",
+      "weight": 2
     },
     {
       "if": [["flag", "va_king_forsaken"]],
-      "text": "In the Vale the king still sits his stone seat, grieving. The gray there never fully lifts."
+      "text": "In the Vale the king still sits his stone seat, grieving. The gray there never fully lifts.",
+      "weight": 2
     },
     {
       "if": [["flag", "va_crown_broken"]],
@@ -1638,5 +1642,9 @@
     "rep_free": "the Free Companies",
     "rep_keepers": "the Barrow-Keepers",
     "rep_crown": "the Crown"
-  }
+  },
+  "statusTracks": [
+    { "var": "hollows_rested", "label": "Hollows rested", "max": 6, "if": [["flag", "act2_open"]] },
+    { "var": "hollows_burned", "label": "Hollows burned", "max": 6, "if": [["var", "hollows_burned", ">=", 1]] }
+  ]
 }
