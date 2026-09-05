@@ -110,7 +110,9 @@ function stubsFor(exclude: Set<string>, withOracle: boolean): Record<string, unk
 const [mode, ...codes] = process.argv.slice(2);
 if (mode === "master") {
   const written = new Set(["va", ...codes]);
-  const stubs = stubsFor(written, false);
+  // the oracle stays in the master stubs while any region is unwritten, so the
+  // draft walkthrough can end after act 1 whatever neighbor lands next
+  const stubs = stubsFor(written, true);
   writeFileSync("world/reach/zz_stubs.json", `${JSON.stringify(stubs, null, 2)}\n`);
   console.log(`world/reach/zz_stubs.json: stubs for ${Object.keys(REGIONS).filter((c) => !written.has(c)).join(", ")}`);
 } else if (mode === "private" && codes[0] && codes[1]) {
