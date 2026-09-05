@@ -221,7 +221,18 @@
                 ["addvar", "appr_osk", 1],
                 ["say", "Tarn hears you out, arms crossed. 'The Church's oath covers rites for the dead, not the living,' he says, 'but I've a hearing to hold, and better things to hold it over.' He signs her release himself."]
               ],
-              [["say", "Tarn hears you out and is not moved. 'Fine words,' he says. 'Bring me better ones.'"]]
+              [
+                [
+                  "if",
+                  [["!flag", "mg_argue_oath_missed"]],
+                  [
+                    ["set", "mg_argue_oath_missed"],
+                    ["addvar", "rep_watch", -1],
+                    ["say", "Tarn hears you out and is not moved. 'Fine words,' he says, and the Watch marks the stranger who came to its house with words and nothing behind them."]
+                  ],
+                  [["say", "Tarn hears you out and is not moved. 'Fine words,' he says. 'Bring me better ones.'"]]
+                ]
+              ]
             ]
           ]
         },
@@ -1164,7 +1175,18 @@
                 ["say", "You walk the tallies back to their source, the same way she would, until the ledger makes her case better than you could. 'I have always known,' she says. 'I did not know he wrote it down.'"]
               ],
               [
-                ["say", "Your numbers are sound. Hers are better rehearsed. She has an answer for every column before you finish it."]
+                [
+                  "if",
+                  [["!flag", "mg_shake_wits_missed"]],
+                  [
+                    ["set", "mg_shake_wits_missed"],
+                    ["addvar", "rep_crown", -1],
+                    ["say", "Your numbers are sound. Hers are better rehearsed, and now she has a face to put to the stranger who came at her with figures. The Crown remembers that."]
+                  ],
+                  [
+                    ["say", "Your numbers are sound. Hers are better rehearsed. She has an answer for every column before you finish it."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -1602,7 +1624,18 @@
                 ["xp", 3],
                 ["say", "Something in the argument catches him where threats wouldn't. 'Third cask from the door,' he says, almost to himself. 'If the fire's honest, let it be honest all the way.'"]
               ],
-              [["say", "'The fire answers to me, not to arguments,' he says, and goes back to the roll."]]
+              [
+                [
+                  "if",
+                  [["!flag", "mg_proof_will_missed"]],
+                  [
+                    ["set", "mg_proof_will_missed"],
+                    ["addvar", "rep_iron", -1],
+                    ["say", "'The fire answers to me, not to arguments,' he says, and the Ironbound in the hall hear a stranger try to talk their Preceptor round and fail."]
+                  ],
+                  [["say", "'The fire answers to me, not to arguments,' he says, and goes back to the roll."]]
+                ]
+              ]
             ]
           ]
         },
@@ -1686,7 +1719,18 @@
                 ["say", "You don't lean on Osk or the holds. You just tell her, plain, why it matters, and something in the argument itself convinces her more than the argument's source would have. She pulls the bolt."]
               ],
               [
-                ["say", "She hears you out and shakes her head once. 'A reason isn't the same as a good one,' she says. 'Try again when you have one.'"]
+                [
+                  "if",
+                  [["!flag", "mg_pilgrim_door_will_missed"]],
+                  [
+                    ["set", "mg_pilgrim_door_will_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "She hears you out and shakes her head once. A stranger who argues the Mother for a door is remembered by the Church, and not as a friend of it."]
+                  ],
+                  [
+                    ["say", "She hears you out and shakes her head once. 'A reason isn't the same as a good one,' she says. 'Try again when you have one.'"]
+                  ]
+                ]
               ]
             ]
           ]

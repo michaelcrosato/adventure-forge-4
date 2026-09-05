@@ -67,7 +67,8 @@
           "label": "get your bearings",
           "fx": [
             ["say", "West along the middle row, four stands: the gallows road. North-west past the black thorn: the Understory, Maud's hut. South-west the Denhollow; south the Long Watch; north the Cutter's Barrow; Rook north-west."]
-          ]
+          ],
+          "free": true
         }
       ]
     },
@@ -557,7 +558,18 @@
                 ["say", "You give them what words you have, half-remembered and meant anyway. It's enough. The turning stops, and the glade goes as still as any ordinary wood."]
               ],
               [
-                ["say", "The words won't come whole. Whatever's needed here, half a rest-oath isn't it. It can be tried again."]
+                [
+                  "if",
+                  [["!flag", "th_rest_oath_missed"]],
+                  [
+                    ["set", "th_rest_oath_missed"],
+                    ["addvar", "rep_keepers", -1],
+                    ["say", "The words won't come whole. Half a rest-oath said over the Company is a thing the Keepers will hear of, and not kindly."]
+                  ],
+                  [
+                    ["say", "The words won't come whole. Whatever's needed here, half a rest-oath isn't it. It can be tried again."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -583,7 +595,18 @@
                 ["say", "The living Company files in behind you and swears the old oath in the dead men's own names, Captain Vane leading it. The hanging tree empties itself, name by name, into the mouths of the living."]
               ],
               [
-                ["say", "The oath comes out ragged, more mutter than vow. Nothing in the glade moves. It can be tried again."]
+                [
+                  "if",
+                  [["!flag", "th_bargain_missed"]],
+                  [
+                    ["set", "th_bargain_missed"],
+                    ["addvar", "rep_free", -1],
+                    ["say", "The oath comes out ragged, more mutter than vow, and the living Company hears every word of it fail. They don't forget an oath botched over their dead."]
+                  ],
+                  [
+                    ["say", "The oath comes out ragged, more mutter than vow. Nothing in the glade moves. It can be tried again."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -1227,7 +1250,18 @@
                 ["say", "\"...Yeah,\" he says, and sets the bow down like it costs him something. \"Yeah, all right. Tell her I'm coming, so she doesn't come looking first.\""]
               ],
               [
-                ["say", "\"Not yet,\" he says, and picks the bow back up. \"Debts don't forgive themselves. Ask me again.\""]
+                [
+                  "if",
+                  [["!flag", "th_cal_home_missed"]],
+                  [
+                    ["set", "th_cal_home_missed"],
+                    ["if", [["inParty", "lys"]], [["addvar", "appr_lys", -1]], []],
+                    ["say", "\"Not yet,\" he says, and picks the bow back up. If Lys is beside you she hears how hard you pushed her brother, and says nothing, which is worse."]
+                  ],
+                  [
+                    ["say", "\"Not yet,\" he says, and picks the bow back up. \"Debts don't forgive themselves. Ask me again.\""]
+                  ]
+                ]
               ]
             ]
           ]
