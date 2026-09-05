@@ -162,6 +162,7 @@
               11,
               [
                 ["set", "va_coffer_opened"],
+                ["set", "va_coffer_picked"],
                 ["move", "va_crown", "inv"],
                 ["score", 10],
                 ["xp", 3],
@@ -259,7 +260,12 @@
         {
           "id": "promise",
           "label": "promise to seal the barrow",
-          "if": [["flag", "va_heard_reeve_ask"], ["!flag", "va_promised_seal"], ["!flag", "va_broke_promise"]],
+          "if": [
+            ["flag", "va_heard_reeve_ask"],
+            ["!flag", "va_promised_seal"],
+            ["!flag", "va_broke_promise"],
+            ["!flag", "va_left_open"]
+          ],
           "once": true,
           "say": "Good. The watch stands with you. Take the shield — it has stopped worse than claws. I'm holding you to it: when he rests, the doors shut.",
           "fx": [
@@ -292,6 +298,14 @@
           "once": true,
           "say": "He told me himself, in his way. I'd rather have heard it from you first. I'll take it plain over hearing it from no one. The watch remembers, though. It always has.",
           "fx": [["xp", 2], ["addvar", "rep_watch", 1]]
+        },
+        {
+          "id": "reeve_left_open",
+          "label": "ask about the doors, left open",
+          "if": [["flag", "va_left_open"], ["!flag", "va_broke_promise"]],
+          "once": true,
+          "say": "You left his doors open to the sky. The village will learn to live with that, or it won't.",
+          "fx": [["xp", 1]]
         },
         {
           "id": "scrap",
@@ -619,6 +633,14 @@
           "say": "Four hundred years that coffer stayed shut. Whatever you do with what was in it, do it where I don't have to watch.",
           "fx": [["xp", 1]]
         },
+        {
+          "id": "lock_scratched",
+          "label": "about the coffer's lock",
+          "if": [["flag", "va_coffer_picked"]],
+          "once": true,
+          "say": "She has found fresh scratches round the keyhole, bright over old rust. \"Someone tried this before ever asking,\" she says. Not quite a question.",
+          "fx": [["xp", 1]]
+        },
         { "id": "bye", "label": "leave her to the ledgers", "say": "Shut the door. The wood is close.", "end": true }
       ]
     },
@@ -655,7 +677,20 @@
             ["addvar", "rep_iron", 1],
             ["addvar", "rep_church", -1],
             ["addvar", "appr_osk", -1],
-            ["addvar", "appr_tamsin", 1]
+            ["addvar", "appr_tamsin", 1],
+            ["addvar", "appr_lys", -1],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [["say", "Osk: \"You swore to burn them. I heard every word. I don't think I can un-hear it.\""]],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [["say", "Lys: \"Fire for grief that never raised a hand against you. That's the word you just gave.\""]],
+              []
+            ]
           ]
         },
         {
@@ -727,6 +762,21 @@
     {
       "if": [["flag", "free_passage"]],
       "text": "Last Light heard you went under the mountain on the Free Companies' word, not the crown's.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "va_swore_burn"], ["var", "hollows_burned", ">=", 2]],
+      "text": "Last Light remembers the oath you swore the herald — two hollows burned before you ever asked for the writ.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "va_swore_burn"], ["var", "hollows_burned", "<", 2], ["var", "hollows_rested", ">=", 1]],
+      "text": "You swore to burn the hollows for the Regent, then rested one instead. Marrowgate does not forget a broken oath.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "va_refused_herald"]],
+      "text": "You told the Regent's herald no, plain, in Last Light square. The Free Companies still toast you for it.",
       "weight": 1
     }
   ]

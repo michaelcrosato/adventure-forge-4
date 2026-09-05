@@ -107,10 +107,20 @@
               "might",
               11,
               [
-                ["set", "lys_brother_home"],
                 ["score", 6],
                 ["xp", 4],
-                ["say", "You put a man twice Cal's size on his back before the ring's done cheering, and card enough of the pot to square his tally yourself. \"Go home,\" you tell him. \"It's paid.\""]
+                [
+                  "if",
+                  [["flag", "th_cal_staying"]],
+                  [
+                    ["set", "lys_brother_cleared"],
+                    ["say", "You put a man twice Cal's size on his back before the ring's done cheering, and card enough of the pot to square his tally. \"Debt's paid,\" you tell him. \"I know,\" he says. \"I'm staying anyway.\""]
+                  ],
+                  [
+                    ["set", "lys_brother_home"],
+                    ["say", "You put a man twice Cal's size on his back before the ring's done cheering, and card enough of the pot to square his tally yourself. \"Go home,\" you tell him. \"It's paid.\""]
+                  ]
+                ]
               ],
               [
                 ["say", "The bigger man plants you in the dirt before you've found your feet. The debt stands exactly where it was."]
@@ -158,10 +168,20 @@
           "once": true,
           "fx": [
             ["addvar", "gold", -10],
-            ["set", "lys_brother_home"],
             ["score", 6],
             ["xp", 4],
-            ["say", "Bray marks the ledger square and says nothing more about it. That's debt enough to send a man home with a clean name, if he'll take it."]
+            [
+              "if",
+              [["flag", "th_cal_staying"]],
+              [
+                ["set", "lys_brother_cleared"],
+                ["say", "Bray marks the ledger square and says nothing more about it. Cal's name is clean now, and he's still not riding east — just square, and staying by his own choice."]
+              ],
+              [
+                ["set", "lys_brother_home"],
+                ["say", "Bray marks the ledger square and says nothing more about it. That's debt enough to send a man home with a clean name, if he'll take it."]
+              ]
+            ]
           ]
         },
         {
@@ -198,10 +218,20 @@
               "wits",
               10,
               [
-                ["set", "lys_brother_home"],
                 ["score", 6],
                 ["xp", 4],
-                ["say", "The tally doesn't add the way Bray thinks it does — a column carried wrong, twice, always in the wagon's favor. Shown plain, he strikes Cal's debt without an argument."]
+                [
+                  "if",
+                  [["flag", "th_cal_staying"]],
+                  [
+                    ["set", "lys_brother_cleared"],
+                    ["say", "The tally doesn't add the way Bray thinks it does — a column carried wrong, twice, always in the wagon's favor. Shown plain, he strikes Cal's debt without an argument. Cal stays on with a clean name."]
+                  ],
+                  [
+                    ["set", "lys_brother_home"],
+                    ["say", "The tally doesn't add the way Bray thinks it does — a column carried wrong, twice, always in the wagon's favor. Shown plain, he strikes Cal's debt without an argument."]
+                  ]
+                ]
               ],
               [
                 ["say", "The figures are a mess, but an honest one. Whatever's owed, it's owed fair, and the columns won't say otherwise."]
@@ -705,6 +735,7 @@
           "if": [["var", "hollows_burned", ">=", 1], ["!flag", "th_wayfire_resolved"]],
           "fx": [
             ["set", "th_wayfire_resolved"],
+            ["set", "th_wayfire_cold"],
             ["addvar", "rep_iron", -1],
             ["score", 2],
             ["xp", 1],
@@ -865,7 +896,7 @@
           "label": "propose the Company swear an oath",
           "if": [["flag", "th_heard_captain_lore"], ["!flag", "th_asked_captain_oath"]],
           "once": true,
-          "say": "...You're not wrong that we owe them something. I'll bring the Company to the glade myself, when you're ready to lead the words. Don't waste it.",
+          "say": "...You're not wrong that we owe them something. I'll bring the Company to the glade myself — west past the Waiting Bough — when you're ready to lead the words. Don't waste it.",
           "fx": [["set", "th_asked_captain_oath"], ["xp", 2]]
         },
         {
@@ -1333,6 +1364,14 @@
               [["say", "\"Not interested,\" he says flat, and doesn't move. It can be tried again."]]
             ]
           ]
+        },
+        {
+          "id": "noticed",
+          "label": "ask if he ever noticed you",
+          "if": [["flag", "th_rook_slipped"]],
+          "once": true,
+          "say": "\"Once,\" he says, not looking up from the tally. \"Snares don't lie. Something went through here quiet, and it wasn't the wind.\" He doesn't ask who.",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -1850,12 +1889,35 @@
         }
       ]
     },
+    "th_q_company": {
+      "name": "The Hanged Company",
+      "start": [["any", [["flag", "th_asked_captain_oath"], ["flag", "th_verse_known"], ["has", "th_pardon"]]]],
+      "done": [["flag", "th_hollow_done"]],
+      "stages": [
+        {
+          "if": [["flag", "th_verse_known"]],
+          "text": "You know the rest-verse. Speak it over the Company at the Gallows Glade, west past the Waiting Bough."
+        },
+        {
+          "if": [["has", "th_pardon"]],
+          "text": "The pardon is yours. Read it at the Gallows Glade, west past the Waiting Bough and the gray sergeant."
+        },
+        {
+          "if": [],
+          "text": "Vane will bring the Company to the glade when you can lead the words: a verse, the pardon, or an oath."
+        }
+      ]
+    },
     "th_q_cal": {
       "name": "Cal's Reckoning",
       "start": [["flag", "lys_brother_found"]],
-      "done": [["flag", "lys_brother_home"]],
+      "done": [["any", [["flag", "lys_brother_home"], ["flag", "lys_brother_cleared"]]]],
       "failed": [["flag", "th_cal_dead"]],
       "stages": [
+        {
+          "if": [["flag", "lys_brother_cleared"]],
+          "text": "Cal cleared his debt and chose to stay with the Company anyway. Tell Lys, if she doesn't know yet."
+        },
         {
           "if": [["flag", "lys_brother_buried"]],
           "text": "Cal is buried east of Camp Gallows. Lys should hear it from you, gently, when you find her."
@@ -1863,6 +1925,10 @@
         {
           "if": [["flag", "lys_brother_lost"]],
           "text": "Cal is gone, and no grave marks where. There's no good way to say this to Lys."
+        },
+        {
+          "if": [["flag", "th_cal_staying"]],
+          "text": "Cal means to stay with the Company, debt or no. Clear his debt if you like, or leave him to it."
         },
         {
           "if": [],
@@ -1935,6 +2001,10 @@
     {
       "if": [["flag", "lys_brother_home"]],
       "text": "Cal came home to the Vale, and last word had him teaching his sister's old bow-craft to anyone who'd stand still for it."
+    },
+    {
+      "if": [["flag", "th_cal_staying"]],
+      "text": "Cal stayed with the Free Company at Camp Gallows, by his own choice, and Lys let it be his choice to make."
     },
     {
       "if": [["flag", "lys_brother_buried"]],

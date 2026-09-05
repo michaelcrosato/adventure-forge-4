@@ -23,12 +23,21 @@
         ["say", "So this is where the gray begins. Even the white grass is graying at the edges."]
       ],
       "variants": [
-        { "if": [["flag", "va_sealed"]], "brief": "White grass. The doors are sealed, as you left them." },
+        {
+          "if": [["flag", "va_sealed"]],
+          "desc": "A bare hill and two stone doors, sealed shut again behind you. The grass here is white, not gray, and green is starting to show through it. The wood lies south; a road climbs north toward the moor.",
+          "brief": "White grass. The doors are sealed, as you left them."
+        },
         {
           "if": [["flag", "va_king_rested"]],
+          "desc": "A bare hill and two stone doors standing open into the dark. The grass here is white, not gray, and green is coming through it at last. The wood lies south; a road climbs north toward the moor.",
           "brief": "White grass, and green coming through it. The doors stand open."
         },
-        { "if": [["flag", "va_barrow_open"]], "brief": "White grass. The stone doors stand open." }
+        {
+          "if": [["flag", "va_barrow_open"]],
+          "desc": "A bare hill and two stone doors standing open into the dark. The grass here is white, not gray. The wood lies south; a road climbs north toward the moor.",
+          "brief": "White grass. The stone doors stand open."
+        }
       ],
       "actions": [
         {
@@ -465,13 +474,13 @@
               [
                 ["score", 5],
                 ["addvar", "rep_watch", 2],
-                ["say", "You draw the great doors shut from within the passage and hear the seal-stone drop. True to your word. The watch will know."]
+                ["say", "You draw the great doors shut from within the passage and hear the seal-stone drop. True to your word. The watch will know. The crypt way south still stands open behind you."]
               ],
               [
                 ["addvar", "rep_watch", 1],
                 ["addvar", "rep_church", -1],
                 ["addvar", "appr_osk", -1],
-                ["say", "You draw the great doors shut and hear the seal-stone drop. You promised no one; you chose it anyway. The priest will grieve the door."]
+                ["say", "You draw the great doors shut and hear the seal-stone drop. You promised no one; you chose it anyway. The priest will grieve the door. The crypt way south still stands open behind you."]
               ]
             ]
           ]
@@ -515,7 +524,7 @@
           "if": [["!flag", "va_king_resolved"], ["!flag", "va_kneel_warned"]],
           "fx": [
             ["set", "va_kneel_warned"],
-            ["say", "You lower yourself toward the stone seat and stop, one knee still free. This is the one door here that does not open back: no verse, no crown, just you taking his place. Kneel again to go through it."]
+            ["say", "You lower yourself toward the stone seat and stop, one knee still free. This door does not open back: no verse, no crown, just his place for yours — and no dawn after, for you or the Vale. Kneel again to go through it."]
           ]
         },
         {
@@ -733,12 +742,28 @@
           "text": "All three verses are yours. Speak them over the king at the throne."
         },
         {
-          "if": [["var", "va_verses_known", "=", 2]],
-          "text": "Two of three verses known. The third waits — shrine, tower, or the barrow's own hall."
+          "if": [["flag", "va_verse_stone"], ["flag", "va_verse_wind"], ["!flag", "va_verse_water"]],
+          "text": "Stone and wind are yours. One verse left: the sunken shrine, in the wood east of the village."
         },
         {
-          "if": [["var", "va_verses_known", "=", 1]],
-          "text": "One verse known. Two more: the sunken shrine and the old watchtower east of the wood, and the barrow's hall."
+          "if": [["flag", "va_verse_stone"], ["flag", "va_verse_water"], ["!flag", "va_verse_wind"]],
+          "text": "Stone and water are yours. One verse left: the old watchtower, east of the wood."
+        },
+        {
+          "if": [["flag", "va_verse_water"], ["flag", "va_verse_wind"], ["!flag", "va_verse_stone"]],
+          "text": "Water and wind are yours. One verse left: the barrow's own hall."
+        },
+        {
+          "if": [["flag", "va_verse_stone"], ["!flag", "va_verse_water"], ["!flag", "va_verse_wind"]],
+          "text": "Stone verse known. Two more: the sunken shrine and the old watchtower, both east of the wood."
+        },
+        {
+          "if": [["flag", "va_verse_water"], ["!flag", "va_verse_stone"], ["!flag", "va_verse_wind"]],
+          "text": "Water verse known. Two more: the old watchtower, east of the wood, and the barrow's own hall."
+        },
+        {
+          "if": [["flag", "va_verse_wind"], ["!flag", "va_verse_stone"], ["!flag", "va_verse_water"]],
+          "text": "Wind verse known. Two more: the sunken shrine, east of the wood, and the barrow's own hall."
         },
         {
           "if": [],

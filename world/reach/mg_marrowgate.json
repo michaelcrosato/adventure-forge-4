@@ -506,7 +506,38 @@
       "brief": "One chair, one window.",
       "region": "mg",
       "exits": { "south": { "to": "mg_palace_court" } },
-      "onEnterOnce": [["xp", 3], ["score", 3]]
+      "onEnterOnce": [
+        ["xp", 3],
+        ["score", 3],
+        [
+          "if",
+          [["flag", "va_swore_burn"], ["var", "hollows_burned", ">=", 2]],
+          [
+            ["addvar", "rep_crown", 1],
+            ["addvar", "gold", 8],
+            ["say", "'You kept your word to my herald,' she says, and for a moment something in her face isn't calculation. 'Two hollows burned, as sworn.' A purse changes hands."]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["flag", "va_swore_burn"], ["var", "hollows_burned", "<", 2], ["var", "hollows_rested", ">=", 1]],
+          [
+            ["addvar", "rep_crown", -2],
+            ["say", "'You swore to burn for me,' she says, 'and rested a hollow instead. I do not forget which oaths get kept, and which get quietly set down.'"]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["flag", "va_refused_herald"]],
+          [
+            ["addvar", "rep_crown", -1],
+            ["say", "'You told my herald no,' she says, without heat. 'I remember refusals better than promises. Mind how you walk in my city.'"]
+          ],
+          []
+        ]
+      ]
     },
     "mg_pilgrims_door": {
       "name": "The Pilgrims' Door",
@@ -693,7 +724,71 @@
           "once": true,
           "fx": [
             ["xp", 1],
-            ["say", "Fill it: three holds rested, the Vale's king at rest, the Reeve's confession. Burn it: Ironbound oil. Sit in it: the Vale's crown. Read the ledger aloud: the Watch, Church or Companies must trust you."]
+            [
+              "if",
+              [["var", "hollows_rested", ">=", 3], ["flag", "va_king_rested"], ["flag", "mg_reeve_confessed"]],
+              [["say", "The rite stands ready: three hollows rested, the Vale's king at rest, his confession said."]],
+              []
+            ],
+            [
+              "if",
+              [["var", "hollows_rested", "<", 3]],
+              [["say", "The rite still wants more hollows rested — three, and you are short of it."]],
+              []
+            ],
+            [
+              "if",
+              [["!flag", "va_king_rested"]],
+              [["say", "The rite still wants the Vale's king truly at rest, not merely settled another way."]],
+              []
+            ],
+            [
+              "if",
+              [["!flag", "mg_reeve_confessed"]],
+              [["say", "The rite still wants the first Reeve's own confession, down in his tomb."]],
+              []
+            ],
+            [
+              "if",
+              [["any", [["flag", "mg_has_oil"], ["has", "ir_oil"]]]],
+              [["say", "The oil is yours, one cask or the other — enough to burn the seat clean."]],
+              [["say", "No oil yet: the Ironbound keep casks at Cinderhall, and the palace has its own."]]
+            ],
+            [
+              "if",
+              [
+                ["has", "mg_founding_ledger"],
+                ["any", [["var", "rep_watch", ">=", 2], ["var", "rep_church", ">=", 2], ["var", "rep_free", ">=", 2]]]
+              ],
+              [["say", "The ledger is yours, and someone trusts you enough to hear it read aloud."]],
+              [
+                [
+                  "if",
+                  [["!has", "mg_founding_ledger"]],
+                  [["say", "You do not carry the founding ledger — it is chained in the Hall of Ledgers."]],
+                  []
+                ],
+                [
+                  "if",
+                  [
+                    ["has", "mg_founding_ledger"],
+                    ["var", "rep_watch", "<", 2],
+                    ["var", "rep_church", "<", 2],
+                    ["var", "rep_free", "<", 2]
+                  ],
+                  [
+                    ["say", "You have the ledger, but no one trusts you enough yet — Watch, Church, or Companies, to standing 2."]
+                  ],
+                  []
+                ]
+              ]
+            ],
+            [
+              "if",
+              [["has", "va_crown"]],
+              [["say", "The crown is yours to wear, if you dare the seat."]],
+              [["say", "You do not carry the Vale's crown."]]
+            ]
           ]
         },
         {
@@ -714,12 +809,13 @@
         {
           "id": "mg_burn_throne",
           "label": "burn the throne with the Ironbound oil",
-          "if": [["flag", "mg_has_oil"], ["!flag", "mg_throne_resolved"]],
+          "if": [["any", [["flag", "mg_has_oil"], ["has", "ir_oil"]]], ["!flag", "mg_throne_resolved"]],
           "fx": [
             ["set", "mg_throne_resolved"],
             ["addvar", "hollows_burned", 1],
             ["score", 25],
             ["set", "mg_burned_throne"],
+            ["if", [["has", "ir_oil"]], [["move", "ir_oil", "nowhere"]], []],
             ["end", "win", "reach_burned", "You break the casks over the seat and put the torch to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace, and mostly mean it."]
           ]
         },
@@ -805,7 +901,7 @@
           "if": [["!flag", "mg_throne_resolved"], ["!flag", "mg_kneel_warned"]],
           "fx": [
             ["set", "mg_kneel_warned"],
-            ["say", "You go down on one knee before the empty stone and feel the gray notice you. This is the one door here that does not open back. Kneel again to go through it."]
+            ["say", "You go down on one knee before the empty stone and feel the gray notice you. This is the one door here that does not open back — and there is no dawn on the other side of it. Kneel again to go through it."]
           ]
         },
         {
@@ -1099,6 +1195,14 @@
                   ]
                 ]
               ]
+            ],
+            [
+              "if",
+              [["flag", "mg_heard_reeve"]],
+              [
+                ["say", "'You have spoken to him, then,' she says. 'Down on the lid. I have known he was there since I was a girl, and never once gone down to hear him.'"]
+              ],
+              []
             ]
           ]
         },
@@ -1128,7 +1232,7 @@
         },
         {
           "id": "tanners_proof",
-          "label": "hand her the burn-order to bury",
+          "label": "bury the burn-order (breaks the oath)",
           "if": [
             ["has", "mg_burn_manifest"],
             ["!flag", "mg_oath_told_tarn"],
@@ -1160,6 +1264,20 @@
               [["say", "'Tarn came to me already knowing,' she says. 'I'll say this for the Marshal: he didn't gloat.'"]],
               [["say", "'Free Company gossip, this time.' She almost smiles. 'I find I mind less than I once would have.'"]]
             ]
+          ]
+        },
+        {
+          "id": "name_vell",
+          "label": "name Vell's blood to the Regent",
+          "if": [["any", [["flag", "vell_secret_told"], ["flag", "vell_exposed"]]], ["!flag", "vell_named"]],
+          "once": true,
+          "say": "You tell her plainly whose blood travels with you, and what the Hollowbrook ledger says about it. She goes very still.",
+          "fx": [
+            ["set", "vell_named"],
+            ["addvar", "gold", 12],
+            ["addvar", "rep_crown", 2],
+            ["say", "'Useful,' she says at last, and has a purse brought. 'The exile line, alive and walking. That is worth knowing, and worth paying for.'"],
+            ["if", [["flag", "vell_kept_secret"]], [["set", "vell_oath_broken"], ["addvar", "appr_vell", -4]], []]
           ]
         },
         {
@@ -1296,6 +1414,37 @@
                   ]
                 ]
               ]
+            ]
+          ]
+        },
+        {
+          "id": "herald_word",
+          "label": "what the Watch heard of the herald",
+          "if": [["any", [["flag", "va_swore_burn"], ["flag", "va_refused_herald"]]]],
+          "once": true,
+          "say": "Word of the Vale's herald reached the Watch too, same as everything does eventually.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "va_swore_burn"], ["var", "hollows_burned", ">=", 2]],
+              [["say", "\"Two hollows burned, as sworn. The Regent got her fire. I still prefer a rite.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "va_swore_burn"], ["var", "hollows_burned", "<", 2], ["var", "hollows_rested", ">=", 1]],
+              [["say", "\"Swore to burn, then rested one instead. Marrowgate has a long memory for oaths.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "va_refused_herald"]],
+              [
+                ["addvar", "rep_watch", 1],
+                ["say", "\"Told the Regent's man no, plain. Takes a spine to do that in the Vale. I respect it.\""]
+              ],
+              []
             ]
           ]
         },
@@ -1825,6 +1974,14 @@
           "fx": [["xp", 2]]
         },
         {
+          "id": "refused_decree",
+          "label": "the day you told the Regent's herald no",
+          "if": [["flag", "va_refused_herald"]],
+          "once": true,
+          "say": "\"You told the Regent's man no, flat, in the Vale.\" Quill deals a card he doesn't need. \"The Companies drink to that kind of no.\"",
+          "fx": [["xp", 2], ["addvar", "rep_free", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave Quill to the cards",
           "say": "Three knocks and a pause. Everything is three knocks and a pause.",
@@ -2041,6 +2198,20 @@
           ]
         },
         {
+          "id": "covenant_words",
+          "label": "speak of the covenant Rowan still keeps",
+          "if": [["flag", "th_heard_covenant"], ["flag", "mg_heard_reeve"], ["!flag", "mg_reeve_confessed"]],
+          "once": true,
+          "say": "You tell him a Keeper still teaches the old covenant whole, in Thornwold's root, exactly as if he had never had them struck off at all.",
+          "fx": [
+            ["set", "mg_reeve_confessed"],
+            ["score", 15],
+            ["xp", 5],
+            ["addvar", "rep_keepers", 1],
+            ["say", "'I took it from his brow while he slept,' he says, quiet, 'and called it inheritance.' The gray coming off him thins to a thread."]
+          ]
+        },
+        {
           "id": "ledger",
           "label": "show him his own ledger",
           "if": [["has", "mg_founding_ledger"], ["flag", "mg_heard_reeve"], ["!flag", "mg_reeve_confessed"]],
@@ -2109,7 +2280,18 @@
           "if": [["flag", "mg_heard_reeve"]],
           "once": true,
           "say": "I cut it hollow for his crown — a gift I never gave. All the Reach's grief pours from it. Fill it: three holds rested, my father at rest, my confession. Burn it: Ironbound oil. Sit: a crown. Or read my ledger aloud.",
-          "fx": [["xp", 3], ["score", 2]]
+          "fx": [
+            ["xp", 3],
+            ["score", 2],
+            [
+              "if",
+              [["flag", "mg_heard_regent"]],
+              [
+                ["say", "'Treason, she calls it,' he says. 'She has my blood, and my gift for calling a debt by a kinder name. Grief is not rebellion. It is only what is owed, unpaid.'"]
+              ],
+              []
+            ]
+          ]
         },
         {
           "id": "burned_report",

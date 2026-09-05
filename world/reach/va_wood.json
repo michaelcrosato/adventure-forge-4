@@ -229,6 +229,28 @@
       "landmark": "the hunter's camp",
       "exits": { "south": { "to": "va_west_road", "landmark": "the west road" } },
       "onEnterOnce": [["xp", 2], ["set", "va_found_camp"]],
+      "variants": [
+        {
+          "if": [["flag", "lys_brother_home"]],
+          "desc": "A lean-to and a smoke rack at the wood's west edge, hides stretched to cure, herbs bundled to dry in the smoke. Two shapes work the rack now instead of one — Lys's brother, learning the smoke-cure again, badly, on purpose.",
+          "brief": "Lean-to and smoke. Two shapes at the rack now."
+        },
+        {
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "th_cal_staying"],
+                ["flag", "lys_brother_cleared"],
+                ["flag", "lys_brother_buried"],
+                ["flag", "lys_brother_lost"]
+              ]
+            ]
+          ],
+          "desc": "A lean-to and a smoke rack at the wood's west edge, hides stretched to cure, herbs bundled to dry in the smoke. The hunter watches the trees, not you. His son's bow-string hangs unused by the rack, waiting on a homecoming that hasn't come.",
+          "brief": "Lean-to and smoke. An unused bow-string waits."
+        }
+      ],
       "actions": [
         {
           "id": "va_camp_tally",

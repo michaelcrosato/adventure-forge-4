@@ -169,6 +169,48 @@
             "id": "r_rb_ir_sk",
             "if": [["flag", "rb_ir_sk_stayed"]],
             "say": "Lys: \"Let him choose his own road. Half the cruelty in this Reach is other people's certainty about what someone else owes them.\""
+          },
+          {
+            "id": "r_advised_go_resolved",
+            "if": [
+              ["flag", "lys_advised_go"],
+              [
+                "any",
+                [
+                  ["flag", "lys_brother_home"],
+                  ["flag", "lys_brother_buried"],
+                  ["flag", "lys_brother_lost"],
+                  ["flag", "lys_brother_cleared"]
+                ]
+              ]
+            ],
+            "say": "You told me to go to him myself, whatever it cost. Whatever came of it, I'm glad you said it."
+          },
+          {
+            "id": "r_advised_deserter_resolved",
+            "if": [
+              ["flag", "lys_advised_deserter"],
+              [
+                "any",
+                [
+                  ["flag", "lys_brother_home"],
+                  ["flag", "lys_brother_buried"],
+                  ["flag", "lys_brother_lost"],
+                  ["flag", "lys_brother_cleared"]
+                ]
+              ]
+            ],
+            "say": "You called him a deserter not worth chasing. I went anyway. I still haven't decided if I forgive you for saying it."
+          },
+          {
+            "id": "r_confided_th",
+            "if": [["flag", "lys_confided"], ["flag", "th_entered"]],
+            "say": "I told you the wood forgives everything but waiting too long. We're here now. Let's see if it forgives this."
+          },
+          {
+            "id": "r_cal_staying",
+            "if": [["flag", "th_cal_staying"]],
+            "say": "He's staying, of his own choice. I asked you not to make it for him. Looks like nobody did."
           }
         ],
         "leaves": [
@@ -260,7 +302,7 @@
           "if": [["flag", "lys_brother_found"], ["!flag", "lys_advised"]],
           "once": true,
           "say": "Word comes: he's alive, camped with the Free Company at Camp Gallows. You tell her to go to him herself, whatever it costs. She's quiet a moment, then nods, like she'd been waiting to hear it.",
-          "fx": [["set", "lys_advised"], ["addvar", "appr_lys", 1]]
+          "fx": [["set", "lys_advised"], ["set", "lys_advised_go"], ["addvar", "appr_lys", 1]]
         },
         {
           "id": "choice_b",
@@ -268,7 +310,7 @@
           "if": [["flag", "lys_brother_found"], ["!flag", "lys_advised"]],
           "once": true,
           "say": "Word comes: he's alive, camped with the Free Company at Camp Gallows. You call him a deserter not worth chasing. Something in her face closes like a shutter, and she doesn't argue the point.",
-          "fx": [["set", "lys_advised"], ["addvar", "appr_lys", -1]]
+          "fx": [["set", "lys_advised"], ["set", "lys_advised_deserter"], ["addvar", "appr_lys", -1]]
         },
         {
           "id": "quest_home",
@@ -295,6 +337,14 @@
           "fx": [["xp", 1], ["addvar", "appr_lys", -1]]
         },
         {
+          "id": "quest_cleared",
+          "label": "ask after her brother",
+          "if": [["flag", "lys_brother_cleared"]],
+          "once": true,
+          "say": "He's clear of his debt, and staying with the Company anyway, by his own choice. She's quiet, then: \"Then that's what he wants. I don't have to like it to respect it.\"",
+          "fx": [["xp", 2], ["addvar", "appr_lys", 1]]
+        },
+        {
           "id": "trust1",
           "label": "ask why she never went herself",
           "if": [["var", "appr_lys", ">=", 4], ["flag", "said_lys_confide"]],
@@ -316,7 +366,22 @@
           "if": [["flag", "said_lys_trust2"]],
           "once": true,
           "say": "Take this much, at least — a broken twig, a turned stone, a print gone soft at the edge. Ground talks, if you know where to look. Watch where I'm looking, not where I'm walking.",
-          "fx": [["perk", "lys_gift"], ["xp", 2]]
+          "fx": [
+            ["perk", "lys_gift"],
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "lys_advised_go"]],
+              [["say", "\"You told me to go to him myself, once. I still hear it when I need steadying.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "lys_advised_deserter"]],
+              [["say", "\"You called him a deserter, once. I've made my peace with the word. Not with you saying it.\""]],
+              []
+            ]
+          ]
         },
         {
           "id": "amend",
@@ -493,6 +558,24 @@
             "id": "r_rb_sk_hb",
             "if": [["flag", "rb_sk_hb_mound"]],
             "say": "Osk: \"No Keeper blessed that bell, and it rings anyway. Maybe the rite was never the point. Maybe just remembering was.\""
+          },
+          {
+            "id": "r_advised_worth_resolved",
+            "if": [["flag", "osk_advised_worth"], ["any", [["flag", "osk_family_rested"], ["flag", "osk_family_burned"]]]],
+            "say": "You told me my verses were worth saying. I have said them since, over my own family, badly and out loud."
+          },
+          {
+            "id": "r_advised_superstition_resolved",
+            "if": [
+              ["flag", "osk_advised_superstition"],
+              ["any", [["flag", "osk_family_rested"], ["flag", "osk_family_burned"]]]
+            ],
+            "say": "You called the rites superstition, once. I said them anyway, over my own family. I still don't know which of us was right."
+          },
+          {
+            "id": "r_confided_fd",
+            "if": [["flag", "osk_confided"], ["flag", "fd_entered"]],
+            "say": "I told you I say the verses even when I'm not sure they're heard. This is where I find out for certain."
           }
         ],
         "leaves": [
@@ -592,7 +675,7 @@
           "if": [["flag", "osk_family_found"], ["!flag", "osk_advised"]],
           "once": true,
           "say": "Word reaches the chapel: his family's found, in the drowned nave, past hoping for but not past grieving. You tell him his verses are worth saying, badly or not. He almost smiles.",
-          "fx": [["set", "osk_advised"], ["addvar", "appr_osk", 1]]
+          "fx": [["set", "osk_advised"], ["set", "osk_advised_worth"], ["addvar", "appr_osk", 1]]
         },
         {
           "id": "choice_b",
@@ -600,7 +683,7 @@
           "if": [["flag", "osk_family_found"], ["!flag", "osk_advised"]],
           "once": true,
           "say": "Word reaches the chapel: his family's found, in the drowned nave, past hoping for but not past grieving. You tell him the old rites are just superstition. He goes very quiet, and doesn't answer.",
-          "fx": [["set", "osk_advised"], ["addvar", "appr_osk", -1]]
+          "fx": [["set", "osk_advised"], ["set", "osk_advised_superstition"], ["addvar", "appr_osk", -1]]
         },
         {
           "id": "quest_rested",
@@ -640,7 +723,24 @@
           "if": [["flag", "said_osk_trust2"]],
           "once": true,
           "say": "Here, then — the litany the old priest said before hard work, not holy exactly, just steady. Say it under your breath and your hand won't shake when it matters most.",
-          "fx": [["perk", "osk_gift"], ["xp", 2]]
+          "fx": [
+            ["perk", "osk_gift"],
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "osk_advised_worth"]],
+              [["say", "\"You told me my verses were worth saying, badly or not. I say this one for you, then.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "osk_advised_superstition"]],
+              [
+                ["say", "\"You called the rites superstition, once. I still believe them. I just stopped explaining why to you.\""]
+              ],
+              []
+            ]
+          ]
         },
         {
           "id": "amend",
@@ -817,6 +917,27 @@
             "id": "r_rb_wm_ir",
             "if": [["flag", "rb_wm_ir_cleared"]],
             "say": "Tamsin: \"Debt was paid all along, and the company just never said. That's the kind of lie that costs nothing to fix and everything to leave.\""
+          },
+          {
+            "id": "r_advised_answer_resolved",
+            "if": [
+              ["flag", "tamsin_advised_answer"],
+              ["any", [["flag", "tamsin_mine_avenged"], ["flag", "tamsin_mine_forgiven"], ["flag", "ir_miners_sold"]]]
+            ],
+            "say": "You told me to make them answer for it. I did. Or I let it lie. Either way, you said it, and I heard it."
+          },
+          {
+            "id": "r_advised_waste_resolved",
+            "if": [
+              ["flag", "tamsin_advised_waste"],
+              ["any", [["flag", "tamsin_mine_avenged"], ["flag", "tamsin_mine_forgiven"], ["flag", "ir_miners_sold"]]]
+            ],
+            "say": "You called it wasted iron, once. Maybe it was. I chased it anyway, or I didn't. Either way, you said it, and I heard it."
+          },
+          {
+            "id": "r_confided_ir",
+            "if": [["flag", "tamsin_confided"], ["flag", "ir_entered"]],
+            "say": "I told you I've been counting blows since I was twelve. This is where the counting stops, one way or another."
           }
         ],
         "leaves": [
@@ -908,7 +1029,7 @@
           "if": [["flag", "tamsin_mine_truth"], ["!flag", "tamsin_advised"]],
           "once": true,
           "say": "The truth about the mine comes out at last, uglier than she guessed. You tell her to make whoever's responsible answer for it. She nods once, already working out how.",
-          "fx": [["set", "tamsin_advised"], ["addvar", "appr_tamsin", 1]]
+          "fx": [["set", "tamsin_advised"], ["set", "tamsin_advised_answer"], ["addvar", "appr_tamsin", 1]]
         },
         {
           "id": "choice_b",
@@ -916,7 +1037,7 @@
           "if": [["flag", "tamsin_mine_truth"], ["!flag", "tamsin_advised"]],
           "once": true,
           "say": "The truth about the mine comes out at last, uglier than she guessed. You tell her chasing it further wastes good iron and better time. Something in her jaw sets hard.",
-          "fx": [["set", "tamsin_advised"], ["addvar", "appr_tamsin", -1]]
+          "fx": [["set", "tamsin_advised"], ["set", "tamsin_advised_waste"], ["addvar", "appr_tamsin", -1]]
         },
         {
           "id": "quest_avenged",
@@ -964,7 +1085,22 @@
           "if": [["flag", "said_tamsin_trust2"]],
           "once": true,
           "say": "Hand it over. Won't take long done right. There — feel that edge now. It won't turn on you when it matters most, and neither will I.",
-          "fx": [["perk", "tamsin_gift"], ["xp", 2]]
+          "fx": [
+            ["perk", "tamsin_gift"],
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "tamsin_advised_answer"]],
+              [["say", "\"You told me to make them answer for it. I did. This edge remembers that too.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "tamsin_advised_waste"]],
+              [["say", "\"You called it wasted iron, once. Maybe. I tempered this blade anyway.\""]],
+              []
+            ]
+          ]
         },
         {
           "id": "amend",
@@ -1132,12 +1268,41 @@
             "id": "r_rb_hb_th",
             "if": [["flag", "rb_hb_th_verse"]],
             "say": "Vell: \"A verse carried whole between two Halls that had nearly forgotten each other existed. I intend to write this one down properly.\""
+          },
+          {
+            "id": "r_advised_truth_resolved",
+            "if": [["flag", "vell_advised_truth"], ["any", [["flag", "vell_ledger_found"], ["flag", "vell_exposed"]]]],
+            "say": "You told me the truth was worth knowing, whatever it cost. It cost something. I'd still rather have known."
+          },
+          {
+            "id": "r_advised_burn_resolved",
+            "if": [["flag", "vell_advised_burn"], ["any", [["flag", "vell_ledger_found"], ["flag", "vell_exposed"]]]],
+            "say": "You told me to burn it and be done. I didn't. I'm not sure yet whether that was courage or just curiosity."
+          },
+          {
+            "id": "r_confided_throne",
+            "if": [["flag", "vell_secret_told"], ["flag", "mg_at_throne"]],
+            "say": "I told you I'd rather you heard it from me than the throne. Here's the throne. Ask it whatever you like — I already answered."
+          },
+          {
+            "id": "r_kept_secret_throne",
+            "if": [["flag", "vell_kept_secret"], ["flag", "mg_at_throne"]],
+            "say": "You kept your word about my name, all the way to this room. I didn't expect that, least of all from you."
+          },
+          {
+            "id": "r_throne_secret_unresolved",
+            "if": [["flag", "mg_at_throne"], ["!flag", "vell_ledger_found"], ["!flag", "vell_exposed"]],
+            "say": "Whatever this seat decides, my own question is still unanswered. I find that easier to bear standing up."
           }
         ],
         "leaves": [
           {
             "if": [["flag", "va_crown_broken"], ["var", "appr_vell", "<=", -1]],
             "say": "You broke the one thing that might have named me honestly, and I no longer trust you to carry what's left of the truth. I'll carry it myself."
+          },
+          {
+            "if": [["flag", "vell_oath_broken"]],
+            "say": "You swore to keep my name out of it. You named it anyway, the first time it paid. I don't forget a broken oath. I'm gone."
           },
           {
             "if": [["var", "appr_vell", "<=", -3]],
@@ -1225,7 +1390,7 @@
           "if": [["flag", "vell_ledger_found"], ["!flag", "vell_advised"]],
           "once": true,
           "say": "The ledger surfaces at last, every line damning or vindicating, depending on the reader. You tell them the truth deserves to be known, whatever it costs. They go still, then nod.",
-          "fx": [["set", "vell_advised"], ["addvar", "appr_vell", 1]]
+          "fx": [["set", "vell_advised"], ["set", "vell_advised_truth"], ["addvar", "appr_vell", 1]]
         },
         {
           "id": "choice_b",
@@ -1233,7 +1398,7 @@
           "if": [["flag", "vell_ledger_found"], ["!flag", "vell_advised"]],
           "once": true,
           "say": "The ledger surfaces at last, every line damning or vindicating, depending on the reader. You tell them to burn it and be done with the whole business. Something in their face closes over.",
-          "fx": [["set", "vell_advised"], ["addvar", "appr_vell", -1]]
+          "fx": [["set", "vell_advised"], ["set", "vell_advised_burn"], ["addvar", "appr_vell", -1]]
         },
         {
           "id": "quest_exposed",
@@ -1265,7 +1430,22 @@
           "if": [["flag", "said_vell_trust2"]],
           "once": true,
           "say": "Hold still — this won't hurt, and it won't show. Just recall the shape of what you want to keep, and I'll mark the parts worth keeping. The right fact will surface when you need it.",
-          "fx": [["perk", "vell_gift"], ["xp", 2]]
+          "fx": [
+            ["perk", "vell_gift"],
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "vell_advised_truth"]],
+              [["say", "\"You told them the truth was worth knowing. I've marked that fact particularly well.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "vell_advised_burn"]],
+              [["say", "\"You told them to burn the ledger, once. I did not forget. I annotate that too, for balance.\""]],
+              []
+            ]
+          ]
         },
         {
           "id": "amend",
@@ -1310,9 +1490,13 @@
     "q_lys": {
       "name": "A Brother in the Company",
       "start": [["flag", "lys_joined"]],
-      "done": [["any", [["flag", "lys_brother_home"], ["flag", "lys_brother_buried"]]]],
+      "done": [["any", [["flag", "lys_brother_home"], ["flag", "lys_brother_buried"], ["flag", "lys_brother_cleared"]]]],
       "failed": [["flag", "lys_brother_lost"]],
       "stages": [
+        {
+          "if": [["flag", "lys_brother_cleared"]],
+          "text": "He's clear of debt, and staying with the Company anyway. That's his to choose, and he chose."
+        },
         {
           "if": [["flag", "lys_brother_buried"]],
           "text": "He's buried east of Camp Gallows, in Thornwold. Grief, not victory — but it's finished."
@@ -1429,6 +1613,16 @@
       "weight": 1
     },
     {
+      "if": [["flag", "lys_advised_go"]],
+      "text": "You told Lys to go to her brother herself, whatever it cost. She never forgot who said it first.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "lys_advised_deserter"]],
+      "text": "You called Cal a deserter once, in front of Lys. She went after him anyway, and never quite let it go.",
+      "weight": 1
+    },
+    {
       "if": [["flag", "osk_dead"]],
       "text": "Brother Osk's verse went unfinished. The chapel lit a candle and did not say why.",
       "weight": 1
@@ -1461,6 +1655,16 @@
     {
       "if": [["var", "appr_osk", "<=", -2], ["!flag", "osk_left"], ["!flag", "osk_dead"]],
       "text": "Osk still says the rites when you ask him to, but he has stopped explaining them to you, and you have stopped asking why.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "osk_advised_worth"]],
+      "text": "You told Osk his verses were worth saying. He has not stopped saying them since, badly, on purpose.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "osk_advised_superstition"]],
+      "text": "You called the old rites superstition, to Osk's face. He kept saying them anyway, just not to you.",
       "weight": 1
     },
     {
@@ -1504,6 +1708,16 @@
       "weight": 1
     },
     {
+      "if": [["flag", "tamsin_advised_answer"]],
+      "text": "You told Tamsin to make them answer for the mine. She did, and never asked if you approved.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "tamsin_advised_waste"]],
+      "text": "You called her mother's death wasted iron, once. Tamsin still swings a hammer. She just swings it alone.",
+      "weight": 1
+    },
+    {
       "if": [["flag", "vell_dead"]],
       "text": "Vell's last sentence went unfinished, and nobody who heard it start ever learned how it ended.",
       "weight": 1
@@ -1536,6 +1750,31 @@
     {
       "if": [["var", "appr_vell", "<=", -2], ["!flag", "vell_left"], ["!flag", "vell_dead"]],
       "text": "Vell still travels with you, notebook closed more often than open now, and asks you fewer questions than before.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "vell_advised_truth"]],
+      "text": "You told Vell the truth was worth knowing, whatever it cost them. They paid it, and kept walking.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "vell_advised_burn"]],
+      "text": "You told Vell to burn the ledger and be done. They didn't. They still wonder if you were right.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "vell_oath_broken"]],
+      "text": "You swore to keep Vell's name out of it, then sold it for gold and standing. Vell hasn't forgiven that.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "vell_kept_secret"], ["!flag", "vell_oath_broken"]],
+      "text": "You kept Vell's name out of it, as you swore; they never learned how close it came.",
+      "weight": 1
+    },
+    {
+      "if": [["!flag", "vell_kept_secret"], ["!flag", "vell_named"], ["flag", "vell_secret_told"]],
+      "text": "You never swore to protect Vell's name. You kept it quiet anyway, and never mentioned that either.",
       "weight": 1
     }
   ],
