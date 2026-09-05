@@ -223,7 +223,13 @@
         {
           "id": "fd_speak_of_flood",
           "label": "say what you learned of the flood",
-          "if": [["flag", "fd_knows_hollow"]],
+          "if": [
+            ["flag", "fd_knows_hollow"],
+            ["!flag", "fd_hollow_bargained"],
+            ["!flag", "fd_hollow_burned"],
+            ["!flag", "fd_hollow_done"],
+            ["!flag", "fd_hollow_rested"]
+          ],
           "once": true,
           "fx": [
             ["xp", 2],

@@ -443,6 +443,9 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
                 s.flags["_seenApproval"] = true;
                 events.push("(Companions judge what you do: their regard opens some doors and closes others, and one pushed too far walks out.)");
               }
+            } else if (npc && !npcDead(world, s, id)) {
+              // regard moved for someone not here to see it: a player found Osk at -1 with no idea why
+              events.push(`(${npc.name} ${d > 0 ? "+" : ""}${d}, when word reaches them)`);
             }
           } else if (world.factions?.[fx[1]]) {
             events.push(`(${world.factions[fx[1]]} ${d > 0 ? "+" : ""}${d})`);
@@ -678,6 +681,28 @@ function ownerWatching(world: World, s: State, owner: string): NpcDef | null {
   return def;
 }
 
+/** True when an effect list counts a hollow rested or burned somewhere inside it. */
+function fxSettlesHollow(fxs: Fx[] | undefined): boolean {
+  for (const fx of fxs ?? []) {
+    if (fx[0] === "addvar" && (fx[1] === "hollows_rested" || fx[1] === "hollows_burned")) return true;
+    if (fx[0] === "if" && (fxSettlesHollow(fx[2]) || fxSettlesHollow(fx[3]))) return true;
+    if (fx[0] === "check" && (fxSettlesHollow(fx[3]) || fxSettlesHollow(fx[4]))) return true;
+    if (fx[0] === "chance" && (fxSettlesHollow(fx[2]) || fxSettlesHollow(fx[3]))) return true;
+  }
+  return false;
+}
+
+/** True when an effect list lowers a faction's standing or a companion's regard somewhere inside it. */
+function fxCostsStanding(fxs: Fx[] | undefined): boolean {
+  for (const fx of fxs ?? []) {
+    if (fx[0] === "addvar" && fx[2] < 0 && (fx[1].startsWith("rep_") || fx[1].startsWith("appr_"))) return true;
+    if (fx[0] === "if" && (fxCostsStanding(fx[2]) || fxCostsStanding(fx[3]))) return true;
+    if (fx[0] === "check" && (fxCostsStanding(fx[3]) || fxCostsStanding(fx[4]))) return true;
+    if (fx[0] === "chance" && (fxCostsStanding(fx[2]) || fxCostsStanding(fx[3]))) return true;
+  }
+  return false;
+}
+
 /** True when an effect list can end the game somewhere inside it. */
 function fxEnds(fxs: Fx[] | undefined): boolean {
   for (const fx of fxs ?? []) {
@@ -902,14 +927,19 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   }
   const fx = fxFor(world, s, a);
   const chk = fx?.[0];
+  const parts: string[] = [];
   if (chk && chk[0] === "check") {
     // all three numbers, so neither frame can be misread: the DC the total must
     // reach, the modifier, and the die roll that gets there
     const mod = checkMod(world, s, chk[1]);
     const need = Math.max(1, chk[2] - mod);
-    if (!mod) return ` (DC ${chk[2]}, ${chk[1]}: roll ${need}+ on the die)`;
-    return ` (DC ${chk[2]}, ${mod > 0 ? "+" : ""}${mod} ${chk[1]}: roll ${need}+ on the die)`;
+    parts.push(mod ? `DC ${chk[2]}, ${mod > 0 ? "+" : ""}${mod} ${chk[1]}: roll ${need}+ on the die` : `DC ${chk[2]}, ${chk[1]}: roll ${need}+ on the die`);
+    // a miss that costs standing or regard is said before the die is thrown, like "fail costs 1hp"
+    if (fxCostsStanding(chk[4])) parts.push("a miss costs standing");
   }
+  // an action that settles a hold's grief is the one-shot the hold is built around; say so before it is taken
+  if (fx && fxSettlesHollow(fx)) parts.push("settles this hold's grief");
+  if (parts.length) return ` (${parts.join("; ")})`;
   if (a.kind === "use" && opts.itemHints !== false) {
     // an item's use can sit in the menu for the rest of the game, so its hint
     // is shown where a place is first shown (and in status), not on every screen

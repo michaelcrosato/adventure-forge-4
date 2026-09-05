@@ -1299,7 +1299,8 @@
             ["addvar", "gold", 12],
             ["addvar", "rep_crown", 2],
             ["say", "'Useful,' she says at last, and has a purse brought. 'The exile line, alive and walking. That is worth knowing, and worth paying for.'"],
-            ["if", [["flag", "vell_kept_secret"]], [["set", "vell_oath_broken"], ["addvar", "appr_vell", -4]], []]
+            ["if", [["flag", "vell_kept_secret"]], [["set", "vell_oath_broken"], ["addvar", "appr_vell", -4]], []],
+            ["if", [["!flag", "vell_kept_secret"]], [["addvar", "appr_vell", -2]], []]
           ]
         },
         {

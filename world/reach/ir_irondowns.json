@@ -514,6 +514,7 @@
           "label": "put the Ironbound's oil to the gallery",
           "if": [["has", "ir_oil"], ["!flag", "ir_hollow_resolved"]],
           "fx": [
+            ["move", "ir_oil", "nowhere"],
             ["set", "ir_hollow_burned"],
             ["set", "ir_hollow_resolved"],
             ["addvar", "hollows_burned", 1],

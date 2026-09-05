@@ -148,6 +148,7 @@
           "label": "put the oath-stone to the torch",
           "if": [["flag", "wm_oath_heard"], ["has", "wm_oil_flask"], ["!flag", "wm_oath_resolved"]],
           "fx": [
+            ["move", "wm_oil_flask", "nowhere"],
             ["set", "wm_oath_resolved"],
             ["set", "wm_hollow_burned"],
             ["addvar", "hollows_burned", 1],
@@ -162,7 +163,7 @@
         },
         {
           "id": "wm_oath_break",
-          "label": "break the stone by main strength (might)",
+          "label": "break the stone — the burn road (might)",
           "if": [["flag", "wm_oath_heard"], ["!flag", "wm_oath_resolved"]],
           "fx": [
             [

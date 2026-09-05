@@ -340,6 +340,25 @@ test("a remark gated on npcHere fires only while that npc stands alive in the ro
   assert.match(east.events.join(" "), /Lys: "Leave it\."/, "she speaks the turn the wolf is in front of you");
 });
 
+test("the menu says when an action settles a hold's grief or a miss costs standing; regard moved out of sight is still told", () => {
+  const world = mini({
+    npcs: {
+      lys: { name: "Lys", room: "b", hp: 6, companion: {} },
+    },
+  });
+  world.rooms["a"]!.actions = [
+    { id: "rite", label: "speak the rite", fx: [["set", "x_rested"], ["addvar", "hollows_rested", 1]] },
+    { id: "press", label: "press the prior (will)", fx: [["check", "will", 10, [["say", "He yields."]], [["if", [["!flag", "press_missed"]], [["set", "press_missed"], ["addvar", "rep_church", -1], ["say", "He hears the lie."]], [["say", "No."]]]]]] },
+    { id: "snub", label: "snub the hunter", fx: [["addvar", "appr_lys", -1]] },
+  ];
+  const { state } = newState(world, 1);
+  const menu = renderMenu(world, state).text;
+  assert.match(menu, /speak the rite \(settles this hold's grief\)/);
+  assert.match(menu, /press the prior \(will\) \(DC 10, will: roll 10\+ on the die; a miss costs standing\)/);
+  const out = step(world, state, actionByLabel(world, state, "snub the hunter")!);
+  assert.match(out.events.join(" "), /\(Lys -1, when word reaches them\)/, "she is a room away, and still the move is told");
+});
+
 test("companions roll their own attacks after the player's, and a leaving companion stays behind", () => {
   const world = company();
   let { state } = newState(world, 1);

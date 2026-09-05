@@ -1649,8 +1649,10 @@
     {
       "label": "the Crown",
       "states": [
-        { "if": [["var", "rep_crown", ">=", 2]], "text": "in the Regent's favour" },
-        { "if": [["var", "rep_crown", "<=", -2]], "text": "in the Regent's memory, and not kindly" }
+        { "if": [["var", "rep_crown", ">=", 3]], "text": "in the Regent's favour" },
+        { "if": [["var", "rep_crown", ">=", 1]], "text": "noticed by the Crown" },
+        { "if": [["var", "rep_crown", "<=", -2]], "text": "in the Regent's memory, and not kindly" },
+        { "if": [["var", "rep_crown", "<=", -1]], "text": "marked by the Crown" }
       ],
       "fallback": "unknown to Marrowgate"
     }
@@ -1665,6 +1667,6 @@
   },
   "statusTracks": [
     { "var": "hollows_rested", "label": "Hollows rested", "max": 7, "if": [["flag", "act2_open"]] },
-    { "var": "hollows_burned", "label": "Hollows burned", "max": 7, "if": [["var", "hollows_burned", ">=", 1]] }
+    { "var": "hollows_burned", "label": "Hollows burned", "max": 7, "if": [["flag", "act2_open"]] }
   ]
 }
