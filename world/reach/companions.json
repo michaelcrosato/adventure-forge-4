@@ -101,6 +101,11 @@
             "say": "You've more than earned a place at my fire. Didn't think that would happen, and it did."
           },
           {
+            "id": "r_warn",
+            "if": [["var", "appr_lys", "<=", -2], ["var", "appr_lys", ">=", -2]],
+            "say": "One more thing like that and I'm done following you. I only say a thing once."
+          },
+          {
             "id": "r_appr_neg",
             "if": [["var", "appr_lys", "<=", -2]],
             "say": "I'm starting to wonder why I still walk beside you. Give me a reason before I stop wondering."
@@ -280,6 +285,38 @@
           "fx": [["xp", 1], ["addvar", "appr_lys", -1]]
         },
         {
+          "id": "trust1",
+          "label": "ask why she never went herself",
+          "if": [["var", "appr_lys", ">=", 4], ["flag", "said_lys_confide"]],
+          "once": true,
+          "say": "I got as far as the Thornwold treeline once, a year before you ever came. Heard the Company's fires through the trees, and turned back. Told myself it was the wood. It wasn't.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "trust2",
+          "label": "ask what stopped her",
+          "if": [["flag", "said_lys_trust1"]],
+          "once": true,
+          "say": "If I'd found him and he told me to stay lost, that would have been the end of hoping on him. I'd rather carry not-knowing than that. I have never said this out loud before now.",
+          "fx": [["xp", 3]]
+        },
+        {
+          "id": "gift",
+          "label": "let her teach you to read the ground",
+          "if": [["flag", "said_lys_trust2"]],
+          "once": true,
+          "say": "Take this much, at least — a broken twig, a turned stone, a print gone soft at the edge. Ground talks, if you know where to look. Watch where I'm looking, not where I'm walking.",
+          "fx": [["perk", "lys_gift"], ["xp", 2]]
+        },
+        {
+          "id": "amend",
+          "label": "pay to spread word of her brother",
+          "if": [["var", "appr_lys", "<=", -2], ["flag", "said_lys_rebuke"], ["var", "gold", ">=", 10]],
+          "once": true,
+          "say": "That's real coin, not a promise. Riders will carry Cal's name down every road between here and Thornwold faster than either of us could walk it. I didn't expect this from you. Thank you.",
+          "fx": [["addvar", "gold", -10], ["addvar", "appr_lys", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave it there",
           "say": "Mind your footing. This wood doesn't forgive twice.",
@@ -386,6 +423,11 @@
             "id": "r_appr_pos",
             "if": [["var", "appr_osk", ">=", 2]],
             "say": "I didn't expect to trust anyone this quickly again. Thank you for that, whether you meant to earn it or not."
+          },
+          {
+            "id": "r_warn",
+            "if": [["var", "appr_osk", "<=", -2], ["var", "appr_osk", ">=", -2]],
+            "say": "If it happens again, I'm gone — I mean that, and I don't say things like that lightly."
           },
           {
             "id": "r_appr_neg",
@@ -557,6 +599,38 @@
           "fx": [["xp", 1], ["addvar", "appr_osk", -2]]
         },
         {
+          "id": "trust1",
+          "label": "ask what he really remembers of that day",
+          "if": [["var", "appr_osk", ">=", 4], ["flag", "said_osk_confide"]],
+          "once": true,
+          "say": "I wasn't there. Sent off for dry wood on some errand nobody even remembers giving me now. I have never told a living soul I sometimes wonder if that's the only reason I'm still here.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "trust2",
+          "label": "ask if he blames himself",
+          "if": [["flag", "said_osk_trust1"]],
+          "once": true,
+          "say": "Every night, some, if I'm honest — and I'm trying, for once, to be. The verses I'm learning are as much for me as for anyone drowned. Thank you for asking it plain.",
+          "fx": [["xp", 3]]
+        },
+        {
+          "id": "gift",
+          "label": "let him teach you the steadying litany",
+          "if": [["flag", "said_osk_trust2"]],
+          "once": true,
+          "say": "Here, then — the litany the old priest said before hard work, not holy exactly, just steady. Say it under your breath and your hand won't shake when it matters most.",
+          "fx": [["perk", "osk_gift"], ["xp", 2]]
+        },
+        {
+          "id": "amend",
+          "label": "back him against the priory's counsel",
+          "if": [["var", "appr_osk", "<=", -2], ["flag", "said_osk_rebuke"]],
+          "once": true,
+          "say": "I didn't ask you to cross the Priory for me. You did it anyway, plain and public, and they'll remember whose voice said it. That costs you something I can't give back to you.",
+          "fx": [["addvar", "rep_church", -1], ["addvar", "appr_osk", 1]]
+        },
+        {
           "id": "bye",
           "label": "that's enough for now",
           "say": "Go gently. The gray doesn't need help from us to be cruel.",
@@ -663,6 +737,11 @@
             "id": "r_appr_pos",
             "if": [["var", "appr_tamsin", ">=", 2]],
             "say": "You've earned my back in a fight. That's not a small thing, coming from me."
+          },
+          {
+            "id": "r_warn",
+            "if": [["var", "appr_tamsin", "<=", -2], ["var", "appr_tamsin", ">=", -2]],
+            "say": "One more like that and I'm gone. I don't give second warnings, only first ones."
           },
           {
             "id": "r_appr_neg",
@@ -839,6 +918,38 @@
           "fx": [["xp", 1], ["addvar", "appr_tamsin", -2]]
         },
         {
+          "id": "trust1",
+          "label": "ask what she still expects, some days",
+          "if": [["var", "appr_tamsin", ">=", 4], ["flag", "said_tamsin_confide"]],
+          "once": true,
+          "say": "Some mornings I still listen for her boots on the forge steps. Twenty years gone and some fool part of me hasn't caught up with the rest. Never told the smith that. Never told anyone.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "trust2",
+          "label": "ask why she never told the smith",
+          "if": [["flag", "said_tamsin_trust1"]],
+          "once": true,
+          "say": "She'd worry, and worrying doesn't temper steel. Counting does. So I count, and I don't tell her, and most days that's enough to get the hammer swinging again.",
+          "fx": [["xp", 3]]
+        },
+        {
+          "id": "gift",
+          "label": "let her re-temper your blade",
+          "if": [["flag", "said_tamsin_trust2"]],
+          "once": true,
+          "say": "Hand it over. Won't take long done right. There — feel that edge now. It won't turn on you when it matters most, and neither will I.",
+          "fx": [["perk", "tamsin_gift"], ["xp", 2]]
+        },
+        {
+          "id": "amend",
+          "label": "cross the Ironbound to back her question",
+          "if": [["var", "appr_tamsin", "<=", -2], ["flag", "said_tamsin_rebuke"]],
+          "once": true,
+          "say": "You put the question to the Ironbound chapter yourself, plain and public, and didn't back down when they didn't like it. They'll mark your name for it. I'm not going to say thank you. I don't have to.",
+          "fx": [["addvar", "rep_iron", -1], ["addvar", "appr_tamsin", 1]]
+        },
+        {
           "id": "bye",
           "label": "that's enough for now",
           "say": "Watch your footing. I'm not carrying you back.",
@@ -941,6 +1052,11 @@
             "id": "r_appr_pos",
             "if": [["var", "appr_vell", ">=", 2]],
             "say": "I don't extend trust for free. Consider this the exception, not the rule."
+          },
+          {
+            "id": "r_warn",
+            "if": [["var", "appr_vell", "<=", -2], ["var", "appr_vell", ">=", -2]],
+            "say": "One more incident like that and I revise my opinion of you permanently. Consider this your only warning."
           },
           {
             "id": "r_appr_neg",
@@ -1098,6 +1214,38 @@
           "fx": [["xp", 1], ["addvar", "appr_vell", -1]]
         },
         {
+          "id": "trust1",
+          "label": "ask if they've ever been to Marrowgate",
+          "if": [["var", "appr_vell", ">=", 4], ["flag", "said_vell_confide"]],
+          "once": true,
+          "say": "Once. Years before I met you, plain gray, nobody looking twice. I stood in the market square, looked up at the palace, and did not go in. I have never told anyone that either.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "trust2",
+          "label": "ask why they turned back that day",
+          "if": [["flag", "said_vell_trust1"]],
+          "once": true,
+          "say": "I wasn't ready to know what I'd do, standing in that hall with that name behind me. I'm still not entirely sure. I'd rather you knew that about me before either of us finds out.",
+          "fx": [["xp", 3]]
+        },
+        {
+          "id": "gift",
+          "label": "let them annotate your memory",
+          "if": [["flag", "said_vell_trust2"]],
+          "once": true,
+          "say": "Hold still — this won't hurt, and it won't show. Just recall the shape of what you want to keep, and I'll mark the parts worth keeping. The right fact will surface when you need it.",
+          "fx": [["perk", "vell_gift"], ["xp", 2]]
+        },
+        {
+          "id": "amend",
+          "label": "swear to keep their name out of it",
+          "if": [["var", "appr_vell", "<=", -2], ["flag", "said_vell_rebuke"]],
+          "once": true,
+          "say": "You gave your word, plainly, that whatever that ledger says stays between the two of us unless I choose otherwise. I don't extend trust for free, remember. Consider this noted. And remembered.",
+          "fx": [["set", "vell_kept_secret"], ["addvar", "appr_vell", 1]]
+        },
+        {
           "id": "bye",
           "label": "that's enough for now",
           "say": "Do try not to lose anything important while I'm not looking.",
@@ -1221,7 +1369,7 @@
       "weight": 1
     },
     {
-      "if": [["flag", "lys_brother_home"]],
+      "if": [["flag", "lys_brother_home"], ["var", "appr_lys", "<", 4]],
       "text": "Lys brought her brother home to the Vale, and the hunter's camp is loud again, for the first time in years.",
       "weight": 1
     },
@@ -1241,6 +1389,16 @@
       "weight": 1
     },
     {
+      "if": [["var", "appr_lys", ">=", 4], ["!flag", "lys_left"], ["!flag", "lys_dead"]],
+      "text": "By the end Lys called you the steadiest thing on a road she never expected to walk this far down.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "appr_lys", "<=", -2], ["!flag", "lys_left"], ["!flag", "lys_dead"]],
+      "text": "Lys still walks beside you, but she watches you now the way she watches strange ground — carefully, from a distance.",
+      "weight": 1
+    },
+    {
       "if": [["flag", "osk_dead"]],
       "text": "Brother Osk's verse went unfinished. The chapel lit a candle and did not say why.",
       "weight": 1
@@ -1251,7 +1409,7 @@
       "weight": 1
     },
     {
-      "if": [["flag", "osk_family_rested"]],
+      "if": [["flag", "osk_family_rested"], ["var", "appr_osk", "<", 4]],
       "text": "Brother Osk said the rite over his own family himself, and the Church quietly stopped calling him a novice.",
       "weight": 1
     },
@@ -1266,6 +1424,16 @@
       "weight": 1
     },
     {
+      "if": [["var", "appr_osk", ">=", 4], ["!flag", "osk_left"], ["!flag", "osk_dead"]],
+      "text": "Brother Osk stopped calling himself a novice somewhere around you, though the Church never made it official.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "appr_osk", "<=", -2], ["!flag", "osk_left"], ["!flag", "osk_dead"]],
+      "text": "Osk still says the rites when you ask him to, but he has stopped explaining them to you, and you have stopped asking why.",
+      "weight": 1
+    },
+    {
       "if": [["flag", "tamsin_dead"]],
       "text": "Tamsin's hammer hangs unclaimed at the Vale forge. Nobody there swings it as hard.",
       "weight": 1
@@ -1276,7 +1444,7 @@
       "weight": 1
     },
     {
-      "if": [["flag", "tamsin_mine_avenged"]],
+      "if": [["flag", "tamsin_mine_avenged"], ["var", "appr_tamsin", "<", 4]],
       "text": "Tamsin got her answer about the mine, and made whoever lied about it answer in turn.",
       "weight": 1
     },
@@ -1296,6 +1464,16 @@
       "weight": 1
     },
     {
+      "if": [["var", "appr_tamsin", ">=", 4], ["!flag", "tamsin_left"], ["!flag", "tamsin_dead"]],
+      "text": "Tamsin swings her hammer easier with you at her back than she'd ever admit to the smith.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "appr_tamsin", "<=", -2], ["!flag", "tamsin_left"], ["!flag", "tamsin_dead"]],
+      "text": "Tamsin still marches with you, but she counts your blows now the way she counts an enemy's, out of old habit.",
+      "weight": 1
+    },
+    {
       "if": [["flag", "vell_dead"]],
       "text": "Vell's last sentence went unfinished, and nobody who heard it start ever learned how it ended.",
       "weight": 1
@@ -1306,7 +1484,7 @@
       "weight": 1
     },
     {
-      "if": [["flag", "vell_ledger_found"]],
+      "if": [["flag", "vell_ledger_found"], ["var", "appr_vell", "<", 4]],
       "text": "Vell found the Keepers' ledger, and whatever it says about their birth, they carry it quietly now, on their own terms.",
       "weight": 1
     },
@@ -1319,6 +1497,32 @@
       "if": [["!flag", "vell_joined"]],
       "text": "Vell stayed at the Last Light inn, still evasive about Marrowgate, and never did explain why.",
       "weight": 1
+    },
+    {
+      "if": [["var", "appr_vell", ">=", 4], ["!flag", "vell_left"], ["!flag", "vell_dead"]],
+      "text": "Vell stopped being careful with you somewhere along the road, and started being honest instead.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "appr_vell", "<=", -2], ["!flag", "vell_left"], ["!flag", "vell_dead"]],
+      "text": "Vell still travels with you, notebook closed more often than open now, and asks you fewer questions than before.",
+      "weight": 1
     }
-  ]
+  ],
+  "perks": {
+    "lys_gift": {
+      "name": "Reading the Ground",
+      "desc": "+1 wits checks (sign and trail)",
+      "require": { "level": 99 },
+      "bonus": { "check": { "wits": 1 } }
+    },
+    "osk_gift": { "name": "Steadying Litany", "desc": "+1 to hit", "require": { "level": 99 }, "bonus": { "hit": 1 } },
+    "tamsin_gift": { "name": "Re-tempered Edge", "desc": "+1 damage", "require": { "level": 99 }, "bonus": { "dmg": 1 } },
+    "vell_gift": {
+      "name": "Annotated Memory",
+      "desc": "+1 will checks",
+      "require": { "level": 99 },
+      "bonus": { "check": { "will": 1 } }
+    }
+  }
 }
