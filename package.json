@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test test/*.test.ts",
     "validate": "tsx src/validate.ts world/lighthouse.json world/vale.json",
-    "crawl": "tsx src/crawl.ts --smoke",
+    "crawl": "tsx src/crawl.ts",
     "verify": "npm run -s typecheck && npm run -s test && npm run -s validate && npm run -s crawl",
     "mock": "node loop/mock-player.mjs",
     "measure": "node loop/mock-player.mjs --measure",

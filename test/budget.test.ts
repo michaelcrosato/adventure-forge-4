@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import { actionByLabel, condOk, newState, step } from "../src/engine.ts";
 import { render, renderIntro } from "../src/format.ts";
 import { loadWorld } from "../src/validate.ts";
+import { MENU_CAP } from "../src/types.ts";
 import type { State, World } from "../src/types.ts";
 
 const AVG_CHARS_MAX = 450; // avg act-response size along the walkthrough
@@ -74,7 +75,7 @@ for (const world of worlds) {
       }
       if (state.ended) break;
       const r = render(world, state, []);
-      assert.ok(r.actions.length <= 12, `menu ${r.actions.length} > 12 at ${state.room}`);
+      assert.ok(r.actions.length <= MENU_CAP, `menu ${r.actions.length} > ${MENU_CAP} at ${state.room}`);
     }
   });
 }
