@@ -14,10 +14,10 @@ import {
   step,
 } from "./engine.ts";
 import { expandWorld } from "./worldgen.ts";
-import { ATTRS } from "./types.ts";
+import { ATTRS, MENU_CAP } from "./types.ts";
 import type { Cond, Fx, State, WalkStep, World } from "./types.ts";
 
-export const MENU_CAP = 12;
+export { MENU_CAP };
 
 const COND_OPS = new Set([
   "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk",
