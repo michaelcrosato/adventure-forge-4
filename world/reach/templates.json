@@ -2,11 +2,11 @@
   "templates": {
     "barrow": {
       "entrance": "$mouth",
-      "vars": ["NAME", "WIGHT"],
+      "vars": ["NAME", "WIGHT", "SIGN", "LOOT"],
       "rooms": {
         "$mouth": {
           "name": "{{NAME}} — mouth",
-          "desc": "Turf has grown thick over the mound, but the doorstone stands open. Cold air breathes out of the dark, carrying old iron and older dust.",
+          "desc": "Turf has grown thick over the mound, but the doorstone stands open. Cold air breathes out of the dark, carrying old iron and older dust. {{SIGN}}",
           "brief": "The barrow-mouth, open to the dark.",
           "exits": { "in": { "to": "$passage" } }
         },
@@ -42,9 +42,18 @@
               "label": "read the verse-stone (wits)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "wits", 9,
-                  [["set", "$done"], ["slay", "$wight"], ["score", 6], ["xp", 5], ["addvar", "rep_keepers", 1],
-                    ["say", "The verse gives itself up, line by line. {{WIGHT}} does not stir — these words were never meant for it."]],
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["slay", "$wight"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_keepers", 1],
+                    ["say", "The verse gives itself up, line by line. {{WIGHT}} does not stir — these words were never meant for it."]
+                  ],
                   [["say", "The cuts blur, worn past easy reading. {{WIGHT}} has not moved."]]
                 ]
               ]
@@ -54,9 +63,18 @@
               "label": "swear the rest-oath (will)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "will", 10,
-                  [["set", "$done"], ["slay", "$wight"], ["score", 6], ["xp", 5], ["addvar", "rep_keepers", 1],
-                    ["say", "You swear the old rest-oath over the stone, word for word as it's cut. {{WIGHT}} settles like a held breath let out, and does not rise again."]],
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["slay", "$wight"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_keepers", 1],
+                    ["say", "You swear the old rest-oath over the stone, word for word as it's cut. {{WIGHT}} settles like a held breath let out, and does not rise again."]
+                  ],
                   [["say", "The oath comes out wrong, a stranger's words in a stranger's mouth. {{WIGHT}} has not moved."]]
                 ]
               ]
@@ -74,15 +92,18 @@
               "label": "search the alcove",
               "once": true,
               "if": [["flag", "$done"]],
-              "fx": [["move", "$loot", "inv"], ["score", 3], ["xp", 2], ["addvar", "gold", 5],
-                ["say", "Tucked into a fold of cloth gone to dust: a small ring, plain iron, worn smooth by a thumb that isn't yours."]]
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 5],
+                ["say", "Tucked into a fold of cloth gone to dust: {{LOOT}}, worn smooth by a thumb that isn't yours."]
+              ]
             }
           ]
         }
       },
-      "items": {
-        "$loot": { "name": "a small worn ring", "loc": "nowhere" }
-      },
+      "items": { "$loot": { "name": "{{LOOT}}", "loc": "nowhere" } },
       "npcs": {
         "$wight": {
           "name": "{{WIGHT}}",
@@ -93,23 +114,29 @@
           "df": 9,
           "desc": "Old leather gone to dust over bone, one hand still flat on the stone.",
           "onDeath": [
-            ["if", [["!flag", "$done"]],
-              [["set", "$done"], ["score", 6], ["xp", 5], ["addvar", "rep_keepers", 1],
-                ["say", "{{WIGHT}} comes apart into rag and old bone. The verse-stone stands clear behind it, its grief finally witnessed."]],
+            [
+              "if",
+              [["!flag", "$done"]],
+              [
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_keepers", 1],
+                ["say", "{{WIGHT}} comes apart into rag and old bone. The verse-stone stands clear behind it, its grief finally witnessed."]
+              ],
               [["say", "{{WIGHT}} was already still, whatever kept it standing already settled."]]
             ]
           ]
         }
       }
     },
-
     "cave": {
       "entrance": "$mouth",
-      "vars": ["NAME", "BEAST"],
+      "vars": ["NAME", "BEAST", "SIGN", "LOOT"],
       "rooms": {
         "$mouth": {
           "name": "{{NAME}} — mouth",
-          "desc": "Scree fans out from a crack in the rock, hardly wide enough to call a cave. Fresh scat marks the threshold — something uses this, and often.",
+          "desc": "Scree fans out from a crack in the rock, hardly wide enough to call a cave. Fresh scat marks the threshold — something uses this, and often. {{SIGN}}",
           "brief": "A narrow crack in the rock, scored with scat.",
           "exits": { "in": { "to": "$throat" } }
         },
@@ -137,9 +164,17 @@
               "label": "slip past it for the loot (grace)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "grace", 9,
-                  [["set", "$done"], ["npcgo", "$beast", null], ["score", 6], ["xp", 5],
-                    ["say", "You go still, and it loses you against the rock — the scrape of claws fades deeper in, hunting something that isn't there."]],
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$beast", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "You go still, and it loses you against the rock — the scrape of claws fades deeper in, hunting something that isn't there."]
+                  ],
                   [["say", "It's already turned. Too late to be quiet now."]]
                 ]
               ]
@@ -149,8 +184,13 @@
               "label": "search the bone-litter",
               "once": true,
               "if": [["flag", "$done"]],
-              "fx": [["move", "$loot", "inv"], ["score", 3], ["xp", 2], ["addvar", "gold", 4],
-                ["say", "Among the bone-litter: a broken hunting knife, its owner long past needing it. The blade's snapped, but the balance is still good."]]
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 4],
+                ["say", "Among the bone-litter: {{LOOT}}, its owner long past needing it."]
+              ]
             }
           ]
         }
@@ -165,12 +205,17 @@
             {
               "target": "$beast",
               "if": [["!flag", "$done"]],
-              "fx": [["set", "$done"], ["npcgo", "$beast", null], ["score", 6], ["xp", 5],
-                ["say", "You toss it the carcass. {{BEAST}} is on it before it hits the ground, and doesn't look up again as you go."]]
+              "fx": [
+                ["set", "$done"],
+                ["npcgo", "$beast", null],
+                ["score", 6],
+                ["xp", 5],
+                ["say", "You toss it the carcass. {{BEAST}} is on it before it hits the ground, and doesn't look up again as you go."]
+              ]
             }
           ]
         },
-        "$loot": { "name": "a broken hunting knife", "loc": "nowhere" }
+        "$loot": { "name": "{{LOOT}}", "loc": "nowhere" }
       },
       "npcs": {
         "$beast": {
@@ -182,23 +227,28 @@
           "df": 9,
           "desc": "Lean and quick, more hunger than shape in this light.",
           "onDeath": [
-            ["if", [["!flag", "$done"]],
-              [["set", "$done"], ["score", 6], ["xp", 5],
-                ["say", "{{BEAST}} goes still. Whatever den-right it was guarding passes to you, for what that's worth to a dead thing."]],
+            [
+              "if",
+              [["!flag", "$done"]],
+              [
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["say", "{{BEAST}} goes still. Whatever den-right it was guarding passes to you, for what that's worth to a dead thing."]
+              ],
               [["say", "{{BEAST}} was already gone from here."]]
             ]
           ]
         }
       }
     },
-
     "tower": {
       "entrance": "$base",
-      "vars": ["NAME", "WATCHER", "VIEW"],
+      "vars": ["NAME", "WATCHER", "VIEW", "SIGN", "LOOT"],
       "rooms": {
         "$base": {
           "name": "{{NAME}} — base",
-          "desc": "The tower's foot, half-collapsed, its old door long gone to rot. Steps spiral up into the dark, worn to a shine at their centers by feet none of them remember.",
+          "desc": "The tower's foot, half-collapsed, its old door long gone to rot. Steps spiral up into the dark, worn to a shine at their centers by feet none of them remember. {{SIGN}}",
           "brief": "The tower's foot, steps spiralling up.",
           "exits": { "up": { "to": "$stair" } }
         },
@@ -228,9 +278,18 @@
               "label": "shoulder past it (might)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "might", 10,
-                  [["set", "$done"], ["npcgo", "$watcher", null], ["score", 6], ["xp", 5], ["addvar", "rep_watch", 1],
-                    ["say", "You put a shoulder into the gap and climb through before it can answer for itself. {{WATCHER}} does not follow."]],
+                [
+                  "check",
+                  "might",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$watcher", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_watch", 1],
+                    ["say", "You put a shoulder into the gap and climb through before it can answer for itself. {{WATCHER}} does not follow."]
+                  ],
                   [["say", "It gives no ground. You're back on the steps, {{WATCHER}} unmoved."]]
                 ]
               ]
@@ -240,9 +299,18 @@
               "label": "climb past it outside (grace)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "grace", 9,
-                  [["set", "$done"], ["npcgo", "$watcher", null], ["score", 6], ["xp", 5], ["addvar", "rep_watch", 1],
-                    ["say", "You find a handhold past the rail and swing around it entirely. {{WATCHER}} turns to follow the sound, too late."]],
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$watcher", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_watch", 1],
+                    ["say", "You find a handhold past the rail and swing around it entirely. {{WATCHER}} turns to follow the sound, too late."]
+                  ],
                   [["say", "The stone gives you nothing to hold. You're back on the steps, {{WATCHER}} still there."]]
                 ]
               ]
@@ -260,15 +328,18 @@
               "label": "scan the horizon",
               "once": true,
               "if": [["flag", "$done"]],
-              "fx": [["move", "$loot", "inv"], ["score", 3], ["xp", 2], ["addvar", "gold", 5],
-                ["say", "Wedged in the parapet stones, a spyglass, its lens cracked but still true enough to be worth the weight."]]
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 5],
+                ["say", "Wedged in the parapet stones, {{LOOT}} — worth the climb, whatever it once cost to carry up here."]
+              ]
             }
           ]
         }
       },
-      "items": {
-        "$loot": { "name": "a cracked spyglass", "loc": "nowhere" }
-      },
+      "items": { "$loot": { "name": "{{LOOT}}", "loc": "nowhere" } },
       "npcs": {
         "$watcher": {
           "name": "{{WATCHER}}",
@@ -281,9 +352,18 @@
               "if": [["!flag", "$done"]],
               "say": "What is it you carry up my stair?",
               "fx": [
-                ["check", "wits", 10,
-                  [["set", "$done"], ["npcgo", "$watcher", null], ["score", 6], ["xp", 5], ["addvar", "rep_watch", 1],
-                    ["say", "Your answer lands true, and {{WATCHER}} steps aside, its question finally spent."]],
+                [
+                  "check",
+                  "wits",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$watcher", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_watch", 1],
+                    ["say", "Your answer lands true, and {{WATCHER}} steps aside, its question finally spent."]
+                  ],
                   [["say", "{{WATCHER}} is not satisfied, and does not move."]]
                 ]
               ]
@@ -294,9 +374,18 @@
               "if": [["!flag", "$done"]],
               "say": "What is it you carry up my stair?",
               "fx": [
-                ["check", "will", 10,
-                  [["set", "$done"], ["npcgo", "$watcher", null], ["score", 6], ["xp", 5], ["addvar", "rep_watch", 1],
-                    ["say", "You answer like you've always known it. {{WATCHER}} can't tell the lie from the truth, and lets you by."]],
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$watcher", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_watch", 1],
+                    ["say", "You answer like you've always known it. {{WATCHER}} can't tell the lie from the truth, and lets you by."]
+                  ],
                   [["say", "{{WATCHER}} sees through it plainly, and does not move."]]
                 ]
               ]
@@ -305,14 +394,13 @@
         }
       }
     },
-
     "mine": {
       "entrance": "$adit",
-      "vars": ["NAME", "FOREMAN"],
+      "vars": ["NAME", "FOREMAN", "SIGN", "LOOT"],
       "rooms": {
         "$adit": {
           "name": "{{NAME}} — adit",
-          "desc": "The mine's mouth, timbered and sagging, propped by hands long gone. Somewhere below, water drips onto stone in a rhythm nobody set right.",
+          "desc": "The mine's mouth, timbered and sagging, propped by hands long gone. Somewhere below, water drips onto stone in a rhythm nobody set right. {{SIGN}}",
           "brief": "The mine-mouth, its timbers sagging.",
           "exits": { "in": { "to": "$gallery" } }
         },
@@ -327,9 +415,18 @@
               "label": "shore up the props (might)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "might", 10,
-                  [["set", "$done"], ["npcgo", "$foreman", null], ["score", 6], ["xp", 5], ["addvar", "rep_iron", 1],
-                    ["say", "You wedge the new prop home and the roof settles, groaning once, then quiet. This gallery will hold, whatever else is wrong down here."]],
+                [
+                  "check",
+                  "might",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$foreman", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_iron", 1],
+                    ["say", "You wedge the new prop home and the roof settles, groaning once, then quiet. This gallery will hold, whatever else is wrong down here."]
+                  ],
                   [["say", "The prop slips before it bites. You're no closer to trusting this roof."]]
                 ]
               ]
@@ -347,9 +444,18 @@
               "label": "puzzle out the ledger (wits)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "wits", 9,
-                  [["set", "$done"], ["npcgo", "$foreman", null], ["score", 6], ["xp", 5], ["addvar", "rep_iron", 1],
-                    ["say", "The tallies make an ugly sense once followed: corners cut, timber skipped, signed off anyway. Worth knowing, whatever else waits down here."]],
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$foreman", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_iron", 1],
+                    ["say", "The tallies make an ugly sense once followed: corners cut, timber skipped, signed off anyway. Worth knowing, whatever else waits down here."]
+                  ],
                   [["say", "The figures swim, half of them water-stained past reading."]]
                 ]
               ]
@@ -374,15 +480,18 @@
               "label": "search the flooded cut",
               "once": true,
               "if": [["flag", "$done"]],
-              "fx": [["move", "$loot", "inv"], ["score", 3], ["xp", 2], ["addvar", "gold", 5],
-                ["say", "Where the water's shallowest, a miner's lamp, unlit but sound. Small mercy, but yours now."]]
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 5],
+                ["say", "Where the water's shallowest: {{LOOT}}, small mercy, but yours now."]
+              ]
             }
           ]
         }
       },
-      "items": {
-        "$loot": { "name": "a miner's lamp", "loc": "nowhere" }
-      },
+      "items": { "$loot": { "name": "{{LOOT}}", "loc": "nowhere" } },
       "npcs": {
         "$foreman": {
           "name": "{{FOREMAN}}",
@@ -402,9 +511,18 @@
               "if": [["!flag", "$done"]],
               "say": "Say it plain, then. Say you'll see it done.",
               "fx": [
-                ["check", "will", 10,
-                  [["set", "$done"], ["npcgo", "$foreman", null], ["score", 6], ["xp", 5], ["addvar", "rep_iron", 1],
-                    ["say", "You give him the words he's waited on. Something in {{FOREMAN}} finally settles, the lamp gone still in his hands."]],
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$foreman", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_iron", 1],
+                    ["say", "You give him the words he's waited on. Something in {{FOREMAN}} finally settles, the lamp gone still in his hands."]
+                  ],
                   [["say", "The words come out thin. {{FOREMAN}} looks through you like you hadn't spoken at all."]]
                 ]
               ]
@@ -413,14 +531,13 @@
         }
       }
     },
-
     "camp": {
       "entrance": "$palisade",
-      "vars": ["NAME", "CAPTAIN"],
+      "vars": ["NAME", "CAPTAIN", "SIGN", "LOOT"],
       "rooms": {
         "$palisade": {
           "name": "{{NAME}} — palisade",
-          "desc": "A ring of sharpened stakes and old rope, more scarecrow than wall, but it's kept someone out before. A watch-fire glows just inside.",
+          "desc": "A ring of sharpened stakes and old rope, more scarecrow than wall, but it's kept someone out before. A watch-fire glows just inside. {{SIGN}}",
           "brief": "A stake-and-rope palisade, a watch-fire glowing within.",
           "exits": { "in": { "to": "$fire" } }
         },
@@ -449,17 +566,31 @@
               "id": "$pay",
               "label": "pay the toll (gold)",
               "if": [["!flag", "$done"], ["var", "gold", ">=", 6]],
-              "fx": [["addvar", "gold", -6], ["set", "$done"], ["score", 6], ["xp", 5], ["addvar", "rep_free", 1],
-                ["say", "{{CAPTAIN}} weighs the coin in one hand, then waves you toward the fire like you were always welcome there."]]
+              "fx": [
+                ["addvar", "gold", -6],
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_free", 1],
+                ["say", "{{CAPTAIN}} weighs the coin in one hand, then waves you toward the fire like you were always welcome there."]
+              ]
             },
             {
               "id": "$slip",
               "label": "slip through unseen (grace)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "grace", 10,
-                  [["set", "$done"], ["score", 6], ["xp", 5], ["addvar", "rep_free", 1],
-                    ["say", "You wait for the watch to turn and thread the gap between bedrolls before anyone thinks to look twice."]],
+                [
+                  "check",
+                  "grace",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_free", 1],
+                    ["say", "You wait for the watch to turn and thread the gap between bedrolls before anyone thinks to look twice."]
+                  ],
                   [["say", "Someone looks up right as you move. {{CAPTAIN}} hasn't missed it."]]
                 ]
               ]
@@ -477,15 +608,18 @@
               "label": "take a share from the box",
               "once": true,
               "if": [["flag", "$done"]],
-              "fx": [["move", "$loot", "inv"], ["score", 3], ["xp", 2], ["addvar", "gold", 6],
-                ["say", "A share left plain on top, like {{CAPTAIN}} expected someone to come looking. You take it and nothing more."]]
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 6],
+                ["say", "A share left plain on top, like {{CAPTAIN}} expected someone to come looking. You take it and nothing more."]
+              ]
             }
           ]
         }
       },
-      "items": {
-        "$loot": { "name": "a Free Company chit", "loc": "nowhere" }
-      },
+      "items": { "$loot": { "name": "{{LOOT}}", "loc": "nowhere" } },
       "npcs": {
         "$captain": {
           "name": "{{CAPTAIN}}",
@@ -509,32 +643,46 @@
               "if": [["!flag", "$done"]],
               "say": "Go on, then. Make your case.",
               "fx": [
-                ["check", "will", 10,
-                  [["set", "$done"], ["score", 6], ["xp", 5], ["addvar", "rep_free", 1],
-                    ["say", "You make a case {{CAPTAIN}} can't quite argue with, and they wave you past, calling it fair enough."]],
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_free", 1],
+                    ["say", "You make a case {{CAPTAIN}} can't quite argue with, and they wave you past, calling it fair enough."]
+                  ],
                   [["say", "{{CAPTAIN}} hears you out, unmoved, and says as much without much interest."]]
                 ]
               ]
             }
           ],
           "onDeath": [
-            ["if", [["!flag", "$done"]],
-              [["set", "$done"], ["score", 6], ["xp", 5], ["addvar", "rep_free", 1],
-                ["say", "{{CAPTAIN}} goes down still reaching for the knife. The rest of the camp doesn't move to avenge it — a toll's a toll, not a cause."]],
+            [
+              "if",
+              [["!flag", "$done"]],
+              [
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_free", 1],
+                ["say", "{{CAPTAIN}} goes down still reaching for the knife. The rest of the camp doesn't move to avenge it — a toll's a toll, not a cause."]
+              ],
               [["say", "{{CAPTAIN}} was already square with you."]]
             ]
           ]
         }
       }
     },
-
     "chapel": {
       "entrance": "$porch",
-      "vars": ["NAME", "SAINT"],
+      "vars": ["NAME", "SAINT", "SIGN", "LOOT"],
       "rooms": {
         "$porch": {
           "name": "{{NAME}} — porch",
-          "desc": "Rain has had its way with the porch roof, but the door beneath it still hangs true. Old wax has pooled and hardened on the sill, layer over layer.",
+          "desc": "Rain has had its way with the porch roof, but the door beneath it still hangs true. Old wax has pooled and hardened on the sill, layer over layer. {{SIGN}}",
           "brief": "The chapel porch, wax pooled on the sill.",
           "exits": { "in": { "to": "$nave" } }
         },
@@ -564,9 +712,18 @@
               "label": "speak the rite for it (will)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "will", 10,
-                  [["set", "$done"], ["slay", "$saint_shade"], ["score", 6], ["xp", 5], ["addvar", "rep_church", 1],
-                    ["say", "You speak the rite whole, start to finish, meaning enough of it that {{SAINT}} finally hears the end of its own vigil."]],
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["slay", "$saint_shade"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_church", 1],
+                    ["say", "You speak the rite whole, start to finish, meaning enough of it that {{SAINT}} finally hears the end of its own vigil."]
+                  ],
                   [["say", "The words come out hollow, half-remembered. {{SAINT}} does not stir."]]
                 ]
               ]
@@ -576,9 +733,18 @@
               "label": "read the vigil-plaque (wits)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "wits", 9,
-                  [["set", "$done"], ["slay", "$saint_shade"], ["score", 6], ["xp", 5], ["addvar", "rep_church", 1],
-                    ["say", "The plaque names the vigil's proper end, word for word. {{SAINT}} rises, and does not kneel again."]],
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["slay", "$saint_shade"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_church", 1],
+                    ["say", "The plaque names the vigil's proper end, word for word. {{SAINT}} rises, and does not kneel again."]
+                  ],
                   [["say", "The plaque's cut too shallow to read by feel alone, and you're guessing more than reading."]]
                 ]
               ]
@@ -587,8 +753,8 @@
         },
         "$crypt": {
           "name": "{{NAME}} — crypt",
-          "desc": "The crypt below, close-walled and dry, holds the congregation the nave forgot. A reliquary sits on the one dry shelf, unopened in what looks like decades.",
-          "brief": "The crypt, a reliquary on its shelf.",
+          "desc": "The crypt below, close-walled and dry, holds the congregation the nave forgot, and on the one dry shelf sits {{LOOT}}, waiting on someone to claim it.",
+          "brief": "The crypt, {{LOOT}} on its shelf.",
           "exits": { "out": { "to": "$nave" } },
           "actions": [
             {
@@ -596,23 +762,33 @@
               "label": "lay them to rest",
               "once": true,
               "if": [["flag", "$done"], ["!flag", "$crypt_done"]],
-              "fx": [["set", "$crypt_done"], ["move", "$loot", "inv"], ["score", 3], ["xp", 2], ["addvar", "rep_church", 1],
-                ["say", "You say what's owed to the ones the nave forgot, plain and unhurried. The reliquary opens easy after, like it was only waiting to be asked."]]
+              "fx": [
+                ["set", "$crypt_done"],
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "rep_church", 1],
+                ["say", "You say what's owed to the ones the nave forgot, plain and unhurried, and {{LOOT}} comes free after, like it was only waiting to be asked."]
+              ]
             },
             {
               "id": "$theft",
-              "label": "take the reliquary and go",
+              "label": "take {{LOOT}} and go",
               "once": true,
               "if": [["flag", "$done"], ["!flag", "$crypt_done"]],
-              "fx": [["set", "$crypt_done"], ["move", "$loot", "inv"], ["score", 3], ["xp", 2], ["addvar", "rep_church", -1],
-                ["say", "You force the reliquary and pocket it. The congregation's rest is no better and no worse for your being quick about it."]]
+              "fx": [
+                ["set", "$crypt_done"],
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "rep_church", -1],
+                ["say", "You pry {{LOOT}} loose and pocket it. The congregation's rest is no better and no worse for your being quick about it."]
+              ]
             }
           ]
         }
       },
-      "items": {
-        "$loot": { "name": "a saint's small reliquary", "loc": "nowhere" }
-      },
+      "items": { "$loot": { "name": "{{LOOT}}", "loc": "nowhere" } },
       "npcs": {
         "$saint_shade": {
           "name": "{{SAINT}}",
@@ -623,23 +799,29 @@
           "df": 8,
           "desc": "Robes gone to cobweb, hands still folded as if the prayer never ended.",
           "onDeath": [
-            ["if", [["!flag", "$done"]],
-              [["set", "$done"], ["score", 6], ["xp", 5], ["addvar", "rep_church", 1],
-                ["say", "{{SAINT}} comes apart into dust and old cloth, its vigil finally ended, however roughly."]],
+            [
+              "if",
+              [["!flag", "$done"]],
+              [
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_church", 1],
+                ["say", "{{SAINT}} comes apart into dust and old cloth, its vigil finally ended, however roughly."]
+              ],
               [["say", "{{SAINT}} was already at rest."]]
             ]
           ]
         }
       }
     },
-
     "hut": {
       "entrance": "$hut",
-      "vars": ["NAME", "HERMIT"],
+      "vars": ["NAME", "HERMIT", "SIGN", "LOOT"],
       "rooms": {
         "$hut": {
           "name": "{{NAME}}",
-          "desc": "One room: a hearth, a cot, and {{HERMIT}} mid-task at a bench, in no hurry to notice you. Everything here has been mended, more than once, and holds.",
+          "desc": "One room: a hearth, a cot, and {{HERMIT}} mid-task at a bench, in no hurry to notice you. Everything here has been mended, more than once, and holds. {{SIGN}}",
           "brief": "{{HERMIT}}'s one room, everything mended more than once.",
           "variants": [
             {
@@ -654,9 +836,16 @@
               "label": "press for it plainly (might)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "might", 10,
-                  [["set", "$done"], ["score", 6], ["xp", 5],
-                    ["say", "You make it plain you're not leaving without an answer. {{HERMIT}} decides you mean it, and talks."]],
+                [
+                  "check",
+                  "might",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "You make it plain you're not leaving without an answer. {{HERMIT}} decides you mean it, and talks."]
+                  ],
                   [["say", "{{HERMIT}} waits you out, unbothered. You gave in first."]]
                 ]
               ]
@@ -666,9 +855,16 @@
               "label": "read the signs yourself (wits)",
               "if": [["!flag", "$done"]],
               "fx": [
-                ["check", "wits", 9,
-                  [["set", "$done"], ["score", 6], ["xp", 5],
-                    ["say", "It's all there if you look: what's worn, what's new, what's kept close. You piece it together without a word asked."]],
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "It's all there if you look: what's worn, what's new, what's kept close. You piece it together without a word asked."]
+                  ],
                   [["say", "Whatever's here to read, it doesn't give itself up on a glance."]]
                 ]
               ]
@@ -678,15 +874,18 @@
               "label": "take the parting gift",
               "once": true,
               "if": [["flag", "$done"]],
-              "fx": [["move", "$loot", "inv"], ["score", 3], ["xp", 2], ["addvar", "gold", 3],
-                ["say", "{{HERMIT}} presses it into your hands before you can think to refuse, already turning back to the bench."]]
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 3],
+                ["say", "{{HERMIT}} presses it into your hands before you can think to refuse, already turning back to the bench."]
+              ]
             }
           ]
         }
       },
-      "items": {
-        "$loot": { "name": "a hand-drawn charm against the gray", "loc": "nowhere" }
-      },
+      "items": { "$loot": { "name": "{{LOOT}}", "loc": "nowhere" } },
       "npcs": {
         "$hermit": {
           "name": "{{HERMIT}}",
@@ -706,9 +905,16 @@
               "if": [["!flag", "$done"]],
               "say": "Fair enough. Talk, then, and we'll see.",
               "fx": [
-                ["check", "will", 10,
-                  [["set", "$done"], ["score", 6], ["xp", 5],
-                    ["say", "You strike a plain bargain, and {{HERMIT}} keeps to it, telling you what you came for without further prompting."]],
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "You strike a plain bargain, and {{HERMIT}} keeps to it, telling you what you came for without further prompting."]
+                  ],
                   [["say", "{{HERMIT}} hears you out and shakes their head. Not enough, not yet."]]
                 ]
               ]
