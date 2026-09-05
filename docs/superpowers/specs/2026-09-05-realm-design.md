@@ -212,8 +212,8 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the first playtest rounds): 415 rooms, 126 npcs, 114
-items, 55 quests, 32 stamped places each with its own sign and reward, 144
+**As built** (after the first playtest rounds): 415 rooms, 126 npcs, 115
+items, 56 quests, 32 stamped places each with its own sign and reward, 168
 epilogue lines, 4 companions, 6 factions, 7 endings each with a proof; every
 gate in the holds and the capital has a force, a craft and a words route, and
 ten waystations on the roads between the holds each put a small choice in the
@@ -244,6 +244,19 @@ sold to the chandler, or hung on the great mound's door, in Hollowbrook. And
 Keeper Wren's question for a sister Hall, in Hollowbrook, is answered — the
 verse sent whole, a lesser token, or nothing at all — by Keeper Rowan in
 Thornwold's Understory, closing the ring.
+
+**Remembered** (after the choice audit, `scripts/audit-choices.ts`): the
+forks the realm forgot now echo somewhere else. The herald's oath is met
+again in the Regent's chamber and by the Marshal and Quill; each companion's
+advice is quoted back when their grief resolves and colors their epilogue;
+their confidences are recalled; Vell's promise is tested in Marrowgate, kept
+or broken; Cal staying with the Company is its own ending line. The chapel
+crypts count the dead laid to rest and the dead robbed, and the Prior, Keeper
+Wren and the abbot answer for it; Rennick's smuggling and informing on him are
+told apart; the Drowned Chapel wears the Third Bell's outcome; the pilgrim's
+token and the drovers' family, the chandler's ring and three pieces of
+knowledge all find a second place. Eighteen forgotten forks remain, all
+single-path markers or warnings by design.
 
 ## Build order
 
