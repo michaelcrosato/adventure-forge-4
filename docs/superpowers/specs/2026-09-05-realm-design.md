@@ -212,8 +212,8 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the first playtest rounds): 415 rooms, 126 npcs, 115
-items, 56 quests, 32 stamped places each with its own sign and reward, 168
+**As built** (after the first playtest rounds): 464 rooms, 139 npcs, 129
+items, 62 quests, 36 stamped places each with its own sign and reward, 180
 epilogue lines, 4 companions, 6 factions, 7 endings each with a proof; every
 gate in the holds and the capital has a force, a craft and a words route, and
 ten waystations on the roads between the holds each put a small choice in the
@@ -257,6 +257,21 @@ told apart; the Drowned Chapel wears the Third Bell's outcome; the pilgrim's
 token and the drovers' family, the chandler's ring and three pieces of
 knowledge all find a second place. Eighteen forgotten forks remain, all
 single-path markers or warnings by design.
+
+**Emberfall** (the tenth region, `em_`): west of Thornwold by the wayfire's
+ash road, the hold that was burned once. Glasswick among the ruins — a
+glass-master, a prior who guards the Church's sealed record of the old
+burning, a charcoal-burner, an Ironbound factor, a Companies runner, a Keeper
+hiding from her own Church, a child of the ash, a woman whose brother died
+stopping the last fire — a walled flat of ash and glass with a piercing
+glass-ash wraith, four stamped places (the Glazed Cairn, the Cinder Watch,
+the Sand Mine, the Charcoal Run), and the Choir of Ash on the ridge: rested
+with the prior's confession and the Keeper's suppressed verse together,
+bargained with the chapel's bell or the confession made public, or burned a
+fifth time with Ironbound cinder-oil — after which it sings louder, and
+Marrowgate's Preceptor-General admits as much. Six quests, eleven epilogue
+lines, three Marrowgate echoes, ten companion remarks; the hollow tallies
+run to seven.
 
 ## Build order
 
