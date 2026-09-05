@@ -23,6 +23,22 @@ export function renderMenu(world: World, s: State): { text: string; actions: Act
   return { text, actions };
 }
 
+/**
+ * The inverse of renderMenu's line format, for clients that only see rendered
+ * text (the mock players) and want to follow a walkthrough by canonical label:
+ * a menu line is the canonical label, optionally followed by exactly one
+ * display-only hint from oddsHint — always " (…)" at the end, whatever its
+ * kind (roll odds, locked-exit clue, destination landmark, item-use preview).
+ * Parentheses that belong to the label itself ("(scholar)", a perk's "(desc)")
+ * survive because the whole canonical label is matched first. Callers should
+ * prefer an exact match over this looser one when both are on offer.
+ */
+export function matchesMenuLabel(line: string, canonical: string): boolean {
+  const a = line.trim().toLowerCase();
+  const b = canonical.trim().toLowerCase();
+  return a === b || (a.startsWith(`${b} (`) && a.endsWith(")"));
+}
+
 // Compass abbreviations for the "exits:" orientation line — every direction
 // word a world actually uses (see world/*.json); anything else falls back to
 // its capitalized self.

@@ -7,11 +7,103 @@ import assert from "node:assert/strict";
 import { readFileSync, rmSync } from "node:fs";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { fileReport, mockProvider, playOne, turnWarning } from "../src/player.ts";
+import {
+  acceptReport,
+  fileReport,
+  findMenuEntry,
+  mockProvider,
+  playOne,
+  reportShapeErrors,
+  turnWarning,
+} from "../src/player.ts";
+import type { Msg, Provider, SessionResult } from "../src/player.ts";
 import { loadWorld } from "../src/validate.ts";
 import type { World } from "../src/types.ts";
 
 const world: World = loadWorld(fileURLToPath(new URL("../world/lighthouse.json", import.meta.url)));
+const vale: World = loadWorld(fileURLToPath(new URL("../world/vale.json", import.meta.url)));
+const noUsage = { in: 0, out: 0, cacheRead: 0, cacheWrite: 0 };
+
+test("mock provider follows the Vale walkthrough over rendered text to a verified full-score win", async () => {
+  // Regression: display hints such as "go east (toward drowned shrine)" once
+  // defeated label matching, so the mock skipped steps and stalled at turn 35.
+  const r = await playOne(vale, 1, mockProvider(vale), 80);
+  assert.equal(r.ended, "king_at_rest");
+  assert.equal(r.stalled, false);
+  assert.equal(r.verified, true, "receipt verified by in-process replay");
+  assert.ok(r.receipt?.includes(`.${vale.maxScore}.`), `full score in receipt ${r.receipt}`);
+});
+
+test("an ordinary walkthrough step missing from the menu is an error, not a silent skip", async () => {
+  const broken: World = { ...world, walkthrough: ["go nowhere"] };
+  await assert.rejects(playOne(broken, 1, mockProvider(broken), 80), /"go nowhere" is not on the menu/);
+});
+
+test("findMenuEntry prefers an exact label over a hint-tolerant match", () => {
+  // two real Vale labels differ only by a trailing parenthetical of their own
+  const menu = [
+    { n: "1", label: "weigh the two roads (scout)" },
+    { n: "2", label: "weigh the two roads" },
+  ];
+  assert.equal(findMenuEntry(menu, "weigh the two roads")?.n, "2");
+  assert.equal(findMenuEntry(menu, "weigh the two roads (scout)")?.n, "1");
+  assert.equal(findMenuEntry([{ n: "1", label: "go east (toward drowned shrine)" }], "go east")?.n, "1");
+  assert.equal(findMenuEntry([{ n: "1", label: "go east" }], "go west"), undefined);
+});
+
+test("reportShapeErrors accepts a well-formed report and names each fault of a malformed one", () => {
+  assert.deepEqual(
+    reportShapeErrors({ verdict: "won", fun: 3, clarity: 4, turns: 9, receipt: "r", bugs: [], confusions: [], suggestions: [] }),
+    [],
+  );
+  const errs = reportShapeErrors({ verdict: "champion", fun: 9, clarity: "x", bugs: "none", suggestions: [], receipt: 5 });
+  for (const k of ["verdict", "fun", "clarity", "bugs", "receipt"])
+    assert.ok(errs.some((e) => e.startsWith(k)), `${k} flagged in: ${errs.join("; ")}`);
+  assert.deepEqual(reportShapeErrors(null), ["report must be a JSON object"]);
+  assert.deepEqual(reportShapeErrors([1]), ["report must be a JSON object"]);
+});
+
+test("a malformed report is rejected with a shape error and the session files as unverified", async () => {
+  const provider: Provider = async (_system: string, msgs: Msg[]) => {
+    const last = msgs[msgs.length - 1]!.content;
+    const text = /output ONLY.*json report/is.test(last) ? '```json\n{"verdict":"champion","receipt":"x"}\n```' : "1";
+    return { text, usage: noUsage };
+  };
+  const r = await playOne(world, 11, provider, 80);
+  assert.equal(r.report, null);
+  assert.match(r.reportError ?? "", /report shape/);
+  assert.equal(r.verified, false);
+});
+
+test("a filed report cannot overwrite host-controlled metadata (verified, seed, build, ending, lane)", () => {
+  // The writer used to spread the model's report AFTER the host fields, so a
+  // report carrying e.g. verified:true or ending:"invented" replaced the truth.
+  const forged = {
+    verdict: "won", fun: 5, clarity: 5, turns: 3, receipt: "forged", bugs: [], confusions: [], suggestions: [],
+    verified: true, seed: 999, ending: "invented", build: { rev: "fake", world: "fake" }, lane: "mcp", kind: "issue",
+  };
+  const r: SessionResult = {
+    seed: 7, turns: 3, ended: "beacon_lit", stalled: false, verified: false, apiCalls: 4,
+    receipt: "lighthouse.7.3.0.beacon_lit.00000000", usage: noUsage, report: forged,
+  };
+  const file = fileReport(r, "mock", fileURLToPath(new URL("../world/lighthouse.json", import.meta.url)));
+  assert.ok(file, "report file written");
+  try {
+    const item = JSON.parse(readFileSync(file!, "utf8"));
+    assert.equal(item.verified, false);
+    assert.equal(item.seed, 7);
+    assert.equal(item.ending, "beacon_lit");
+    assert.equal(item.lane, "api");
+    assert.equal(item.kind, "playtest");
+    assert.notEqual(item.build.rev, "fake");
+    assert.equal(item.verdict, "won", "accepted report fields still land");
+    assert.equal(item.receipt, "forged", "the quoted receipt is kept as evidence; verified says whether it held");
+  } finally {
+    rmSync(file!, { force: true });
+  }
+  // and the accept step itself keeps only the supported fields
+  assert.deepEqual(Object.keys(acceptReport(forged)).sort(), ["bugs", "clarity", "confusions", "fun", "receipt", "suggestions", "turns", "verdict"]);
+});
 
 test("direct player wins via walkthrough policy and files a verified report", async () => {
   const r = await playOne(world, 7, mockProvider(world), 80);

@@ -20,7 +20,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { inClassPhase, inPerkPickPhase, newState, receipt as receiptOf, step } from "./engine.ts";
-import { render, renderIntro } from "./format.ts";
+import { matchesMenuLabel, render, renderIntro } from "./format.ts";
 import { replayTrace } from "./crawl.ts";
 import { loadWorld } from "./validate.ts";
 import { triage } from "./triage.ts";
@@ -83,13 +83,26 @@ export function apiProvider(model: string): Provider {
   };
 }
 
-// Menu text may carry a display-only " (roll N+ on the die[; +N skill])" or
-// " (locked[: hint])" suffix (see oddsHint in engine.ts) that is never part
-// of the canonical label walkthroughs match on.
-const stripHints = (label: string) =>
-  label.replace(/ \((?:roll \d+\+ on the die(?:; [+-]?\d+ \w+)?|locked(?::[^)]*)?)\)$/, "");
+/**
+ * Find a rendered menu entry for a canonical walkthrough label. Exact match
+ * first (two labels can differ only by a trailing parenthetical, e.g. "weigh
+ * the two roads" and "weigh the two roads (scout)"), then the hint-tolerant
+ * rule from format.ts, since menu text carries display-only " (…)" suffixes
+ * from oddsHint that are never part of the canonical label.
+ */
+export function findMenuEntry<T extends { label: string }>(menu: T[], want: string): T | undefined {
+  const w = want.trim().toLowerCase();
+  return menu.find((m) => m.label.trim().toLowerCase() === w) ?? menu.find((m) => matchesMenuLabel(m.label, want));
+}
 
-/** Scripted stand-in: follows the world's walkthrough by menu label, then files a canned report quoting the real receipt. Proves the whole driver for zero tokens. */
+/**
+ * Scripted stand-in: follows the world's walkthrough by menu label, then files
+ * a canned report quoting the real receipt. Proves the whole driver for zero
+ * tokens. An ordinary step that is not on the menu is an error (the session
+ * would otherwise silently drift off the proven path and file a bogus stall);
+ * only a `repeat` step may vanish from the menu, which means its until-condition
+ * is met.
+ */
 export function mockProvider(world: World): Provider {
   const script = [...world.walkthrough];
   let repeat: { repeat: string; max: number } | null = null;
@@ -104,22 +117,22 @@ export function mockProvider(world: World): Provider {
         usage,
       };
     }
-    const menu = [...last.matchAll(/^(\d+) (.+)$/gm)].map((m) => ({ n: m[1]!, label: stripHints(m[2]!) }));
-    const want = () => {
-      if (repeat) return repeat.repeat;
-      const s = script[0];
-      if (typeof s === "string") { script.shift(); return s; }
-      if (s) { repeat = s; script.shift(); return s.repeat; }
+    const menu = [...last.matchAll(/^(\d+) (.+)$/gm)].map((m) => ({ n: m[1]!, label: m[2]! }));
+    const want = (): { label: string; repeat: boolean } | null => {
+      if (repeat) return { label: repeat.repeat, repeat: true };
+      const s = script.shift();
+      if (typeof s === "string") return { label: s, repeat: false };
+      if (s) { repeat = s; return { label: s.repeat, repeat: true }; }
       return null;
     };
-    for (let guard = 0; guard < 3; guard++) {
+    for (;;) {
       const w = want();
-      if (!w) return { text: "1", usage };
-      const hit = menu.find((m) => m.label.toLowerCase() === w.toLowerCase());
+      if (!w) return { text: "1", usage }; // script exhausted with the game still open: nothing left to follow
+      const hit = findMenuEntry(menu, w.label);
       if (hit) return { text: hit.n, usage };
+      if (!w.repeat) throw new Error(`mock: walkthrough step "${w.label}" is not on the menu:\n${last}`);
       repeat = null; // repeat target gone => its until-condition is met; advance
     }
-    return { text: "1", usage };
   };
 }
 
@@ -194,7 +207,7 @@ export async function playOne(
     // accept "3", "3: go north", or structured {"a":3} (provider-compat)
     const parseN = (t: string) => Number(/^\s*(\d+)/.exec(t)?.[1] ?? /"a"\s*:\s*(\d+)/.exec(t)?.[1]);
     let n = parseN(reply.text);
-    let menu = render(world, state, []).actions;
+    const menu = render(world, state, []).actions;
     if (!Number.isInteger(n) || n < 1 || n > menu.length) {
       msgs.push({ role: "user", content: `Reply with ONLY a menu number (1-${menu.length}).` });
       const retry = await ask(system, msgs, 20);
@@ -227,7 +240,10 @@ export async function playOne(
   try {
     const fence = /```json\s*([\s\S]*?)```/.exec(rep.text);
     if (!fence) throw new Error("no fenced json block");
-    report = JSON.parse(fence[1]!) as Record<string, unknown>;
+    const parsed = JSON.parse(fence[1]!) as unknown;
+    const shapeErrs = reportShapeErrors(parsed);
+    if (shapeErrs.length) throw new Error(`report shape: ${shapeErrs.join("; ")}`);
+    report = acceptReport(parsed as Record<string, unknown>);
   } catch (e) {
     reportError = String(e);
   }
@@ -241,6 +257,41 @@ export async function playOne(
   return { seed, turns: state.turn, ended: state.ended?.id ?? null, stalled, report, reportError, verified, usage, apiCalls, receipt: trueReceipt };
 }
 
+// ---------- report shape ----------
+/**
+ * The fields a player's report may contribute, and nothing else. Everything
+ * the host knows better — verified, seed, build, usage, the actual ending —
+ * is written by the host AFTER these, so a report can never overwrite it.
+ * loop/report-check.mjs applies the same rule to the MCP lane.
+ */
+export const REPORT_FIELDS = ["verdict", "fun", "clarity", "turns", "receipt", "bugs", "confusions", "suggestions"] as const;
+export const VERDICTS = ["won", "lost", "quit", "stuck"] as const;
+
+/** Why a parsed report is not a report — empty when it is. Mirrors loop/report-check.mjs. */
+export function reportShapeErrors(v: unknown): string[] {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return ["report must be a JSON object"];
+  const r = v as Record<string, unknown>;
+  const errs: string[] = [];
+  const num = (k: string, lo: number, hi: number) => {
+    const x = r[k];
+    if (typeof x !== "number" || x < lo || x > hi) errs.push(`${k} must be ${lo}..${hi}`);
+  };
+  if (!(VERDICTS as readonly unknown[]).includes(r.verdict)) errs.push(`verdict must be ${VERDICTS.join("|")}`);
+  num("fun", 1, 5);
+  num("clarity", 1, 5);
+  if (!Array.isArray(r.bugs)) errs.push("bugs must be an array");
+  if (!Array.isArray(r.suggestions)) errs.push("suggestions must be an array");
+  if (typeof r.receipt !== "string") errs.push("receipt must be quoted verbatim");
+  return errs;
+}
+
+/** Copy only the supported report fields (drops anything that could shadow host metadata). */
+export function acceptReport(r: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const k of REPORT_FIELDS) if (k in r) out[k] = r[k];
+  return out;
+}
+
 // ---------- fleet CLI ----------
 /** Ground-truth ending id (distinct per ending, e.g. multiple ids per world when a
  * world offers more than one route to a win) — lets analysis across playtests see
@@ -248,9 +299,12 @@ export async function playOne(
 export function fileReport(r: SessionResult, model: string, worldPath: string): string | null {
   if (!r.report) return null;
   const ts = new Date().toISOString().replace(/[:.]/g, "-");
+  // accepted report fields first, host-controlled metadata last: the host's
+  // values win even if a report somehow carried a same-named key
   const item = {
+    ...acceptReport(r.report),
     schema: 1, kind: "playtest", lane: "api", model, ts, seed: r.seed, stalled: r.stalled,
-    build: buildId(worldPath), usage: r.usage, api_calls: r.apiCalls, verified: r.verified, ending: r.ended, ...r.report,
+    build: buildId(worldPath), usage: r.usage, api_calls: r.apiCalls, verified: r.verified, ending: r.ended,
   };
   mkdirSync(join(ROOT, "reports"), { recursive: true });
   const file = join(ROOT, "reports", `playtest-${ts}-s${r.seed}.json`);

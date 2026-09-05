@@ -18,13 +18,22 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
+// The same world the MCP server (src/mcp.ts) serves by default, so a report's
+// content hash names the world the player actually saw; loop/playtest.sh also
+// passes its resolved TF_WORLD to both, so an override cannot drift either.
+const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
+
 function buildId() {
   let rev = "nogit";
   try { rev = execSync("git rev-parse --short HEAD", { cwd: ROOT, encoding: "utf8" }).trim(); } catch {}
-  const worldPath = process.env.TF_WORLD ?? join(ROOT, "world", "lighthouse.json");
-  const world = createHash("sha256").update(readFileSync(worldPath)).digest("hex").slice(0, 8);
+  const world = createHash("sha256").update(readFileSync(WORLD_PATH)).digest("hex").slice(0, 8);
   return { rev, world };
 }
+
+// The fields a player's report may contribute, and nothing else. Everything the
+// host knows better (verified, seed, build, cost) is written AFTER these, so a
+// report can never overwrite it. Mirrors REPORT_FIELDS in src/player.ts.
+const REPORT_FIELDS = ["verdict", "fun", "clarity", "turns", "receipt", "bugs", "confusions", "suggestions"];
 const args = process.argv.slice(2);
 const outFile = args[0];
 const seed = args.includes("--seed") ? Number(args[args.indexOf("--seed") + 1]) : null;
@@ -103,7 +112,9 @@ try {
 
 const ts = new Date().toISOString().replace(/[:.]/g, "-");
 mkdirSync(join(ROOT, "reports"), { recursive: true });
+const accepted = Object.fromEntries(REPORT_FIELDS.filter((k) => k in report).map((k) => [k, report[k]]));
 const item = {
+  ...accepted,
   schema: 1,
   kind: "playtest",
   lane: "mcp",
@@ -112,7 +123,6 @@ const item = {
   build: buildId(),
   cost_usd: costUsd,
   verified,
-  ...report,
 };
 const file = join(ROOT, "reports", `playtest-${ts}${seed !== null ? `-s${seed}` : ""}.json`);
 writeFileSync(file, JSON.stringify(item, null, 2));
