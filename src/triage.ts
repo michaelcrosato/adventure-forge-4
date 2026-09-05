@@ -16,6 +16,8 @@
  * threshold clusterUnits uses within one wave, just applied across waves too.
  * Bug reports skip this fuzzy check and always need an exact id match, so a
  * recurring bug (maybe a regression) is never silently swallowed.
+ * queue/superseded/ (issues folded by hand into a better-corroborated one,
+ * listed in its _manifest.json) counts as already known too.
  */
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
@@ -140,7 +142,12 @@ export function triage(opts?: { reportsDir?: string; queueDir?: string; dedupeDi
 } {
   const reportsDir = opts?.reportsDir ?? join(ROOT, "reports");
   const queueDir = opts?.queueDir ?? join(ROOT, "queue");
-  const dedupeDirs = opts?.dedupeDirs ?? [queueDir, join(queueDir, "failed"), join(ROOT, "done")];
+  const dedupeDirs = opts?.dedupeDirs ?? [
+    queueDir,
+    join(queueDir, "failed"),
+    join(queueDir, "superseded"),
+    join(ROOT, "done"),
+  ];
   mkdirSync(join(reportsDir, "triaged"), { recursive: true });
   mkdirSync(queueDir, { recursive: true });
 
