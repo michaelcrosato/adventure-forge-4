@@ -1,0 +1,36 @@
+# The same bar the dev loop enforces locally, on every push and pull request,
+# across the Node majors the engines field admits. No tokens are spent: the
+# mock player and the walkthrough measurement talk to the real MCP server
+# with a scripted client.
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24]
+    name: node ${{ matrix.node }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - name: typecheck + tests + validator + crawler
+        run: npm run verify
+      - name: structural player over real MCP (random walk)
+        run: npm run mock
+      - name: Vale walkthrough over real MCP
+        run: npm run measure
+      - name: Lighthouse walkthrough over real MCP (TF_WORLD override)
+        run: node loop/mock-player.mjs --measure
+        env:
+          TF_WORLD: world/lighthouse.json

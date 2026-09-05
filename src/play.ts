@@ -1,11 +1,13 @@
 /**
  * tinyforge human CLI — play in a terminal: `npm run play [-- seed]`.
- * Type a menu number (or an action label). `look` re-shows the room. `q` quits.
+ * Type a menu number (or an action label). `look` re-shows the room and
+ * `status` recaps objectives, progress, and inventory — both free, like the
+ * MCP tools of the same names. `q` quits.
  */
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 import { actionByLabel, inClassPhase, inPerkPickPhase, newState, step } from "./engine.ts";
-import { render, renderIntro } from "./format.ts";
+import { render, renderIntro, renderStatus } from "./format.ts";
 import { loadWorld } from "./validate.ts";
 
 const seed = Number(process.argv[2] ?? Math.floor(Math.random() * 1e9));
@@ -23,6 +25,11 @@ rl.on("line", (line) => {
   if (cmd === "q" || cmd === "quit") process.exit(0);
   if (cmd === "look") {
     console.log(render(world, state, [], { full: true }).text);
+    rl.prompt();
+    return;
+  }
+  if (cmd === "status") {
+    console.log(renderStatus(world, state));
     rl.prompt();
     return;
   }
