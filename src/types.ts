@@ -13,7 +13,7 @@ export type Cond =
   | ["!flag", string]
   | ["npcDead", string]
   | ["!npcDead", string]
-  | ["var", string, "<" | ">" | "=" | ">=", number]
+  | ["var", string, "<" | ">" | "=" | ">=" | "<=", number]
   | ["class", string] // player picked this class
   | ["!class", string]
   | ["perk", string] // player owns this perk
@@ -132,6 +132,13 @@ export type CompanionDef = {
   hit?: number; // attack-roll bonus when fighting beside the player
   dmg?: number; // damage on a hit (default 1)
   remarks?: RemarkDef[];
+  /**
+   * When a companion walks out: checked after every turn while in the party;
+   * the first entry whose conditions pass is spoken, the companion leaves the
+   * party where they stand, and flag `<npc>_left` is set. Approval floors and
+   * unforgivable deeds live here, once, instead of in every settlement.
+   */
+  leaves?: { if: Cond[]; say: string }[];
 };
 
 export type NpcDef = {

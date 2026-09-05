@@ -333,3 +333,19 @@ test("the perk and class menus still take precedence over an open conversation",
   state = doLabel(world, state, "perk: Tough (+3 max hp)");
   assert.ok(inTalkMode(world, state), "and the conversation resumes afterwards");
 });
+
+test("a companion with a matching `leaves` entry walks out after the turn, sets <npc>_left, and stops following", () => {
+  const world = company();
+  world.npcs["lys"]!.companion!.leaves = [{ if: [["var", "appr_lys", "<=", -2]], say: "I've seen enough of you." }];
+  world.rooms["a"]!.actions = [{ id: "kick", label: "kick a dog", fx: [["addvar", "appr_lys", -1]] }];
+  let { state } = newState(world, 1);
+  state = doLabel(world, state, "ask Lys: come with me");
+  state = doLabel(world, state, "kick a dog");
+  assert.deepEqual(state.party, ["lys"], "one strike is not enough");
+  const out = step(world, state, actionByLabel(world, state, "kick a dog")!);
+  assert.match(out.events.join(" "), /Lys: "I've seen enough of you\." Lys leaves your company\./);
+  assert.deepEqual(out.state.party, []);
+  assert.ok(out.state.flags["lys_left"]);
+  const moved = doLabel(world, out.state, "go east");
+  assert.equal(moved.npcRoom["lys"], "a", "she stays where she quit");
+});

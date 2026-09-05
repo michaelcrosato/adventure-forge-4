@@ -56,7 +56,7 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["has", item]` / `["!has", item]` | item is / is not in the inventory |
 | `["flag", f]` / `["!flag", f]` | flag set / not set |
 | `["npcDead", npc]` / `["!npcDead", npc]` | npc hp ≤ 0 (or not) |
-| `["var", v, op, n]` | `op` is `<`, `>`, `=`, `>=`; unset vars read 0 |
+| `["var", v, op, n]` | `op` is `<`, `>`, `=`, `>=`, `<=`; unset vars read 0 |
 | `["class", c]` / `["!class", c]` | the player's class |
 | `["perk", p]` / `["!perk", p]` | the player owns the perk |
 | `["inParty", npc]` / `["!inParty", npc]` | companion travels with the player |

@@ -116,7 +116,7 @@ export function validateWorld(world: World): string[] {
       if (!COND_OPS.has(c[0])) err(`${where}: unknown cond op ${String(c[0])}`);
       else if ((c[0] === "has" || c[0] === "!has") && !itemOk(c[1])) err(`${where}: unknown item ${c[1]}`);
       else if ((c[0] === "npcDead" || c[0] === "!npcDead" || c[0] === "inParty" || c[0] === "!inParty") && !npcOk(c[1])) err(`${where}: unknown npc ${c[1]}`);
-      else if (c[0] === "var" && !["<", ">", "=", ">="].includes(c[2])) err(`${where}: bad var comparator ${String(c[2])}`);
+      else if (c[0] === "var" && !["<", ">", "=", ">=", "<="].includes(c[2])) err(`${where}: bad var comparator ${String(c[2])}`);
       else if ((c[0] === "class" || c[0] === "!class") && !classOk(c[1])) err(`${where}: unknown class ${c[1]}`);
       else if ((c[0] === "perk" || c[0] === "!perk") && !perkOk(c[1])) err(`${where}: unknown perk ${c[1]}`);
     }
@@ -182,6 +182,8 @@ export function validateWorld(world: World): string[] {
       need(`npc ${nid} topic ${t.id ?? "?"}`, t, [["id", "string"], ["label", "string"], ["say", "string"]]);
     for (const r of npc.companion?.remarks ?? [])
       need(`npc ${nid} remark ${r.id ?? "?"}`, r, [["id", "string"], ["say", "string"]]);
+    for (const [i, l] of (npc.companion?.leaves ?? []).entries())
+      need(`npc ${nid} leaves ${i}`, l, [["if", "array"], ["say", "string"]]);
     // an aggressive npc that cannot hurt or be fought is a menu with no teeth
     if (npc.aggressive && (npc.hp === undefined || !npc.atk)) err(`npc ${nid}: aggressive needs both hp and atk`);
     if (npc.dialogue && !npc.topics?.length) err(`npc ${nid}: dialogue set but no topics — "talk to" would never appear`);
@@ -279,6 +281,7 @@ export function validateWorld(world: World): string[] {
       checkFx(`npc ${nid} topic ${t.id}`, t.fx);
     }
     for (const r of npc.companion?.remarks ?? []) checkConds(`npc ${nid} remark ${r.id}`, r.if);
+    for (const [i, l] of (npc.companion?.leaves ?? []).entries()) checkConds(`npc ${nid} leaves ${i}`, l.if);
   }
 
   // ---------- reachability ----------

@@ -101,7 +101,7 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return !npcDead(world, s, c[1]);
     case "var": {
       const v = s.vars[c[1]] ?? 0;
-      return c[2] === "<" ? v < c[3] : c[2] === ">" ? v > c[3] : c[2] === ">=" ? v >= c[3] : v === c[3];
+      return c[2] === "<" ? v < c[3] : c[2] === ">" ? v > c[3] : c[2] === ">=" ? v >= c[3] : c[2] === "<=" ? v <= c[3] : v === c[3];
     }
     case "class":
       return s.classId === c[1];
@@ -478,10 +478,19 @@ function enterRoom(world: World, s: State, roomId: string, events: string[]): vo
  * effects, so a remark can react to the very choice just made.
  */
 function partyRemarks(world: World, s: State, events: string[]): void {
-  for (const id of s.party) {
+  for (const id of [...s.party]) {
     if (s.ended) return;
     const def = world.npcs[id];
     if (!def || npcDead(world, s, id)) continue;
+    // a companion who has had enough walks out before saying anything else
+    const gone = def.companion?.leaves?.find((l) => condsOk(world, s, l.if));
+    if (gone) {
+      events.push(`${def.name}: "${gone.say}"`);
+      s.party = s.party.filter((x) => x !== id);
+      s.flags[`${id}_left`] = true;
+      events.push(`${def.name} leaves your company.`);
+      continue;
+    }
     for (const r of def.companion?.remarks ?? []) {
       const flag = `remarked_${id}_${r.id}`;
       if (s.flags[flag] || !condsOk(world, s, r.if)) continue;
