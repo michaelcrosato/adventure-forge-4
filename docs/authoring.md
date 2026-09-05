@@ -286,7 +286,7 @@ it standing somewhere.
   lists the journal. Every region quest (4–6 per region) needs a stage for
   each state a player can be in.
 - Epilogue lines print after any ending when their conditions hold, in file
-  order, at most 8. Write 4–8 per region: rested / burned / bargained /
+  order, at most 6. Write 4–8 per region: rested / burned / bargained /
   untouched, plus one or two for memorable side choices. One sentence each.
 - `hud` (root) puts counters on the status line; `gold` is already there.
 

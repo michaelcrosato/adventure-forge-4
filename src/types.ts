@@ -286,7 +286,7 @@ export type QuestDef = {
 };
 
 /** Most epilogue lines appended to an ending; the rest stay untold. */
-export const EPILOGUE_CAP = 8;
+export const EPILOGUE_CAP = 6;
 
 export type World = {
   id: string;

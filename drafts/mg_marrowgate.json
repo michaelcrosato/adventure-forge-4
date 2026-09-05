@@ -1,0 +1,1408 @@
+{
+  "rooms": {
+    "mg_south_gate": {
+      "name": "Marrowgate, South Gate",
+      "desc": "A gatehouse of black stone at the top of the pass, the Regent's stag cut over the arch. Guards in Marrowgate gray count everyone in. Beyond, the Lower Town falls away in tiers of slate roofs, and above it all the palace, pale as a tooth.",
+      "brief": "The south gate. Guards in gray.",
+      "region": "mg",
+      "landmark": "Marrowgate south gate",
+      "exits": {
+        "south": { "to": "cp_pass", "landmark": "Coldpass" },
+        "north": { "to": "mg_lower_town", "landmark": "the Lower Town" }
+      },
+      "onEnterOnce": [
+        ["set", "mg_entered"],
+        ["xp", 5],
+        ["score", 5],
+        [
+          "if",
+          [["flag", "cp_came_by_writ"]],
+          [
+            ["say", "The guards see the Regent's seal on your writ and step back a pace. One of them will not meet your eye."]
+          ],
+          [
+            [
+              "if",
+              [["flag", "cp_came_by_stair"]],
+              [
+                ["say", "The pilgrim stair lets out beside the gate, behind the guards' backs. Nobody has watched that stair in a hundred years."]
+              ],
+              [["say", "The guards look you over, decide you are nobody, and wave you through with the carters."]]
+            ]
+          ]
+        ]
+      ]
+    },
+    "mg_lower_town": {
+      "name": "The Lower Town",
+      "desc": "A market square that climbs, stalls on the steps, the smell of tallow and wet wool. The gray is here too, thin as breath on a window; it comes up the drains at night. The Hanged Man east, the Chapel of Ash west, the Regent's Way north, the warrens down.",
+      "brief": "The market steps. Gray on the drains.",
+      "region": "mg",
+      "landmark": "the Lower Town",
+      "exits": {
+        "south": { "to": "mg_south_gate" },
+        "north": { "to": "mg_regents_way", "landmark": "the Regent's Way" },
+        "east": { "to": "mg_hanged_man", "landmark": "the Hanged Man" },
+        "west": { "to": "mg_chapel_of_ash", "landmark": "the Chapel of Ash" },
+        "up": { "to": "mg_market", "landmark": "the market" },
+        "down": { "to": "mg_warrens_1_0", "landmark": "the warrens", "sideTrip": true }
+      },
+      "onEnterOnce": [["xp", 2], ["score", 3]],
+      "variants": [{ "if": [["flag", "mg_throne_resolved"]], "brief": "The market steps. The drains have stopped breathing." }],
+      "actions": [
+        {
+          "id": "mg_listen_market",
+          "label": "listen to the market talk",
+          "once": true,
+          "fx": [
+            ["xp", 2],
+            ["say", "Three things everyone says: the Regent burns the dead now, by decree. The Ironbound have a hall on the Regent's Way. And there is something under the palace that the guards will not go down to, not for double pay."]
+          ]
+        }
+      ]
+    },
+    "mg_hanged_man": {
+      "name": "The Hanged Man",
+      "desc": "A tavern named for its sign and for the square outside. Sawdust, a good fire, and a corner table where a small neat man in a Free Company coat is dealing cards to nobody. The market steps lie west.",
+      "brief": "Sawdust and a good fire.",
+      "region": "mg",
+      "exits": { "west": { "to": "mg_lower_town" } },
+      "actions": [
+        {
+          "id": "mg_rest",
+          "label": "take a room and sleep",
+          "fx": [["hp", 10], ["say", "You sleep with your boots on and wake steadier."]]
+        }
+      ]
+    },
+    "mg_market": {
+      "name": "The Upper Market",
+      "desc": "Better stalls under awnings: an armourer, a herb-wife, a cutler with Marrowgate steel. Prices are in the Regent's coin and so are the sellers. The market steps lie down.",
+      "brief": "The upper stalls.",
+      "region": "mg",
+      "exits": { "down": { "to": "mg_lower_town" } },
+      "actions": [
+        {
+          "id": "mg_buy_sword",
+          "label": "buy the Marrowgate sword (12 gold)",
+          "if": [["var", "gold", ">=", 12], ["!has", "mg_fine_sword"]],
+          "fx": [
+            ["addvar", "gold", -12],
+            ["move", "mg_fine_sword", "inv"],
+            ["say", "The cutler wraps it in oiled cloth without asking what you want it for."]
+          ]
+        },
+        {
+          "id": "mg_buy_mail",
+          "label": "buy the riveted mail (15 gold)",
+          "if": [["var", "gold", ">=", 15], ["!has", "mg_riveted_mail"]],
+          "fx": [
+            ["addvar", "gold", -15],
+            ["move", "mg_riveted_mail", "inv"],
+            ["say", "Heavier than it looks, and it looks heavy. It rides in your pack and turns blows from there."]
+          ]
+        },
+        {
+          "id": "mg_buy_herbs",
+          "label": "buy a bundle of herbs (3 gold)",
+          "if": [["var", "gold", ">=", 3], ["!has", "mg_herbs"]],
+          "fx": [
+            ["addvar", "gold", -3],
+            ["move", "mg_herbs", "inv"],
+            ["say", "The herb-wife ties the bundle with gray thread. 'Everything's gray thread now,' she says."]
+          ]
+        }
+      ]
+    },
+    "mg_chapel_of_ash": {
+      "name": "The Chapel of Ash",
+      "desc": "The Gray Church's house in the capital, and a poor one: whitewash over old soot, a font full of ash instead of water. Mother Ysme keeps it with two novices and no illusions. The market steps lie east.",
+      "brief": "Whitewash over soot.",
+      "region": "mg",
+      "exits": {
+        "east": { "to": "mg_lower_town" },
+        "down": {
+          "to": "mg_pilgrims_door",
+          "if": [["flag", "mg_knows_pilgrim_door"]],
+          "lockedMsg": "A trapdoor under the font, bolted. Mother Ysme would have to tell you where it goes.",
+          "hint": "ask Mother Ysme about the pilgrims' door",
+          "landmark": "the pilgrims' door",
+          "sideTrip": true
+        }
+      }
+    },
+    "mg_regents_way": {
+      "name": "The Regent's Way",
+      "desc": "A straight avenue climbing to the palace between houses too grand to have windows at street level. The Watch House stands east with its shutters open; the Ironbound's hall stands west with its doors shut and a brazier burning in daylight.",
+      "brief": "The avenue to the palace.",
+      "region": "mg",
+      "landmark": "the Regent's Way",
+      "exits": {
+        "south": { "to": "mg_lower_town" },
+        "north": { "to": "mg_palace_gate", "landmark": "the palace gate" },
+        "east": { "to": "mg_watch_house", "landmark": "the Watch House" },
+        "west": { "to": "mg_ironbound_hall", "landmark": "the Ironbound hall" }
+      },
+      "onEnterOnce": [["xp", 2]]
+    },
+    "mg_watch_house": {
+      "name": "The Watch House",
+      "desc": "Racks of pikes, a map of the Reach with pins in it, and Lord Marshal Tarn at a desk too small for him. The Watch in Marrowgate answers to the Regent. The Marshal answers to the Watch, and does not always like it.",
+      "brief": "Pikes and a map with pins.",
+      "region": "mg",
+      "exits": { "west": { "to": "mg_regents_way" } }
+    },
+    "mg_ironbound_hall": {
+      "name": "The Ironbound Hall",
+      "desc": "A hall built like a furnace, all iron doors and drafts. Casks of lamp-oil stand in ranks along the wall. The Preceptor-General stands at a lectern reading the roll of the burned, and does not stop when you come in.",
+      "brief": "Iron doors, ranked casks of oil.",
+      "region": "mg",
+      "exits": { "east": { "to": "mg_regents_way" } }
+    },
+    "mg_palace_gate": {
+      "name": "The Palace Gate",
+      "desc": "Bronze doors under the stag, a guard captain in enamelled gray, and a smaller servants' door in the wall to one side where a boy carries out ash in buckets. Nobody goes through the bronze without the Regent's word.",
+      "brief": "Bronze doors. The servants' door.",
+      "region": "mg",
+      "exits": {
+        "south": { "to": "mg_regents_way" },
+        "north": {
+          "to": "mg_palace_court",
+          "if": [["flag", "mg_admitted"]],
+          "lockedMsg": "The captain does not move. 'The Regent's word, or the Marshal's, or turn around.'",
+          "hint": "the writ, the Marshal's escort, the servants' door, or force"
+        }
+      },
+      "actions": [
+        {
+          "id": "mg_show_writ",
+          "label": "show the Regent's writ",
+          "if": [["flag", "regent_writ"], ["!flag", "mg_admitted"]],
+          "once": true,
+          "fx": [
+            ["set", "mg_admitted"],
+            ["score", 5],
+            ["xp", 3],
+            ["say", "The captain reads the writ twice and hands it back with both hands. The bronze doors open for you."]
+          ]
+        },
+        {
+          "id": "mg_marshal_escort",
+          "label": "present the Marshal's token",
+          "if": [["flag", "mg_marshal_token"], ["!flag", "mg_admitted"]],
+          "once": true,
+          "fx": [
+            ["set", "mg_admitted"],
+            ["score", 5],
+            ["xp", 3],
+            ["say", "The captain looks at the Marshal's token, then at the Watch House, and decides he did not see you."]
+          ]
+        },
+        {
+          "id": "mg_servants_door",
+          "label": "slip through the servants' door (grace)",
+          "if": [["!flag", "mg_admitted"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              13,
+              [
+                ["set", "mg_admitted"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "You take the boy's empty bucket and walk in behind him. Nobody looks at the ash-carriers."]
+              ],
+              [["say", "The captain's eye finds you before the door does. You walk on as if you meant to."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "mg_palace_court": {
+      "name": "The Palace Court",
+      "desc": "A courtyard of white stone kept scrubbed by people who are never seen doing it. Stairs climb north to the Regent's chambers; a colonnade east leads to the Hall of Ledgers; a barred stair in the corner goes down, and nobody stands near it.",
+      "brief": "White stone. The barred stair.",
+      "region": "mg",
+      "landmark": "the palace court",
+      "exits": {
+        "south": { "to": "mg_palace_gate" },
+        "north": { "to": "mg_regents_chamber", "landmark": "the Regent's chambers" },
+        "east": { "to": "mg_hall_of_ledgers", "landmark": "the Hall of Ledgers" },
+        "down": {
+          "to": "mg_undercity_stair",
+          "if": [["flag", "mg_stair_open"]],
+          "lockedMsg": "The stair is barred with iron and a lock the size of a fist. The archivist keeps the key; or the lock keeps nothing against a strong enough shoulder.",
+          "hint": "the archivist's key, or force",
+          "landmark": "the undercity"
+        }
+      },
+      "onEnterOnce": [["xp", 3], ["score", 3]],
+      "actions": [
+        {
+          "id": "mg_force_stair",
+          "label": "break the stair's bar — fail costs 1hp",
+          "if": [["!flag", "mg_stair_open"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              12,
+              [
+                ["set", "mg_stair_open"],
+                ["xp", 2],
+                ["say", "The bar gives with a crack that turns every head in the court. Nobody comes."]
+              ],
+              [["hp", -1], ["say", "The bar holds and your shoulder does not."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "mg_hall_of_ledgers": {
+      "name": "The Hall of Ledgers",
+      "desc": "Four hundred years of the Reach in bound calfskin, floor to vault. Archivist Penn moves among the shelves with a candle he never lets near them. The oldest shelf is chained.",
+      "brief": "Shelves to the vault. The chained shelf.",
+      "region": "mg",
+      "exits": { "west": { "to": "mg_palace_court" } },
+      "onEnterOnce": [["xp", 2], ["score", 2]],
+      "variants": [{ "if": [["flag", "mg_ledger_found"]], "brief": "The chained shelf stands open." }],
+      "actions": [
+        {
+          "id": "mg_read_founding",
+          "label": "find the founding ledger (wits)",
+          "if": [["!flag", "mg_ledger_found"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              12,
+              [
+                ["set", "mg_ledger_found"],
+                ["move", "mg_founding_ledger", "inv"],
+                ["score", 15],
+                ["xp", 5],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["set", "vell_exposed"],
+                    ["say", "The chained shelf is a shelf like the others once you know which chain is only for show. The founding ledger: the first Reeve's own account of the crown, and the names of his line — one of them Vell's."]
+                  ],
+                  [
+                    ["say", "The chained shelf is a shelf like the others once you know which chain is only for show. The founding ledger: the first Reeve's own account of the crown, in his own hand."]
+                  ]
+                ]
+              ],
+              [["say", "Every shelf looks chained when you are looking for the one that is. Penn watches you look."]]
+            ]
+          ]
+        },
+        {
+          "id": "mg_pick_chain",
+          "label": "pick the chain's lock (grace)",
+          "if": [["!flag", "mg_ledger_found"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              12,
+              [
+                ["set", "mg_ledger_found"],
+                ["move", "mg_founding_ledger", "inv"],
+                ["score", 15],
+                ["xp", 5],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["set", "vell_exposed"],
+                    ["say", "The chain drops. The founding ledger: the first Reeve's own account of the crown, and the names of his line — one of them Vell's."]
+                  ],
+                  [
+                    ["say", "The chain drops. The founding ledger: the first Reeve's own account of the crown, in his own hand."]
+                  ]
+                ]
+              ],
+              [["say", "The lock is older than your fingers know. Penn coughs."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "mg_regents_chamber": {
+      "name": "The Regent's Chambers",
+      "desc": "A long room with one chair in it and a window that looks down on the whole Reach. Regent Ysolde Ashreeve stands at the window rather than sit. The stag is worked into everything, even the floor.",
+      "brief": "One chair, one window.",
+      "region": "mg",
+      "exits": { "south": { "to": "mg_palace_court" } },
+      "onEnterOnce": [["xp", 3], ["score", 3]]
+    },
+    "mg_pilgrims_door": {
+      "name": "The Pilgrims' Door",
+      "desc": "A stair under the chapel font, worn to a trough by knees. Keeper-knots are cut into the wall every ten steps, the same as the Vale's. It lets out below into standing water.",
+      "brief": "The knee-worn stair.",
+      "region": "mg",
+      "exits": { "up": { "to": "mg_chapel_of_ash" }, "down": { "to": "mg_cistern" } },
+      "onEnterOnce": [["xp", 2], ["score", 2], ["addvar", "rep_keepers", 1]]
+    },
+    "mg_undercity_stair": {
+      "name": "The Barred Stair",
+      "desc": "Steps down under the palace, iron-shod, the gray thickening with every turn until your light is a lamp in fog. Someone has scratched a raised hand into the wall at the bottom.",
+      "brief": "Iron-shod steps into fog.",
+      "region": "mg",
+      "exits": { "up": { "to": "mg_palace_court" }, "down": { "to": "mg_cistern" } },
+      "onEnterOnce": [["xp", 2]]
+    },
+    "mg_cistern": {
+      "name": "The Undercity Cistern",
+      "desc": "A vault of black water under the whole city, pillars marching off into the dark. Three ways in meet here: the barred stair above, the pilgrims' door, and a smugglers' cut from the warrens. The gray pours north along the water like a river in a river.",
+      "brief": "Black water, marching pillars. The gray runs north.",
+      "region": "mg",
+      "landmark": "the undercity cistern",
+      "exits": {
+        "up": { "to": "mg_undercity_stair" },
+        "east": { "to": "mg_pilgrims_door" },
+        "west": { "to": "mg_smugglers_cut" },
+        "north": { "to": "mg_old_crypts", "landmark": "the old crypts" }
+      },
+      "onEnterOnce": [["xp", 3], ["score", 5], ["say", "Whatever is under Marrowgate, the water knows where it is."]]
+    },
+    "mg_smugglers_cut": {
+      "name": "The Smugglers' Cut",
+      "desc": "A tunnel hacked through the cistern wall by people who did not want to pay the gate. Barrels, a lantern, a Free Company mark chalked on the stone. It climbs to the warrens.",
+      "brief": "Barrels and a chalked mark.",
+      "region": "mg",
+      "exits": { "east": { "to": "mg_cistern" }, "up": { "to": "mg_free_den" } },
+      "onEnterOnce": [["xp", 2]]
+    },
+    "mg_free_den": {
+      "name": "Quill's Den",
+      "desc": "A cellar under the warrens with too many exits and a card table. Whoever runs it is not here; whoever is here is watching you. A trap in the floor is chalked with the Free Company's mark.",
+      "brief": "The cellar with too many exits.",
+      "region": "mg",
+      "exits": {
+        "up": { "to": "mg_warrens_2_2" },
+        "down": {
+          "to": "mg_smugglers_cut",
+          "if": [["flag", "mg_knows_cut"]],
+          "lockedMsg": "The trap is bolted from beneath. Quill, at the Hanged Man, would know the knock.",
+          "hint": "ask Quill at the Hanged Man about the cut",
+          "landmark": "the smugglers' cut"
+        }
+      },
+      "onEnterOnce": [["xp", 2]]
+    },
+    "mg_old_crypts": {
+      "name": "The Old Crypts",
+      "desc": "The crypts of the kings before the Reeves, robbed to the bone. A shape in gray mail stands where the gray runs thickest — the first Reeve's honour guard, four hundred years at his post, and it lunges the moment it hears a living step.",
+      "brief": "Robbed crypts. The honour guard.",
+      "region": "mg",
+      "exits": {
+        "south": { "to": "mg_cistern" },
+        "north": {
+          "to": "mg_first_reeves_tomb",
+          "if": [["flag", "mg_guard_passed"]],
+          "lockedMsg": "The honour guard bars the way north. Kill it, slip past it, or turn back.",
+          "hint": "kill it, or slip past it (grace)"
+        }
+      },
+      "onEnterOnce": [["xp", 3]],
+      "variants": [
+        {
+          "if": [["npcDead", "mg_hollow_guard"]],
+          "desc": "The crypts of the kings before the Reeves, robbed to the bone. Gray mail lies in a heap where the guard stood. The way north is open.",
+          "brief": "Robbed crypts. The guard is down."
+        }
+      ],
+      "actions": [
+        {
+          "id": "mg_slip_guard",
+          "label": "slip past the guard — fail costs 2hp",
+          "if": [["!flag", "mg_guard_passed"], ["!npcDead", "mg_hollow_guard"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              13,
+              [
+                ["set", "mg_guard_passed"],
+                ["xp", 3],
+                ["say", "You wait for its swing and go under it. The passage north is yours."]
+              ],
+              [["hp", -2], ["say", "It is faster than four hundred years should allow."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "mg_first_reeves_tomb": {
+      "name": "The First Reeve's Tomb",
+      "desc": "A tomb built for a king by a man who knew he was not one. The stag on the lid is the Hollow King's stag with a bar through it. A shade sits on the lid with its head in its hands, and it is the gray's own source: it comes off him like smoke.",
+      "brief": "The barred stag. The shade on the lid.",
+      "region": "mg",
+      "landmark": "the first Reeve's tomb",
+      "exits": { "south": { "to": "mg_old_crypts" }, "north": { "to": "mg_hollow_throne", "landmark": "the Hollow Throne" } },
+      "onEnterOnce": [["xp", 3], ["score", 5]],
+      "variants": [{ "if": [["flag", "mg_reeve_confessed"]], "brief": "The barred stag. The shade sits straighter now." }]
+    },
+    "mg_hollow_throne": {
+      "name": "The Hollow Throne",
+      "desc": "A throne room under the throne room: the true seat of the Reach, cut from one gray stone and empty at the heart, where a crown was meant to sit and never did. The gray comes up out of that hollow. Everything that grieves in the Reach is fed from here.",
+      "brief": "The gray stone seat, hollow at the heart.",
+      "region": "mg",
+      "exits": { "south": { "to": "mg_first_reeves_tomb" } },
+      "onEnterOnce": [
+        ["xp", 5],
+        ["score", 5],
+        ["set", "mg_at_throne"],
+        [
+          "if",
+          [["flag", "mg_admitted"]],
+          [
+            ["npcgo", "mg_regent", "here"],
+            ["say", "Footsteps on the stair behind you: Regent Ysolde Ashreeve, alone, with a lamp. 'So,' she says. 'Someone finally came down.'"]
+          ],
+          []
+        ]
+      ],
+      "actions": [
+        {
+          "id": "mg_great_rite",
+          "label": "speak the Great Rite over the seat",
+          "if": [
+            ["var", "hollows_rested", ">=", 3],
+            ["flag", "mg_reeve_confessed"],
+            ["flag", "va_king_rested"],
+            ["!flag", "mg_throne_resolved"]
+          ],
+          "fx": [
+            ["set", "mg_throne_resolved"],
+            ["score", 40],
+            ["end", "win", "reach_at_rest", "You speak the verses of three holds over the hollow seat, and the first Reeve's confession after them, and the stone fills — not with a crown, with quiet. The gray goes out of the water, the drains, the fields of nine holds, like a breath let go. The Reach sleeps."]
+          ]
+        },
+        {
+          "id": "mg_burn_throne",
+          "label": "burn the throne with the Ironbound oil",
+          "if": [["flag", "mg_has_oil"], ["!flag", "mg_throne_resolved"]],
+          "fx": [
+            ["set", "mg_throne_resolved"],
+            ["addvar", "hollows_burned", 1],
+            ["score", 25],
+            ["end", "win", "reach_burned", "You break the casks over the seat and put the torch to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace, and mostly mean it."]
+          ]
+        },
+        {
+          "id": "mg_depose_watch",
+          "label": "read the ledger aloud to the Marshal",
+          "if": [
+            ["has", "mg_founding_ledger"],
+            ["!npcDead", "mg_regent"],
+            ["var", "rep_watch", ">=", 2],
+            ["!flag", "mg_throne_resolved"]
+          ],
+          "fx": [
+            ["set", "mg_throne_resolved"],
+            ["score", 30],
+            ["end", "win", "regent_deposed", "You read the first Reeve's own hand aloud, and behind the Regent, Lord Marshal Tarn's men come down the stair with their pikes reversed. The House of Ashreeve ends without a blow, on a lie read out in a cellar. The Watch keeps the Reach until a better answer comes."]
+          ]
+        },
+        {
+          "id": "mg_depose_church",
+          "label": "read the ledger aloud to the Mother",
+          "if": [
+            ["has", "mg_founding_ledger"],
+            ["!npcDead", "mg_regent"],
+            ["var", "rep_church", ">=", 2],
+            ["!flag", "mg_throne_resolved"]
+          ],
+          "fx": [
+            ["set", "mg_throne_resolved"],
+            ["score", 30],
+            ["end", "win", "regent_deposed", "You read the first Reeve's own hand aloud, and Mother Ysme's novices carry the words up the pilgrims' stair to the Lower Town before the Regent has stopped shaking. By morning the city knows what it was founded on. The House of Ashreeve leaves by the north road, unescorted."]
+          ]
+        },
+        {
+          "id": "mg_depose_free",
+          "label": "read the ledger aloud to the Companies",
+          "if": [
+            ["has", "mg_founding_ledger"],
+            ["!npcDead", "mg_regent"],
+            ["var", "rep_free", ">=", 2],
+            ["!flag", "mg_throne_resolved"]
+          ],
+          "fx": [
+            ["set", "mg_throne_resolved"],
+            ["score", 30],
+            ["end", "win", "regent_deposed", "You read the first Reeve's own hand aloud, and Quill's people come out of the smugglers' cut with knives and a grin. The Regent leaves Marrowgate in a barrel-cart, alive, which was the bargain. The Free Companies hold the palace for a season and then, to everyone's surprise, hold an election."]
+          ]
+        },
+        {
+          "id": "mg_sit_throne",
+          "label": "sit the throne, wearing the Vale's crown",
+          "if": [["has", "va_crown"], ["!flag", "mg_throne_resolved"], ["!inParty", "vell"]],
+          "fx": [
+            ["set", "mg_throne_resolved"],
+            ["score", 20],
+            ["end", "win", "gray_crown", "You set the Hollow King's crown on your own head and sit. The stone takes your weight like it has waited for exactly you. The gray thins across the Reach, and settles behind your eyes, and does not leave either place. You are Regent by dawn. Nobody argues."]
+          ]
+        },
+        {
+          "id": "mg_sit_throne_vell",
+          "label": "sit the throne, wearing the Vale's crown",
+          "if": [["has", "va_crown"], ["!flag", "mg_throne_resolved"], ["inParty", "vell"], ["var", "appr_vell", ">", -2]],
+          "fx": [
+            ["set", "mg_throne_resolved"],
+            ["score", 20],
+            ["end", "win", "gray_crown", "You set the Hollow King's crown on your own head and sit. Vell watches you do it and says nothing at all, which is the worst thing Vell has ever said. The gray thins across the Reach, and settles behind your eyes. You are Regent by dawn."]
+          ]
+        },
+        {
+          "id": "mg_sit_throne_betrayed",
+          "label": "sit the throne, wearing the Vale's crown",
+          "if": [["has", "va_crown"], ["!flag", "mg_throne_resolved"], ["inParty", "vell"], ["var", "appr_vell", "<=", -2]],
+          "fx": [
+            ["set", "mg_throne_resolved"],
+            ["set", "vell_took_crown"],
+            ["score", 10],
+            ["end", "win", "gray_crown", "You lift the crown toward your head and Vell's hand closes on it first. 'It was always mine,' Vell says, and sits, and the stone takes the exile's weight like it has waited four hundred years for exactly this. The gray thins across the Reach and settles behind Vell's eyes. You are shown the north road."]
+          ]
+        },
+        {
+          "id": "mg_kneel",
+          "label": "(no dawn) kneel to the hollow seat",
+          "if": [["!flag", "mg_throne_resolved"], ["!flag", "mg_kneel_warned"]],
+          "fx": [
+            ["set", "mg_kneel_warned"],
+            ["say", "You go down on one knee before the empty stone and feel the gray notice you. This is the one door here that does not open back. Kneel again to go through it."]
+          ]
+        },
+        {
+          "id": "mg_kneel_confirm",
+          "label": "(no dawn) finish kneeling",
+          "if": [["!flag", "mg_throne_resolved"], ["flag", "mg_kneel_warned"]],
+          "fx": [
+            ["end", "lose", "hollow_reach", "You kneel, and the hollow at the heart of the stone fills with you. The gray has a source with a face now. Across the Reach the dead sit up, all of them, and wait to be told what to grieve. There is no dawn."]
+          ]
+        }
+      ]
+    }
+  },
+  "gen": [
+    {
+      "id": "mg_warrens",
+      "name": "the Warrens",
+      "seed": 77,
+      "w": 3,
+      "h": 3,
+      "region": "mg",
+      "pools": {
+        "descs": ["Alleys stacked on alleys, washing strung across the gap of sky."],
+        "briefs": ["Stacked alleys."],
+        "scenes": [
+          {
+            "name": "Tallow Court",
+            "desc": "A court of candle-makers, every sill greasy, the air thick enough to chew. Someone has scratched a raised hand beside a cellar door.",
+            "brief": "Greasy sills."
+          },
+          {
+            "name": "The Ropewalk",
+            "desc": "A long shed open at both ends where two old women walk backward twisting hemp, and have done since before the Regent's mother.",
+            "brief": "The long rope shed."
+          },
+          {
+            "name": "Bell-Founders' Lane",
+            "desc": "Cracked bell-moulds used as planters, nothing growing in them. A bell hangs at the lane's end that nobody rings; the gray beads on it like sweat.",
+            "brief": "Cracked moulds, a silent bell."
+          },
+          {
+            "name": "The Old Shambles",
+            "desc": "Butchers' hooks with nothing on them and a gutter that still runs red on wet days out of habit.",
+            "brief": "Empty hooks."
+          },
+          {
+            "name": "Gray Steps",
+            "desc": "A stair between houses so narrow you climb it sideways. Chalked on the risers, the Free Company's mark and an arrow pointing down.",
+            "brief": "The narrow stair."
+          },
+          {
+            "name": "Dyers' Yard",
+            "desc": "Vats of dead colour and hands stained to the elbow. Everyone here knows which vat the gray came up in first.",
+            "brief": "Vats of dead colour."
+          },
+          {
+            "name": "Saint's Alley",
+            "desc": "A niche with a stone saint whose face has been rubbed off by centuries of thumbs. Fresh candle-stubs at its feet: someone still asks.",
+            "brief": "The faceless saint."
+          }
+        ]
+      },
+      "links": [
+        { "cell": [1, 0], "dir": "north", "to": "mg_lower_town" },
+        {
+          "cell": [2, 2],
+          "dir": "down",
+          "to": "mg_free_den",
+          "landmark": "a cellar with the Company's mark",
+          "sideTrip": true
+        }
+      ],
+      "spots": [
+        {
+          "cell": [1, 0],
+          "name": "The Warrens' Mouth",
+          "desc": "Where the market steps give up and become alleys. Washing overhead, a beggar in a niche who watches the drains instead of the passers-by, and the smell of the undercity coming up through a grating.",
+          "brief": "The alleys begin. The beggar's niche.",
+          "npcs": ["mg_beggar"],
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 2],
+          "name": "Cutpurse Corner",
+          "desc": "A dead end that is not: a gap behind a rain-barrel lets a thin person through. Children's chalk games on the flags, and a knife-scratch tally on the wall that is not a game.",
+          "brief": "The dead end that isn't.",
+          "onEnterOnce": [
+            ["xp", 1],
+            ["addvar", "gold", 2],
+            ["say", "Two coins in the chalk circle, left as a dare. You take the dare."]
+          ]
+        }
+      ],
+      "cellFx": {
+        "onEnter": [
+          [
+            "chance",
+            8,
+            [
+              [
+                "if",
+                [["!npcDead", "mg_cutpurse"]],
+                [["npcgo", "mg_cutpurse", "here"], ["say", "A boy with a knife and a man's eyes steps out of the washing."]],
+                []
+              ]
+            ],
+            []
+          ]
+        ]
+      }
+    }
+  ],
+  "items": {
+    "mg_fine_sword": { "name": "Marrowgate sword", "loc": "nowhere", "hit": 2, "dmg": 4 },
+    "mg_riveted_mail": { "name": "riveted mail", "loc": "nowhere", "armor": 3, "hint": "turns blows from your pack" },
+    "mg_herbs": {
+      "name": "gray-thread herbs",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "eat them to heal",
+      "use": [{ "fx": [["hp", 4], ["move", "mg_herbs", "nowhere"], ["say", "Bitter. The gray thread you spit out."]] }]
+    },
+    "mg_founding_ledger": {
+      "name": "the founding ledger",
+      "loc": "nowhere",
+      "hint": "the first Reeve's own account of the crown — read it",
+      "use": [
+        {
+          "if": [["!flag", "mg_read_ledger"]],
+          "fx": [
+            ["set", "mg_read_ledger"],
+            ["xp", 3],
+            ["score", 3],
+            ["say", "'I took it from his brow while he slept his last sleep, and I called it inheritance, and the vale ate that winter. Let whoever reads this judge me. I could not.' Signed with the stag, and a bar through it."]
+          ]
+        }
+      ]
+    },
+    "mg_ironbound_oil": { "name": "cask of Ironbound oil", "loc": "nowhere", "hint": "enough to burn a throne" }
+  },
+  "npcs": {
+    "mg_regent": {
+      "name": "Regent Ysolde",
+      "room": "mg_regents_chamber",
+      "dialogue": true,
+      "hp": 8,
+      "atk": 2,
+      "df": 12,
+      "desc": "Fifty, gray-eyed, a woman who has read every ledger in the hall and burned none of them.",
+      "onDeath": [
+        ["set", "mg_throne_resolved"],
+        ["set", "mg_regent_dead"],
+        ["addvar", "rep_crown", -3],
+        ["addvar", "rep_watch", -2],
+        ["score", 15],
+        ["end", "win", "regent_deposed", "The Regent dies with the stag under her. The Watch comes running and finds you standing over the House of Ashreeve; what they do next depends on who you have been to them. The Reach has no Regent by morning, and the gray does not care either way."]
+      ],
+      "topics": [
+        {
+          "id": "audience",
+          "label": "why the gray is treason",
+          "once": true,
+          "say": "Because grief that will not end is a rebellion against the living. I have fields going gray from here to the sea. I can burn what grieves, or I can hold rites for it and hope. I chose the one I can command.",
+          "fx": [["xp", 3], ["score", 3], ["set", "mg_heard_regent"]]
+        },
+        {
+          "id": "bargain",
+          "label": "oil to burn the Hollow Throne",
+          "if": [["flag", "mg_heard_regent"], ["!flag", "mg_has_oil"], ["!flag", "mg_refused_regent"]],
+          "once": true,
+          "say": "You know what is under this palace, then. Good. Burn it for me and you will have a title, a hall, and my gratitude, which is worth more than the title. Take the oil from the Preceptor-General; I will send word.",
+          "fx": [
+            ["set", "mg_has_oil"],
+            ["set", "mg_regent_bargain"],
+            ["move", "mg_ironbound_oil", "inv"],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "rep_iron", 1],
+            ["addvar", "rep_church", -1],
+            ["addvar", "appr_osk", -2],
+            ["addvar", "appr_vell", -1],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "refuse to burn anything for her",
+          "if": [["flag", "mg_heard_regent"], ["!flag", "mg_has_oil"], ["!flag", "mg_refused_regent"]],
+          "once": true,
+          "say": "Then we understand each other, at least. The stair is barred and the archivist is loyal. Go home. Whatever is under this palace has waited four hundred years; it can wait past you.",
+          "fx": [
+            ["set", "mg_refused_regent"],
+            ["addvar", "rep_crown", -1],
+            ["addvar", "appr_osk", 1],
+            ["addvar", "appr_lys", 1],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "theft",
+          "label": "the founding ledger (will)",
+          "if": [["has", "mg_founding_ledger"], ["!flag", "mg_regent_shaken"]],
+          "say": "You set the first Reeve's own hand on the table between you and say nothing.",
+          "fx": [
+            [
+              "check",
+              "will",
+              12,
+              [
+                ["set", "mg_regent_shaken"],
+                ["score", 10],
+                ["xp", 4],
+                ["say", "She reads it standing. When she looks up she is older. 'I knew,' she says. 'I have always known. I did not know he wrote it down.'"]
+              ],
+              [
+                ["say", "She does not look at it. 'Every house is founded on something. Mine is founded on a winter with no grain. Take that book back to the shelf.'"]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "vale",
+          "label": "what you did in the Vale",
+          "if": [["flag", "va_king_resolved"]],
+          "once": true,
+          "say": "My herald told me. The Hollow King was my ancestor's father, did you know? Every Ashreeve does. We are taught it with our letters, and taught never to say it.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "va_king_rested"]],
+              [
+                ["addvar", "rep_crown", 1],
+                ["say", "'You rested him,' she says. 'I would not have. Perhaps that is the whole of the difference between us.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "va_king_slain"]],
+                  [["addvar", "rep_crown", 1], ["say", "'You cut him down,' she says. 'Good. That, at least, I understand.'"]],
+                  [
+                    ["addvar", "rep_crown", -1],
+                    ["say", "'You left him grieving,' she says, 'with his crown in your pack. You and I are more alike than I would like.'"]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave the Regent to her window",
+          "say": "Mind the stair. Everyone who goes down it comes up changed, or does not come up.",
+          "end": true
+        }
+      ]
+    },
+    "mg_marshal": {
+      "name": "Lord Marshal Tarn",
+      "room": "mg_watch_house",
+      "dialogue": true,
+      "desc": "Too big for his desk and his orders both.",
+      "topics": [
+        {
+          "id": "watch",
+          "label": "the Watch in Marrowgate",
+          "once": true,
+          "say": "We keep the gate, the Way, and the peace. We do not keep the undercity. The Regent's writ says burn; the Watch's oath says guard. I am trying to do both, and doing neither.",
+          "fx": [["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "escort",
+          "label": "get me into the palace",
+          "if": [["var", "rep_watch", ">=", 2], ["!flag", "mg_marshal_token"]],
+          "once": true,
+          "say": "The Watch owes you, by every report from the holds. Take my token to the gate captain. If anyone asks, I never met you, and I shall mean it.",
+          "fx": [["set", "mg_marshal_token"], ["score", 5], ["xp", 3], ["addvar", "rep_watch", 1]]
+        },
+        {
+          "id": "escort_no",
+          "label": "get me into the palace",
+          "if": [["var", "rep_watch", "<", 2], ["!flag", "mg_marshal_token"]],
+          "say": "On whose word? The Watch in the holds has not sent me your name with anything good attached to it. Earn that, and ask again."
+        },
+        {
+          "id": "founding",
+          "label": "the Watch's founding",
+          "if": [["flag", "wm_hollow_rested"]],
+          "once": true,
+          "say": "Highward sent word. The oath-stone rests. Four hundred years we guarded a road for a thief and called it honour; you gave us the truth and we are still standing. That is worth something. It is worth the palace gate.",
+          "fx": [
+            ["addvar", "rep_watch", 1],
+            ["xp", 2],
+            ["set", "mg_marshal_token"],
+            ["say", "He puts his token in your hand."]
+          ]
+        },
+        { "id": "bye", "label": "leave the Marshal to his map", "say": "Keep to the Way after dark.", "end": true }
+      ]
+    },
+    "mg_preceptor": {
+      "name": "Preceptor-General Hald",
+      "room": "mg_ironbound_hall",
+      "dialogue": true,
+      "desc": "Burn-scarred hands and a voice like a closing door.",
+      "topics": [
+        {
+          "id": "roll",
+          "label": "the roll of the burned",
+          "once": true,
+          "say": "Every hollow we have put to the fire, and every name in it. Grief has a weight; fire has none. Read it if you like. It gets shorter every year, and the gray does not.",
+          "fx": [["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "oil",
+          "label": "oil for the Hollow Throne",
+          "if": [["!flag", "mg_has_oil"], ["!flag", "mg_regent_bargain"]],
+          "say": "You know what is down there, then.",
+          "fx": [
+            [
+              "if",
+              [["flag", "regent_writ"]],
+              [
+                ["set", "mg_has_oil"],
+                ["move", "mg_ironbound_oil", "inv"],
+                ["addvar", "rep_iron", 1],
+                ["xp", 3],
+                ["say", "He reads your writ and rolls a cask to your feet himself. 'Finish it,' he says. 'Nobody else has had the stomach.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["var", "rep_iron", ">=", 2]],
+                  [
+                    ["set", "mg_has_oil"],
+                    ["move", "mg_ironbound_oil", "inv"],
+                    ["addvar", "rep_iron", 1],
+                    ["xp", 3],
+                    ["say", "'The chapterhouse vouches for you,' he says, and rolls a cask to your feet. 'Finish it.'"]
+                  ],
+                  [
+                    ["say", "'The Ironbound do not arm strangers,' he says. 'Bring me the Regent's writ, or two burned hollows to your name, and we will speak.'"]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "tamsin",
+          "label": "the Hundred, at Cinderhall",
+          "if": [["flag", "tamsin_mine_truth"]],
+          "once": true,
+          "say": "Aldous was Preceptor at Cinderhall before he was anything. If he signed off on rotten timber, that is on him, not on the fire. The fire has never lied to anyone.",
+          "fx": [["xp", 2], ["addvar", "appr_tamsin", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the roll",
+          "say": "Every name gets read. Even yours, in the end.",
+          "end": true
+        }
+      ]
+    },
+    "mg_mother": {
+      "name": "Mother Ysme",
+      "room": "mg_chapel_of_ash",
+      "dialogue": true,
+      "desc": "Small, quick, ash to the wrists, unimpressed by everything including you.",
+      "topics": [
+        {
+          "id": "chapel",
+          "label": "the Church in the capital",
+          "once": true,
+          "say": "Tolerated. The Regent lets us keep the rites the way you let a dog keep a bone: as long as it does not growl. We say the words over the burned anyway. Somebody should.",
+          "fx": [["xp", 2], ["score", 2], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "door",
+          "label": "the pilgrims' door",
+          "if": [["!flag", "mg_knows_pilgrim_door"]],
+          "say": "Under the font. Keepers used it, when there were keepers, to go down and sit with what is under the palace.",
+          "fx": [
+            [
+              "if",
+              [["var", "rep_church", ">=", 1]],
+              [
+                ["set", "mg_knows_pilgrim_door"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "'The Church knows what you did for it in the holds,' she says, and pulls the bolt herself."]
+              ],
+              [
+                [
+                  "if",
+                  [["inParty", "osk"]],
+                  [
+                    ["set", "mg_knows_pilgrim_door"],
+                    ["score", 5],
+                    ["xp", 3],
+                    ["addvar", "appr_osk", 1],
+                    ["say", "She looks past you at Osk. 'You are one of ours,' she says to him, and pulls the bolt. 'See that this one deserves it.'"]
+                  ],
+                  [
+                    ["say", "'And I would open it for a stranger why?' she says. 'Do the Church a kindness somewhere and come back.'"]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "osk",
+          "label": "Brother Osk",
+          "if": [["inParty", "osk"]],
+          "once": true,
+          "say": "A novice from the Vale chapel, with the fens in his face. Whatever you have done with him, do not make him watch a burning. Some of us do not come back from that.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "fen",
+          "label": "the drowned nave at Fenmarch",
+          "if": [["flag", "fd_hollow_rested"]],
+          "once": true,
+          "say": "The Prior wrote to me. The congregation sings no more at dusk, and the Priory admitted its part. That is a rite, whatever the Regent's roll calls it. The Church does not forget who held it.",
+          "fx": [["addvar", "rep_church", 1], ["xp", 2]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the font",
+          "say": "Go carefully, and say the words even when nobody is listening.",
+          "end": true
+        }
+      ]
+    },
+    "mg_quill": {
+      "name": "Quill",
+      "room": "mg_hanged_man",
+      "dialogue": true,
+      "desc": "Small, neat, dealing cards to nobody.",
+      "topics": [
+        {
+          "id": "cards",
+          "label": "who you are",
+          "once": true,
+          "say": "Quill. I fix things for the Companies in the capital — passage, papers, the occasional absence. You have the look of someone who came over the pass without a writ. Or with one you did not earn.",
+          "fx": [["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "cut",
+          "label": "a way under the palace",
+          "if": [["!flag", "mg_knows_cut"]],
+          "say": "There is a cut from a cellar in the warrens down into the cistern. The Companies use it for barrels. It would carry a person.",
+          "fx": [
+            [
+              "if",
+              [["flag", "free_passage"]],
+              [
+                ["set", "mg_knows_cut"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "'The Captain's word came over the pass ahead of you,' Quill says. 'Three knocks and a pause. The cellar is under the Gray Steps.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["var", "rep_free", ">=", 1]],
+                  [
+                    ["set", "mg_knows_cut"],
+                    ["score", 5],
+                    ["xp", 3],
+                    ["say", "'The Companies know your name kindly,' Quill says. 'Three knocks and a pause. Under the Gray Steps.'"]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["var", "gold", ">=", 10]],
+                      [
+                        ["addvar", "gold", -10],
+                        ["set", "mg_knows_cut"],
+                        ["score", 3],
+                        ["xp", 2],
+                        ["say", "Ten coins vanish under a card. 'Three knocks and a pause,' Quill says. 'Under the Gray Steps. We never spoke.'"]
+                      ],
+                      [
+                        ["say", "'For strangers, ten coins,' Quill says. 'For friends of the Companies, a smile. You are neither yet.'"]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "lys",
+          "label": "a rider called Cal",
+          "if": [["flag", "lys_brother_found"]],
+          "once": true,
+          "say": "Sorrel Vane's company? Then he is in the Thornwold, or under it. The Companies do not send men to Marrowgate; Marrowgate sends for them, and they do not come back the same.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave Quill to the cards",
+          "say": "Three knocks and a pause. Everything is three knocks and a pause.",
+          "end": true
+        }
+      ]
+    },
+    "mg_archivist": {
+      "name": "Archivist Penn",
+      "room": "mg_hall_of_ledgers",
+      "dialogue": true,
+      "desc": "Ink to the second knuckle and a candle held like a weapon.",
+      "topics": [
+        {
+          "id": "ledgers",
+          "label": "the Hall of Ledgers",
+          "once": true,
+          "say": "Every tithe, every hanging, every harvest since the founding. Nothing in this hall is secret. Some of it is chained, which is a different thing.",
+          "fx": [["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "chained",
+          "label": "the chained shelf",
+          "if": [["!flag", "mg_ledger_found"]],
+          "say": "The founding ledger. The first Reeve wrote it himself and chained it himself. Every Regent since has read it and left the chain on.",
+          "fx": [
+            [
+              "if",
+              [["var", "rep_church", ">=", 2]],
+              [
+                ["set", "mg_ledger_found"],
+                ["move", "mg_founding_ledger", "inv"],
+                ["score", 15],
+                ["xp", 5],
+                ["say", "'Mother Ysme says you are to be trusted with the dead,' Penn says, and takes a key from around his neck. The chain drops."]
+              ],
+              [
+                [
+                  "if",
+                  [["var", "gold", ">=", 15]],
+                  [
+                    ["addvar", "gold", -15],
+                    ["set", "mg_ledger_found"],
+                    ["move", "mg_founding_ledger", "inv"],
+                    ["score", 12],
+                    ["xp", 4],
+                    ["say", "Penn looks at the coins for a long moment and then at the chain. 'I am paid in candles,' he says, and takes the key from his neck."]
+                  ],
+                  [
+                    ["say", "'It can be read by the Regent, the Church's Mother, or someone with fifteen gold and no shame,' Penn says. 'Or by a thief. I would know which you were.'"]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "key",
+          "label": "the key to the barred stair",
+          "if": [["!flag", "mg_stair_open"]],
+          "say": "The stair goes down to what the palace stands on. I have the key because nobody else would carry it.",
+          "fx": [
+            [
+              "if",
+              [["flag", "mg_ledger_found"]],
+              [
+                ["set", "mg_stair_open"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "'You have read what is down there,' Penn says. 'Then you may as well see it.' The key is warm from his neck."]
+              ],
+              [
+                [
+                  "check",
+                  "will",
+                  11,
+                  [
+                    ["set", "mg_stair_open"],
+                    ["score", 5],
+                    ["xp", 3],
+                    ["say", "Penn listens to you for longer than he meant to. 'Four hundred years,' he says, 'and nobody has asked me for it politely.' The key is warm from his neck."]
+                  ],
+                  [["say", "'No,' Penn says, and goes back to his shelves."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "vell",
+          "label": "the exile line",
+          "if": [["flag", "vell_exposed"]],
+          "once": true,
+          "say": "So one of them is alive, and travelling with you. The ledger says the exile line was to be struck off. The ledger says many things. I have never once struck a name off anything.",
+          "fx": [["xp", 2], ["addvar", "appr_vell", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave Penn to his candle",
+          "say": "Mind the shelves. They are the only honest thing in this palace.",
+          "end": true
+        }
+      ]
+    },
+    "mg_first_reeve": {
+      "name": "the first Reeve's shade",
+      "room": "mg_first_reeves_tomb",
+      "dialogue": true,
+      "desc": "Grief made a man, or the other way round.",
+      "topics": [
+        {
+          "id": "who",
+          "label": "who you were",
+          "once": true,
+          "say": "Reeve of the Vale, once. Then a thief. Then a founder. They built me a king's tomb and I have sat on the lid of it every night since, because I cannot lie down in what I did.",
+          "fx": [["xp", 3], ["score", 3], ["set", "mg_heard_reeve"]]
+        },
+        {
+          "id": "father",
+          "label": "your father rests",
+          "if": [["flag", "va_king_rested"], ["flag", "mg_heard_reeve"], ["!flag", "mg_reeve_confessed"]],
+          "once": true,
+          "say": "He — rests? Without the crown, or with it? It does not matter. Then hear it, because I have said it to no one: I took it from his brow while he slept, and called it inheritance, and the Vale ate that winter.",
+          "fx": [
+            ["set", "mg_reeve_confessed"],
+            ["score", 15],
+            ["xp", 5],
+            ["addvar", "rep_keepers", 1],
+            ["say", "The gray coming off him thins to a thread."]
+          ]
+        },
+        {
+          "id": "keepers",
+          "label": "speak the keepers' words to him",
+          "if": [["var", "rep_keepers", ">=", 1], ["flag", "mg_heard_reeve"], ["!flag", "mg_reeve_confessed"]],
+          "once": true,
+          "say": "The keepers. I had them struck off, every one. And still one came down each year and sat with me and said those words, and I could not answer. I can now: I took it from his brow while he slept, and called it inheritance.",
+          "fx": [
+            ["set", "mg_reeve_confessed"],
+            ["score", 15],
+            ["xp", 5],
+            ["addvar", "rep_keepers", 1],
+            ["say", "The gray coming off him thins to a thread."]
+          ]
+        },
+        {
+          "id": "ledger",
+          "label": "show him his own ledger",
+          "if": [["has", "mg_founding_ledger"], ["flag", "mg_heard_reeve"], ["!flag", "mg_reeve_confessed"]],
+          "once": true,
+          "say": "My hand. I wrote it the night after and chained it the morning after that, so that someone would read it and no one would. You read it. Then it is said: I took it from his brow while he slept, and called it inheritance.",
+          "fx": [
+            ["set", "mg_reeve_confessed"],
+            ["score", 15],
+            ["xp", 5],
+            ["say", "The gray coming off him thins to a thread."]
+          ]
+        },
+        {
+          "id": "slain",
+          "label": "your father is dust",
+          "if": [["flag", "va_king_slain"], ["flag", "mg_heard_reeve"]],
+          "once": true,
+          "say": "Dust. Then I am the last of it, and there is nothing left to say it to. Do what you came to do. The seat is through there.",
+          "fx": [["xp", 2], ["addvar", "rep_keepers", -1]]
+        },
+        {
+          "id": "throne",
+          "label": "the Hollow Throne",
+          "if": [["flag", "mg_heard_reeve"]],
+          "once": true,
+          "say": "I had it cut with a hollow for his crown, meaning to set it there one day as a gift instead of a theft. I never did. Everything that grieves in the Reach pours out of that hollow. Fill it, burn it, or sit in it. Those are the doors.",
+          "fx": [["xp", 3], ["score", 2]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him on the lid",
+          "say": "Go on. I have heard every footstep for four hundred years. Yours is not the last.",
+          "end": true
+        }
+      ]
+    },
+    "mg_gate_guard": {
+      "name": "gate captain",
+      "room": "mg_palace_gate",
+      "hp": 10,
+      "atk": 3,
+      "df": 12,
+      "desc": "Enamelled gray and a face that has said no for a living.",
+      "onDeath": [
+        ["set", "mg_admitted"],
+        ["addvar", "rep_watch", -2],
+        ["addvar", "rep_crown", -2],
+        ["addvar", "appr_lys", -1],
+        ["xp", 5],
+        ["say", "The captain goes down on the white steps. The bronze doors are only doors now. Behind you the Way has emptied, and someone is running for the Watch House."]
+      ]
+    },
+    "mg_hollow_guard": {
+      "name": "honour guard",
+      "room": "mg_old_crypts",
+      "hostile": true,
+      "aggressive": true,
+      "hp": 10,
+      "atk": 3,
+      "df": 12,
+      "onDeath": [
+        ["set", "mg_guard_passed"],
+        ["score", 5],
+        ["xp", 6],
+        ["say", "The gray mail folds down on nothing. Four hundred years at a post, ended by whoever came next."]
+      ]
+    },
+    "mg_cutpurse": {
+      "name": "cutpurse",
+      "room": null,
+      "hostile": true,
+      "aggressive": true,
+      "hp": 4,
+      "atk": 1,
+      "df": 9,
+      "onDeath": [
+        ["xp", 2],
+        ["addvar", "gold", 3],
+        ["say", "The boy drops the knife and three coins that were not his either, and is gone into the washing before he hits the ground."]
+      ]
+    },
+    "mg_beggar": {
+      "name": "the beggar in the niche",
+      "room": null,
+      "topics": [
+        {
+          "id": "drains",
+          "label": "what you watch for",
+          "once": true,
+          "say": "The gray comes up the drains at the third bell; every night a step farther. Under the chapel there is a stair the keepers used; under the Gray Steps a cellar the Companies use. Both go down. Everything here goes down.",
+          "fx": [["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "coin",
+          "label": "give him a coin",
+          "if": [["var", "gold", ">=", 1]],
+          "once": true,
+          "say": "He takes it without looking at it. 'The Regent's face,' he says. 'Her grandfather's on the old ones. Same face. Same hollow behind it.'",
+          "fx": [["addvar", "gold", -1], ["xp", 1], ["addvar", "appr_osk", 1], ["addvar", "appr_lys", 1]]
+        }
+      ]
+    }
+  },
+  "quests": {
+    "mg_throne": {
+      "name": "The Hollow Throne",
+      "start": [["flag", "mg_entered"]],
+      "done": [["flag", "mg_throne_resolved"]],
+      "stages": [
+        {
+          "if": [["flag", "mg_at_throne"]],
+          "text": "You stand before the Hollow Throne. Fill it, burn it, sit in it, or read the truth aloud — each is an ending."
+        },
+        {
+          "if": [["flag", "mg_reeve_confessed"]],
+          "text": "The first Reeve has confessed. The Hollow Throne lies north of his tomb."
+        },
+        {
+          "if": [["flag", "mg_guard_passed"]],
+          "text": "The honour guard is passed. The first Reeve's tomb lies north through the crypts; hear him before the throne."
+        },
+        {
+          "if": [["flag", "mg_stair_open"]],
+          "text": "The barred stair is open. Down, through the cistern, north into the old crypts."
+        },
+        {
+          "if": [["flag", "mg_knows_pilgrim_door"]],
+          "text": "The pilgrims' door under the Chapel of Ash leads down to the cistern; the crypts lie north of it."
+        },
+        {
+          "if": [["flag", "mg_knows_cut"]],
+          "text": "Quill's cut: under the Gray Steps in the warrens, three knocks and a pause, down to the cistern."
+        },
+        {
+          "if": [["flag", "mg_admitted"]],
+          "text": "You are inside the palace. The archivist keeps the key to the barred stair; the Regent keeps her window."
+        },
+        {
+          "if": [],
+          "text": "What feeds the gray lies under the palace. Ways down: the palace stair, the chapel's pilgrims' door, or Quill's cut in the warrens."
+        }
+      ]
+    },
+    "mg_ledger": {
+      "name": "The Founding Ledger",
+      "start": [["flag", "mg_entered"]],
+      "done": [["flag", "mg_ledger_found"]],
+      "stages": [
+        {
+          "if": [["flag", "mg_admitted"]],
+          "text": "The chained shelf in the Hall of Ledgers, east of the palace court. Penn, the Church, gold, or your own hands."
+        },
+        {
+          "if": [],
+          "text": "The founding ledger is chained in the palace's Hall of Ledgers. It would prove what the House of Ashreeve stands on."
+        }
+      ]
+    }
+  },
+  "epilogue": [
+    {
+      "if": [["flag", "mg_regent_shaken"]],
+      "text": "Ysolde Ashreeve kept the founding ledger on her own table after that, unchained, where anyone who came to her could read it."
+    },
+    {
+      "if": [["flag", "mg_regent_dead"]],
+      "text": "In Marrowgate they still argue whether the Regent's killing was justice. The argument is the closest thing the city has to a rite."
+    },
+    {
+      "if": [["flag", "vell_took_crown"]],
+      "text": "Regent Vell rules the Reach from the Hollow Throne, precisely and without mercy, and has never once spoken your name."
+    },
+    {
+      "if": [["npcDead", "mg_hollow_guard"]],
+      "text": "Nothing stands in the old crypts now. The Watch goes down with lamps on feast days and finds only water."
+    },
+    {
+      "if": [["npcDead", "mg_gate_guard"]],
+      "text": "The gate captain's name is on the Watch's roll of honour. Yours is on a different roll, in the same hall."
+    }
+  ]
+}
