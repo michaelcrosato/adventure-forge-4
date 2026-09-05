@@ -273,6 +273,18 @@ Marrowgate's Preceptor-General admits as much. Six quests, eleven epilogue
 lines, three Marrowgate echoes, ten companion remarks; the hollow tallies
 run to seven.
 
+**The company** (after the third playtest round): companions can be hurt —
+an enemy's blows rotate between the player and the companions standing with
+them, in join order and with no die involved, so replays hold; a companion
+struck to nothing falls back out of the fight and gets up at half strength
+once it is over, and remembers the fall. The four talk among themselves:
+thirty paired exchanges fire when both are present — entering a hold
+together, a hollow's fate they disagree on, each road into Marrowgate, the
+Hollow Throne, one of them having gone down, one high and one low in regard —
+and twelve pair epilogue lines tell what became of two of them together or at
+odds. Owned things (the `owner` field) let the world notice theft; the
+content pass marking owners across the holds is in flight.
+
 ## Build order
 
 1. `world/reach.json` root + `companions.json` + `templates.json` + the
