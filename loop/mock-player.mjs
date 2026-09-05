@@ -79,17 +79,27 @@ const rnd = () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-// Menu text may carry a display-only " (roll N+ on the die)" or
-// " (locked[: hint])" suffix (see oddsHint in src/engine.ts) that is never
-// part of the canonical label walkthroughs match on.
-const stripHints = (label) => label.replace(/ \((?:roll \d+\+ on the die|locked(?::[^)]*)?)\)$/, "");
-
 const menuOf = (text) =>
   text
     .split("\n")
     .map((l) => /^(\d+) (.+)$/.exec(l))
     .filter(Boolean)
-    .map((m) => ({ n: Number(m[1]), label: stripHints(m[2]) }));
+    .map((m) => ({ n: Number(m[1]), label: m[2] }));
+
+// Menu text may carry ONE display-only " (…)" suffix from oddsHint (roll odds,
+// a locked-exit clue, a destination landmark, an item-use preview) that is
+// never part of the canonical label walkthroughs match on. Same rule as
+// matchesMenuLabel in src/format.ts (this file runs without tsx, so it cannot
+// import it); exact match is preferred, since two labels may differ only by a
+// trailing parenthetical of their own.
+const matchesLabel = (line, want) => {
+  const a = line.trim().toLowerCase();
+  const b = want.trim().toLowerCase();
+  return a === b || (a.startsWith(`${b} (`) && a.endsWith(")"));
+};
+const findEntry = (menu, want) =>
+  menu.find((m) => m.label.trim().toLowerCase() === want.trim().toLowerCase()) ??
+  menu.find((m) => matchesLabel(m.label, want));
 
 function expandWalkthrough() {
   const path = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
@@ -107,7 +117,8 @@ const main = async () => {
   notify("notifications/initialized", {});
   const tools = await rpc("tools/list", {});
   const names = tools.tools.map((t) => t.name).sort();
-  if (JSON.stringify(names) !== JSON.stringify(["act", "look", "new_game"]))
+  // the exact surface a live player gets — a missing OR an extra tool is a wiring finding
+  if (JSON.stringify(names) !== JSON.stringify(["act", "look", "new_game", "status"]))
     throw new Error(`unexpected tool surface: ${names.join(",")}`);
 
   let text = await callTool("new_game", { seed: SEED });
@@ -144,14 +155,15 @@ const main = async () => {
           wanted = stepDef.repeat;
         }
       }
-      pick = menu.find((m) => m.label.toLowerCase() === wanted.toLowerCase());
+      pick = findEntry(menu, wanted);
       if (!pick && repeatStep) {
         // repeat target no longer offered => condition satisfied, move on
         repeatStep = null;
         si++;
         continue;
       }
-      if (!pick) throw new Error(`walkthrough label "${wanted}" not in menu at turn ${turns}`);
+      // an ordinary step missing from the menu is an error, never a silent skip
+      if (!pick) throw new Error(`walkthrough label "${wanted}" not in menu at turn ${turns}:\n${text}`);
     } else {
       pick = menu[Math.floor(rnd() * menu.length)];
     }

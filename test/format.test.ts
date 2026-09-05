@@ -1,7 +1,32 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { renderStatus } from "../src/format.ts";
+import { matchesMenuLabel, renderStatus } from "../src/format.ts";
 import type { State, World } from "../src/types.ts";
+
+test("matchesMenuLabel: a rendered menu line is its canonical label, alone or with one trailing display hint", () => {
+  // Every hint kind oddsHint can append (see engine.ts), plus labels whose own
+  // parentheses must survive — a mock player that only sees rendered text has
+  // to recover the canonical label a walkthrough is written in.
+  const cases: [line: string, canonical: string, want: boolean][] = [
+    ["go east", "go east", true],
+    ["go east (toward drowned shrine)", "go east", true], // destination landmark
+    ["go north (locked: find the keeper's key)", "go north", true], // locked exit, with clue
+    ["go north (locked)", "go north", true],
+    ["force it (roll 9+ on the die; +2 might)", "force it", true], // check odds, with modifier
+    ["force it (roll 11+ on the die; might)", "force it", true], // check odds, no modifier
+    ["attack sea-wight with notched cutlass (roll 6+ on the die)", "attack sea-wight with notched cutlass", true],
+    ["use iron crown (turn it over and read the engraving inside the band)", "use iron crown", true], // item-use preview
+    ["work out the water verse (wits) (roll 7+ on the die; wits)", "work out the water verse (wits)", true], // canonical parens kept
+    ["perk: Fleetfoot (+2 grace checks (locks))", "perk: Fleetfoot (+2 grace checks (locks))", true],
+    ["Go East (toward drowned shrine)", "go east", true], // case-insensitive, like actionByLabel
+    ["go east now", "go east", false],
+    ["go eastward", "go east", false],
+    ["use iron crown on hollow king", "use iron crown", false], // a different action, not a hint
+    ["go east (toward drowned shrine) extra", "go east", false],
+  ];
+  for (const [line, canonical, want] of cases)
+    assert.equal(matchesMenuLabel(line, canonical), want, `"${line}" vs "${canonical}"`);
+});
 
 const stateWithVars = (vars: Record<string, number>, inv: string[] = []) =>
   ({ vars, inv, flags: {} }) as unknown as State;
