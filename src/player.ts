@@ -45,24 +45,44 @@ export type Msg = { role: "user" | "assistant"; content: string };
 export type Usage = { in: number; out: number; cacheRead: number; cacheWrite: number };
 export type Provider = (system: string, msgs: Msg[], maxTokens: number) => Promise<{ text: string; usage: Usage }>;
 
-export function apiProvider(model: string): Provider {
+export type ApiOpts = {
+  fetchFn?: typeof fetch; // injectable for tests
+  baseDelayMs?: number; // first retry delay; doubles per attempt (default 1500)
+  maxAttempts?: number; // total tries per call before giving up (default 5)
+};
+
+export function apiProvider(model: string, opts: ApiOpts = {}): Provider {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) throw new Error("ANTHROPIC_API_KEY not set — use --mock, or export a key");
+  const fetchFn = opts.fetchFn ?? fetch;
+  const baseDelayMs = opts.baseDelayMs ?? 1500;
+  const maxAttempts = opts.maxAttempts ?? 5;
+  const backoff = (attempt: number) => new Promise((r) => setTimeout(r, baseDelayMs * 2 ** attempt));
   return async (system, msgs, maxTokens) => {
     for (let attempt = 0; ; attempt++) {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-        body: JSON.stringify({
-          model,
-          max_tokens: maxTokens,
-          system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
-          messages: msgs,
-        }),
-      });
+      const last = attempt >= maxAttempts - 1;
+      // a dropped connection is as transient as a 429/5xx — a fleet session
+      // has tokens sunk into its transcript by then, so retry it the same way
+      let res: Response;
+      try {
+        res = await fetchFn("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+          body: JSON.stringify({
+            model,
+            max_tokens: maxTokens,
+            system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
+            messages: msgs,
+          }),
+        });
+      } catch (e) {
+        if (last) throw new Error(`API unreachable after ${maxAttempts} attempts: ${String(e)}`);
+        await backoff(attempt);
+        continue;
+      }
       if (res.status === 429 || res.status >= 500) {
-        if (attempt >= 4) throw new Error(`API ${res.status} after retries`);
-        await new Promise((r) => setTimeout(r, 1500 * 2 ** attempt));
+        if (last) throw new Error(`API ${res.status} after ${maxAttempts} attempts`);
+        await backoff(attempt);
         continue;
       }
       if (!res.ok) throw new Error(`API ${res.status}: ${(await res.text()).slice(0, 300)}`);
