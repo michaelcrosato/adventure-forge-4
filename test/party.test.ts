@@ -293,6 +293,38 @@ test("a hostile who will still talk says so; a room that holds an ending warns o
   assert.doesNotMatch(back.events.join(" "), /An ending waits/, "the warning is given once per room");
 });
 
+test("taking an owned thing under its owner's eyes is seen and counted; coin moves are tagged; status names regard and, after the end, what was left undone", () => {
+  const world = mini({
+    items: {
+      purse: { name: "purse", loc: "a", takeable: true, owner: "keeper" },
+      rope: { name: "rope", loc: "b", takeable: true, owner: "keeper" },
+    },
+    npcs: {
+      keeper: { name: "shopkeeper", room: "a", topics: [{ id: "buy", label: "buy nothing", say: "Suit yourself.", fx: [["addvar", "gold", 3]] }] },
+      lys: { name: "Lys", room: "a", hp: 6, companion: {}, topics: [{ id: "join", label: "come with me", say: "Fine.", fx: [["party", "lys", "join"], ["addvar", "appr_lys", 2]], once: true }] },
+    },
+  });
+  world.rooms["b"]!.actions = [{ id: "kneel", label: "kneel to the seat", fx: [["end", "lose", "knelt", "You kneel."]] }];
+  let { state } = newState(world, 1);
+  assert.match(renderMenu(world, state).text, /take purse \(shopkeeper is watching\)/);
+  const out = step(world, state, actionByLabel(world, state, "take purse")!);
+  assert.match(out.events.join(" "), /The shopkeeper sees you take it\./);
+  assert.equal(out.state.flags["stole_purse"], true);
+  assert.equal(out.state.vars["thefts"], 1);
+  state = out.state;
+  const paid = step(world, state, actionByLabel(world, state, "ask shopkeeper: buy nothing")!);
+  assert.match(paid.events.join(" "), /\(\+3 gold\)/);
+  state = doLabel(world, paid.state, "ask Lys: come with me");
+  assert.match(renderStatus(world, state), /Party: Lys \(regard \+2\)/);
+  state = doLabel(world, state, "go east");
+  assert.doesNotMatch(renderMenu(world, state).text, /is watching/, "the owner is a room away");
+  const took = step(world, state, actionByLabel(world, state, "take rope")!);
+  assert.equal(took.state.vars["thefts"], 1, "unseen, it is nobody's business");
+  state = doLabel(world, took.state, "kneel to the seat");
+  assert.ok(state.ended);
+  assert.match(renderStatus(world, state), /The tale is told\./);
+});
+
 test("companions roll their own attacks after the player's, and a leaving companion stays behind", () => {
   const world = company();
   let { state } = newState(world, 1);

@@ -160,6 +160,13 @@ shown, and in `status` (a brief view spends its characters on what changed).
 conditions hold (first match wins; an empty hint hides it), so "the hunter
 might want to see it" goes quiet once `said_va_hunter_pelt` is set.
 
+An item may name an `owner` (an npc id). Taking it while the owner stands
+alive in the room is seen: the take entry warns "(<owner> is watching)", the
+take prints that they saw it, the flag `stole_<item>` is set and the counter
+`thefts` grows by one — read them back in the owner's topics, a faction's
+standing, a companion's remark, the epilogue. Taking it while they are away is
+nobody's business but the player's.
+
 ## 7. Npcs, topics, conversations
 
 ```json

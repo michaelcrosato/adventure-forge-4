@@ -16,6 +16,7 @@ import type {
   State,
   StepOut,
   TopicDef,
+  NpcDef,
   UseDef,
   World,
 } from "./types.ts";
@@ -425,6 +426,8 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         s.vars[fx[1]] = (s.vars[fx[1]] ?? 0) + fx[2];
         const d = fx[2];
         if (d) {
+          // coin moves are tagged like score and xp, so a stash found or a price paid is never silent
+          if (fx[1] === "gold") events.push(`(${d > 0 ? "+" : ""}${d} gold)`);
           // choices that matter must be legible: a companion at hand says so,
           // and a named faction's standing prints its move
           if (fx[1].startsWith("appr_")) {
@@ -664,6 +667,13 @@ export const inTalkMode = (world: World, s: State): boolean =>
   !npcDead(world, s, s.talking) &&
   visibleTopics(world, s, s.talking).length > 0;
 
+/** The owner of an item, if they stand alive in the player's room to see it go. */
+function ownerWatching(world: World, s: State, owner: string): NpcDef | null {
+  const def = world.npcs[owner];
+  if (!def || s.npcRoom[owner] !== s.room || npcDead(world, s, owner) || s.party.includes(owner)) return null;
+  return def;
+}
+
 /** True when an effect list can end the game somewhere inside it. */
 function fxEnds(fxs: Fx[] | undefined): boolean {
   for (const fx of fxs ?? []) {
@@ -859,6 +869,11 @@ export function itemHint(world: World, s: State, id: string): string | undefined
 
 export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: boolean } = {}): string {
   if (a.kind === "custom" && world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.free) return " (free)";
+  if (a.kind === "take") {
+    const owner = world.items[a.item]?.owner;
+    const w = owner ? ownerWatching(world, s, owner) : null;
+    return w ? ` (${w.name} is watching)` : "";
+  }
   if (a.kind === "travelregion" && a.region) {
     // a region entry opens a second menu; say how many known places wait behind it
     const n = knownLandmarks(world, s).filter((id) => (world.rooms[id]?.region ?? "") === a.region).length;
@@ -933,6 +948,13 @@ export function step(world: World, prev: State, action: Action): StepOut {
       const label = def?.name ?? action.item;
       const hint = itemHint(world, s, action.item);
       events.push(hint ? `${label}: taken. (${hint})` : `${label}: taken.`);
+      // an owned thing taken under its owner's eyes is a theft the world can remember
+      const owner = def?.owner ? ownerWatching(world, s, def.owner) : null;
+      if (owner) {
+        s.flags[`stole_${action.item}`] = true;
+        s.vars["thefts"] = (s.vars["thefts"] ?? 0) + 1;
+        events.push(`${TheName(owner.name)} sees you take it.`);
+      }
       break;
     }
     case "use": {
@@ -1061,7 +1083,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // whole map on foot for ninety turns before noticing the entry.
   if (!s.ended && !s.flags["_seenTravel"] && travelAvailable(world, s)) {
     s.flags["_seenTravel"] = true;
-    events.push("(You know more than one place now: 'travel to a known place' moves you between landmarks in one turn.)");
+    events.push("(You know more than one place now: 'travel to a known place' moves you between the named places you have seen — landmarks, not every room — in one turn.)");
   }
   // Once per room that holds an ending: a player three hollows in walked to the
   // seat and ended the tale on the next action with four threads still open.

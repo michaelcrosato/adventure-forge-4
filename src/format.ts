@@ -214,7 +214,9 @@ export function renderStatus(world: World, s: State): string {
   // the recap follows the story: a staged objectives list shows its first entry whose conditions hold
   const obj = world.objectives;
   const recap = Array.isArray(obj) ? obj.find((o) => o.if.every((c) => condOk(world, s, c)))?.text : (obj ?? world.intro);
-  if (recap) lines.push(recap);
+  // after the end, the recap would point forward; say instead that the tale is told
+  if (s.ended) lines.push("The tale is told. What follows is how things stood at the end; the quests listed are the ones left undone.");
+  else if (recap) lines.push(recap);
   // the score's ceiling lives here, not in every turn's header, where it read as a progress bar
   if (world.maxScore !== undefined)
     lines.push(`Score: ${s.score}/${world.maxScore} (a bonus tally of discoveries and choices; it can fill long before the tale ends)`);
@@ -245,8 +247,8 @@ export function renderStatus(world: World, s: State): string {
     // the road (quests marked main) reads first, apart from the side threads
     const road = active.filter((x) => world.quests?.[x.id]?.main);
     const side = active.filter((x) => !world.quests?.[x.id]?.main);
-    if (road.length) lines.push(`The road:\n${road.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
-    if (side.length) lines.push(`Quests:\n${side.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
+    if (road.length) lines.push(`${s.ended ? "The road, as it ended" : "The road"}:\n${road.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
+    if (side.length) lines.push(`${s.ended ? "Left undone" : "Quests"}:\n${side.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
     const done = q.filter((x) => x.status === "done").map((x) => x.name);
     if (done.length) lines.push(`Done: ${done.join(", ")}`);
     const failed = q.filter((x) => x.status === "failed").map((x) => x.name);
@@ -272,7 +274,12 @@ export function renderStatus(world: World, s: State): string {
     lines.push(`carrying: ${carried.join(", ")}`);
   }
   if (s.party?.length) {
-    const party = s.party.map((id) => world.npcs[id]?.name ?? id);
+    // regard in numbers, the same ones the "(Lys -1)" events move, so how near a companion is to walking is never a guess
+    const party = s.party.map((id) => {
+      const name = world.npcs[id]?.name ?? id;
+      const a = s.vars?.[`appr_${id}`];
+      return a === undefined ? name : `${name} (regard ${a > 0 ? "+" : ""}${a})`;
+    });
     lines.push(`Party: ${party.join(", ")}`);
   }
   if (s.perks?.length) {

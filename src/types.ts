@@ -107,6 +107,7 @@ export type ItemDef = {
   dmg?: number; // damage when carried (best weapon wins; unarmed = 1)
   armor?: number; // reduces damage taken while carried (best armor wins)
   use?: UseDef[]; // first matching def runs; else "Nothing happens."
+  owner?: string; // an npc: taking the item while they stand alive in the room is seen (flag `stole_<item>`, var `thefts`), and the menu warns
   hint?: string; // shown on pickup, and (for a `use`-able item) as a menu preview of what "use" does
   /** The hint while conditions hold (first match wins; an empty hint hides it) — a "show it to the hunter" goes quiet once shown. */
   variants?: { if: Cond[]; hint?: string }[];
