@@ -178,7 +178,8 @@ export function render(
         if (hp <= 0) return `${d.name} (${s.flags[`laid_${id}`] ? "at rest" : "dead"})`;
         const pierce = d.pierce ? ", armor useless" : "";
         if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1}${pierce})${tail}`;
-        if (d.hostile) return `${d.name} (hostile, hp${hp}/${d.hp ?? 1}${pierce}${talks.has(id) ? ", will hear you out" : ""})${tail}`;
+        // a hostile that is not aggressive never strikes first: say so, so walking past reads as the choice it is
+        if (d.hostile) return `${d.name} (hostile, holds its ground, hp${hp}/${d.hp ?? 1}${pierce}${talks.has(id) ? ", will hear you out" : ""})${tail}`;
         return `${d.name} is here${tail}`;
       });
     if (npcs.length) lines.push(npcs.join("; "));
