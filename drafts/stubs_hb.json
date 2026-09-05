@@ -400,80 +400,6 @@
         }
       ]
     },
-    "hb_west_road": {
-      "name": "Hollowbrook west road (stub)",
-      "desc": "Hollowbrook begins here. This region is not yet written.",
-      "brief": "Hollowbrook west road (stub).",
-      "region": "hb",
-      "landmark": "Hollowbrook west road",
-      "exits": {
-        "west": {
-          "to": "wm_east_road"
-        },
-        "in": {
-          "to": "hb_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "hb_entered"
-        ]
-      ]
-    },
-    "hb_south_dike": {
-      "name": "Hollowbrook south dike (stub)",
-      "desc": "Hollowbrook begins here. This region is not yet written.",
-      "brief": "Hollowbrook south dike (stub).",
-      "region": "hb",
-      "landmark": "Hollowbrook south dike",
-      "exits": {
-        "south": {
-          "to": "fd_north_dike"
-        },
-        "in": {
-          "to": "hb_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "hb_entered"
-        ]
-      ]
-    },
-    "hb_stub_hub": {
-      "name": "Hollowbrook (unwritten)",
-      "desc": "A placeholder for Hollowbrook while the realm is built.",
-      "brief": "Hollowbrook (unwritten).",
-      "region": "hb",
-      "exits": {
-        "to_hb_west_road": {
-          "to": "hb_west_road"
-        },
-        "to_hb_south_dike": {
-          "to": "hb_south_dike"
-        }
-      },
-      "actions": [
-        {
-          "id": "hb_stub_end",
-          "label": "(stub) end the tale here",
-          "fx": [
-            [
-              "score",
-              100
-            ],
-            [
-              "end",
-              "win",
-              "zz_stub_win",
-              "The realm is unfinished; this ending is a scaffold and will be removed."
-            ]
-          ]
-        }
-      ]
-    },
     "sk_north_track": {
       "name": "Saltkerns north track (stub)",
       "desc": "the Saltkerns begins here. This region is not yet written.",
@@ -705,6 +631,31 @@
         {
           "id": "mg_stub_end",
           "label": "(stub) end the tale here",
+          "fx": [
+            [
+              "score",
+              100
+            ],
+            [
+              "end",
+              "win",
+              "zz_stub_win",
+              "The realm is unfinished; this ending is a scaffold and will be removed."
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "zz_oracle": {
+      "name": "stub oracle",
+      "room": "va_gate",
+      "topics": [
+        {
+          "id": "end",
+          "label": "(stub) end the tale here",
+          "say": "So be it.",
           "fx": [
             [
               "score",

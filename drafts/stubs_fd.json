@@ -98,104 +98,6 @@
         }
       ]
     },
-    "fd_causeway_west": {
-      "name": "Fenmarch causeway (stub)",
-      "desc": "Fenmarch begins here. This region is not yet written.",
-      "brief": "Fenmarch causeway (stub).",
-      "region": "fd",
-      "landmark": "Fenmarch causeway",
-      "exits": {
-        "west": {
-          "to": "va_causeway"
-        },
-        "in": {
-          "to": "fd_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "fd_entered"
-        ]
-      ]
-    },
-    "fd_north_dike": {
-      "name": "Fenmarch north dike (stub)",
-      "desc": "Fenmarch begins here. This region is not yet written.",
-      "brief": "Fenmarch north dike (stub).",
-      "region": "fd",
-      "landmark": "Fenmarch north dike",
-      "exits": {
-        "north": {
-          "to": "hb_south_dike"
-        },
-        "in": {
-          "to": "fd_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "fd_entered"
-        ]
-      ]
-    },
-    "fd_coast_road": {
-      "name": "Fenmarch coast road (stub)",
-      "desc": "Fenmarch begins here. This region is not yet written.",
-      "brief": "Fenmarch coast road (stub).",
-      "region": "fd",
-      "landmark": "Fenmarch coast road",
-      "exits": {
-        "south": {
-          "to": "sk_coast_road"
-        },
-        "in": {
-          "to": "fd_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "fd_entered"
-        ]
-      ]
-    },
-    "fd_stub_hub": {
-      "name": "Fenmarch (unwritten)",
-      "desc": "A placeholder for Fenmarch while the realm is built.",
-      "brief": "Fenmarch (unwritten).",
-      "region": "fd",
-      "exits": {
-        "to_fd_causeway_west": {
-          "to": "fd_causeway_west"
-        },
-        "to_fd_north_dike": {
-          "to": "fd_north_dike"
-        },
-        "to_fd_coast_road": {
-          "to": "fd_coast_road"
-        }
-      },
-      "actions": [
-        {
-          "id": "fd_stub_end",
-          "label": "(stub) end the tale here",
-          "fx": [
-            [
-              "score",
-              100
-            ],
-            [
-              "end",
-              "win",
-              "zz_stub_win",
-              "The realm is unfinished; this ending is a scaffold and will be removed."
-            ]
-          ]
-        }
-      ]
-    },
     "wm_south_gate": {
       "name": "Highward south gate (stub)",
       "desc": "Wardmoor begins here. This region is not yet written.",
@@ -705,6 +607,31 @@
         {
           "id": "mg_stub_end",
           "label": "(stub) end the tale here",
+          "fx": [
+            [
+              "score",
+              100
+            ],
+            [
+              "end",
+              "win",
+              "zz_stub_win",
+              "The realm is unfinished; this ending is a scaffold and will be removed."
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "zz_oracle": {
+      "name": "stub oracle",
+      "room": "va_gate",
+      "topics": [
+        {
+          "id": "end",
+          "label": "(stub) end the tale here",
+          "say": "So be it.",
           "fx": [
             [
               "score",

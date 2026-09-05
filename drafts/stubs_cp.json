@@ -572,104 +572,6 @@
         }
       ]
     },
-    "cp_south_stair": {
-      "name": "Coldpass south stair (stub)",
-      "desc": "Coldpass begins here. This region is not yet written.",
-      "brief": "Coldpass south stair (stub).",
-      "region": "cp",
-      "landmark": "Coldpass south stair",
-      "exits": {
-        "south": {
-          "to": "wm_north_road"
-        },
-        "in": {
-          "to": "cp_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "cp_entered"
-        ]
-      ]
-    },
-    "cp_smugglers_cave": {
-      "name": "the smugglers' cave (stub)",
-      "desc": "Coldpass begins here. This region is not yet written.",
-      "brief": "the smugglers' cave (stub).",
-      "region": "cp",
-      "landmark": "the smugglers' cave",
-      "exits": {
-        "down": {
-          "to": "sk_smugglers_stair"
-        },
-        "in": {
-          "to": "cp_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "cp_entered"
-        ]
-      ]
-    },
-    "cp_pass": {
-      "name": "the pass (stub)",
-      "desc": "Coldpass begins here. This region is not yet written.",
-      "brief": "the pass (stub).",
-      "region": "cp",
-      "landmark": "the pass",
-      "exits": {
-        "north": {
-          "to": "mg_south_gate"
-        },
-        "in": {
-          "to": "cp_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "cp_entered"
-        ]
-      ]
-    },
-    "cp_stub_hub": {
-      "name": "Coldpass (unwritten)",
-      "desc": "A placeholder for Coldpass while the realm is built.",
-      "brief": "Coldpass (unwritten).",
-      "region": "cp",
-      "exits": {
-        "to_cp_south_stair": {
-          "to": "cp_south_stair"
-        },
-        "to_cp_smugglers_cave": {
-          "to": "cp_smugglers_cave"
-        },
-        "to_cp_pass": {
-          "to": "cp_pass"
-        }
-      },
-      "actions": [
-        {
-          "id": "cp_stub_end",
-          "label": "(stub) end the tale here",
-          "fx": [
-            [
-              "score",
-              100
-            ],
-            [
-              "end",
-              "win",
-              "zz_stub_win",
-              "The realm is unfinished; this ending is a scaffold and will be removed."
-            ]
-          ]
-        }
-      ]
-    },
     "mg_south_gate": {
       "name": "Marrowgate south gate (stub)",
       "desc": "Marrowgate begins here. This region is not yet written.",
@@ -705,6 +607,31 @@
         {
           "id": "mg_stub_end",
           "label": "(stub) end the tale here",
+          "fx": [
+            [
+              "score",
+              100
+            ],
+            [
+              "end",
+              "win",
+              "zz_stub_win",
+              "The realm is unfinished; this ending is a scaffold and will be removed."
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "zz_oracle": {
+      "name": "stub oracle",
+      "room": "va_gate",
+      "topics": [
+        {
+          "id": "end",
+          "label": "(stub) end the tale here",
+          "say": "So be it.",
           "fx": [
             [
               "score",

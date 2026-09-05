@@ -196,136 +196,6 @@
         }
       ]
     },
-    "wm_south_gate": {
-      "name": "Highward south gate (stub)",
-      "desc": "Wardmoor begins here. This region is not yet written.",
-      "brief": "Highward south gate (stub).",
-      "region": "wm",
-      "landmark": "Highward south gate",
-      "exits": {
-        "south": {
-          "to": "va_north_road"
-        },
-        "in": {
-          "to": "wm_stub_hub",
-          "if": [
-            [
-              "flag",
-              "act2_open"
-            ]
-          ],
-          "lockedMsg": "The Watch admits no one from a blighted hold until the barrow is dealt with.",
-          "hint": "settle the Hollow King first"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "wm_entered"
-        ]
-      ]
-    },
-    "wm_west_road": {
-      "name": "Wardmoor west road (stub)",
-      "desc": "Wardmoor begins here. This region is not yet written.",
-      "brief": "Wardmoor west road (stub).",
-      "region": "wm",
-      "landmark": "Wardmoor west road",
-      "exits": {
-        "west": {
-          "to": "ir_east_road"
-        },
-        "in": {
-          "to": "wm_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "wm_entered"
-        ]
-      ]
-    },
-    "wm_east_road": {
-      "name": "Wardmoor east road (stub)",
-      "desc": "Wardmoor begins here. This region is not yet written.",
-      "brief": "Wardmoor east road (stub).",
-      "region": "wm",
-      "landmark": "Wardmoor east road",
-      "exits": {
-        "east": {
-          "to": "hb_west_road"
-        },
-        "in": {
-          "to": "wm_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "wm_entered"
-        ]
-      ]
-    },
-    "wm_north_road": {
-      "name": "Wardmoor north road (stub)",
-      "desc": "Wardmoor begins here. This region is not yet written.",
-      "brief": "Wardmoor north road (stub).",
-      "region": "wm",
-      "landmark": "Wardmoor north road",
-      "exits": {
-        "north": {
-          "to": "cp_south_stair"
-        },
-        "in": {
-          "to": "wm_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "wm_entered"
-        ]
-      ]
-    },
-    "wm_stub_hub": {
-      "name": "Wardmoor (unwritten)",
-      "desc": "A placeholder for Wardmoor while the realm is built.",
-      "brief": "Wardmoor (unwritten).",
-      "region": "wm",
-      "exits": {
-        "to_wm_south_gate": {
-          "to": "wm_south_gate"
-        },
-        "to_wm_west_road": {
-          "to": "wm_west_road"
-        },
-        "to_wm_east_road": {
-          "to": "wm_east_road"
-        },
-        "to_wm_north_road": {
-          "to": "wm_north_road"
-        }
-      },
-      "actions": [
-        {
-          "id": "wm_stub_end",
-          "label": "(stub) end the tale here",
-          "fx": [
-            [
-              "score",
-              100
-            ],
-            [
-              "end",
-              "win",
-              "zz_stub_win",
-              "The realm is unfinished; this ending is a scaffold and will be removed."
-            ]
-          ]
-        }
-      ]
-    },
     "ir_east_road": {
       "name": "Iron Downs east road (stub)",
       "desc": "the Iron Downs begins here. This region is not yet written.",
@@ -705,6 +575,31 @@
         {
           "id": "mg_stub_end",
           "label": "(stub) end the tale here",
+          "fx": [
+            [
+              "score",
+              100
+            ],
+            [
+              "end",
+              "win",
+              "zz_stub_win",
+              "The realm is unfinished; this ending is a scaffold and will be removed."
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "zz_oracle": {
+      "name": "stub oracle",
+      "room": "va_gate",
+      "topics": [
+        {
+          "id": "end",
+          "label": "(stub) end the tale here",
+          "say": "So be it.",
           "fx": [
             [
               "score",

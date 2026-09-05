@@ -326,80 +326,6 @@
         }
       ]
     },
-    "ir_east_road": {
-      "name": "Iron Downs east road (stub)",
-      "desc": "the Iron Downs begins here. This region is not yet written.",
-      "brief": "Iron Downs east road (stub).",
-      "region": "ir",
-      "landmark": "Iron Downs east road",
-      "exits": {
-        "east": {
-          "to": "wm_west_road"
-        },
-        "in": {
-          "to": "ir_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "ir_entered"
-        ]
-      ]
-    },
-    "ir_south_track": {
-      "name": "Iron Downs south track (stub)",
-      "desc": "the Iron Downs begins here. This region is not yet written.",
-      "brief": "Iron Downs south track (stub).",
-      "region": "ir",
-      "landmark": "Iron Downs south track",
-      "exits": {
-        "south": {
-          "to": "th_north_track"
-        },
-        "in": {
-          "to": "ir_stub_hub"
-        }
-      },
-      "onEnterOnce": [
-        [
-          "set",
-          "ir_entered"
-        ]
-      ]
-    },
-    "ir_stub_hub": {
-      "name": "the Iron Downs (unwritten)",
-      "desc": "A placeholder for the Iron Downs while the realm is built.",
-      "brief": "the Iron Downs (unwritten).",
-      "region": "ir",
-      "exits": {
-        "to_ir_east_road": {
-          "to": "ir_east_road"
-        },
-        "to_ir_south_track": {
-          "to": "ir_south_track"
-        }
-      },
-      "actions": [
-        {
-          "id": "ir_stub_end",
-          "label": "(stub) end the tale here",
-          "fx": [
-            [
-              "score",
-              100
-            ],
-            [
-              "end",
-              "win",
-              "zz_stub_win",
-              "The realm is unfinished; this ending is a scaffold and will be removed."
-            ]
-          ]
-        }
-      ]
-    },
     "hb_west_road": {
       "name": "Hollowbrook west road (stub)",
       "desc": "Hollowbrook begins here. This region is not yet written.",
@@ -705,6 +631,31 @@
         {
           "id": "mg_stub_end",
           "label": "(stub) end the tale here",
+          "fx": [
+            [
+              "score",
+              100
+            ],
+            [
+              "end",
+              "win",
+              "zz_stub_win",
+              "The realm is unfinished; this ending is a scaffold and will be removed."
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "zz_oracle": {
+      "name": "stub oracle",
+      "room": "va_gate",
+      "topics": [
+        {
+          "id": "end",
+          "label": "(stub) end the tale here",
+          "say": "So be it.",
           "fx": [
             [
               "score",
