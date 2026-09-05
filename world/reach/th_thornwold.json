@@ -11,7 +11,15 @@
         "in": { "to": "th_settlement" },
         "south": { "to": "th_toll_stand", "sideTrip": true, "landmark": "a roadside toll stand" }
       },
-      "onEnterOnce": [["set", "th_entered"], ["xp", 1]]
+      "onEnterOnce": [["set", "th_entered"], ["xp", 1]],
+      "onEnter": [
+        [
+          "if",
+          [["flag", "lys_brother_home"], ["!flag", "th_cal_gone"]],
+          [["npcgo", "th_cal", null], ["set", "th_cal_gone"]],
+          []
+        ]
+      ]
     },
     "th_north_track": {
       "name": "The North Track",
@@ -24,7 +32,15 @@
         "in": { "to": "th_settlement" },
         "west": { "to": "th_wayfire", "sideTrip": true, "landmark": "an Ironbound wayfire" }
       },
-      "onEnterOnce": [["set", "th_entered"], ["xp", 1]]
+      "onEnterOnce": [["set", "th_entered"], ["xp", 1]],
+      "onEnter": [
+        [
+          "if",
+          [["flag", "lys_brother_home"], ["!flag", "th_cal_gone"]],
+          [["npcgo", "th_cal", null], ["set", "th_cal_gone"]],
+          []
+        ]
+      ]
     },
     "th_south_track": {
       "name": "The South Track",
@@ -37,7 +53,15 @@
         "in": { "to": "th_settlement" },
         "east": { "to": "th_waymarker", "sideTrip": true, "landmark": "an old waymarker" }
       },
-      "onEnterOnce": [["set", "th_entered"], ["xp", 1]]
+      "onEnterOnce": [["set", "th_entered"], ["xp", 1]],
+      "onEnter": [
+        [
+          "if",
+          [["flag", "lys_brother_home"], ["!flag", "th_cal_gone"]],
+          [["npcgo", "th_cal", null], ["set", "th_cal_gone"]],
+          []
+        ]
+      ]
     },
     "th_settlement": {
       "name": "Camp Gallows — Palisade Gate",
@@ -70,6 +94,14 @@
           ],
           "free": true
         }
+      ],
+      "onEnter": [
+        [
+          "if",
+          [["flag", "lys_brother_home"], ["!flag", "th_cal_gone"]],
+          [["npcgo", "th_cal", null], ["set", "th_cal_gone"]],
+          []
+        ]
       ]
     },
     "th_muster": {
@@ -284,7 +316,19 @@
       "desc": "A row of stakes hung with straw targets, arrows bristling from most of them. A young man in faded Company colors nocks another shaft, form good and aim better — he has the look of someone who took up a bow to stop thinking about something else.",
       "brief": "Straw targets. A young archer.",
       "region": "th",
-      "exits": { "north": { "to": "th_cookfire" } }
+      "exits": { "north": { "to": "th_cookfire" } },
+      "onEnter": [
+        [
+          "if",
+          [["flag", "lys_brother_home"], ["!flag", "th_cal_gone"]],
+          [
+            ["npcgo", "th_cal", null],
+            ["set", "th_cal_gone"],
+            ["say", "Cal's kit is gone from the scout line; he took the east road for the Vale at first light."]
+          ],
+          []
+        ]
+      ]
     },
     "th_understory_root": {
       "name": "The Black Thorn Gap",
@@ -861,7 +905,7 @@
       "name": "the true pardon, unsent",
       "loc": "nowhere",
       "hint": "signed at Marrowgate, forty years late — read it where the Company can hear it",
-      "variants": [{ "if": [["flag", "th_pardon_used"]], "hint": "read over the Hanged Company, forty years late" }]
+      "variants": [{ "if": [["flag", "th_pardon_used"]], "hint": "read over the Company at last; a keepsake now" }]
     },
     "th_free_blade": {
       "name": "a Free Company blade",
@@ -936,7 +980,10 @@
             ["flag", "th_heard_passage"],
             ["var", "rep_free", ">=", 1],
             ["!flag", "free_passage"],
-            ["var", "gold", ">=", 15]
+            ["var", "gold", ">=", 15],
+            ["!flag", "cp_came_by_stair"],
+            ["!flag", "cp_came_by_writ"],
+            ["!flag", "cp_came_by_cave"]
           ],
           "once": true,
           "say": "Fair coin for a fair risk. Tell the harbor folk south you walk under my word.",
@@ -949,7 +996,10 @@
             ["flag", "th_heard_passage"],
             ["var", "rep_free", ">=", 1],
             ["!flag", "free_passage"],
-            ["flag", "th_rook_dealt"]
+            ["flag", "th_rook_dealt"],
+            ["!flag", "cp_came_by_stair"],
+            ["!flag", "cp_came_by_writ"],
+            ["!flag", "cp_came_by_cave"]
           ],
           "once": true,
           "say": "Rook off our backs is worth more to me than coin. The road's yours — walk it under my word, and mind the tide.",
@@ -1020,6 +1070,36 @@
           "label": "leave her to the map",
           "say": "Mind the toll on your way out. Company rules, not mine.",
           "end": true
+        },
+        {
+          "id": "th_news_em",
+          "label": "word from the ash road",
+          "if": [["any", [["flag", "em_hollow_rested"], ["flag", "em_hollow_burned"], ["flag", "em_hollow_bargained"]]]],
+          "once": true,
+          "say": "Runners came down the ash road with word of Glasswick.",
+          "fx": [
+            [
+              "if",
+              [["flag", "em_hollow_burned"]],
+              [
+                ["say", "\"Somebody put fire to the Choir again. It's singing louder, they say. Fifth time's the same as the first; you'd think the Ironbound could count.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "em_hollow_rested"]],
+                  [
+                    ["say", "\"The Choir on the ridge has gone quiet, and not from fire. First time in living memory. The runners didn't know what to charge for that.\""]
+                  ],
+                  [
+                    ["say", "\"The Choir's quiet for now, on a bell and a promise. Nobody in Glasswick is betting on how long.\""]
+                  ]
+                ]
+              ]
+            ],
+            ["addvar", "rep_free", 1],
+            ["xp", 1]
+          ]
         }
       ]
     },

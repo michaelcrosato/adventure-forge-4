@@ -325,7 +325,7 @@
         {
           "id": "quest_home",
           "label": "ask after her brother",
-          "if": [["flag", "lys_brother_home"]],
+          "if": [["flag", "lys_brother_home"], ["flag", "th_cal_gone"]],
           "once": true,
           "say": "He's home. She doesn't say much about it, just stands in the doorway a while, watching him sleep like he might vanish if she looks away.",
           "fx": [["xp", 2], ["addvar", "appr_lys", 2]]
@@ -1826,6 +1826,49 @@
       "if": [["!flag", "vell_kept_secret"], ["!flag", "vell_named"], ["flag", "vell_secret_told"]],
       "text": "You never swore to protect Vell's name. You kept it quiet anyway, and never mentioned that either.",
       "weight": 1
+    },
+    {
+      "if": [
+        ["inParty", "lys"],
+        ["!flag", "lys_brother_home"],
+        ["!flag", "lys_brother_buried"],
+        ["!flag", "lys_brother_cleared"],
+        ["!flag", "lys_brother_lost"],
+        ["!flag", "lys_left"],
+        ["!flag", "lys_dead"]
+      ],
+      "text": "Lys walked with you to the end with her brother's name still unspoken; the road to Camp Gallows is still there, and she still means it."
+    },
+    {
+      "if": [
+        ["inParty", "osk"],
+        ["!flag", "osk_family_rested"],
+        ["!flag", "osk_family_burned"],
+        ["!flag", "osk_left"],
+        ["!flag", "osk_dead"]
+      ],
+      "text": "Brother Osk never reached the drowned nave with you. He says the verses for his family anyway, over water that isn't theirs."
+    },
+    {
+      "if": [
+        ["inParty", "tamsin"],
+        ["!flag", "tamsin_mine_avenged"],
+        ["!flag", "tamsin_mine_forgiven"],
+        ["!flag", "ir_miners_sold"],
+        ["!flag", "tamsin_left"],
+        ["!flag", "tamsin_dead"]
+      ],
+      "text": "Tamsin never got to Cinderhall with you. The mine keeps its answer, and she keeps swinging at whatever is nearest."
+    },
+    {
+      "if": [
+        ["inParty", "vell"],
+        ["!flag", "vell_ledger_found"],
+        ["!flag", "vell_exposed"],
+        ["!flag", "vell_left"],
+        ["!flag", "vell_dead"]
+      ],
+      "text": "Vell's ledger stayed unread in Barrowmere. They walked with you to the end still not saying what Marrowgate means to them."
     }
   ],
   "perks": {
