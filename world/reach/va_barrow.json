@@ -459,12 +459,7 @@
         {
           "id": "va_seal_doors",
           "label": "seal the barrow doors behind you",
-          "if": [
-            ["flag", "va_king_resolved"],
-            ["!flag", "va_sealed"],
-            ["!flag", "va_left_open"],
-            ["!flag", "va_king_forsaken"]
-          ],
+          "if": [["flag", "va_king_resolved"], ["!flag", "va_sealed"], ["!flag", "va_left_open"]],
           "fx": [
             ["set", "va_sealed"],
             ["set", "va_doors_decided"],
@@ -482,18 +477,19 @@
                 ["addvar", "appr_osk", -1],
                 ["say", "You draw the great doors shut and hear the seal-stone drop. You promised no one; you chose it anyway. The priest will grieve the door. The crypt way south still stands open behind you."]
               ]
+            ],
+            [
+              "if",
+              [["flag", "va_king_forsaken"]],
+              [["say", "Behind the stone, the king you left grieving goes on grieving, unheard now by anyone."]],
+              []
             ]
           ]
         },
         {
           "id": "va_leave_open",
           "label": "leave the barrow open to the sky",
-          "if": [
-            ["flag", "va_king_resolved"],
-            ["!flag", "va_sealed"],
-            ["!flag", "va_left_open"],
-            ["!flag", "va_king_forsaken"]
-          ],
+          "if": [["flag", "va_king_resolved"], ["!flag", "va_sealed"], ["!flag", "va_left_open"]],
           "fx": [
             ["set", "va_left_open"],
             ["set", "va_doors_decided"],
@@ -515,6 +511,12 @@
                 ["addvar", "appr_osk", 1],
                 ["say", "You leave the doors open to the sky. Grief needs air, the priest said. You are choosing to believe him."]
               ]
+            ],
+            [
+              "if",
+              [["flag", "va_king_forsaken"]],
+              [["say", "The king you left grieving keeps his open door and his sky, and the gray with them."]],
+              []
             ]
           ]
         },
