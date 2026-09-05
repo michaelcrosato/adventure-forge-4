@@ -1,6 +1,10 @@
 # RPG foundations — design
 
-Date: 2026-09-01. Status: approved by goal directive; building.
+Date: 2026-09-01. Status: built and shipped (see README). Kept as the design
+record; where it and `world/vale.json` disagree, the world file is the truth.
+Notable drift: the lore path's ending shipped as `king_at_rest` (not
+`blight_bound`), and `crown_broken`, `true_rest`, and `king_forsaken` were
+added — the proven set is `proofs` in the world file.
 
 ## Goal
 

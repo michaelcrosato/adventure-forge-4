@@ -37,7 +37,8 @@ npm run devloop 5     # up to 5 dev cycles: finding -> change -> verify -> commi
 
 Needs Node 20+. Works on Windows, macOS, and Linux. The live loops need the
 Claude Code CLI. Set `TF_WORLD=world/lighthouse.json` to play the small
-regression world instead.
+regression world instead — every entry point (server, CLI, both playtest
+lanes, the report checker) reads the same variable and defaults to the Vale.
 
 ## What a turn looks like
 
@@ -54,8 +55,10 @@ The dry well.
 5 ask reeve: the barrow
 ```
 
-The agent answers `act(s, 4)`. That is the whole interface. Average response
-along the proven walkthrough: ~170 chars (~45 tokens).
+The agent answers `act(s, 4)`. That is the whole interface. Along the proven
+Vale walkthrough an `act` response averages ~450 chars (~120 tokens) and a
+whole 34-turn session is ~18k chars (~4.7k tokens) of game text; the small
+Lighthouse world averages ~290 chars. `npm run measure` prints the live numbers.
 
 ## The game systems
 
@@ -83,9 +86,12 @@ along the proven walkthrough: ~170 chars (~45 tokens).
 `npm run verify` (~10s) enforces:
 
 - **Typecheck** — strict, no unchecked indexing.
-- **Tests** (62) — determinism (same seed = byte-identical run, and an engine
+- **Tests** (96) — determinism (same seed = byte-identical run, and an engine
   core that provably never reads the clock), the character layer, worldgen,
-  triage promotion rules, and the token budget along every world's walkthrough.
+  triage promotion rules, the fleet driver and its report honesty check, content
+  rules the shipped worlds must keep (no "safe to retry" label on a check whose
+  failure costs hp, one-time rewards), and the token budget along every world's
+  walkthrough.
 - **Validator** — every reference resolves, the DSL is closed, the primary
   walkthrough replays to a win with score === maxScore, and **every other
   ending carries its own replay-proof**. "Choice matters" is checked, not
@@ -104,12 +110,15 @@ playtest lane can hand-wave a session.
 
 | | `npm run playtest` (MCP + Claude Code) | `npm run fleet` (in-process + raw API) |
 |---|---|---|
-| player sees | game via MCP tools inside a full agent harness | only rendered game text |
+| player sees | game via the 4 MCP tools inside a full agent harness | only rendered game text |
 | needs | Claude subscription | `ANTHROPIC_API_KEY` |
 | best for | interop proof | volume: 10–100 cheap players per wave |
 
 Same report schema, same queue, same replay-verified receipts either way.
-`--mock` proves either driver end to end for zero tokens.
+`--mock` proves either driver end to end for zero tokens. A report contributes
+only its own fields (verdict, scores, receipt, bugs, confusions, suggestions);
+the host writes `verified`, `seed`, `build`, and the actual ending itself, so
+no report can claim more than its replay proves.
 
 ## Layout
 
@@ -125,11 +134,15 @@ src/triage.ts     reports -> atomic corroborated issues
 src/play.ts       human CLI
 world/vale.json   The Vale of Ash (the game)
 world/lighthouse.json  the small regression world
-test/             62 tests, including the token budget and determinism rules
+test/             96 tests, including the token budget and determinism rules
 loop/             playtest wave, dev cycle, mock player, report checker
 queue/ done/      the one inbox (issues) and its archive
+queue/failed/     issues a dev cycle could not land (quarantined, with the reason)
+queue/superseded/ issues folded by hand into a better-corroborated one (_manifest.json)
+reports/triaged/  raw playtest reports, once triage has turned them into issues
 AGENT.md          the charter the dev agent is prompted with
 docs/superpowers/specs/  design docs
+docs/reviews/     repository review findings and what was done about them
 ```
 
 ## The loops, unattended
@@ -141,9 +154,12 @@ TF_DEV_FLAGS=--dangerously-skip-permissions npm run devloop 10   # only on a mac
 ```
 
 Driver-enforced per dev cycle: clean tree in, protected paths untouched
-(`loop/`, `AGENT.md`), no deleted tests, test count non-decreasing, no no-op
-cycles, verify green — else revert and quarantine the issue. Three straight
-failures trip the circuit breaker. Between waves and the dev loop, triage
+(`loop/`, `AGENT.md`), no deleted tests, test count non-decreasing (counted
+from an explicit TAP run, whatever Node's default reporter is), no no-op
+cycles, verify green — else restore the tree to its pre-agent baseline (index
+and staged edits included, agent-made scratch files removed) and quarantine
+the issue in `queue/failed/`. Three straight failures trip the circuit
+breaker. Between waves and the dev loop, triage
 clusters near-duplicate findings across reports (deterministic word overlap,
 no model): mechanical bugs promote alone, subjective suggestions need 2+
 independent reports to rise.

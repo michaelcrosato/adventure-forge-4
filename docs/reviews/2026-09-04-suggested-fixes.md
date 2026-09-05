@@ -5,7 +5,10 @@ Reviewed branch: `main`.
 Reviewed commit: `11ddd8d5a52223235f0d4c64d796708788d61a07`.
 
 This file records eight confirmed defects, suggested changes, and acceptance checks.
-The fixes have not been applied.
+
+**Status (2026-09-05): all eight fixes applied** in the repository audit on
+branch `claude/repo-audit-cleanup-uo5dgd`. Each item below ends with an
+*Applied* note saying what changed and how the acceptance check was met.
 
 P1 means fix promptly. P2 means fix in the normal development schedule.
 Source links use the reviewed commit so that the evidence remains stable.
@@ -37,6 +40,11 @@ Confirm that source and tests match the baseline, verification passes, and the n
 Repeat with a staged change to a protected file and a newly staged file.
 Confirm that the post-triage baseline and pre-existing untracked file contents remain intact.
 
+**Applied.** `loop/dev.sh` now records the baseline (`REF`) and the list of pre-existing untracked files after the triage commit and before the agent starts.
+On failure it runs `git reset --hard` to that baseline, deletes only untracked files the cycle created (and the directories made for them), stops if the tree is still dirty, and only then moves the issue to `queue/failed/`.
+The triage commit stages `reports/` and `queue/` only; the quarantine commit stages `queue/` only.
+Checked in an isolated copy with a stub `claude` that staged a broken source edit, edited `AGENT.md`, left scratch files, and exited 1: the quarantine commit contained only the queue move, source and tests matched the baseline, a pre-existing untracked file survived, and typecheck passed afterwards.
+
 ## 2. P1: Keep report data separate from trusted metadata
 
 Sources: [src/player.ts, line 253](https://github.com/michaelcrosato/adventure-forge-4/blob/11ddd8d5a52223235f0d4c64d796708788d61a07/src/player.ts#L253)
@@ -60,6 +68,10 @@ A report with an invalid receipt and extra properties was saved with `verified: 
 Confirm that the saved report remains unverified and retains the host values.
 Also confirm that a valid report still passes.
 
+**Applied.** Both writers copy only `verdict`, `fun`, `clarity`, `turns`, `receipt`, `bugs`, `confusions`, and `suggestions` (`REPORT_FIELDS` in `src/player.ts`, mirrored in `loop/report-check.mjs`) and write the host metadata after them.
+The API lane now also validates the report shape the way the MCP lane always did.
+Test: "a filed report cannot overwrite host-controlled metadata" in `test/player.test.ts`; the MCP checker was exercised by hand with a forged `verified`, `seed`, `build`, and `lane`, all of which the filed report ignored while a valid receipt still verified.
+
 ## 3. P1: Make the test-count check independent of the default reporter
 
 Source: [loop/dev.sh, line 22](https://github.com/michaelcrosato/adventure-forge-4/blob/11ddd8d5a52223235f0d4c64d796708788d61a07/loop/dev.sh#L22).
@@ -81,6 +93,10 @@ Remove one passing test from an existing file in an isolated fixture.
 Confirm that the driver rejects the cycle.
 Also confirm that an unreadable count stops the cycle.
 
+**Applied.** `count_tests` runs `node --import tsx --test --test-reporter=tap test/*.test.ts` and requires exactly one `# pass N` line; a failed run or a missing count is an error.
+Before the agent runs, an unreadable count stops the driver; after, it fails the cycle ("test run failed or its passing count is unreadable") instead of reading as zero.
+Checked in the isolated copy with a stub agent that removed one test from a retained file and exited 0: the cycle was rejected with "test count fell".
+
 ## 4. P2: Update the MCP mock tool check
 
 Source: [loop/mock-player.mjs, line 110](https://github.com/michaelcrosato/adventure-forge-4/blob/11ddd8d5a52223235f0d4c64d796708788d61a07/loop/mock-player.mjs#L110).
@@ -98,6 +114,9 @@ Keep the check for missing or unexpected tools.
 **Acceptance check:** Run `npm run mock` and `npm run playtest -- 1 --mock`.
 Confirm that sessions start and complete the structural check.
 After fix 5, confirm that `npm run measure` completes the walkthrough.
+
+**Applied.** The expected surface is `act, look, new_game, status`; a missing or extra tool still fails.
+`npm run mock` completes a 200-step random walk, and `npm run measure` replays the Vale walkthrough over the real server to a full-score win (`vale.7.34.100.king_at_rest`), the Lighthouse one likewise.
 
 ## 5. P2: Match walkthrough labels when the menu includes display hints
 
@@ -124,6 +143,11 @@ Confirm a win, maximum score, and a verified receipt.
 After fix 4, run both through the MCP measurement client.
 Check labels with destination hints, skill hints, item hints, and canonical parentheses.
 
+**Applied.** One rule, `matchesMenuLabel` in `src/format.ts` (the inverse of `renderMenu`): a line matches its canonical label exactly, or the label followed by exactly one trailing ` (…)` hint of any kind.
+`findMenuEntry` in `src/player.ts` tries an exact match first, then that rule; `loop/mock-player.mjs` carries the same two lines because it runs without `tsx`.
+An ordinary step that is not on the menu now throws in both clients.
+Tests: `matchesMenuLabel` cases in `test/format.test.ts` (destination, locked-exit, roll with and without modifier, item-use, canonical parentheses, near-miss rejections) and a full Vale walkthrough through the API mock in `test/player.test.ts` (win, `score === maxScore`, verified receipt).
+
 ## 6. P2: Grant early coffer XP only once
 
 Source: [world/vale.json, line 1988](https://github.com/michaelcrosato/adventure-forge-4/blob/11ddd8d5a52223235f0d4c64d796708788d61a07/world/vale.json#L1988).
@@ -145,6 +169,10 @@ No new engine operation is needed.
 Confirm that the combined reward is at most one XP and the clue remains available.
 Replay the walkthrough and ending proofs.
 Update proof steps if the intended progression changes.
+
+**Applied.** Both early-coffer topics set a shared `asked_coffer_early` flag with their one XP; two reminder topics (`coffer_sealed_again`, `coffer_sealed_seal_early_again`) keep the clue on the menu afterwards with no reward.
+No proof step changed (every proof hears the grievance before visiting the elder).
+Test: "asking the elder about the coffer early rewards xp once" in `test/content.test.ts`, including the switch to the seal-in-hand variant.
 
 ## 7. P2: State the damage risk for repeated door attempts
 
@@ -169,6 +197,11 @@ Replay the seed 320 case and confirm that the warning matches the damage.
 Update walkthrough or proof labels that refer to changed text.
 Run the observation-budget check.
 
+**Applied.** `force the doors — a failed try costs 1 hp` (both variants) and `… a failed try costs 1 hp (scout|wits)` on the two loose-stone actions, whose failure branches deduct exactly that.
+The strongbox and coffer labels keep their safety claim, which is true there (no hp on failure).
+No walkthrough or proof referenced the changed labels; the budget test is unaffected because none of these actions sit on the proven path.
+A content test in `test/content.test.ts` now fails any world where a label claims safety on a check whose failure costs hp.
+
 ## 8. P2: Use the active world for MCP report metadata
 
 Source: [loop/report-check.mjs, line 24](https://github.com/michaelcrosato/adventure-forge-4/blob/11ddd8d5a52223235f0d4c64d796708788d61a07/loop/report-check.mjs#L24).
@@ -183,6 +216,11 @@ Share this selection or pass the resolved path explicitly.
 
 **Acceptance check:** With `TF_WORLD` unset, confirm that the report hash equals the Vale file hash.
 With `TF_WORLD=world/lighthouse.json`, confirm that it equals the Lighthouse file hash.
+
+**Applied.** `loop/report-check.mjs` defaults to `world/vale.json` like the server.
+`loop/playtest.sh` resolves `TF_WORLD` once (absolute, default Vale), exports it for the checker, and passes it explicitly in the generated MCP config's `env`, so the server cannot be started on a different world than the one hashed.
+Checked by hand: the filed hash equals the Vale file hash with `TF_WORLD` unset and the Lighthouse hash with the override.
+The same wave now also lets MCP-lane players call the free `status` tool, which the server had offered but the prompt and allow-list did not.
 
 ## Verification recorded during the review
 
