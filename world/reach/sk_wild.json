@@ -1,0 +1,185 @@
+{
+  "gen": [
+    {
+      "id": "sk_coast",
+      "name": "the Saltkerns coast",
+      "seed": 57,
+      "w": 6,
+      "h": 5,
+      "region": "sk",
+      "walls": [[4, 0], [5, 0], [5, 1], [0, 3], [0, 4], [1, 4]],
+      "pools": {
+        "descs": ["Salt marsh and gray water, wind carrying the smell of iron and old fish."],
+        "briefs": ["Salt marsh, gray water."],
+        "scenes": [
+          { "name": "Salt Pan Flats", "desc": "Shallow pans catch the tide and let it go, leaving salt in white rings. Herons stand in the runnels, patient as debt.", "brief": "White salt rings, patient herons." },
+          { "name": "Bladderwrack Shingle", "desc": "Bladderwrack pops underfoot, black and slick. Something has dragged a heavy net through here and not come back for it.", "brief": "Black weed, a dragged net." },
+          { "name": "The Kern Huts", "desc": "A scatter of turf-roofed huts, salt-panners' work, most empty this season. Smoke rises from just one chimney.", "brief": "Turf huts, one chimney smoking." },
+          { "name": "Driftwood Reach", "desc": "Bleached driftwood piles against a low dune, sorted by hand into stacks — someone here plans to build something, or burn it.", "brief": "Sorted driftwood, a dune behind." },
+          { "name": "The Gull Colony", "desc": "Thousands of gulls nest in the marsh grass, and every one of them minds you passing. The noise alone could wake the dead.", "brief": "Gulls enough to wake the dead." },
+          { "name": "Sunken Causeway", "desc": "An old stone causeway runs half underwater, its far end lost in reeds. Something built this before Gullhaven had a name.", "brief": "A half-drowned stone causeway." },
+          { "name": "Cliff Path", "desc": "The path narrows along the cliff edge, spray reaching up from the rocks below. One wrong step and the sea decides the rest.", "brief": "A narrow cliff path, spray below." },
+          { "name": "The Boneyard", "desc": "Ribs of old ships stand up out of the sand like a picked-clean carcass, the tide moving quiet between them.", "brief": "Ship-ribs standing in the sand." },
+          { "name": "Reed Cut", "desc": "Reeds taller than a man, cut back in narrow lanes by hands that knew exactly where they were going.", "brief": "Tall reeds, cut into lanes." },
+          { "name": "Marram Dunes", "desc": "Marram grass holds the dunes together against a wind that never quite stops. Rabbit tracks cross every slope.", "brief": "Windbound dunes, rabbit tracks." },
+          { "name": "The Tide Pools", "desc": "Rock pools hold the sea in miniature — crabs, anemones, a starfish gone the color of old rust.", "brief": "Rock pools, a rust-red starfish." },
+          { "name": "Wreckwood Fence", "desc": "A fence built entirely from wreck-timber, planks still bearing half a ship's name in faded paint.", "brief": "A fence built of wreck-timber." },
+          { "name": "The Long Dune", "desc": "The dune runs unbroken a long way, marram grass hissing in the wind. Salt crust cracks like old paint underfoot.", "brief": "A long dune, salt crust underfoot." },
+          { "name": "Fisherman's Cairn", "desc": "A cairn of flat stones, raised for someone the sea kept. Fresh shells sit on top, left by hands that still remember.", "brief": "A drowned fisherman's cairn." },
+          { "name": "The Mudflats", "desc": "Mudflats stretch out at low tide, pocked with worm-casts and one print of something that walked here on two legs, then stopped.", "brief": "Mudflats, one strange print." },
+          { "name": "Cliffside Terns", "desc": "Terns wheel and dive off the cliff face, screaming at nothing in particular. The wind up here tastes of salt and old iron.", "brief": "Diving terns, iron on the wind." },
+          { "name": "The Weir", "desc": "A fish-weir of woven withies stretches across a tidal channel, half its lattice torn away by something stronger than a fish.", "brief": "A torn fish-weir." },
+          { "name": "Bramble Hollow", "desc": "A hollow out of the wind, brambles heavy with fruit gone sour from the salt air. Something has been feeding here.", "brief": "A wind-sheltered bramble hollow." },
+          { "name": "The Groyne", "desc": "A stone groyne juts into the surf, built to hold the beach in place. Half of it has already lost that argument.", "brief": "A stone groyne, losing to the sea." },
+          { "name": "Salt-Crust Flat", "desc": "The ground here is crusted white and hard as bone, cracked into a thousand plates that shift underfoot like broken crockery.", "brief": "White salt-crust, cracked flat." },
+          { "name": "The Widow Rocks", "desc": "Black rocks break the surf offshore, named for every boat that never came back around them. The tide talks to itself here.", "brief": "Black rocks, named for old wrecks." },
+          { "name": "Kelp Line", "desc": "A tide-line of kelp and rope-ends marks the last big storm, three seasons gone by the smell of it still.", "brief": "A storm's old kelp-line." },
+          { "name": "The Watch Cairn", "desc": "A cairn taller than the rest, stones added by generations of fishermen putting off from this exact spot. Superstition, mostly.", "brief": "A tall cairn, a fisherman's habit." },
+          { "name": "Low Marsh", "desc": "The ground goes soft and treacherous, black water standing between hummocks of grass. Better to know the path than guess it.", "brief": "Soft marsh, standing black water." },
+          { "name": "The Spit", "desc": "A long spit of shingle runs out toward open water, gulls working its whole length, wind scouring every loose thing off it.", "brief": "A shingle spit, wind-scoured." }
+        ]
+      },
+      "links": [
+        { "cell": [0, 2], "dir": "south", "to": "sk_settlement", "back": "west" },
+        { "cell": [5, 3], "dir": "east", "to": "sk_hollow_shingle", "back": "north", "landmark": "a hidden shingle beach" },
+        { "cell": [3, 0], "dir": "north", "to": "sk_lighthouse", "landmark": "the Farlight" }
+      ],
+      "spots": [
+        {
+          "cell": [0, 2], "name": "The Coast Path",
+          "desc": "The path drops toward Gullhaven's roofs and the smell of woodsmoke. Inland, the marsh opens out, salt and gray water as far as the eye finds a stopping place.",
+          "brief": "The path drops toward Gullhaven.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [5, 3], "name": "The Point",
+          "desc": "The headland ends here, cliffs dropping to a hidden shingle beach below. Out past the rocks, fog sits low on the water even when the rest of the sky runs clear.",
+          "brief": "The headland's end; a beach below.",
+          "onEnterOnce": [["xp", 2], ["say", "Oars. Faint, and out of time with any current, somewhere in that fog. You don't see the boat they belong to."]]
+        },
+        {
+          "cell": [3, 0], "name": "Lighthouse Rise",
+          "desc": "The ground climbs toward a squat stone tower, dark even at noon. Its lamp hasn't turned in longer than anyone in Gullhaven cares to say.",
+          "brief": "The rise climbs to a dark tower.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 2], "name": "The Beached Longboat", "landmark": "the beached longboat",
+          "desc": "A longboat lies broken-backed on the sand, ribs picked bare by weather and worse. Old pitch still cakes the seams, and something glints deep in the wreckage.",
+          "brief": "A broken longboat, old pitch in its seams.",
+          "onEnterOnce": [["xp", 2]],
+          "actions": [
+            {
+              "id": "sk_longboat_search",
+              "label": "search the ribs for salvage (wits)",
+              "if": [["!has", "sk_stolen_nets"], ["!flag", "sk_nets_returned"], ["!flag", "sk_nets_sold"]],
+              "fx": [["check", "wits", 9,
+                [["move", "sk_stolen_nets", "inv"], ["score", 3], ["xp", 2], ["say", "Wedged under a broken thwart: a whole haul of good netting, salt-stiff but sound. Someone stashed this here and never came back."]],
+                [["say", "Sand and old rope, nothing more you can find by feel alone."]]
+              ]]
+            },
+            {
+              "id": "sk_longboat_pitch",
+              "label": "strip pitch from the hull",
+              "once": true,
+              "if": [["!has", "sk_pitch_torch"]],
+              "fx": [["move", "sk_pitch_torch", "inv"], ["xp", 1], ["say", "The old caulking peels away in a long black strip, still tacky under the salt crust. It'll burn."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 3], "name": "Samphire Bank",
+          "desc": "Sea samphire grows thick in the wet ground here, salt-sharp and good against a wound, if you know to eat it raw.",
+          "brief": "Samphire growing wild.",
+          "items": ["sk_samphire"],
+          "onEnterOnce": [["xp", 1]]
+        }
+      ],
+      "cellFx": {
+        "onEnter": [["chance", 8, [["if", [["!npcDead", "sk_wrecker_scout"]], [["npcgo", "sk_wrecker_scout", "here"], ["say", "A figure rises out of the reeds ahead, iron bar in hand, sizing up what you're carrying."]], []]], []]]
+      }
+    }
+  ],
+  "rooms": {
+    "sk_lighthouse": {
+      "name": "The Farlight",
+      "desc": "The lamp room at the tower's top, glass panes salt-blind, the great lens dark. The winding gear sits seized with rust. From up here the whole bay shows: Gullhaven, the reef, and the fog that never quite leaves the point.",
+      "brief": "The dark lamp room, seized gear.",
+      "region": "sk",
+      "landmark": "the Farlight",
+      "onEnterOnce": [["xp", 2], ["say", "A keeper's logbook lies open on the sill, its last entry unfinished. The ink just stops, mid-word."]],
+      "variants": [
+        { "if": [["flag", "sk_lighthouse_lit"]], "desc": "The lamp room at the tower's top, its great lens finally turning again, throwing a slow white beam out over the reef. From up here the whole bay shows clean.", "brief": "The lamp turns; a white beam over the reef." }
+      ],
+      "actions": [
+        {
+          "id": "sk_lighthouse_log",
+          "label": "read the keeper's logbook",
+          "once": true,
+          "fx": [["xp", 2], ["say", "Weeks of ordinary weather, then one line in a shaking hand: 'Paid well. Told them the glass was fouled. God forgive the reef what I've done to it tonight.' Nothing after."]]
+        },
+        {
+          "id": "sk_light_might",
+          "label": "wrench the seized crank around (might)",
+          "if": [["!flag", "sk_lighthouse_lit"]],
+          "fx": [["check", "might", 10,
+            [["set", "sk_lighthouse_lit"], ["score", 8], ["xp", 4], ["say", "Rust shears away under your grip and the gear gives all at once, the lens grinding into its slow turn. Light spills out over the water for the first time in a generation."]],
+            [["say", "The crank won't budge, and your hands are raw for the trying."]]
+          ]]
+        },
+        {
+          "id": "sk_light_grace",
+          "label": "coax the old lens back onto true (grace)",
+          "if": [["!flag", "sk_lighthouse_lit"]],
+          "fx": [["check", "grace", 10,
+            [["set", "sk_lighthouse_lit"], ["score", 8], ["xp", 4], ["say", "Working blind between the housing and the frame, you ease the lens back onto its track a hair at a time until it simply turns. Light spills out over the water."]],
+            [["say", "The lens shifts, catches, and won't turn true. Not yet."]]
+          ]]
+        },
+        {
+          "id": "sk_light_wits",
+          "label": "puzzle out the keeper's old drill (wits)",
+          "if": [["!flag", "sk_lighthouse_lit"]],
+          "fx": [["check", "wits", 10,
+            [["set", "sk_lighthouse_lit"], ["score", 8], ["xp", 4], ["say", "The logbook's routine comes clear: prime, prime again, then turn against the seize, not with it. The gear surrenders exactly where a keeper's hands would have known to push. Light spills out over the water."]],
+            [["say", "Whatever the trick was, the log doesn't say it plainly enough to guess."]]
+          ]]
+        },
+        {
+          "id": "sk_light_oil",
+          "label": "prime the lamp and touch it off",
+          "if": [["has", "sk_lamp_oil"], ["!flag", "sk_lighthouse_lit"]],
+          "fx": [["move", "sk_lamp_oil", "nowhere"], ["set", "sk_lighthouse_lit"], ["score", 8], ["xp", 4], ["say", "Fresh oil takes to the old wick at once. The gear, freed of its dry seize, turns almost gently. Light spills out over the water."]]
+        }
+      ]
+    }
+  },
+  "items": {
+    "sk_samphire": {
+      "name": "sea samphire",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "eat it raw to ease a wound",
+      "use": [{ "fx": [["hp", 3], ["move", "sk_samphire", "nowhere"], ["say", "Salt-sharp and bitter, but the ache dulls."]] }]
+    }
+  },
+  "npcs": {
+    "sk_wrecker_scout": {
+      "name": "wrecker scout",
+      "room": null,
+      "hostile": true,
+      "aggressive": true,
+      "hp": 6,
+      "atk": 2,
+      "df": 9,
+      "desc": "Rag-wrapped and quick, an iron bar for a weapon and a wrecker's eye for what you're carrying.",
+      "onDeath": [["score", 3], ["xp", 3], ["addvar", "gold", 2], ["say", "The scout drops the bar and goes down still reaching for it. Two coins roll loose from a torn pocket."]]
+    }
+  },
+  "stamps": [
+    { "template": "cave", "id": "sk_seacave", "at": "sk_coast_5_2", "dir": "in", "back": "out", "vars": { "NAME": "the Weeping Caves", "BEAST": "a bone-eel" }, "sideTrip": true, "landmark": "the Weeping Caves" },
+    { "template": "hut", "id": "sk_kernhut", "at": "sk_coast_1_1", "dir": "in", "back": "out", "vars": { "NAME": "Sela's Hut", "HERMIT": "Sela" }, "sideTrip": true, "landmark": "Sela's hut" },
+    { "template": "camp", "id": "sk_wreckroost", "at": "sk_coast_4_3", "dir": "in", "back": "out", "vars": { "NAME": "the Wreckers' Roost", "CAPTAIN": "Captain Grael" }, "sideTrip": true, "landmark": "the Wreckers' Roost" },
+    { "template": "chapel", "id": "sk_shrine", "at": "sk_coast_2_1", "dir": "in", "back": "out", "vars": { "NAME": "St. Mara's Shrine", "SAINT": "St. Mara" }, "sideTrip": true, "landmark": "St. Mara's Shrine" }
+  ]
+}
