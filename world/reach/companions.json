@@ -236,6 +236,41 @@
             "id": "r_fell",
             "if": [["flag", "fell_lys"], ["!flag", "down_lys"]],
             "say": "Don't look at me like that. I've been knocked down by worse than this and got up faster."
+          },
+          {
+            "id": "r_pair_lys_osk_th",
+            "if": [["inParty", "osk"], ["flag", "th_entered"]],
+            "say": "My brother is somewhere in this country. Do not judge his company by the first rough one you meet. — Osk: \"I have met rough men who turned out kind under it. I will wait to judge.\""
+          },
+          {
+            "id": "r_pair_lys_osk_appr",
+            "if": [["inParty", "osk"], ["var", "appr_lys", ">=", 2], ["var", "appr_osk", "<=", -2]],
+            "say": "You have earned my trust and lost his in the same stretch of road. That is a strange trick to manage. — Osk: \"It is not a trick. I simply notice what she is willing to overlook.\""
+          },
+          {
+            "id": "r_pair_lys_tamsin_cave",
+            "if": [["inParty", "tamsin"], ["flag", "cp_came_by_cave"]],
+            "say": "Smugglers' road. My brother's kind of road — coin, no masters, no questions asked at the door. — Tamsin: \"I have sharpened enough of their blades to trust the steel more than the company.\""
+          },
+          {
+            "id": "r_pair_lys_tamsin_fell",
+            "if": [["inParty", "tamsin"], ["flag", "fell_tamsin"], ["!flag", "down_tamsin"]],
+            "say": "I did not think anything could put you on the ground. Turns out you are just hard to kill, not impossible. — Tamsin: \"Noted the difference. Won't be the thing that finds out which, twice.\""
+          },
+          {
+            "id": "r_pair_lys_vell_bargain",
+            "if": [["inParty", "vell"], ["flag", "hb_hollow_bargained"]],
+            "say": "Bargained instead of rested. Feels like a promise made to something that cannot hold you to it later. — Vell: \"Or a promise made honestly, to something that never asked for perfect.\""
+          },
+          {
+            "id": "r_pair_lys_vell_fell",
+            "if": [["inParty", "vell"], ["flag", "fell_vell"], ["!flag", "down_vell"]],
+            "say": "You went down like a dropped book. I will teach you to fall better, if you ever let me teach you anything. — Vell: \"Duly noted, and mildly insulted. I accept the lesson regardless.\""
+          },
+          {
+            "id": "r_pair_lys_osk_intro",
+            "if": [["inParty", "osk"]],
+            "say": "You pray over every grave we pass. I do not think you have noticed you do it. — Osk: \"I have noticed. I just do not expect anyone else to.\""
           }
         ],
         "leaves": [
@@ -626,6 +661,46 @@
             "id": "r_fell",
             "if": [["flag", "fell_osk"], ["!flag", "down_osk"]],
             "say": "I'm all right. The Church says the body is a borrowed coat; mine is a little torn, that's all."
+          },
+          {
+            "id": "r_pair_osk_lys_stair",
+            "if": [["inParty", "lys"], ["flag", "cp_came_by_stair"]],
+            "say": "The old pilgrim stair, and no fire behind us the whole climb. This is the road I would have chosen, if anyone asks a novice. — Lys: \"Nobody usually does. For what it's worth, I'd have chosen it too.\""
+          },
+          {
+            "id": "r_pair_osk_lys_fell",
+            "if": [["inParty", "lys"], ["flag", "fell_lys"], ["!flag", "down_lys"]],
+            "say": "I said a verse over you before you were even properly still. A waste of a good verse, since you got up anyway. — Lys: \"Save it for someone who needs it more. I heard every word.\""
+          },
+          {
+            "id": "r_pair_osk_tamsin_burn",
+            "if": [["inParty", "tamsin"], ["flag", "wm_hollow_burned"]],
+            "say": "Another hollow burned instead of rested. Whatever rites might have been said there are just ash now. — Tamsin: \"Ash doesn't come back for seconds. A door left open might. I know which one lets me sleep.\""
+          },
+          {
+            "id": "r_pair_osk_tamsin_appr",
+            "if": [["inParty", "tamsin"], ["var", "appr_osk", "<=", -2], ["var", "appr_tamsin", ">=", 2]],
+            "say": "She has earned your trust with a hammer. I seem to have lost mine with words alone. There is a lesson in that. — Tamsin: \"Do less talking about being good. Do more of the actual thing.\""
+          },
+          {
+            "id": "r_pair_osk_vell_rite",
+            "if": [["inParty", "vell"], ["flag", "hb_hollow_rested"]],
+            "say": "Rested properly, the whole rite said. That is the part that matters, whatever the ledgers end up recording. — Vell: \"The rite mattered to the dead. The ledger matters to whoever asks afterward if it was true.\""
+          },
+          {
+            "id": "r_pair_osk_vell_appr",
+            "if": [["inParty", "vell"], ["var", "appr_osk", ">=", 2], ["var", "appr_vell", "<=", -2]],
+            "say": "I trust you plainly, and you extend me none of it back. I have made my peace with that. Mostly. — Vell: \"Trust is a ledger I balance slowly. Yours is noted. Not yet due.\""
+          },
+          {
+            "id": "r_pair_osk_tamsin_intro",
+            "if": [["inParty", "tamsin"]],
+            "say": "You never once asked me to justify the Church to you. I keep waiting for the argument that never comes. — Tamsin: \"I judge what you do, not what you believe. Save us both the argument.\""
+          },
+          {
+            "id": "r_pair_osk_vell_intro",
+            "if": [["inParty", "vell"]],
+            "say": "You never ask what I believe. Only what I have read. I think that might be its own kind of respect. — Vell: \"It is. Beliefs change hourly. What you've read tends to stay put.\""
           }
         ],
         "leaves": [
@@ -1003,6 +1078,46 @@
             "id": "r_fell",
             "if": [["flag", "fell_tamsin"], ["!flag", "down_tamsin"]],
             "say": "Twelve years counting blows and I still let that one through. It won't happen twice."
+          },
+          {
+            "id": "r_pair_tamsin_lys_ir",
+            "if": [["inParty", "lys"], ["flag", "ir_entered"]],
+            "say": "Home ground. Smells like the forge and worse things. The good paths here are worn by miners who did not watch their footing. — Lys: \"I'll watch the ground. You watch whatever's watching you back.\""
+          },
+          {
+            "id": "r_pair_tamsin_lys_appr",
+            "if": [["inParty", "lys"], ["var", "appr_tamsin", ">=", 2], ["var", "appr_lys", "<=", -2]],
+            "say": "I would trust you at my back tomorrow. She is still deciding. Give her time, or don't; either way I am not budging. — Lys: \"Still deciding is not the same as deciding against.\""
+          },
+          {
+            "id": "r_pair_tamsin_osk_writ",
+            "if": [["inParty", "osk"], ["flag", "cp_came_by_writ"]],
+            "say": "A Regent's writ got us through that gate. Paid for in fire, but paid, and we are through it. — Osk: \"I keep counting what that writ actually cost. The sum troubles me more the longer I add it up.\""
+          },
+          {
+            "id": "r_pair_tamsin_osk_fell",
+            "if": [["inParty", "osk"], ["flag", "fell_osk"], ["!flag", "down_osk"]],
+            "say": "You went down easier than I'd like from someone who spends half his day sweeping. Eat something. — Osk: \"The Church does not train for combat. It trains for enduring what combat leaves behind.\""
+          },
+          {
+            "id": "r_pair_tamsin_vell_appr",
+            "if": [["inParty", "vell"], ["var", "appr_tamsin", ">=", 2], ["var", "appr_vell", "<=", -2]],
+            "say": "You still have not decided about her. I decided in a day. Slow is not always wiser, near as I have seen. — Vell: \"Slow has kept me alive this long. I'd rather be right eventually than quick and wrong.\""
+          },
+          {
+            "id": "r_pair_tamsin_vell_throne",
+            "if": [["inParty", "vell"], ["flag", "mg_at_throne"]],
+            "say": "It is a chair. Old, ugly, and everyone's died over it regardless. I do not understand the fuss, honestly. — Vell: \"The fuss is four hundred years and my own name buried somewhere in it.\""
+          },
+          {
+            "id": "r_pair_tamsin_lys_intro",
+            "if": [["inParty", "lys"]],
+            "say": "You move quiet for someone carrying that much steel. I only just noticed. — Lys: \"You move loud for someone who notices everything else. Fair trade, I'd say.\""
+          },
+          {
+            "id": "r_pair_tamsin_vell_intro",
+            "if": [["inParty", "vell"]],
+            "say": "You talk like every word costs you coin. I talk like I am paying for someone else's silence. We will manage. — Vell: \"An astute observation, for someone who claims not to care for words.\""
           }
         ],
         "leaves": [
@@ -1378,6 +1493,41 @@
             "id": "r_fell",
             "if": [["flag", "fell_vell"], ["!flag", "down_vell"]],
             "say": "Up. I'm up. Write that down somewhere it can't be edited: I did not stay down."
+          },
+          {
+            "id": "r_pair_vell_lys_hb",
+            "if": [["inParty", "lys"], ["flag", "hb_entered"]],
+            "say": "Barrowmere. My answer is here somewhere, in a ledger nobody has opened in decades. I intend to be thorough. — Lys: \"Thorough's fine. Just don't get so lost in the reading you forget which way is out.\""
+          },
+          {
+            "id": "r_pair_vell_lys_throne",
+            "if": [["inParty", "lys"], ["flag", "mg_at_throne"]],
+            "say": "My own name might be older than this throne, and I still do not know what I will do standing this close to it. — Lys: \"Whatever you do, do it because you chose it, not because a crown told you who you are.\""
+          },
+          {
+            "id": "r_pair_vell_osk_fd",
+            "if": [["inParty", "osk"], ["flag", "fd_entered"]],
+            "say": "Fenmarch. Somewhere under this water is the reason you wear that gray. I will not pretend that is light to walk beside. — Osk: \"It is heavier to carry alone. Walk beside it as long as you like.\""
+          },
+          {
+            "id": "r_pair_vell_osk_throne",
+            "if": [["inParty", "osk"], ["flag", "mg_at_throne"]],
+            "say": "Four hundred years of my own family's silence, and it ends in this room. I do not know what verse covers that. — Osk: \"None of mine do either. I'll say one anyway. Silence has waited long enough.\""
+          },
+          {
+            "id": "r_pair_vell_tamsin_hb",
+            "if": [["inParty", "tamsin"], ["flag", "hb_entered"]],
+            "say": "Barrowmere's archive holds what I have spent a lifetime not asking about. I intend to finally ask. — Tamsin: \"Ask, then. Standing here wondering wastes better light than we've got.\""
+          },
+          {
+            "id": "r_pair_vell_tamsin_burn",
+            "if": [["inParty", "tamsin"], ["flag", "hb_hollow_burned"]],
+            "say": "Whatever proof I had of my own name burned with that mound. I am trying very hard not to resent you for it. — Tamsin: \"Trying's more than most manage. For what it's worth, I didn't light that one.\""
+          },
+          {
+            "id": "r_pair_vell_lys_intro",
+            "if": [["inParty", "lys"]],
+            "say": "You watch everything and say almost none of it. I find that unbearably suspicious in a person. — Lys: \"Good. Keep finding it suspicious. Means you're paying attention.\""
           }
         ],
         "leaves": [
@@ -1920,6 +2070,66 @@
     {
       "if": [["flag", "fell_vell"], ["!flag", "vell_dead"], ["!flag", "vell_left"]],
       "text": "Vell went down once with you and wrote up the whole affair afterwards, leaving out only the part where they screamed."
+    },
+    {
+      "if": [["inParty", "lys"], ["inParty", "osk"], ["var", "appr_lys", ">=", 2], ["var", "appr_osk", ">=", 2]],
+      "text": "Lys and Brother Osk still walk together, unlikely as it once looked — a hunter's quiet keeping pace with a novice's verses.",
+      "weight": 1
+    },
+    {
+      "if": [["inParty", "lys"], ["inParty", "osk"], ["var", "appr_lys", ">=", 2], ["var", "appr_osk", "<=", -1]],
+      "text": "Lys never wavered on you. Brother Osk stopped explaining his doubts to her, and she stopped asking him to.",
+      "weight": 1
+    },
+    {
+      "if": [["inParty", "lys"], ["inParty", "tamsin"], ["var", "appr_lys", ">=", 2], ["var", "appr_tamsin", ">=", 2]],
+      "text": "Lys and Tamsin talk less than either would admit, and still know exactly when to guard each other's backs.",
+      "weight": 1
+    },
+    {
+      "if": [["inParty", "lys"], ["inParty", "tamsin"], ["var", "appr_tamsin", ">=", 2], ["var", "appr_lys", "<=", -1]],
+      "text": "Tamsin still swears by you. Lys stopped arguing the point with her on the road, and started watching quietly instead.",
+      "weight": 1
+    },
+    {
+      "if": [["inParty", "lys"], ["inParty", "vell"], ["var", "appr_lys", ">=", 2], ["var", "appr_vell", ">=", 2]],
+      "text": "Lys still doesn't trust a man who won't say where he's from. Vell still doesn't trust anyone. They manage anyway.",
+      "weight": 1
+    },
+    {
+      "if": [["inParty", "lys"], ["inParty", "vell"], ["var", "appr_lys", ">=", 2], ["var", "appr_vell", "<=", -1]],
+      "text": "Lys kept faith in you to the end. Vell kept a careful distance from both of you, and wrote none of it down.",
+      "weight": 1
+    },
+    {
+      "if": [["inParty", "osk"], ["inParty", "tamsin"], ["var", "appr_osk", ">=", 2], ["var", "appr_tamsin", ">=", 2]],
+      "text": "Brother Osk still says a verse before Tamsin swings her hammer. She still says it doesn't help. Neither one stops.",
+      "weight": 1
+    },
+    {
+      "if": [["inParty", "osk"], ["inParty", "tamsin"], ["var", "appr_tamsin", ">=", 2], ["var", "appr_osk", "<=", -1]],
+      "text": "Tamsin backed you without blinking. Brother Osk kept walking beside you anyway, quieter than he used to be.",
+      "weight": 1
+    },
+    {
+      "if": [["inParty", "osk"], ["inParty", "vell"], ["var", "appr_osk", ">=", 2], ["var", "appr_vell", ">=", 2]],
+      "text": "Brother Osk got Vell to sit through a whole verse without interrupting it. Vell has still not admitted he liked it.",
+      "weight": 1
+    },
+    {
+      "if": [["inParty", "osk"], ["inParty", "vell"], ["var", "appr_osk", ">=", 2], ["var", "appr_vell", "<=", -1]],
+      "text": "Osk never stopped trusting you, plainly and out loud. Vell never quite matched it, and never explained why.",
+      "weight": 1
+    },
+    {
+      "if": [["inParty", "tamsin"], ["inParty", "vell"], ["var", "appr_tamsin", ">=", 2], ["var", "appr_vell", ">=", 2]],
+      "text": "Tamsin re-tempers Vell's pens now the way she tempers blades, and swears she doesn't know why she bothers. She knows.",
+      "weight": 1
+    },
+    {
+      "if": [["inParty", "tamsin"], ["inParty", "vell"], ["var", "appr_tamsin", ">=", 2], ["var", "appr_vell", "<=", -1]],
+      "text": "Tamsin never asked Vell to justify their caution about you. She just started standing a little closer, just in case.",
+      "weight": 1
     }
   ],
   "perks": {
