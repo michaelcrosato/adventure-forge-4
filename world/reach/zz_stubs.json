@@ -1,0 +1,58 @@
+{
+  "rooms": {
+    "th_east_edge": {
+      "name": "Thornwold Edge (stub)",
+      "desc": "The Thornwold begins here. This region is not yet written.",
+      "brief": "Thornwold edge.",
+      "region": "th",
+      "landmark": "Thornwold edge",
+      "exits": { "east": { "to": "va_west_road" } },
+      "onEnterOnce": [["set", "th_entered"]]
+    },
+    "fd_causeway_west": {
+      "name": "Fenmarch Causeway (stub)",
+      "desc": "The causeway runs on into the fens. This region is not yet written.",
+      "brief": "Fen causeway.",
+      "region": "fd",
+      "landmark": "Fenmarch causeway",
+      "exits": { "west": { "to": "va_causeway" } },
+      "onEnterOnce": [["set", "fd_entered"]]
+    },
+    "wm_south_gate": {
+      "name": "Highward South Gate (stub)",
+      "desc": "The moor road ends at a gate in a wall of gray stone. This region is not yet written.",
+      "brief": "Highward's gate.",
+      "region": "wm",
+      "landmark": "Highward gate",
+      "exits": {
+        "south": { "to": "va_north_road" },
+        "in": {
+          "to": "mg_south_gate",
+          "if": [["flag", "act2_open"]],
+          "lockedMsg": "The Watch admits no one from a blighted hold until the barrow is dealt with.",
+          "hint": "settle the Hollow King first"
+        }
+      },
+      "onEnterOnce": [["set", "wm_entered"]]
+    },
+    "mg_south_gate": {
+      "name": "Marrowgate (stub)",
+      "desc": "A placeholder for the capital while the realm is built. This region is not yet written.",
+      "brief": "Marrowgate.",
+      "region": "mg",
+      "landmark": "Marrowgate",
+      "exits": { "out": { "to": "wm_south_gate" } },
+      "onEnterOnce": [["set", "mg_entered"]],
+      "actions": [
+        {
+          "id": "zz_stub_end",
+          "label": "(stub) end the tale here",
+          "fx": [
+            ["score", 30],
+            ["end", "win", "zz_stub_win", "The realm is unfinished; this ending is a scaffold and will be removed."]
+          ]
+        }
+      ]
+    }
+  }
+}

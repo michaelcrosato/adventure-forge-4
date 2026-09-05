@@ -1,0 +1,759 @@
+{
+  "rooms": {
+    "va_barrow_field": {
+      "name": "Barrow Field",
+      "desc": "A bare hill and two stone doors set into it, facing north. Ivy chokes a loose-looking stone off to one side. The grass here is white, not gray. The wood lies south; a road climbs north toward the moor.",
+      "brief": "White grass, stone doors.",
+      "region": "va",
+      "landmark": "the barrow field",
+      "exits": {
+        "south": { "to": "va_wood_1_0" },
+        "in": {
+          "to": "va_antechamber",
+          "if": [["flag", "va_barrow_open"]],
+          "lockedMsg": "The stone doors are shut fast. The priest's blessing opens them, or force, or the gap under the loose stone.",
+          "hint": "the priest's blessing, force, or the loose stone",
+          "landmark": "the barrow"
+        },
+        "north": { "to": "va_north_road", "landmark": "the north road" }
+      },
+      "onEnterOnce": [
+        ["score", 5],
+        ["xp", 4],
+        ["say", "So this is where the gray begins. Even the white grass is graying at the edges."]
+      ],
+      "variants": [
+        { "if": [["flag", "va_sealed"]], "brief": "White grass. The doors are sealed, as you left them." },
+        {
+          "if": [["flag", "va_king_rested"]],
+          "brief": "White grass, and green coming through it. The doors stand open."
+        },
+        { "if": [["flag", "va_barrow_open"]], "brief": "White grass. The stone doors stand open." }
+      ],
+      "actions": [
+        {
+          "id": "va_force_doors",
+          "label": "force the doors — a failed try costs 1 hp",
+          "if": [["!class", "warden"], ["!flag", "va_barrow_open"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [["set", "va_barrow_open"], ["xp", 2], ["say", "Stone grinds on stone. The doors open."]],
+              [["hp", -1], ["say", "The doors do not move, and the recoil wrenches your shoulder."]]
+            ]
+          ]
+        },
+        {
+          "id": "va_force_doors_warden",
+          "label": "put your shoulder to the doors (warden)",
+          "if": [["class", "warden"], ["!flag", "va_barrow_open"]],
+          "fx": [
+            ["set", "va_barrow_open"],
+            ["xp", 2],
+            ["say", "One good shoulder is all it takes. Stone grinds on stone and gives way at once."]
+          ]
+        },
+        {
+          "id": "va_loose_stone",
+          "label": "work the loose stone by the ivy (wits)",
+          "if": [["!flag", "va_barrow_open"], ["!flag", "va_knows_gap"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              11,
+              [
+                ["set", "va_barrow_open"],
+                ["xp", 2],
+                ["move", "va_keeper_token", "inv"],
+                ["say", "The stone gives when you lean on it; roots and old rain have hollowed a gap beneath. Wedged in the gap, a worn half-token."]
+              ],
+              [["say", "The stone shifts and settles back. There is a trick to it you have not found."]]
+            ]
+          ]
+        },
+        {
+          "id": "va_hunters_gap",
+          "label": "find the hunter's gap under the loose stone",
+          "if": [["!flag", "va_barrow_open"], ["flag", "va_knows_gap"]],
+          "fx": [
+            ["set", "va_barrow_open"],
+            ["xp", 2],
+            ["move", "va_keeper_token", "inv"],
+            ["say", "Right where the tally said: the stone lifts, and the gap beneath is worn smooth by years of someone's knees. Wedged in it, a worn half-token."]
+          ]
+        }
+      ]
+    },
+    "va_antechamber": {
+      "name": "Barrow Antechamber",
+      "desc": "Cut stone, cold and faintly echoing. Shelf niches stand empty, robbed bare long before you arrived. A passage north leads to the hall of verses. East, an iron door; down, a crypt that reeks of the same blight fouling the fields.",
+      "brief": "Empty niches.",
+      "region": "va",
+      "exits": {
+        "out": { "to": "va_barrow_field" },
+        "north": { "to": "va_hall_of_verses" },
+        "down": { "to": "va_crypt", "sideTrip": true },
+        "east": { "to": "va_vault", "sideTrip": true }
+      },
+      "onEnterOnce": [["xp", 2], ["say", "These niches once held tokens for the dead. Someone took them all."]]
+    },
+    "va_vault": {
+      "name": "The King's Strongroom",
+      "desc": "A side chamber the wight never had to guard — the old king trusted iron more than claws. A strongbox sits under years of dust. In the corner a robed shade sits so still you take it for shadow until it speaks. The antechamber lies west.",
+      "brief": "The rusted strongbox. A robed shade.",
+      "region": "va",
+      "exits": { "west": { "to": "va_antechamber" } },
+      "onEnterOnce": [["xp", 2]],
+      "variants": [{ "if": [["flag", "va_vault_opened"]], "brief": "The strongbox stands open." }],
+      "actions": [
+        {
+          "id": "va_force_vault",
+          "label": "force the strongbox (might)",
+          "if": [["!flag", "va_vault_opened"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "va_vault_opened"],
+                ["move", "va_kings_seal", "inv"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "The rusted lock snaps. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap in the king's own hand."]
+              ],
+              [["say", "The lock holds. Rust does not mean weak."]]
+            ]
+          ]
+        },
+        {
+          "id": "va_pick_vault",
+          "label": "pick the strongbox's lock (grace)",
+          "if": [["!flag", "va_vault_opened"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              10,
+              [
+                ["set", "va_vault_opened"],
+                ["move", "va_kings_seal", "inv"],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "The old pins give way one by one. Inside: a seal of office, heavy enough to turn a blow, wrapped around a scrap in the king's own hand."]
+              ],
+              [["say", "A pin sticks. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "va_show_token",
+          "label": "show the shade your worn half-token",
+          "if": [["has", "va_keeper_token"], ["!flag", "va_vault_opened"]],
+          "once": true,
+          "fx": [
+            ["set", "va_vault_opened"],
+            ["move", "va_kings_seal", "inv"],
+            ["score", 5],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1],
+            ["say", "The shade stills at the sight of it — the same raised-hand ward it once wore. 'One of ours,' it says, and the rusted lock falls open at a touch. Inside, the king's seal, wrapped around a scrap in his own hand."]
+          ]
+        }
+      ]
+    },
+    "va_hall_of_verses": {
+      "name": "Hall of Verses",
+      "desc": "Every wall is cut with lines of old writing — the king's verses, meant to be spoken over him. Some of it almost reads itself. The antechamber lies south; a stair climbs to the throne.",
+      "brief": "Walls of old writing.",
+      "region": "va",
+      "exits": {
+        "south": { "to": "va_antechamber" },
+        "up": {
+          "to": "va_throne",
+          "if": [["flag", "va_verse_stone"]],
+          "lockedMsg": "There is a stair here somewhere. The walls say where.",
+          "hint": "read the stone verse on these walls first"
+        }
+      },
+      "variants": [{ "if": [["flag", "va_verse_stone"]], "brief": "Walls of old writing. The stair climbs to the throne." }],
+      "actions": [
+        {
+          "id": "va_stone_read",
+          "label": "read the stone walls (scholar)",
+          "if": [["class", "scholar"], ["!flag", "va_verse_stone"]],
+          "fx": [
+            ["set", "va_verse_stone"],
+            ["addvar", "va_verses_known", 1],
+            ["score", 10],
+            ["xp", 3],
+            ["say", "'Let the stone remember what flesh forgets; set it down, and rest.' The verse reads itself to you, plain as speech. Cut beneath it, a stair leads up. Stone verse: known."]
+          ]
+        },
+        {
+          "id": "va_stone_trace",
+          "label": "trace the stone walls by touch (grace)",
+          "if": [["!class", "scholar"], ["!flag", "va_verse_stone"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              8,
+              [
+                ["set", "va_verse_stone"],
+                ["addvar", "va_verses_known", 1],
+                ["score", 10],
+                ["xp", 3],
+                ["say", "Quiet fingers find the deep-cut letters. 'Let the stone remember what flesh forgets; set it down, and rest.' Beneath it, a stair. Stone verse: known."]
+              ],
+              [["say", "The letters run on past where your fingers can follow. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "va_stone_puzzle",
+          "label": "work out the stone verse (wits)",
+          "if": [["!class", "scholar"], ["!flag", "va_verse_stone"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              8,
+              [
+                ["set", "va_verse_stone"],
+                ["addvar", "va_verses_known", 1],
+                ["score", 10],
+                ["xp", 3],
+                ["say", "The verse comes clear. 'Let the stone remember what flesh forgets; set it down, and rest.' Cut beneath it, a stair leads up. Stone verse: known."]
+              ],
+              [["say", "The old letters will not hold still. It can be tried again."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "va_crypt": {
+      "name": "Barrow Crypt",
+      "desc": "Low vaults and stone boxes, the air gone sour and the mold black instead of green. Blight-rats scatter between the boxes. A mail shirt is draped over one box. A barrow-wight blocks the north passage, drawn up out of the same rot.",
+      "brief": "Low vaults, air gone sour.",
+      "region": "va",
+      "exits": {
+        "up": { "to": "va_antechamber" },
+        "north": {
+          "to": "va_throne",
+          "if": [["flag", "va_wight_passed"]],
+          "lockedMsg": "The wight bars the way north. Fight it, slip past it, or go up and around through the hall of verses.",
+          "hint": "defeat it, slip past it (grace), or go around"
+        }
+      },
+      "onEnterOnce": [
+        ["xp", 2],
+        ["say", "Whoever wore this mail last never got clear of the barrow. The blight pools thickest right here."]
+      ],
+      "variants": [{ "if": [["npcDead", "va_barrow_wight"]], "brief": "Low vaults. The wight is rag and bone." }],
+      "actions": [
+        {
+          "id": "va_slip_past",
+          "label": "slip past the wight (grace) — a failed try costs 1 hp",
+          "if": [["!flag", "va_wight_passed"], ["!npcDead", "va_barrow_wight"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              12,
+              [
+                ["set", "va_wight_passed"],
+                ["xp", 2],
+                ["say", "You keep to the shadow and slip by. The passage north stands open."]
+              ],
+              [["hp", -1], ["say", "Claws rake you as you dart back."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "va_throne": {
+      "name": "Throne of the Barrow",
+      "desc": "The Hollow King sits on a stone seat worn smooth by hands not his own. Where a crown should be, only dust. Cold air gutters your light. South: the crypt. Down: the hall of verses.",
+      "brief": "The stone seat.",
+      "region": "va",
+      "exits": { "south": { "to": "va_crypt" }, "down": { "to": "va_hall_of_verses" } },
+      "onEnterOnce": [
+        ["xp", 2],
+        ["say", "He does not move against you. Word or blade, whichever ends it, he will let you choose. Kneel to him, though, and you take his place."]
+      ],
+      "variants": [
+        {
+          "if": [["flag", "va_king_rested"]],
+          "name": "The Empty Seat",
+          "desc": "The stone seat is empty. Dust lies in the shape of a man who finally lay down. The air is only cold now, not grieving.",
+          "brief": "The empty seat."
+        },
+        {
+          "if": [["flag", "va_king_slain"]],
+          "name": "The Broken Seat",
+          "desc": "Dust and old iron on the floor where a king came apart. The stone seat is cracked through.",
+          "brief": "The cracked seat."
+        },
+        {
+          "if": [["flag", "va_king_forsaken"]],
+          "desc": "The Hollow King sits on his stone seat and does not look at you. He has said what he has to say.",
+          "brief": "The stone seat. He does not look up."
+        }
+      ],
+      "actions": [
+        {
+          "id": "va_rite",
+          "label": "speak the three verses over him",
+          "if": [
+            ["flag", "va_verse_stone"],
+            ["flag", "va_verse_water"],
+            ["flag", "va_verse_wind"],
+            ["!flag", "va_king_resolved"],
+            ["!has", "va_crown"]
+          ],
+          "fx": [
+            ["set", "va_king_resolved"],
+            ["set", "va_king_rested"],
+            ["set", "va_verses_all"],
+            ["set", "act2_open"],
+            ["score", 25],
+            ["xp", 8],
+            ["addvar", "rep_church", 1],
+            ["addvar", "rep_keepers", 1],
+            ["npcgo", "va_hollow_king", null],
+            ["say", "You speak the three verses. Relief crosses his face, and he lies down at last. The gray goes out of the air like a tide. Behind you the stone doors wait on your word: seal, or leave open."]
+          ]
+        },
+        {
+          "id": "va_full_rite",
+          "label": "return the crown and speak the three verses",
+          "if": [
+            ["flag", "va_verse_stone"],
+            ["flag", "va_verse_water"],
+            ["flag", "va_verse_wind"],
+            ["has", "va_crown"],
+            ["flag", "va_heard_grievance"],
+            ["!flag", "va_king_resolved"]
+          ],
+          "fx": [
+            ["set", "va_king_resolved"],
+            ["set", "va_king_rested"],
+            ["set", "va_verses_all"],
+            ["set", "va_crown_returned"],
+            ["set", "va_true_rest"],
+            ["set", "act2_open"],
+            ["move", "va_crown", "nowhere"],
+            ["score", 35],
+            ["xp", 10],
+            ["addvar", "rep_church", 1],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "appr_vell", 1],
+            ["addvar", "appr_osk", 1],
+            ["npcgo", "va_hollow_king", null],
+            ["say", "You set the crown in his hands and speak the three verses over him. He listens through them with the crown where it belongs, and something in his face settles that four hundred years could not. He lies down. The doors wait on your word."]
+          ]
+        },
+        {
+          "id": "va_return_crown",
+          "label": "return the crown",
+          "if": [["has", "va_crown"], ["flag", "va_heard_grievance"], ["!flag", "va_king_resolved"]],
+          "fx": [
+            ["set", "va_king_resolved"],
+            ["set", "va_king_rested"],
+            ["set", "va_crown_returned"],
+            ["set", "act2_open"],
+            ["move", "va_crown", "nowhere"],
+            ["score", 25],
+            ["xp", 8],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_vell", 1],
+            ["npcgo", "va_hollow_king", null],
+            ["say", "You set the crown in his hands. He stands, bows once, and lies down at last. The gray goes out of the trees like a tide. The doors wait on your word."]
+          ]
+        },
+        {
+          "id": "va_break_crown",
+          "label": "break the crown in front of him",
+          "if": [["has", "va_crown"], ["flag", "va_heard_grievance"], ["!flag", "va_king_resolved"]],
+          "fx": [
+            ["set", "va_king_resolved"],
+            ["set", "va_king_rested"],
+            ["set", "va_crown_broken"],
+            ["set", "act2_open"],
+            ["move", "va_crown", "nowhere"],
+            ["score", 20],
+            ["xp", 8],
+            ["addvar", "appr_vell", -2],
+            ["addvar", "appr_tamsin", 1],
+            ["addvar", "rep_crown", -1],
+            ["npcgo", "va_hollow_king", null],
+            ["say", "You set the crown on the stone and bring your heel down until the iron gives. He does not move to stop you — you already believed him; that was the debt, more than the metal. He lies down. The doors wait on your word."]
+          ]
+        },
+        {
+          "id": "va_forsake",
+          "label": "pocket the crown and leave him grieving",
+          "if": [["has", "va_crown"], ["flag", "va_heard_grievance"], ["!flag", "va_king_resolved"]],
+          "fx": [
+            ["set", "va_king_resolved"],
+            ["set", "va_king_forsaken"],
+            ["set", "va_crown_kept"],
+            ["set", "act2_open"],
+            ["score", 5],
+            ["xp", 4],
+            ["addvar", "rep_church", -2],
+            ["addvar", "rep_keepers", -2],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "appr_osk", -2],
+            ["addvar", "appr_lys", -1],
+            ["addvar", "appr_vell", 1],
+            ["say", "You keep the crown and turn for the stairs, leaving him exactly as you found him. He does not call after you. The gray in the Vale will not lift. Marrowgate will hear that the crown is loose in the world."]
+          ]
+        },
+        {
+          "id": "va_seal_doors",
+          "label": "seal the barrow doors behind you",
+          "if": [
+            ["flag", "va_king_resolved"],
+            ["!flag", "va_sealed"],
+            ["!flag", "va_left_open"],
+            ["!flag", "va_king_forsaken"]
+          ],
+          "fx": [
+            ["set", "va_sealed"],
+            [
+              "if",
+              [["flag", "va_promised_seal"]],
+              [
+                ["score", 5],
+                ["addvar", "rep_watch", 2],
+                ["say", "You draw the great doors shut from within the passage and hear the seal-stone drop. True to your word. The watch will know."]
+              ],
+              [
+                ["addvar", "rep_watch", 1],
+                ["addvar", "rep_church", -1],
+                ["addvar", "appr_osk", -1],
+                ["say", "You draw the great doors shut and hear the seal-stone drop. You promised no one; you chose it anyway. The priest will grieve the door."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "va_leave_open",
+          "label": "leave the barrow open to the sky",
+          "if": [
+            ["flag", "va_king_resolved"],
+            ["!flag", "va_sealed"],
+            ["!flag", "va_left_open"],
+            ["!flag", "va_king_forsaken"]
+          ],
+          "fx": [
+            ["set", "va_left_open"],
+            [
+              "if",
+              [["flag", "va_promised_seal"]],
+              [
+                ["set", "va_broke_promise"],
+                ["clear", "va_promised_seal"],
+                ["addvar", "rep_watch", -2],
+                ["addvar", "rep_church", 1],
+                ["addvar", "appr_osk", 1],
+                ["addvar", "appr_tamsin", -1],
+                ["say", "You leave the doors as they stand, open to the sky, and your word to the reeve on the barrow floor with them."]
+              ],
+              [
+                ["score", 3],
+                ["addvar", "rep_church", 1],
+                ["addvar", "appr_osk", 1],
+                ["say", "You leave the doors open to the sky. Grief needs air, the priest said. You are choosing to believe him."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "va_kneel",
+          "label": "(no dawn) kneel and take his place",
+          "if": [["!flag", "va_king_resolved"], ["!flag", "va_kneel_warned"]],
+          "fx": [
+            ["set", "va_kneel_warned"],
+            ["say", "You lower yourself toward the stone seat and stop, one knee still free. This is the one door here that does not open back: no verse, no crown, just you taking his place. Kneel again to go through it."]
+          ]
+        },
+        {
+          "id": "va_kneel_confirm",
+          "label": "(no dawn) finish kneeling",
+          "if": [["!flag", "va_king_resolved"], ["flag", "va_kneel_warned"]],
+          "fx": [
+            ["end", "lose", "crowned_hollow", "You kneel. The crown of nothing settles on you, light as ash. The Vale will have a king after all, and no dawn."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "va_mail_shirt": {
+      "name": "mail shirt",
+      "loc": "va_crypt",
+      "takeable": true,
+      "armor": 2,
+      "hint": "blunts every blow just by riding in your pack"
+    },
+    "va_kings_seal": {
+      "name": "king's seal",
+      "loc": "nowhere",
+      "armor": 1,
+      "hint": "read the scrap wrapped around it",
+      "use": [
+        {
+          "if": [["!flag", "va_read_seal"]],
+          "fx": [
+            ["set", "va_read_seal"],
+            ["xp", 2],
+            ["score", 2],
+            ["say", "'Forty years I kept faith. It was my own blood who lifted the crown from my sleeping brow and called it inheritance. I do not want the vale to suffer for his theft. I only wanted to be given it back.'"]
+          ]
+        }
+      ]
+    },
+    "va_keeper_token": {
+      "name": "worn half-token",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "one face rubbed nearly smooth — the gray priest might know the ward-sign",
+      "use": [
+        {
+          "if": [["!flag", "va_read_token"]],
+          "fx": [
+            ["set", "va_read_token"],
+            ["xp", 1],
+            ["say", "A raised hand, snapped off at the wrist. A ward, or half of one. Someone left it at that door on purpose."]
+          ]
+        }
+      ]
+    },
+    "va_wight_relic": {
+      "name": "ward-token",
+      "loc": "nowhere",
+      "hint": "cold iron worked into a rough sun — hung over a door to keep grief from walking in"
+    }
+  },
+  "npcs": {
+    "va_blight_rats": {
+      "name": "blight rats",
+      "room": "va_crypt",
+      "hostile": true,
+      "hp": 3,
+      "atk": 1,
+      "df": 7,
+      "onDeath": [["score", 2], ["xp", 2], ["say", "The rats scatter into the dark between the boxes."]]
+    },
+    "va_barrow_wight": {
+      "name": "barrow-wight",
+      "room": "va_crypt",
+      "hostile": true,
+      "hp": 8,
+      "atk": 1,
+      "df": 5,
+      "onDeath": [
+        ["xp", 5],
+        ["score", 5],
+        ["move", "va_wight_relic", "inv"],
+        ["set", "va_wight_passed"],
+        ["say", "The wight comes apart into rag and bone. Among the scraps, a ward-token of cold iron, the kind hung over a door to keep grief from walking in."]
+      ]
+    },
+    "va_steward_shade": {
+      "name": "steward's shade",
+      "room": "va_vault",
+      "topics": [
+        {
+          "id": "duty",
+          "label": "who kept this room",
+          "once": true,
+          "say": "Forty years I held this key, and the king's trust with it. I do not haunt the box — only what it meant, that a man's word once needed iron behind it to be believed.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "seal",
+          "label": "the seal you kept",
+          "if": [["flag", "va_vault_opened"]],
+          "once": true,
+          "say": "His own blood pried the crown loose that same week — I heard both locks give, his and mine, one after the other. I kept faith with the wrong door.",
+          "fx": [["xp", 2]]
+        }
+      ]
+    },
+    "va_hollow_king": {
+      "name": "hollow king",
+      "room": "va_throne",
+      "dialogue": true,
+      "hp": 12,
+      "atk": 3,
+      "df": 13,
+      "desc": "A king the shape of grief, sitting very still.",
+      "onDeath": [
+        ["score", 25],
+        ["xp", 8],
+        ["set", "va_king_resolved"],
+        ["set", "va_king_slain"],
+        ["set", "act2_open"],
+        ["addvar", "rep_watch", 1],
+        ["addvar", "rep_iron", 1],
+        ["addvar", "rep_church", -1],
+        ["addvar", "rep_keepers", -1],
+        ["addvar", "appr_tamsin", 1],
+        ["addvar", "appr_osk", -1],
+        ["say", "Your blade finds him and he breaks apart into dust and old iron, a king who never got his crown back. The blight thins with him. It does not lift. The doors wait on your word."]
+      ],
+      "topics": [
+        {
+          "id": "grieve",
+          "label": "why do you grieve",
+          "once": true,
+          "say": "My crown. The first reeve took it from my barrow, and my rest went with it. Bring it back, or speak the old verses over me — either rests me. Both together rests me deeper. Kneel, and you will have my seat and my grief for your own.",
+          "fx": [["set", "va_heard_grievance"], ["score", 10], ["xp", 3]]
+        },
+        {
+          "id": "blight",
+          "label": "the blight",
+          "once": true,
+          "say": "It is my grief, spilled over the land. It will not stop while I wake. And I am not the only one awake in this Reach. Ask the living what they have let lapse.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "memories",
+          "label": "the first reeve",
+          "if": [["flag", "va_heard_grievance"]],
+          "once": true,
+          "say": "He was my own blood, and the vale was starving, and a crown buys grain. He did not take it out of malice. His line rules in Marrowgate now, on what he took. They have never once come to say so.",
+          "fx": [["xp", 2], ["set", "va_king_memories"]]
+        },
+        {
+          "id": "forgive",
+          "label": "do you forgive him",
+          "if": [["flag", "va_king_memories"]],
+          "once": true,
+          "say": "I do not curse his name, whatever the vale calls him for it. If I begrudge anything, it is that he never came back to tell me why. A grief told is half a grief. That is what the verses are for.",
+          "fx": [["xp", 2], ["addvar", "rep_keepers", 1]]
+        },
+        {
+          "id": "doors",
+          "label": "the barrow doors — seal or open?",
+          "if": [["flag", "va_king_memories"]],
+          "once": true,
+          "say": "Sealed or open, it is no longer mine to keep. The reeve fears what walks free; the priest fears a shut door on grief undone. Both are half right. Leave it however you see fit.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "verses_ready",
+          "label": "you may soon rest",
+          "if": [["flag", "va_verse_stone"], ["flag", "va_verse_water"], ["flag", "va_verse_wind"]],
+          "once": true,
+          "say": "Three. Water for grief my own hands could not lay down, wind for what iron never carried off, stone for what my flesh forgot. Say them, when you are ready.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bye",
+          "label": "step back from the seat",
+          "say": "I have waited four hundred years. I can wait while you decide.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "quests": {
+    "va_doors": {
+      "name": "The Barrow Doors",
+      "start": [["flag", "va_heard_reeve_ask"]],
+      "done": [["flag", "va_sealed"]],
+      "failed": [["flag", "va_left_open"]],
+      "stages": [
+        {
+          "if": [["flag", "va_king_resolved"]],
+          "text": "The king is settled. The doors are yours to seal or leave open, from the throne."
+        },
+        {
+          "if": [["flag", "va_promised_seal"]],
+          "text": "You promised the reeve to seal the barrow once the king rests. The priest will not bless a door meant to shut."
+        },
+        {
+          "if": [],
+          "text": "The reeve wants the barrow sealed after; the priest wants it open. Promise, or don't — you decide at the throne."
+        }
+      ]
+    },
+    "va_verses": {
+      "name": "The Three Verses",
+      "start": [["flag", "va_notice_2"]],
+      "done": [["flag", "va_verses_all"]],
+      "stages": [
+        {
+          "if": [["var", "va_verses_known", "=", 3]],
+          "text": "All three verses are yours. Speak them over the king at the throne."
+        },
+        {
+          "if": [["var", "va_verses_known", "=", 2]],
+          "text": "Two of three verses known. The third waits — shrine, tower, or the barrow's own hall."
+        },
+        {
+          "if": [["var", "va_verses_known", "=", 1]],
+          "text": "One verse known. Two more: the drowned shrine and the old watchtower east of the wood, and the barrow's hall."
+        },
+        {
+          "if": [],
+          "text": "Three verses were cut for the king: the drowned shrine, the old watchtower (both east of the wood), and the barrow's own hall."
+        }
+      ]
+    },
+    "va_crown_q": {
+      "name": "The Stolen Crown",
+      "start": [["flag", "va_notice_3"]],
+      "done": [["flag", "va_crown_returned"]],
+      "failed": [["flag", "va_crown_broken"]],
+      "stages": [
+        {
+          "if": [["has", "va_crown"]],
+          "text": "The crown is yours. Return it to the king at the throne — or decide otherwise."
+        },
+        {
+          "if": [["flag", "va_heard_grievance"]],
+          "text": "You have heard the king's grief. Press it on the elder, or bring her the king's seal from the barrow's strongroom."
+        },
+        {
+          "if": [],
+          "text": "The elder keeps the crown in a locked coffer, and will not open it until you have heard the king grieve himself."
+        }
+      ]
+    }
+  },
+  "statusTracks": [
+    {
+      "var": "va_verses_known",
+      "label": "Verses",
+      "max": 3,
+      "remaining": [
+        { "flag": "va_verse_water", "label": "drowned shrine" },
+        { "flag": "va_verse_wind", "label": "old watchtower" },
+        { "flag": "va_verse_stone", "label": "barrow hall" }
+      ]
+    }
+  ],
+  "epilogue": [
+    {
+      "if": [["flag", "va_true_rest"]],
+      "text": "Of the Hollow King the Vale says only that he sleeps, crowned, and that the grass on his hill is the greenest in the Reach."
+    },
+    {
+      "if": [["flag", "va_broke_promise"]],
+      "text": "The reeve of Last Light kept the watch shield you gave back, and never spoke your name again."
+    },
+    {
+      "if": [["npcDead", "va_lean_wolf"], ["npcDead", "va_ash_wolf"], ["npcDead", "va_gaunt_wolf"]],
+      "text": "No wolves run the Ashwood now. The hunter says the wood is quieter for it, and does not say whether that is good."
+    }
+  ]
+}

@@ -1,0 +1,566 @@
+{
+  "gen": [
+    {
+      "id": "va_wood",
+      "name": "the Ashwood",
+      "seed": 11,
+      "w": 4,
+      "h": 4,
+      "region": "va",
+      "pools": {
+        "descs": ["Ash trees close in, gray on gray, and the trail keeps its own counsel."],
+        "briefs": ["Gray trees."],
+        "scenes": []
+      },
+      "walls": [],
+      "links": [
+        { "cell": [1, 3], "dir": "south", "to": "va_gate" },
+        { "cell": [1, 0], "dir": "north", "to": "va_barrow_field", "landmark": "the barrow field" },
+        {
+          "cell": [0, 2],
+          "dir": "west",
+          "to": "va_hunters_camp",
+          "back": "east",
+          "landmark": "the hunter's camp",
+          "sideTrip": true
+        },
+        { "cell": [3, 2], "dir": "east", "to": "va_drowned_chapel", "landmark": "the drowned shrine" },
+        { "cell": [3, 1], "dir": "east", "to": "va_watchtower", "landmark": "the old watchtower" }
+      ],
+      "spots": [
+        {
+          "cell": [0, 0],
+          "name": "Widow's Well",
+          "desc": "A stone well, dry and capped with a warped board. Someone pried up one corner once and never set it right; a tarnished locket glints in the gap. East, the trees thin toward the barrow hill.",
+          "brief": "The dry well.",
+          "items": ["va_widows_locket"],
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 0],
+          "name": "The Last Trees",
+          "desc": "The ash wood thins to nothing. North the barrow hill rises, white grass on a bare slope and two stone doors set into it.",
+          "brief": "The last trees. The barrow north.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 0],
+          "name": "Herb Hollow",
+          "desc": "A sunken hollow out of the wind. Wild herbs grow here, bitter but good for a wound — the only green in the whole gray wood. West the trees thin toward the barrow trail.",
+          "brief": "Herb hollow.",
+          "items": ["va_herbs"],
+          "onEnterOnce": [["xp", 2]]
+        },
+        {
+          "cell": [3, 0],
+          "name": "Crow Perch",
+          "desc": "A blasted, leafless tree stands alone, hung with black feathers instead of leaves, rasping in the wind. A scrap of cloth is snagged high in the branches.",
+          "brief": "The crow tree.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "va_crow_climb",
+              "label": "climb for the scrap of cloth (grace)",
+              "if": [["!has", "va_crow_scrap"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["move", "va_crow_scrap", "inv"],
+                    ["xp", 2],
+                    ["say", "The branch holds. The scrap is fine-woven, gray, and stained dark with something old."]
+                  ],
+                  [["say", "The branch bows and you drop back to the ash, empty-handed. It can be tried again."]]
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [0, 1],
+          "name": "Gray Cairn",
+          "desc": "A cairn of flat stones older than the wood, the air over it gone cold and mineral. A gray husk crouches over the stones, guarding a river charm loose among them. It does not stir unless struck.",
+          "brief": "The gray cairn. The husk crouches.",
+          "npcs": ["va_cairn_husk"],
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "va_cairn_charm",
+              "label": "take the river charm from the cairn",
+              "if": [["npcDead", "va_cairn_husk"], ["!has", "va_river_charm"]],
+              "once": true,
+              "fx": [
+                ["move", "va_river_charm", "inv"],
+                ["addvar", "gold", 3],
+                ["xp", 2],
+                ["say", "The charm comes free, and three old coins with it from under the stones."]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [1, 1],
+          "name": "The Hollow Path",
+          "desc": "The ground dips into a sunken trail, root and stone rising to either side. Through a gap in the trees east, black water marks the drowned shrine; past it the watchtower's broken crown breaks the skyline.",
+          "brief": "The sunken trail. Shrine and tower east.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 1],
+          "npcs": ["va_gaunt_wolf"],
+          "onEnterOnce": [["xp", 1]],
+          "name": "Wolf Scrape",
+          "desc": "Claw marks score deep into an ash trunk, fresh enough to weep sap. A gaunt gray wolf watches from the scrub, ribs plain, and does not move first.",
+          "brief": "Clawed trunks. The gaunt wolf watches."
+        },
+        {
+          "cell": [3, 1],
+          "name": "Tower Shadow",
+          "desc": "The watchtower's shadow falls long across the path. Its stones rise east through the last trees. South, the ground drops toward black water.",
+          "brief": "Tower shadow. The tower stands east.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 2],
+          "name": "Camp Smoke",
+          "desc": "A thread of smoke shows through the trees. The hunter's lean-to stands just beyond, to the west. North, a cairn of flat stones and a cold mineral smell.",
+          "brief": "Camp smoke. The camp lies west.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 2],
+          "name": "The Ashfall Clearing",
+          "desc": "A wide clearing where the gray ash lies thickest, drifted like snow that never melts. East the ground softens and water glints; west a thread of woodsmoke rises.",
+          "brief": "The ashfall clearing.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 2],
+          "npcs": ["va_ash_wolf"],
+          "landmark": "Twin Stones",
+          "onEnterOnce": [["xp", 1]],
+          "name": "Twin Stones",
+          "desc": "Two standing stones lean together, worn faces touching. An ash wolf lies between them, gray coat gone to dust at the edges, watching you with a patience that is not a wolf's.",
+          "brief": "The leaning stones. The ash wolf watches."
+        },
+        {
+          "cell": [3, 2],
+          "name": "Sodden Verge",
+          "desc": "The ground turns soft and cold underfoot. East, black water glints through the trees where a stone roofline breaks the surface. A worn track climbs north toward the tower.",
+          "brief": "Soft ground. The shrine's water east.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 3],
+          "name": "Broken Bridge",
+          "desc": "A footbridge half fallen into a dry streambed, the far rail gone. Woodsmoke drifts from the north. The village lanterns show through the trees east.",
+          "brief": "The broken bridge. Smoke north.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 3],
+          "name": "The Split Oak",
+          "desc": "An oak split clean by old lightning at the wood's edge. East along the trail a lean wolf has taken the charcoal ring for its own; north the trail runs deeper; west, past a broken bridge, woodsmoke marks a hunter's camp.",
+          "brief": "The split oak. Village south.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 3],
+          "name": "Charcoal Ring",
+          "desc": "A ring of blackened stone. Someone camped here and not recently — a boot-print in the ash, a tin cup on its side. A lean, blight-pale wolf crouches over the cold ash and lunges the moment it has your scent.",
+          "brief": "The charcoal ring.",
+          "npcs": ["va_lean_wolf"],
+          "onEnterOnce": [["xp", 1]],
+          "variants": [{ "if": [["npcDead", "va_lean_wolf"]], "brief": "The charcoal ring. Quiet now." }]
+        },
+        {
+          "cell": [3, 3],
+          "name": "Antler Stake",
+          "desc": "A stag's antlers lashed to a stake at the trail's edge click together in the wind — a marker, not a kill; strips of cloth are tied below, weathered past color. North the ground turns wet.",
+          "brief": "The antler stake.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "va_antler_cloth",
+              "label": "look at the strips of cloth",
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Old keeper-knots, the priest would call them. Someone marked the way to the drowned shrine for pilgrims, long before the pilgrims stopped."]
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "rooms": {
+    "va_hunters_camp": {
+      "name": "Hunter's Camp",
+      "desc": "A lean-to and a smoke rack at the wood's west edge, hides stretched to cure, herbs bundled to dry in the smoke. The hunter watches the trees, not you. A young woman in a hunter's leathers sits apart, fletching, and watches you instead.",
+      "brief": "Lean-to and smoke.",
+      "region": "va",
+      "landmark": "the hunter's camp",
+      "exits": { "south": { "to": "va_west_road", "landmark": "the west road" } },
+      "onEnterOnce": [["xp", 2], ["set", "va_found_camp"]],
+      "actions": [
+        {
+          "id": "va_camp_tally",
+          "label": "read the tally marks by the smoke rack",
+          "if": [["!flag", "va_knows_gap"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "va_knows_gap"],
+                ["xp", 2],
+                ["say", "Not idle scratches — a hunter's shorthand. A gap under a fallen stone on the barrow hill's north face, doors skipped entirely. Someone has been going in and out for years."]
+              ],
+              [["say", "Scratches. A hunter's private shorthand; the hunter could read them for you."]]
+            ]
+          ]
+        },
+        {
+          "id": "va_camp_brush",
+          "label": "search the brush past the smoke rack",
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["addvar", "gold", 2],
+            ["say", "Half-buried in old leaves: a tarnished clasp stamped with a rearing stag — the old king's mark, the same one on the elder's coffer lid — and two coins gone green."]
+          ]
+        }
+      ]
+    },
+    "va_drowned_chapel": {
+      "name": "Drowned Shrine",
+      "desc": "Half a chapel, sunk to its windows in black water. A stone psalter stands above the waterline, its verses cut for a king who cannot rest. The wood lies west.",
+      "brief": "Black water, stone psalter.",
+      "region": "va",
+      "landmark": "the drowned shrine",
+      "exits": { "west": { "to": "va_wood_3_2" } },
+      "onEnterOnce": [["xp", 2], ["score", 2]],
+      "variants": [{ "if": [["flag", "va_verse_water"]], "brief": "Black water. The water verse is yours." }],
+      "actions": [
+        {
+          "id": "va_water_read",
+          "label": "read the water verse (scholar)",
+          "if": [["class", "scholar"], ["!flag", "va_verse_water"]],
+          "fx": [
+            ["set", "va_verse_water"],
+            ["addvar", "va_verses_known", 1],
+            ["score", 10],
+            ["xp", 3],
+            ["say", "'Let the water take what grief the living cannot; lay it down, and rest.' It comes back to you line by line, a scholar's ease. Water verse: known."]
+          ]
+        },
+        {
+          "id": "va_water_trace",
+          "label": "trace the water verse by touch (grace)",
+          "if": [["!class", "scholar"], ["!flag", "va_verse_water"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              8,
+              [
+                ["set", "va_verse_water"],
+                ["addvar", "va_verses_known", 1],
+                ["score", 10],
+                ["xp", 3],
+                ["say", "Your fingers find the worn grooves and trace them true. 'Let the water take what grief the living cannot; lay it down, and rest.' Water verse: known."]
+              ],
+              [["say", "The grooves run together under your fingers. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "va_water_puzzle",
+          "label": "work out the water verse (wits)",
+          "if": [["!class", "scholar"], ["!flag", "va_verse_water"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              8,
+              [
+                ["set", "va_verse_water"],
+                ["addvar", "va_verses_known", 1],
+                ["score", 10],
+                ["xp", 3],
+                ["say", "The worn lines give up their meaning. 'Let the water take what grief the living cannot; lay it down, and rest.' Water verse: known."]
+              ],
+              [["say", "The letters swim. It can be tried again."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "va_watchtower": {
+      "name": "Old Watchtower",
+      "desc": "An old watchtower, stairs still sound. Wind carvings ring the bell room at the top. From the parapet the whole Vale lies gray below: village south, the barrow hill north-west, the fens east.",
+      "brief": "Wind in the bell room.",
+      "region": "va",
+      "landmark": "the old watchtower",
+      "exits": { "west": { "to": "va_wood_3_1" } },
+      "onEnterOnce": [["xp", 2], ["score", 2]],
+      "variants": [{ "if": [["flag", "va_verse_wind"]], "brief": "Wind in the bell room. The wind verse is yours." }],
+      "actions": [
+        {
+          "id": "va_wind_read",
+          "label": "read the wind carvings (scholar)",
+          "if": [["class", "scholar"], ["!flag", "va_verse_wind"]],
+          "fx": [
+            ["set", "va_verse_wind"],
+            ["addvar", "va_verses_known", 1],
+            ["score", 10],
+            ["xp", 3],
+            ["say", "'Let the wind take what iron could not; let it go, and rest.' The wind verse returns whole. Wind verse: known."]
+          ]
+        },
+        {
+          "id": "va_wind_trace",
+          "label": "trace the wind carvings by touch (grace)",
+          "if": [["!class", "scholar"], ["!flag", "va_verse_wind"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              9,
+              [
+                ["set", "va_verse_wind"],
+                ["addvar", "va_verses_known", 1],
+                ["score", 10],
+                ["xp", 3],
+                ["say", "Quiet fingers find the wind-worn cuts. 'Let the wind take what iron could not; let it go, and rest.' Wind verse: known."]
+              ],
+              [["say", "The wind has worn them too shallow for a first pass. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "va_wind_puzzle",
+          "label": "work out the wind carvings (wits)",
+          "if": [["!class", "scholar"], ["!flag", "va_verse_wind"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "va_verse_wind"],
+                ["addvar", "va_verses_known", 1],
+                ["score", 10],
+                ["xp", 3],
+                ["say", "The carvings give up their meaning. 'Let the wind take what iron could not; let it go, and rest.' Wind verse: known."]
+              ],
+              [["say", "The pattern will not hold still. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "va_tower_bearings",
+          "label": "get your bearings from the parapet",
+          "fx": [
+            ["say", "Your map, in words: the drowned shrine's water glints south of here; the barrow hill is the bare rise north-west past the last trees; the village and its gate lie south-west; the fens spread east, and beyond them, low country to Hollowbrook."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "va_river_charm": {
+      "name": "river charm",
+      "loc": "nowhere",
+      "takeable": true,
+      "armor": 1,
+      "hint": "wards off harm just by riding in your pack"
+    },
+    "va_herbs": {
+      "name": "wild herbs",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "eat them to heal a little",
+      "use": [{ "fx": [["hp", 3], ["move", "va_herbs", "nowhere"], ["say", "Bitter, but they ease the ache."]] }]
+    },
+    "va_herbs2": {
+      "name": "dried herbs",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "eat them to heal a little",
+      "use": [{ "fx": [["hp", 3], ["move", "va_herbs2", "nowhere"], ["say", "Bitter, but they ease the ache."]] }]
+    },
+    "va_widows_locket": {
+      "name": "tarnished locket",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "open it",
+      "use": [
+        {
+          "if": [["!flag", "va_opened_locket"]],
+          "fx": [
+            ["set", "va_opened_locket"],
+            ["xp", 2],
+            ["say", "The clasp gives. Inside, a lock of hair gone gray and a name scratched into the tin: MAREN. Someone in the Reach will know it."]
+          ]
+        }
+      ]
+    },
+    "va_crow_scrap": {
+      "name": "faded scrap of cloth",
+      "loc": "nowhere",
+      "hint": "fine-woven, watch gray, stained dark — worth showing the reeve"
+    },
+    "va_wolf_fang": {
+      "name": "ash-pale fang",
+      "loc": "nowhere",
+      "hint": "pulled from the ash wolf — the hunter might want to see it"
+    },
+    "va_wolf_rib": {
+      "name": "gaunt rib-bone",
+      "loc": "nowhere",
+      "hint": "pulled from the gaunt wolf — the hunter might want to see it"
+    },
+    "va_wolf_pelt": { "name": "lean wolf's pelt", "loc": "nowhere", "hint": "the lean wolf's — the hunter might want to see it" }
+  },
+  "npcs": {
+    "va_hunter": {
+      "name": "hunter",
+      "room": "va_hunters_camp",
+      "dialogue": true,
+      "desc": "Long practice, out here alone with the wood pressing close.",
+      "topics": [
+        {
+          "id": "wood",
+          "label": "the wood",
+          "once": true,
+          "say": "Wolves gone gray and wrong. Keep moving and keep iron close. And mind the old king under that hill — kneel to him and he doesn't just take your life, he takes your place.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "barrow",
+          "label": "the old barrow",
+          "once": true,
+          "say": "Doors face north, sealed since before me. There's a gap under a fallen stone on the north face, if you'd rather not test the doors — I've marked it in the tally by the rack. If it's verses you're after, one's cut into the barrow's own hall.",
+          "fx": [["xp", 2], ["score", 3], ["set", "va_knows_gap"]]
+        },
+        {
+          "id": "herbs",
+          "label": "herbs for the road",
+          "once": true,
+          "say": "Take them. Wolves run this wood and worse waits under the hill. Pay me by ending this.",
+          "fx": [["move", "va_herbs2", "inv"]]
+        },
+        {
+          "id": "daughter",
+          "label": "the young woman fletching",
+          "once": true,
+          "say": "Lys. Mine. Her brother went west to Thornwold to ride with the Free Company at Camp Gallows and hasn't sent word in a year. She'd go after him tomorrow if I let her. I don't let her. Ask her yourself; she'll tell you I'm wrong.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "fang",
+          "label": "show the ash wolf's fang",
+          "if": [["has", "va_wolf_fang"]],
+          "once": true,
+          "say": "That one circled my snares three nights running and never sprung one. Smarter than the rest of the gray. Good you ended it clean.",
+          "fx": [
+            ["xp", 2],
+            ["hp", 3],
+            ["addvar", "gold", 3],
+            ["say", "The hunter presses a bundle of herbs and three coins into your hands."]
+          ]
+        },
+        {
+          "id": "rib",
+          "label": "show the gaunt wolf's rib-bone",
+          "if": [["has", "va_wolf_rib"]],
+          "once": true,
+          "say": "Starving, that one — but starving things bite harder, not softer. Good you ended it clean.",
+          "fx": [
+            ["xp", 2],
+            ["hp", 3],
+            ["addvar", "gold", 3],
+            ["say", "The hunter presses a bundle of herbs and three coins into your hands."]
+          ]
+        },
+        {
+          "id": "pelt",
+          "label": "show the lean wolf's pelt",
+          "if": [["has", "va_wolf_pelt"]],
+          "once": true,
+          "say": "That's the one that jumped anyone who came near the old fire ring. Meanest of the three. Wood's quieter for it.",
+          "fx": [
+            ["xp", 2],
+            ["hp", 3],
+            ["addvar", "gold", 3],
+            ["say", "The hunter presses a bundle of herbs and three coins into your hands."]
+          ]
+        },
+        { "id": "bye", "label": "leave the hunter to the trees", "say": "Keep iron close.", "end": true }
+      ]
+    },
+    "va_ash_wolf": {
+      "name": "ash wolf",
+      "room": null,
+      "hostile": true,
+      "hp": 6,
+      "atk": 2,
+      "df": 10,
+      "onDeath": [
+        ["score", 3],
+        ["xp", 3],
+        ["move", "va_wolf_fang", "inv"],
+        ["addvar", "appr_lys", -1],
+        ["say", "The wolf drops. Its gray coat goes to dust. One fang holds its shape, ash-pale."]
+      ]
+    },
+    "va_gaunt_wolf": {
+      "name": "gaunt wolf",
+      "room": null,
+      "hostile": true,
+      "hp": 4,
+      "atk": 1,
+      "df": 8,
+      "onDeath": [
+        ["score", 3],
+        ["xp", 3],
+        ["move", "va_wolf_rib", "inv"],
+        ["addvar", "appr_lys", -1],
+        ["say", "The gaunt wolf falls still, ribs plain through the gray coat. One rib comes away clean."]
+      ]
+    },
+    "va_lean_wolf": {
+      "name": "lean wolf",
+      "room": null,
+      "hostile": true,
+      "aggressive": true,
+      "hp": 5,
+      "atk": 1,
+      "df": 9,
+      "onDeath": [
+        ["score", 3],
+        ["xp", 3],
+        ["move", "va_wolf_pelt", "inv"],
+        ["say", "The lean wolf goes still, the last of the pack that watched the trail. Its pelt comes away thin as paper."]
+      ]
+    },
+    "va_cairn_husk": {
+      "name": "gray husk",
+      "room": null,
+      "hostile": true,
+      "hp": 7,
+      "atk": 2,
+      "df": 9,
+      "onDeath": [
+        ["score", 3],
+        ["xp", 3],
+        ["say", "The husk crumbles to gray dust over the stones. Whatever held it together came apart the night the barrow opened."]
+      ]
+    }
+  }
+}
