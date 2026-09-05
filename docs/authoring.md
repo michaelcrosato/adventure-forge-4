@@ -212,6 +212,12 @@ out of the party (`["party", id, "leave"]`) last, just before the way out, so
 the slot a player has been pressing to carry the talk on never dismisses
 anyone by surprise. Author the topics in any order.
 
+A fighting npc may carry `"pierce": true`: its strikes ignore the player's
+armor (a wight's chill, a grip that finds the gap), the room line adds "armor
+useless", and the strike says so. Use it for the realm's horrors and set-piece
+fights, so an armored build still has something to fear; ordinary beasts and
+men keep the usual rule (armor soaks what it can, at least 1 gets through).
+
 ## 8. Wilderness regions (`gen`)
 
 ```json

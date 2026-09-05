@@ -252,6 +252,27 @@ test("attacking someone who has drawn no blade is the last thing on the menu; a 
   assert.ok(menu.indexOf("ask novice: the chapel") < menu.indexOf("attack novice with sword"));
 });
 
+test("a piercing npc's strike ignores armor and says so; the room line warns of it", () => {
+  const world = mini({
+    items: { sword: { name: "sword", loc: "inv", hit: 0, dmg: 2 }, mail: { name: "mail shirt", loc: "inv", armor: 2 } },
+    npcs: {
+      wight: { name: "barrow-wight", room: "a", aggressive: true, pierce: true, hp: 50, atk: 3, df: 30 },
+      boar: { name: "boar", room: "b", aggressive: true, hp: 50, atk: 3, df: 30 },
+    },
+  });
+  let { state } = newState(world, 1);
+  assert.match(render(world, state, []).text, /barrow-wight \(hostile, attacks on sight, hp50\/50, armor useless\)/);
+  const hp = state.hp;
+  const out = step(world, state, actionByLabel(world, state, "attack barrow-wight with sword")!);
+  assert.equal(hp - out.state.hp, 3, "all three points land through the mail");
+  assert.match(out.events.join(" "), /armor means nothing to it/);
+  state = doLabel(world, { ...state }, "go east");
+  const hp2 = state.hp;
+  const out2 = step(world, state, actionByLabel(world, state, "attack boar with sword")!);
+  assert.equal(hp2 - out2.state.hp, 1, "the boar's three is soaked to one by the mail");
+  assert.match(out2.events.join(" "), /your armor takes 2 of it/);
+});
+
 test("companions roll their own attacks after the player's, and a leaving companion stays behind", () => {
   const world = company();
   let { state } = newState(world, 1);

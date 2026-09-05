@@ -153,6 +153,7 @@ export type NpcDef = {
   desc?: string;
   hostile?: boolean; // display flavor only: shows "(hostile, hp)" in room text. Attackability comes from `hp`.
   aggressive?: boolean; // strikes the player at the end of every turn spent in its room (needs hp and atk) — leaving is the only way to stop it
+  pierce?: boolean; // its strikes ignore armor (a wight's chill, a grip that finds the gap): the room says "armor useless"
   hp?: number;
   atk?: number; // damage dealt to the player per round while alive
   df?: number; // player must roll d20 + weapon hit >= df

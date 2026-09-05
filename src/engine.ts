@@ -564,13 +564,15 @@ function partyRemarks(world: World, s: State, events: string[]): void {
 function npcStrike(world: World, s: State, npcId: string, events: string[], verb: string): void {
   const def = world.npcs[npcId];
   if (!def?.atk) return;
-  const armor = armorOf(world, s);
+  const armor = def.pierce ? 0 : armorOf(world, s);
   const taken = Math.max(1, def.atk - armor);
   const absorbed = def.atk - taken;
   events.push(
     absorbed > 0
       ? `${TheName(def.name)} ${verb} — your armor takes ${absorbed} of it.`
-      : `${TheName(def.name)} ${verb}.`,
+      : def.pierce && armorOf(world, s) > 0
+        ? `${TheName(def.name)} ${verb} — your armor means nothing to it.`
+        : `${TheName(def.name)} ${verb}.`,
   );
   applyFx(world, s, [["hp", -taken]], events);
 }

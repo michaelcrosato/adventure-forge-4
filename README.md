@@ -177,7 +177,7 @@ world/reach/      its parts — the Vale rebuilt, companions, templates, and eig
 world/vale.json   The Vale of Ash, the original compact world
 world/lighthouse.json  the small regression world
 scripts/          author tools: lint, choice audit, walk, stubs, land, fmt
-test/             158 tests, including the token budget and determinism rules
+test/             159 tests, including the token budget and determinism rules
 loop/             playtest wave, dev cycle, mock player, report checker
 queue/ done/      the one inbox (issues) and its archive
 docs/             design specs, the authoring guide, review findings

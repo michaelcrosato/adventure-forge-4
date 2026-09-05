@@ -172,8 +172,9 @@ export function render(
         // an npc's one-line desc shows on the full view (first sight, look), not on revisits
         const tail = opts.full && d.desc ? ` — ${d.desc}` : "";
         if (hp <= 0) return `${d.name} (${s.flags[`laid_${id}`] ? "at rest" : "dead"})`;
-        if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1})${tail}`;
-        if (d.hostile) return `${d.name} (hostile, hp${hp}/${d.hp ?? 1})${tail}`;
+        const pierce = d.pierce ? ", armor useless" : "";
+        if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1}${pierce})${tail}`;
+        if (d.hostile) return `${d.name} (hostile, hp${hp}/${d.hp ?? 1}${pierce})${tail}`;
         return `${d.name} is here${tail}`;
       });
     if (npcs.length) lines.push(npcs.join("; "));
