@@ -92,7 +92,7 @@ export function render(
       e.text,
       ...epilogue,
       `score:${s.score}/${world.maxScore} turns:${s.turn} seed:${s.seed}`,
-      `(score tallies discoveries and choices along the way — a bonus, not required)`,
+      `(score is a bonus tally of discoveries and choices; status tells the rest of the tale)`,
       `receipt:${receipt(world, s)}`,
     ];
     return { text: lines.join("\n"), actions: [] };
@@ -206,8 +206,15 @@ export function render(
  */
 export function renderStatus(world: World, s: State): string {
   const lines: string[] = [];
-  const recap = world.objectives ?? world.intro;
+  // the recap follows the story: a staged objectives list shows its first entry whose conditions hold
+  const obj = world.objectives;
+  const recap = Array.isArray(obj) ? obj.find((o) => o.if.every((c) => condOk(world, s, c)))?.text : (obj ?? world.intro);
   if (recap) lines.push(recap);
+  if (s.ended) {
+    // the ending screen fits six lines; here the whole telling is free
+    const told = (world.epilogue ?? []).filter((ep) => ep.if.every((c) => condOk(world, s, c))).map((ep) => `- ${ep.text}`);
+    if (told.length) lines.push(`How the realm remembers you:\n${told.join("\n")}`);
+  }
   type Track = { var: string; label: string; max: number; remaining?: { flag: string; label: string }[]; if?: Cond[] };
   const tracks: Track[] = world.statusTracks ?? (world.progress ? [world.progress] : []);
   for (const t of tracks) {

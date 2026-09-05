@@ -295,6 +295,10 @@ it standing somewhere.
 ]
 ```
 
+- `objectives` (root) is the recap `status` leads with: a string, or a list of
+  `{ "if": [...], "text": "..." }` tried top to bottom (most advanced first) so
+  the recap follows the acts. After an ending, `status` also tells every true
+  epilogue line, uncapped — the ending screen shows the six that weigh most.
 - A quest lists once `start` passes (default: from the beginning) until
   `done` or `failed`. `main: true` marks a quest of the road itself: `status`
   lists those first, under "The road:", apart from the side threads. Stages are tried top to bottom; put the most advanced

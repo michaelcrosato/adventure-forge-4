@@ -340,6 +340,33 @@ test("a quest that first appears already done says nothing; one the player carri
   assert.match(renderStatus(world, enter.state), /Done: .*The Writ/, "it still counts as done in the journal");
 });
 
+test("staged objectives follow the story, and after the end status tells every epilogue line", () => {
+  const world: World = {
+    id: "o", title: "O", intro: "x", start: "a", hp: 10, maxScore: 1,
+    objectives: [{ if: [["flag", "late"]], text: "Act 2: finish it." }, { if: [], text: "Act 1: begin." }],
+    rooms: { a: { name: "A", desc: "A.", actions: [
+      { id: "on", label: "go on", fx: [["set", "late"]] },
+      { id: "win", label: "win", fx: [["score", 1], ["end", "win", "done", "Done."]] },
+    ] } },
+    items: {}, npcs: {}, walkthrough: [],
+    epilogue: Array.from({ length: EPILOGUE_CAP + 2 }, (_, i) => ({ if: [] as never[], text: `Line ${i}.` })),
+  };
+  assert.deepEqual(validateWorld(world).filter((e) => !/walkthrough|no proof/.test(e)), []);
+  let { state } = newState(world, 1);
+  assert.match(renderStatus(world, state), /^Act 1: begin\./);
+  state = doLabel(world, state, "go on");
+  assert.match(renderStatus(world, state), /^Act 2: finish it\./);
+  const end = step(world, state, actionByLabel(world, state, "win")!);
+  const shown = render(world, end.state, end.events).text;
+  assert.equal(shown.split("\n").filter((l) => /^Line \d/.test(l)).length, EPILOGUE_CAP, "the ending screen keeps its cap");
+  assert.match(shown, /status tells the rest/);
+  const after = renderStatus(world, end.state);
+  assert.match(after, /How the realm remembers you:/);
+  assert.equal(after.split("\n").filter((l) => /^- Line \d/.test(l)).length, EPILOGUE_CAP + 2, "status tells them all");
+  const bad = validateWorld({ ...world, objectives: [{ text: "no if" } as never] });
+  assert.ok(bad.some((e) => /objectives 0/.test(e)));
+});
+
 test("the first time fast travel is on the menu, one hint says so — and never again", () => {
   const world = line(3);
   let { state } = newState(world, 1);

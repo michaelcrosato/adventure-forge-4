@@ -303,7 +303,7 @@ export type World = {
   title: string;
   intro: string;
   /** Short recap of active goals for the free `status` check (any time, no turn cost). Falls back to `intro` if absent. */
-  objectives?: string;
+  objectives?: string | { if: Cond[]; text: string }[]; // staged: first entry whose conditions hold (most advanced first)
   start: string;
   hp: number;
   maxScore: number;

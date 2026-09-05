@@ -226,6 +226,12 @@ export function validateWorld(world: World): string[] {
       checkConds(`quest ${qid} stage ${i}`, st.if);
     }
   }
+  if (Array.isArray(world.objectives)) {
+    for (const [i, o] of world.objectives.entries()) {
+      need(`objectives ${i}`, o, [["if", "array"], ["text", "string"]]);
+      checkConds(`objectives ${i}`, o.if);
+    }
+  } else if (world.objectives !== undefined && typeof world.objectives !== "string") err("objectives: a string or a list of { if, text }");
   for (const [i, ep] of (world.epilogue ?? []).entries()) {
     need(`epilogue ${i}`, ep, [["if", "array"], ["text", "string"]]);
     checkConds(`epilogue ${i}`, ep.if);

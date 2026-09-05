@@ -2,7 +2,20 @@
   "id": "reach",
   "title": "The Gray Reach",
   "intro": "The barrow on the hill above Last Light has opened, and a gray blight creeps down the Vale of Ash — crops first, then cattle, then the will to stay. Someone must go up and settle the Hollow King, by verse or by crown or by steel. The Vale is one hold of nine. What you learn under that hill is only the beginning of it. Ask people more than one thing; carry what they give you; choose, and live with it.",
-  "objectives": "Act 1: settle the Hollow King in the barrow north of the Vale — speak his three verses, return his crown, or end him. Then the roads open: six holds, each with its own unrested grief, and the pass to Marrowgate beyond. Companions can be met in the Vale and asked to come along, as many as will. Reputation with the Watch, the Church, the Ironbound, the Free Companies, the Keepers, and the Crown opens and closes doors. Kneeling to the king ends your story. The realm is large: the straight road to Marrowgate runs near three hundred turns; seeing every hold whole, many times that.",
+  "objectives": [
+    {
+      "if": [["flag", "mg_entered"]],
+      "text": "Act 3: Marrowgate. The Hollow Throne lies under the palace. Fill it with the rite (three holds rested, the Vale's king at rest, the first Reeve's confession), burn it with Ironbound oil, sit in it with a crown, or read the founding ledger aloud to those who trust you — each is an ending, and the seat can be weighed before choosing. Kneeling to it ends your story. Companions can be met in the Vale and asked to come along, as many as will. Reputation with the Watch, the Church, the Ironbound, the Free Companies, the Keepers, and the Crown opens and closes doors."
+    },
+    {
+      "if": [["flag", "act2_open"]],
+      "text": "Act 2: the holds. Six holds, six unrested griefs, each to be rested, bargained with, or burned. Coldpass opens on three hollows rested (the Keepers' stair), the Regent's writ (two hollows burned, or two services to Highward's Watch), or the Free Companies' word (Gullhaven or Camp Gallows). The realm is large: the straight road to Marrowgate runs near three hundred turns; seeing every hold whole, many times that. Companions can be met in the Vale and asked to come along, as many as will. Reputation with the Watch, the Church, the Ironbound, the Free Companies, the Keepers, and the Crown opens and closes doors."
+    },
+    {
+      "if": [],
+      "text": "Act 1: settle the Hollow King in the barrow north of the Vale — speak his three verses, return his crown, or end him. Then the roads open: six holds, each with its own unrested grief, and the pass to Marrowgate beyond. Companions can be met in the Vale and asked to come along, as many as will. Reputation with the Watch, the Church, the Ironbound, the Free Companies, the Keepers, and the Crown opens and closes doors. Kneeling to the king ends your story. The realm is large: the straight road to Marrowgate runs near three hundred turns; seeing every hold whole, many times that."
+    }
+  ],
   "start": "va_gate",
   "hp": 10,
   "maxScore": 366,
