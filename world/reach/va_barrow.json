@@ -724,7 +724,7 @@
         },
         {
           "if": [["flag", "va_promised_seal"]],
-          "text": "You promised the reeve to seal the barrow once the king rests. The priest will not bless a door meant to shut."
+          "text": "You promised the reeve to seal the barrow once the king rests: a door shut on the dead, the priest would say."
         },
         {
           "if": [],
@@ -811,12 +811,16 @@
       "text": "Of the Hollow King the Vale says only that he sleeps, crowned, and that the grass on his hill is the greenest in the Reach."
     },
     {
-      "if": [["flag", "va_broke_promise"]],
+      "if": [["flag", "va_broke_promise"], ["!has", "va_watch_shield"]],
       "text": "The reeve of Last Light kept the watch shield you gave back, and never spoke your name again."
     },
     {
       "if": [["npcDead", "va_lean_wolf"], ["npcDead", "va_ash_wolf"], ["npcDead", "va_gaunt_wolf"]],
       "text": "No wolves run the Ashwood now. The hunter says the wood is quieter for it, and does not say whether that is good."
+    },
+    {
+      "if": [["flag", "va_broke_promise"], ["has", "va_watch_shield"]],
+      "text": "The reeve of Last Light never got his watch shield back, nor a word of why, and never spoke your name again."
     }
   ]
 }

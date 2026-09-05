@@ -280,7 +280,12 @@
         {
           "id": "decline",
           "label": "decline to promise",
-          "if": [["flag", "va_heard_reeve_ask"], ["!flag", "va_promised_seal"]],
+          "if": [
+            ["flag", "va_heard_reeve_ask"],
+            ["!flag", "va_promised_seal"],
+            ["!flag", "va_broke_promise"],
+            ["!flag", "va_left_open"]
+          ],
           "once": true,
           "say": "Then say so plain, and I'll hold nothing against you. The doors are yours to decide when you stand there. Ask again if you change your mind.",
           "fx": [["addvar", "appr_osk", 1]]

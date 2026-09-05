@@ -284,8 +284,8 @@ test("a hostile who will still talk says so; a room that holds an ending warns o
   world.rooms["b"]!.actions = [{ id: "kneel", label: "kneel to the seat", fx: [["end", "lose", "knelt", "You kneel."]] }];
   let { state } = newState(world, 1);
   const scene = render(world, state, []).text;
-  assert.match(scene, /toll-man \(hostile, hp6\/6, will hear you out\)/);
-  assert.match(scene, /wolf \(hostile, hp5\/5\)/);
+  assert.match(scene, /toll-man \(hostile, holds its ground, hp6\/6, will hear you out\)/);
+  assert.match(scene, /wolf \(hostile, holds its ground, hp5\/5\)/);
   const out = step(world, state, actionByLabel(world, state, "go east")!);
   assert.match(out.events.join(" "), /An ending waits in this room/);
   state = doLabel(world, out.state, "go west");
