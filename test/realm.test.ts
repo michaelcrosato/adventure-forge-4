@@ -36,7 +36,7 @@ const line = (n: number, regionOf?: (i: number) => string): World => {
 };
 
 // ---------- fast travel ----------
-test("travel appears only from a landmark with somewhere known to go, lists known places, and moves the player", () => {
+test("travel appears once somewhere is known, lists known places, and moves the player", () => {
   const world = line(4);
   let { state } = newState(world, 1);
   assert.ok(!travelAvailable(world, state), "nowhere known yet");
@@ -62,17 +62,19 @@ test("travel appears only from a landmark with somewhere known to go, lists know
   assert.ok(labels(world, state).includes("go east"));
 });
 
-test("travel is not offered from an ordinary room, nor with an aggressive npc at hand", () => {
+test("travel is offered from an ordinary room too, but never with an aggressive npc at hand", () => {
   const world = line(3);
   delete world.rooms["r1"]!.landmark;
   world.npcs = { wolf: { name: "wolf", room: "r2", aggressive: true, hp: 100, atk: 1, df: 30 } };
   let { state } = newState(world, 1);
-  state = doLabel(world, state, "go east"); // r1: no landmark
-  assert.ok(!labels(world, state).includes("travel to a known place"));
+  state = doLabel(world, state, "go east"); // r1: no landmark, but r0 is known — the lost can walk back
+  assert.ok(labels(world, state).includes("travel to a known place"));
   state = doLabel(world, state, "go east"); // r2: landmark, but a wolf
   assert.ok(!labels(world, state).includes("travel to a known place"));
   state.npcHp["wolf"] = 0;
   assert.ok(labels(world, state).includes("travel to a known place"), "a dead wolf keeps no one from leaving");
+  world.rooms["r2"]!.noTravel = true;
+  assert.ok(!labels(world, state).includes("travel to a known place"), "a noTravel room is walked out of");
 });
 
 test("with more known landmarks than the menu holds, travel groups them by region, and 'back' steps out", () => {

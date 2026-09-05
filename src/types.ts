@@ -87,6 +87,8 @@ export type RoomDef = {
    * other landmark room (with no aggressive npc present) by this short name.
    */
   landmark?: string;
+  /** No fast travel departs from here: a scene to be walked out of (a throne room, a confrontation). */
+  noTravel?: boolean;
 };
 
 export type UseDef = {

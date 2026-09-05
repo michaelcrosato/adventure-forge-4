@@ -124,7 +124,9 @@ effects when you want the menu to preview its odds (`(roll 9+ on the die;
   (others work but read worse). A gated exit is still listed, marked
   `(locked: hint)` in the menu, and prints `lockedMsg` if tried.
 - `landmark` makes the room a fast-travel destination once visited. Travel is
-  offered **from** a landmark room with no aggressive npc present. Every
+  offered from any room with no hostile npc present, once a landmark other
+  than the current room is known (the lost can always walk back); a room with
+  `noTravel: true` (a throne room, a confrontation) must be walked out of. Every
   landmark needs a `region`. Each region may hold at most 11 landmarks.
   Landmark names are what the player sees: `to Reedholm`.
 - `variants`: first match overrides `name`/`desc`/`brief`. This is how the

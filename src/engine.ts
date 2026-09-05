@@ -297,13 +297,18 @@ export function knownLandmarks(world: World, s: State): string[] {
   return s.visited.filter((id) => id !== s.room && !!world.rooms[id]?.landmark);
 }
 
-/** Travel is offered from a landmark room with somewhere else known to go and no aggressive npc at hand. */
+/**
+ * Travel is offered from any room with somewhere known to go and no hostile at
+ * hand — a player lost in a wilderness grid can always walk back the way they
+ * came to a place they know; only the destinations are landmarks, and nobody
+ * strolls away from a confrontation.
+ */
 export function travelAvailable(world: World, s: State): boolean {
-  if (!world.rooms[s.room]?.landmark) return false;
+  if (world.rooms[s.room]?.noTravel) return false;
   if (!knownLandmarks(world, s).length) return false;
   for (const id of Object.keys(world.npcs)) {
     const def = world.npcs[id]!;
-    if (def.aggressive && s.npcRoom[id] === s.room && !npcDead(world, s, id) && !s.party.includes(id)) return false;
+    if ((def.aggressive || def.hostile) && s.npcRoom[id] === s.room && !npcDead(world, s, id) && !s.party.includes(id)) return false;
   }
   return true;
 }
@@ -414,7 +419,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
               events.push(`${npc.name} ${Math.abs(d) > 1 ? "strongly " : ""}${d > 0 ? "approves" : "disapproves"}.`);
               if (!s.flags["_seenApproval"]) {
                 s.flags["_seenApproval"] = true;
-                events.push("(Companions judge what you do; their approval opens some doors and closes others.)");
+                events.push("(Companions judge what you do: their regard opens some doors and closes others, and one pushed too far walks out.)");
               }
             }
           } else if (world.factions?.[fx[1]]) {
