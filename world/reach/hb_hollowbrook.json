@@ -537,7 +537,18 @@
                 ["say", "She holds your eye a long moment, then goes to the chest herself. 'Bring the old court peace,' she says, 'and I'll call it well spent.'"]
               ],
               [
-                ["say", "She looks at you a while longer, and shakes her head. Not yet, her face says, more than her words do."]
+                [
+                  "if",
+                  [["!flag", "hb_keeper_wren_ask_key_missed"]],
+                  [
+                    ["set", "hb_keeper_wren_ask_key_missed"],
+                    ["addvar", "rep_keepers", -1],
+                    ["say", "She shakes her head, and marks that a stranger asked before earning it. Word of it will reach the Hall's own ledger, one way or another."]
+                  ],
+                  [
+                    ["say", "She looks at you a while longer, and shakes her head. Not yet, her face says, more than her words do."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -584,7 +595,18 @@
                 ["say", "She studies you a moment, then finds it herself, faster than you'd have managed. 'An exile's name struck from a Marrowgate line,' she says, 'and where the child was sent. Make good use of it.'"]
               ],
               [
-                ["say", "She holds the look a while, then shakes her head. 'Not from me. Go looking yourself, if you mean to know it.'"]
+                [
+                  "if",
+                  [["!flag", "hb_ask_ledger_missed"]],
+                  [
+                    ["set", "hb_ask_ledger_missed"],
+                    ["addvar", "rep_keepers", -1],
+                    ["say", "She shakes her head — 'not from me' — and something in how you asked it costs you standing with the Hall she keeps for."]
+                  ],
+                  [
+                    ["say", "She holds the look a while, then shakes her head. 'Not from me. Go looking yourself, if you mean to know it.'"]
+                  ]
+                ]
               ]
             ]
           ]

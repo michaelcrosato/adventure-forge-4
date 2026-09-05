@@ -194,7 +194,18 @@
                     ["addvar", "rep_keepers", 1],
                     ["say", "He hears you out, weighs the spade, and decides it isn't worth the argument. He is gone before the warden could ever have caught him."]
                   ],
-                  [["say", "He shrugs and keeps digging. Words alone aren't moving him tonight."]]
+                  [
+                    [
+                      "if",
+                      [["!flag", "hb_robber_talk_missed"]],
+                      [
+                        ["set", "hb_robber_talk_missed"],
+                        ["addvar", "rep_keepers", -1],
+                        ["say", "He shrugs and keeps digging. Word gets back to the Keepers that a stranger's talk didn't hold, and the mounds stay open a while longer."]
+                      ],
+                      [["say", "He shrugs and keeps digging. Words alone aren't moving him tonight."]]
+                    ]
+                  ]
                 ]
               ]
             },

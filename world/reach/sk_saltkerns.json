@@ -383,7 +383,18 @@
                 ["say", "Brann eyes the cart, eyes you, and waves it through with a look that says she's counting this against you later. Rennick claps you once on the shoulder. 'The stair's yours. Use it well.'"]
               ],
               [
-                ["say", "Brann's not fooled and makes you unpack the whole cart on the spot. Nothing's found — this time — but she's watching closer now."]
+                [
+                  "if",
+                  [["!flag", "sk_harbourmaster_help_smuggle_missed"]],
+                  [
+                    ["set", "sk_harbourmaster_help_smuggle_missed"],
+                    ["addvar", "rep_watch", -1],
+                    ["say", "Brann's not fooled and unpacks the whole cart herself. Nothing's found, but she marks you now as one of Rennick's, watching closer for it."]
+                  ],
+                  [
+                    ["say", "Brann's not fooled and makes you unpack the whole cart on the spot. Nothing's found — this time — but she's watching closer now."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -406,7 +417,18 @@
                 ["say", "His jaw works a moment. 'The old free-towns paid the keeper to let the fleet break rather than land. Saved this coast its freedom. I've never once called it a good trade.'"]
               ],
               [
-                ["say", "He goes back to his ledger like you hadn't spoken. Whatever he knows, he isn't giving it up that easily."]
+                [
+                  "if",
+                  [["!flag", "sk_harbourmaster_bribe_press_missed"]],
+                  [
+                    ["set", "sk_harbourmaster_bribe_press_missed"],
+                    ["addvar", "rep_free", -1],
+                    ["say", "He goes back to his ledger like you hadn't spoken — and word gets round the docks that a stranger came at Rennick's own old business."]
+                  ],
+                  [
+                    ["say", "He goes back to his ledger like you hadn't spoken. Whatever he knows, he isn't giving it up that easily."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -764,7 +786,18 @@
                 ["xp", 2],
                 ["say", "'The keeper took the free-towns' coin and let the light stay dark,' she says, steady as reading it off a page she's read a thousand times. 'There. Said aloud, at last, by someone who isn't me.'"]
               ],
-              [["say", "She looks away, out the shuttered window, and says nothing more today."]]
+              [
+                [
+                  "if",
+                  [["!flag", "sk_widow_bribe_ask_missed"]],
+                  [
+                    ["set", "sk_widow_bribe_ask_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "She looks away, out the shuttered window, and says nothing more. Whatever chance there was to speak the truth aloud today, it's gone begging."]
+                  ],
+                  [["say", "She looks away, out the shuttered window, and says nothing more today."]]
+                ]
+              ]
             ]
           ]
         },

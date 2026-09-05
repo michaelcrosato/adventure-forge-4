@@ -178,7 +178,18 @@
                 ["say", "The old words hold the shapes still, the way a held breath holds a room quiet. When you finish, the water isn't empty — but it isn't restless either."]
               ],
               [
-                ["say", "The words come out uncertain, and uncertainty is the one thing this rite can't survive. Nothing answers."]
+                [
+                  "if",
+                  [["!flag", "mg_bell_rite_missed"]],
+                  [
+                    ["set", "mg_bell_rite_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "The words come out uncertain, and this rite can't survive that. Nothing answers — and Mother Ysme's chapel hears a rite tried and lost, once."]
+                  ],
+                  [
+                    ["say", "The words come out uncertain, and uncertainty is the one thing this rite can't survive. Nothing answers."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -202,7 +213,18 @@
                 ["say", "You work out which stones are load-bearing and which are only in the way, and wedge the grate shut with the ones that don't matter. The water stills for want of anywhere left to climb."]
               ],
               [
-                ["say", "You wedge stone after stone and the grate holds none of them. Whatever moves this water is stronger than a makeshift wall."]
+                [
+                  "if",
+                  [["!flag", "mg_bell_seal_missed"]],
+                  [
+                    ["set", "mg_bell_seal_missed"],
+                    ["addvar", "rep_watch", -1],
+                    ["say", "You wedge stone after stone and none of it holds — and the Watch marks a makeshift wall failed under the palace, once, on your account."]
+                  ],
+                  [
+                    ["say", "You wedge stone after stone and the grate holds none of them. Whatever moves this water is stronger than a makeshift wall."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -627,7 +649,18 @@
                 ["xp", 2],
                 ["say", "He breaks first. 'The Preceptor's,' he says, low. 'His own, not the Regent's — there was never a hearing for the ash, only for the burning.' Then he's gone, barrow and all."]
               ],
-              [["say", "He says nothing at all, and goes back to the sacks like you're already gone."]]
+              [
+                [
+                  "if",
+                  [["!flag", "mg_ash_warder_confront_missed"]],
+                  [
+                    ["set", "mg_ash_warder_confront_missed"],
+                    ["addvar", "rep_iron", -1],
+                    ["say", "He says nothing at all, and goes back to the sacks — and word of a stranger pressing an Ironbound warder reaches the chapterhouse anyway."]
+                  ],
+                  [["say", "He says nothing at all, and goes back to the sacks like you're already gone."]]
+                ]
+              ]
             ]
           ]
         },

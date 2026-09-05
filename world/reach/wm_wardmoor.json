@@ -79,7 +79,8 @@
           "label": "get your bearings from the parade",
           "fx": [
             ["say", "North across the moor, then east at the height: the Last Cairn, the oath-stone beyond. Opened Cairn one stand north; Beacon Hill west; signal tower north-west; hut east. Coldpass: the north road, from the record-house."]
-          ]
+          ],
+          "free": true
         }
       ]
     },
@@ -1006,7 +1007,18 @@
                 ["say", "You give her one. She looks at you a long moment, then breaks a seal older than either of you were expecting to matter."]
               ],
               [
-                ["say", "She hears you out, and shakes her head once. 'Not for a stranger's asking. Try again when you've earned it.'"]
+                [
+                  "if",
+                  [["!flag", "wm_archivist_persuade_missed"]],
+                  [
+                    ["set", "wm_archivist_persuade_missed"],
+                    ["addvar", "rep_watch", -1],
+                    ["say", "She shakes her head once — 'not for a stranger's asking' — and makes a note of the asking itself. The Watch hears of it before you leave the shelf."]
+                  ],
+                  [
+                    ["say", "She hears you out, and shakes her head once. 'Not for a stranger's asking. Try again when you've earned it.'"]
+                  ]
+                ]
               ]
             ]
           ]

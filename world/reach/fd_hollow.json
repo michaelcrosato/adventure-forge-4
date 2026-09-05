@@ -161,7 +161,18 @@
                 ["say", "You promise it plainly, a tenth of every catch, every year, for as long as Reedholm nets an eel. The singing doesn't stop, but it eases, like a debt finally acknowledged."]
               ],
               [
-                ["say", "The words leave your mouth and land wrong somehow — too quick, or not meant enough. The water doesn't take the bargain. It can be tried again."]
+                [
+                  "if",
+                  [["!flag", "fd_tithe_missed"]],
+                  [
+                    ["set", "fd_tithe_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "The words land wrong, too quick to mean enough — and Fenmarch's own church hears a stranger tried to bargain with its drowned and failed. It can be tried again."]
+                  ],
+                  [
+                    ["say", "The words leave your mouth and land wrong somehow — too quick, or not meant enough. The water doesn't take the bargain. It can be tried again."]
+                  ]
+                ]
               ]
             ]
           ]

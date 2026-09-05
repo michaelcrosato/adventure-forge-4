@@ -75,7 +75,18 @@
                     ["addvar", "rep_keepers", 1],
                     ["say", "You swear the old rest-oath over the stone, word for word as it's cut. {{WIGHT}} settles like a held breath let out, and does not rise again."]
                   ],
-                  [["say", "The oath comes out wrong, a stranger's words in a stranger's mouth. {{WIGHT}} has not moved."]]
+                  [
+                    [
+                      "if",
+                      [["!flag", "$oath_missed"]],
+                      [
+                        ["set", "$oath_missed"],
+                        ["addvar", "rep_keepers", -1],
+                        ["say", "The oath comes out wrong, a stranger's words in a stranger's mouth. {{WIGHT}} has not moved, and the old covenant marks a rest-oath tried and lost here."]
+                      ],
+                      [["say", "The oath comes out wrong, a stranger's words in a stranger's mouth. {{WIGHT}} has not moved."]]
+                    ]
+                  ]
                 ]
               ]
             }
@@ -364,7 +375,18 @@
                     ["addvar", "rep_watch", 1],
                     ["say", "Your answer lands true, and {{WATCHER}} steps aside, its question finally spent."]
                   ],
-                  [["say", "{{WATCHER}} is not satisfied, and does not move."]]
+                  [
+                    [
+                      "if",
+                      [["!flag", "$answer_missed"]],
+                      [
+                        ["set", "$answer_missed"],
+                        ["addvar", "rep_watch", -1],
+                        ["say", "{{WATCHER}} is not satisfied, and does not move — and something in the old watch marks a stranger's answer tried, and refused, here."]
+                      ],
+                      [["say", "{{WATCHER}} is not satisfied, and does not move."]]
+                    ]
+                  ]
                 ]
               ]
             },
@@ -386,7 +408,18 @@
                     ["addvar", "rep_watch", 1],
                     ["say", "You answer like you've always known it. {{WATCHER}} can't tell the lie from the truth, and lets you by."]
                   ],
-                  [["say", "{{WATCHER}} sees through it plainly, and does not move."]]
+                  [
+                    [
+                      "if",
+                      [["!flag", "$bluff_missed"]],
+                      [
+                        ["set", "$bluff_missed"],
+                        ["addvar", "rep_watch", -1],
+                        ["say", "{{WATCHER}} sees through it plainly, and does not move — the old watch remembers a stranger's bluff, and is not fooled twice."]
+                      ],
+                      [["say", "{{WATCHER}} sees through it plainly, and does not move."]]
+                    ]
+                  ]
                 ]
               ]
             }
@@ -523,7 +556,18 @@
                     ["addvar", "rep_iron", 1],
                     ["say", "You give him the words he's waited on. Something in {{FOREMAN}} finally settles, the lamp gone still in his hands."]
                   ],
-                  [["say", "The words come out thin. {{FOREMAN}} looks through you like you hadn't spoken at all."]]
+                  [
+                    [
+                      "if",
+                      [["!flag", "$promise_missed"]],
+                      [
+                        ["set", "$promise_missed"],
+                        ["addvar", "rep_iron", -1],
+                        ["say", "The words come out thin. {{FOREMAN}} looks through you like you hadn't spoken — and the company hears a promise made, and broken, here."]
+                      ],
+                      [["say", "The words come out thin. {{FOREMAN}} looks through you like you hadn't spoken at all."]]
+                    ]
+                  ]
                 ]
               ]
             }
@@ -654,7 +698,18 @@
                     ["addvar", "rep_free", 1],
                     ["say", "You make a case {{CAPTAIN}} can't quite argue with, and they wave you past, calling it fair enough."]
                   ],
-                  [["say", "{{CAPTAIN}} hears you out, unmoved, and says as much without much interest."]]
+                  [
+                    [
+                      "if",
+                      [["!flag", "$talk_missed"]],
+                      [
+                        ["set", "$talk_missed"],
+                        ["addvar", "rep_free", -1],
+                        ["say", "{{CAPTAIN}} hears you out, unmoved, and says as much — and the company remembers a stranger's plea that didn't land."]
+                      ],
+                      [["say", "{{CAPTAIN}} hears you out, unmoved, and says as much without much interest."]]
+                    ]
+                  ]
                 ]
               ]
             }
@@ -724,7 +779,18 @@
                     ["addvar", "rep_church", 1],
                     ["say", "You speak the rite whole, start to finish, meaning enough of it that {{SAINT}} finally hears the end of its own vigil."]
                   ],
-                  [["say", "The words come out hollow, half-remembered. {{SAINT}} does not stir."]]
+                  [
+                    [
+                      "if",
+                      [["!flag", "$rite_missed"]],
+                      [
+                        ["set", "$rite_missed"],
+                        ["addvar", "rep_church", -1],
+                        ["say", "The words come out hollow, half-remembered. {{SAINT}} does not stir — and the Church hears a rite tried here, and lost."]
+                      ],
+                      [["say", "The words come out hollow, half-remembered. {{SAINT}} does not stir."]]
+                    ]
+                  ]
                 ]
               ]
             },

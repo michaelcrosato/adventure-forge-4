@@ -194,7 +194,18 @@
                 ["say", "He goes very still, then says it plain: they heard the bell-ringer's own warning and prayed over it instead. 'Now you know,' he says. 'Do with it what you will.'"]
               ],
               [
-                ["say", "He looks at the floor a long moment. 'Some things are between me and that water,' he says, and won't be moved past it today."]
+                [
+                  "if",
+                  [["!flag", "fd_confess_missed"]],
+                  [
+                    ["set", "fd_confess_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "He looks at the floor a long moment and won't be moved today — and something in how you pressed him will reach the Priory's own ears before you do."]
+                  ],
+                  [
+                    ["say", "He looks at the floor a long moment. 'Some things are between me and that water,' he says, and won't be moved past it today."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -240,7 +251,18 @@
                 ["say", "You lay the tablet's scraped confession next to his own account of the flood and let the dates do the arguing. He can't refute his own hand. 'Now you know,' he says. 'Do with it what you will.'"]
               ],
               [
-                ["say", "The dates almost line up, almost — not quite enough to pin him with. He watches you fail to make the case, and says nothing."]
+                [
+                  "if",
+                  [["!flag", "fd_press_wits_missed"]],
+                  [
+                    ["set", "fd_press_wits_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "The dates almost line up, not quite enough to pin him — and the Priory hears only that a stranger tried to build a case against its own Prior."]
+                  ],
+                  [
+                    ["say", "The dates almost line up, almost — not quite enough to pin him with. He watches you fail to make the case, and says nothing."]
+                  ]
+                ]
               ]
             ]
           ]

@@ -188,7 +188,18 @@
                 ["say", "You make the case plain — a dead man's ring, a debt long since not worth the company's holding. Mirren weighs it, then slides both ring and ledger-line across the counter."]
               ],
               [
-                ["say", "Mirren hears you out and shakes her head. 'Rules are rules,' she says. 'Even the small ones.' It can be tried again."]
+                [
+                  "if",
+                  [["!flag", "wm_ir_will_missed"]],
+                  [
+                    ["set", "wm_ir_will_missed"],
+                    ["addvar", "rep_iron", -1],
+                    ["say", "Mirren shakes her head — 'rules are rules' — and marks you down as trouble worth watching. It can be tried again."]
+                  ],
+                  [
+                    ["say", "Mirren hears you out and shakes her head. 'Rules are rules,' she says. 'Even the small ones.' It can be tried again."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -260,7 +271,8 @@
           "label": "get your bearings from the head-frame",
           "fx": [
             ["say", "North from Tally Rise past the Marker Stone and the Long Spoil to the Cracked Adit; the Hundred's Mouth lies east of it. Quarry north-east; Old Cairn west edge; Gibbet Tower far north-east; scrappers' camp east."]
-          ]
+          ],
+          "free": true
         }
       ]
     },
@@ -482,7 +494,18 @@
                 ["addvar", "appr_tamsin", 1],
                 ["say", "You speak the claim plain, the hall's backing behind every word. The company's hold on this gallery breaks. The Hundred do not rest, exactly — but they are minded now, not abandoned."]
               ],
-              [["say", "The words don't land the way they need to. The claim needs saying again, and better."]]
+              [
+                [
+                  "if",
+                  [["!flag", "ir_hundred_bargain_missed"]],
+                  [
+                    ["set", "ir_hundred_bargain_missed"],
+                    ["addvar", "rep_free", -1],
+                    ["say", "The words don't land, and the hall's claim sounds weaker for the fumbling — the Companies backing you hear it too."]
+                  ],
+                  [["say", "The words don't land the way they need to. The claim needs saying again, and better."]]
+                ]
+              ]
             ]
           ]
         },
@@ -683,7 +706,18 @@
                 ["say", "Something in him finally gives. 'I signed the order. Rotten timber, and I signed it anyway, because the company said the season couldn't wait. I've burned two hollows clean since. Ask yourself why.'"]
               ],
               [
-                ["say", "He looks at you a long moment and says nothing at all. Whatever nerve you needed, it wasn't enough this time."]
+                [
+                  "if",
+                  [["!flag", "ir_aldous_confront_missed"]],
+                  [
+                    ["set", "ir_aldous_confront_missed"],
+                    ["addvar", "rep_iron", -1],
+                    ["say", "He looks at you a long moment and says nothing — but the chapterhouse marks that a stranger came at its Preceptor and failed to move him."]
+                  ],
+                  [
+                    ["say", "He looks at you a long moment and says nothing at all. Whatever nerve you needed, it wasn't enough this time."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -714,7 +748,18 @@
                 ["say", "You lay it out plain enough that even the chapterhouse can't look away. Aldous doesn't argue. By evening a Watch clerk has his desk, and Aldous has a cell, or a road out of Cinderhall — nobody will say which."]
               ],
               [
-                ["say", "You make the case, and the chapterhouse chooses its own, same as it always has. Aldous is still watching that door tomorrow."]
+                [
+                  "if",
+                  [["!flag", "ir_aldous_expose_missed"]],
+                  [
+                    ["set", "ir_aldous_expose_missed"],
+                    ["addvar", "rep_iron", -1],
+                    ["say", "You make the case and the chapterhouse closes ranks around its own — and marks you as the stranger who tried and failed to move them."]
+                  ],
+                  [
+                    ["say", "You make the case, and the chapterhouse chooses its own, same as it always has. Aldous is still watching that door tomorrow."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -793,7 +838,18 @@
                 ["say", "You say it in front of the whole chapterhouse, plain and unshaking, and let them watch him fail to deny it. By evening a Watch clerk has his desk."]
               ],
               [
-                ["say", "Your voice doesn't waver, but the room does — nobody here is ready to hear it from a stranger. Not yet."]
+                [
+                  "if",
+                  [["!flag", "ir_denounce_aldous_missed"]],
+                  [
+                    ["set", "ir_denounce_aldous_missed"],
+                    ["addvar", "rep_iron", -1],
+                    ["say", "Your voice doesn't waver, but the room does — and the chapterhouse remembers a stranger tried to shame its Preceptor in his own hall."]
+                  ],
+                  [
+                    ["say", "Your voice doesn't waver, but the room does — nobody here is ready to hear it from a stranger. Not yet."]
+                  ]
+                ]
               ]
             ]
           ]

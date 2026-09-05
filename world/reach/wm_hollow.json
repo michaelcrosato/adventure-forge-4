@@ -127,7 +127,18 @@
                 ["say", "You swear a new oath in the old one's place, plain and meant. The ring lowers its standards together, and files off into wherever soldiers go when the watch finally changes."]
               ],
               [
-                ["say", "The words come out uneven, half-borrowed. The ring does not move, and does not forgive an oath that isn't whole."]
+                [
+                  "if",
+                  [["!flag", "wm_oath_bargain_missed"]],
+                  [
+                    ["set", "wm_oath_bargain_missed"],
+                    ["addvar", "rep_watch", -1],
+                    ["say", "The words come out uneven, half-borrowed, and the ring does not move — word of a botched oath at the old stone reaches Highward before you do."]
+                  ],
+                  [
+                    ["say", "The words come out uneven, half-borrowed. The ring does not move, and does not forgive an oath that isn't whole."]
+                  ]
+                ]
               ]
             ]
           ]
@@ -197,7 +208,18 @@
                 ["npcgo", "wm_oath_captain", null],
                 ["say", "You ask it of them plainly, no standing to back the asking, only the asking itself. The captain studies you a long moment, then lowers the standard anyway. \"Close enough,\" he says, \"to an order.\""]
               ],
-              [["say", "The ring hears you out and does not move. Whatever it's still waiting on, a plain ask wasn't it."]]
+              [
+                [
+                  "if",
+                  [["!flag", "wm_oath_plea_missed"]],
+                  [
+                    ["set", "wm_oath_plea_missed"],
+                    ["addvar", "rep_watch", -1],
+                    ["say", "The ring hears you out and does not move — and Highward hears, too, that a plain ask wasn't enough to settle its own old watch."]
+                  ],
+                  [["say", "The ring hears you out and does not move. Whatever it's still waiting on, a plain ask wasn't it."]]
+                ]
+              ]
             ]
           ]
         }
