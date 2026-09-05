@@ -22,13 +22,17 @@ import { fileURLToPath } from "node:url";
 import { inClassPhase, inPerkPickPhase, inTalkMode, newState, receipt as receiptOf, step } from "./engine.ts";
 import { matchesMenuLabel, render, renderIntro } from "./format.ts";
 import { replayTrace } from "./crawl.ts";
-import { loadWorld } from "./validate.ts";
+import { loadWorld, worldFiles } from "./validate.ts";
 import { triage } from "./triage.ts";
 import type { Action, State, World } from "./types.ts";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-/** Build identity a report is bound to: git rev + content hash of the world file. */
+/**
+ * Build identity a report is bound to: git rev + content hash of the world —
+ * every file it is made of (root, then included parts in load order), so a
+ * change to any region file changes the hash. loop/report-check.mjs mirrors it.
+ */
 export function buildId(worldPath: string): { rev: string; world: string } {
   let rev = "nogit";
   try {
@@ -36,7 +40,9 @@ export function buildId(worldPath: string): { rev: string; world: string } {
   } catch {
     /* not a repo yet */
   }
-  const world = createHash("sha256").update(readFileSync(worldPath)).digest("hex").slice(0, 8);
+  const h = createHash("sha256");
+  for (const f of worldFiles(worldPath)) h.update(readFileSync(f));
+  const world = h.digest("hex").slice(0, 8);
   return { rev, world };
 }
 

@@ -5,7 +5,8 @@
  * within the cap. Dynamic: the authored walkthrough must replay to a WIN with
  * score === maxScore — the ending witness and the score-economy proof in one.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { basename, dirname, join, relative } from "node:path";
 import {
   actionByLabel,
   condOk,
@@ -26,8 +27,74 @@ const FX_OPS = new Set([
   "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "end",
 ]);
 
+/**
+ * The files a world is made of: the root, then every part its `include` list
+ * names (a path, or a `dir/*.json` glob, relative to the root; globs sort by
+ * name). A build hash that names "the world" must cover all of them.
+ */
+export function worldFiles(path: string): string[] {
+  const root = JSON.parse(readFileSync(path, "utf8")) as { include?: string[] };
+  const dir = dirname(path);
+  const files = [path];
+  for (const pat of root.include ?? []) {
+    const base = basename(pat);
+    if (base.includes("*")) {
+      const d = join(dir, dirname(pat));
+      const re = new RegExp(`^${base.split("*").map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join(".*")}$`);
+      const matches = existsSync(d) ? readdirSync(d).filter((f) => re.test(f)).sort().map((f) => join(d, f)) : [];
+      if (!matches.length) throw new Error(`include ${pat}: matches no files`);
+      files.push(...matches);
+    } else {
+      const full = join(dir, pat);
+      if (!existsSync(full)) throw new Error(`include ${pat}: no such file`);
+      files.push(full);
+    }
+  }
+  return files;
+}
+
+// Which top-level fields a part file may carry. A part is a slice of one world:
+// it adds records and list entries, never the world's identity or its proof.
+const ROOT_ONLY = new Set(["id", "title", "intro", "objectives", "start", "hp", "maxScore", "walkthrough", "progress", "include"]);
+const RECORD_FIELDS = new Set(["rooms", "items", "npcs", "classes", "perks", "regions", "quests", "proofs", "templates", "skills"]);
+const LIST_FIELDS = new Set(["gen", "stamps", "epilogue", "statusTracks", "statusPaths", "hud"]);
+
+/**
+ * Load a world: read the root file, merge every included part (records must
+ * not collide; lists concatenate in file order), then expand regions and
+ * stamps. Anything a part may not carry, or a duplicate id across parts, is a
+ * load error — a world that cannot merge cannot load.
+ */
 export function loadWorld(path: string): World {
-  return expandWorld(JSON.parse(readFileSync(path, "utf8")) as World);
+  const files = worldFiles(path);
+  const root = JSON.parse(readFileSync(files[0]!, "utf8")) as World & Record<string, unknown>;
+  const owner = new Map<string, string>(); // "rooms/gate" -> file that defined it
+  for (const f of files.slice(1)) {
+    const name = relative(dirname(path), f);
+    const part = JSON.parse(readFileSync(f, "utf8")) as Record<string, unknown>;
+    for (const [k, v] of Object.entries(part)) {
+      if (ROOT_ONLY.has(k)) throw new Error(`${name}: "${k}" belongs in the root world file`);
+      if (RECORD_FIELDS.has(k)) {
+        if (!v || typeof v !== "object" || Array.isArray(v)) throw new Error(`${name}: "${k}" must be an object`);
+        const target = ((root[k] as Record<string, unknown> | undefined) ??= {});
+        for (const [id, def] of Object.entries(v as Record<string, unknown>)) {
+          if (id in target) throw new Error(`${name}: ${k} id "${id}" already defined in ${owner.get(`${k}/${id}`) ?? "the root file"}`);
+          target[id] = def;
+          owner.set(`${k}/${id}`, name);
+        }
+      } else if (LIST_FIELDS.has(k)) {
+        if (!Array.isArray(v)) throw new Error(`${name}: "${k}" must be an array`);
+        (root[k] as unknown[] | undefined) ??= [];
+        (root[k] as unknown[]).push(...v);
+      } else {
+        throw new Error(`${name}: unknown top-level field "${k}"`);
+      }
+    }
+  }
+  root.rooms ??= {};
+  root.items ??= {};
+  root.npcs ??= {};
+  return expandWorld(root);
 }
 
 export function validateWorld(world: World): string[] {
@@ -205,6 +272,63 @@ export function validateWorld(world: World): string[] {
       checkFx(`npc ${nid} topic ${t.id}`, t.fx);
     }
     for (const r of npc.companion?.remarks ?? []) checkConds(`npc ${nid} remark ${r.id}`, r.if);
+  }
+
+  // ---------- reachability ----------
+  // Every room must be reachable from the start through some exit (whatever
+  // its conditions) or some goto effect. A room nothing leads to is content
+  // no player can ever see — in a world of hundreds of rooms, that is how a
+  // whole dungeon goes missing without anyone noticing.
+  {
+    const gotos = new Set<string>();
+    const collectGotos = (fxs?: Fx[]) => {
+      for (const fx of fxs ?? []) {
+        if (fx[0] === "goto") gotos.add(fx[1]);
+        if (fx[0] === "check") { collectGotos(fx[3]); collectGotos(fx[4]); }
+        if (fx[0] === "chance") { collectGotos(fx[2]); collectGotos(fx[3]); }
+      }
+    };
+    for (const room of Object.values(world.rooms)) {
+      collectGotos(room.onEnter);
+      collectGotos(room.onEnterOnce);
+      for (const a of room.actions ?? []) collectGotos(a.fx);
+    }
+    for (const item of Object.values(world.items)) for (const u of item.use ?? []) collectGotos(u.fx);
+    for (const npc of Object.values(world.npcs)) {
+      collectGotos(npc.onDeath);
+      for (const t of npc.topics ?? []) collectGotos(t.fx);
+    }
+    const seen = new Set<string>();
+    const queue = [world.start, ...gotos].filter(roomOk);
+    while (queue.length) {
+      const id = queue.pop()!;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      for (const ex of Object.values(world.rooms[id]!.exits ?? {})) if (roomOk(ex.to) && !seen.has(ex.to)) queue.push(ex.to);
+    }
+    for (const rid of Object.keys(world.rooms)) if (!seen.has(rid)) err(`room ${rid}: unreachable — no exit or goto leads there from ${world.start}`);
+  }
+
+  // ---------- perk menu ----------
+  // A level-up menu is capped; a perk the cap hides can never be picked at
+  // that level. At level L a class has made L-1 picks (each still eligible,
+  // so excluded from the menu) — the worst case is everything else eligible
+  // at once. Stagger `require.level` or gate by class until it fits.
+  for (const [cid, cls] of Object.entries(world.classes ?? {})) {
+    const attrs = cls.attrs ?? {};
+    for (let level = 1; level <= 10; level++) {
+      const eligible = Object.entries(world.perks ?? {}).filter(([pid, p]) => {
+        if (cls.perks?.includes(pid)) return false;
+        const r = p.require;
+        if (!r) return true;
+        if (r.level !== undefined && level < r.level) return false;
+        if (r.class && !r.class.includes(cid)) return false;
+        if (r.attr && (attrs[r.attr[0]] ?? 0) < r.attr[1]) return false;
+        return true;
+      }).length;
+      const visible = eligible - (level - 1);
+      if (visible > MENU_CAP) { err(`perks: class ${cid} at level ${level} may see ${visible} perks, more than the menu holds (${MENU_CAP}) — stagger require.level`); break; }
+    }
   }
 
   // Dynamic proof: replay the walkthrough at seed 1.

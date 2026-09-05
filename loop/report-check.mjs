@@ -12,8 +12,8 @@
  */
 import { execFileSync, execSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -23,11 +23,31 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 // passes its resolved TF_WORLD to both, so an override cannot drift either.
 const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
 
+// The files a world is made of: the root, then every `include` part in load
+// order (globs sort by name). Mirrors worldFiles in src/validate.ts — this
+// file runs without tsx, so it cannot import it.
+function worldFiles(path) {
+  const root = JSON.parse(readFileSync(path, "utf8"));
+  const dir = dirname(path);
+  const files = [path];
+  for (const pat of root.include ?? []) {
+    const base = basename(pat);
+    if (base.includes("*")) {
+      const d = join(dir, dirname(pat));
+      const re = new RegExp(`^${base.split("*").map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join(".*")}$`);
+      const matches = existsSync(d) ? readdirSync(d).filter((f) => re.test(f)).sort().map((f) => join(d, f)) : [];
+      files.push(...matches);
+    } else files.push(join(dir, pat));
+  }
+  return files;
+}
+
 function buildId() {
   let rev = "nogit";
   try { rev = execSync("git rev-parse --short HEAD", { cwd: ROOT, encoding: "utf8" }).trim(); } catch {}
-  const world = createHash("sha256").update(readFileSync(WORLD_PATH)).digest("hex").slice(0, 8);
-  return { rev, world };
+  const h = createHash("sha256");
+  for (const f of worldFiles(WORLD_PATH)) h.update(readFileSync(f));
+  return { rev, world: h.digest("hex").slice(0, 8) };
 }
 
 // The fields a player's report may contribute, and nothing else. Everything the

@@ -198,11 +198,17 @@ export type GenSpot = {
   name?: string; // override the generated room name
   desc?: string;
   brief?: string; // shown on revisits; a named spot should usually set this too
+  landmark?: string; // make this cell a fast-travel destination
   items?: string[]; // item ids placed here (their loc is rewritten)
   npcs?: string[]; // npc ids placed here (their room is rewritten)
   onEnterOnce?: Fx[];
+  onEnter?: Fx[];
   actions?: CustomAction[];
+  variants?: RoomVariant[];
 };
+
+/** A coherent name/desc/brief triple for one wilderness cell, drawn without replacement. */
+export type GenScene = { name?: string; desc: string; brief?: string };
 
 export type GenDef = {
   id: string; // room ids become `${id}_${x}_${y}`
@@ -210,9 +216,50 @@ export type GenDef = {
   seed: number; // all generated text/structure flows from this
   w: number;
   h: number;
-  pools: { descs: string[]; briefs?: string[] }; // text is data, drawn by seeded PRNG
+  region?: string; // every cell joins this region (see world.regions)
+  /**
+   * Text is data, drawn by seeded PRNG. `scenes` are used first, each once, so
+   * a cell's name, description, and brief agree; `descs`/`briefs`/`names` fill
+   * whatever cells remain (names without replacement too, then "Name x,y").
+   */
+  pools: { descs: string[]; briefs?: string[]; names?: string[]; scenes?: GenScene[] };
   links: { cell: [number, number]; dir: string; to: string; back?: string; landmark?: string; sideTrip?: boolean }[];
   spots?: GenSpot[];
+  /** Cells that are not made at all — cliffs, water, the shape of the land. Neighbors get no exit toward them. */
+  walls?: [number, number][];
+  /** Effects every generated cell carries — the place for a region's random encounters (`chance`). */
+  cellFx?: { onEnter?: Fx[]; onEnterOnce?: Fx[] };
+};
+
+// ---------- templates and stamps ----------
+/**
+ * A reusable place — a bandit cave, a shrine, a mine — written once with
+ * `$name` placeholders for every id it owns (rooms, items, npcs, flags, vars)
+ * and `{{VAR}}` placeholders for text that changes per copy. Each stamp of it
+ * expands into real rooms with the placeholders replaced (`$hall` in stamp
+ * `cave1` becomes `cave1_hall`), wired into a host room, and validated exactly
+ * like authored content.
+ */
+export type TemplateDef = {
+  entrance: string; // the template room (`$hall`) the host room's exit leads into
+  rooms: Record<string, RoomDef>;
+  items?: Record<string, ItemDef>;
+  npcs?: Record<string, NpcDef>;
+  vars?: string[]; // the {{VAR}} names every stamp must supply
+};
+
+export type StampDef = {
+  template: string;
+  id: string; // instance prefix: `$x` -> `${id}_x`
+  at: string; // host room id (authored, or a generated cell like `wood_2_1`)
+  dir: string; // exit direction on the host that leads in
+  back?: string; // exit direction on the entrance that leads back out
+  if?: Cond[]; // gate on the host's exit
+  lockedMsg?: string;
+  hint?: string;
+  landmark?: string; // destination preview on the host's exit
+  sideTrip?: boolean;
+  vars?: Record<string, string>;
 };
 
 /**
@@ -244,7 +291,11 @@ export type World = {
   skills?: Record<string, number>; // name -> modifier for ["check", ...]
   classes?: Record<string, ClassDef>; // if present, the game starts with a class menu
   perks?: Record<string, PerkDef>;
+  /** Part files merged into this one at load (paths or `dir/*.json` globs, relative to this file). Root-only fields stay in the root. */
+  include?: string[];
   gen?: GenDef[]; // regions expanded into rooms at load, before validation
+  templates?: Record<string, TemplateDef>; // reusable places, expanded per stamp
+  stamps?: StampDef[]; // where each copy of a template stands
   rooms: Record<string, RoomDef>;
   items: Record<string, ItemDef>;
   npcs: Record<string, NpcDef>;
