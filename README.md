@@ -5,8 +5,8 @@ server with 4 tools, blind AI playtesters, and a dev loop that only lands
 green changes. Content is data. Every claim about the game is proven by a
 replay, not asserted.
 
-Two worlds ship today. **The Gray Reach** is the default game: a realm of nine
-regions — the Vale of Ash as its first act, six holds each with its own
+Two worlds ship today. **The Gray Reach** is the default game: a realm of ten
+regions — the Vale of Ash as its first act, seven holds each with its own
 unrested grief, a mountain pass, and a capital where the endings wait — with
 companions who judge you, six factions that remember, fast travel between the
 landmarks you have found, and seven endings, every one replay-proven. **The
