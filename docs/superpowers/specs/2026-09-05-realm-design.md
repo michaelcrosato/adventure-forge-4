@@ -212,6 +212,17 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
+**As built** (first whole realm): 386 rooms, 113 npcs, 100 items, 45 quests,
+28 stamped places, 91 epilogue lines, 4 companions, 6 factions, 7 endings
+each with a proof. `maxScore` 366, the score the proven walkthrough reaches:
+a Scholar with Lys along rests Thornwold (the Keeper's verse), the Iron
+Downs (the true ledger) and the Saltkerns (the sailors' verse under the
+Farlight), earns the Free Companies' stair in Gullhaven, climbs the Keepers'
+pilgrim stair at Coldpass, hears the first Reeve's confession, and speaks the
+Great Rite — 269 turns, 418 characters a screen on average. Proofs replay the
+Regent deposed by the Companies, the throne burned with the Regent's own oil,
+the Vale's crown worn on the gray seat, and kneeling to the hollow.
+
 ## Build order
 
 1. `world/reach.json` root + `companions.json` + `templates.json` + the
@@ -221,4 +232,5 @@ Understory, Coldpass, Marrowgate, `reach_at_rest`.
    against the landed base with only its own file added. Land them one by one.
 3. Coldpass and Marrowgate, the act-3 endings and proofs, the real
    walkthrough, the root epilogue. Switch the default world to the Reach.
-4. Blind playtests; triage; fix; repeat.
+4. Blind playtests; triage; fix; repeat. (Steps 1–3 are done; this loop is
+   where the realm lives now.)
