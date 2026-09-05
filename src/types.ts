@@ -25,7 +25,7 @@ export type Fx =
   | ["set", string] // set flag
   | ["clear", string]
   | ["score", number] // add (clamped 0..maxScore)
-  | ["hp", number] // delta (clamped 0..maxHp); 0 => lose ending
+  | ["hp", number] // delta (clamped 0..maxHp); reaching 0 => the engine's "dead" lose ending
   | ["move", string, string] // item -> "inv" | "nowhere" | roomId
   | ["goto", string] // move player (fires room entry)
   | ["npcgo", string, string | null] // move npc (null removes)
@@ -105,6 +105,13 @@ export type NpcDef = {
 };
 
 export type WalkStep = string | { repeat: string; until: Cond; max: number };
+
+/**
+ * Most actions a single menu may offer. The validator enforces it along the
+ * walkthrough; the engine caps the perk-pick menu to it. Numbered replies stay
+ * one or two tokens, and a blind player never has to scroll.
+ */
+export const MENU_CAP = 12;
 
 // ---------- characters ----------
 /** The four attributes. Plain names, plain meanings. */

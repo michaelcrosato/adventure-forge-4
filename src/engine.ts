@@ -6,6 +6,7 @@
  * seed and action list is byte-identical every run, and a trace replays exactly.
  */
 import { createHash } from "node:crypto";
+import { MENU_CAP } from "./types.ts";
 import type {
   Action,
   Cond,
@@ -152,11 +153,16 @@ export function armorOf(world: World, s: State): number {
   return best + perkBonus(world, s, "armor");
 }
 
+/** Attack-roll bonus: best weapon's hit + might + perk hit bonuses. The one place this sum is defined. */
+function attackBonus(world: World, s: State, w = bestWeapon(world, s)): number {
+  return w.hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit");
+}
+
 /** Attack-roll and damage totals an `attack` action would actually use, for the free `status` check. */
 export function combatMods(world: World, s: State): { hit: number; dmg: number; armor: number } {
   const w = bestWeapon(world, s);
   return {
-    hit: w.hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit"),
+    hit: attackBonus(world, s, w),
     dmg: w.dmg + perkBonus(world, s, "dmg"),
     armor: armorOf(world, s),
   };
@@ -405,7 +411,7 @@ export function legalActions(world: World, s: State): Action[] {
   // a pending level-up perk choice blocks the menu until spent
   if (s.perkPicks > 0) {
     const picks = eligiblePerks(world, s).sort();
-    if (picks.length) return picks.slice(0, 12).map((id) => ({ kind: "perkpick", id }));
+    if (picks.length) return picks.slice(0, MENU_CAP).map((id) => ({ kind: "perkpick", id }));
   }
   const out: Action[] = [];
   const room = world.rooms[s.room];
@@ -486,7 +492,7 @@ function bestWeapon(world: World, s: State): { hit: number; dmg: number; item: s
   return best;
 }
 
-/** The check a "use" action would actually run, mirroring step()'s own def search. */
+/** The use def a "use" action runs: first entry whose conditions pass and whose target (if any) is at hand. Shared by step() and oddsHint(). */
 function useDefFor(world: World, s: State, item: string): UseDef | undefined {
   return (world.items[item]?.use ?? []).find((d) => {
     if (!condsOk(world, s, d.if)) return false;
@@ -533,8 +539,7 @@ export function oddsHint(world: World, s: State, a: Action): string {
   if (a.kind === "attack") {
     const def = world.npcs[a.npc];
     if (!def) return "";
-    const hit = bestWeapon(world, s).hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit");
-    const need = Math.max(1, (def.df ?? 10) - hit);
+    const need = Math.max(1, (def.df ?? 10) - attackBonus(world, s));
     return ` (roll ${need}+ on the die)`;
   }
   if (a.kind === "go") {
@@ -590,12 +595,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
       break;
     }
     case "use": {
-      const defs = world.items[action.item]?.use ?? [];
-      const u = defs.find((d) => {
-        if (!condsOk(world, s, d.if)) return false;
-        const t = d.target;
-        return !t || s.inv.includes(t) || s.itemLoc[t] === s.room || s.npcRoom[t] === s.room;
-      });
+      const u = useDefFor(world, s, action.item);
       if (u) applyFx(world, s, u.fx, events);
       else events.push("Nothing happens.");
       break;
@@ -611,7 +611,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
     case "attack": {
       const def = world.npcs[action.npc]!;
       const w = bestWeapon(world, s);
-      const hit = w.hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit");
+      const hit = attackBonus(world, s, w);
       const roll = d20(s);
       const df = def.df ?? 10;
       const total = roll + hit;

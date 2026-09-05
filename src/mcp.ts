@@ -1,5 +1,5 @@
 /**
- * tinyforge MCP server — the whole play surface in 3 tools.
+ * tinyforge MCP server — the whole play surface in 4 tools.
  *
  * new_game -> intro + first menu. act -> one turn (narration + status + next
  * menu in ONE response, so a whole turn is ONE tool call). look -> resync.
@@ -13,8 +13,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
-import { inClassPhase, inPerkPickPhase, receipt, step } from "./engine.ts";
-import { newState } from "./engine.ts";
+import { inClassPhase, inPerkPickPhase, newState, receipt, step } from "./engine.ts";
 import { render, renderIntro, renderStatus } from "./format.ts";
 import { loadWorld, validateWorld } from "./validate.ts";
 import type { Action, State, Trace, World } from "./types.ts";
