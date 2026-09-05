@@ -37,7 +37,7 @@
       },
       "variants": [
         { "if": [["flag", "ir_hollow_burned"]], "brief": "The chalked tally board. The hill still smells of the fire." },
-        { "if": [["flag", "ir_hollow_rested"]], "brief": "The chalked tally board. Someone has finally crossed through the old line." },
+        { "if": [["flag", "ir_hollow_rested"]], "brief": "The chalked tally board, its old line finally crossed through." },
         { "if": [["flag", "ir_hollow_bargained"]], "brief": "The chalked tally board, kept by the hall now, not the company." }
       ],
       "actions": [
@@ -192,7 +192,7 @@
         },
         {
           "id": "ir_climb_fall",
-          "label": "climb through the gap — a failed try costs 1 hp (grace)",
+          "label": "climb the gap (grace, 1hp on fail)",
           "if": [["!flag", "ir_hundred_passed"]],
           "fx": [
             ["check", "grace", 9,
@@ -411,8 +411,8 @@
         { "id": "greet", "label": "who are you", "once": true, "say": "Ness. I keep the shift-tally here, for what the company's own tally is worth these days.", "fx": [["xp", 1]] },
         { "id": "bg_hall", "label": "the miners' hall", "if": [["flag", "said_ir_ness_greet"]], "once": true, "say": "The hall could run this mine better than the company ever has, if the company didn't own the deed. That's the whole of our trouble, in one sentence.", "fx": [["xp", 2]] },
         { "id": "bounty", "label": "the trouble on the downs", "if": [["flag", "said_ir_ness_bg_hall"]], "once": true, "say": "There's a slag-hound working the downs north of here, bold enough to come right up to the track after dark. Deal with it and the hall won't forget the favor.", "fx": [["xp", 2]] },
-        { "id": "bargain_free", "label": "propose the hall claim the mine (free companies)", "if": [["flag", "said_ir_ness_bg_hall"], ["var", "rep_free", ">=", 1], ["!flag", "ir_hall_backing"]], "say": "You've dealt fair with the Free Companies. Speak for us plain, and I think the hall would back a claim on this mine.", "fx": [["set", "ir_hall_backing"], ["score", 3], ["xp", 2], ["addvar", "rep_free", 1], ["say", "Word goes round the hall quiet and quick. If it comes to declaring the claim, they're behind you."]] },
-        { "id": "bargain_watch", "label": "propose the hall claim the mine (the Watch)", "if": [["flag", "said_ir_ness_bg_hall"], ["var", "rep_watch", ">=", 1], ["!flag", "ir_hall_backing"]], "say": "The Watch keeps its word, when it gives one. If they'd stand behind a lawful claim, I think the hall could be persuaded to try one.", "fx": [["set", "ir_hall_backing"], ["score", 3], ["xp", 2], ["addvar", "rep_watch", 1], ["say", "Word goes round the hall quiet and quick. If it comes to declaring the claim, they're behind you."]] },
+        { "id": "bargain_free", "label": "back the hall's claim (Free Companies)", "if": [["flag", "said_ir_ness_bg_hall"], ["var", "rep_free", ">=", 1], ["!flag", "ir_hall_backing"]], "say": "You've dealt fair with the Free Companies. Speak for us plain, and I think the hall would back a claim on this mine.", "fx": [["set", "ir_hall_backing"], ["score", 3], ["xp", 2], ["addvar", "rep_free", 1], ["say", "Word goes round the hall quiet and quick. If it comes to declaring the claim, they're behind you."]] },
+        { "id": "bargain_watch", "label": "back the hall's claim (the Watch)", "if": [["flag", "said_ir_ness_bg_hall"], ["var", "rep_watch", ">=", 1], ["!flag", "ir_hall_backing"]], "say": "The Watch keeps its word, when it gives one. If they'd stand behind a lawful claim, I think the hall could be persuaded to try one.", "fx": [["set", "ir_hall_backing"], ["score", 3], ["xp", 2], ["addvar", "rep_watch", 1], ["say", "Word goes round the hall quiet and quick. If it comes to declaring the claim, they're behind you."]] },
         { "id": "hound_thanks", "label": "the slag-hound is dealt with", "if": [["npcDead", "ir_slaghound"]], "once": true, "say": "That hound won't trouble the night shift again. The hall's grateful, whatever else it can't give you.", "fx": [["xp", 1], ["addvar", "gold", 2]] },
         { "id": "after_bargain", "label": "the mine, now", "if": [["flag", "ir_hollow_bargained"]], "once": true, "say": "The claim held. The hall runs the gallery now. It doesn't undo what happened there, but it's ours to answer for now, not the company's.", "fx": [["xp", 2]] },
         { "id": "bye", "label": "leave Ness to the tally", "say": "Watch the cage on your way past. It doesn't wait for anyone.", "end": true }
@@ -487,7 +487,7 @@
           "cell": [2, 1], "name": "Cracked Adit", "desc": "A sealed mine-mouth, boarded over twice, a company notice nailed across both boardings: CONDEMNED, DO NOT ENTER. Someone has pried at one corner anyway.", "brief": "A boarded, condemned adit.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
-            { "id": "ir_adit_pry", "label": "pry the loosened board — a failed try costs 1 hp (might)", "if": [["!flag", "ir_adit_pried"]],
+            { "id": "ir_adit_pry", "label": "pry the board (might, 1hp on fail)", "if": [["!flag", "ir_adit_pried"]],
               "fx": [["check", "might", 9,
                 [["set", "ir_adit_pried"], ["addvar", "gold", 4], ["xp", 1], ["say", "The board splits away. Wedged behind it, a handful of coin someone hid from a company tally, years back."]],
                 [["hp", -1], ["say", "The nail holds, and bites your palm for the trouble."]]
@@ -511,7 +511,7 @@
         {
           "cell": [2, 3], "name": "The Marker Stone", "desc": "A company boundary-stone, CINDERHALL COMPANY LANDS cut deep and confident. Someone has scratched a tally of names beneath it, too many to be a coincidence.", "brief": "The company's boundary-stone.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [{ "id": "ir_marker_read", "label": "read the scratched tally beneath the stone", "once": true, "fx": [["xp", 2], ["say", "Names, dozens of them, scratched by hands that weren't company clerks. Whoever kept this count did it because the company's own count stopped mattering to them."]] }]
+          "actions": [{ "id": "ir_marker_read", "label": "read the tally scratched below the stone", "once": true, "fx": [["xp", 2], ["say", "Names, dozens of them, scratched by hands that weren't company clerks. Whoever kept this count did it because the company's own count stopped mattering to them."]] }]
         },
         { "cell": [3, 3], "name": "Cinder Flat", "desc": "Flat, black ground, packed by feet that came this way in numbers once and haven't since.", "brief": "Packed black ground.", "onEnterOnce": [["xp", 1]] },
         { "cell": [4, 3], "name": "Spoil Gap", "desc": "A gap between two heaps just wide enough to walk, walled in gray on both sides like a passage that was never meant to be one.", "brief": "A gap between spoil-heaps.", "onEnterOnce": [["xp", 1]] },
@@ -542,17 +542,17 @@
     { "template": "cave", "id": "ir_cave1", "at": "ir_downs_4_2", "dir": "east", "back": "west", "landmark": "the Flooded Quarry", "sideTrip": true, "vars": { "NAME": "the Flooded Quarry", "BEAST": "a scarred slag-hound" } }
   ],
   "quests": {
-    "q_ir_hollow": {
+    "ir_hollow": {
       "name": "The Hundred",
       "start": [["flag", "ir_entered"]],
       "done": [["flag", "ir_hollow_resolved"]],
       "stages": [
-        { "if": [["flag", "tamsin_mine_truth"]], "text": "The truth is out: Preceptor Aldous signed the order that doomed the Hundred. Decide the gallery's fate — and his — in Cinderhall." },
+        { "if": [["flag", "tamsin_mine_truth"]], "text": "The truth is out: Aldous signed the order that doomed the Hundred. Decide the gallery's fate, and his, in Cinderhall." },
         { "if": [["flag", "ir_hall_backing"]], "text": "The miners' hall is ready to claim the gallery from the company. Declare it at the Hundred Gallery, north of Cinderhall." },
         { "if": [], "text": "A hundred miners died when the Hundred Gallery came down. The Ironbound blame the timber. Ask around Cinderhall." }
       ]
     },
-    "q_ir_writ": {
+    "ir_writ": {
       "name": "The Regent's Writ",
       "start": [["flag", "ir_entered"]],
       "done": [["flag", "regent_writ"]],
@@ -562,9 +562,9 @@
         { "if": [], "text": "Cinderhall's chapterhouse will write the Regent's writ for the crown road, once two hollows of the Reach have burned." }
       ]
     },
-    "q_ir_crick": {
+    "ir_hobs_pick": {
       "name": "Hob's Marked Pick",
-      "start": [["flag", "ir_entered"]],
+      "start": [["flag", "said_ir_crick_greet"]],
       "done": [["flag", "ir_crick_closure"]],
       "stages": [
         { "if": [["has", "ir_marked_pick"]], "text": "Return Hob's marked pick to Old Crick, at the miners' hall in Cinderhall." },
@@ -572,19 +572,18 @@
         { "if": [], "text": "Old Crick survived the Hundred. His friend Hob did not. Ask him about it, at Cinderhall's miners' hall." }
       ]
     },
-    "q_ir_hound": {
+    "ir_hound": {
       "name": "The Slag-Hound",
-      "start": [["flag", "ir_entered"]],
+      "start": [["flag", "said_ir_ness_greet"]],
       "done": [["npcDead", "ir_slaghound"]],
       "stages": [
         { "if": [["flag", "ir_hound_bounty"]], "text": "A slag-hound is prowling the bare downs at night. Ness, at Cinderhall's head-frame, would be glad to see it dealt with." },
-        { "if": [["flag", "ir_entered"]], "text": "Miners at the head-frame complain of something prowling the downs after dark." },
-        { "if": [], "text": "The bare downs north of Cinderhall are said to hold worse than spoil-heaps." }
+        { "if": [], "text": "Miners at the head-frame complain of something prowling the downs after dark." }
       ]
     },
-    "q_ir_sella": {
+    "ir_wenna": {
       "name": "Wenna's Name",
-      "start": [["flag", "ir_entered"]],
+      "start": [["flag", "said_ir_sella_greet"]],
       "done": [["flag", "ir_sella_closure"]],
       "stages": [
         { "if": [["flag", "ir_knows_wenna"]], "text": "Speak Wenna's name at the Hundred Gallery, north of Cinderhall, for Sella." },
