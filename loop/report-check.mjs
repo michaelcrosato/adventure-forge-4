@@ -104,6 +104,8 @@ if (errs.length) {
 // Verify the receipt against the recorded trace, by replay. The trace's seed
 // must also match the seed this player was assigned — a receipt from some other
 // session in runs/ does not count.
+// players sometimes quote the whole "receipt:…" token; the receipt is what follows the label
+const wanted = String(report.receipt).replace(/^\s*receipt:\s*/, "");
 let verified = false;
 const runsDir = join(ROOT, "runs");
 try {
@@ -115,13 +117,13 @@ try {
     } catch {
       continue; // a concurrent player may be mid-write to this file; it isn't our receipt either way
     }
-    if (trace.receipt === report.receipt) {
+    if (trace.receipt === wanted) {
       if (seed !== null && trace.seed !== seed) continue;
       const replayed = execFileSync(process.execPath, ["--import", "tsx", join(ROOT, "src", "crawl.ts"), "--replay", join(runsDir, f)], {
         cwd: ROOT,
         encoding: "utf8",
       }).trim();
-      verified = replayed === report.receipt;
+      verified = replayed === wanted;
       break;
     }
   }
