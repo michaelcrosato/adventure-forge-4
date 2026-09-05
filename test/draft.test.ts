@@ -6,6 +6,7 @@
  * moves to the world/ glob (and disappears) when the realm ships.
  */
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -43,4 +44,11 @@ test("the draft realm validates and its walkthrough holds the budget", { skip: !
   const avg = sizes.reduce((a, b) => a + b, 0) / sizes.length;
   assert.ok(avg <= 450, `avg ${avg.toFixed(0)} chars > 450`);
   assert.ok(Math.max(...sizes) <= 1100, `max ${Math.max(...sizes)} chars > 1100`);
+});
+
+test("the draft realm's text stays inside the style budget (scripts/lint-world.ts)", { skip: !existsSync(path) }, () => {
+  // desc ≤ 260, brief ≤ 70, label ≤ 40, say ≤ 220, epilogue ≤ 140, stage ≤ 120 —
+  // the authoring guide's numbers, enforced on every region as it lands
+  const out = execFileSync(process.execPath, ["--import", "tsx", "scripts/lint-world.ts", path], { encoding: "utf8" });
+  assert.match(out, /all text within budget/);
 });
