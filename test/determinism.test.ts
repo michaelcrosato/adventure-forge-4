@@ -10,7 +10,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-const IO_EDGE = new Set(["mcp.ts", "play.ts", "player.ts", "triage.ts", "crawl.ts"]);
+const IO_EDGE = new Set(["mcp.ts", "play.ts", "player.ts", "triage.ts", "crawl.ts", "turn.ts"]);
 const BANNED = ["Date.now", "Math.random", "new Date("];
 
 test("engine core has no ambient time or randomness", () => {
