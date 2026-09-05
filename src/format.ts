@@ -277,9 +277,13 @@ export function renderStatus(world: World, s: State): string {
   if (s.party?.length) {
     // regard in numbers, the same ones the "(Lys -1)" events move, so how near a companion is to walking is never a guess
     const party = s.party.map((id) => {
-      const name = world.npcs[id]?.name ?? id;
+      const def = world.npcs[id];
+      const name = def?.name ?? id;
       const a = s.vars?.[`appr_${id}`];
-      return a === undefined ? name : `${name} (regard ${a > 0 ? "+" : ""}${a})`;
+      const bits: string[] = [];
+      if (a !== undefined) bits.push(`regard ${a > 0 ? "+" : ""}${a}`);
+      if (def?.hp !== undefined) bits.push(`hp ${s.npcHp?.[id] ?? def.hp}/${def.hp}${s.flags?.[`down_${id}`] ? ", down" : ""}`);
+      return bits.length ? `${name} (${bits.join(", ")})` : name;
     });
     lines.push(`Party: ${party.join(", ")}`);
   }

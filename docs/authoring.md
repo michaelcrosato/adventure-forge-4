@@ -226,6 +226,15 @@ useless", and the strike says so. Use it for the realm's horrors and set-piece
 fights, so an armored build still has something to fear; ordinary beasts and
 men keep the usual rule (armor soaks what it can, at least 1 gets through).
 
+Companions fight beside the player and can be hurt: an enemy's blows rotate
+between the player and the companions standing with them, in join order, with
+no die involved, so the same fight replays the same way. A companion has no
+armor; one struck down to nothing falls back out of the fight (flag
+`down_<id>`, hp held at 1), takes no part until the room holds nothing
+aggressive and alive, then gets up at half strength. `status` shows each
+companion's hp beside their regard. Nobody dies of it — a companion's death,
+if a story wants one, is written with `slay` or a `leaves` line.
+
 ## 8. Wilderness regions (`gen`)
 
 ```json

@@ -315,7 +315,7 @@ test("taking an owned thing under its owner's eyes is seen and counted; coin mov
   const paid = step(world, state, actionByLabel(world, state, "ask shopkeeper: buy nothing")!);
   assert.match(paid.events.join(" "), /\(\+3 gold\)/);
   state = doLabel(world, paid.state, "ask Lys: come with me");
-  assert.match(renderStatus(world, state), /Party: Lys \(regard \+2\)/);
+  assert.match(renderStatus(world, state), /Party: Lys \(regard \+2, hp 6\/6\)/);
   state = doLabel(world, state, "go east");
   assert.doesNotMatch(renderMenu(world, state).text, /is watching/, "the owner is a room away");
   const took = step(world, state, actionByLabel(world, state, "take rope")!);
@@ -357,6 +357,31 @@ test("the menu says when an action settles a hold's grief or a miss costs standi
   assert.match(menu, /press the prior \(will\) \(DC 10, will: roll 10\+ on the die; a miss costs standing\)/);
   const out = step(world, state, actionByLabel(world, state, "snub the hunter")!);
   assert.match(out.events.join(" "), /\(Lys -1, when word reaches them\)/, "she is a room away, and still the move is told");
+});
+
+test("blows rotate onto standing companions; one struck to nothing falls back, sits out the fight, and gets up after it", () => {
+  const world = company();
+  world.npcs["lys"]!.hp = 4;
+  let { state } = newState(world, 1);
+  state = doLabel(world, state, "ask Lys: come with me");
+  state = doLabel(world, state, "go east");
+  const hp0 = state.hp;
+  let out = step(world, state, actionByLabel(world, state, "attack troll with sword")!);
+  assert.equal(hp0 - out.state.hp, 3, "the first blow lands on the player");
+  out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!);
+  assert.match(out.events.join(" "), /The troll strikes back at Lys \(-3hp\) — Lys staggers, 1\/4 left\./);
+  assert.equal(out.state.npcHp["lys"], 1);
+  out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!); // the player again
+  out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!);
+  assert.match(out.events.join(" "), /Lys goes down, and crawls clear of the fight/);
+  assert.equal(out.state.flags["down_lys"], true);
+  assert.match(renderStatus(world, out.state), /Party: Lys \(hp 1\/4, down\)/);
+  const idle = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!);
+  assert.doesNotMatch(idle.events.join(" "), /Lys (hits|misses)/, "a downed companion takes no part");
+  const back = step(world, idle.state, actionByLabel(world, idle.state, "go west")!);
+  assert.match(back.events.join(" "), /Lys is back on their feet, shaken\./);
+  assert.equal(back.state.npcHp["lys"], 2, "up again at half strength");
+  assert.ok(!back.state.flags["down_lys"]);
 });
 
 test("companions roll their own attacks after the player's, and a leaving companion stays behind", () => {

@@ -571,9 +571,66 @@ function partyRemarks(world: World, s: State, events: string[]): void {
 }
 
 /** An npc hits the player once: armor soaks what it can, at least 1 gets through. */
+/** Party members who can still take a blow: alive, here, and not already down. */
+function standingCompanions(world: World, s: State): string[] {
+  return s.party.filter(
+    (id) => world.npcs[id]?.companion && !npcDead(world, s, id) && s.npcRoom[id] === s.room && !s.flags[`down_${id}`],
+  );
+}
+
+/**
+ * A blow lands on a companion instead of the player. Companions have no armor;
+ * one who would drop to nothing falls back out of the fight (flag `down_<id>`,
+ * hp held at 1) and gets up again, shaken, once no aggressive thing is left in
+ * the room. Nobody dies of it: a companion's death is content's to write.
+ */
+function companionStruck(world: World, s: State, def: NpcDef, id: string, events: string[], verb: string): void {
+  const c = world.npcs[id]!;
+  const max = c.hp ?? 1;
+  const hp = (s.npcHp[id] ?? max) - (def.atk ?? 1);
+  if (hp <= 0) {
+    s.npcHp[id] = 1;
+    s.flags[`down_${id}`] = true;
+    events.push(`${TheName(def.name)} ${verb} at ${c.name} — ${c.name} goes down, and crawls clear of the fight.`);
+    return;
+  }
+  s.npcHp[id] = hp;
+  events.push(
+    hp <= 2
+      ? `${TheName(def.name)} ${verb} at ${c.name} (-${def.atk}hp) — ${c.name} staggers, ${hp}/${max} left.`
+      : `${TheName(def.name)} ${verb} at ${c.name} (-${def.atk}hp, ${hp}/${max} left).`,
+  );
+}
+
+/** Downed companions get up once the room holds nothing aggressive and alive, at half their strength. */
+function recoverDowned(world: World, s: State, events: string[], attacked: string | null): void {
+  // the fight is still on while something aggressive stands here, or while the player is trading blows
+  const hostile = Object.keys(world.npcs).some(
+    (id) => world.npcs[id]!.aggressive && !s.party.includes(id) && s.npcRoom[id] === s.room && !npcDead(world, s, id),
+  );
+  if (hostile || attacked) return;
+  for (const id of s.party) {
+    if (!s.flags[`down_${id}`]) continue;
+    const c = world.npcs[id]!;
+    delete s.flags[`down_${id}`];
+    s.npcHp[id] = Math.max(s.npcHp[id] ?? 1, Math.ceil((c.hp ?? 1) / 2));
+    events.push(`${c.name} is back on their feet, shaken.`);
+  }
+}
+
 function npcStrike(world: World, s: State, npcId: string, events: string[], verb: string): void {
   const def = world.npcs[npcId];
   if (!def?.atk) return;
+  // blows rotate between the player and the companions standing with them, in
+  // order, with no die involved: the same fight replays the same way
+  const standing = standingCompanions(world, s);
+  const nth = s.vars["_strikes"] ?? 0;
+  s.vars["_strikes"] = nth + 1;
+  const pick = nth % (1 + standing.length);
+  if (pick > 0) {
+    companionStruck(world, s, def, standing[pick - 1]!, events, verb);
+    return;
+  }
   const armor = def.pierce ? 0 : armorOf(world, s);
   const taken = Math.max(1, def.atk - armor);
   const absorbed = def.atk - taken;
@@ -1052,7 +1109,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
       for (const id of s.party) {
         if ((s.npcHp[action.npc] ?? 0) <= 0) break;
         const c = world.npcs[id];
-        if (!c?.companion || npcDead(world, s, id) || s.npcRoom[id] !== s.room) continue;
+        if (!c?.companion || npcDead(world, s, id) || s.npcRoom[id] !== s.room || s.flags[`down_${id}`]) continue;
         const cHit = c.companion.hit ?? 0;
         const cRoll = d20(s);
         const cTotal = cRoll + cHit;
@@ -1110,6 +1167,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // which are menu time, not world time
   if (!s.ended && action.kind !== "perkpick" && action.kind !== "classpick") {
     aggressivePass(world, s, events, attacked);
+    recoverDowned(world, s, events, attacked);
     partyRemarks(world, s, events);
   }
   journalEvents(world, prev, s, events);
