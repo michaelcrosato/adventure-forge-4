@@ -231,6 +231,11 @@
             "id": "r_lean_wolf",
             "if": [["npcHere", "va_lean_wolf"], ["!npcDead", "va_lean_wolf"]],
             "say": "That one's past reasoning with. If it comes, it comes; don't turn your back on it."
+          },
+          {
+            "id": "r_fell",
+            "if": [["flag", "fell_lys"], ["!flag", "down_lys"]],
+            "say": "Don't look at me like that. I've been knocked down by worse than this and got up faster."
           }
         ],
         "leaves": [
@@ -616,6 +621,11 @@
             "id": "r_confided_fd",
             "if": [["flag", "osk_confided"], ["flag", "fd_entered"]],
             "say": "I told you I say the verses even when I'm not sure they're heard. This is where I find out for certain."
+          },
+          {
+            "id": "r_fell",
+            "if": [["flag", "fell_osk"], ["!flag", "down_osk"]],
+            "say": "I'm all right. The Church says the body is a borrowed coat; mine is a little torn, that's all."
           }
         ],
         "leaves": [
@@ -988,6 +998,11 @@
             "id": "r_confided_ir",
             "if": [["flag", "tamsin_confided"], ["flag", "ir_entered"]],
             "say": "I told you I've been counting blows since I was twelve. This is where the counting stops, one way or another."
+          },
+          {
+            "id": "r_fell",
+            "if": [["flag", "fell_tamsin"], ["!flag", "down_tamsin"]],
+            "say": "Twelve years counting blows and I still let that one through. It won't happen twice."
           }
         ],
         "leaves": [
@@ -1358,6 +1373,11 @@
             "id": "r_named_unsworn",
             "if": [["flag", "vell_named"], ["!flag", "vell_kept_secret"]],
             "say": "You told her. I asked to choose the when and the who, and you chose for me. I'll remember which of us that was."
+          },
+          {
+            "id": "r_fell",
+            "if": [["flag", "fell_vell"], ["!flag", "down_vell"]],
+            "say": "Up. I'm up. Write that down somewhere it can't be edited: I did not stay down."
           }
         ],
         "leaves": [
@@ -1884,6 +1904,22 @@
         ["!flag", "vell_dead"]
       ],
       "text": "Vell's ledger stayed unread in Barrowmere. They walked with you to the end still not saying what Marrowgate means to them."
+    },
+    {
+      "if": [["flag", "fell_lys"], ["!flag", "lys_dead"], ["!flag", "lys_left"]],
+      "text": "Lys went down once on the road with you, and got up. She tells it as a joke, and watches your face while she does."
+    },
+    {
+      "if": [["flag", "fell_osk"], ["!flag", "osk_dead"], ["!flag", "osk_left"]],
+      "text": "Brother Osk was carried clear of a fight once, and says the rite for it every year, half in thanks and half in complaint."
+    },
+    {
+      "if": [["flag", "fell_tamsin"], ["!flag", "tamsin_dead"], ["!flag", "tamsin_left"]],
+      "text": "Tamsin still keeps the dent in her pauldron from the blow that put her down beside you. She won't have it hammered out."
+    },
+    {
+      "if": [["flag", "fell_vell"], ["!flag", "vell_dead"], ["!flag", "vell_left"]],
+      "text": "Vell went down once with you and wrote up the whole affair afterwards, leaving out only the part where they screamed."
     }
   ],
   "perks": {

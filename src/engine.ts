@@ -591,6 +591,7 @@ function companionStruck(world: World, s: State, def: NpcDef, id: string, events
   if (hp <= 0) {
     s.npcHp[id] = 1;
     s.flags[`down_${id}`] = true;
+    s.flags[`fell_${id}`] = true; // stays set: a remark or an epilogue line can recall the day they went down
     events.push(`${TheName(def.name)} ${verb} at ${c.name} — ${c.name} goes down, and crawls clear of the fight.`);
     return;
   }

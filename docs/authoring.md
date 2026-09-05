@@ -231,7 +231,8 @@ between the player and the companions standing with them, in join order, with
 no die involved, so the same fight replays the same way. A companion has no
 armor; one struck down to nothing falls back out of the fight (flag
 `down_<id>`, hp held at 1), takes no part until the room holds nothing
-aggressive and alive, then gets up at half strength. `status` shows each
+aggressive and alive, then gets up at half strength; `fell_<id>` stays set
+for a remark or an epilogue line to recall it. `status` shows each
 companion's hp beside their regard. Nobody dies of it — a companion's death,
 if a story wants one, is written with `slay` or a `leaves` line.
 

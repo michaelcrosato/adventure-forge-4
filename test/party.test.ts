@@ -375,6 +375,7 @@ test("blows rotate onto standing companions; one struck to nothing falls back, s
   out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!);
   assert.match(out.events.join(" "), /Lys goes down, and crawls clear of the fight/);
   assert.equal(out.state.flags["down_lys"], true);
+  assert.equal(out.state.flags["fell_lys"], true, "the fall is remembered after she is back up");
   assert.match(renderStatus(world, out.state), /Party: Lys \(hp 1\/4, down\)/);
   const idle = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!);
   assert.doesNotMatch(idle.events.join(" "), /Lys (hits|misses)/, "a downed companion takes no part");
