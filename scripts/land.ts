@@ -48,8 +48,8 @@ for (const f of [`drafts/reach_${code}.json`, `drafts/stubs_${code}.json`]) if (
 // 5. the draft realm must still be whole
 console.log(`— validating the draft realm`);
 let ok = true;
-try { run(["src/validate.ts", "drafts/reach.json"]); } catch (e) { ok = false; console.error(String((e as { stdout?: string }).stdout ?? e)); }
-try { run(["src/crawl.ts", "drafts/reach.json"]); } catch (e) { ok = false; console.error(String((e as { stdout?: string; stderr?: string }).stdout ?? "") + String((e as { stderr?: string }).stderr ?? "")); }
-try { run(["scripts/lint-world.ts", "drafts/reach.json", "--prefix", code]); } catch (e) { ok = false; console.error(String((e as { stdout?: string }).stdout ?? e)); }
+try { run(["src/validate.ts", "world/reach.json"]); } catch (e) { ok = false; console.error(String((e as { stdout?: string }).stdout ?? e)); }
+try { run(["src/crawl.ts", "world/reach.json"]); } catch (e) { ok = false; console.error(String((e as { stdout?: string; stderr?: string }).stdout ?? "") + String((e as { stderr?: string }).stderr ?? "")); }
+try { run(["scripts/lint-world.ts", "world/reach.json", "--prefix", code]); } catch (e) { ok = false; console.error(String((e as { stdout?: string }).stdout ?? e)); }
 console.log(ok ? `✓ ${code} landed` : `✗ ${code} landed with problems above — fix them before committing`);
 process.exit(ok ? 0 : 1);

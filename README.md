@@ -5,13 +5,13 @@ server with 4 tools, blind AI playtesters, and a dev loop that only lands
 green changes. Content is data. Every claim about the game is proven by a
 replay, not asserted.
 
-Two worlds ship today. **The Vale of Ash** is the compact one: four classes,
-perks, levels, dice, two factions, a generated wood, and seven endings, every
-one replay-proven. **The Gray Reach** is the realm being built around it — the
-Vale as its first act, eight more regions, companions who judge you, factions
-that remember, and a capital where seven endings wait — under construction in
-`drafts/reach.json` and `world/reach/` until it can prove a real ending, then
-the default.
+Two worlds ship today. **The Gray Reach** is the default game: a realm of nine
+regions — the Vale of Ash as its first act, six holds each with its own
+unrested grief, a mountain pass, and a capital where the endings wait — with
+companions who judge you, six factions that remember, fast travel between the
+landmarks you have found, and seven endings, every one replay-proven. **The
+Vale of Ash** is the compact original it grew from: four classes, perks,
+levels, dice, two factions, a generated wood, and seven endings of its own.
 
 ```
 playtest loop                               dev loop
@@ -42,8 +42,8 @@ npm run devloop 5     # up to 5 dev cycles: finding -> change -> verify -> commi
 
 Needs Node 20+. Works on Windows, macOS, and Linux. The live loops need the
 Claude Code CLI. `TF_WORLD=<file>` picks the world for every entry point —
-`world/lighthouse.json` (the small regression world), `drafts/reach.json`
-(the realm under construction) — and defaults to the Vale.
+`world/lighthouse.json` (the small regression world), `world/vale.json` (the
+original Vale) — and defaults to the Gray Reach.
 
 ## What a turn looks like
 
@@ -152,8 +152,8 @@ is the realm's design and state contract; `docs/region-brief.md` is the brief
 a region author works from.
 
 ```bash
-node --import tsx scripts/lint-world.ts drafts/reach.json     # text budgets, per-region counts
-node --import tsx scripts/walk.ts drafts/reach.json steps.json # label list -> walkthrough, perk picks inserted
+node --import tsx scripts/lint-world.ts world/reach.json      # text budgets, per-region counts
+node --import tsx scripts/walk.ts world/reach.json steps.json  # label list -> walkthrough, perk picks inserted
 node scripts/fmt-json.mjs world/reach/*.json                  # compact, stable content formatting
 ```
 
@@ -170,12 +170,12 @@ src/turn.ts       the shell lane: one command per turn, replayed from its trace
 src/player.ts     direct-API fleet lane
 src/triage.ts     reports -> atomic corroborated issues
 src/play.ts       human CLI
-world/vale.json   The Vale of Ash (the default game)
+world/reach.json  The Gray Reach (the default game): root, classes, perks, quests, walkthrough, proofs
+world/reach/      its parts — the Vale rebuilt, companions, templates, and eight more regions
+world/vale.json   The Vale of Ash, the original compact world
 world/lighthouse.json  the small regression world
-world/reach/      The Gray Reach, in parts (the Vale rebuilt, companions, templates, regions)
-drafts/           the realm's root while it is built, and Marrowgate until its endings can be proven
 scripts/          author tools: lint, walk, stubs, land, fmt
-test/             148 tests, including the token budget and determinism rules
+test/             151 tests, including the token budget and determinism rules
 loop/             playtest wave, dev cycle, mock player, report checker
 queue/ done/      the one inbox (issues) and its archive
 docs/             design specs, the authoring guide, review findings

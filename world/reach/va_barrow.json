@@ -528,7 +528,7 @@
       "name": "worn half-token",
       "loc": "nowhere",
       "takeable": true,
-      "hint": "one face rubbed nearly smooth — the gray priest might know the ward-sign",
+      "hint": "half a ward-sign; the gray priest may know it",
       "use": [
         {
           "if": [["!flag", "va_read_token"]],
@@ -675,7 +675,7 @@
       "name": "The Barrow Doors",
       "start": [["flag", "va_heard_reeve_ask"]],
       "done": [["flag", "va_doors_decided"]],
-      "failed": [["flag", "va_broke_promise"]],
+      "failed": [["any", [["flag", "va_broke_promise"], ["flag", "va_king_forsaken"]]]],
       "stages": [
         {
           "if": [["flag", "va_king_resolved"]],

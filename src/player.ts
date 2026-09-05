@@ -203,7 +203,7 @@ export async function playOne(
   world: World,
   seed: number,
   provider: Provider,
-  maxGameTurns = 80,
+  maxGameTurns = 300,
 ): Promise<SessionResult> {
   const usage: Usage = { in: 0, out: 0, cacheRead: 0, cacheWrite: 0 };
   let apiCalls = 0;
@@ -344,10 +344,10 @@ if (process.argv[1]?.endsWith("player.ts")) {
   const count = Number(opt("--count", "1"));
   const seedBase = Number(opt("--seed-base", String(Math.floor(Date.now() / 1000) % 100000)));
   const parallel = Number(opt("--parallel", "4"));
-  const maxGameTurns = Number(opt("--max-game-turns", "80"));
+  const maxGameTurns = Number(opt("--max-game-turns", "300"));
   const model = opt("--model", process.env.TF_PLAYER_MODEL ?? "claude-haiku-4-5");
   const mock = args.includes("--mock");
-  const worldPath = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
+  const worldPath = process.env.TF_WORLD ?? join(ROOT, "world", "reach.json");
   const world = loadWorld(worldPath);
 
   const run = async () => {

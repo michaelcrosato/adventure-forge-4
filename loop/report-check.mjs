@@ -21,7 +21,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 // The same world the MCP server (src/mcp.ts) serves by default, so a report's
 // content hash names the world the player actually saw; loop/playtest.sh also
 // passes its resolved TF_WORLD to both, so an override cannot drift either.
-const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
+const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "reach.json");
 
 // The files a world is made of: the root, then every `include` part in load
 // order (globs sort by name). Mirrors worldFiles in src/validate.ts — this

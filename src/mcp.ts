@@ -22,7 +22,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const RUNS = join(ROOT, "runs");
 mkdirSync(RUNS, { recursive: true });
 
-const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
+const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "reach.json");
 const world: World = loadWorld(WORLD_PATH);
 {
   // refuse a bad world at boot instead of crashing mid-session

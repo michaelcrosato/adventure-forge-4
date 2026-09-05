@@ -148,7 +148,7 @@ if (mode === "master") {
   // an author's root ends at the oracle straight from the gate, so it is not gated there
   const stubs = stubsFor(new Set(["va", code]), true, false);
   writeFileSync(`drafts/stubs_${code}.json`, `${JSON.stringify(stubs, null, 2)}\n`);
-  const root = JSON.parse(readFileSync("drafts/reach.json", "utf8")) as Record<string, unknown>;
+  const root = JSON.parse(readFileSync("world/reach.json", "utf8")) as Record<string, unknown>;
   // every world/reach/wip/<code>_*.json — a region may be written as several
   // part files (settlement, wilderness, hollow) so no single write is huge
   root["include"] = [

@@ -12,7 +12,7 @@
  *   tsx src/turn.ts status <id>           journal, party, inventory, modifiers (free)
  *   tsx src/turn.ts labels <id>           the session's actions as walkthrough labels (for proofs)
  *
- * TF_WORLD picks the world file (default world/vale.json, same as every entry point).
+ * TF_WORLD picks the world file (default world/reach.json, same as every entry point).
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -24,7 +24,7 @@ import type { Action, State, Trace, World } from "./types.ts";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const RUNS = join(ROOT, "runs");
-const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
+const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "reach.json");
 
 type Built = { state: State; seen: Set<string>; events: string[]; menu: Action[] };
 

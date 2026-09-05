@@ -145,8 +145,9 @@ effects when you want the menu to preview its odds (`(roll 9+ on the die;
 by `move`). `hit`/`dmg` make a weapon (best carried counts, unarmed = 1 dmg),
 `armor` reduces damage taken (best carried counts). `light: true` lights dark
 rooms while flag `<id>_lit` is set. `use` entries run the first whose `if`
-passes and whose `target` (item or npc) is at hand; `hint` shows on pickup and
-as the menu preview for a use without a leading check.
+passes and whose `target` (item or npc) is at hand; `hint` shows on pickup, as
+the menu preview for a use without a leading check where a place is first
+shown, and in `status` (a brief view spends its characters on what changed).
 
 ## 7. Npcs, topics, conversations
 
@@ -290,8 +291,9 @@ it standing somewhere.
 
 - A quest lists once `start` passes (default: from the beginning) until
   `done` or `failed`. Stages are tried top to bottom; put the most advanced
-  first. Any change prints `Quest — name: text` the turn it happens; `status`
-  lists the journal. Every region quest (4–6 per region) needs a stage for
+  first. Any change prints `Quest — name: text` the turn it happens (several quests
+  beginning on one turn collapse to one `Journal: …` line); `status` lists
+  the journal. Every region quest (4–6 per region) needs a stage for
   each state a player can be in.
 - Epilogue lines print after any ending when their conditions hold, in file
   order, at most 6. Write 4–8 per region: rested / burned / bargained /

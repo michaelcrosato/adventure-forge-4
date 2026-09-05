@@ -19,10 +19,10 @@ const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 export const VISITED_FULL = 12;
 export const VISITED_RECENT = 5;
 
-export function renderMenu(world: World, s: State): { text: string; actions: Action[] } {
+export function renderMenu(world: World, s: State, opts: { itemHints?: boolean } = {}): { text: string; actions: Action[] } {
   const actions = legalActions(world, s);
   const text = actions
-    .map((a, i) => `${i + 1} ${actionLabel(world, a, s)}${oddsHint(world, s, a)}`)
+    .map((a, i) => `${i + 1} ${actionLabel(world, a, s)}${oddsHint(world, s, a, opts)}`)
     .join("\n");
   return { text, actions };
 }
@@ -96,7 +96,7 @@ export function render(
       const v = s.vars[world.progress.var] ?? 0;
       lines.push(`${world.progress.label}: ${v}/${world.progress.max}`);
     }
-    const menu = renderMenu(world, s);
+    const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push(menu.text);
     return { text: lines.join("\n"), actions: menu.actions };
   }
@@ -115,13 +115,15 @@ export function render(
     const v = s.vars[world.progress.var] ?? 0;
     lines.push(`${world.progress.label}: ${v}/${world.progress.max}`);
   }
-  if (s.inv.length) {
+  if (s.inv.length && opts.full) {
+    // the pack is listed where a place is first shown and in status; a brief
+    // view spends its characters on what changed
     const carried = s.inv.map((id) => world.items[id]?.name ?? id);
     lines.push(`carrying: ${carried.join(", ")}`);
   }
 
   if (inPerkPickPhase(world, s)) {
-    const menu = renderMenu(world, s);
+    const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push("Level up. Pick 1 perk/lvl for fights & checks (perm).");
     lines.push(menu.text);
     return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
@@ -129,7 +131,7 @@ export function render(
 
   // an open conversation: the npc's line is in the events; the room waits
   if (inTalkMode(world, s)) {
-    const menu = renderMenu(world, s);
+    const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push(`talking with ${world.npcs[s.talking!]?.name ?? s.talking}`);
     lines.push(menu.text);
     return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
@@ -137,7 +139,7 @@ export function render(
 
   // the travel menu: known places, nothing else
   if (inTravelMode(world, s)) {
-    const menu = renderMenu(world, s);
+    const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push("Travel — places you know:");
     lines.push(menu.text);
     return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
@@ -177,7 +179,7 @@ export function render(
     lines.push(`exits: ${marked.join(" ")}`);
   }
 
-  const menu = renderMenu(world, s);
+  const menu = renderMenu(world, s, { itemHints: !!opts.full });
   lines.push(menu.text);
   return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
 }
@@ -228,7 +230,11 @@ export function renderStatus(world: World, s: State): string {
     else lines.push(`Visited: ${names.length} places (lately: ${names.slice(-VISITED_RECENT).join(", ")})`);
   }
   if (s.inv.length) {
-    const carried = s.inv.map((id) => world.items[id]?.name ?? id);
+    // status is the one place every carried item's hint is always listed
+    const carried = s.inv.map((id) => {
+      const it = world.items[id];
+      return it ? (it.hint ? `${it.name} (${it.hint})` : it.name) : id;
+    });
     lines.push(`carrying: ${carried.join(", ")}`);
   }
   if (s.party?.length) {

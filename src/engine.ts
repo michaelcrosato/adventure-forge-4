@@ -272,9 +272,16 @@ export function journal(world: World, s: State): QuestLine[] {
 function journalEvents(world: World, before: State, after: State, events: string[]): void {
   if (!world.quests) return;
   const prev = new Map(journal(world, before).map((q) => [q.id, q]));
-  for (const q of journal(world, after)) {
+  const now = journal(world, after);
+  // entering a hold can begin several quests at once; one line names them all
+  // and the journal (status) carries their text, so the screen stays readable
+  const begun = now.filter((q) => !prev.has(q.id) && q.status !== "done" && q.status !== "failed" && q.text);
+  const collapse = begun.length >= 2;
+  if (collapse) events.push(`Journal: ${begun.map((q) => q.name).join("; ")} — see status.`);
+  for (const q of now) {
     const p = prev.get(q.id);
     if (p && p.status === q.status && p.text === q.text) continue;
+    if (collapse && !p && q.status !== "done" && q.status !== "failed") continue;
     if (q.status === "done") events.push(`Quest done: ${q.name}.`);
     else if (q.status === "failed") events.push(`Quest failed: ${q.name}.`);
     else if (q.text) events.push(`Quest — ${q.name}: ${q.text}`);
@@ -791,7 +798,7 @@ function fxFor(world: World, s: State, a: Action): Fx[] | undefined {
  * which match on the canonical label — are unaffected by odds text or by
  * attribute/perk changes.
  */
-export function oddsHint(world: World, s: State, a: Action): string {
+export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: boolean } = {}): string {
   if (a.kind === "attack") {
     const def = world.npcs[a.npc];
     if (!def) return "";
@@ -814,7 +821,9 @@ export function oddsHint(world: World, s: State, a: Action): string {
     if (!mod) return ` (roll ${need}+ on the die; ${chk[1]})`;
     return ` (roll ${need}+ on the die; ${mod > 0 ? "+" : ""}${mod} ${chk[1]})`;
   }
-  if (a.kind === "use") {
+  if (a.kind === "use" && opts.itemHints !== false) {
+    // an item's use can sit in the menu for the rest of the game, so its hint
+    // is shown where a place is first shown (and in status), not on every screen
     const hint = world.items[a.item]?.hint;
     return hint ? ` (${hint})` : "";
   }

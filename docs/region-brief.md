@@ -102,8 +102,8 @@ previewed goes FIRST in its effect list.
 Your file is validated as part of the whole draft realm:
 
 ```bash
-node --import tsx src/validate.ts drafts/reach.json     # must print ✓ for the realm
-node --import tsx src/crawl.ts drafts/reach.json        # must be clean; note rooms seen
+node --import tsx src/validate.ts world/reach.json      # must print ✓ for the realm
+node --import tsx src/crawl.ts world/reach.json         # must be clean; note rooms seen
 ```
 
 Run them from the repo root. Fix every line that names one of your ids. If
@@ -112,7 +112,7 @@ typo. Then check your text budgets programmatically (write a small script)
 and play your region blind for a dozen turns:
 
 ```bash
-TF_WORLD=drafts/reach.json npm run turn -- new 5      # then act <id> <n>, look, status
+npm run turn -- new 5                                   # then act <id> <n>, look, status
 ```
 
 Read your own screens as the player will. Finally write, in your report: the

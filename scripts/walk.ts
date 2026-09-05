@@ -5,7 +5,7 @@
  * label list as JSON — ready to paste into `walkthrough` or `proofs`. On a
  * label that is not on the menu it prints the room, the turn, and the menu.
  *
- *   node --import tsx scripts/walk.ts drafts/reach.json steps.json [--perk "Second Wind"] [--show]
+ *   node --import tsx scripts/walk.ts world/reach.json steps.json [--perk "Second Wind"] [--show]
  *
  * steps.json is a JSON array of labels (repeat steps are passed through).
  */
@@ -42,7 +42,8 @@ const pickPerk = () => {
 };
 
 const doLabel = (label: string): boolean => {
-  while (pickPerk()) { /* drain level-ups first */ }
+  // a walkthrough may name its own perk picks; only auto-pick when the step is something else
+  while (!label.startsWith("perk:") && pickPerk()) { /* drain level-ups first */ }
   const a = actionByLabel(world, state, label);
   if (!a) {
     console.error(`\n✗ no legal action "${label}" at ${state.room} (turn ${state.turn}). Menu:`);

@@ -1,0 +1,286 @@
+{
+  "rooms": {
+    "fd_causeway_west": {
+      "name": "Fenmarch Causeway",
+      "desc": "Packed stone gives way to reed and standing water. Fenmarch's stilt-roofs show ahead through the reeds, gray on gray. West the causeway climbs back dry toward the Vale.",
+      "brief": "The causeway sinks into reed and water.",
+      "region": "fd",
+      "landmark": "Fenmarch causeway",
+      "exits": {
+        "west": { "to": "va_causeway" },
+        "in": { "to": "fd_settlement", "landmark": "Reedholm" }
+      },
+      "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
+    },
+    "fd_north_dike": {
+      "name": "Fenmarch North Dike",
+      "desc": "A raised dike holds the fen back from firmer ground. North the land climbs toward Hollowbrook's barrows; south the reeds close back over Reedholm's roofs.",
+      "brief": "The dike holds back the fen.",
+      "region": "fd",
+      "landmark": "Fenmarch north dike",
+      "exits": {
+        "north": { "to": "hb_south_dike" },
+        "in": { "to": "fd_settlement", "landmark": "Reedholm" }
+      },
+      "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
+    },
+    "fd_coast_road": {
+      "name": "Fenmarch Coast Road",
+      "desc": "The road runs south on a spine of shingle between fen and open coast, salt creeping into the reed-smell. South it climbs toward the Saltkerns; north, Reedholm's stilts stand over black water.",
+      "brief": "Shingle spine, fen and sea.",
+      "region": "fd",
+      "landmark": "Fenmarch coast road",
+      "exits": {
+        "south": { "to": "sk_coast_road" },
+        "in": { "to": "fd_settlement", "landmark": "Reedholm" }
+      },
+      "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
+    },
+    "fd_settlement": {
+      "name": "Reedholm — the Landing",
+      "desc": "Stilt-houses crowd over black water, gray planking strung rail to rail between them. Nets dry everywhere and nobody mends them. A causeway runs west, a dike north, a shingle road south; the settlement crowds east, and a boardwalk trails out into open reed.",
+      "brief": "Reedholm's landing, stilts over black water.",
+      "region": "fd",
+      "landmark": "Reedholm",
+      "exits": {
+        "west": { "to": "fd_causeway_west", "landmark": "the causeway" },
+        "north": { "to": "fd_north_dike", "landmark": "the north dike" },
+        "south": { "to": "fd_coast_road", "landmark": "the coast road" },
+        "east": { "to": "fd_net_hall", "landmark": "the net-hall" }
+      },
+      "onEnterOnce": [["score", 3], ["xp", 2], ["say", "Somewhere past the last stilt-house, faint under the water at dusk, something sings. Nobody in Reedholm looks up when it does."]],
+      "actions": [
+        { "id": "fd_landing_listen", "label": "listen to the water", "once": true,
+          "fx": [["xp", 1], ["say", "Voices, or near enough — layered, slow, more felt through the planking than heard. It stops the moment you're sure of it."]] }
+      ]
+    },
+    "fd_net_hall": {
+      "name": "The Net-Hall",
+      "desc": "Long tables under a low roof, hung thick with nets that smell of tar and fish. A banked fire keeps the worst of the damp out. The eel-market lies north, the Priory south, the rest of Reedholm east; the landing is west.",
+      "brief": "Nets and a banked fire.",
+      "region": "fd",
+      "exits": {
+        "west": { "to": "fd_settlement" },
+        "north": { "to": "fd_eel_market", "landmark": "the eel-market" },
+        "south": { "to": "fd_priory", "landmark": "the Priory" },
+        "east": { "to": "fd_stilt_row" }
+      },
+      "actions": [
+        { "id": "fd_rest", "label": "rest among the nets", "fx": [["hp", 10], ["say", "You sleep salt-damp and warm enough, rocked by the water under the planks."]] }
+      ]
+    },
+    "fd_eel_market": {
+      "name": "The Eel-Market",
+      "desc": "Baskets of live eels hiss and slap in shallow tubs. A trader missing two fingers weighs catch against coin, calling prices to no one in particular. The net-hall lies south.",
+      "brief": "Eels in tubs, a two-fingered scale.",
+      "region": "fd",
+      "exits": { "south": { "to": "fd_net_hall" } },
+      "actions": [
+        { "id": "fd_buy_spear", "label": "buy an eel-spear — 8 gold", "if": [["var", "gold", ">=", 8], ["!has", "fd_eel_spear"]],
+          "fx": [["addvar", "gold", -8], ["move", "fd_eel_spear", "inv"], ["say", "A long spear, barbed for eel-work and balanced well enough for worse. 'Mind the barb coming back out,' she says."]] },
+        { "id": "fd_buy_cloak", "label": "buy an oilskin cloak — 6 gold", "if": [["var", "gold", ">=", 6], ["!has", "fd_oilskin_cloak"]],
+          "fx": [["addvar", "gold", -6], ["move", "fd_oilskin_cloak", "inv"], ["say", "Stiff with tar and salt, and it sheds water like it means it."]] },
+        { "id": "fd_buy_smoked", "label": "buy smoked eel — 3 gold", "if": [["var", "gold", ">=", 3]],
+          "fx": [["addvar", "gold", -3], ["move", "fd_smoked_eel", "inv"], ["say", "She wraps a length of smoked eel in waxed cloth without being asked twice."]] },
+        { "id": "fd_sell_ward", "label": "sell the corroded ward-coin", "if": [["has", "fd_cairn_ward"]], "once": true,
+          "fx": [["move", "fd_cairn_ward", "nowhere"], ["addvar", "gold", 4], ["xp", 1], ["say", "She turns it over once, shrugs, and pays four coin for the curiosity of it."]] }
+      ]
+    },
+    "fd_priory": {
+      "name": "The Priory of the Gray Church",
+      "desc": "Stone among the stilts, older than Reedholm itself — the mother-house of the Gray Church, or what's left of it. Prior Halm keeps candles lit against the damp. A cloister leads east.",
+      "brief": "Stone among stilts, candles lit.",
+      "region": "fd",
+      "exits": {
+        "north": { "to": "fd_net_hall" },
+        "east": { "to": "fd_priory_cloister" }
+      },
+      "actions": [
+        { "id": "fd_confess", "label": "press Halm on the tablet (will)", "if": [["flag", "fd_read_tablet"], ["!flag", "fd_prior_confessed"]],
+          "fx": [["check", "will", 11,
+            [["set", "fd_prior_confessed"], ["score", 4], ["xp", 3], ["addvar", "rep_church", -1], ["addvar", "appr_osk", 1],
+              ["say", "He goes very still, then says it plain: they heard the bell-ringer's own warning and prayed over it instead. 'Now you know,' he says. 'Do with it what you will.'"]],
+            [["say", "He looks at the floor a long moment. 'Some things are between me and that water,' he says, and won't be moved past it today."]]
+          ]] },
+        { "id": "fd_expose_ironbound", "label": "tell Halm what the Ironbound mean to do", "if": [["flag", "fd_knows_ironbound_plan"], ["!flag", "fd_ironbound_sided"], ["!flag", "fd_ironbound_gone"]], "once": true,
+          "fx": [["set", "fd_ironbound_exposed"], ["set", "fd_ironbound_gone"], ["addvar", "rep_church", 1], ["addvar", "rep_iron", -2],
+            ["npcgo", "fd_ironbound_warder", null], ["npcgo", "fd_ironbound_second", null],
+            ["say", "Halm's face goes hard in a way you haven't seen on him. By evening the Priory's own men have walked the Ironbound off Stilt Row, iron sun and all. 'Not in my water,' is all he says of it."]] }
+      ]
+    },
+    "fd_priory_cloister": {
+      "name": "The Cloister",
+      "desc": "A covered walk rings a drowned garden, more mud than green now. Grave-tablets line the inner wall, names worn past reading — except one, kept clear of moss on purpose. The Priory lies west.",
+      "brief": "The drowned garden, one clear tablet.",
+      "region": "fd",
+      "exits": { "west": { "to": "fd_priory" } },
+      "actions": [
+        { "id": "fd_read_tablet", "label": "read the one clear grave-tablet", "once": true,
+          "fx": [["set", "fd_read_tablet"], ["xp", 3], ["score", 2],
+            ["say", "A name, a date — the flood's year — and beneath it, scraped by a different, later hand: THE DOOR STOOD OPEN. THEY CHOSE TO PRAY. Not a mason's line. Someone's confession, half-erased since."]] }
+      ]
+    },
+    "fd_stilt_row": {
+      "name": "Stilt Row",
+      "desc": "Leaning houses on stilts, walkways slick underfoot. A child's shoe hangs from one rail, small and gray, and nobody has taken it down in years. The net-hall lies west.",
+      "brief": "Leaning houses, a small gray shoe.",
+      "region": "fd",
+      "exits": {
+        "west": { "to": "fd_net_hall" },
+        "north": { "to": "fd_drying_racks" },
+        "south": { "to": "fd_ironbound_camp", "landmark": "the Ironbound mission" }
+      }
+    },
+    "fd_drying_racks": {
+      "name": "The Drying Racks",
+      "desc": "Racks of split eel curing over a low fire. Whoever tends them has stepped away — a knife's stuck in the block, a coil of tarred rope beside it.",
+      "brief": "Curing eel, a knife left in the block.",
+      "region": "fd",
+      "exits": { "south": { "to": "fd_stilt_row" } },
+      "actions": [
+        { "id": "fd_take_rope", "label": "take the coil of tarred rope", "once": true, "if": [["!has", "fd_tarred_rope"]],
+          "fx": [["move", "fd_tarred_rope", "inv"], ["xp", 1], ["say", "Good rope, tarred against the wet. Whoever left it isn't likely to miss one coil."]] }
+      ]
+    },
+    "fd_ironbound_camp": {
+      "name": "The Ironbound Mission",
+      "desc": "A netshed requisitioned and hung with the Ironbound's iron sun. A brazier stays lit day and night. Two of them keep it, waiting on an order to burn the nave and be done with the singing.",
+      "brief": "A netshed, an iron sun, a lit brazier.",
+      "region": "fd",
+      "exits": { "north": { "to": "fd_stilt_row" } },
+      "variants": [
+        { "if": [["flag", "fd_ironbound_gone"]], "desc": "The netshed stands empty, the iron sun taken down. Ash from the brazier is the only sign they were ever here.", "brief": "Empty netshed, cold ash." }
+      ]
+    }
+  },
+  "items": {
+    "fd_eel_spear": { "name": "eel-spear", "loc": "nowhere", "hit": 1, "dmg": 4 },
+    "fd_oilskin_cloak": { "name": "oilskin cloak", "loc": "nowhere", "armor": 1 },
+    "fd_smoked_eel": { "name": "smoked eel", "loc": "nowhere", "takeable": true, "hint": "eat it to ease a wound",
+      "use": [{ "fx": [["hp", 4], ["move", "fd_smoked_eel", "nowhere"], ["say", "Salt and smoke; it settles the stomach and eases the ache."]] }] },
+    "fd_tarred_rope": { "name": "coil of tarred rope", "loc": "nowhere", "takeable": true, "hint": "good for hauling something heavy up out of black water" },
+    "fd_pitch": { "name": "skin of Ironbound pitch", "loc": "nowhere", "hint": "the Ironbound's own brand-oil, meant for burning what won't rest" }
+  },
+  "npcs": {
+    "fd_prior": {
+      "name": "Prior Halm",
+      "room": "fd_priory",
+      "dialogue": true,
+      "desc": "A thin man in gray, hands never quite still, watching the water through the door as much as you.",
+      "topics": [
+        { "id": "greet", "label": "who are you", "once": true, "say": "Prior Halm, for what that's worth these days. Sit if the damp doesn't trouble you — it troubles everyone eventually, in Fenmarch.", "fx": [["xp", 1]] },
+        { "id": "mother_house", "label": "this Priory", "if": [["flag", "said_fd_prior_greet"]], "once": true,
+          "say": "This is the Gray Church's mother-house — every gray priest between here and Coldpass trained under this roof once, mine included. Little enough to show for it now.", "fx": [["xp", 2]] },
+        { "id": "flood", "label": "the flood", "if": [["flag", "said_fd_prior_mother_house"]], "once": true,
+          "say": "Twenty years gone, the water rose in a night and took the old nave and its whole congregation with it. We prayed instead of ringing the warning bell. I did not choose that. I was young enough not to be asked.",
+          "fx": [["xp", 2], ["set", "fd_knows_hollow"]] },
+        { "id": "fault_rumor", "label": "what folk say about the flood", "if": [["flag", "said_fd_prior_flood"]], "once": true,
+          "say": "Some in Reedholm say the Priory chose prayer over the bell on purpose, to test their faith. I've never found the courage to ask which of my elders believed that — or whether I would have.", "fx": [["xp", 2]] },
+        { "id": "osk", "label": "your novice, Brother Osk", "if": [["flag", "osk_joined"]], "once": true,
+          "say": "Sent to me green and hopeful, and I've taught him rites for a grief he didn't know was his own family's, not until you brought him this far east. I owe him better than I've given him.", "fx": [["xp", 2]] },
+        { "id": "ironbound", "label": "the Ironbound on Stilt Row", "if": [["flag", "fd_entered"]], "once": true,
+          "say": "Two of the Ironbound have pitched camp on Stilt Row, waiting to burn the nave and be done with it. They aren't wrong that something must be done. I only wish they'd asked before they arrived.",
+          "fx": [["set", "fd_knows_ironbound_plan"], ["xp", 2]] },
+        { "id": "after_rested", "label": "the singing's stopped", "if": [["flag", "fd_hollow_rested"]], "once": true,
+          "say": "I felt it go, like a held breath finally let out. Whatever you did down there, it was mercy, and Fenmarch will not forget it soon.", "fx": [["xp", 2], ["addvar", "rep_church", 1]] },
+        { "id": "after_bargained", "label": "the tithe you promised", "if": [["flag", "fd_hollow_bargained"]], "once": true,
+          "say": "Quieter, they tell me, not gone. A tithe's not absolution, but it's honest dealing, and the water seems to have taken it as such. I can live with quieter.", "fx": [["xp", 2], ["addvar", "rep_church", 1]] },
+        { "id": "after_burned", "label": "the fire on the water", "if": [["flag", "fd_hollow_burned"]], "once": true,
+          "say": "You burned them. I understand the reasoning — I may even understand the mercy in it — but I buried my own faith in that water once, and now there's nothing left down there to visit.", "fx": [["xp", 1], ["addvar", "rep_church", -1]] },
+        { "id": "bye", "label": "leave him to his candles", "say": "Go gently on the walkways. Reedholm loses someone to the water most years; I'd rather not add a name I know.", "end": true }
+      ]
+    },
+    "fd_sexton": {
+      "name": "old sexton",
+      "room": "fd_priory_cloister",
+      "desc": "Bent low over the one clear tablet, scraping moss that keeps coming back.",
+      "topics": [
+        { "id": "greet", "label": "the tablet you keep clear", "once": true,
+          "say": "Someone has to. The rest can go under the moss; that one, never. It isn't for the dead's sake I keep it — it's for the Priory's memory, which is shorter.", "fx": [["xp", 2]] },
+        { "id": "hint", "label": "what happened, the year of the flood", "if": [["flag", "said_fd_sexton_greet"]], "once": true,
+          "say": "The water rose faster than anyone thought it could, and the Priory prayed instead of ringing the bell to run. Halm wasn't Prior then. He was young, and he watched it happen.", "fx": [["xp", 2], ["set", "fd_knows_sexton_hint"]] }
+      ]
+    },
+    "fd_netkeep": {
+      "name": "netkeep",
+      "room": "fd_net_hall",
+      "desc": "Mending net by firelight, fingers quick despite the poor light.",
+      "topics": [
+        { "id": "greet", "label": "the hall", "once": true, "say": "Warm, dry-ish, and nobody drowns under this roof. That's the whole of what I promise anyone.", "fx": [["xp", 1]] },
+        { "id": "rumor", "label": "what folk are saying", "if": [["flag", "said_fd_netkeep_greet"]], "once": true,
+          "say": "That the singing's gotten louder since the Ironbound pitched their camp on Stilt Row. Whether that's the water answering them or just Reedholm's nerves, I couldn't say.", "fx": [["xp", 2]] },
+        { "id": "after", "label": "the smoke over the water", "if": [["flag", "fd_hollow_burned"]], "once": true,
+          "say": "I've mended nets under worse skies. Never one I helped make, though.", "fx": [["xp", 1]] }
+      ]
+    },
+    "fd_eel_trader": {
+      "name": "eel-trader",
+      "room": "fd_eel_market",
+      "desc": "Two fingers gone at the second knuckle, and quick enough with the rest not to miss them.",
+      "topics": [
+        { "id": "greet", "label": "the trade", "once": true,
+          "say": "Eels don't care whose water they're in. Been a leaner catch since something's been tearing my traps out past the reed-line, though.", "fx": [["xp", 1]] },
+        { "id": "bounty", "label": "the traps somebody's tearing out", "if": [["flag", "said_fd_eel_trader_greet"], ["!flag", "fd_bog_bounty"]], "once": true,
+          "say": "Something with more strength than sense, out in the reeds. Bring me proof of what's doing it and there's coin in it — three or four.", "fx": [["set", "fd_bog_bounty"], ["xp", 1]] },
+        { "id": "bounty_paid", "label": "the hide, for the bounty", "if": [["has", "fd_bog_hide"]], "once": true,
+          "say": "That's the hide, all right. Ugly thing. Here — and my traps thank you, even if they can't say so themselves.",
+          "fx": [["move", "fd_bog_hide", "nowhere"], ["set", "fd_bog_paid"], ["addvar", "gold", 4], ["score", 3], ["xp", 2],
+            ["say", "She counts four coins into your palm without haggling, which from her is its own kind of thanks."]] },
+        { "id": "ironbound", "label": "the Ironbound on Stilt Row", "if": [["flag", "fd_entered"]], "once": true,
+          "say": "Bad for business, zealots. Folk don't linger to buy eel with a brazier and a burning-sermon two doors down.", "fx": [["xp", 1]] }
+      ]
+    },
+    "fd_mara": {
+      "name": "Mara",
+      "room": "fd_stilt_row",
+      "dialogue": true,
+      "desc": "Hangs washing that never quite dries, watching the water more than the line.",
+      "topics": [
+        { "id": "greet", "label": "who are you", "once": true,
+          "say": "Lived on this row longer than most of the houses have stood. My husband went out checking eel-traps the night of the flood, twenty years gone. Never came back to be buried.", "fx": [["xp", 2]] },
+        { "id": "ask", "label": "ask about her husband", "if": [["flag", "said_fd_mara_greet"], ["!flag", "fd_mara_asked"]], "once": true,
+          "say": "If you go down there — if you find anything of his, a ring, a boot-buckle, anything — I'd want to know. Even now. Especially now.", "fx": [["set", "fd_mara_asked"], ["xp", 2]] },
+        { "id": "give_truth", "label": "tell her what the water gave up", "if": [["has", "fd_grief_token"], ["!flag", "fd_mara_closure"]], "once": true,
+          "say": "You set the buckle in her hands, black with years underwater. She holds it a long moment, then nods, like a question finally answered. 'Twenty years,' she says. 'I can stop asking now.'",
+          "fx": [["set", "fd_mara_closure"], ["set", "fd_mara_told_truth"], ["move", "fd_grief_token", "nowhere"], ["score", 4], ["xp", 3], ["addvar", "rep_church", 1]] },
+        { "id": "lie", "label": "tell her he's at peace", "if": [["flag", "fd_mara_asked"], ["!has", "fd_grief_token"], ["!flag", "fd_mara_closure"], ["flag", "fd_hollow_done"]], "once": true,
+          "say": "You tell her he's at peace, though you found nothing of him at all. She wants to believe it badly enough that she does. It isn't the truth. It settles her all the same.",
+          "fx": [["set", "fd_mara_closure"], ["set", "fd_mara_lied"], ["score", 2], ["xp", 2]] },
+        { "id": "after", "label": "how she's getting on", "if": [["flag", "fd_mara_closure"]], "once": true,
+          "say": "Better, some days. The row's quieter without the wondering in it. Thank you for that, whichever way you managed it.", "fx": [["xp", 1]] },
+        { "id": "bye", "label": "leave her to the washing", "say": "Mind the planks past the third house. They've been rotten for years.", "end": true }
+      ]
+    },
+    "fd_ironbound_warder": {
+      "name": "Warder Iss",
+      "room": "fd_ironbound_camp",
+      "dialogue": true,
+      "desc": "An iron sun on a cord at her throat, watching the water like it owes her something.",
+      "topics": [
+        { "id": "greet", "label": "who are you", "once": true,
+          "say": "Ironbound, out of Cinderhall. That nave's been singing grief into this water for a hundred years and the Church has done nothing but pray at it. We don't pray. We finish things.", "fx": [["xp", 2]] },
+        { "id": "order", "label": "the order you're waiting on", "if": [["flag", "said_fd_ironbound_warder_greet"]], "once": true,
+          "say": "Preceptor's word, or our own patience running out first. Either way, that nave burns eventually. Help us do it clean and it goes easier on everyone in these stilts.",
+          "fx": [["set", "fd_knows_ironbound_plan"], ["xp", 2]] },
+        { "id": "pitch", "label": "ask for the pitch", "if": [["flag", "said_fd_ironbound_warder_order"], ["!has", "fd_pitch"], ["!flag", "fd_hollow_done"], ["!flag", "fd_ironbound_refused"], ["!flag", "fd_ironbound_exposed"]], "once": true,
+          "say": "Now you're talking sense. Take it — and when you're standing over that water, remember whose fire you're carrying.",
+          "fx": [["move", "fd_pitch", "inv"], ["set", "fd_ironbound_sided"], ["addvar", "rep_iron", 1], ["addvar", "rep_church", -1], ["xp", 1]] },
+        { "id": "refuse", "label": "tell her the Church handles its own dead", "if": [["flag", "said_fd_ironbound_warder_order"], ["!flag", "fd_ironbound_sided"], ["!flag", "fd_ironbound_refused"]], "once": true,
+          "say": "Your funeral, not ours — but then, everything down here already is somebody's funeral. Suit yourself.",
+          "fx": [["set", "fd_ironbound_refused"], ["addvar", "rep_church", 1], ["addvar", "rep_iron", -1], ["addvar", "appr_osk", 1]] },
+        { "id": "after_done", "label": "the nave, now it's settled", "if": [["flag", "fd_hollow_done"], ["!flag", "fd_hollow_burned"]], "once": true,
+          "say": "Quiet, is it. Wasn't fire, but quiet's something. We'll take word of it back to Cinderhall regardless — a hollow dealt with is a hollow dealt with, our way or not.", "fx": [["xp", 1]] },
+        { "id": "bye", "label": "leave the mission to its brazier", "say": "Mind the water. It remembers who prayed and who didn't.", "end": true }
+      ]
+    },
+    "fd_ironbound_second": {
+      "name": "the second zealot",
+      "room": "fd_ironbound_camp",
+      "desc": "Feeds the brazier without being told to, and watches you over the flame.",
+      "topics": [
+        { "id": "greet", "label": "say nothing, just look at him", "once": true,
+          "say": "He doesn't look up from the fire. 'Warder does the talking,' he says, and goes back to feeding it.", "fx": [["xp", 1]] }
+      ]
+    }
+  }
+}

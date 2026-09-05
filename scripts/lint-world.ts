@@ -9,7 +9,7 @@
  *   - per region prefix: rooms, named places, landmarks, npcs, quests,
  *     stamps, score and xp available, gold available
  *
- *   node --import tsx scripts/lint-world.ts drafts/reach.json [--prefix fd]
+ *   node --import tsx scripts/lint-world.ts world/reach.json [--prefix fd]
  */
 import { loadWorld } from "../src/validate.ts";
 import type { Fx, World } from "../src/types.ts";

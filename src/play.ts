@@ -11,7 +11,7 @@ import { render, renderIntro, renderStatus } from "./format.ts";
 import { loadWorld } from "./validate.ts";
 
 const seed = Number(process.argv[2] ?? Math.floor(Math.random() * 1e9));
-const world = loadWorld(process.env.TF_WORLD ?? fileURLToPath(new URL("../world/vale.json", import.meta.url)));
+const world = loadWorld(process.env.TF_WORLD ?? fileURLToPath(new URL("../world/reach.json", import.meta.url)));
 let { state, events } = newState(world, seed);
 const seen = new Set<string>(inClassPhase(world, state) ? [] : [state.room]);
 let out = renderIntro(world, state, events);
