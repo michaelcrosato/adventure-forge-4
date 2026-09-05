@@ -156,9 +156,11 @@ export function render(
       .filter(([id]) => s.npcRoom[id] === s.room && !s.party.includes(id))
       .map(([id, d]) => {
         const hp = s.npcHp[id] ?? d.hp ?? 1;
+        // an npc's one-line desc shows on the full view (first sight, look), not on revisits
+        const tail = opts.full && d.desc ? ` — ${d.desc}` : "";
         if (hp <= 0) return `${d.name} (dead)`;
-        if (d.hostile || d.aggressive) return `${d.name} (hostile, hp${hp}/${d.hp ?? 1})`;
-        return `${d.name} is here`;
+        if (d.hostile || d.aggressive) return `${d.name} (hostile, hp${hp}/${d.hp ?? 1})${tail}`;
+        return `${d.name} is here${tail}`;
       });
     if (npcs.length) lines.push(npcs.join("; "));
     const party = s.party.map((id) => world.npcs[id]?.name ?? id);

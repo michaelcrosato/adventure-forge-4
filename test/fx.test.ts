@@ -76,3 +76,19 @@ test("validator: a goto inside an if still counts for reachability", () => {
   w.rooms["a"]!.actions!.push({ id: "jump", label: "jump", fx: [["if", [], [["goto", "c"]], []]] });
   assert.deepEqual(validateWorld(w), []);
 });
+
+test("any passes when one listed condition passes, and is validated like any other condition", () => {
+  const w = world();
+  w.rooms["a"]!.actions!.push({ id: "either", label: "either", if: [["any", [["flag", "x"], ["has", "coin"]]]], fx: [["say", "ok"]] });
+  let { state } = newState(w, 1);
+  assert.ok(legalActions(w, state).some((a) => a.kind === "custom" && a.id === "either"), "coin in hand satisfies the any");
+  state = step(w, state, { kind: "custom", room: "a", id: "drop" }).state;
+  assert.ok(!legalActions(w, state).some((a) => a.kind === "custom" && a.id === "either"), "neither holds");
+  state.flags["x"] = true;
+  assert.ok(legalActions(w, state).some((a) => a.kind === "custom" && a.id === "either"));
+  assert.deepEqual(validateWorld(w), []);
+  w.rooms["a"]!.actions!.push({ id: "bad", label: "bad", if: [["any", [["has", "ghost"]]], ["any", []]], fx: [] });
+  const errs = validateWorld(w);
+  assert.ok(errs.some((e) => e.includes("bad.any: unknown item ghost")), errs.join("\n"));
+  assert.ok(errs.some((e) => e.includes("any needs a non-empty list")), errs.join("\n"));
+});

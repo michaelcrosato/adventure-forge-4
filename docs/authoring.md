@@ -60,6 +60,7 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["class", c]` / `["!class", c]` | the player's class |
 | `["perk", p]` / `["!perk", p]` | the player owns the perk |
 | `["inParty", npc]` / `["!inParty", npc]` | companion travels with the player |
+| `["any", [cond, cond, ...]]` | passes when at least one listed condition passes — the one OR inside an all-of list |
 
 ## 4. Effects
 
@@ -176,6 +177,11 @@ as the menu preview for a use without a leading check.
   ones with `said_<npc>_<topic>` flags to build a tree.
 - Keep a topic's `say` under ~220 characters. Split long speeches across
   chained topics; the player chooses to hear more.
+- Npc `name`s: common nouns lowercase and without an article ("barrow-wight",
+  "gray husk"); proper names capitalized ("Lys", "Regent Ysolde"). Combat
+  text adds "the" before a lowercase common noun and never before a capital
+  or an existing the/a/an. `desc` (one line) shows after "is here" on the
+  room's full view — first sight and `look` — and never on revisits.
 - Fighting: `hp`, `atk` (damage per strike), `df` (the d20 + weapon hit +
   might total needed), `onDeath` effects. `hostile: true` only changes the
   room line (`(hostile, hp3/3)`); a non-aggressive hostile waits to be

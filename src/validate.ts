@@ -21,7 +21,7 @@ import type { Cond, Fx, State, WalkStep, World } from "./types.ts";
 export { MENU_CAP };
 
 const COND_OPS = new Set([
-  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty",
+  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "any",
 ]);
 const FX_OPS = new Set([
   "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "end",
@@ -119,6 +119,10 @@ export function validateWorld(world: World): string[] {
       else if (c[0] === "var" && !["<", ">", "=", ">=", "<="].includes(c[2])) err(`${where}: bad var comparator ${String(c[2])}`);
       else if ((c[0] === "class" || c[0] === "!class") && !classOk(c[1])) err(`${where}: unknown class ${c[1]}`);
       else if ((c[0] === "perk" || c[0] === "!perk") && !perkOk(c[1])) err(`${where}: unknown perk ${c[1]}`);
+      else if (c[0] === "any") {
+        if (!Array.isArray(c[1]) || !c[1].length) err(`${where}: any needs a non-empty list of conditions`);
+        else checkConds(`${where}.any`, c[1]);
+      }
     }
   };
   const endIds = new Set<string>(); // every ending the content can reach

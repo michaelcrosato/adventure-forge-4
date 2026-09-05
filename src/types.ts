@@ -19,7 +19,8 @@ export type Cond =
   | ["perk", string] // player owns this perk
   | ["!perk", string]
   | ["inParty", string] // npc travels with the player
-  | ["!inParty", string];
+  | ["!inParty", string]
+  | ["any", Cond[]]; // passes when at least one of the listed conditions passes (the one OR in an all-of list)
 
 // ---------- effects ----------
 export type Fx =

@@ -20,46 +20,221 @@
         "hit": 2,
         "dmg": 2,
         "remarks": [
-          { "id": "r_th_hollow", "if": [["flag", "th_hollow_burned"]], "say": "Thornwold's burning. My brother better have been clear of it." },
-          { "id": "r_king_slain", "if": [["flag", "va_king_slain"]], "say": "You killed him. I understand why. I don't have to like it." },
-          { "id": "r_king_forsaken", "if": [["flag", "va_king_forsaken"]], "say": "Leaving him like that, neither rested nor answered — that's its own kind of cruelty, I think." },
-          { "id": "r_king_rested", "if": [["flag", "va_king_rested"]], "say": "He's at rest. No blood on it. That's the mercy I'd have chosen too." },
-          { "id": "r_crown_broken", "if": [["flag", "va_crown_broken"]], "say": "A crown's just metal. Whatever you did with it, nobody starved for it." },
-          { "id": "r_sealed", "if": [["flag", "va_sealed"]], "say": "Doors shut for good behind us. Feels right. Some things shouldn't be easy to walk back into." },
-          { "id": "r_th_entered", "if": [["flag", "th_entered"]], "say": "Camp Gallows is close now. Some of me wants to run there today. Some of me knows better than to hope out loud." },
-          { "id": "r_fd_entered", "if": [["flag", "fd_entered"]], "say": "Wet ground, soft footing. I don't like a wood I can't hear myself walk through." },
-          { "id": "r_wm_entered", "if": [["flag", "wm_entered"]], "say": "Open moor. No cover for a hundred strides. I don't love being this easy to see." },
-          { "id": "r_ir_entered", "if": [["flag", "ir_entered"]], "say": "Iron on the wind before we even crest the hill. This is Tamsin's country more than mine." },
-          { "id": "r_hb_entered", "if": [["flag", "hb_entered"]], "say": "Barrows every way I look. Whatever sleeps under this ground, I'd rather not wake it." },
-          { "id": "r_sk_entered", "if": [["flag", "sk_entered"]], "say": "Salt air. My father always said it ruins a good bowstring. He wasn't wrong." },
-          { "id": "r_cp_entered", "if": [["flag", "cp_entered"]], "say": "Thin air, thin trail. Watch your footing more than the view up here." },
-          { "id": "r_mg_entered", "if": [["flag", "mg_entered"]], "say": "So this is the city that started all of it. Doesn't look like much, for the weight it's carrying." },
-          { "id": "r_hollows3", "if": [["var", "hollows_rested", ">=", 3]], "say": "Three hollows quiet now, and none of them by fire. That's a road I can walk without flinching." },
-          { "id": "r_appr_pos", "if": [["var", "appr_lys", ">=", 2]], "say": "You've more than earned a place at my fire. Didn't think that would happen, and it did." },
-          { "id": "r_appr_neg", "if": [["var", "appr_lys", "<=", -2]], "say": "I'm starting to wonder why I still walk beside you. Give me a reason before I stop wondering." }
+          {
+            "id": "r_th_hollow",
+            "if": [["flag", "th_hollow_burned"]],
+            "say": "Thornwold's burning. My brother better have been clear of it."
+          },
+          {
+            "id": "r_king_slain",
+            "if": [["flag", "va_king_slain"]],
+            "say": "You killed him. I understand why. I don't have to like it."
+          },
+          {
+            "id": "r_king_forsaken",
+            "if": [["flag", "va_king_forsaken"]],
+            "say": "Leaving him like that, neither rested nor answered — that's its own kind of cruelty, I think."
+          },
+          {
+            "id": "r_king_rested",
+            "if": [["flag", "va_king_rested"]],
+            "say": "He's at rest. No blood on it. That's the mercy I'd have chosen too."
+          },
+          {
+            "id": "r_crown_broken",
+            "if": [["flag", "va_crown_broken"]],
+            "say": "A crown's just metal. Whatever you did with it, nobody starved for it."
+          },
+          {
+            "id": "r_sealed",
+            "if": [["flag", "va_sealed"]],
+            "say": "Doors shut for good behind us. Feels right. Some things shouldn't be easy to walk back into."
+          },
+          {
+            "id": "r_th_entered",
+            "if": [["flag", "th_entered"]],
+            "say": "Camp Gallows is close now. Some of me wants to run there today. Some of me knows better than to hope out loud."
+          },
+          {
+            "id": "r_fd_entered",
+            "if": [["flag", "fd_entered"]],
+            "say": "Wet ground, soft footing. I don't like a wood I can't hear myself walk through."
+          },
+          {
+            "id": "r_wm_entered",
+            "if": [["flag", "wm_entered"]],
+            "say": "Open moor. No cover for a hundred strides. I don't love being this easy to see."
+          },
+          {
+            "id": "r_ir_entered",
+            "if": [["flag", "ir_entered"]],
+            "say": "Iron on the wind before we even crest the hill. This is Tamsin's country more than mine."
+          },
+          {
+            "id": "r_hb_entered",
+            "if": [["flag", "hb_entered"]],
+            "say": "Barrows every way I look. Whatever sleeps under this ground, I'd rather not wake it."
+          },
+          {
+            "id": "r_sk_entered",
+            "if": [["flag", "sk_entered"]],
+            "say": "Salt air. My father always said it ruins a good bowstring. He wasn't wrong."
+          },
+          {
+            "id": "r_cp_entered",
+            "if": [["flag", "cp_entered"]],
+            "say": "Thin air, thin trail. Watch your footing more than the view up here."
+          },
+          {
+            "id": "r_mg_entered",
+            "if": [["flag", "mg_entered"]],
+            "say": "So this is the city that started all of it. Doesn't look like much, for the weight it's carrying."
+          },
+          {
+            "id": "r_hollows3",
+            "if": [["var", "hollows_rested", ">=", 3]],
+            "say": "Three hollows quiet now, and none of them by fire. That's a road I can walk without flinching."
+          },
+          {
+            "id": "r_appr_pos",
+            "if": [["var", "appr_lys", ">=", 2]],
+            "say": "You've more than earned a place at my fire. Didn't think that would happen, and it did."
+          },
+          {
+            "id": "r_appr_neg",
+            "if": [["var", "appr_lys", "<=", -2]],
+            "say": "I'm starting to wonder why I still walk beside you. Give me a reason before I stop wondering."
+          }
         ],
         "leaves": [
-          { "if": [["flag", "th_hollow_burned"], ["!flag", "lys_brother_home"]], "say": "He was still in there, and you knew it, and you did it anyway. I watched Thornwold burn from the ridge. I'm done." },
-          { "if": [["var", "appr_lys", "<=", -3]], "say": "I've watched you long enough to know what you are. I won't watch anymore." }
+          {
+            "if": [["flag", "th_hollow_burned"], ["!flag", "lys_brother_home"]],
+            "say": "He was still in there, and you knew it, and you did it anyway. I watched Thornwold burn from the ridge. I'm done."
+          },
+          {
+            "if": [["var", "appr_lys", "<=", -3]],
+            "say": "I've watched you long enough to know what you are. I won't watch anymore."
+          }
         ]
       },
       "topics": [
-        { "id": "greet", "label": "who are you", "once": true, "say": "Hunter's daughter. I've walked this wood since before I could spell my own name. Ask plain, I'll answer plain.", "fx": [["xp", 1]] },
-        { "id": "bg_want", "label": "what you're really out here for", "if": [["flag", "said_lys_greet"]], "once": true, "say": "My brother went west to Thornwold a year gone — the Free Company, Camp Gallows, not a word sent home since. My father won't let me go after him. I'm done waiting on his permission.", "fx": [["xp", 2]] },
-        { "id": "bg_gray", "label": "what you make of the gray", "if": [["flag", "said_lys_bg_want"]], "once": true, "say": "Wolves that don't flinch from fire. Does that don't run. The wood's forgetting how to be afraid, and that troubles me worse than any tooth or claw.", "fx": [["xp", 2]] },
-        { "id": "recruit", "label": "come with me", "if": [["!inParty", "lys"], ["!flag", "lys_left"], ["flag", "said_lys_greet"]], "say": "...Fine. Somebody ought to watch your back better than you do.", "fx": [["party", "lys", "join"], ["set", "lys_joined"]] },
-        { "id": "dismiss", "label": "wait here", "if": [["inParty", "lys"]], "say": "Watching the trees only needs one set of eyes. I'll be here.", "fx": [["party", "lys", "leave"]] },
-        { "id": "return_barred", "label": "ask her to come back", "if": [["flag", "lys_left"], ["flag", "th_hollow_burned"]], "say": "No. You had your chance to get him clear, and Thornwold burned with him still inside it. I'll walk this wood alone before I walk beside that again." },
-        { "id": "return_yes", "label": "ask her to come back", "if": [["flag", "lys_left"], ["!flag", "th_hollow_burned"], ["var", "appr_lys", ">=", 0]], "say": "...All right. Didn't say I'd forgotten. Said I'd come.", "fx": [["party", "lys", "join"], ["clear", "lys_left"]] },
-        { "id": "return_no", "label": "ask her to come back", "if": [["flag", "lys_left"], ["!flag", "th_hollow_burned"], ["var", "appr_lys", "<", 0]], "say": "Not yet. You know where to find me when that changes." },
-        { "id": "confide", "label": "ask what she's not saying", "if": [["var", "appr_lys", ">=", 2]], "once": true, "say": "My mother used to say the wood forgives everything but waiting too long. I didn't believe her till my brother left. Don't wait too long on what you love, either.", "fx": [["xp", 3], ["set", "lys_confided"], ["move", "lys_whistle", "inv"]] },
-        { "id": "rebuke", "label": "ask why she's gone quiet", "if": [["var", "appr_lys", "<=", -2]], "once": true, "say": "You want it plain? I think you'd walk past a starving thing in the road if it slowed you down. I've seen you do it." },
-        { "id": "choice_a", "label": "tell her to go to him herself", "if": [["flag", "lys_brother_found"], ["!flag", "lys_advised"]], "once": true, "say": "Word comes: he's alive, camped with the Free Company at Camp Gallows. You tell her to go to him herself, whatever it costs. She's quiet a moment, then nods, like she'd been waiting to hear it.", "fx": [["set", "lys_advised"], ["addvar", "appr_lys", 1]] },
-        { "id": "choice_b", "label": "call her brother a deserter", "if": [["flag", "lys_brother_found"], ["!flag", "lys_advised"]], "once": true, "say": "Word comes: he's alive, camped with the Free Company at Camp Gallows. You call him a deserter not worth chasing. Something in her face closes like a shutter, and she doesn't argue the point.", "fx": [["set", "lys_advised"], ["addvar", "appr_lys", -1]] },
-        { "id": "quest_home", "label": "ask after her brother", "if": [["flag", "lys_brother_home"]], "once": true, "say": "He's home. She doesn't say much about it, just stands in the doorway a while, watching him sleep like he might vanish if she looks away.", "fx": [["xp", 2], ["addvar", "appr_lys", 2]] },
-        { "id": "quest_buried", "label": "ask after her brother", "if": [["flag", "lys_brother_buried"]], "once": true, "say": "She buried him herself, east of Camp Gallows, and marked the spot the way hunters mark a trail — so she could find it again. She doesn't cry where you can see.", "fx": [["xp", 2], ["addvar", "appr_lys", 1]] },
-        { "id": "quest_lost", "label": "ask after her brother", "if": [["flag", "lys_brother_lost"]], "once": true, "say": "No grave, no word, nothing. She's stopped asking after him out loud. You catch her some nights, still watching the eastern road anyway.", "fx": [["xp", 1], ["addvar", "appr_lys", -1]] },
-        { "id": "bye", "label": "leave it there", "say": "Mind your footing. This wood doesn't forgive twice.", "end": true }
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Hunter's daughter. I've walked this wood since before I could spell my own name. Ask plain, I'll answer plain.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_want",
+          "label": "what you're really out here for",
+          "if": [["flag", "said_lys_greet"]],
+          "once": true,
+          "say": "My brother went west to Thornwold a year gone — the Free Company, Camp Gallows, not a word sent home since. My father won't let me go after him. I'm done waiting on his permission.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_gray",
+          "label": "what you make of the gray",
+          "if": [["flag", "said_lys_bg_want"]],
+          "once": true,
+          "say": "Wolves that don't flinch from fire. Does that don't run. The wood's forgetting how to be afraid, and that troubles me worse than any tooth or claw.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "recruit",
+          "label": "come with me",
+          "if": [["!inParty", "lys"], ["!flag", "lys_left"], ["flag", "said_lys_greet"]],
+          "say": "...Fine. Somebody ought to watch your back better than you do.",
+          "fx": [["party", "lys", "join"], ["set", "lys_joined"]]
+        },
+        {
+          "id": "dismiss",
+          "label": "wait here",
+          "if": [["inParty", "lys"]],
+          "say": "Watching the trees only needs one set of eyes. I'll be here.",
+          "fx": [["party", "lys", "leave"]]
+        },
+        {
+          "id": "return_barred",
+          "label": "ask her to come back",
+          "if": [["flag", "lys_left"], ["flag", "th_hollow_burned"]],
+          "say": "No. You had your chance to get him clear, and Thornwold burned with him still inside it. I'll walk this wood alone before I walk beside that again."
+        },
+        {
+          "id": "return_yes",
+          "label": "ask her to come back",
+          "if": [["flag", "lys_left"], ["!flag", "th_hollow_burned"], ["var", "appr_lys", ">=", 0]],
+          "say": "...All right. Didn't say I'd forgotten. Said I'd come.",
+          "fx": [["party", "lys", "join"], ["clear", "lys_left"]]
+        },
+        {
+          "id": "return_no",
+          "label": "ask her to come back",
+          "if": [["flag", "lys_left"], ["!flag", "th_hollow_burned"], ["var", "appr_lys", "<", 0]],
+          "say": "Not yet. You know where to find me when that changes."
+        },
+        {
+          "id": "confide",
+          "label": "ask what she's not saying",
+          "if": [["var", "appr_lys", ">=", 2]],
+          "once": true,
+          "say": "My mother used to say the wood forgives everything but waiting too long. I didn't believe her till my brother left. Don't wait too long on what you love, either.",
+          "fx": [["xp", 3], ["set", "lys_confided"], ["move", "lys_whistle", "inv"]]
+        },
+        {
+          "id": "rebuke",
+          "label": "ask why she's gone quiet",
+          "if": [["var", "appr_lys", "<=", -2]],
+          "once": true,
+          "say": "You want it plain? I think you'd walk past a starving thing in the road if it slowed you down. I've seen you do it."
+        },
+        {
+          "id": "choice_a",
+          "label": "tell her to go to him herself",
+          "if": [["flag", "lys_brother_found"], ["!flag", "lys_advised"]],
+          "once": true,
+          "say": "Word comes: he's alive, camped with the Free Company at Camp Gallows. You tell her to go to him herself, whatever it costs. She's quiet a moment, then nods, like she'd been waiting to hear it.",
+          "fx": [["set", "lys_advised"], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "choice_b",
+          "label": "call her brother a deserter",
+          "if": [["flag", "lys_brother_found"], ["!flag", "lys_advised"]],
+          "once": true,
+          "say": "Word comes: he's alive, camped with the Free Company at Camp Gallows. You call him a deserter not worth chasing. Something in her face closes like a shutter, and she doesn't argue the point.",
+          "fx": [["set", "lys_advised"], ["addvar", "appr_lys", -1]]
+        },
+        {
+          "id": "quest_home",
+          "label": "ask after her brother",
+          "if": [["flag", "lys_brother_home"]],
+          "once": true,
+          "say": "He's home. She doesn't say much about it, just stands in the doorway a while, watching him sleep like he might vanish if she looks away.",
+          "fx": [["xp", 2], ["addvar", "appr_lys", 2]]
+        },
+        {
+          "id": "quest_buried",
+          "label": "ask after her brother",
+          "if": [["flag", "lys_brother_buried"]],
+          "once": true,
+          "say": "She buried him herself, east of Camp Gallows, and marked the spot the way hunters mark a trail — so she could find it again. She doesn't cry where you can see.",
+          "fx": [["xp", 2], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "quest_lost",
+          "label": "ask after her brother",
+          "if": [["flag", "lys_brother_lost"]],
+          "once": true,
+          "say": "No grave, no word, nothing. She's stopped asking after him out loud. You catch her some nights, still watching the eastern road anyway.",
+          "fx": [["xp", 1], ["addvar", "appr_lys", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave it there",
+          "say": "Mind your footing. This wood doesn't forgive twice.",
+          "end": true
+        }
       ]
     },
     "osk": {
@@ -82,46 +257,221 @@
         "hit": 0,
         "dmg": 1,
         "remarks": [
-          { "id": "r_fd_hollow", "if": [["flag", "fd_hollow_burned"]], "say": "Fenmarch's burning. My mother's grave is under that water somewhere. I can't — I need a moment." },
-          { "id": "r_king_slain", "if": [["flag", "va_king_slain"]], "say": "No rite. No verse. Just — ended. I keep waiting to feel it was right." },
-          { "id": "r_king_forsaken", "if": [["flag", "va_king_forsaken"]], "say": "Leaving him neither rested nor answered is the exact wound the Church exists to close. We didn't close it." },
-          { "id": "r_king_rested", "if": [["flag", "va_king_rested"]], "say": "He's at rest. Say what you will of the road there — the door opened, and grief went out through it. The teaching, proven true." },
-          { "id": "r_crown_broken", "if": [["flag", "va_crown_broken"]], "say": "A broken crown won't trouble the dead much. What troubles them is being forgotten. That crown wasn't forgetting anyone." },
-          { "id": "r_sealed", "if": [["flag", "va_sealed"]], "say": "Sealed doors again. I understand the reeve's reasons. I don't have to agree with every one of them." },
-          { "id": "r_th_entered", "if": [["flag", "th_entered"]], "say": "Rough company, this Free Company. I'll say a verse for whoever needs one and try not to judge the rest." },
-          { "id": "r_fd_entered", "if": [["flag", "fd_entered"]], "say": "Reedholm. I know these stilts better than I know my own two feet. Careful where you put yours." },
-          { "id": "r_wm_entered", "if": [["flag", "wm_entered"]], "say": "The Watch keeps good order up here. Order isn't the same as peace, but it's not nothing either." },
-          { "id": "r_ir_entered", "if": [["flag", "ir_entered"]], "say": "Cinderhall smells of ash even from the road. I don't think that's only the forges." },
-          { "id": "r_hb_entered", "if": [["flag", "hb_entered"]], "say": "Barrowmere. So many kept graves in one place. The Keepers do good work, whatever else gets said of them." },
-          { "id": "r_sk_entered", "if": [["flag", "sk_entered"]], "say": "Gullhaven. Salt air, hard people. I like it more than I expected to." },
-          { "id": "r_cp_entered", "if": [["flag", "cp_entered"]], "say": "This high, even the verses feel thinner. Or maybe that's just the air." },
-          { "id": "r_mg_entered", "if": [["flag", "mg_entered"]], "say": "Marrowgate. Four hundred years of unrested grief, and a throne built right on top of it. Lord." },
-          { "id": "r_hollows3", "if": [["var", "hollows_rested", ">=", 3]], "say": "Three doors opened properly now, three graces given air. More good than I've managed in a year of trying." },
-          { "id": "r_appr_pos", "if": [["var", "appr_osk", ">=", 2]], "say": "I didn't expect to trust anyone this quickly again. Thank you for that, whether you meant to earn it or not." },
-          { "id": "r_appr_neg", "if": [["var", "appr_osk", "<=", -2]], "say": "I keep telling myself there's a reason for what you do. I'm running out of ways to believe it." }
+          {
+            "id": "r_fd_hollow",
+            "if": [["flag", "fd_hollow_burned"]],
+            "say": "Fenmarch's burning. My mother's grave is under that water somewhere. I can't — I need a moment."
+          },
+          {
+            "id": "r_king_slain",
+            "if": [["flag", "va_king_slain"]],
+            "say": "No rite. No verse. Just — ended. I keep waiting to feel it was right."
+          },
+          {
+            "id": "r_king_forsaken",
+            "if": [["flag", "va_king_forsaken"]],
+            "say": "Leaving him neither rested nor answered is the exact wound the Church exists to close. We didn't close it."
+          },
+          {
+            "id": "r_king_rested",
+            "if": [["flag", "va_king_rested"]],
+            "say": "He's at rest. Say what you will of the road there — the door opened, and grief went out through it. The teaching, proven true."
+          },
+          {
+            "id": "r_crown_broken",
+            "if": [["flag", "va_crown_broken"]],
+            "say": "A broken crown won't trouble the dead much. What troubles them is being forgotten. That crown wasn't forgetting anyone."
+          },
+          {
+            "id": "r_sealed",
+            "if": [["flag", "va_sealed"]],
+            "say": "Sealed doors again. I understand the reeve's reasons. I don't have to agree with every one of them."
+          },
+          {
+            "id": "r_th_entered",
+            "if": [["flag", "th_entered"]],
+            "say": "Rough company, this Free Company. I'll say a verse for whoever needs one and try not to judge the rest."
+          },
+          {
+            "id": "r_fd_entered",
+            "if": [["flag", "fd_entered"]],
+            "say": "Reedholm. I know these stilts better than I know my own two feet. Careful where you put yours."
+          },
+          {
+            "id": "r_wm_entered",
+            "if": [["flag", "wm_entered"]],
+            "say": "The Watch keeps good order up here. Order isn't the same as peace, but it's not nothing either."
+          },
+          {
+            "id": "r_ir_entered",
+            "if": [["flag", "ir_entered"]],
+            "say": "Cinderhall smells of ash even from the road. I don't think that's only the forges."
+          },
+          {
+            "id": "r_hb_entered",
+            "if": [["flag", "hb_entered"]],
+            "say": "Barrowmere. So many kept graves in one place. The Keepers do good work, whatever else gets said of them."
+          },
+          {
+            "id": "r_sk_entered",
+            "if": [["flag", "sk_entered"]],
+            "say": "Gullhaven. Salt air, hard people. I like it more than I expected to."
+          },
+          {
+            "id": "r_cp_entered",
+            "if": [["flag", "cp_entered"]],
+            "say": "This high, even the verses feel thinner. Or maybe that's just the air."
+          },
+          {
+            "id": "r_mg_entered",
+            "if": [["flag", "mg_entered"]],
+            "say": "Marrowgate. Four hundred years of unrested grief, and a throne built right on top of it. Lord."
+          },
+          {
+            "id": "r_hollows3",
+            "if": [["var", "hollows_rested", ">=", 3]],
+            "say": "Three doors opened properly now, three graces given air. More good than I've managed in a year of trying."
+          },
+          {
+            "id": "r_appr_pos",
+            "if": [["var", "appr_osk", ">=", 2]],
+            "say": "I didn't expect to trust anyone this quickly again. Thank you for that, whether you meant to earn it or not."
+          },
+          {
+            "id": "r_appr_neg",
+            "if": [["var", "appr_osk", "<=", -2]],
+            "say": "I keep telling myself there's a reason for what you do. I'm running out of ways to believe it."
+          }
         ],
         "leaves": [
-          { "if": [["flag", "fd_hollow_burned"]], "say": "You burned it. My family, the nave, all of it. I have nothing left to say to you." },
-          { "if": [["var", "appr_osk", "<=", -3]], "say": "I came to this Church to be better than my worst assumptions about people. Standing next to you keeps proving them right. I'm done." }
+          {
+            "if": [["flag", "fd_hollow_burned"]],
+            "say": "You burned it. My family, the nave, all of it. I have nothing left to say to you."
+          },
+          {
+            "if": [["var", "appr_osk", "<=", -3]],
+            "say": "I came to this Church to be better than my worst assumptions about people. Standing next to you keeps proving them right. I'm done."
+          }
         ]
       },
       "topics": [
-        { "id": "greet", "label": "who are you", "once": true, "say": "Brother Osk, of the Gray Church — a novice still, whatever the robe suggests. I'm told my verses need work. I'm told a lot of things.", "fx": [["xp", 1]] },
-        { "id": "bg_family", "label": "your own family", "if": [["flag", "said_osk_greet"]], "once": true, "say": "The water took my family in Fenmarch, before I ever wore this gray. I came here to learn what to say over the drowned. Nobody's finished teaching me yet.", "fx": [["xp", 2]] },
-        { "id": "bg_faith", "label": "why the Church, and why you", "if": [["flag", "said_osk_bg_family"]], "once": true, "say": "Someone has to sit with grief and mean it. I wasn't much good at anything else, so — here I am, still learning to mean it properly.", "fx": [["xp", 2]] },
-        { "id": "bg_gray", "label": "what you make of the gray", "if": [["flag", "said_osk_bg_faith"]], "once": true, "say": "Grief that's never given air festers. That's the whole of Church teaching on it, and I believe every word — I just don't always know how to open the door.", "fx": [["xp", 2]] },
-        { "id": "recruit", "label": "come with me", "if": [["!inParty", "osk"], ["!flag", "osk_left"], ["flag", "said_osk_greet"]], "say": "...Truly? Then — yes. Purpose is easier to find walking than kneeling, some days.", "fx": [["party", "osk", "join"], ["set", "osk_joined"]] },
-        { "id": "dismiss", "label": "wait here", "if": [["inParty", "osk"]], "say": "I'll keep this ground quiet while you're gone. It's what I'm for, mostly.", "fx": [["party", "osk", "leave"]] },
-        { "id": "return_barred", "label": "ask him to come back", "if": [["flag", "osk_left"], ["flag", "fd_hollow_burned"]], "say": "No. You burned the nave with my family still unrested inside it. I have no verse left that forgives that, and I've stopped looking for one." },
-        { "id": "return_yes", "label": "ask him to come back", "if": [["flag", "osk_left"], ["!flag", "fd_hollow_burned"], ["var", "appr_osk", ">=", 0]], "say": "...The Church teaches forgiveness. I'm meant to practice what I preach, badly as I preach it. I'll come.", "fx": [["party", "osk", "join"], ["clear", "osk_left"]] },
-        { "id": "return_no", "label": "ask him to come back", "if": [["flag", "osk_left"], ["!flag", "fd_hollow_burned"], ["var", "appr_osk", "<", 0]], "say": "Not yet. I need to believe it before I follow it. Give me more than words." },
-        { "id": "confide", "label": "ask what he really believes", "if": [["var", "appr_osk", ">=", 2]], "once": true, "say": "Some nights I'm not sure the old king even hears the verses. I say them anyway. Faith, near as I can tell, is doing it anyway.", "fx": [["xp", 3], ["set", "osk_confided"], ["move", "osk_verse_scrap", "inv"]] },
-        { "id": "rebuke", "label": "ask why he won't meet your eye", "if": [["var", "appr_osk", "<=", -2]], "once": true, "say": "Because I keep hoping you'll surprise me, and you keep not doing it. That's a hard thing to say to someone's face. There. Said it." },
-        { "id": "choice_a", "label": "tell him his verses are worth saying", "if": [["flag", "osk_family_found"], ["!flag", "osk_advised"]], "once": true, "say": "Word reaches the chapel: his family's found, in the drowned nave, past hoping for but not past grieving. You tell him his verses are worth saying, badly or not. He almost smiles.", "fx": [["set", "osk_advised"], ["addvar", "appr_osk", 1]] },
-        { "id": "choice_b", "label": "tell him the rites are superstition", "if": [["flag", "osk_family_found"], ["!flag", "osk_advised"]], "once": true, "say": "Word reaches the chapel: his family's found, in the drowned nave, past hoping for but not past grieving. You tell him the old rites are just superstition. He goes very quiet, and doesn't answer.", "fx": [["set", "osk_advised"], ["addvar", "appr_osk", -1]] },
-        { "id": "quest_rested", "label": "ask after his family", "if": [["flag", "osk_family_rested"]], "once": true, "say": "They're at rest. He said the rite himself, voice cracking on the third verse, and didn't stop. I think he's a priest now, whatever the Church calls it officially.", "fx": [["xp", 2], ["addvar", "appr_osk", 2]] },
-        { "id": "quest_burned", "label": "ask after his family", "if": [["flag", "osk_family_burned"]], "once": true, "say": "The nave burned with them still in it. He hasn't quoted a verse since. I'm not sure he believes in doors anymore, open or shut.", "fx": [["xp", 1], ["addvar", "appr_osk", -2]] },
-        { "id": "bye", "label": "that's enough for now", "say": "Go gently. The gray doesn't need help from us to be cruel.", "end": true }
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Brother Osk, of the Gray Church — a novice still, whatever the robe suggests. I'm told my verses need work. I'm told a lot of things.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_family",
+          "label": "your own family",
+          "if": [["flag", "said_osk_greet"]],
+          "once": true,
+          "say": "The water took my family in Fenmarch, before I ever wore this gray. I came here to learn what to say over the drowned. Nobody's finished teaching me yet.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_faith",
+          "label": "why the Church, and why you",
+          "if": [["flag", "said_osk_bg_family"]],
+          "once": true,
+          "say": "Someone has to sit with grief and mean it. I wasn't much good at anything else, so — here I am, still learning to mean it properly.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_gray",
+          "label": "what you make of the gray",
+          "if": [["flag", "said_osk_bg_faith"]],
+          "once": true,
+          "say": "Grief that's never given air festers. That's the whole of Church teaching on it, and I believe every word — I just don't always know how to open the door.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "recruit",
+          "label": "come with me",
+          "if": [["!inParty", "osk"], ["!flag", "osk_left"], ["flag", "said_osk_greet"]],
+          "say": "...Truly? Then — yes. Purpose is easier to find walking than kneeling, some days.",
+          "fx": [["party", "osk", "join"], ["set", "osk_joined"]]
+        },
+        {
+          "id": "dismiss",
+          "label": "wait here",
+          "if": [["inParty", "osk"]],
+          "say": "I'll keep this ground quiet while you're gone. It's what I'm for, mostly.",
+          "fx": [["party", "osk", "leave"]]
+        },
+        {
+          "id": "return_barred",
+          "label": "ask him to come back",
+          "if": [["flag", "osk_left"], ["flag", "fd_hollow_burned"]],
+          "say": "No. You burned the nave with my family still unrested inside it. I have no verse left that forgives that, and I've stopped looking for one."
+        },
+        {
+          "id": "return_yes",
+          "label": "ask him to come back",
+          "if": [["flag", "osk_left"], ["!flag", "fd_hollow_burned"], ["var", "appr_osk", ">=", 0]],
+          "say": "...The Church teaches forgiveness. I'm meant to practice what I preach, badly as I preach it. I'll come.",
+          "fx": [["party", "osk", "join"], ["clear", "osk_left"]]
+        },
+        {
+          "id": "return_no",
+          "label": "ask him to come back",
+          "if": [["flag", "osk_left"], ["!flag", "fd_hollow_burned"], ["var", "appr_osk", "<", 0]],
+          "say": "Not yet. I need to believe it before I follow it. Give me more than words."
+        },
+        {
+          "id": "confide",
+          "label": "ask what he really believes",
+          "if": [["var", "appr_osk", ">=", 2]],
+          "once": true,
+          "say": "Some nights I'm not sure the old king even hears the verses. I say them anyway. Faith, near as I can tell, is doing it anyway.",
+          "fx": [["xp", 3], ["set", "osk_confided"], ["move", "osk_verse_scrap", "inv"]]
+        },
+        {
+          "id": "rebuke",
+          "label": "ask why he won't meet your eye",
+          "if": [["var", "appr_osk", "<=", -2]],
+          "once": true,
+          "say": "Because I keep hoping you'll surprise me, and you keep not doing it. That's a hard thing to say to someone's face. There. Said it."
+        },
+        {
+          "id": "choice_a",
+          "label": "tell him his verses are worth saying",
+          "if": [["flag", "osk_family_found"], ["!flag", "osk_advised"]],
+          "once": true,
+          "say": "Word reaches the chapel: his family's found, in the drowned nave, past hoping for but not past grieving. You tell him his verses are worth saying, badly or not. He almost smiles.",
+          "fx": [["set", "osk_advised"], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "choice_b",
+          "label": "tell him the rites are superstition",
+          "if": [["flag", "osk_family_found"], ["!flag", "osk_advised"]],
+          "once": true,
+          "say": "Word reaches the chapel: his family's found, in the drowned nave, past hoping for but not past grieving. You tell him the old rites are just superstition. He goes very quiet, and doesn't answer.",
+          "fx": [["set", "osk_advised"], ["addvar", "appr_osk", -1]]
+        },
+        {
+          "id": "quest_rested",
+          "label": "ask after his family",
+          "if": [["flag", "osk_family_rested"]],
+          "once": true,
+          "say": "They're at rest. He said the rite himself, voice cracking on the third verse, and didn't stop. I think he's a priest now, whatever the Church calls it officially.",
+          "fx": [["xp", 2], ["addvar", "appr_osk", 2]]
+        },
+        {
+          "id": "quest_burned",
+          "label": "ask after his family",
+          "if": [["flag", "osk_family_burned"]],
+          "once": true,
+          "say": "The nave burned with them still in it. He hasn't quoted a verse since. I'm not sure he believes in doors anymore, open or shut.",
+          "fx": [["xp", 1], ["addvar", "appr_osk", -2]]
+        },
+        {
+          "id": "bye",
+          "label": "that's enough for now",
+          "say": "Go gently. The gray doesn't need help from us to be cruel.",
+          "end": true
+        }
       ]
     },
     "tamsin": {
@@ -144,46 +494,221 @@
         "hit": 2,
         "dmg": 3,
         "remarks": [
-          { "id": "r_ir_hollow", "if": [["flag", "ir_hollow_burned"]], "say": "Cinderhall's burning. Whatever's left of the truth about that mine burns with it. Convenient, that." },
-          { "id": "r_king_slain", "if": [["flag", "va_king_slain"]], "say": "Good. Grief that won't quit gets put down, same as anything else that won't quit." },
-          { "id": "r_king_forsaken", "if": [["flag", "va_king_forsaken"]], "say": "You walked away and settled nothing. That's the one option I'd have talked you out of, if you'd asked." },
-          { "id": "r_king_rested", "if": [["flag", "va_king_rested"]], "say": "He's quiet now. Didn't need killing after all. Fine — I'll take an ending that doesn't cost a fight, when one's on offer." },
-          { "id": "r_crown_broken", "if": [["flag", "va_crown_broken"]], "say": "Broke the crown. Good — less for the next fool to fight over." },
-          { "id": "r_sealed", "if": [["flag", "va_sealed"]], "say": "Sealed for good. That's a door that'll hold. I checked the hinges myself." },
-          { "id": "r_th_entered", "if": [["flag", "th_entered"]], "say": "Free Company work, this ground. Mercenaries. I've sharpened enough of their blades to know their word's worth exactly what they're paid." },
-          { "id": "r_fd_entered", "if": [["flag", "fd_entered"]], "say": "Wet ground ruins good steel fast. Whatever you're carrying, dry it tonight." },
-          { "id": "r_wm_entered", "if": [["flag", "wm_entered"]], "say": "Watch country. Say what you like about rules — their gear's always in good repair. I respect that." },
-          { "id": "r_ir_entered", "if": [["flag", "ir_entered"]], "say": "Cinderhall. Home ground, near enough. I know this air. Iron and old smoke." },
-          { "id": "r_hb_entered", "if": [["flag", "hb_entered"]], "say": "Barrows everywhere you look. Keepers guard the dead like the dead are still paying them. Maybe they are." },
-          { "id": "r_sk_entered", "if": [["flag", "sk_entered"]], "say": "Salt eats steel worse than anything. Remind me to check every blade we're carrying before we leave." },
-          { "id": "r_cp_entered", "if": [["flag", "cp_entered"]], "say": "Cold enough up here to crack a bad weld. Whoever forged your gear better have known what they were doing." },
-          { "id": "r_mg_entered", "if": [["flag", "mg_entered"]], "say": "Marrowgate. Big walls, soft hands, near as I can tell. We'll see if that holds up." },
-          { "id": "r_hollows3", "if": [["var", "hollows_rested", ">=", 3]], "say": "Three hollows settled without burning a one of them. Didn't think that was the harder road. Turns out it was." },
-          { "id": "r_appr_pos", "if": [["var", "appr_tamsin", ">=", 2]], "say": "You've earned my back in a fight. That's not a small thing, coming from me." },
-          { "id": "r_appr_neg", "if": [["var", "appr_tamsin", "<=", -2]], "say": "I don't waste time on people I don't trust. I'm starting to wonder why I'm still wasting it on you." }
+          {
+            "id": "r_ir_hollow",
+            "if": [["flag", "ir_hollow_burned"]],
+            "say": "Cinderhall's burning. Whatever's left of the truth about that mine burns with it. Convenient, that."
+          },
+          {
+            "id": "r_king_slain",
+            "if": [["flag", "va_king_slain"]],
+            "say": "Good. Grief that won't quit gets put down, same as anything else that won't quit."
+          },
+          {
+            "id": "r_king_forsaken",
+            "if": [["flag", "va_king_forsaken"]],
+            "say": "You walked away and settled nothing. That's the one option I'd have talked you out of, if you'd asked."
+          },
+          {
+            "id": "r_king_rested",
+            "if": [["flag", "va_king_rested"]],
+            "say": "He's quiet now. Didn't need killing after all. Fine — I'll take an ending that doesn't cost a fight, when one's on offer."
+          },
+          {
+            "id": "r_crown_broken",
+            "if": [["flag", "va_crown_broken"]],
+            "say": "Broke the crown. Good — less for the next fool to fight over."
+          },
+          {
+            "id": "r_sealed",
+            "if": [["flag", "va_sealed"]],
+            "say": "Sealed for good. That's a door that'll hold. I checked the hinges myself."
+          },
+          {
+            "id": "r_th_entered",
+            "if": [["flag", "th_entered"]],
+            "say": "Free Company work, this ground. Mercenaries. I've sharpened enough of their blades to know their word's worth exactly what they're paid."
+          },
+          {
+            "id": "r_fd_entered",
+            "if": [["flag", "fd_entered"]],
+            "say": "Wet ground ruins good steel fast. Whatever you're carrying, dry it tonight."
+          },
+          {
+            "id": "r_wm_entered",
+            "if": [["flag", "wm_entered"]],
+            "say": "Watch country. Say what you like about rules — their gear's always in good repair. I respect that."
+          },
+          {
+            "id": "r_ir_entered",
+            "if": [["flag", "ir_entered"]],
+            "say": "Cinderhall. Home ground, near enough. I know this air. Iron and old smoke."
+          },
+          {
+            "id": "r_hb_entered",
+            "if": [["flag", "hb_entered"]],
+            "say": "Barrows everywhere you look. Keepers guard the dead like the dead are still paying them. Maybe they are."
+          },
+          {
+            "id": "r_sk_entered",
+            "if": [["flag", "sk_entered"]],
+            "say": "Salt eats steel worse than anything. Remind me to check every blade we're carrying before we leave."
+          },
+          {
+            "id": "r_cp_entered",
+            "if": [["flag", "cp_entered"]],
+            "say": "Cold enough up here to crack a bad weld. Whoever forged your gear better have known what they were doing."
+          },
+          {
+            "id": "r_mg_entered",
+            "if": [["flag", "mg_entered"]],
+            "say": "Marrowgate. Big walls, soft hands, near as I can tell. We'll see if that holds up."
+          },
+          {
+            "id": "r_hollows3",
+            "if": [["var", "hollows_rested", ">=", 3]],
+            "say": "Three hollows settled without burning a one of them. Didn't think that was the harder road. Turns out it was."
+          },
+          {
+            "id": "r_appr_pos",
+            "if": [["var", "appr_tamsin", ">=", 2]],
+            "say": "You've earned my back in a fight. That's not a small thing, coming from me."
+          },
+          {
+            "id": "r_appr_neg",
+            "if": [["var", "appr_tamsin", "<=", -2]],
+            "say": "I don't waste time on people I don't trust. I'm starting to wonder why I'm still wasting it on you."
+          }
         ],
         "leaves": [
-          { "if": [["flag", "ir_miners_sold"]], "say": "You sold out the miners. The same mine that killed my mother, and you sold out the men still working it for coin. We're done." },
-          { "if": [["var", "appr_tamsin", "<=", -3]], "say": "I don't fight beside people I can't trust at my back. That's you now. Find someone else." }
+          {
+            "if": [["flag", "ir_miners_sold"]],
+            "say": "You sold out the miners. The same mine that killed my mother, and you sold out the men still working it for coin. We're done."
+          },
+          {
+            "if": [["var", "appr_tamsin", "<=", -3]],
+            "say": "I don't fight beside people I can't trust at my back. That's you now. Find someone else."
+          }
         ]
       },
       "topics": [
-        { "id": "greet", "label": "who are you", "once": true, "say": "Smith's apprentice. Ask me about steel and I'll talk your ear off. Ask me about anything else, keep it short.", "fx": [["xp", 1]] },
-        { "id": "bg_want", "label": "what you actually want", "if": [["flag", "said_tamsin_greet"]], "once": true, "say": "Ask the smith and she'll tell you not to say 'mine' near me. I'm saying it anyway: the Hundred came down on my mother in the Iron Downs, and nobody's ever given me a straight answer why.", "fx": [["xp", 2]] },
-        { "id": "bg_gray", "label": "what you make of the gray", "if": [["flag", "said_tamsin_bg_want"]], "once": true, "say": "Grief's not complicated. Something's wrong, you find what's wrong, you fix it or you burn it. People make it complicated because plain answers scare them.", "fx": [["xp", 2]] },
-        { "id": "recruit", "label": "come with me", "if": [["!inParty", "tamsin"], ["!flag", "tamsin_left"], ["flag", "said_tamsin_greet"]], "say": "Good. I've been itching to hit something that isn't an anvil.", "fx": [["party", "tamsin", "join"], ["set", "tamsin_joined"]] },
-        { "id": "dismiss", "label": "wait here", "if": [["inParty", "tamsin"]], "say": "Fine. Don't get yourself killed doing something I could've done faster.", "fx": [["party", "tamsin", "leave"]] },
-        { "id": "return_barred", "label": "ask her to come back", "if": [["flag", "tamsin_left"], ["flag", "ir_miners_sold"]], "say": "No. You sold out men working the same mine that killed my mother, for coin, and you want me to forget that. I don't forget. Ever." },
-        { "id": "return_yes", "label": "ask her to come back", "if": [["flag", "tamsin_left"], ["!flag", "ir_miners_sold"], ["var", "appr_tamsin", ">=", 0]], "say": "...You've done enough to earn a second look. Don't waste it.", "fx": [["party", "tamsin", "join"], ["clear", "tamsin_left"]] },
-        { "id": "return_no", "label": "ask her to come back", "if": [["flag", "tamsin_left"], ["!flag", "ir_miners_sold"], ["var", "appr_tamsin", "<", 0]], "say": "Not yet. Show me, don't tell me." },
-        { "id": "confide", "label": "ask what really drives her", "if": [["var", "appr_tamsin", ">=", 2]], "once": true, "say": "I was twelve when the Hundred came down and they carried what was left of my mother out of that shaft. I've been counting blows ever since — needed something I could measure.", "fx": [["xp", 3], ["set", "tamsin_confided"], ["move", "tamsin_hammer_charm", "inv"]] },
-        { "id": "rebuke", "label": "ask what she thinks of you", "if": [["var", "appr_tamsin", "<=", -2]], "once": true, "say": "You want it straight? I think you talk more than you act, and I've got no use for people like that. There. Straight." },
-        { "id": "choice_a", "label": "tell her to make them answer for it", "if": [["flag", "tamsin_mine_truth"], ["!flag", "tamsin_advised"]], "once": true, "say": "The truth about the mine comes out at last, uglier than she guessed. You tell her to make whoever's responsible answer for it. She nods once, already working out how.", "fx": [["set", "tamsin_advised"], ["addvar", "appr_tamsin", 1]] },
-        { "id": "choice_b", "label": "tell her chasing it wastes good iron", "if": [["flag", "tamsin_mine_truth"], ["!flag", "tamsin_advised"]], "once": true, "say": "The truth about the mine comes out at last, uglier than she guessed. You tell her chasing it further wastes good iron and better time. Something in her jaw sets hard.", "fx": [["set", "tamsin_advised"], ["addvar", "appr_tamsin", -1]] },
-        { "id": "quest_avenged", "label": "ask about the mine", "if": [["flag", "tamsin_mine_avenged"]], "once": true, "say": "Whoever lied about that collapse has answered for it now, her way — plain, and final. She doesn't talk about it much. Doesn't need to.", "fx": [["xp", 2], ["addvar", "appr_tamsin", 2]] },
-        { "id": "quest_forgiven", "label": "ask about the mine", "if": [["flag", "tamsin_mine_forgiven"]], "once": true, "say": "She let it lie, in the end. Said carrying it further wouldn't carry her mother back. First time I've heard her sound tired instead of angry.", "fx": [["xp", 2], ["addvar", "appr_tamsin", 1]] },
-        { "id": "quest_sold", "label": "ask about the mine", "if": [["flag", "ir_miners_sold"]], "once": true, "say": "The miners got sold out to the Ironbound for a tidy sum, truth and all, buried under it. She hasn't said a word since she heard. That's worse than shouting.", "fx": [["xp", 1], ["addvar", "appr_tamsin", -2]] },
-        { "id": "bye", "label": "that's enough for now", "say": "Watch your footing. I'm not carrying you back.", "end": true }
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Smith's apprentice. Ask me about steel and I'll talk your ear off. Ask me about anything else, keep it short.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_want",
+          "label": "what you actually want",
+          "if": [["flag", "said_tamsin_greet"]],
+          "once": true,
+          "say": "Ask the smith and she'll tell you not to say 'mine' near me. I'm saying it anyway: the Hundred came down on my mother in the Iron Downs, and nobody's ever given me a straight answer why.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_gray",
+          "label": "what you make of the gray",
+          "if": [["flag", "said_tamsin_bg_want"]],
+          "once": true,
+          "say": "Grief's not complicated. Something's wrong, you find what's wrong, you fix it or you burn it. People make it complicated because plain answers scare them.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "recruit",
+          "label": "come with me",
+          "if": [["!inParty", "tamsin"], ["!flag", "tamsin_left"], ["flag", "said_tamsin_greet"]],
+          "say": "Good. I've been itching to hit something that isn't an anvil.",
+          "fx": [["party", "tamsin", "join"], ["set", "tamsin_joined"]]
+        },
+        {
+          "id": "dismiss",
+          "label": "wait here",
+          "if": [["inParty", "tamsin"]],
+          "say": "Fine. Don't get yourself killed doing something I could've done faster.",
+          "fx": [["party", "tamsin", "leave"]]
+        },
+        {
+          "id": "return_barred",
+          "label": "ask her to come back",
+          "if": [["flag", "tamsin_left"], ["flag", "ir_miners_sold"]],
+          "say": "No. You sold out men working the same mine that killed my mother, for coin, and you want me to forget that. I don't forget. Ever."
+        },
+        {
+          "id": "return_yes",
+          "label": "ask her to come back",
+          "if": [["flag", "tamsin_left"], ["!flag", "ir_miners_sold"], ["var", "appr_tamsin", ">=", 0]],
+          "say": "...You've done enough to earn a second look. Don't waste it.",
+          "fx": [["party", "tamsin", "join"], ["clear", "tamsin_left"]]
+        },
+        {
+          "id": "return_no",
+          "label": "ask her to come back",
+          "if": [["flag", "tamsin_left"], ["!flag", "ir_miners_sold"], ["var", "appr_tamsin", "<", 0]],
+          "say": "Not yet. Show me, don't tell me."
+        },
+        {
+          "id": "confide",
+          "label": "ask what really drives her",
+          "if": [["var", "appr_tamsin", ">=", 2]],
+          "once": true,
+          "say": "I was twelve when the Hundred came down and they carried what was left of my mother out of that shaft. I've been counting blows ever since — needed something I could measure.",
+          "fx": [["xp", 3], ["set", "tamsin_confided"], ["move", "tamsin_hammer_charm", "inv"]]
+        },
+        {
+          "id": "rebuke",
+          "label": "ask what she thinks of you",
+          "if": [["var", "appr_tamsin", "<=", -2]],
+          "once": true,
+          "say": "You want it straight? I think you talk more than you act, and I've got no use for people like that. There. Straight."
+        },
+        {
+          "id": "choice_a",
+          "label": "tell her to make them answer for it",
+          "if": [["flag", "tamsin_mine_truth"], ["!flag", "tamsin_advised"]],
+          "once": true,
+          "say": "The truth about the mine comes out at last, uglier than she guessed. You tell her to make whoever's responsible answer for it. She nods once, already working out how.",
+          "fx": [["set", "tamsin_advised"], ["addvar", "appr_tamsin", 1]]
+        },
+        {
+          "id": "choice_b",
+          "label": "tell her chasing it wastes good iron",
+          "if": [["flag", "tamsin_mine_truth"], ["!flag", "tamsin_advised"]],
+          "once": true,
+          "say": "The truth about the mine comes out at last, uglier than she guessed. You tell her chasing it further wastes good iron and better time. Something in her jaw sets hard.",
+          "fx": [["set", "tamsin_advised"], ["addvar", "appr_tamsin", -1]]
+        },
+        {
+          "id": "quest_avenged",
+          "label": "ask about the mine",
+          "if": [["flag", "tamsin_mine_avenged"]],
+          "once": true,
+          "say": "Whoever lied about that collapse has answered for it now, her way — plain, and final. She doesn't talk about it much. Doesn't need to.",
+          "fx": [["xp", 2], ["addvar", "appr_tamsin", 2]]
+        },
+        {
+          "id": "quest_forgiven",
+          "label": "ask about the mine",
+          "if": [["flag", "tamsin_mine_forgiven"]],
+          "once": true,
+          "say": "She let it lie, in the end. Said carrying it further wouldn't carry her mother back. First time I've heard her sound tired instead of angry.",
+          "fx": [["xp", 2], ["addvar", "appr_tamsin", 1]]
+        },
+        {
+          "id": "quest_sold",
+          "label": "ask about the miners",
+          "if": [["flag", "ir_miners_sold"]],
+          "once": true,
+          "say": "The miners got sold out to the Ironbound for a tidy sum, truth and all, buried under it. She hasn't said a word since she heard. That's worse than shouting.",
+          "fx": [["xp", 1], ["addvar", "appr_tamsin", -2]]
+        },
+        {
+          "id": "bye",
+          "label": "that's enough for now",
+          "say": "Watch your footing. I'm not carrying you back.",
+          "end": true
+        }
       ]
     },
     "vell": {
@@ -206,63 +731,247 @@
         "hit": 1,
         "dmg": 1,
         "remarks": [
-          { "id": "r_hb_hollow", "if": [["flag", "hb_hollow_burned"]], "say": "Hollowbrook's burning, and with it every record the Keepers never finished copying. That is not a small loss." },
-          { "id": "r_king_slain", "if": [["flag", "va_king_slain"]], "say": "A death, unrecorded by any rite. History will remember only that he stopped being a problem. Poor epitaph." },
-          { "id": "r_king_forsaken", "if": [["flag", "va_king_forsaken"]], "say": "An unfinished story. I dislike those more than sad endings. At least a sad ending is an ending." },
-          { "id": "r_king_rested", "if": [["flag", "va_king_rested"]], "say": "Properly rested, properly recorded. That's the kind of ending that actually holds." },
-          { "id": "r_crown_broken", "if": [["flag", "va_crown_broken"]], "say": "You broke it. Four hundred years of history, and you broke it. I have opinions about this I am choosing not to share yet." },
-          { "id": "r_sealed", "if": [["flag", "va_sealed"]], "say": "Sealed away from study forever, most likely. A scholar's small grief, next to everything else that happened there." },
-          { "id": "r_th_entered", "if": [["flag", "th_entered"]], "say": "Mercenary country. Poor record-keeping, excellent gossip. I'll take what I can get." },
-          { "id": "r_fd_entered", "if": [["flag", "fd_entered"]], "say": "Fenmarch keeps its history underwater, apparently. I do hope it kept it readable." },
-          { "id": "r_wm_entered", "if": [["flag", "wm_entered"]], "say": "Wardmoor's archive is meant to be excellent. I intend to find out, given half a chance." },
-          { "id": "r_ir_entered", "if": [["flag", "ir_entered"]], "say": "The Ironbound burn what they don't like. I try not to think too hard about what that's cost the Downs' history." },
-          { "id": "r_hb_entered", "if": [["flag", "hb_entered"]], "say": "Barrowmere. The Keepers' Hall is here somewhere. I have — reasons to want to see it." },
-          { "id": "r_sk_entered", "if": [["flag", "sk_entered"]], "say": "Gullhaven keeps its records in the harbormaster's memory, near as I can tell. Frustrating, and probably more accurate than paper." },
-          { "id": "r_cp_entered", "if": [["flag", "cp_entered"]], "say": "St. Ashwyn's Perch. Old enough to remember things properly, if anyone up here still bothers to ask it." },
+          {
+            "id": "r_hb_hollow",
+            "if": [["flag", "hb_hollow_burned"]],
+            "say": "Hollowbrook's burning, and with it every record the Keepers never finished copying. That is not a small loss."
+          },
+          {
+            "id": "r_king_slain",
+            "if": [["flag", "va_king_slain"]],
+            "say": "A death, unrecorded by any rite. History will remember only that he stopped being a problem. Poor epitaph."
+          },
+          {
+            "id": "r_king_forsaken",
+            "if": [["flag", "va_king_forsaken"]],
+            "say": "An unfinished story. I dislike those more than sad endings. At least a sad ending is an ending."
+          },
+          {
+            "id": "r_king_rested",
+            "if": [["flag", "va_king_rested"]],
+            "say": "Properly rested, properly recorded. That's the kind of ending that actually holds."
+          },
+          {
+            "id": "r_crown_broken",
+            "if": [["flag", "va_crown_broken"]],
+            "say": "You broke it. Four hundred years of history, and you broke it. I have opinions about this I am choosing not to share yet."
+          },
+          {
+            "id": "r_sealed",
+            "if": [["flag", "va_sealed"]],
+            "say": "Sealed away from study forever, most likely. A scholar's small grief, next to everything else that happened there."
+          },
+          {
+            "id": "r_th_entered",
+            "if": [["flag", "th_entered"]],
+            "say": "Mercenary country. Poor record-keeping, excellent gossip. I'll take what I can get."
+          },
+          {
+            "id": "r_fd_entered",
+            "if": [["flag", "fd_entered"]],
+            "say": "Fenmarch keeps its history underwater, apparently. I do hope it kept it readable."
+          },
+          {
+            "id": "r_wm_entered",
+            "if": [["flag", "wm_entered"]],
+            "say": "Wardmoor's archive is meant to be excellent. I intend to find out, given half a chance."
+          },
+          {
+            "id": "r_ir_entered",
+            "if": [["flag", "ir_entered"]],
+            "say": "The Ironbound burn what they don't like. I try not to think too hard about what that's cost the Downs' history."
+          },
+          {
+            "id": "r_hb_entered",
+            "if": [["flag", "hb_entered"]],
+            "say": "Barrowmere. The Keepers' Hall is here somewhere. I have — reasons to want to see it."
+          },
+          {
+            "id": "r_sk_entered",
+            "if": [["flag", "sk_entered"]],
+            "say": "Gullhaven keeps its records in the harbormaster's memory, near as I can tell. Frustrating, and probably more accurate than paper."
+          },
+          {
+            "id": "r_cp_entered",
+            "if": [["flag", "cp_entered"]],
+            "say": "St. Ashwyn's Perch. Old enough to remember things properly, if anyone up here still bothers to ask it."
+          },
           { "id": "r_mg_entered", "if": [["flag", "mg_entered"]], "say": "Marrowgate." },
-          { "id": "r_hollows3", "if": [["var", "hollows_rested", ">=", 3]], "say": "Three rites completed properly, three records worth keeping. I'm almost tempted to write this down as it happens, for once." },
-          { "id": "r_appr_pos", "if": [["var", "appr_vell", ">=", 2]], "say": "I don't extend trust for free. Consider this the exception, not the rule." },
-          { "id": "r_appr_neg", "if": [["var", "appr_vell", "<=", -2]], "say": "I am reconsidering several earlier assessments of your character. None of the revisions favor you." }
+          {
+            "id": "r_hollows3",
+            "if": [["var", "hollows_rested", ">=", 3]],
+            "say": "Three rites completed properly, three records worth keeping. I'm almost tempted to write this down as it happens, for once."
+          },
+          {
+            "id": "r_appr_pos",
+            "if": [["var", "appr_vell", ">=", 2]],
+            "say": "I don't extend trust for free. Consider this the exception, not the rule."
+          },
+          {
+            "id": "r_appr_neg",
+            "if": [["var", "appr_vell", "<=", -2]],
+            "say": "I am reconsidering several earlier assessments of your character. None of the revisions favor you."
+          }
         ],
         "leaves": [
-          { "if": [["flag", "va_crown_broken"], ["var", "appr_vell", "<=", -1]], "say": "You broke the one thing that might have named me honestly, and I no longer trust you to carry what's left of the truth. I'll carry it myself." },
-          { "if": [["var", "appr_vell", "<=", -3]], "say": "I've reconsidered the wisdom of this arrangement entirely. Goodbye." }
+          {
+            "if": [["flag", "va_crown_broken"], ["var", "appr_vell", "<=", -1]],
+            "say": "You broke the one thing that might have named me honestly, and I no longer trust you to carry what's left of the truth. I'll carry it myself."
+          },
+          {
+            "if": [["var", "appr_vell", "<=", -3]],
+            "say": "I've reconsidered the wisdom of this arrangement entirely. Goodbye."
+          }
         ]
       },
       "topics": [
-        { "id": "greet", "label": "who are you", "once": true, "say": "A wandering scholar, of sorts. I read old stones for a living, when the living pays. Ask me anything — I may even answer truthfully.", "fx": [["xp", 1]] },
-        { "id": "bg_want", "label": "what you're really after", "if": [["flag", "said_vell_greet"]], "once": true, "say": "A particular kind of truth, buried in a particular kind of ledger. I'll say no more than that until I trust you a little further.", "fx": [["xp", 2]] },
-        { "id": "bg_marrowgate", "label": "why you go quiet at 'Marrowgate'", "if": [["flag", "said_vell_bg_want"]], "once": true, "say": "Do I? I hadn't noticed. Some cities aren't kind to certain names. Leave it there, for now.", "fx": [["xp", 2]] },
-        { "id": "bg_gray", "label": "what you make of the gray", "if": [["flag", "said_vell_bg_marrowgate"]], "once": true, "say": "Four hundred years of neglected rites, come due all at once. Not a curse. An unpaid debt — and debts don't forget the way people do.", "fx": [["xp", 2]] },
-        { "id": "recruit", "label": "come with me", "if": [["!inParty", "vell"], ["!flag", "vell_left"], ["flag", "said_vell_greet"]], "say": "...An excellent notion, actually. I do my best thinking while walking, and my worst while paying for a room.", "fx": [["party", "vell", "join"], ["set", "vell_joined"]] },
-        { "id": "dismiss", "label": "wait here", "if": [["inParty", "vell"]], "say": "I'll mind the ledgers. Someone ought to, and it clearly isn't going to be you.", "fx": [["party", "vell", "leave"]] },
-        { "id": "return_yes", "label": "ask them to come back", "if": [["flag", "vell_left"], ["var", "appr_vell", ">=", 0]], "say": "...Curiosity outweighs pride, in the end. It usually does, with me. I'll come.", "fx": [["party", "vell", "join"], ["clear", "vell_left"]] },
-        { "id": "return_no", "label": "ask them to come back", "if": [["flag", "vell_left"], ["var", "appr_vell", "<", 0]], "say": "Not yet. I'd rather finish being right about you before I forgive you for it." },
-        { "id": "confide", "label": "ask what they're hiding", "if": [["var", "appr_vell", ">=", 2]], "once": true, "say": "The truth, since you've earned it: I'm Marrowgate's own blood, exiled before I could walk. The ledger in Hollowbrook proves it. I'd rather you heard it from me than the throne.", "fx": [["xp", 3], ["set", "vell_secret_told"]] },
-        { "id": "rebuke", "label": "ask what they think of you", "if": [["var", "appr_vell", "<=", -2]], "once": true, "say": "I think you handle the truth the way a child handles a knife — carelessly, and someone always ends up cut." },
-        { "id": "choice_a", "label": "tell them the truth is worth knowing", "if": [["flag", "vell_ledger_found"], ["!flag", "vell_advised"]], "once": true, "say": "The ledger surfaces at last, every line damning or vindicating, depending on the reader. You tell them the truth deserves to be known, whatever it costs. They go still, then nod.", "fx": [["set", "vell_advised"], ["addvar", "appr_vell", 1]] },
-        { "id": "choice_b", "label": "tell them to burn the ledger", "if": [["flag", "vell_ledger_found"], ["!flag", "vell_advised"]], "once": true, "say": "The ledger surfaces at last, every line damning or vindicating, depending on the reader. You tell them to burn it and be done with the whole business. Something in their face closes over.", "fx": [["set", "vell_advised"], ["addvar", "appr_vell", -1]] },
-        { "id": "quest_exposed", "label": "ask about the ledger", "if": [["flag", "vell_exposed"]], "once": true, "say": "The secret got out before Vell ever chose to tell it — dragged into the light at the worst possible moment. They haven't forgiven whoever did that. Might not forgive themselves either.", "fx": [["xp", 1], ["addvar", "appr_vell", -1]] },
-        { "id": "bye", "label": "that's enough for now", "say": "Do try not to lose anything important while I'm not looking.", "end": true }
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "A wandering scholar, of sorts. I read old stones for a living, when the living pays. Ask me anything — I may even answer truthfully.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_want",
+          "label": "what you're really after",
+          "if": [["flag", "said_vell_greet"]],
+          "once": true,
+          "say": "A particular kind of truth, buried in a particular kind of ledger. I'll say no more than that until I trust you a little further.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_marrowgate",
+          "label": "why you go quiet at 'Marrowgate'",
+          "if": [["flag", "said_vell_bg_want"]],
+          "once": true,
+          "say": "Do I? I hadn't noticed. Some cities aren't kind to certain names. Leave it there, for now.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_gray",
+          "label": "what you make of the gray",
+          "if": [["flag", "said_vell_bg_marrowgate"]],
+          "once": true,
+          "say": "Four hundred years of neglected rites, come due all at once. Not a curse. An unpaid debt — and debts don't forget the way people do.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "recruit",
+          "label": "come with me",
+          "if": [["!inParty", "vell"], ["!flag", "vell_left"], ["flag", "said_vell_greet"]],
+          "say": "...An excellent notion, actually. I do my best thinking while walking, and my worst while paying for a room.",
+          "fx": [["party", "vell", "join"], ["set", "vell_joined"]]
+        },
+        {
+          "id": "dismiss",
+          "label": "wait here",
+          "if": [["inParty", "vell"]],
+          "say": "I'll mind the ledgers. Someone ought to, and it clearly isn't going to be you.",
+          "fx": [["party", "vell", "leave"]]
+        },
+        {
+          "id": "return_yes",
+          "label": "ask them to come back",
+          "if": [["flag", "vell_left"], ["var", "appr_vell", ">=", 0]],
+          "say": "...Curiosity outweighs pride, in the end. It usually does, with me. I'll come.",
+          "fx": [["party", "vell", "join"], ["clear", "vell_left"]]
+        },
+        {
+          "id": "return_no",
+          "label": "ask them to come back",
+          "if": [["flag", "vell_left"], ["var", "appr_vell", "<", 0]],
+          "say": "Not yet. I'd rather finish being right about you before I forgive you for it."
+        },
+        {
+          "id": "confide",
+          "label": "ask what they're hiding",
+          "if": [["var", "appr_vell", ">=", 2]],
+          "once": true,
+          "say": "The truth, since you've earned it: I'm Marrowgate's own blood, exiled before I could walk. The ledger in Hollowbrook proves it. I'd rather you heard it from me than the throne.",
+          "fx": [["xp", 3], ["set", "vell_secret_told"]]
+        },
+        {
+          "id": "rebuke",
+          "label": "ask what they think of you",
+          "if": [["var", "appr_vell", "<=", -2]],
+          "once": true,
+          "say": "I think you handle the truth the way a child handles a knife — carelessly, and someone always ends up cut."
+        },
+        {
+          "id": "choice_a",
+          "label": "tell them the truth is worth knowing",
+          "if": [["flag", "vell_ledger_found"], ["!flag", "vell_advised"]],
+          "once": true,
+          "say": "The ledger surfaces at last, every line damning or vindicating, depending on the reader. You tell them the truth deserves to be known, whatever it costs. They go still, then nod.",
+          "fx": [["set", "vell_advised"], ["addvar", "appr_vell", 1]]
+        },
+        {
+          "id": "choice_b",
+          "label": "tell them to burn the ledger",
+          "if": [["flag", "vell_ledger_found"], ["!flag", "vell_advised"]],
+          "once": true,
+          "say": "The ledger surfaces at last, every line damning or vindicating, depending on the reader. You tell them to burn it and be done with the whole business. Something in their face closes over.",
+          "fx": [["set", "vell_advised"], ["addvar", "appr_vell", -1]]
+        },
+        {
+          "id": "quest_exposed",
+          "label": "ask about the ledger",
+          "if": [["flag", "vell_exposed"]],
+          "once": true,
+          "say": "The secret got out before Vell ever chose to tell it — dragged into the light at the worst possible moment. They haven't forgiven whoever did that. Might not forgive themselves either.",
+          "fx": [["xp", 1], ["addvar", "appr_vell", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "that's enough for now",
+          "say": "Do try not to lose anything important while I'm not looking.",
+          "end": true
+        }
       ]
     }
   },
   "items": {
-    "lys_whistle": { "name": "a bone hunting-whistle", "loc": "nowhere", "hint": "two low notes, and somewhere in the trees, she'll hear them." },
-    "osk_verse_scrap": { "name": "a verse in an unsteady hand", "loc": "nowhere", "hint": "his own hand, mistakes and all — he wanted you to have it right, even wrong." },
-    "tamsin_hammer_charm": { "name": "a thumbnail-small forge-charm", "loc": "nowhere", "hint": "her mother's iron. She doesn't explain further, and you don't ask." },
-    "vell_cipher_key": { "name": "a strip of vellum, a cipher in hand", "loc": "nowhere", "hint": "notes in Vell's own hand — might unlock more of theirs, if you find any." }
+    "lys_whistle": {
+      "name": "a bone hunting-whistle",
+      "loc": "nowhere",
+      "hint": "two low notes, and somewhere in the trees, she'll hear them."
+    },
+    "osk_verse_scrap": {
+      "name": "a verse in an unsteady hand",
+      "loc": "nowhere",
+      "hint": "his own hand, mistakes and all — he wanted you to have it right, even wrong."
+    },
+    "tamsin_hammer_charm": {
+      "name": "a thumbnail-small forge-charm",
+      "loc": "nowhere",
+      "hint": "her mother's iron. She doesn't explain further, and you don't ask."
+    },
+    "vell_cipher_key": {
+      "name": "a strip of vellum, a cipher in hand",
+      "loc": "nowhere",
+      "hint": "notes in Vell's own hand — might unlock more of theirs, if you find any."
+    }
   },
   "quests": {
     "q_lys": {
       "name": "A Brother in the Company",
       "start": [["flag", "lys_joined"]],
-      "done": [["flag", "lys_brother_home"]],
+      "done": [["any", [["flag", "lys_brother_home"], ["flag", "lys_brother_buried"]]]],
       "failed": [["flag", "lys_brother_lost"]],
       "stages": [
-        { "if": [["flag", "lys_brother_buried"]], "text": "He's buried east of Camp Gallows, in Thornwold. Grief, not victory — but it's finished." },
-        { "if": [["flag", "lys_brother_found"]], "text": "He's alive and found. What happens next in Thornwold isn't yours to force." },
-        { "if": [["flag", "th_entered"]], "text": "You're in Thornwold. Find Camp Gallows and ask after him by name." },
+        {
+          "if": [["flag", "lys_brother_buried"]],
+          "text": "He's buried east of Camp Gallows, in Thornwold. Grief, not victory — but it's finished."
+        },
+        {
+          "if": [["flag", "lys_brother_found"]],
+          "text": "He's alive and found. What happens next in Thornwold isn't yours to force."
+        },
+        {
+          "if": [["flag", "th_entered"]],
+          "text": "You're in Thornwold. Find Camp Gallows and ask after him by name."
+        },
         { "if": [], "text": "Ask after Lys's brother at Camp Gallows, in Thornwold west of the Vale." }
       ]
     },
@@ -272,20 +981,35 @@
       "done": [["flag", "osk_family_rested"]],
       "failed": [["flag", "osk_family_burned"]],
       "stages": [
-        { "if": [["flag", "osk_family_found"]], "text": "His family is found in the drowned nave. What happens next in Fenmarch isn't yours to force." },
-        { "if": [["flag", "fd_entered"]], "text": "You're in Fenmarch. Ask after Osk's family at the drowned nave, near Reedholm." },
+        {
+          "if": [["flag", "osk_family_found"]],
+          "text": "His family is found in the drowned nave. What happens next in Fenmarch isn't yours to force."
+        },
+        {
+          "if": [["flag", "fd_entered"]],
+          "text": "You're in Fenmarch. Ask after Osk's family at the drowned nave, near Reedholm."
+        },
         { "if": [], "text": "Ask Osk about his family, then find Fenmarch east of the Vale." }
       ]
     },
     "q_tamsin": {
       "name": "What the Mine Took",
       "start": [["flag", "tamsin_joined"]],
-      "done": [["flag", "tamsin_mine_avenged"]],
+      "done": [["any", [["flag", "tamsin_mine_avenged"], ["flag", "tamsin_mine_forgiven"]]]],
       "failed": [["flag", "ir_miners_sold"]],
       "stages": [
-        { "if": [["flag", "tamsin_mine_forgiven"]], "text": "She's let the mine lie, in her own way. There's nothing more it can take from her now." },
-        { "if": [["flag", "tamsin_mine_truth"]], "text": "She knows the truth about the collapse. What she does with it in Cinderhall is hers to choose." },
-        { "if": [["flag", "ir_entered"]], "text": "You're in the Iron Downs. Ask after the collapsed mine at Cinderhall." },
+        {
+          "if": [["flag", "tamsin_mine_forgiven"]],
+          "text": "She's let the mine lie, in her own way. There's nothing more it can take from her now."
+        },
+        {
+          "if": [["flag", "tamsin_mine_truth"]],
+          "text": "She knows the truth about the collapse. What she does with it in Cinderhall is hers to choose."
+        },
+        {
+          "if": [["flag", "ir_entered"]],
+          "text": "You're in the Iron Downs. Ask after the collapsed mine at Cinderhall."
+        },
         { "if": [], "text": "Ask Tamsin about the mine, then find Cinderhall in the Iron Downs, past Thornwold." }
       ]
     },
@@ -295,34 +1019,109 @@
       "done": [["flag", "vell_ledger_found"]],
       "failed": [["flag", "vell_exposed"]],
       "stages": [
-        { "if": [["flag", "hb_entered"]], "text": "You're in Hollowbrook. Ask after the Keepers' Hall and the ledger it holds." },
-        { "if": [["flag", "said_vell_bg_marrowgate"]], "text": "Vell goes quiet at the name Marrowgate. The Keepers' Hall in Hollowbrook might hold why." },
-        { "if": [], "text": "Ask Vell about Marrowgate, then find the Keepers' Hall in Hollowbrook, north past Fenmarch." }
+        {
+          "if": [["flag", "hb_entered"]],
+          "text": "You're in Hollowbrook. Ask after the Keepers' Hall and the ledger it holds."
+        },
+        {
+          "if": [["flag", "said_vell_bg_marrowgate"]],
+          "text": "Vell goes quiet at the name Marrowgate. The Keepers' Hall in Hollowbrook might hold why."
+        },
+        {
+          "if": [],
+          "text": "Ask Vell about Marrowgate, then find the Keepers' Hall in Hollowbrook, north past Fenmarch."
+        }
       ]
     }
   },
   "epilogue": [
-    { "if": [["flag", "lys_dead"]], "text": "Lys never got the chance to find her brother. Nobody else went looking either." },
-    { "if": [["flag", "lys_left"]], "text": "Lys walked out of your company on the road and never came back to it." },
-    { "if": [["flag", "lys_brother_home"]], "text": "Lys brought her brother home to the Vale, and the hunter's camp is loud again, for the first time in years." },
-    { "if": [["flag", "lys_brother_buried"]], "text": "Lys buried her brother east of Camp Gallows and marked the spot the way hunters mark a trail." },
-    { "if": [["flag", "lys_brother_lost"]], "text": "Lys still watches the eastern road some evenings, though she's stopped saying why." },
-    { "if": [["!flag", "lys_joined"]], "text": "Lys stayed at the hunter's camp, watching the treeline, and never learned how the rest of it ended." },
-    { "if": [["flag", "osk_dead"]], "text": "Brother Osk's verse went unfinished. The chapel lit a candle and did not say why." },
-    { "if": [["flag", "osk_left"]], "text": "Brother Osk left your company on the road, verses and all, and did not send word after." },
-    { "if": [["flag", "osk_family_rested"]], "text": "Brother Osk said the rite over his own family himself, and the Church quietly stopped calling him a novice." },
-    { "if": [["flag", "osk_family_burned"]], "text": "Brother Osk has not quoted a verse since Fenmarch burned. He still wears the gray." },
-    { "if": [["!flag", "osk_joined"]], "text": "Brother Osk stayed in the chapel, tending a grief that was never quite his own to carry alone." },
-    { "if": [["flag", "tamsin_dead"]], "text": "Tamsin's hammer hangs unclaimed at the Vale forge. Nobody there swings it as hard." },
-    { "if": [["flag", "tamsin_left"]], "text": "Tamsin walked out of your company and didn't look back to see if you noticed." },
-    { "if": [["flag", "tamsin_mine_avenged"]], "text": "Tamsin got her answer about the mine, and made whoever lied about it answer in turn." },
-    { "if": [["flag", "tamsin_mine_forgiven"]], "text": "Tamsin let the mine keep its dead in the end. She sounds tired more than angry now, when it comes up." },
-    { "if": [["flag", "ir_miners_sold"]], "text": "Tamsin has not spoken about the mine, or the miners, or much else, since Cinderhall sold them out." },
-    { "if": [["!flag", "tamsin_joined"]], "text": "Tamsin kept the Vale forge running and never went looking for what took her mother." },
-    { "if": [["flag", "vell_dead"]], "text": "Vell's last sentence went unfinished, and nobody who heard it start ever learned how it ended." },
-    { "if": [["flag", "vell_left"]], "text": "Vell left your company somewhere on the road, taking their notes and their silences with them." },
-    { "if": [["flag", "vell_ledger_found"]], "text": "Vell found the Keepers' ledger, and whatever it says about their birth, they carry it quietly now, on their own terms." },
-    { "if": [["flag", "vell_exposed"]], "text": "Vell's lineage came out before they were ready, dragged into daylight by someone else's hand. They have not forgiven it." },
-    { "if": [["!flag", "vell_joined"]], "text": "Vell stayed at the Last Light inn, still evasive about Marrowgate, and never did explain why." }
+    {
+      "if": [["flag", "lys_dead"]],
+      "text": "Lys never got the chance to find her brother. Nobody else went looking either."
+    },
+    {
+      "if": [["flag", "lys_left"]],
+      "text": "Lys walked out of your company on the road and never came back to it."
+    },
+    {
+      "if": [["flag", "lys_brother_home"]],
+      "text": "Lys brought her brother home to the Vale, and the hunter's camp is loud again, for the first time in years."
+    },
+    {
+      "if": [["flag", "lys_brother_buried"]],
+      "text": "Lys buried her brother east of Camp Gallows and marked the spot the way hunters mark a trail."
+    },
+    {
+      "if": [["flag", "lys_brother_lost"]],
+      "text": "Lys still watches the eastern road some evenings, though she's stopped saying why."
+    },
+    {
+      "if": [["!flag", "lys_joined"]],
+      "text": "Lys stayed at the hunter's camp, watching the treeline, and never learned how the rest of it ended."
+    },
+    {
+      "if": [["flag", "osk_dead"]],
+      "text": "Brother Osk's verse went unfinished. The chapel lit a candle and did not say why."
+    },
+    {
+      "if": [["flag", "osk_left"]],
+      "text": "Brother Osk left your company on the road, verses and all, and did not send word after."
+    },
+    {
+      "if": [["flag", "osk_family_rested"]],
+      "text": "Brother Osk said the rite over his own family himself, and the Church quietly stopped calling him a novice."
+    },
+    {
+      "if": [["flag", "osk_family_burned"]],
+      "text": "Brother Osk has not quoted a verse since Fenmarch burned. He still wears the gray."
+    },
+    {
+      "if": [["!flag", "osk_joined"]],
+      "text": "Brother Osk stayed in the chapel, tending a grief that was never quite his own to carry alone."
+    },
+    {
+      "if": [["flag", "tamsin_dead"]],
+      "text": "Tamsin's hammer hangs unclaimed at the Vale forge. Nobody there swings it as hard."
+    },
+    {
+      "if": [["flag", "tamsin_left"]],
+      "text": "Tamsin walked out of your company and didn't look back to see if you noticed."
+    },
+    {
+      "if": [["flag", "tamsin_mine_avenged"]],
+      "text": "Tamsin got her answer about the mine, and made whoever lied about it answer in turn."
+    },
+    {
+      "if": [["flag", "tamsin_mine_forgiven"]],
+      "text": "Tamsin let the mine keep its dead in the end. She sounds tired more than angry now, when it comes up."
+    },
+    {
+      "if": [["flag", "ir_miners_sold"]],
+      "text": "Tamsin has not spoken about the mine, or the miners, or much else, since Cinderhall sold them out."
+    },
+    {
+      "if": [["!flag", "tamsin_joined"]],
+      "text": "Tamsin kept the Vale forge running and never went looking for what took her mother."
+    },
+    {
+      "if": [["flag", "vell_dead"]],
+      "text": "Vell's last sentence went unfinished, and nobody who heard it start ever learned how it ended."
+    },
+    {
+      "if": [["flag", "vell_left"]],
+      "text": "Vell left your company somewhere on the road, taking their notes and their silences with them."
+    },
+    {
+      "if": [["flag", "vell_ledger_found"]],
+      "text": "Vell found the Keepers' ledger, and whatever it says about their birth, they carry it quietly now, on their own terms."
+    },
+    {
+      "if": [["flag", "vell_exposed"]],
+      "text": "Vell's lineage came out before they were ready, dragged into daylight by someone else's hand. They have not forgiven it."
+    },
+    {
+      "if": [["!flag", "vell_joined"]],
+      "text": "Vell stayed at the Last Light inn, still evasive about Marrowgate, and never did explain why."
+    }
   ]
 }

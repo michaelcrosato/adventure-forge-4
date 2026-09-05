@@ -70,6 +70,14 @@ export function receipt(world: World, s: State): string {
 // ---------- helpers ----------
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 const article = (name: string) => (/^[aeiou]/i.test(name) ? "an" : "a");
+/**
+ * "the wight" — unless the name already carries its own article ("the Wyrm")
+ * or is a proper name ("Lys", "Regent Ysolde": authored with a capital).
+ * Common nouns are authored lowercase by convention (docs/authoring.md §7).
+ */
+const theName = (name: string) => (/^(the|a|an)\s/i.test(name) || /^[A-Z]/.test(name) ? name : `the ${name}`);
+/** Sentence-initial form of theName. */
+const TheName = (name: string) => { const t = theName(name); return t.charAt(0).toUpperCase() + t.slice(1); };
 
 export function hasLight(world: World, s: State): boolean {
   return s.inv.some((id) => world.items[id]?.light && s.flags[`${id}_lit`]);
@@ -115,6 +123,8 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return s.party.includes(c[1]);
     case "!inParty":
       return !s.party.includes(c[1]);
+    case "any":
+      return c[1].some((x) => condOk(world, s, x));
   }
 }
 
@@ -510,8 +520,8 @@ function npcStrike(world: World, s: State, npcId: string, events: string[], verb
   const absorbed = def.atk - taken;
   events.push(
     absorbed > 0
-      ? `The ${def.name} ${verb} — your armor takes ${absorbed} of it.`
-      : `The ${def.name} ${verb}.`,
+      ? `${TheName(def.name)} ${verb} — your armor takes ${absorbed} of it.`
+      : `${TheName(def.name)} ${verb}.`,
   );
   applyFx(world, s, [["hp", -taken]], events);
 }
@@ -879,9 +889,9 @@ export function step(world: World, prev: State, action: Action): StepOut {
         s.npcHp[action.npc] = (s.npcHp[action.npc] ?? 1) - dmg;
         const left = s.npcHp[action.npc]!;
         const leftText = left > 0 ? `, ${left}/${def.hp ?? 1}hp left` : "";
-        events.push(`You hit the ${def.name} (d20:${roll}+${hit}=${total} vs DF ${df}, -${dmg}hp${leftText}).`);
+        events.push(`You hit ${theName(def.name)} (d20:${roll}+${hit}=${total} vs DF ${df}, -${dmg}hp${leftText}).`);
       } else {
-        events.push(`You miss the ${def.name} (d20:${roll}+${hit}=${total} vs DF ${df}).`);
+        events.push(`You miss ${theName(def.name)} (d20:${roll}+${hit}=${total} vs DF ${df}).`);
       }
       // companions fight beside the player: one roll each, in join order,
       // until the target drops
@@ -897,13 +907,13 @@ export function step(world: World, prev: State, action: Action): StepOut {
           s.npcHp[action.npc] = (s.npcHp[action.npc] ?? 1) - cDmg;
           const left = s.npcHp[action.npc]!;
           const leftText = left > 0 ? `, ${left}/${def.hp ?? 1}hp left` : "";
-          events.push(`${c.name} hits the ${def.name} (d20:${cRoll}+${cHit}=${cTotal} vs DF ${df}, -${cDmg}hp${leftText}).`);
+          events.push(`${c.name} hits ${theName(def.name)} (d20:${cRoll}+${cHit}=${cTotal} vs DF ${df}, -${cDmg}hp${leftText}).`);
         } else {
           events.push(`${c.name} misses (d20:${cRoll}+${cHit}=${cTotal} vs DF ${df}).`);
         }
       }
       if ((s.npcHp[action.npc] ?? 0) <= 0) {
-        events.push(`The ${def.name} is destroyed.`);
+        events.push(`${TheName(def.name)} is destroyed.`);
         if (def.onDeath) applyFx(world, s, def.onDeath, events);
       } else if (def.atk) {
         npcStrike(world, s, action.npc, events, "strikes back");

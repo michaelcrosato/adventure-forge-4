@@ -174,6 +174,11 @@ epilogue reads.
 
 ## Shared templates (`templates.json`)
 
+Built as written below, with one liberty: every template offers a force, a
+craft, and a words route (the table's loop column omitted one for barrow,
+tower, and camp), so no class is ever locked out of a stamped place. Where
+this table and `world/reach/templates.json` disagree, the file is the truth.
+
 | template | rooms | vars | the loop |
 |---|---|---|---|
 | `barrow` | mouth, passage, chamber, rest | NAME, WIGHT | a wight guards a verse-stone; read it (wits) / trace it (grace) / cut the wight down (fight); the rest room holds a keepsake |

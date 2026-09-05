@@ -353,3 +353,33 @@ test("a companion with a matching `leaves` entry walks out after the turn, sets 
   const moved = doLabel(world, out.state, "go east");
   assert.equal(moved.npcRoom["lys"], "a", "she stays where she quit");
 });
+
+test("combat text does not double an article an npc name already carries", () => {
+  const world = mini({
+    npcs: { wyrm: { name: "the Wyrm", room: "a", hostile: true, hp: 100, atk: 1, df: 1 }, husk: { name: "gray husk", room: "a", hostile: true, hp: 100, atk: 1, df: 1 } },
+  });
+  const { state } = newState(world, 1);
+  const a = step(world, state, { kind: "attack", npc: "wyrm" }).events.join(" ");
+  assert.match(a, /You hit the Wyrm/);
+  assert.doesNotMatch(a, /the the/);
+  assert.match(a, /The Wyrm strikes back/);
+  const b = step(world, state, { kind: "attack", npc: "husk" }).events.join(" ");
+  assert.match(b, /You hit the gray husk/);
+  assert.match(b, /The gray husk strikes back/);
+});
+
+test("a proper name (authored with a capital) takes no article in combat text", () => {
+  const named = mini({ npcs: { lys: { name: "Lys", room: "a", hp: 100, atk: 1, df: 1 } } });
+  const c = step(named, newState(named, 1).state, { kind: "attack", npc: "lys" }).events.join(" ");
+  assert.match(c, /You hit Lys /);
+  assert.match(c, /Lys strikes back/);
+  assert.doesNotMatch(c, /the Lys/);
+});
+
+test("an npc's desc shows on the full view and not on the brief one", () => {
+  const world = mini({ npcs: { reeve: { name: "reeve", room: "a", desc: "Gray at the temples." } } });
+  const { state } = newState(world, 1);
+  assert.match(render(world, state, [], { full: true }).text, /reeve is here — Gray at the temples\./);
+  assert.match(render(world, state, []).text, /reeve is here$/m);
+  assert.doesNotMatch(render(world, state, []).text, /Gray at the temples/);
+});

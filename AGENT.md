@@ -28,7 +28,15 @@ this file. The driver reverts any cycle that tries.
   Change content ⇒ update the walkthrough and proofs in the same change.
 - **Character rules are engine, flavor is data.** Classes, perks, and xp live
   in the world file. New DSL ops need validator + tests in the same change.
-  Generated regions (`gen`) expand before validation — same file, same world.
+  Generated regions (`gen`), templates and stamps expand before validation —
+  same file, same world. A root file may `include` part files; a region
+  lives in its own part. The full DSL and the style budget are in
+  `docs/authoring.md`; the realm's design and state contract are in
+  `docs/superpowers/specs/2026-09-05-realm-design.md`.
+- **Content tools.** `scripts/lint-world.ts` (text budgets, per-region
+  counts), `scripts/walk.ts` (turn a label list into a walkthrough, inserting
+  perk picks), `scripts/fmt-json.mjs` (compact content formatting),
+  `npm run turn` (play one command at a time from a shell).
 
 ## Cycle contract
 
