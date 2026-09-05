@@ -120,6 +120,10 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return s.perks.includes(c[1]);
     case "!perk":
       return !s.perks.includes(c[1]);
+    case "npcHere":
+      return s.npcRoom[c[1]] === s.room && !npcDead(world, s, c[1]);
+    case "!npcHere":
+      return !(s.npcRoom[c[1]] === s.room && !npcDead(world, s, c[1]));
     case "inParty":
       return s.party.includes(c[1]);
     case "!inParty":

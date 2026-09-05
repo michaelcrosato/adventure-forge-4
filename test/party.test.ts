@@ -325,6 +325,21 @@ test("taking an owned thing under its owner's eyes is seen and counted; coin mov
   assert.match(renderStatus(world, state), /The tale is told\./);
 });
 
+test("a remark gated on npcHere fires only while that npc stands alive in the room", () => {
+  const world = mini({
+    items: { sword: { name: "sword", loc: "inv", hit: 0, dmg: 5 } },
+    npcs: {
+      lys: { name: "Lys", room: "a", hp: 6, companion: { remarks: [{ id: "wolf", if: [["npcHere", "wolf"], ["!npcDead", "wolf"]], say: "Leave it." }] }, topics: [{ id: "join", label: "come with me", say: "Fine.", fx: [["party", "lys", "join"]], once: true }] },
+      wolf: { name: "wolf", room: "b", hostile: true, hp: 1, atk: 1, df: 1 },
+    },
+  });
+  let { state } = newState(world, 1);
+  const joined = step(world, state, actionByLabel(world, state, "ask Lys: come with me")!);
+  assert.doesNotMatch(joined.events.join(" "), /Leave it/, "the wolf is a room away");
+  const east = step(world, joined.state, actionByLabel(world, joined.state, "go east")!);
+  assert.match(east.events.join(" "), /Lys: "Leave it\."/, "she speaks the turn the wolf is in front of you");
+});
+
 test("companions roll their own attacks after the player's, and a leaving companion stays behind", () => {
   const world = company();
   let { state } = newState(world, 1);

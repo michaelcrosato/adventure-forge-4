@@ -20,6 +20,8 @@ export type Cond =
   | ["!perk", string]
   | ["inParty", string] // npc travels with the player
   | ["!inParty", string]
+  | ["npcHere", string] // npc stands alive in the player's room (a companion's warning before a fight, a line only said in someone's presence)
+  | ["!npcHere", string]
   | ["any", Cond[]]; // passes when at least one of the listed conditions passes (the one OR in an all-of list)
 
 // ---------- effects ----------

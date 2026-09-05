@@ -89,6 +89,16 @@
                   ]
                 ]
               ]
+            },
+            {
+              "id": "$verse_after",
+              "label": "read the verse-stone over the still dead",
+              "if": [["npcDead", "$wight"]],
+              "once": true,
+              "fx": [
+                ["xp", 2],
+                ["say", "With nothing left to keep it, the verse-stone reads plain: a rest-verse for whoever lies here, older than the doors. You say it anyway, for what it is worth to the dead."]
+              ]
             }
           ]
         },
@@ -978,7 +988,7 @@
         "$hermit": {
           "name": "{{HERMIT}}",
           "room": "$hut",
-          "desc": "Doesn't look up first. Looks up eventually, and takes your measure quick.",
+          "desc": "{{HERMIT}}: doesn't look up first. Looks up eventually, and takes your measure quick.",
           "topics": [
             {
               "id": "$needs",

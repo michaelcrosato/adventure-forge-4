@@ -60,6 +60,7 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["class", c]` / `["!class", c]` | the player's class |
 | `["perk", p]` / `["!perk", p]` | the player owns the perk |
 | `["inParty", npc]` / `["!inParty", npc]` | companion travels with the player |
+| `["npcHere", id]` / `["!npcHere", id]` | the npc stands alive in the player's room — a companion's warning before a fight, a line said only in someone's presence |
 | `["any", [cond, cond, ...]]` | passes when at least one listed condition passes — the one OR inside an all-of list |
 
 ## 4. Effects
