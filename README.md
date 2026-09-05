@@ -154,6 +154,7 @@ a region author works from.
 
 ```bash
 node --import tsx scripts/lint-world.ts world/reach.json      # text budgets, per-region counts
+node --import tsx scripts/audit-choices.ts world/reach.json  # which choices the world reads back, and which it forgets
 node --import tsx scripts/walk.ts world/reach.json steps.json  # label list -> walkthrough, perk picks inserted
 node scripts/fmt-json.mjs world/reach/*.json                  # compact, stable content formatting
 ```
@@ -175,7 +176,7 @@ world/reach.json  The Gray Reach (the default game): root, classes, perks, quest
 world/reach/      its parts — the Vale rebuilt, companions, templates, and eight more regions
 world/vale.json   The Vale of Ash, the original compact world
 world/lighthouse.json  the small regression world
-scripts/          author tools: lint, walk, stubs, land, fmt
+scripts/          author tools: lint, choice audit, walk, stubs, land, fmt
 test/             155 tests, including the token budget and determinism rules
 loop/             playtest wave, dev cycle, mock player, report checker
 queue/ done/      the one inbox (issues) and its archive

@@ -377,3 +377,16 @@ npm run test                        # budget, content rules, determinism
 Fix every line the validator prints about your ids. Then play your region
 blind for ten turns with `npm run turn -- new 3` and read your own screens as
 the player will.
+
+Then ask whether your choices matter:
+
+```bash
+node --import tsx scripts/audit-choices.ts world/reach.json --prefix fd
+```
+
+It lists every flag a player choice sets and where the world reads it back —
+another room's variant or exit, another npc's topic, a quest, the epilogue, a
+companion's remark. A fork whose branch is read nowhere but where it was made
+is a choice the world forgets: give it a line somewhere else (the asker's
+thanks, a variant, an epilogue line, a remark), or make it plain the choice
+was only flavour. Gates opened by several routes are fine to leave alone.
