@@ -664,6 +664,17 @@ export const inTalkMode = (world: World, s: State): boolean =>
   !npcDead(world, s, s.talking) &&
   visibleTopics(world, s, s.talking).length > 0;
 
+/** True when an effect list can end the game somewhere inside it. */
+function fxEnds(fxs: Fx[] | undefined): boolean {
+  for (const fx of fxs ?? []) {
+    if (fx[0] === "end") return true;
+    if (fx[0] === "if" && (fxEnds(fx[2]) || fxEnds(fx[3]))) return true;
+    if (fx[0] === "check" && (fxEnds(fx[3]) || fxEnds(fx[4]))) return true;
+    if (fx[0] === "chance" && (fxEnds(fx[2]) || fxEnds(fx[3]))) return true;
+  }
+  return false;
+}
+
 /** A topic whose effects send someone out of the party. */
 const partsWays = (t: TopicDef): boolean => (t.fx ?? []).some((f) => f[0] === "party" && f[2] === "leave");
 
@@ -1051,6 +1062,13 @@ export function step(world: World, prev: State, action: Action): StepOut {
   if (!s.ended && !s.flags["_seenTravel"] && travelAvailable(world, s)) {
     s.flags["_seenTravel"] = true;
     events.push("(You know more than one place now: 'travel to a known place' moves you between landmarks in one turn.)");
+  }
+  // Once per room that holds an ending: a player three hollows in walked to the
+  // seat and ended the tale on the next action with four threads still open.
+  const endKey = `_warnedEnd_${s.room}`;
+  if (!s.ended && !s.flags[endKey] && (world.rooms[s.room]?.actions ?? []).some((a) => fxEnds(a.fx))) {
+    s.flags[endKey] = true;
+    events.push("(An ending waits in this room. What you have left undone elsewhere stays undone.)");
   }
   // Once per region, the first time the exits line there would carry a * (an
   // unexplored side trip): locked exits explain themselves inline, this marker

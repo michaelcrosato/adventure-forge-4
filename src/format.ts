@@ -165,6 +165,10 @@ export function render(
       .filter((id) => s.itemLoc[id] === s.room)
       .map((id) => world.items[id]?.name ?? id);
     if (here.length) lines.push(`you notice ${here.join(", ")} here`);
+    // a hostile who will still talk is told from one who only fights
+    const talks = new Set(
+      legalActions(world, s).flatMap((a) => (a.kind === "talk" || a.kind === "talkto" ? [a.npc] : [])),
+    );
     const npcs = Object.entries(world.npcs)
       .filter(([id]) => s.npcRoom[id] === s.room && !s.party.includes(id))
       .map(([id, d]) => {
@@ -174,7 +178,7 @@ export function render(
         if (hp <= 0) return `${d.name} (${s.flags[`laid_${id}`] ? "at rest" : "dead"})`;
         const pierce = d.pierce ? ", armor useless" : "";
         if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1}${pierce})${tail}`;
-        if (d.hostile) return `${d.name} (hostile, hp${hp}/${d.hp ?? 1}${pierce})${tail}`;
+        if (d.hostile) return `${d.name} (hostile, hp${hp}/${d.hp ?? 1}${pierce}${talks.has(id) ? ", will hear you out" : ""})${tail}`;
         return `${d.name} is here${tail}`;
       });
     if (npcs.length) lines.push(npcs.join("; "));

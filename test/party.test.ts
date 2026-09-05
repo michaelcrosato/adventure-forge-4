@@ -273,6 +273,26 @@ test("a piercing npc's strike ignores armor and says so; the room line warns of 
   assert.match(out2.events.join(" "), /your armor takes 2 of it/);
 });
 
+test("a hostile who will still talk says so; a room that holds an ending warns once on entry", () => {
+  const world = mini({
+    items: { sword: { name: "sword", loc: "inv", hit: 0, dmg: 2 } },
+    npcs: {
+      toll: { name: "toll-man", room: "a", hostile: true, hp: 6, atk: 2, df: 9, topics: [{ id: "pay", label: "pay the toll", say: "Go on, then." }] },
+      wolf: { name: "wolf", room: "a", hostile: true, hp: 5, atk: 2, df: 8 },
+    },
+  });
+  world.rooms["b"]!.actions = [{ id: "kneel", label: "kneel to the seat", fx: [["end", "lose", "knelt", "You kneel."]] }];
+  let { state } = newState(world, 1);
+  const scene = render(world, state, []).text;
+  assert.match(scene, /toll-man \(hostile, hp6\/6, will hear you out\)/);
+  assert.match(scene, /wolf \(hostile, hp5\/5\)/);
+  const out = step(world, state, actionByLabel(world, state, "go east")!);
+  assert.match(out.events.join(" "), /An ending waits in this room/);
+  state = doLabel(world, out.state, "go west");
+  const back = step(world, state, actionByLabel(world, state, "go east")!);
+  assert.doesNotMatch(back.events.join(" "), /An ending waits/, "the warning is given once per room");
+});
+
 test("companions roll their own attacks after the player's, and a leaving companion stays behind", () => {
   const world = company();
   let { state } = newState(world, 1);
