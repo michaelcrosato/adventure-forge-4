@@ -1100,6 +1100,13 @@
             ["addvar", "rep_free", 1],
             ["xp", 1]
           ]
+        },
+        {
+          "id": "ask_favor",
+          "label": "what favor would buy the road",
+          "if": [["flag", "th_heard_passage"], ["!flag", "free_passage"], ["!flag", "th_rook_dealt"]],
+          "say": "Rook, at the Rope Larder, poaching my woods and my patience. Deal with him — however you like, so long as it sticks — and the road under Coldpass is yours for nothing.",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -1980,7 +1987,7 @@
         },
         {
           "if": [],
-          "text": "Camp gossip speaks of Keepers hidden in the wood. The gap in the black thorn is at the wood's north-west corner."
+          "text": "Keepers hide in the wood. From Camp Gallows go west to the far side, then north one stand: the black thorn opens north."
         }
       ]
     },
@@ -2047,7 +2054,7 @@
         },
         {
           "if": [],
-          "text": "Cal is at the scout line in Camp Gallows. Persuade him home (will), or clear his debt at the wagon."
+          "text": "Cal is at the scout line. Persuade him home (will), clear his debt at the wagon, or win it at the ring."
         }
       ]
     },

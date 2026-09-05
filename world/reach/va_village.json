@@ -374,7 +374,14 @@
           "say": "A rider says someone is carrying the Regent's own writ now. That is not a paper Marrowgate hands out for nothing. You have been busy out there.",
           "fx": [["addvar", "rep_crown", 1], ["xp", 2]]
         },
-        { "id": "bye", "label": "leave the reeve to the watch", "say": "Mind the wood.", "end": true }
+        { "id": "bye", "label": "leave the reeve to the watch", "say": "Mind the wood.", "end": true },
+        {
+          "id": "reeve_blessed_open",
+          "label": "the priest opened the barrow",
+          "if": [["flag", "va_promised_seal"], ["flag", "va_barrow_open"], ["!flag", "va_doors_decided"]],
+          "once": true,
+          "say": "The priest opened it for you, I hear, blessing and all. Fine. Doors open to go in. Shut them after, as you said, and we'll have no quarrel."
+        }
       ]
     },
     "va_innkeep": {
@@ -572,7 +579,7 @@
           "id": "coffer_early",
           "label": "the sealed coffer",
           "if": [["!flag", "va_heard_grievance"], ["!flag", "va_coffer_opened"]],
-          "say": "Not open to asking — not from you, not yet. Go hear what the dead king himself grieves over, up in the barrow. Then come back.",
+          "say": "Not open to asking — not from you, not yet. It holds the old king's crown, if you must know why it matters. Go hear what the dead king grieves over, up in the barrow. Then come back.",
           "fx": [["if", [["!flag", "va_asked_coffer_early"]], [["set", "va_asked_coffer_early"], ["xp", 1]], []]]
         },
         {
