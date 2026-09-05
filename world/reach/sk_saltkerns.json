@@ -961,7 +961,7 @@
         {
           "id": "route_home",
           "label": "pay his debt (6 gold), send him home",
-          "if": [["flag", "ir_asked_berin"], ["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"], ["var", "gold", ">=", 6]],
+          "if": [["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"], ["var", "gold", ">=", 6]],
           "once": true,
           "say": "You square it with Rennick before Berin can argue. He stares at his own hands a moment, like he's not sure they're free.",
           "fx": [["addvar", "gold", -6], ["set", "rb_ir_sk_home"], ["set", "rb_ir_sk_done"], ["score", 3], ["xp", 2]]
@@ -969,7 +969,7 @@
         {
           "id": "route_stay",
           "label": "tell him to make his own way here",
-          "if": [["flag", "ir_asked_berin"], ["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"]],
+          "if": [["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"]],
           "once": true,
           "say": "You tell him the debt's his to carry and the choice under it is too. Something in his shoulders sets, like a decision finally made on purpose.",
           "fx": [["set", "rb_ir_sk_stayed"], ["set", "rb_ir_sk_done"], ["addvar", "appr_lys", 1], ["score", 3], ["xp", 2]]
@@ -977,7 +977,7 @@
         {
           "id": "route_guilt",
           "label": "tell him his grandfather needs him",
-          "if": [["flag", "ir_asked_berin"], ["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"]],
+          "if": [["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"]],
           "once": true,
           "say": "You lay Crick's thirty years of grief on the counter between you. It works. Berin books passage home, and doesn't look like a man who chose to.",
           "fx": [["set", "rb_ir_sk_guilted"], ["set", "rb_ir_sk_done"], ["addvar", "rep_free", -1], ["score", 3], ["xp", 2]]

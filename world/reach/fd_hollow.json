@@ -373,12 +373,12 @@
       "done": [["flag", "fd_bog_paid"]],
       "stages": [
         {
-          "if": [["has", "fd_bog_hide"]],
-          "text": "Bring the hide back to the eel-trader in Reedholm for the bounty."
+          "if": [["any", [["has", "fd_bog_hide"], ["has", "fd_eelrun_loot"]]]],
+          "text": "You have proof from the fens. The eel-trader in Reedholm pays for either kind — bring it to her."
         },
         {
           "if": [["flag", "fd_bog_bounty"]],
-          "text": "Something's tearing up the eel-trader's traps out in the fens. Deal with it and bring proof."
+          "text": "Something wanders the fens after dark, tearing traps. Deal with it, or bring back proof of whatever you find."
         },
         { "if": [], "text": "The eel-market's traps keep coming back torn." }
       ]

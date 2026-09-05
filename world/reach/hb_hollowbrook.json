@@ -85,6 +85,11 @@
       "landmark": "the chandler's shop",
       "exits": { "out": { "to": "hb_mere_shore" } },
       "variants": [
+        {
+          "if": [["flag", "hb_chandler_shamed"]],
+          "desc": "Candle-wax and old iron. The shelf that held dug-up things stands bare now, swept clean and not restocked. The shore lies out.",
+          "brief": "Wax and iron. The old shelf stands bare."
+        },
         { "if": [["flag", "hb_robber_stopped"]], "brief": "Wax, and fewer curios than there were." },
         { "if": [["flag", "hb_robber_bribed"]], "brief": "Wax, and a fresh crate of curios, unexplained." }
       ],
@@ -163,6 +168,24 @@
             ["score", 3],
             ["xp", 2],
             ["say", "He doesn't ask where a tavern's own bell came from, or where it's going. Five coin, no questions — his whole business, in a gesture."]
+          ]
+        },
+        {
+          "id": "hb_buy_curio_discount",
+          "label": "buy the stag-clasp, cheap (3 gold)",
+          "if": [
+            ["flag", "hb_chandler_deal"],
+            ["!has", "hb_curio_clasp"],
+            ["!flag", "hb_curio_clasp_gone"],
+            ["var", "gold", ">=", 3]
+          ],
+          "once": true,
+          "fx": [
+            ["addvar", "gold", -3],
+            ["set", "hb_curio_clasp_gone"],
+            ["move", "hb_curio_clasp", "inv"],
+            ["score", 2],
+            ["say", "He sets the stag-clasp down without wrapping it. 'Between friends,' he says, 'no charge for the cloth.'"]
           ]
         }
       ]
@@ -295,7 +318,8 @@
       "name": "a jar of Ironbound pitch",
       "loc": "nowhere",
       "hint": "thick and dark — it burns however wet the ground is"
-    }
+    },
+    "hb_curio_clasp": { "name": "the stag-clasp", "loc": "nowhere", "hint": "a keepsake; nothing is owed on it" }
   },
   "npcs": {
     "hb_warden": {
@@ -340,6 +364,14 @@
           "label": "the Crown surveyor",
           "once": true,
           "say": "Been through staking mounds like they're timber to be sold. I've asked him to stop. He has not. Watch what you tell him.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "digger",
+          "label": "the digger on the downs",
+          "if": [["flag", "said_hb_warden_greet"]],
+          "once": true,
+          "say": "One's working the robbed mounds now, north-west past the toll-stones. Everything he pulls out belongs to whoever's still under it — not to some fool with a spade and a buyer waiting.",
           "fx": [["xp", 1]]
         },
         {
@@ -405,6 +437,22 @@
           ]
         },
         {
+          "id": "react_chandler_shamed",
+          "label": "the chandler's shelf, since",
+          "if": [["flag", "hb_chandler_shamed"]],
+          "once": true,
+          "say": "Word travels fast on a mere this size. First time in years I haven't had to threaten anyone over a barrow-ring.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_chandler_deal",
+          "label": "the chandler's shelf, since",
+          "if": [["flag", "hb_chandler_deal"]],
+          "once": true,
+          "say": "Fewer curios moving, they tell me, and a new face buying quietly. I keep my own count of who looks away and who doesn't.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "let him get back to his maps",
           "say": "Mind the ditches after dark. And give the Weeping Cairn east a wide berth after.",
@@ -432,6 +480,46 @@
           "once": true,
           "say": "A ring off a barrow-queen's hand, if the warden hasn't scared you off buying it. Pitch too, if you've got a use that isn't candlelight. I don't ask. A bone-carver out past the Hollow Eaves sells me pieces too.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "call_out",
+          "label": "call him out on the digging (will)",
+          "if": [["flag", "said_hb_warden_digger"], ["!flag", "hb_chandler_deal"], ["!flag", "hb_chandler_shamed"]],
+          "say": "Come to scold the chandler, have you? Let's hear it, then.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "hb_chandler_shamed"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "rep_keepers", 1],
+                ["say", "He goes quiet, then starts wrapping the shelf-stock in cloth, unsold. 'Warden's right, probably,' he mutters. 'Doesn't mean I like hearing it twice.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "hb_chandler_call_out_missed"]],
+                  [
+                    ["set", "hb_chandler_call_out_missed"],
+                    ["addvar", "rep_keepers", -1],
+                    ["say", "He shrugs you off without looking up. 'Everyone's got an opinion on a shelf they don't stock.' A Keeper hears, too, that it didn't hold."]
+                  ],
+                  [["say", "He shrugs you off without looking up, same as before."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "let_lie",
+          "label": "let him keep dealing, and ask his price",
+          "if": [["flag", "said_hb_warden_digger"], ["!flag", "hb_chandler_deal"], ["!flag", "hb_chandler_shamed"]],
+          "once": true,
+          "say": "You keep the warden's words to yourself. He notices you noticing the shelf, and warms up considerably.",
+          "fx": [["set", "hb_chandler_deal"], ["addvar", "rep_keepers", -1], ["xp", 1]]
         },
         {
           "id": "react_stopped",
@@ -736,7 +824,7 @@
           "id": "digger",
           "label": "trouble on the downs",
           "once": true,
-          "say": "Someone's been digging where they shouldn't, out past the toll-stones. Warden knows. Warden hasn't caught them yet.",
+          "say": "Someone's digging the robbed mounds, north-west across the downs, past the toll-stones. Warden knows. Warden hasn't caught them yet.",
           "fx": [["xp", 1]]
         },
         {

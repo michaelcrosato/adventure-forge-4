@@ -1698,9 +1698,13 @@
     },
     "ir_q_berin": {
       "name": "Berin's Coin Road",
-      "start": [["flag", "ir_asked_berin"]],
+      "start": [["any", [["flag", "ir_asked_berin"], ["flag", "sk_berin_debt"]]]],
       "done": [["any", [["flag", "rb_ir_sk_home"], ["flag", "rb_ir_sk_stayed"], ["flag", "rb_ir_sk_guilted"]]]],
       "stages": [
+        {
+          "if": [["flag", "sk_berin_debt"], ["!flag", "ir_asked_berin"]],
+          "text": "Berin, on Gullhaven's quay, owes Rennick 6 gold and won't go home owing it. His grandfather Crick waits at Cinderhall."
+        },
         { "if": [["flag", "sk_entered"]], "text": "You're in the Saltkerns. Ask after Berin at Gullhaven's quay." },
         {
           "if": [],

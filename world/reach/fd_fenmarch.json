@@ -895,12 +895,32 @@
           ]
         },
         {
+          "id": "bounty_charm",
+          "label": "the eel-trap charm, for the bounty",
+          "if": [["has", "fd_eelrun_loot"], ["!flag", "fd_bog_paid"]],
+          "once": true,
+          "say": "Not what's tearing my traps — different bite, different drag. But you went out for my sake and came back with something. That's worth a coin or two.",
+          "fx": [
+            ["move", "fd_eelrun_loot", "nowhere"],
+            ["set", "fd_bog_paid"],
+            ["addvar", "gold", 2],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "She counts out two coins, slower than she did for the hide. 'For the trying,' she says. 'Not for the eel.'"]
+          ]
+        },
+        {
           "id": "ironbound",
           "label": "the Ironbound on Stilt Row",
           "if": [["flag", "fd_entered"]],
           "once": true,
           "say": "Bad for business, zealots. Folk don't linger to buy eel with a brazier and a burning-sermon two doors down.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "banter",
+          "label": "the smell of the eel-market",
+          "say": "Tubs and brine, morning to night. You get used to it, or you don't stay."
         }
       ]
     },
