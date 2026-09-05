@@ -237,6 +237,21 @@ test("a free room action costs no turn and says so; a scripted end reads 'at res
   if (world.classes) assert.match(renderStatus(world, state), /armor\+2 \(tarred coat\)/);
 });
 
+test("attacking someone who has drawn no blade is the last thing on the menu; a hostile is listed in place", () => {
+  const world = mini({
+    items: { sword: { name: "sword", loc: "inv", hit: 0, dmg: 2 }, bread: { name: "bread", loc: "inv", use: [{ fx: [["hp", 1]] }] } },
+    npcs: {
+      novice: { name: "novice", room: "a", hp: 4, topics: [{ id: "hi", label: "the chapel", say: "Swept." }] },
+      wolf: { name: "wolf", room: "a", hostile: true, hp: 5, atk: 2, df: 8 },
+    },
+  });
+  const { state } = newState(world, 1);
+  const menu = labels(world, state);
+  assert.equal(menu[menu.length - 1], "attack novice with sword");
+  assert.ok(menu.indexOf("attack wolf with sword") < menu.indexOf("use bread"), "the hostile stays where the room lists it");
+  assert.ok(menu.indexOf("ask novice: the chapel") < menu.indexOf("attack novice with sword"));
+});
+
 test("companions roll their own attacks after the player's, and a leaving companion stays behind", () => {
   const world = company();
   let { state } = newState(world, 1);

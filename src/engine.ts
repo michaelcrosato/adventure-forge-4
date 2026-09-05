@@ -692,6 +692,7 @@ export function legalActions(world: World, s: State): Action[] {
   const out: Action[] = [];
   const room = world.rooms[s.room];
   if (!room) return out;
+  const late: Action[] = []; // attacks on the peaceable, listed after everything else
   for (const dir of Object.keys(room.exits ?? {})) out.push({ kind: "go", dir });
   if (roomIsDark(world, s)) return out; // in the dark you can only feel for exits
   if (travelAvailable(world, s)) out.push({ kind: "travel" });
@@ -707,8 +708,10 @@ export function legalActions(world: World, s: State): Action[] {
     } else {
       for (const t of topics) out.push({ kind: "talk", npc, topic: t.id });
     }
-    // companions are not targets
-    if (def.hp !== undefined && !s.party.includes(npc)) out.push({ kind: "attack", npc });
+    // companions are not targets; a stranger who has drawn no blade is one, but
+    // the option waits at the foot of the menu, after everything else here
+    if (def.hp !== undefined && !s.party.includes(npc))
+      (def.hostile || def.aggressive ? out : late).push({ kind: "attack", npc });
   }
   for (const id of s.inv) {
     for (const u of world.items[id]?.use ?? []) {
@@ -722,6 +725,7 @@ export function legalActions(world: World, s: State): Action[] {
       }
     }
   }
+  out.push(...late);
   return out;
 }
 
@@ -842,6 +846,11 @@ export function itemHint(world: World, s: State, id: string): string | undefined
 
 export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: boolean } = {}): string {
   if (a.kind === "custom" && world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.free) return " (free)";
+  if (a.kind === "travelregion" && a.region) {
+    // a region entry opens a second menu; say how many known places wait behind it
+    const n = knownLandmarks(world, s).filter((id) => (world.rooms[id]?.region ?? "") === a.region).length;
+    return ` (${n} known ${n === 1 ? "place" : "places"})`;
+  }
   if (a.kind === "attack") {
     const def = world.npcs[a.npc];
     if (!def) return "";
@@ -1041,12 +1050,14 @@ export function step(world: World, prev: State, action: Action): StepOut {
     s.flags["_seenTravel"] = true;
     events.push("(You know more than one place now: 'travel to a known place' moves you between landmarks in one turn.)");
   }
-  // Once, the first time the exits line would carry a * (an unexplored side
-  // trip): locked exits explain themselves inline, this marker did not.
-  if (!s.ended && !s.flags["_seenSideTrip"]) {
+  // Once per region, the first time the exits line there would carry a * (an
+  // unexplored side trip): locked exits explain themselves inline, this marker
+  // did not, and a player who met it in the Vale had forgotten it by Thornwold.
+  const seenKey = `_seenSideTrip_${world.rooms[s.room]?.region ?? ""}`;
+  if (!s.ended && !s.flags[seenKey]) {
     const exits = world.rooms[s.room]?.exits ?? {};
     if (Object.values(exits).some((ex) => ex.sideTrip && !s.visited.includes(ex.to))) {
-      s.flags["_seenSideTrip"] = true;
+      s.flags[seenKey] = true;
       events.push("(* marks an optional side path not yet visited.)");
     }
   }
