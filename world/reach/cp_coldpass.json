@@ -200,11 +200,11 @@
       "onEnterOnce": [["xp", 1]]
     },
     "cp_ness_camp": {
-      "name": "Old Ness's Camp",
-      "desc": "A goat-hide tent staked into a windbreak of piled stone. Old Ness turns a bell-clapper over in weathered hands like she's still deciding whether to give it up. Goats pick at moss between the stones, unbothered by the cold.",
-      "brief": "The hide tent, and Old Ness turning the clapper over.",
+      "name": "Old Maud's Camp",
+      "desc": "A goat-hide tent staked into a windbreak of piled stone. Old Maud turns a bell-clapper over in weathered hands like she's still deciding whether to give it up. Goats pick at moss between the stones, unbothered by the cold.",
+      "brief": "The hide tent, and Old Maud turning the clapper over.",
       "region": "cp",
-      "landmark": "Old Ness's Camp",
+      "landmark": "Old Maud's Camp",
       "onEnterOnce": [["xp", 2]],
       "onEnter": [
         [
@@ -217,7 +217,7 @@
       "actions": [
         {
           "id": "cp_ness_persuade",
-          "label": "earn Old Ness's trust (will)",
+          "label": "earn Old Maud's trust (will)",
           "if": [["!has", "cp_bell_clapper"], ["flag", "said_cp_ness_ask_clapper"]],
           "fx": [
             [
@@ -641,7 +641,7 @@
           "label": "ask about the silent bell",
           "if": [["flag", "said_cp_abbot_greet"]],
           "once": true,
-          "say": "That bell hasn't rung since the storm swallowed a line of pilgrims whole. I want it rung again, for them. The clapper snapped that day — Old Ness kept the spare, out on the Goat Track. She's stubborn about giving it up.",
+          "say": "That bell hasn't rung since the storm swallowed a line of pilgrims whole. I want it rung again, for them. The clapper snapped that day — Old Maud kept the spare, out on the Goat Track. She's stubborn about giving it up.",
           "fx": [["set", "cp_abbot_asked"], ["xp", 1]]
         },
         {
@@ -665,7 +665,7 @@
           "label": "ask about the missing clapper",
           "if": [["flag", "cp_bell_sold"]],
           "once": true,
-          "say": "Old Ness kept that clapper eleven winters for someone worth giving it to. I hope whatever Crell paid you was worth what you decided you weren't.",
+          "say": "Old Maud kept that clapper eleven winters for someone worth giving it to. I hope whatever Crell paid you was worth what you decided you weren't.",
           "fx": [["xp", 1]]
         },
         {
@@ -698,7 +698,7 @@
       ]
     },
     "cp_ness": {
-      "name": "Old Ness",
+      "name": "Old Maud",
       "room": "cp_ness_camp",
       "desc": "Weathered past guessing at an age, a goat-bell for a necklace, and no hurry anywhere in her.",
       "topics": [
@@ -706,7 +706,7 @@
           "id": "greet",
           "label": "who keeps goats up here",
           "once": true,
-          "say": "Old Ness. I've outlived three abbots and most of my goats. I know this Spine better than the monks know their own chapel.",
+          "say": "Old Maud. I've outlived three abbots and most of my goats. I know this Spine better than the monks know their own chapel.",
           "fx": [["xp", 1]]
         },
         {
@@ -1226,7 +1226,7 @@
         { "if": [["has", "cp_bell_clapper"]], "text": "You have the clapper. Ring the bell in the tower — or don't." },
         {
           "if": [],
-          "text": "Abbot Corvin wants the tower bell rung again. Old Ness, on the Goat Track, has kept the spare clapper for years."
+          "text": "Abbot Corvin wants the tower bell rung again. Old Maud, on the Goat Track, has kept the spare clapper for years."
         }
       ]
     },
@@ -1276,7 +1276,7 @@
     },
     {
       "if": [["flag", "cp_bell_sold"]],
-      "text": "The clapper Old Ness kept eleven winters went to Ironbound fires instead of the tower."
+      "text": "The clapper Old Maud kept eleven winters went to Ironbound fires instead of the tower."
     },
     {
       "if": [["flag", "cp_fost_protected"]],

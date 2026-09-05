@@ -872,7 +872,7 @@
         {
           "id": "hound_thanks",
           "label": "the slag-hound is dealt with",
-          "if": [["npcDead", "ir_slaghound"]],
+          "if": [["any", [["npcDead", "ir_slaghound"], ["npcDead", "ir_cave1_beast"]]]],
           "once": true,
           "say": "That hound won't trouble the night shift again. The hall's grateful, whatever else it can't give you.",
           "fx": [["xp", 1], ["addvar", "gold", 2]]
@@ -1443,7 +1443,7 @@
     "ir_hound": {
       "name": "The Slag-Hound",
       "start": [["flag", "said_ir_ness_greet"]],
-      "done": [["npcDead", "ir_slaghound"]],
+      "done": [["any", [["npcDead", "ir_slaghound"], ["npcDead", "ir_cave1_beast"]]]],
       "stages": [
         {
           "if": [["flag", "ir_hound_bounty"]],
