@@ -62,6 +62,10 @@
         {
           "if": [["flag", "sk_hollow_bargained"]],
           "brief": "Boats on the tide. Coin went out to the water; quiet came back."
+        },
+        {
+          "if": [["any", [["flag", "rb_ir_sk_home"], ["flag", "rb_ir_sk_stayed"], ["flag", "rb_ir_sk_guilted"]]]],
+          "brief": "Boats over their wrecked kin. One Downs debt, settled."
         }
       ],
       "actions": [
@@ -307,7 +311,12 @@
       "loc": "nowhere",
       "hint": "burns hot and long — good for a wreck, if you mean it"
     },
-    "sk_stolen_nets": { "name": "haul of stolen nets", "loc": "nowhere", "hint": "Marta at the chandlery would know these" }
+    "sk_stolen_nets": { "name": "haul of stolen nets", "loc": "nowhere", "hint": "Marta at the chandlery would know these" },
+    "sk_drowned_ship_bell": {
+      "name": "the Drowned Bell's old ship's-bell",
+      "loc": "nowhere",
+      "hint": "owed as tithe to Hollowbrook's Keepers' Hall"
+    }
   },
   "npcs": {
     "sk_harbourmaster": {
@@ -787,7 +796,113 @@
           "once": true,
           "say": "\"Heard a Free Company man walked out of a cage at Camp Gallows, forty years late but out.\" Otts sets down a glass. \"Good story, that one.\"",
           "fx": [["addvar", "rep_free", 1]]
+        },
+        {
+          "id": "otts_bell",
+          "label": "ask about the old ship's bell",
+          "if": [["flag", "said_sk_tavernkeep_rumors"]],
+          "once": true,
+          "say": "Green with age and silent as the grave — hauled off a wreck two generations back. Custom says it's owed to the nearest Keepers' hall as tithe. Take it, if Barrowmere's your road.",
+          "fx": [["move", "sk_drowned_ship_bell", "inv"], ["set", "sk_gave_bell"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "otts_bell_done",
+          "label": "tell Otts what became of the bell",
+          "if": [
+            ["flag", "sk_gave_bell"],
+            ["any", [["flag", "rb_sk_hb_wren"], ["flag", "rb_sk_hb_sold"], ["flag", "rb_sk_hb_mound"]]]
+          ],
+          "once": true,
+          "say": "Otts sets down the glass he's polishing and actually looks at you.",
+          "fx": [
+            ["score", 6],
+            ["xp", 3],
+            [
+              "if",
+              [["flag", "rb_sk_hb_wren"]],
+              [
+                ["say", "\"Tithe's paid at last, generations late.\" He almost smiles. \"Bar's quieter without it, not that it ever made a sound.\""],
+                ["addvar", "appr_vell", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_sk_hb_sold"]],
+              [
+                ["say", "\"Sold it, did you. Fair enough — it never rang for me either.\" He goes back to his polishing, unbothered."]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_sk_hb_mound"]],
+              [
+                ["say", "\"Hung it on a barrow door, of all things.\" He shakes his head, more curious than disapproving. \"Reach is full of strangers like you.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "otts_bell_pending",
+          "label": "tell Otts there's no word on the bell",
+          "if": [
+            ["flag", "sk_gave_bell"],
+            ["!flag", "rb_sk_hb_wren"],
+            ["!flag", "rb_sk_hb_sold"],
+            ["!flag", "rb_sk_hb_mound"]
+          ],
+          "say": "He shrugs, wiping down the bar. \"Wasn't ringing here. Wasn't ringing anywhere, far as I could tell.\""
         }
+      ]
+    },
+    "sk_berin": {
+      "name": "Berin",
+      "room": "sk_settlement",
+      "dialogue": true,
+      "desc": "Rope-scarred hands too young for them, watching the boats more than the quay.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Berin. I crew Rennick's boats now — coin road out of Cinderhall, same as half the Downs before me.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "debt",
+          "label": "ask how he's getting on",
+          "if": [["flag", "said_sk_berin_greet"]],
+          "once": true,
+          "say": "Owe the harbourmaster for gear I lost off the point last storm. Six gold, near enough. Can't go home even if I wanted to, not owing that.",
+          "fx": [["set", "sk_berin_debt"], ["xp", 2]]
+        },
+        {
+          "id": "route_home",
+          "label": "pay his debt (6 gold), send him home",
+          "if": [["flag", "ir_asked_berin"], ["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"], ["var", "gold", ">=", 6]],
+          "once": true,
+          "say": "You square it with Rennick before Berin can argue. He stares at his own hands a moment, like he's not sure they're free.",
+          "fx": [["addvar", "gold", -6], ["set", "rb_ir_sk_home"], ["set", "rb_ir_sk_done"], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "route_stay",
+          "label": "tell him to make his own way here",
+          "if": [["flag", "ir_asked_berin"], ["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"]],
+          "once": true,
+          "say": "You tell him the debt's his to carry and the choice under it is too. Something in his shoulders sets, like a decision finally made on purpose.",
+          "fx": [["set", "rb_ir_sk_stayed"], ["set", "rb_ir_sk_done"], ["addvar", "appr_lys", 1], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "route_guilt",
+          "label": "tell him his grandfather needs him",
+          "if": [["flag", "ir_asked_berin"], ["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"]],
+          "once": true,
+          "say": "You lay Crick's thirty years of grief on the counter between you. It works. Berin books passage home, and doesn't look like a man who chose to.",
+          "fx": [["set", "rb_ir_sk_guilted"], ["set", "rb_ir_sk_done"], ["addvar", "rep_free", -1], ["score", 3], ["xp", 2]]
+        },
+        { "id": "bye", "label": "leave him to the boats", "say": "Mind the reef past the point.", "end": true }
       ]
     }
   },
@@ -795,6 +910,38 @@
     {
       "if": [["any", [["flag", "sk_helped_free"], ["flag", "sk_sided_watch"]]]],
       "text": "Gullhaven's taverns argue for years after whether the Free Companies or the Watch came out ahead across the Reach; nobody settles it."
+    },
+    {
+      "if": [["flag", "rb_ir_sk_home"]],
+      "text": "Berin went home to Cinderhall debt-free, and last word had him back at his father's old bench, not the pick.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_ir_sk_stayed"]],
+      "text": "Berin stayed on Rennick's boats, his own man at last, and sends word to his grandfather when he remembers to.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_ir_sk_guilted"]],
+      "text": "Berin went home to Cinderhall for his grandfather's sake, and not, by his own account, for any sake of his own.",
+      "weight": 1
     }
-  ]
+  ],
+  "quests": {
+    "sk_q_bell": {
+      "name": "The Unrung Tithe",
+      "start": [["flag", "sk_gave_bell"]],
+      "done": [["any", [["flag", "rb_sk_hb_wren"], ["flag", "rb_sk_hb_sold"], ["flag", "rb_sk_hb_mound"]]]],
+      "stages": [
+        {
+          "if": [["flag", "hb_entered"]],
+          "text": "You're in Hollowbrook. The bell's owed to the Keepers' Hall, or sold, or hung where you see fit."
+        },
+        {
+          "if": [],
+          "text": "The Drowned Bell's old ship's-bell is owed, by custom, to Hollowbrook's Keepers' Hall. Carry it north."
+        }
+      ]
+    }
+  }
 }

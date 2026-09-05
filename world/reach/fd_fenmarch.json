@@ -91,6 +91,20 @@
           "id": "fd_rest",
           "label": "rest among the nets",
           "fx": [["hp", 10], ["say", "You sleep salt-damp and warm enough, rocked by the water under the planks."]]
+        },
+        {
+          "id": "fd_letter_burn",
+          "label": "feed the letter to the banked fire",
+          "if": [["has", "th_letter"]],
+          "once": true,
+          "fx": [
+            ["move", "th_letter", "nowhere"],
+            ["set", "rb_th_fd_burn"],
+            ["addvar", "rep_iron", 1],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "The old paper catches fast and is ash before the words could trouble anyone further. Whatever the dead man meant to confess, the fire has it now instead of Reedholm."]
+          ]
         }
       ]
     },
@@ -254,6 +268,20 @@
             ["xp", 3],
             ["score", 2],
             ["say", "A name, a date — the flood's year — and beneath it, scraped by a different, later hand: THE DOOR STOOD OPEN. THEY CHOSE TO PRAY. Not a mason's line. Someone's confession, half-erased since."]
+          ]
+        },
+        {
+          "id": "fd_letter_tablets",
+          "label": "leave the letter with the grave-tablets",
+          "if": [["has", "th_letter"]],
+          "once": true,
+          "fx": [
+            ["move", "th_letter", "nowhere"],
+            ["set", "rb_th_fd_tablets"],
+            ["addvar", "rep_church", 1],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "You wedge the letter behind the one clear tablet. Whoever wrote it, and whoever it was for, Reedholm will remember them now, unnamed or not."]
           ]
         }
       ]
@@ -964,6 +992,79 @@
           "fx": [["xp", 1]]
         }
       ]
+    },
+    "fd_perrins_mother": {
+      "name": "Perrin's mother",
+      "room": "fd_settlement",
+      "desc": "Watches the causeway more than the water, a boy's bedding still folded on the shelf.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who keeps this vigil at the landing",
+          "once": true,
+          "say": "Perrin's mother, is who. My boy went to pay a debt in the Watch's colors, two winters gone to Highward. I keep his bed made up regardless.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask after her son at Highward",
+          "if": [["flag", "said_fd_perrins_mother_greet"]],
+          "once": true,
+          "say": "If you're bound for Wardmoor, ask the barracks after Perrin. Tell me true, whatever you find. I'd rather know than keep hoping blind.",
+          "fx": [["set", "fd_asked_perrin"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "done",
+          "label": "tell her what became of Perrin",
+          "if": [
+            ["flag", "fd_asked_perrin"],
+            ["any", [["flag", "rb_fd_wm_home"], ["flag", "rb_fd_wm_hidden"], ["flag", "rb_fd_wm_reported"]]]
+          ],
+          "once": true,
+          "say": "She's been watching the causeway every evening since you asked.",
+          "fx": [
+            ["score", 6],
+            ["xp", 3],
+            [
+              "if",
+              [["flag", "rb_fd_wm_home"]],
+              [
+                ["say", "She doesn't wait for you to finish the sentence before she's moving — down the road, toward whatever's coming."],
+                ["addvar", "appr_lys", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_fd_wm_hidden"]],
+              [
+                ["say", "\"Steadier, not home,\" she says, and nods like that's the better mercy. \"I can live with steadier.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_fd_wm_reported"]],
+              [
+                ["say", "She goes very quiet, then thanks you for the truth of it, which is not the same as thanking you for the news."],
+                ["addvar", "rep_watch", 1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "pending",
+          "label": "tell her you've no word yet",
+          "if": [
+            ["flag", "fd_asked_perrin"],
+            ["!flag", "rb_fd_wm_home"],
+            ["!flag", "rb_fd_wm_hidden"],
+            ["!flag", "rb_fd_wm_reported"]
+          ],
+          "say": "She only nods, the way she's nodded every evening for two winters. \"Bed's still made,\" she says."
+        }
+      ]
     }
   },
   "epilogue": [
@@ -980,6 +1081,35 @@
       "if": [["flag", "fd_wayside_helped"]],
       "text": "Travelers on the coast road still speak of a stranger who shared what little they had with a family on the road.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "rb_th_fd_tablets"]],
+      "text": "One more name rests among the Priory's grave-tablets now, carried east by a stranger, unread by anyone else.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_th_fd_burn"]],
+      "text": "A dead man's letter went into Reedholm's banked fire, unread. Whatever he meant to confess, the ash keeps it now.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_th_fd_water"]],
+      "text": "A sealed letter went down into the drowned nave's black water, joining a grief it never asked to keep.",
+      "weight": 1
     }
-  ]
+  ],
+  "quests": {
+    "fd_q_perrin": {
+      "name": "Perrin's Mother",
+      "start": [["flag", "fd_asked_perrin"]],
+      "done": [["any", [["flag", "rb_fd_wm_home"], ["flag", "rb_fd_wm_hidden"], ["flag", "rb_fd_wm_reported"]]]],
+      "stages": [
+        { "if": [["flag", "wm_entered"]], "text": "You're in Wardmoor. Ask after Perrin at Highward's barracks." },
+        {
+          "if": [],
+          "text": "A Reedholm mother wants word of her son, pressed into the Watch at Highward, in Wardmoor."
+        }
+      ]
+    }
+  }
 }

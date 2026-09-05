@@ -1458,6 +1458,14 @@
           ]
         },
         {
+          "id": "mg_preceptor_ring",
+          "label": "a debt settled at Cinderhall's store",
+          "if": [["any", [["flag", "rb_wm_ir_forced"], ["flag", "rb_wm_ir_cleared"], ["flag", "rb_wm_ir_bought"]]]],
+          "once": true,
+          "say": "A dead Watchman's ring, fought or bought or proven out of Mirren's ledger. Small iron, small grief. I've burned hollows over less honest reasons than that one.",
+          "fx": [["xp", 2]]
+        },
+        {
           "id": "bye",
           "label": "leave him to the roll",
           "say": "Every name gets read. Even yours, in the end.",
@@ -1602,6 +1610,14 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "mg_mother_letter",
+          "label": "a stranger's letter, settled in Fenmarch",
+          "if": [["any", [["flag", "rb_th_fd_tablets"], ["flag", "rb_th_fd_burn"], ["flag", "rb_th_fd_water"]]]],
+          "once": true,
+          "say": "Word of an unnamed grief carried east reaches even this font. Tended, burned, or given to the water — someone still chose to carry it. That's rite enough for me.",
+          "fx": [["xp", 2]]
         },
         {
           "id": "bye",
@@ -1799,6 +1815,14 @@
             ["addvar", "appr_tamsin", -1],
             ["say", "Coin changes hands, and the burn-order changes pockets. 'The Ironbound's own hand on it,' he says, pleased. 'We'll find a use.'"]
           ]
+        },
+        {
+          "id": "mg_quill_berin",
+          "label": "a Downs boy off Rennick's boats",
+          "if": [["any", [["flag", "rb_ir_sk_home"], ["flag", "rb_ir_sk_stayed"], ["flag", "rb_ir_sk_guilted"]]]],
+          "once": true,
+          "say": "Word reaches the Den the way it always does. A miner's grandson, coined free, left to his own road, or dragged home by guilt — the coast keeps its own accounts, same as I do.",
+          "fx": [["xp", 2]]
         },
         {
           "id": "bye",
@@ -2102,6 +2126,14 @@
           "once": true,
           "say": "Five hollows resting easy, and only the one under me still restless. I begin to think you might actually finish what I could not.",
           "fx": [["addvar", "rep_keepers", 1], ["xp", 2]]
+        },
+        {
+          "id": "mg_reeve_bell",
+          "label": "a late tithe, out of the Saltkerns",
+          "if": [["any", [["flag", "rb_sk_hb_wren"], ["flag", "rb_sk_hb_sold"], ["flag", "rb_sk_hb_mound"]]]],
+          "once": true,
+          "say": "A bell owed to the Keepers for generations, finally carried where it was owed, or sold, or hung on my own kind's door. Debts outlast the men who owe them. I would know.",
+          "fx": [["xp", 2]]
         },
         {
           "id": "bye",

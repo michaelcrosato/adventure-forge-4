@@ -121,6 +121,83 @@
             ["move", "ir_miners_salve", "inv"],
             ["say", "'Rub it in, don't eat it,' Mirren says, sliding the tin across the counter."]
           ]
+        },
+        {
+          "id": "wm_ir_force",
+          "label": "force the strongbox open (might)",
+          "if": [["flag", "wm_asked_ring"], ["!flag", "rb_wm_ir_done"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "rb_wm_ir_forced"],
+                ["set", "rb_wm_ir_done"],
+                ["move", "wm_ir_keepsake", "inv"],
+                ["addvar", "rep_iron", -1],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "The strongbox gives with a crack loud enough to bring Mirren round the counter, too late. You're already walking out with the ring, and her ledger unread."]
+              ],
+              [
+                ["say", "The strongbox holds, and Mirren's already reaching for something under the counter. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "wm_ir_wits",
+          "label": "find the paid-off line (wits)",
+          "if": [["flag", "wm_asked_ring"], ["!flag", "rb_wm_ir_done"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "rb_wm_ir_cleared"],
+                ["set", "rb_wm_ir_done"],
+                ["move", "wm_ir_keepsake", "inv"],
+                ["addvar", "rep_watch", 1],
+                ["addvar", "appr_tamsin", 1],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "The ledger's own columns give it up: the debt was squared two winters back, in a hand nobody bothered to update. Mirren reads it herself, and hands the ring over without a word."]
+              ],
+              [["say", "The columns run together, and whatever they're hiding stays hidden today. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "wm_ir_will",
+          "label": "persuade Mirren, plainly (will)",
+          "if": [["flag", "wm_asked_ring"], ["!flag", "rb_wm_ir_done"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "rb_wm_ir_bought"],
+                ["set", "rb_wm_ir_done"],
+                ["move", "wm_ir_keepsake", "inv"],
+                ["addvar", "rep_iron", 1],
+                ["score", 5],
+                ["xp", 3],
+                ["say", "You make the case plain — a dead man's ring, a debt long since not worth the company's holding. Mirren weighs it, then slides both ring and ledger-line across the counter."]
+              ],
+              [
+                ["say", "Mirren hears you out and shakes her head. 'Rules are rules,' she says. 'Even the small ones.' It can be tried again."]
+              ]
+            ]
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "if": [["any", [["flag", "rb_wm_ir_forced"], ["flag", "rb_wm_ir_cleared"], ["flag", "rb_wm_ir_bought"]]]],
+          "brief": "Company-issue gear, dear. One old debt off the ledger at last."
         }
       ]
     },
@@ -498,6 +575,11 @@
       "loc": "nowhere",
       "takeable": true,
       "hint": "someone tied this here, once, and never came back for it"
+    },
+    "wm_ir_keepsake": {
+      "name": "Aldric's iron ring",
+      "loc": "nowhere",
+      "hint": "Corporal Fenn, at Highward's barracks, would want this back"
     }
   },
   "npcs": {
@@ -778,6 +860,14 @@
           "fx": [["set", "ir_crick_hook"], ["xp", 2]]
         },
         {
+          "id": "crick_grandson",
+          "label": "ask if any of yours went to the coast",
+          "if": [["flag", "said_ir_crick_bg_hob"]],
+          "once": true,
+          "say": "My grandson Berin took the coin road to Gullhaven two summers back — couldn't stomach the pick after what the Hundred took his father. Boats aren't safer. Ask after him, if you make the coast.",
+          "fx": [["set", "ir_asked_berin"], ["xp", 2], ["score", 2]]
+        },
+        {
           "id": "return_pick",
           "label": "give him the marked pick",
           "if": [["has", "ir_marked_pick"], ["!flag", "ir_crick_closure"]],
@@ -805,6 +895,57 @@
             ["addvar", "rep_iron", -1],
             ["say", "His face doesn't change, which is somehow worse than if it had. 'I knew,' he says at last. 'I just needed someone to say it plain.' He takes the pick like it weighs more than iron should."]
           ]
+        },
+        {
+          "id": "crick_berin_done",
+          "label": "ask if word's come of Berin",
+          "if": [
+            ["flag", "ir_asked_berin"],
+            ["any", [["flag", "rb_ir_sk_home"], ["flag", "rb_ir_sk_stayed"], ["flag", "rb_ir_sk_guilted"]]]
+          ],
+          "once": true,
+          "say": "Crick sets his mug down and doesn't pick it back up.",
+          "fx": [
+            ["score", 6],
+            ["xp", 3],
+            [
+              "if",
+              [["flag", "rb_ir_sk_home"]],
+              [
+                ["say", "\"Coming back, is he.\" Something in the old man's face loosens that's been set for thirty years. \"Didn't think I'd live to see it.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_ir_sk_stayed"]],
+              [
+                ["say", "\"Making his own way, then.\" Crick nods slow. \"Better that than dragged back to a pick he never wanted.\""],
+                ["addvar", "appr_lys", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_ir_sk_guilted"]],
+              [
+                ["say", "\"Coming back for me, not for himself.\" Crick doesn't look glad of it. \"That's a debt I never meant to hand him.\""],
+                ["addvar", "rep_free", -1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "crick_berin_pending",
+          "label": "tell Crick there's no word yet",
+          "if": [
+            ["flag", "ir_asked_berin"],
+            ["!flag", "rb_ir_sk_home"],
+            ["!flag", "rb_ir_sk_stayed"],
+            ["!flag", "rb_ir_sk_guilted"]
+          ],
+          "say": "He just goes back to the fire. \"No news is a kind of news, out here,\" he says, not sounding convinced of it."
         },
         {
           "id": "bye",
@@ -1470,6 +1611,18 @@
           "text": "Cinderhall keeps its grief quiet. Some of it isn't yours to carry, but you could still listen."
         }
       ]
+    },
+    "ir_q_berin": {
+      "name": "Berin's Coin Road",
+      "start": [["flag", "ir_asked_berin"]],
+      "done": [["any", [["flag", "rb_ir_sk_home"], ["flag", "rb_ir_sk_stayed"], ["flag", "rb_ir_sk_guilted"]]]],
+      "stages": [
+        { "if": [["flag", "sk_entered"]], "text": "You're in the Saltkerns. Ask after Berin at Gullhaven's quay." },
+        {
+          "if": [],
+          "text": "Old Crick's grandson Berin took the coin road to Gullhaven, in the Saltkerns, past Thornwold."
+        }
+      ]
     }
   },
   "epilogue": [
@@ -1511,6 +1664,21 @@
     {
       "if": [["any", [["flag", "fd_ironbound_exposed"], ["flag", "ir_aldous_ruined"]]]],
       "text": "Cinderhall's chapterhouse changed hands in most tellings of that year, and every hold on the Reach heard some version of why."
+    },
+    {
+      "if": [["flag", "rb_wm_ir_forced"]],
+      "text": "Cinderhall's company store came up one strongbox short, and one dead man's ring lighter, and never found out how.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_wm_ir_cleared"]],
+      "text": "The company's own ledger proved a debt paid twice over. Mirren struck the line herself, in front of witnesses.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_wm_ir_bought"]],
+      "text": "A dead Watchman's ring left Cinderhall's store fairly bought, and Mirren still tells it as the one sale she didn't haggle.",
+      "weight": 1
     }
   ]
 }

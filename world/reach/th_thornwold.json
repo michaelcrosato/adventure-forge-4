@@ -209,6 +209,12 @@
             ]
           ]
         }
+      ],
+      "variants": [
+        {
+          "if": [["any", [["flag", "rb_th_fd_tablets"], ["flag", "rb_th_fd_burn"], ["flag", "rb_th_fd_water"]]]],
+          "brief": "A covered wagon. One old letter finally found where it belonged."
+        }
       ]
     },
     "th_stockade": {
@@ -350,7 +356,13 @@
       "brief": "Root and hollow trunk. Keeper Rowan.",
       "region": "th",
       "landmark": "the Understory",
-      "exits": { "up": { "to": "th_understory_root" } }
+      "exits": { "up": { "to": "th_understory_root" } },
+      "variants": [
+        {
+          "if": [["any", [["flag", "rb_hb_th_verse"], ["flag", "rb_hb_th_token"], ["flag", "rb_hb_th_refused"]]]],
+          "brief": "Root and hollow trunk. A second Hall's word reached this one."
+        }
+      ]
     },
     "th_hollow_approach": {
       "name": "The Silent Reach",
@@ -819,7 +831,12 @@
         }
       ]
     },
-    "th_boar_tusk": { "name": "a gray boar's tusk", "loc": "nowhere", "hint": "Sergeant Coe might want to see it" }
+    "th_boar_tusk": { "name": "a gray boar's tusk", "loc": "nowhere", "hint": "Sergeant Coe might want to see it" },
+    "th_letter": {
+      "name": "a sealed letter, addressed only to Fenmarch's grieving",
+      "loc": "nowhere",
+      "hint": "carry it east to Fenmarch, and decide what's owed the dead"
+    }
   },
   "npcs": {
     "th_vane": {
@@ -991,6 +1008,66 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "letter_ask",
+          "label": "ask about older mail in the box",
+          "if": [["flag", "said_th_bray_greet"]],
+          "once": true,
+          "say": "Older paper past the pardon, sealed still: 'to whoever still grieves in Fenmarch's fens.' No name, no company mark. Take it, if you're bound east.",
+          "fx": [["move", "th_letter", "inv"], ["set", "th_bray_letter_given"], ["xp", 2]]
+        },
+        {
+          "id": "letter_done",
+          "label": "ask if word's come back on the letter",
+          "if": [
+            ["flag", "th_bray_letter_given"],
+            ["any", [["flag", "rb_th_fd_tablets"], ["flag", "rb_th_fd_burn"], ["flag", "rb_th_fd_water"]]]
+          ],
+          "once": true,
+          "say": "Bray sets the ledger down for once, listening proper.",
+          "fx": [
+            ["score", 6],
+            ["xp", 3],
+            [
+              "if",
+              [["flag", "rb_th_fd_tablets"]],
+              [
+                ["say", "\"Priory's memory outlasts mine,\" he says. \"Good place for a name with nowhere else to go.\""],
+                ["addvar", "appr_osk", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_th_fd_burn"]],
+              [
+                ["say", "\"Fire's cleaner than wondering,\" he says, and goes back to the ledger like that settles it."],
+                ["addvar", "appr_tamsin", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_th_fd_water"]],
+              [
+                ["say", "\"Water keeps better secrets than any of us do,\" he says. \"Fair enough resting place, I'd think.\""],
+                ["addvar", "appr_lys", 1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "letter_pending",
+          "label": "ask Bray after the letter",
+          "if": [
+            ["flag", "th_bray_letter_given"],
+            ["!flag", "rb_th_fd_tablets"],
+            ["!flag", "rb_th_fd_burn"],
+            ["!flag", "rb_th_fd_water"]
+          ],
+          "say": "Not yet. Word from Fenmarch travels slower than most, and slower still through me."
         }
       ]
     },
@@ -1333,6 +1410,52 @@
           "once": true,
           "say": "Rowan's eyes close a moment at the words. \"That fragment's older than this hall,\" they say. \"Fire forgets. The root doesn't. You found true work today.\"",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "rowan_wren",
+          "label": "pass on Keeper Wren's question",
+          "if": [["flag", "hb_asked_rowan"]],
+          "once": true,
+          "say": "Wren. Still keeping the Hall alone, then — I'd wondered if she outlasted the roof. What does she want done with the old covenant-count?",
+          "fx": [["set", "th_heard_wren_ask"], ["xp", 2]]
+        },
+        {
+          "id": "rowan_send_verse",
+          "label": "tell her to send the rest-verse whole",
+          "if": [["flag", "th_heard_wren_ask"], ["!flag", "rb_hb_th_done"]],
+          "once": true,
+          "say": "Rowan copies the verse out slow, in her own hand, and folds it once. 'A covenant that only takes and never sends isn't one,' she says. 'Carry it whole.'",
+          "fx": [
+            ["set", "rb_hb_th_verse"],
+            ["set", "rb_hb_th_done"],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_vell", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "rowan_lesser_token",
+          "label": "offer a lesser token in its place",
+          "if": [["flag", "th_heard_wren_ask"], ["!flag", "rb_hb_th_done"]],
+          "once": true,
+          "say": "Rowan presses a carved bark-strip into your hand instead of the verse. 'This says we're still here,' she says, 'without saying everything we know.'",
+          "fx": [["set", "rb_hb_th_token"], ["set", "rb_hb_th_done"], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "rowan_owe_nothing",
+          "label": "tell her the Understory owes nothing",
+          "if": [["flag", "th_heard_wren_ask"], ["!flag", "rb_hb_th_done"]],
+          "once": true,
+          "say": "\"Tell her the covenant ended when the Reeve's line let it lapse,\" Rowan says, flat. \"We keep our own ground now. That's answer enough.\"",
+          "fx": [
+            ["set", "rb_hb_th_refused"],
+            ["set", "rb_hb_th_done"],
+            ["addvar", "rep_keepers", -1],
+            ["addvar", "appr_vell", -1],
+            ["score", 3],
+            ["xp", 2]
+          ]
         },
         {
           "id": "bye",
@@ -1776,6 +1899,21 @@
           "text": "Earn Captain Vane's trust first — do right by the Free Companies, then ask her about the road."
         }
       ]
+    },
+    "th_q_letter": {
+      "name": "A Dead Man's Word",
+      "start": [["flag", "th_bray_letter_given"]],
+      "done": [["any", [["flag", "rb_th_fd_tablets"], ["flag", "rb_th_fd_burn"], ["flag", "rb_th_fd_water"]]]],
+      "stages": [
+        {
+          "if": [["flag", "fd_entered"]],
+          "text": "Fenmarch's reached. Settle the letter at the Priory's cloister, the net-hall's fire, or the drowned nave."
+        },
+        {
+          "if": [],
+          "text": "Bray's dead-letter box gave up one more paper. Carry it east to Fenmarch and decide its fate."
+        }
+      ]
     }
   },
   "epilogue": [
@@ -1821,6 +1959,21 @@
     {
       "if": [["flag", "th_wayfire_named"]],
       "text": "The Ironbound wayfire on the north track carries one more name than it would have, scratched there by a stranger passing through.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_hb_th_verse"]],
+      "text": "The Understory sent its rest-verse whole to Barrowmere at last. Two Halls, one covenant, kept.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_hb_th_token"]],
+      "text": "Keeper Rowan sent a lesser token south to Barrowmere. Less than asked for. More than silence.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_hb_th_refused"]],
+      "text": "The Understory answered Barrowmere with nothing at all. Two Halls, and now two separate silences.",
       "weight": 1
     }
   ]

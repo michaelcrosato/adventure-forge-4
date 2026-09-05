@@ -229,6 +229,22 @@ blind playtests of the whole realm (300–600 turns) reached seven wins on three
 different roads — five of them at full score — and one loss; their findings
 are fixed.
 
+**Roads Between** (added after the first playtest rounds): a ring of six
+cross-hold quests, each asked in one hold and settled in the next, flagged
+`rb_<a>_<b>_*`. Quartermaster Bray's second dead-letter, in Thornwold, is
+settled at the Priory's tablets, the net-hall's fire, or the drowned nave, in
+Fenmarch. A Reedholm mother's plea for her pressed son Perrin, in Fenmarch, is
+settled at Highward's barracks — sent home, covered for, or reported — in
+Wardmoor. Corporal Fenn's dead partner's pawned ring, in Wardmoor, is forced,
+read from the ledger, or bought fairly out of Cinderhall's company store, in
+the Iron Downs. Old Crick's grandson Berin, gone to the coin road, in the Iron
+Downs, is bought home, left to his own way, or guilted home, in the Saltkerns.
+The Drowned Bell's unrung tithe, in the Saltkerns, is given to Keeper Wren,
+sold to the chandler, or hung on the great mound's door, in Hollowbrook. And
+Keeper Wren's question for a sister Hall, in Hollowbrook, is answered — the
+verse sent whole, a lesser token, or nothing at all — by Keeper Rowan in
+Thornwold's Understory, closing the ring.
+
 ## Build order
 
 1. `world/reach.json` root + `companions.json` + `templates.json` + the

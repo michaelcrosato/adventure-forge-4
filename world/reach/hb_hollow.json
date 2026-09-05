@@ -89,6 +89,20 @@
               [["say", "The words you have aren't the words it wants. The slab does not so much as shift."]]
             ]
           ]
+        },
+        {
+          "id": "hb_bell_mound",
+          "label": "hang the bell at the mound's door",
+          "if": [["has", "sk_drowned_ship_bell"]],
+          "once": true,
+          "fx": [
+            ["move", "sk_drowned_ship_bell", "nowhere"],
+            ["set", "rb_sk_hb_mound"],
+            ["addvar", "appr_osk", 1],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "You wire the bell above the slab door, unasked and unsanctioned. No Keeper blessed it. The wind finds it anyway, some nights, and it rings."]
+          ]
         }
       ]
     },

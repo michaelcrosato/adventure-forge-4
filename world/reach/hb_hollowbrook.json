@@ -41,7 +41,11 @@
       "variants": [
         { "if": [["flag", "hb_hollow_burned"]], "brief": "Skiffs on the mud. Smoke stands over the downs." },
         { "if": [["flag", "hb_hollow_rested"]], "brief": "Skiffs on the mud. The mounds are only mounds now." },
-        { "if": [["flag", "hb_hollow_bargained"]], "brief": "Skiffs on the mud. The downs have gone quiet, mostly." }
+        { "if": [["flag", "hb_hollow_bargained"]], "brief": "Skiffs on the mud. The downs have gone quiet, mostly." },
+        {
+          "if": [["any", [["flag", "rb_sk_hb_wren"], ["flag", "rb_sk_hb_sold"], ["flag", "rb_sk_hb_mound"]]]],
+          "brief": "Skiffs on the mud. A coastal bell found its way here."
+        }
       ]
     },
     "hb_tithe_barn": {
@@ -145,6 +149,20 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "hb_bell_chandler",
+          "label": "sell the bell to the chandler",
+          "if": [["has", "sk_drowned_ship_bell"]],
+          "once": true,
+          "fx": [
+            ["move", "sk_drowned_ship_bell", "nowhere"],
+            ["set", "rb_sk_hb_sold"],
+            ["addvar", "gold", 5],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "He doesn't ask where a tavern's own bell came from, or where it's going. Five coin, no questions — his whole business, in a gesture."]
+          ]
         }
       ]
     },
@@ -242,6 +260,20 @@
               ],
               [["say", "You bring down a shelf's worth of mold and rot and nothing worth reading. It can be tried again."]]
             ]
+          ]
+        },
+        {
+          "id": "hb_bell_wren",
+          "label": "give the bell to Keeper Wren",
+          "if": [["has", "sk_drowned_ship_bell"]],
+          "once": true,
+          "fx": [
+            ["move", "sk_drowned_ship_bell", "nowhere"],
+            ["set", "rb_sk_hb_wren"],
+            ["addvar", "rep_keepers", 1],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "Wren turns it once in her hands and hears the note it still holds despite the years. 'Tithe's late,' she says, 'but not too late.'"]
           ]
         }
       ]
@@ -441,6 +473,14 @@
           "fx": [["xp", 2]]
         },
         {
+          "id": "wren_rowan",
+          "label": "ask if any keepers remain elsewhere",
+          "if": [["flag", "said_hb_keeper_wren_order"]],
+          "once": true,
+          "say": "One more, last I heard — Rowan, in Thornwold's Understory, if the years haven't taken her too. Ask, if you find her, whether the old covenant-count still holds true out there.",
+          "fx": [["set", "hb_asked_rowan"], ["xp", 2], ["score", 2]]
+        },
+        {
           "id": "ledger_hint",
           "label": "the ledgers on your shelves",
           "if": [["flag", "said_hb_keeper_wren_order"]],
@@ -549,6 +589,57 @@
           ]
         },
         {
+          "id": "wren_covenant_done",
+          "label": "tell Wren what Rowan answered",
+          "if": [
+            ["flag", "hb_asked_rowan"],
+            ["any", [["flag", "rb_hb_th_verse"], ["flag", "rb_hb_th_token"], ["flag", "rb_hb_th_refused"]]]
+          ],
+          "once": true,
+          "say": "Wren sets down whatever ledger she's holding.",
+          "fx": [
+            ["score", 6],
+            ["xp", 3],
+            [
+              "if",
+              [["flag", "rb_hb_th_verse"]],
+              [
+                ["say", "\"The whole verse, sent this far.\" Something in her straightens. \"Then the covenant still holds, hall to hall. I feared it didn't, anymore.\""],
+                ["addvar", "appr_vell", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_hb_th_token"]],
+              [
+                ["say", "\"A token, not the verse.\" Wren considers this a long moment. \"Caution's its own kind of keeping. I'll allow it.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_hb_th_refused"]],
+              [
+                ["say", "\"Nothing at all, then.\" Wren is quiet a long while. \"Two Halls, and now I know for certain we're strangers to each other.\""],
+                ["addvar", "appr_vell", -1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "wren_covenant_pending",
+          "label": "tell Wren you've not reached Rowan yet",
+          "if": [
+            ["flag", "hb_asked_rowan"],
+            ["!flag", "rb_hb_th_verse"],
+            ["!flag", "rb_hb_th_token"],
+            ["!flag", "rb_hb_th_refused"]
+          ],
+          "say": "Wren only nods. \"She'll keep,\" she says. \"Or she won't. Either way, no sense hurrying grief.\""
+        },
+        {
           "id": "bye",
           "label": "leave her to the ledgers",
           "say": "Go carefully among the mounds. They notice who does.",
@@ -584,6 +675,38 @@
       ]
     }
   },
-  "quests": {},
-  "epilogue": []
+  "quests": {
+    "hb_q_covenant": {
+      "name": "Two Keepers, One Covenant",
+      "start": [["flag", "hb_asked_rowan"]],
+      "done": [["any", [["flag", "rb_hb_th_verse"], ["flag", "rb_hb_th_token"], ["flag", "rb_hb_th_refused"]]]],
+      "stages": [
+        {
+          "if": [["flag", "th_entered"]],
+          "text": "You're in Thornwold. Find Keeper Rowan, in the Understory, and carry Wren's question to her."
+        },
+        {
+          "if": [],
+          "text": "Keeper Wren wonders if Keeper Rowan still keeps the Understory, in Thornwold, past the Vale."
+        }
+      ]
+    }
+  },
+  "epilogue": [
+    {
+      "if": [["flag", "rb_sk_hb_wren"]],
+      "text": "A generations-late tithe reached the Keepers' Hall at last: an old ship's-bell, rung once, then set quiet among the kept things.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_sk_hb_sold"]],
+      "text": "The chandler at Barrowmere sells a green old ship's-bell now to anyone who asks its story. Nobody's asked twice.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_sk_hb_mound"]],
+      "text": "A ship's-bell hangs at the great mound's door now, unblessed by any Keeper, ringing faint when the wind finds it.",
+      "weight": 1
+    }
+  ]
 }

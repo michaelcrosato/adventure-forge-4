@@ -141,6 +141,12 @@
             ["say", "You sleep in someone else's bedroll, boots paired at the foot of it, and wake steadier."]
           ]
         }
+      ],
+      "variants": [
+        {
+          "if": [["any", [["flag", "rb_fd_wm_home"], ["flag", "rb_fd_wm_hidden"], ["flag", "rb_fd_wm_reported"]]]],
+          "brief": "Rows of narrow beds. One bunk's business, at least, is settled."
+        }
       ]
     },
     "wm_hall": {
@@ -671,6 +677,64 @@
           "once": true,
           "say": "\"Two now, maybe more, burned clean across the Reach.\" Fenn stares past you. \"That's not order. That's just fewer places left standing.\"",
           "fx": [["addvar", "rep_watch", -1]]
+        },
+        {
+          "id": "fenn_partner",
+          "label": "ask about an old partner's ring",
+          "once": true,
+          "say": "Aldric. Six years at the same post before a Founding-wight took him on the moor. I pawned his ring to Cinderhall's company store for burial coin I never had, and never bought it back.",
+          "fx": [["set", "wm_asked_ring"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "fenn_ring_done",
+          "label": "ask if word's come of Aldric's ring",
+          "if": [
+            ["flag", "wm_asked_ring"],
+            ["any", [["flag", "rb_wm_ir_forced"], ["flag", "rb_wm_ir_cleared"], ["flag", "rb_wm_ir_bought"]]]
+          ],
+          "once": true,
+          "say": "Fenn goes still the way he does before a bad shift.",
+          "fx": [
+            ["score", 6],
+            ["xp", 3],
+            [
+              "if",
+              [["flag", "rb_wm_ir_forced"]],
+              [
+                ["say", "\"Took it, did you. Good — I'd have broken worse than a lock for it.\" He turns it over once and says nothing further."],
+                ["addvar", "appr_tamsin", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_wm_ir_cleared"]],
+              [
+                ["say", "\"The debt was paid all along, and Mirren's own ledger says so.\" Fenn's jaw sets. \"Wish I'd known that before the guilt.\""],
+                ["addvar", "appr_tamsin", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_wm_ir_bought"]],
+              [
+                ["say", "\"Squared honest, at last.\" He turns the ring over once, slow. \"Aldric would've liked that better than owing anyone.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "fenn_ring_pending",
+          "label": "tell Fenn there's no word yet",
+          "if": [
+            ["flag", "wm_asked_ring"],
+            ["!flag", "rb_wm_ir_forced"],
+            ["!flag", "rb_wm_ir_cleared"],
+            ["!flag", "rb_wm_ir_bought"]
+          ],
+          "say": "He just nods, the way a man nods at weather he can't do anything about."
         }
       ]
     },
@@ -971,12 +1035,97 @@
           "end": true
         }
       ]
+    },
+    "wm_perrin": {
+      "name": "Perrin",
+      "room": "wm_barracks",
+      "dialogue": true,
+      "desc": "A recruit not long past a boy, bedroll too neatly made, flinching at every slammed door.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Perrin. Watch recruit, two winters in — counting the days more than I'm keeping the drills.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "torn",
+          "label": "ask if the Watch suits him",
+          "if": [["flag", "said_wm_perrin_greet"]],
+          "once": true,
+          "say": "Some nights I mean to walk the west road home before muster. Other nights the drill's the only thing that hasn't asked me to be brave for real.",
+          "fx": [["set", "wm_perrin_torn"], ["xp", 2]]
+        },
+        {
+          "id": "route_home",
+          "label": "help him desert, bound for home",
+          "if": [["flag", "fd_asked_perrin"], ["flag", "wm_perrin_torn"], ["!flag", "rb_fd_wm_done"]],
+          "once": true,
+          "say": "You tell him plain: his mother still keeps his bed made up. He's over the wall before the next muster's called, and doesn't look back to see if you follow.",
+          "fx": [["set", "rb_fd_wm_home"], ["set", "rb_fd_wm_done"], ["addvar", "rep_watch", -1], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "route_hidden",
+          "label": "cover his wavering, quietly",
+          "if": [["flag", "fd_asked_perrin"], ["flag", "wm_perrin_torn"], ["!flag", "rb_fd_wm_done"]],
+          "once": true,
+          "say": "You square his tally with the sergeant without naming what almost happened. He drills steadier after, like the saying of it out loud was half the weight.",
+          "fx": [["set", "rb_fd_wm_hidden"], ["set", "rb_fd_wm_done"], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "route_reported",
+          "label": "report his wavering to the sergeant",
+          "if": [["flag", "fd_asked_perrin"], ["flag", "wm_perrin_torn"], ["!flag", "rb_fd_wm_done"]],
+          "once": true,
+          "say": "Sergeant Rook hears it plain and takes him aside herself. Perrin doesn't thank you for it. He also doesn't run.",
+          "fx": [["set", "rb_fd_wm_reported"], ["set", "rb_fd_wm_done"], ["addvar", "rep_watch", 2], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his bunk",
+          "say": "Watch the west road for me, if you're headed that way.",
+          "end": true
+        }
+      ]
     }
   },
   "epilogue": [
     {
       "if": [["flag", "regent_writ"]],
       "text": "Highward's record-house keeps a fresh shelf for what came loose from other holds' old, sealed truths."
+    },
+    {
+      "if": [["flag", "rb_fd_wm_home"]],
+      "text": "Perrin went over the wall for Reedholm and his mother's made bed. The Watch never chased him past the west road.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_fd_wm_hidden"]],
+      "text": "Perrin still drills at Highward, steadier than he was, and nobody in the barracks learned how close he came to leaving.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_fd_wm_reported"]],
+      "text": "Perrin still serves at Highward, watched a little closer than before, and writes his mother more than he used to.",
+      "weight": 1
     }
-  ]
+  ],
+  "quests": {
+    "wm_q_ring": {
+      "name": "Aldric's Ring",
+      "start": [["flag", "wm_asked_ring"]],
+      "done": [["any", [["flag", "rb_wm_ir_forced"], ["flag", "rb_wm_ir_cleared"], ["flag", "rb_wm_ir_bought"]]]],
+      "stages": [
+        {
+          "if": [["flag", "ir_entered"]],
+          "text": "You're in the Iron Downs. Mirren keeps the ring, and the ledger, locked at Cinderhall's company store."
+        },
+        {
+          "if": [],
+          "text": "Corporal Fenn pawned a dead partner's ring to Cinderhall's company store, years back. Find it there."
+        }
+      ]
+    }
+  }
 }

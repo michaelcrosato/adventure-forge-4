@@ -194,6 +194,20 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "fd_letter_water",
+          "label": "give the letter to the black water",
+          "if": [["has", "th_letter"]],
+          "once": true,
+          "fx": [
+            ["move", "th_letter", "nowhere"],
+            ["set", "rb_th_fd_water"],
+            ["addvar", "rep_keepers", 1],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "You lay the letter on the black water and it sinks before the ink can run. Whatever grief it carried joins the rest down here, uncounted and, at last, unhurried."]
+          ]
         }
       ]
     },
