@@ -282,6 +282,9 @@ function journalEvents(world: World, before: State, after: State, events: string
     const p = prev.get(q.id);
     if (p && p.status === q.status && p.text === q.text) continue;
     if (collapse && !p && q.status !== "done" && q.status !== "failed") continue;
+    // a quest that first appears already closed (its start and its end came
+    // together, or its end came first) was never the player's to finish: no announcement
+    if (!p && (q.status === "done" || q.status === "failed")) continue;
     if (q.status === "done") events.push(`Quest done: ${q.name}.`);
     else if (q.status === "failed") events.push(`Quest failed: ${q.name}.`);
     else if (q.text) events.push(`Quest — ${q.name}: ${q.text}`);

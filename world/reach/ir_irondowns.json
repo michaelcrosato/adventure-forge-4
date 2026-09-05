@@ -5,7 +5,7 @@
       "desc": "Cinderhall's road climbs east onto open moor, slag giving way to peat underfoot. A Watch waymarker leans at the verge, half-swallowed by gorse. West, smoke over the tally gate marks the way back into town.",
       "brief": "The waymarker. Wardmoor east.",
       "region": "ir",
-      "landmark": "the east road",
+      "landmark": "Cinderhall's east road",
       "exits": {
         "east": { "to": "wm_west_road", "landmark": "Wardmoor" },
         "in": { "to": "ir_tally_gate", "landmark": "Cinderhall" }
@@ -17,7 +17,7 @@
       "desc": "The track drops south off the downs into old forest, spoil giving way to bracken underfoot. A Free Company toll-notice is nailed to a dead tree, weathered past reading. North, Cinderhall's slag hill smokes.",
       "brief": "The toll-notice. Thornwold south.",
       "region": "ir",
-      "landmark": "the south track",
+      "landmark": "Cinderhall's south track",
       "exits": {
         "south": { "to": "th_north_track", "landmark": "Thornwold" },
         "in": { "to": "ir_tally_gate", "landmark": "Cinderhall" }
@@ -176,7 +176,16 @@
       "brief": "The turning wheel, the cage.",
       "region": "ir",
       "landmark": "the head-frame",
-      "exits": { "up": { "to": "ir_high_street" }, "north": { "to": "ir_downs_2_4", "landmark": "the bare downs" } }
+      "exits": { "up": { "to": "ir_high_street" }, "north": { "to": "ir_downs_2_4", "landmark": "the bare downs" } },
+      "actions": [
+        {
+          "id": "ir_bearings",
+          "label": "get your bearings from the head-frame",
+          "fx": [
+            ["say", "North through the spoil, four heaps on, then east: the Hundred Gallery's adit. Flooded quarry north-east; Old Cairn on the west edge, Chapel of Iron past it; Gibbet Tower far north-east; scrappers' camp east."]
+          ]
+        }
+      ]
     },
     "ir_hundred_adit": {
       "name": "The Hundred Gallery — Adit",

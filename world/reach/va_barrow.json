@@ -329,6 +329,16 @@
       ],
       "actions": [
         {
+          "id": "va_weigh_king",
+          "label": "weigh what each choice would mean",
+          "if": [["flag", "va_heard_grievance"], ["!flag", "va_king_resolved"]],
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "Rest him — verses, the crown returned or broken — and the Reach's great rite stays open. Cut him down: quick, the Regent's answer, and that rite is lost. Keep the crown: he grieves on, and Marrowgate hears it is loose."]
+          ]
+        },
+        {
           "id": "va_rite",
           "label": "speak the three verses over him",
           "if": [
@@ -551,7 +561,7 @@
       "hint": "half a ward-sign; the gray priest may know it",
       "use": [
         {
-          "if": [["!flag", "va_read_token"]],
+          "if": [["!flag", "va_read_token"], ["!flag", "did_va_show_token"]],
           "fx": [
             ["set", "va_read_token"],
             ["xp", 1],

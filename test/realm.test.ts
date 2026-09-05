@@ -312,6 +312,32 @@ test("an item's hint follows its variants: a 'show it to X' goes quiet once show
   assert.ok(bad.some((e) => /item pelt variant 0/.test(e)));
 });
 
+test("a quest that first appears already done says nothing; one the player carried announces its end", () => {
+  const world: World = {
+    id: "j", title: "J", intro: "x", start: "a", hp: 10, maxScore: 1,
+    rooms: { a: { name: "A", desc: "A.", actions: [
+      { id: "writ", label: "earn the writ", fx: [["set", "writ"]] },
+      { id: "enter", label: "enter the downs", fx: [["set", "downs"]] },
+      { id: "ask", label: "hear the ask", fx: [["set", "asked"]] },
+    ] } },
+    items: {}, npcs: {}, walkthrough: [],
+    quests: {
+      late: { name: "The Writ", start: [["flag", "downs"]], done: [["flag", "writ"]], stages: [{ if: [], text: "Earn the writ." }] },
+      carried: { name: "The Ask", start: [["flag", "asked"]], done: [["flag", "downs"]], stages: [{ if: [], text: "Do it." }] },
+    },
+  };
+  let { state } = newState(world, 1);
+  state = step(world, state, actionByLabel(world, state, "earn the writ")!).state;
+  const ask = step(world, state, actionByLabel(world, state, "hear the ask")!);
+  assert.match(ask.events.join(" "), /Quest — The Ask: Do it\./);
+  state = ask.state;
+  const enter = step(world, state, actionByLabel(world, state, "enter the downs")!);
+  const said = enter.events.join(" ");
+  assert.match(said, /Quest done: The Ask\./, "a carried quest announces its end");
+  assert.doesNotMatch(said, /The Writ/, "a quest born already done is not announced");
+  assert.match(renderStatus(world, enter.state), /Done: .*The Writ/, "it still counts as done in the journal");
+});
+
 test("the first time fast travel is on the menu, one hint says so — and never again", () => {
   const world = line(3);
   let { state } = newState(world, 1);

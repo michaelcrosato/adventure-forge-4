@@ -305,6 +305,9 @@ it standing somewhere.
   first act 2, a companion's ending 1, a side choice 0. Write 4–8 per region:
   rested / burned / bargained / untouched, plus one or two for memorable side
   choices. One sentence each.
+- `statusTracks` and `statusPaths` entries take an optional `if`: the line
+  shows only while it holds, so a hold's tracker waits until the hold is
+  reached and the Vale's verse count goes quiet once the king is settled.
 - `hud` (root) puts counters on the status line; `gold` is already there.
 - `factions` (root) names reputation vars (`rep_church` → "the Gray Church"):
   any `addvar` to a named var prints `(the Gray Church -1)` the turn it
