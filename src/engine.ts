@@ -841,10 +841,12 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   const fx = fxFor(world, s, a);
   const chk = fx?.[0];
   if (chk && chk[0] === "check") {
+    // all three numbers, so neither frame can be misread: the DC the total must
+    // reach, the modifier, and the die roll that gets there
     const mod = checkMod(world, s, chk[1]);
     const need = Math.max(1, chk[2] - mod);
-    if (!mod) return ` (roll ${need}+ on the die; ${chk[1]})`;
-    return ` (roll ${need}+ on the die; ${mod > 0 ? "+" : ""}${mod} ${chk[1]})`;
+    if (!mod) return ` (DC ${chk[2]}, ${chk[1]}: roll ${need}+ on the die)`;
+    return ` (DC ${chk[2]}, ${mod > 0 ? "+" : ""}${mod} ${chk[1]}: roll ${need}+ on the die)`;
   }
   if (a.kind === "use" && opts.itemHints !== false) {
     // an item's use can sit in the menu for the rest of the game, so its hint

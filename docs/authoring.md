@@ -87,8 +87,9 @@ Effects run in order and stop the moment the game ends.
 
 `check` skills are the four attributes `might`, `grace`, `wits`, `will`, or a
 name in `world.skills`. Put the `check` **first** in an action's or topic's
-effects when you want the menu to preview its odds (`(roll 9+ on the die;
-+2 wits)`); a check buried after a `say` or inside an `if` gets no preview.
+effects when you want the menu to preview its odds (`(DC 11, +2 wits: roll
+9+ on the die)` — the total must reach the DC; the die alone must reach the
+last number); a check buried after a `say` or inside an `if` gets no preview.
 
 ## 5. Rooms
 

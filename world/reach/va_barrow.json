@@ -10,9 +10,9 @@
         "south": { "to": "va_wood_1_0" },
         "in": {
           "to": "va_antechamber",
-          "if": [["flag", "va_barrow_open"]],
-          "lockedMsg": "The stone doors are shut fast. The priest's blessing opens them, or force, or the gap under the loose stone.",
-          "hint": "the priest's blessing, force, or the loose stone",
+          "if": [["flag", "va_barrow_open"], ["!flag", "va_sealed"]],
+          "lockedMsg": "The stone doors are shut fast. If you dropped the seal-stone yourself they will not open again; if not, the priest's blessing, force, or the loose stone will do it.",
+          "hint": "sealed for good if you sealed them; else the blessing, force, or the loose stone",
           "landmark": "the barrow"
         },
         "north": { "to": "va_north_road", "landmark": "the north road" }
