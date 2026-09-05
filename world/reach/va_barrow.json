@@ -280,7 +280,10 @@
       "desc": "The Hollow King sits on a stone seat worn smooth by hands not his own. Where a crown should be, only dust. Cold air gutters your light. South: the crypt. Down: the hall of verses.",
       "brief": "The stone seat.",
       "region": "va",
-      "exits": { "south": { "to": "va_crypt" }, "down": { "to": "va_hall_of_verses" } },
+      "exits": {
+        "south": { "to": "va_crypt", "landmark": "the crypt" },
+        "down": { "to": "va_hall_of_verses", "landmark": "the hall of verses" }
+      },
       "onEnterOnce": [
         ["xp", 2],
         ["say", "He does not move against you. Word or blade, whichever ends it, he will let you choose. Kneel to him, though, and you take his place."]
@@ -425,6 +428,7 @@
           ],
           "fx": [
             ["set", "va_sealed"],
+            ["set", "va_doors_decided"],
             [
               "if",
               [["flag", "va_promised_seal"]],
@@ -453,6 +457,7 @@
           ],
           "fx": [
             ["set", "va_left_open"],
+            ["set", "va_doors_decided"],
             [
               "if",
               [["flag", "va_promised_seal"]],
@@ -669,8 +674,8 @@
     "va_doors": {
       "name": "The Barrow Doors",
       "start": [["flag", "va_heard_reeve_ask"]],
-      "done": [["flag", "va_sealed"]],
-      "failed": [["flag", "va_left_open"]],
+      "done": [["flag", "va_doors_decided"]],
+      "failed": [["flag", "va_broke_promise"]],
       "stages": [
         {
           "if": [["flag", "va_king_resolved"]],

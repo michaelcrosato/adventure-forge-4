@@ -264,3 +264,14 @@ test("an ending appends every matching epilogue line in order, capped, and the h
   assert.equal(lines.length, EPILOGUE_CAP, "capped");
   assert.match(text, /receipt:/);
 });
+
+test("the first time fast travel is on the menu, one hint says so — and never again", () => {
+  const world = line(3);
+  let { state } = newState(world, 1);
+  const first = step(world, state, actionByLabel(world, state, "go east")!);
+  assert.match(first.events.join(" "), /travel to a known place/);
+  state = first.state;
+  const second = step(world, state, actionByLabel(world, state, "go east")!);
+  assert.doesNotMatch(second.events.join(" "), /travel to a known place/);
+  assert.ok(state.flags["_seenTravel"]);
+});

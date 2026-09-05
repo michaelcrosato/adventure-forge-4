@@ -949,6 +949,12 @@ export function step(world: World, prev: State, action: Action): StepOut {
     partyRemarks(world, s, events);
   }
   journalEvents(world, prev, s, events);
+  // Once, the first time fast travel is on the menu: a playtester walked the
+  // whole map on foot for ninety turns before noticing the entry.
+  if (!s.ended && !s.flags["_seenTravel"] && travelAvailable(world, s)) {
+    s.flags["_seenTravel"] = true;
+    events.push("(You know more than one place now: 'travel to a known place' moves you between landmarks in one turn.)");
+  }
   return { state: s, events };
 }
 

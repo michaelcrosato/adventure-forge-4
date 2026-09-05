@@ -1,0 +1,51 @@
+{
+  "verdict": "quit",
+  "fun": 4,
+  "clarity": 4,
+  "turns": 108,
+  "receipt": "",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Declining to promise the reeve and then choosing 'leave the barrow open to the sky' at the throne logs 'Quest failed: The Barrow Doors' in the journal, even though both the reeve ('I'll hold nothing against you') and the priest ('no promise binds them shut') explicitly say the choice is free of consequence. Reading it as a failure is misleading.",
+      "where": "Throne of the Barrow / Empty Seat - seal or leave open choice"
+    },
+    {
+      "sev": "P2",
+      "what": "Room text names an interactable-sounding NPC (a traveller by the hearth reading a book) but the room menu never offers a 'talk to traveller' option, only 'rest by the fire'.",
+      "where": "The Last Light Inn"
+    },
+    {
+      "sev": "P2",
+      "what": "Same pattern: the chapel description names 'a young novice sweeps the same flagstone' (Brother Osk, discussed via the priest) but there is no direct talk option for the novice.",
+      "where": "Gray Chapel"
+    },
+    {
+      "sev": "P2",
+      "what": "At the Throne, 'go south' leads to a side room (Barrow Crypt) rather than retracing the path back down to the Hall of Verses; 'go down' is the actual reverse route. Disorienting exit labeling right after a plot beat.",
+      "where": "Throne of the Barrow - exits"
+    }
+  ],
+  "confusions": [
+    "The 'Failed: The Barrow Doors' journal entry reads as a punishment for a choice the game itself framed as consequence-free, so it is unclear whether leaving the doors open was actually the wrong call.",
+    "Two named, described NPCs (inn traveller, chapel novice) invite conversation in the prose but have no talk action, so it's unclear if they're meant to matter later or are just set dressing.",
+    "'travel to a known place' fast-travel wasn't obviously advertised early; I didn't use it until turn 98 after a long walk to the barrow on foot, even though it was likely available from Last Light Square much earlier."
+  ],
+  "suggestions": [
+    "Label the barrow-doors outcome as a neutral resolution (e.g. 'Resolved: left open') instead of 'Failed' when no promise was ever made.",
+    "Either add a talk option for the inn traveller and chapel novice, or trim them from room prose so every named character in a description is actually interactable.",
+    "Surface a one-time hint the first time 'travel to a known place' appears, since it meaningfully cuts backtracking and is easy to miss.",
+    "Show the roll-with-bonus math consistently (e.g. 'DC 8, your wits +0') on the same line as the check option, not just after rolling, so players can gauge odds before committing a turn."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T12-09-59-000Z",
+  "seed": 11,
+  "build": {
+    "rev": "e8e0289",
+    "world": "87b3be65"
+  },
+  "cost_usd": null,
+  "verified": false
+}
