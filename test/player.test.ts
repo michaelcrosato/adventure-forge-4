@@ -9,6 +9,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import {
   acceptReport,
+  apiProvider,
   fileReport,
   findMenuEntry,
   mockProvider,
@@ -140,6 +141,58 @@ test("stall guard ends a wandering session early instead of funding it", async (
   const r = await playOne(world, 11, wanderer, 80);
   assert.equal(r.stalled, true);
   assert.ok(r.turns < 80, `ended at t${r.turns}, not the full budget`);
+});
+
+/** Run fn with a throwaway API key in the environment, restoring whatever was there. */
+async function withApiKey<T>(fn: () => Promise<T>): Promise<T> {
+  const prev = process.env.ANTHROPIC_API_KEY;
+  process.env.ANTHROPIC_API_KEY = "test-key";
+  try {
+    return await fn();
+  } finally {
+    if (prev === undefined) delete process.env.ANTHROPIC_API_KEY;
+    else process.env.ANTHROPIC_API_KEY = prev;
+  }
+}
+
+const jsonResponse = (text: string) =>
+  new Response(
+    JSON.stringify({ content: [{ type: "text", text }], usage: { input_tokens: 10, output_tokens: 1, cache_read_input_tokens: 5 } }),
+    { status: 200 },
+  );
+
+test("apiProvider retries a dropped connection, a 5xx, and a 429 with backoff, then returns text and usage", async () => {
+  await withApiKey(async () => {
+    let calls = 0;
+    const fetchFn = (async () => {
+      calls++;
+      if (calls === 1) throw new TypeError("fetch failed");
+      if (calls === 2) return new Response("overloaded", { status: 529 });
+      if (calls === 3) return new Response("slow down", { status: 429 });
+      return jsonResponse("3");
+    }) as unknown as typeof fetch;
+    const ask = apiProvider("m", { fetchFn, baseDelayMs: 1 });
+    const r = await ask("sys", [{ role: "user", content: "hi" }], 10);
+    assert.equal(calls, 4);
+    assert.equal(r.text, "3");
+    assert.deepEqual(r.usage, { in: 10, out: 1, cacheRead: 5, cacheWrite: 0 });
+  });
+});
+
+test("apiProvider gives up after its attempt budget, and never retries a plain 4xx", async () => {
+  await withApiKey(async () => {
+    let calls = 0;
+    const always500 = (async () => { calls++; return new Response("down", { status: 500 }); }) as unknown as typeof fetch;
+    await assert.rejects(
+      apiProvider("m", { fetchFn: always500, baseDelayMs: 1, maxAttempts: 3 })("sys", [], 10),
+      /API 500 after 3 attempts/,
+    );
+    assert.equal(calls, 3);
+    calls = 0;
+    const bad400 = (async () => { calls++; return new Response("bad request", { status: 400 }); }) as unknown as typeof fetch;
+    await assert.rejects(apiProvider("m", { fetchFn: bad400, baseDelayMs: 1 })("sys", [], 10), /API 400: bad request/);
+    assert.equal(calls, 1, "a 4xx is the caller's fault, not transient");
+  });
 });
 
 test("turnWarning stays silent until the session nears its turn cap, then counts down", () => {
