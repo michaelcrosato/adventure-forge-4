@@ -1,0 +1,51 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 577,
+  "receipt": "reach.113.577.366.reach_at_rest.318931a6",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Gray Chapel priest dialogue option 'release me from my promise' reads like an information question but is actually an irrevocable commitment: selecting it instantly broke my promise to the reeve, failed the 'Barrow Doors' quest, and cost Watch reputation, with no confirmation step.",
+      "where": "Gray Chapel / gray priest dialogue"
+    },
+    {
+      "sev": "P1",
+      "what": "Regent Ysolde's dialogue option 'the burn-order from Tanners' Row' silently and irrevocably resolved the 'Marshal's Oath' quest by handing the evidence to the Regent, who buried it in a locked drawer ('she means the drawer, not the truth'). The option looked like a neutral conversation topic, not one of three exclusive final dispositions of the evidence (vs. taking it to Tarn or Quill), and there was no warning it would fail the quest.",
+      "where": "Marrowgate, Regent's Chambers / Regent Ysolde dialogue"
+    },
+    {
+      "sev": "P2",
+      "what": "Several Wardmoor moor rooms (e.g. The Elbow, Cliff Edge, The Grey Ford) describe Hollowbrook as visible/close ('low country starts somewhere past the haze', 'toward Hollowbrook's dike country') but expose no actual exit crossing into Hollowbrook from any of them, costing turns hunting for a passage that isn't there.",
+      "where": "Wardmoor moor rooms (The Elbow / Cliff Edge / The Grey Ford)"
+    },
+    {
+      "sev": "P2",
+      "what": "Failed skill checks that are retryable (e.g. persuading Regent Ysolde with the founding ledger) can simply be re-attempted immediately with identical odds until they succeed, at the cost of a turn but no other stakes, which undercuts tension on an otherwise dramatic beat.",
+      "where": "Regent's Chambers / 'the founding ledger' will check"
+    }
+  ],
+  "confusions": [
+    "The Wardmoor moor is a large, densely-interconnected grid of very similarly-described rooms (mist, heather, cairns); finding the specific 'toward the oath-stone' path from Highward took a long stretch of undirected wandering even with 'get bearings' used earlier.",
+    "It wasn't obvious in advance that 'speak the Great Rite over the seat' at the Hollow Throne would end the run immediately (no 'are you sure' beat), though the room text did say plainly 'each is an ending' just before, so a careful reader is warned.",
+    "Optional dungeon-style side rooms (Cutter's Barrow, the Denhollow, the Opened Cairn) are flagged with '*' as unvisited but give no sense of how much content/time they hold before entering, making it hard to budget turns against them in a 600-turn run."
+  ],
+  "suggestions": [
+    "Add a one-line confirm step for dialogue choices that immediately fail or lock a quest (e.g. 'release me from my promise', handing evidence to an NPC who might bury it), distinguishing 'ask about X' from 'commit to X'.",
+    "Either add the implied exits where flavor text foreshadows a neighboring region (Hollowbrook from the Wardmoor moor edge), or drop the foreshadowing text so it stops reading as a real, findable passage.",
+    "Extend the '(no dawn)' style explicit warning tag already used on 'kneel' options to other irrevocable ending-triggering choices for consistency.",
+    "A 'get bearings'-style free action in more maze-like hub rooms (it worked beautifully at the watchtower and Camp Gallows) would help large regions like the Wardmoor moor read as navigable rather than a warren."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T16-36-28-195Z",
+  "seed": 113,
+  "build": {
+    "rev": "8eee49e",
+    "world": "4b87149c"
+  },
+  "cost_usd": null,
+  "verified": true
+}
