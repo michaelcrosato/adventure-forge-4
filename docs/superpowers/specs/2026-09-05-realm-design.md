@@ -213,19 +213,19 @@ straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
 **As built** (after the first playtest rounds): 405 rooms, 122 npcs, 108
-items, 49 quests, 32 stamped places, 108 epilogue lines, 4 companions, 6
-factions, 7 endings each with a proof; every gate in the holds and the
-capital has a force, a craft and a words route. `maxScore` 366, the score the
-proven walkthrough reaches: a Scholar with Lys along rests Thornwold (the
-Keeper's verse), the Iron Downs (the true ledger) and the Saltkerns (the
-sailors' verse under the Farlight), earns the Free Companies' stair in
-Gullhaven, climbs the Keepers' pilgrim stair at Coldpass, hears the first
-Reeve's confession, and speaks the Great Rite — 255 turns, 417 characters a
-screen on average. Proofs replay the Regent deposed by the Companies, the
-throne burned with the Regent's own oil, the Vale's crown worn on the gray
-seat, and kneeling to the hollow. Nine blind playtests of the whole realm
-(300–600 turns) reached four wins on three different roads — two of them at
-full score — and one loss; their findings are fixed.
+items, 49 quests, 32 stamped places each with its own sign and reward, 109
+epilogue lines, 4 companions, 6 factions, 7 endings each with a proof; every
+gate in the holds and the capital has a force, a craft and a words route.
+`maxScore` 366, the score the proven walkthrough reaches: a Scholar with Lys
+along rests Thornwold (the Keeper's verse), the Iron Downs (the true ledger)
+and the Saltkerns (the sailors' verse under the Farlight), earns the Free
+Companies' stair in Gullhaven, climbs the Keepers' pilgrim stair at Coldpass,
+hears the first Reeve's confession, and speaks the Great Rite — 255 turns,
+417 characters a screen on average. Proofs replay the Regent deposed by the
+Companies, the throne burned with the Regent's own oil, the Vale's crown worn
+on the gray seat, and kneeling to the hollow. Eleven blind playtests of the
+whole realm (300–600 turns) reached five wins on three different roads —
+three of them at full score — and one loss; their findings are fixed.
 
 ## Build order
 
