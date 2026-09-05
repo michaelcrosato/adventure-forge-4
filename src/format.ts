@@ -15,6 +15,10 @@ import type { Action, State, World } from "./types.ts";
 
 const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 
+/** status lists every visited place by name up to this many; beyond it, a count and the latest few. */
+export const VISITED_FULL = 12;
+export const VISITED_RECENT = 5;
+
 export function renderMenu(world: World, s: State): { text: string; actions: Action[] } {
   const actions = legalActions(world, s);
   const text = actions
@@ -212,10 +216,14 @@ export function renderStatus(world: World, s: State): string {
     if (failed.length) lines.push(`Failed: ${failed.join(", ")}`);
   }
   for (const h of world.hud ?? []) lines.push(`${h.label}: ${s.vars[h.var] ?? 0}`);
+  // The visited list is a memory aid, not a map: past a dozen places it
+  // becomes a wall of names that costs tokens every time status is called,
+  // so a big world shows the count and the most recent few instead.
   const visited = s.visited ?? [];
   if (visited.length) {
     const names = visited.map((id) => world.rooms?.[id]?.name ?? id);
-    lines.push(`Visited: ${names.join(", ")}`);
+    if (names.length <= VISITED_FULL) lines.push(`Visited: ${names.join(", ")}`);
+    else lines.push(`Visited: ${names.length} places (lately: ${names.slice(-VISITED_RECENT).join(", ")})`);
   }
   if (s.inv.length) {
     const carried = s.inv.map((id) => world.items[id]?.name ?? id);
