@@ -295,6 +295,11 @@ it standing somewhere.
   order, at most 6. Write 4–8 per region: rested / burned / bargained /
   untouched, plus one or two for memorable side choices. One sentence each.
 - `hud` (root) puts counters on the status line; `gold` is already there.
+- `factions` (root) names reputation vars (`rep_church` → "the Gray Church"):
+  any `addvar` to a named var prints `(the Gray Church -1)` the turn it
+  happens, and an `addvar` to `appr_<npc>` prints "<Name> approves." or
+  "disapproves." when that companion is in the party or the room. Choices
+  are legible without the player calling `status`.
 
 ## 11. Endings and proofs
 

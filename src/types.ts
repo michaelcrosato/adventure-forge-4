@@ -317,6 +317,8 @@ export type World = {
   epilogue?: { if: Cond[]; text: string }[];
   /** Extra counters shown compactly in the per-turn status line (e.g. gold). */
   hud?: { var: string; label: string }[];
+  /** Reputation vars by display name (e.g. rep_church -> "the Gray Church"): a change to one prints "(the Gray Church -1)" the turn it happens. */
+  factions?: Record<string, string>;
   /** Optional persistent counter shown in the status line every turn (e.g. quest items gathered). */
   progress?: { var: string; label: string; max: number };
   /** Optional extra counters for the free `status` check (any time, no turn cost) — e.g. multiple parallel paths to an ending. Not shown on the per-turn line. */

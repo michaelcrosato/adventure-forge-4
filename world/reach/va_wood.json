@@ -134,7 +134,19 @@
           "name": "The Ashfall Clearing",
           "desc": "A wide clearing where the gray ash lies thickest, drifted like snow that never melts. East the ground softens and water glints; west a thread of woodsmoke rises.",
           "brief": "The ashfall clearing.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "va_ash_sift",
+              "label": "sift the ash where it lies thickest",
+              "once": true,
+              "fx": [
+                ["xp", 2],
+                ["score", 1],
+                ["say", "Under the gray, the ground is black and warm, as if something had burned here and never quite stopped. Your palm comes up clean. The gray is not soot; it never was."]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 2],
@@ -157,7 +169,19 @@
           "name": "Broken Bridge",
           "desc": "A footbridge half fallen into a dry streambed, the far rail gone. Woodsmoke drifts from the north. The village lanterns show through the trees east.",
           "brief": "The broken bridge. Smoke north.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "va_bridge_search",
+              "label": "search the dry streambed",
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["addvar", "gold", 2],
+                ["say", "Under the fallen rail, a purse gone green with two coins still in it, and a child's wooden horse nobody came back for."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 3],

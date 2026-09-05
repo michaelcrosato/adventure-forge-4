@@ -59,7 +59,7 @@ const REGIONS: Record<string, { name: string; gates: Gate[] }> = {
   ] },
 };
 
-const END_LABEL = "(stub) end the tale here";
+const END_LABEL = "(scaffold) the road ends here for now";
 const END_FX = [["score", 100], ["end", "win", "zz_stub_win", "The realm is unfinished; this ending is a scaffold and will be removed."]];
 
 function stubsFor(exclude: Set<string>, withOracle: boolean): Record<string, unknown> {
@@ -98,9 +98,11 @@ function stubsFor(exclude: Set<string>, withOracle: boolean): Record<string, unk
   if (withOracle) {
     out["npcs"] = {
       zz_oracle: {
-        name: "stub oracle",
+        name: "gray rider",
         room: "va_gate",
-        topics: [{ id: "end", label: END_LABEL, say: "So be it.", fx: END_FX }],
+        desc: "A rider in road-dust who is not in the story yet.",
+        // only once act 1 is settled, so a playtest of the Vale never meets the scaffolding early
+        topics: [{ id: "end", label: END_LABEL, if: [["flag", "act2_open"]], say: "This is as far as the road goes, for now.", fx: END_FX }],
       },
     };
   }

@@ -391,9 +391,23 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
       case "setvar":
         s.vars[fx[1]] = fx[2];
         break;
-      case "addvar":
+      case "addvar": {
         s.vars[fx[1]] = (s.vars[fx[1]] ?? 0) + fx[2];
+        const d = fx[2];
+        if (d) {
+          // choices that matter must be legible: a companion at hand says so,
+          // and a named faction's standing prints its move
+          if (fx[1].startsWith("appr_")) {
+            const id = fx[1].slice(5);
+            const npc = world.npcs[id];
+            if (npc && (s.party.includes(id) || s.npcRoom[id] === s.room) && !npcDead(world, s, id))
+              events.push(`${npc.name} ${Math.abs(d) > 1 ? "strongly " : ""}${d > 0 ? "approves" : "disapproves"}.`);
+          } else if (world.factions?.[fx[1]]) {
+            events.push(`(${world.factions[fx[1]]} ${d > 0 ? "+" : ""}${d})`);
+          }
+        }
         break;
+      }
       case "check": {
         const [, skill, dc, okFx, failFx] = fx;
         const mod = checkMod(world, s, skill);
@@ -964,6 +978,15 @@ export function step(world: World, prev: State, action: Action): StepOut {
   if (!s.ended && !s.flags["_seenTravel"] && travelAvailable(world, s)) {
     s.flags["_seenTravel"] = true;
     events.push("(You know more than one place now: 'travel to a known place' moves you between landmarks in one turn.)");
+  }
+  // Once, the first time the exits line would carry a * (an unexplored side
+  // trip): locked exits explain themselves inline, this marker did not.
+  if (!s.ended && !s.flags["_seenSideTrip"]) {
+    const exits = world.rooms[s.room]?.exits ?? {};
+    if (Object.values(exits).some((ex) => ex.sideTrip && !s.visited.includes(ex.to))) {
+      s.flags["_seenSideTrip"] = true;
+      events.push("(* marks an optional side path not yet visited.)");
+    }
   }
   return { state: s, events };
 }

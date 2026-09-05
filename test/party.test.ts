@@ -383,3 +383,28 @@ test("an npc's desc shows on the full view and not on the brief one", () => {
   assert.match(render(world, state, []).text, /reeve is here$/m);
   assert.doesNotMatch(render(world, state, []).text, /Gray at the temples/);
 });
+
+test("approval and named-faction changes print the turn they happen — companions only when at hand", () => {
+  const world = company();
+  world.factions = { rep_watch: "the Watch" };
+  world.rooms["a"]!.actions = [
+    { id: "kind", label: "be kind", fx: [["addvar", "appr_lys", 1], ["addvar", "rep_watch", -2]] },
+    { id: "cruel", label: "be cruel", fx: [["addvar", "appr_lys", -2]] },
+  ];
+  let { state } = newState(world, 1);
+  // Lys stands in the room: her reaction shows even before she joins
+  let out = step(world, state, actionByLabel(world, state, "be kind")!);
+  assert.match(out.events.join(" "), /Lys approves\./);
+  assert.match(out.events.join(" "), /\(the Watch -2\)/);
+  out = step(world, out.state, actionByLabel(world, out.state, "be cruel")!);
+  assert.match(out.events.join(" "), /Lys strongly disapproves\./);
+  // far away and not in the party: silent
+  state = out.state;
+  state = doLabel(world, state, "go east");
+  const far = step(world, state, { kind: "go", dir: "west" });
+  assert.doesNotMatch(far.events.join(" "), /Lys/);
+  state.npcRoom["lys"] = "b";
+  const away = step(world, { ...state, room: "a" }, actionByLabel(world, { ...state, room: "a" }, "be kind")!);
+  assert.doesNotMatch(away.events.join(" "), /Lys approves/);
+  assert.match(away.events.join(" "), /\(the Watch -2\)/, "a faction's standing always prints");
+});

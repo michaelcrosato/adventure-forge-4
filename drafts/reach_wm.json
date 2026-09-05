@@ -473,13 +473,34 @@
           "text": "You left him grieving. See who comes to Last Light square anyway."
         },
         {
+          "if": [],
+          "text": "The gray runs through nine holds. Settle the Vale's king first; then the roads open."
+        }
+      ]
+    },
+    "act1": {
+      "name": "Act I — The Vale of Ash",
+      "done": [
+        [
+          "flag",
+          "va_king_resolved"
+        ]
+      ],
+      "failed": [
+        [
+          "flag",
+          "va_king_forsaken"
+        ]
+      ],
+      "stages": [
+        {
           "if": [
             [
               "flag",
               "va_heard_grievance"
             ]
           ],
-          "text": "The king wants his crown, or his verses. The elder's coffer holds the crown; the stones hold the verses."
+          "text": "Settle the Hollow King: speak his verses, return or break his crown, or end him. The doors after are yours too."
         },
         {
           "if": [
@@ -488,11 +509,11 @@
               "va_barrow_open"
             ]
           ],
-          "text": "The barrow stands open. Go down and hear the Hollow King before you decide anything."
+          "text": "The barrow is open. Hear the king at the throne before you decide anything."
         },
         {
           "if": [],
-          "text": "Settle the Hollow King in the barrow north of the Vale. The village of Last Light knows the roads."
+          "text": "Settle the Hollow King in the barrow north of the Vale. Last Light knows the roads; its people know more."
         }
       ]
     }
@@ -566,7 +587,7 @@
   "npcs": {},
   "walkthrough": [
     "be a Scholar — reads the old tongue outright — verses, ledgers, and the dead's own words come easy (wits)",
-    "ask stub oracle: (stub) end the tale here"
+    "ask stub oracle: (scaffold) the road ends here for now"
   ],
   "proofs": {
     "crowned_hollow": [
@@ -592,5 +613,183 @@
       "(no dawn) kneel and take his place",
       "(no dawn) finish kneeling"
     ]
+  },
+  "statusPaths": [
+    {
+      "label": "the Watch",
+      "states": [
+        {
+          "if": [
+            [
+              "var",
+              "rep_watch",
+              ">=",
+              2
+            ]
+          ],
+          "text": "trusted — gates and escorts open to you"
+        },
+        {
+          "if": [
+            [
+              "var",
+              "rep_watch",
+              "<=",
+              -2
+            ]
+          ],
+          "text": "wary — they hold you longer at every gate"
+        }
+      ],
+      "fallback": "neither friend nor foe"
+    },
+    {
+      "label": "the Gray Church",
+      "states": [
+        {
+          "if": [
+            [
+              "var",
+              "rep_church",
+              ">=",
+              2
+            ]
+          ],
+          "text": "in your debt — doors, rites, and secrets open to you"
+        },
+        {
+          "if": [
+            [
+              "var",
+              "rep_church",
+              "<=",
+              -2
+            ]
+          ],
+          "text": "cold — the Church remembers what you did"
+        }
+      ],
+      "fallback": "neither friend nor foe"
+    },
+    {
+      "label": "the Ironbound",
+      "states": [
+        {
+          "if": [
+            [
+              "var",
+              "rep_iron",
+              ">=",
+              2
+            ]
+          ],
+          "text": "counted a brother — fire and iron yours to ask for"
+        },
+        {
+          "if": [
+            [
+              "var",
+              "rep_iron",
+              "<=",
+              -2
+            ]
+          ],
+          "text": "despised — they will not arm you"
+        }
+      ],
+      "fallback": "neither friend nor foe"
+    },
+    {
+      "label": "the Free Companies",
+      "states": [
+        {
+          "if": [
+            [
+              "var",
+              "rep_free",
+              ">=",
+              2
+            ]
+          ],
+          "text": "a friend of the Companies — passage and favours"
+        },
+        {
+          "if": [
+            [
+              "var",
+              "rep_free",
+              "<=",
+              -2
+            ]
+          ],
+          "text": "marked — the Companies remember a wrong"
+        }
+      ],
+      "fallback": "neither friend nor foe"
+    },
+    {
+      "label": "the Barrow-Keepers",
+      "states": [
+        {
+          "if": [
+            [
+              "var",
+              "rep_keepers",
+              ">=",
+              2
+            ]
+          ],
+          "text": "one of theirs — the old rites and roads are yours"
+        },
+        {
+          "if": [
+            [
+              "var",
+              "rep_keepers",
+              "<=",
+              -2
+            ]
+          ],
+          "text": "turned away — they will not teach you"
+        }
+      ],
+      "fallback": "neither friend nor foe"
+    },
+    {
+      "label": "the Crown",
+      "states": [
+        {
+          "if": [
+            [
+              "var",
+              "rep_crown",
+              ">=",
+              2
+            ]
+          ],
+          "text": "in the Regent's favour"
+        },
+        {
+          "if": [
+            [
+              "var",
+              "rep_crown",
+              "<=",
+              -2
+            ]
+          ],
+          "text": "in the Regent's memory, and not kindly"
+        }
+      ],
+      "fallback": "unknown to Marrowgate"
+    }
+  ],
+  "factions": {
+    "rep_watch": "the Watch",
+    "rep_church": "the Gray Church",
+    "rep_iron": "the Ironbound",
+    "rep_free": "the Free Companies",
+    "rep_keepers": "the Barrow-Keepers",
+    "rep_crown": "the Crown"
   }
 }

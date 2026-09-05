@@ -194,17 +194,25 @@
           "if": [["flag", "va_king_forsaken"]],
           "text": "You left him grieving. See who comes to Last Light square anyway."
         },
+        { "if": [], "text": "The gray runs through nine holds. Settle the Vale's king first; then the roads open." }
+      ]
+    },
+    "act1": {
+      "name": "Act I — The Vale of Ash",
+      "done": [["flag", "va_king_resolved"]],
+      "failed": [["flag", "va_king_forsaken"]],
+      "stages": [
         {
           "if": [["flag", "va_heard_grievance"]],
-          "text": "The king wants his crown, or his verses. The elder's coffer holds the crown; the stones hold the verses."
+          "text": "Settle the Hollow King: speak his verses, return or break his crown, or end him. The doors after are yours too."
         },
         {
           "if": [["flag", "va_barrow_open"]],
-          "text": "The barrow stands open. Go down and hear the Hollow King before you decide anything."
+          "text": "The barrow is open. Hear the king at the throne before you decide anything."
         },
         {
           "if": [],
-          "text": "Settle the Hollow King in the barrow north of the Vale. The village of Last Light knows the roads."
+          "text": "Settle the Hollow King in the barrow north of the Vale. Last Light knows the roads; its people know more."
         }
       ]
     }
@@ -238,7 +246,7 @@
   "rooms": {},
   "items": {},
   "npcs": {},
-  "walkthrough": ["be a Scholar — reads the old tongue outright — verses, ledgers, and the dead's own words come easy (wits)", "go south", "read the notice board", "read the notice board again", "read the notice board again", "talk to reeve", "the blight", "seal or open?", "decline to promise", "leave the reeve to the watch", "go west", "ask innkeep: rumors", "go east", "go south", "talk to gray priest", "the old king", "perk: Second Wind (+3 max hp)", "leave him to his candles", "go north", "go north", "go west", "go north", "talk to hunter", "the old barrow", "leave the hunter to the trees", "go east", "go north", "go east", "go north", "go north", "use the hunter's gap under the stone", "go in", "go east", "show the shade your worn half-token", "perk: Fleetfoot (+2 grace checks)", "use king's seal", "go west", "go north", "read the stone walls (scholar)", "go up", "talk to hollow king", "why do you grieve", "step back from the seat", "go down", "go south", "go out", "travel to a known place", "to Last Light square", "go south", "go east", "talk to elder", "open the coffer — I have the king's seal", "leave her to the ledgers", "go west", "go north", "travel to a known place", "to the barrow field", "go south", "go east", "go east", "go south", "go east", "read the wind carvings (scholar)", "go west", "go south", "go east", "read the water verse (scholar)", "perk: Deep Lore (+2 wits checks (scholar))", "travel to a known place", "to the barrow field", "go in", "go north", "go up", "give back the crown and speak the verses", "leave the barrow open to the sky", "go down", "go south", "go out", "travel to a known place", "to Last Light square", "talk to Herald Corvane", "what brings Marrowgate here", "the other hollows", "refuse the Regent's decree", "leave the herald to his horse", "travel to a known place", "to Last Light gate", "ask stub oracle: (stub) end the tale here"],
+  "walkthrough": ["be a Scholar — reads the old tongue outright — verses, ledgers, and the dead's own words come easy (wits)", "go south", "read the notice board", "read the notice board again", "read the notice board again", "talk to reeve", "the blight", "seal or open?", "decline to promise", "leave the reeve to the watch", "go west", "ask innkeep: rumors", "go east", "go south", "talk to gray priest", "the old king", "perk: Second Wind (+3 max hp)", "leave him to his candles", "go north", "go north", "go west", "go north", "talk to hunter", "the old barrow", "leave the hunter to the trees", "go east", "go north", "go east", "go north", "go north", "use the hunter's gap under the stone", "go in", "go east", "show the shade your worn half-token", "perk: Fleetfoot (+2 grace checks)", "use king's seal", "go west", "go north", "read the stone walls (scholar)", "go up", "talk to hollow king", "why do you grieve", "step back from the seat", "go down", "go south", "go out", "travel to a known place", "to Last Light square", "go south", "go east", "talk to elder", "open the coffer — I have the king's seal", "leave her to the ledgers", "go west", "go north", "travel to a known place", "to the barrow field", "go south", "go east", "go east", "go south", "go east", "read the wind carvings (scholar)", "go west", "go south", "go east", "read the water verse (scholar)", "perk: Deep Lore (+2 wits checks (scholar))", "travel to a known place", "to the barrow field", "go in", "go north", "go up", "give back the crown and speak the verses", "leave the barrow open to the sky", "go down", "go south", "go out", "travel to a known place", "to Last Light square", "talk to Herald Corvane", "what brings Marrowgate here", "the other hollows", "refuse the Regent's decree", "leave the herald to his horse", "travel to a known place", "to Last Light gate", "ask gray rider: (scaffold) the road ends here for now"],
   "proofs": {
     "crowned_hollow": ["be a Scholar — reads the old tongue outright — verses, ledgers, and the dead's own words come easy (wits)", "go south", "go south", "talk to gray priest", "the old king", "a blessing for the barrow", "leave him to his candles", "go north", "go north", "go north", "go north", "go north", "go north", "go north", "perk: Fleetfoot (+2 grace checks)", "go in", "go north", "read the stone walls (scholar)", "go up", "(no dawn) kneel and take his place", "(no dawn) finish kneeling"]
   },
@@ -246,23 +254,23 @@
     {
       "label": "the Watch",
       "states": [
-        { "if": [["var", "rep_watch", ">=", 2]], "text": "trusted — their gates and escorts open to you" },
-        { "if": [["var", "rep_watch", "<=", -2]], "text": "wary — the Watch holds you longer at every gate" }
+        { "if": [["var", "rep_watch", ">=", 2]], "text": "trusted — gates and escorts open to you" },
+        { "if": [["var", "rep_watch", "<=", -2]], "text": "wary — they hold you longer at every gate" }
       ],
       "fallback": "neither friend nor foe"
     },
     {
       "label": "the Gray Church",
       "states": [
-        { "if": [["var", "rep_church", ">=", 2]], "text": "in your debt — their doors, rites, and secrets are open" },
-        { "if": [["var", "rep_church", "<=", -2]], "text": "cold — no blessing for a burner of the dead" }
+        { "if": [["var", "rep_church", ">=", 2]], "text": "in your debt — doors, rites, and secrets open to you" },
+        { "if": [["var", "rep_church", "<=", -2]], "text": "cold — the Church remembers what you did" }
       ],
       "fallback": "neither friend nor foe"
     },
     {
       "label": "the Ironbound",
       "states": [
-        { "if": [["var", "rep_iron", ">=", 2]], "text": "counted a brother — fire and iron are yours to ask for" },
+        { "if": [["var", "rep_iron", ">=", 2]], "text": "counted a brother — fire and iron yours to ask for" },
         { "if": [["var", "rep_iron", "<=", -2]], "text": "despised — they will not arm you" }
       ],
       "fallback": "neither friend nor foe"
@@ -271,7 +279,7 @@
       "label": "the Free Companies",
       "states": [
         { "if": [["var", "rep_free", ">=", 2]], "text": "a friend of the Companies — passage and favours" },
-        { "if": [["var", "rep_free", "<=", -2]], "text": "marked — the Companies remember a cheat" }
+        { "if": [["var", "rep_free", "<=", -2]], "text": "marked — the Companies remember a wrong" }
       ],
       "fallback": "neither friend nor foe"
     },
@@ -279,7 +287,7 @@
       "label": "the Barrow-Keepers",
       "states": [
         { "if": [["var", "rep_keepers", ">=", 2]], "text": "one of theirs — the old rites and roads are yours" },
-        { "if": [["var", "rep_keepers", "<=", -2]], "text": "turned away — they will not teach a burner" }
+        { "if": [["var", "rep_keepers", "<=", -2]], "text": "turned away — they will not teach you" }
       ],
       "fallback": "neither friend nor foe"
     },
@@ -291,5 +299,13 @@
       ],
       "fallback": "unknown to Marrowgate"
     }
-  ]
+  ],
+  "factions": {
+    "rep_watch": "the Watch",
+    "rep_church": "the Gray Church",
+    "rep_iron": "the Ironbound",
+    "rep_free": "the Free Companies",
+    "rep_keepers": "the Barrow-Keepers",
+    "rep_crown": "the Crown"
+  }
 }

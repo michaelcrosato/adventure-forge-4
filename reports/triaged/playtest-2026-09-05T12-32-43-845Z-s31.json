@@ -1,0 +1,45 @@
+{
+  "verdict": "quit",
+  "fun": 4,
+  "clarity": 4,
+  "turns": 120,
+  "receipt": "",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "A 'stub oracle' NPC at the Village Gate offers the option '(stub) end the tale here' — a clearly unfinished/placeholder dev artifact exposed in normal play, not gated off from the player.",
+      "where": "Village Gate (after first returning from the barrow)"
+    },
+    {
+      "sev": "P2",
+      "what": "Final reputation summary lists 'the Gray Church: cold — no blessing for a burner of the dead' though the player never performed any burial/burning action; the flag's trigger is opaque.",
+      "where": "status screen, faction reputation list"
+    },
+    {
+      "sev": "P2",
+      "what": "120 in-game turns were consumed by thorough-but-not-exhaustive exploration of the Vale plus reaching and starting the Hollow King decision; the fight with the king (8/12 hp) was still open when the budget ran out, and the game had already signaled a much larger Act 2 ('six holds') ahead. No pacing signal warns the player they are behind the turn budget.",
+      "where": "Throne of the Barrow / overall Act 1 pacing"
+    }
+  ],
+  "confusions": [
+    "Exit letters are sometimes suffixed with '*' (e.g. 'D* E*') with no inline legend the first time it appears; it turned out to foreshadow a lock deeper in that direction, but nothing on-screen said so.",
+    "Run ended at the hard 120-turn cap mid-fight with the Hollow King, without reaching a *** WIN/*** LOSE screen — not a softlock, just ran out of budget after a full Act 1 loop plus the opening move into Act 2's branch."
+  ],
+  "suggestions": [
+    "Remove or clearly gate the stub-oracle 'end the tale here' placeholder before this reaches players.",
+    "Surface why a reputation flag changed (or a hint of the trigger) instead of only showing the end result in status.",
+    "Add a light pacing cue (even just in status) so a player can tell if they're burning turns faster than the story expects.",
+    "Explain the '*' exit marker the first time it's shown."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T12-32-43-845Z",
+  "seed": 31,
+  "build": {
+    "rev": "263afa7",
+    "world": "9e4b50bc"
+  },
+  "cost_usd": null,
+  "verified": false
+}

@@ -82,7 +82,7 @@
       "actions": [
         {
           "id": "th_stub_end",
-          "label": "(stub) end the tale here",
+          "label": "(scaffold) the road ends here for now",
           "fx": [
             [
               "score",
@@ -180,7 +180,7 @@
       "actions": [
         {
           "id": "fd_stub_end",
-          "label": "(stub) end the tale here",
+          "label": "(scaffold) the road ends here for now",
           "fx": [
             [
               "score",
@@ -254,7 +254,7 @@
       "actions": [
         {
           "id": "ir_stub_end",
-          "label": "(stub) end the tale here",
+          "label": "(scaffold) the road ends here for now",
           "fx": [
             [
               "score",
@@ -328,7 +328,7 @@
       "actions": [
         {
           "id": "hb_stub_end",
-          "label": "(stub) end the tale here",
+          "label": "(scaffold) the road ends here for now",
           "fx": [
             [
               "score",
@@ -426,7 +426,7 @@
       "actions": [
         {
           "id": "sk_stub_end",
-          "label": "(stub) end the tale here",
+          "label": "(scaffold) the road ends here for now",
           "fx": [
             [
               "score",
@@ -524,7 +524,7 @@
       "actions": [
         {
           "id": "cp_stub_end",
-          "label": "(stub) end the tale here",
+          "label": "(scaffold) the road ends here for now",
           "fx": [
             [
               "score",
@@ -574,7 +574,7 @@
       "actions": [
         {
           "id": "mg_stub_end",
-          "label": "(stub) end the tale here",
+          "label": "(scaffold) the road ends here for now",
           "fx": [
             [
               "score",
@@ -593,13 +593,20 @@
   },
   "npcs": {
     "zz_oracle": {
-      "name": "stub oracle",
+      "name": "gray rider",
       "room": "va_gate",
+      "desc": "A rider in road-dust who is not in the story yet.",
       "topics": [
         {
           "id": "end",
-          "label": "(stub) end the tale here",
-          "say": "So be it.",
+          "label": "(scaffold) the road ends here for now",
+          "if": [
+            [
+              "flag",
+              "act2_open"
+            ]
+          ],
+          "say": "This is as far as the road goes, for now.",
           "fx": [
             [
               "score",

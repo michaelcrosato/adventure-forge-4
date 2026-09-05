@@ -275,3 +275,15 @@ test("the first time fast travel is on the menu, one hint says so — and never 
   assert.doesNotMatch(second.events.join(" "), /travel to a known place/);
   assert.ok(state.flags["_seenTravel"]);
 });
+
+test("the first unexplored side-trip exit earns a one-time legend for the * marker", () => {
+  const world = line(3);
+  world.rooms["r1"]!.exits!["north"] = { to: "r2", sideTrip: true };
+  let { state } = newState(world, 1);
+  const first = step(world, state, actionByLabel(world, state, "go east")!);
+  assert.match(first.events.join(" "), /\* marks an optional side path not yet visited/);
+  state = first.state;
+  state = doLabel(world, state, "go west");
+  const again = step(world, state, actionByLabel(world, state, "go east")!);
+  assert.doesNotMatch(again.events.join(" "), /side path/);
+});

@@ -56,7 +56,7 @@ export function worldFiles(path: string): string[] {
 // Which top-level fields a part file may carry. A part is a slice of one world:
 // it adds records and list entries, never the world's identity or its proof.
 const ROOT_ONLY = new Set(["id", "title", "intro", "objectives", "start", "hp", "maxScore", "walkthrough", "progress", "include"]);
-const RECORD_FIELDS = new Set(["rooms", "items", "npcs", "classes", "perks", "regions", "quests", "proofs", "templates", "skills"]);
+const RECORD_FIELDS = new Set(["rooms", "items", "npcs", "classes", "perks", "regions", "quests", "proofs", "templates", "skills", "factions"]);
 const LIST_FIELDS = new Set(["gen", "stamps", "epilogue", "statusTracks", "statusPaths", "hud"]);
 
 /**
@@ -231,6 +231,7 @@ export function validateWorld(world: World): string[] {
     checkConds(`epilogue ${i}`, ep.if);
   }
   for (const [i, h] of (world.hud ?? []).entries()) need(`hud ${i}`, h, [["var", "string"], ["label", "string"]]);
+  for (const [v, name] of Object.entries(world.factions ?? {})) if (typeof name !== "string" || !name) err(`factions ${v}: needs a display name`);
 
   // ---------- regions and fast travel ----------
   const regionOk = (id: string) => !!world.regions?.[id];
