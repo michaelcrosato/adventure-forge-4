@@ -17,7 +17,9 @@ export type Cond =
   | ["class", string] // player picked this class
   | ["!class", string]
   | ["perk", string] // player owns this perk
-  | ["!perk", string];
+  | ["!perk", string]
+  | ["inParty", string] // npc travels with the player
+  | ["!inParty", string];
 
 // ---------- effects ----------
 export type Fx =
@@ -34,6 +36,8 @@ export type Fx =
   | ["check", string, number, Fx[], Fx[]] // skill, dc, okFx, failFx (d20 + skill/attr/perk mods)
   | ["xp", number] // grant xp; levels apply themselves
   | ["perk", string] // grant a perk directly (a trainer teaches you)
+  | ["chance", number, Fx[], Fx[]] // pct 0..100 from the state's PRNG: okFx if the roll lands, else failFx
+  | ["party", string, "join" | "leave"] // npc joins the player's company (follows room to room, fights beside them) or leaves it
   | ["end", "win" | "lose", string, string]; // kind, endingId, text
 
 // ---------- content ----------
@@ -85,11 +89,30 @@ export type ItemDef = {
 
 export type TopicDef = {
   id: string;
-  label: string; // menu shows "ask <npc>: <label>"
+  label: string; // menu shows "ask <npc>: <label>" (inline) or just "<label>" inside a conversation
   if?: Cond[];
   once?: boolean; // auto-flag `said_<npc>_<id>` and hide after
   say: string;
   fx?: Fx[];
+  end?: boolean; // conversation mode only: this line closes the conversation
+};
+
+/**
+ * A companion's one-line reaction. Checked after every turn for each party
+ * member; the first remark whose conditions pass is spoken, once ever
+ * (flag `remarked_<npc>_<id>`). This is how a companion notices where you are
+ * and what you just chose.
+ */
+export type RemarkDef = {
+  id: string;
+  if?: Cond[];
+  say: string;
+};
+
+export type CompanionDef = {
+  hit?: number; // attack-roll bonus when fighting beside the player
+  dmg?: number; // damage on a hit (default 1)
+  remarks?: RemarkDef[];
 };
 
 export type NpcDef = {
@@ -97,11 +120,19 @@ export type NpcDef = {
   room: string | null;
   desc?: string;
   hostile?: boolean; // display flavor only: shows "(hostile, hp)" in room text. Attackability comes from `hp`.
+  aggressive?: boolean; // strikes the player at the end of every turn spent in its room (needs hp and atk) — leaving is the only way to stop it
   hp?: number;
   atk?: number; // damage dealt to the player per round while alive
   df?: number; // player must roll d20 + weapon hit >= df
   onDeath?: Fx[];
   topics?: TopicDef[];
+  /**
+   * Conversation mode: the room menu shows one "talk to <name>" entry instead
+   * of every topic; picking it opens a menu of this npc's visible topics plus
+   * "end conversation". Keeps room menus small for talkative npcs.
+   */
+  dialogue?: boolean;
+  companion?: CompanionDef; // can travel in the player's party (see the "party" effect)
 };
 
 export type WalkStep = string | { repeat: string; until: Cond; max: number };
@@ -214,7 +245,9 @@ export type Action =
   | { kind: "attack"; npc: string }
   | { kind: "custom"; room: string; id: string }
   | { kind: "classpick"; id: string } // choose who you are (first menu when a world has classes)
-  | { kind: "perkpick"; id: string }; // choose a perk after a level-up
+  | { kind: "perkpick"; id: string } // choose a perk after a level-up
+  | { kind: "talkto"; npc: string } // open a conversation with a `dialogue` npc
+  | { kind: "endtalk" }; // close the open conversation
 
 export type Ending = { kind: "win" | "lose"; id: string; text: string };
 
@@ -240,6 +273,8 @@ export type State = {
   npcHp: Record<string, number>;
   npcRoom: Record<string, string | null>;
   visited: string[];
+  party: string[]; // companions travelling with the player, in join order
+  talking: string | null; // npc id while a conversation is open (conversation mode)
   ended: Ending | null;
 };
 

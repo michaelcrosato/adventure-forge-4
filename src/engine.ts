@@ -42,6 +42,13 @@ function d20(s: State): number {
   return 1 + Math.floor(r * 20);
 }
 
+/** d100, advancing the state's PRNG cursor — for the "chance" effect. */
+function d100(s: State): number {
+  const { a, r } = nextRng(s.rngA);
+  s.rngA = a;
+  return 1 + Math.floor(r * 100);
+}
+
 // ---------- canonical hash ----------
 function canon(v: unknown): string {
   if (v === null || typeof v !== "object") return JSON.stringify(v);
@@ -104,6 +111,10 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return s.perks.includes(c[1]);
     case "!perk":
       return !s.perks.includes(c[1]);
+    case "inParty":
+      return s.party.includes(c[1]);
+    case "!inParty":
+      return !s.party.includes(c[1]);
   }
 }
 
@@ -333,6 +344,29 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
       case "perk":
         grantPerk(world, s, fx[1], events);
         break;
+      case "chance": {
+        // Silent by itself: the branches carry whatever the player should see.
+        // The roll comes from the state's cursor, so a trace replays it exactly.
+        const [, pct, okFx, failFx] = fx;
+        const roll = d100(s);
+        applyFx(world, s, roll <= pct ? okFx : failFx, events);
+        break;
+      }
+      case "party": {
+        const [, npc, how] = fx;
+        const name = world.npcs[npc]?.name ?? npc;
+        if (how === "join") {
+          if (!s.party.includes(npc)) {
+            s.party.push(npc);
+            events.push(`${name} joins you.`);
+          }
+          s.npcRoom[npc] = s.room;
+        } else if (s.party.includes(npc)) {
+          s.party = s.party.filter((id) => id !== npc);
+          events.push(`${name} leaves your company.`);
+        }
+        break;
+      }
       case "end":
         s.ended = { kind: fx[1], id: fx[2], text: fx[3] };
         break;
@@ -342,12 +376,65 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
 
 function enterRoom(world: World, s: State, roomId: string, events: string[]): void {
   s.room = roomId;
+  // the party keeps pace: every living companion arrives with the player
+  for (const id of s.party) if (!npcDead(world, s, id)) s.npcRoom[id] = roomId;
   const room = world.rooms[roomId];
   if (!room) return;
   const first = !s.visited.includes(roomId);
   if (first) s.visited.push(roomId);
   if (first && room.onEnterOnce) applyFx(world, s, room.onEnterOnce, events);
   if (room.onEnter) applyFx(world, s, room.onEnter, events);
+}
+
+/**
+ * One companion remark per party member per turn: the first remark whose
+ * conditions pass and that hasn't been spoken yet. Runs after the turn's own
+ * effects, so a remark can react to the very choice just made.
+ */
+function partyRemarks(world: World, s: State, events: string[]): void {
+  for (const id of s.party) {
+    if (s.ended) return;
+    const def = world.npcs[id];
+    if (!def || npcDead(world, s, id)) continue;
+    for (const r of def.companion?.remarks ?? []) {
+      const flag = `remarked_${id}_${r.id}`;
+      if (s.flags[flag] || !condsOk(world, s, r.if)) continue;
+      s.flags[flag] = true;
+      events.push(`${def.name}: "${r.say}"`);
+      break;
+    }
+  }
+}
+
+/** An npc hits the player once: armor soaks what it can, at least 1 gets through. */
+function npcStrike(world: World, s: State, npcId: string, events: string[], verb: string): void {
+  const def = world.npcs[npcId];
+  if (!def?.atk) return;
+  const armor = armorOf(world, s);
+  const taken = Math.max(1, def.atk - armor);
+  const absorbed = def.atk - taken;
+  events.push(
+    absorbed > 0
+      ? `The ${def.name} ${verb} — your armor takes ${absorbed} of it.`
+      : `The ${def.name} ${verb}.`,
+  );
+  applyFx(world, s, [["hp", -taken]], events);
+}
+
+/**
+ * Aggressive npcs get their turn: everything alive, aggressive, and in the
+ * player's room strikes once the player's action has resolved — except the
+ * one the player just attacked, which already struck back. Companions never
+ * count, and a dead player ends it.
+ */
+function aggressivePass(world: World, s: State, events: string[], except: string | null): void {
+  for (const id of Object.keys(world.npcs)) {
+    if (s.ended) return;
+    const def = world.npcs[id]!;
+    if (!def.aggressive || id === except || s.party.includes(id)) continue;
+    if (s.npcRoom[id] !== s.room || npcDead(world, s, id)) continue;
+    npcStrike(world, s, id, events, "attacks");
+  }
 }
 
 // ---------- initial state ----------
@@ -373,6 +460,8 @@ export function newState(world: World, seed: number): StepOut {
     npcHp: Object.fromEntries(Object.entries(world.npcs).map(([id, d]) => [id, d.hp ?? 1])),
     npcRoom: Object.fromEntries(Object.entries(world.npcs).map(([id, d]) => [id, d.room])),
     visited: [],
+    party: [],
+    talking: null,
     ended: null,
   };
   for (const id of Object.keys(world.items)) if (s.itemLoc[id] === "inv") s.inv.push(id);
@@ -403,6 +492,21 @@ function topicVisible(world: World, s: State, npc: string, t: TopicDef): boolean
   return condsOk(world, s, t.if);
 }
 
+function visibleTopics(world: World, s: State, npc: string): TopicDef[] {
+  return (world.npcs[npc]?.topics ?? []).filter((t) => topicVisible(world, s, npc, t));
+}
+
+/**
+ * True while a conversation is open with an npc who is still here, alive, and
+ * has something left to say. The menu is then that npc's topics plus "end
+ * conversation" — the room's own menu waits (see format.ts render()).
+ */
+export const inTalkMode = (world: World, s: State): boolean =>
+  s.talking !== null &&
+  s.npcRoom[s.talking] === s.room &&
+  !npcDead(world, s, s.talking) &&
+  visibleTopics(world, s, s.talking).length > 0;
+
 export function legalActions(world: World, s: State): Action[] {
   if (s.ended) return [];
   // class first: nothing else is legal until the player picks who they are
@@ -412,6 +516,13 @@ export function legalActions(world: World, s: State): Action[] {
   if (s.perkPicks > 0) {
     const picks = eligiblePerks(world, s).sort();
     if (picks.length) return picks.slice(0, MENU_CAP).map((id) => ({ kind: "perkpick", id }));
+  }
+  // an open conversation: only its topics, and the way out of it
+  if (inTalkMode(world, s)) {
+    const npc = s.talking!;
+    const out: Action[] = visibleTopics(world, s, npc).map((t) => ({ kind: "talk", npc, topic: t.id }));
+    out.push({ kind: "endtalk" });
+    return out;
   }
   const out: Action[] = [];
   const room = world.rooms[s.room];
@@ -424,9 +535,14 @@ export function legalActions(world: World, s: State): Action[] {
     if (world.items[id]?.takeable) out.push({ kind: "take", item: id });
   for (const npc of npcsHere(world, s)) {
     const def = world.npcs[npc]!;
-    for (const t of def.topics ?? [])
-      if (topicVisible(world, s, npc, t)) out.push({ kind: "talk", npc, topic: t.id });
-    if (def.hp !== undefined) out.push({ kind: "attack", npc });
+    const topics = visibleTopics(world, s, npc);
+    if (def.dialogue) {
+      if (topics.length) out.push({ kind: "talkto", npc });
+    } else {
+      for (const t of topics) out.push({ kind: "talk", npc, topic: t.id });
+    }
+    // companions are not targets
+    if (def.hp !== undefined && !s.party.includes(npc)) out.push({ kind: "attack", npc });
   }
   for (const id of s.inv) {
     for (const u of world.items[id]?.use ?? []) {
@@ -459,8 +575,14 @@ export function actionLabel(world: World, a: Action, s?: State): string {
     case "talk": {
       const npc = world.npcs[a.npc];
       const t = npc?.topics?.find((x) => x.id === a.topic);
+      // inside a conversation the npc is already named, so the label stands alone
+      if (s?.talking === a.npc && npc?.dialogue) return t?.label ?? a.topic;
       return `ask ${npc?.name ?? a.npc}: ${t?.label ?? a.topic}`;
     }
+    case "talkto":
+      return `talk to ${world.npcs[a.npc]?.name ?? a.npc}`;
+    case "endtalk":
+      return "end conversation";
     case "attack": {
       const npcName = world.npcs[a.npc]?.name ?? a.npc;
       const weapon = s ? bestWeapon(world, s).item : null;
@@ -574,6 +696,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
   const s: State = structuredClone(prev);
   const events: string[] = [];
   s.turn += 1;
+  let attacked: string | null = null; // the npc that already struck back this turn
 
   switch (action.kind) {
     case "go": {
@@ -606,8 +729,18 @@ export function step(world: World, prev: State, action: Action): StepOut {
       if (t.once) s.flags[`said_${action.npc}_${t.id}`] = true;
       events.push(`${world.npcs[action.npc]?.name}: "${t.say}"`);
       if (t.fx) applyFx(world, s, t.fx, events);
+      // a conversation closes on its own when the line says so, or when the
+      // npc has nothing left to say / is no longer here (inTalkMode covers
+      // the latter two — clearing here just keeps the state tidy)
+      if (s.talking === action.npc && (t.end || !inTalkMode(world, s))) s.talking = null;
       break;
     }
+    case "talkto":
+      s.talking = action.npc;
+      break;
+    case "endtalk":
+      s.talking = null;
+      break;
     case "attack": {
       const def = world.npcs[action.npc]!;
       const w = bestWeapon(world, s);
@@ -624,19 +757,31 @@ export function step(world: World, prev: State, action: Action): StepOut {
       } else {
         events.push(`You miss the ${def.name} (d20:${roll}+${hit}=${total} vs DF ${df}).`);
       }
+      // companions fight beside the player: one roll each, in join order,
+      // until the target drops
+      for (const id of s.party) {
+        if ((s.npcHp[action.npc] ?? 0) <= 0) break;
+        const c = world.npcs[id];
+        if (!c?.companion || npcDead(world, s, id) || s.npcRoom[id] !== s.room) continue;
+        const cHit = c.companion.hit ?? 0;
+        const cRoll = d20(s);
+        const cTotal = cRoll + cHit;
+        if (cTotal >= df) {
+          const cDmg = c.companion.dmg ?? 1;
+          s.npcHp[action.npc] = (s.npcHp[action.npc] ?? 1) - cDmg;
+          const left = s.npcHp[action.npc]!;
+          const leftText = left > 0 ? `, ${left}/${def.hp ?? 1}hp left` : "";
+          events.push(`${c.name} hits the ${def.name} (d20:${cRoll}+${cHit}=${cTotal} vs DF ${df}, -${cDmg}hp${leftText}).`);
+        } else {
+          events.push(`${c.name} misses (d20:${cRoll}+${cHit}=${cTotal} vs DF ${df}).`);
+        }
+      }
       if ((s.npcHp[action.npc] ?? 0) <= 0) {
         events.push(`The ${def.name} is destroyed.`);
         if (def.onDeath) applyFx(world, s, def.onDeath, events);
       } else if (def.atk) {
-        const armor = armorOf(world, s);
-        const taken = Math.max(1, def.atk - armor);
-        const absorbed = def.atk - taken;
-        events.push(
-          absorbed > 0
-            ? `The ${def.name} strikes back — your armor takes ${absorbed} of it.`
-            : `The ${def.name} strikes back.`,
-        );
-        applyFx(world, s, [["hp", -taken]], events);
+        npcStrike(world, s, action.npc, events, "strikes back");
+        attacked = action.npc;
       }
       break;
     }
@@ -669,6 +814,13 @@ export function step(world: World, prev: State, action: Action): StepOut {
       grantPerk(world, s, action.id, events, true);
       break;
     }
+  }
+  // the world gets its turn: aggressive npcs in the room strike, then the
+  // company has its say — neither runs during a level-up pick or class pick,
+  // which are menu time, not world time
+  if (!s.ended && action.kind !== "perkpick" && action.kind !== "classpick") {
+    aggressivePass(world, s, events, attacked);
+    partyRemarks(world, s, events);
   }
   return { state: s, events };
 }

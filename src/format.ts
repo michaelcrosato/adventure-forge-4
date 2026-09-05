@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inPerkPickPhase, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inPerkPickPhase, inTalkMode, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
 import { ATTRS } from "./types.ts";
 import type { Action, State, World } from "./types.ts";
 
@@ -114,6 +114,14 @@ export function render(
     return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
   }
 
+  // an open conversation: the npc's line is in the events; the room waits
+  if (inTalkMode(world, s)) {
+    const menu = renderMenu(world, s);
+    lines.push(`talking with ${world.npcs[s.talking!]?.name ?? s.talking}`);
+    lines.push(menu.text);
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+  }
+
   if (dark) {
     lines.push("Pitch dark. You can only feel for the exits.");
   } else {
@@ -124,13 +132,16 @@ export function render(
       .map((id) => world.items[id]?.name ?? id);
     if (here.length) lines.push(`you notice ${here.join(", ")} here`);
     const npcs = Object.entries(world.npcs)
-      .filter(([id]) => s.npcRoom[id] === s.room)
+      .filter(([id]) => s.npcRoom[id] === s.room && !s.party.includes(id))
       .map(([id, d]) => {
         const hp = s.npcHp[id] ?? d.hp ?? 1;
         if (hp <= 0) return `${d.name} (dead)`;
-        return d.hostile ? `${d.name} (hostile, hp${hp}/${d.hp ?? 1})` : `${d.name} is here`;
+        if (d.hostile || d.aggressive) return `${d.name} (hostile, hp${hp}/${d.hp ?? 1})`;
+        return `${d.name} is here`;
       });
     if (npcs.length) lines.push(npcs.join("; "));
+    const party = s.party.map((id) => world.npcs[id]?.name ?? id);
+    if (party.length) lines.push(`with you: ${party.join(", ")}`);
   }
 
   const exitDirs = Object.keys(room?.exits ?? {});
@@ -181,6 +192,10 @@ export function renderStatus(world: World, s: State): string {
   if (s.inv.length) {
     const carried = s.inv.map((id) => world.items[id]?.name ?? id);
     lines.push(`carrying: ${carried.join(", ")}`);
+  }
+  if (s.party?.length) {
+    const party = s.party.map((id) => world.npcs[id]?.name ?? id);
+    lines.push(`Party: ${party.join(", ")}`);
   }
   if (s.perks?.length) {
     const perks = s.perks.map((id) => {

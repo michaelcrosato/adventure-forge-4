@@ -20,10 +20,10 @@ import type { Cond, Fx, State, WalkStep, World } from "./types.ts";
 export { MENU_CAP };
 
 const COND_OPS = new Set([
-  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk",
+  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty",
 ]);
 const FX_OPS = new Set([
-  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "end",
+  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "end",
 ]);
 
 export function loadWorld(path: string): World {
@@ -47,7 +47,7 @@ export function validateWorld(world: World): string[] {
     for (const c of cs ?? []) {
       if (!COND_OPS.has(c[0])) err(`${where}: unknown cond op ${String(c[0])}`);
       else if ((c[0] === "has" || c[0] === "!has") && !itemOk(c[1])) err(`${where}: unknown item ${c[1]}`);
-      else if ((c[0] === "npcDead" || c[0] === "!npcDead") && !npcOk(c[1])) err(`${where}: unknown npc ${c[1]}`);
+      else if ((c[0] === "npcDead" || c[0] === "!npcDead" || c[0] === "inParty" || c[0] === "!inParty") && !npcOk(c[1])) err(`${where}: unknown npc ${c[1]}`);
       else if (c[0] === "var" && !["<", ">", "=", ">="].includes(c[2])) err(`${where}: bad var comparator ${String(c[2])}`);
       else if ((c[0] === "class" || c[0] === "!class") && !classOk(c[1])) err(`${where}: unknown class ${c[1]}`);
       else if ((c[0] === "perk" || c[0] === "!perk") && !perkOk(c[1])) err(`${where}: unknown perk ${c[1]}`);
@@ -69,6 +69,16 @@ export function validateWorld(world: World): string[] {
         if (!checkNameOk(fx[1])) err(`${where}: unknown skill ${fx[1]}`);
         checkFx(`${where}.check.ok`, fx[3]);
         checkFx(`${where}.check.fail`, fx[4]);
+      }
+      if (op === "chance") {
+        if (typeof fx[1] !== "number" || fx[1] < 0 || fx[1] > 100) err(`${where}: chance must be 0..100, got ${String(fx[1])}`);
+        checkFx(`${where}.chance.ok`, fx[2]);
+        checkFx(`${where}.chance.fail`, fx[3]);
+      }
+      if (op === "party") {
+        if (!npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
+        else if (!world.npcs[fx[1]]?.companion) err(`${where}: npc ${fx[1]} has no companion block — it cannot join a party`);
+        if (fx[2] !== "join" && fx[2] !== "leave") err(`${where}: party wants "join" or "leave", got ${String(fx[2])}`);
       }
     }
   };
@@ -96,6 +106,11 @@ export function validateWorld(world: World): string[] {
     if (npc.room !== null && typeof npc.room !== "string") err(`npc ${nid}: "room" must be a room id or null`);
     for (const t of npc.topics ?? [])
       need(`npc ${nid} topic ${t.id ?? "?"}`, t, [["id", "string"], ["label", "string"], ["say", "string"]]);
+    for (const r of npc.companion?.remarks ?? [])
+      need(`npc ${nid} remark ${r.id ?? "?"}`, r, [["id", "string"], ["say", "string"]]);
+    // an aggressive npc that cannot hurt or be fought is a menu with no teeth
+    if (npc.aggressive && (npc.hp === undefined || !npc.atk)) err(`npc ${nid}: aggressive needs both hp and atk`);
+    if (npc.dialogue && !npc.topics?.length) err(`npc ${nid}: dialogue set but no topics — "talk to" would never appear`);
   }
   for (const [cid, cls] of Object.entries(world.classes ?? {})) need(`class ${cid}`, cls, [["name", "string"], ["desc", "string"]]);
   for (const [pid, perk] of Object.entries(world.perks ?? {})) need(`perk ${pid}`, perk, [["name", "string"], ["desc", "string"]]);
@@ -147,6 +162,7 @@ export function validateWorld(world: World): string[] {
       checkConds(`npc ${nid} topic ${t.id}`, t.if);
       checkFx(`npc ${nid} topic ${t.id}`, t.fx);
     }
+    for (const r of npc.companion?.remarks ?? []) checkConds(`npc ${nid} remark ${r.id}`, r.if);
   }
 
   // Dynamic proof: replay the walkthrough at seed 1.
