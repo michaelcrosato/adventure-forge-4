@@ -60,7 +60,7 @@
           "actions": [
             {
               "id": "va_crow_climb",
-              "label": "climb for the scrap of cloth (grace)",
+              "label": "climb for the scrap (grace, 1hp on fail)",
               "if": [["!has", "va_crow_scrap"]],
               "fx": [
                 [
@@ -72,7 +72,10 @@
                     ["xp", 2],
                     ["say", "The branch holds. The scrap is fine-woven, gray, and stained dark with something old."]
                   ],
-                  [["say", "The branch bows and you drop back to the ash, empty-handed. It can be tried again."]]
+                  [
+                    ["hp", -1],
+                    ["say", "The branch bows and drops you back to the ash, empty-handed and scraped. It can be tried again."]
+                  ]
                 ]
               ]
             }
