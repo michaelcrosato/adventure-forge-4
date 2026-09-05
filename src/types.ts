@@ -28,9 +28,11 @@ export type Fx =
   | ["clear", string]
   | ["score", number] // add (clamped 0..maxScore)
   | ["hp", number] // delta (clamped 0..maxHp); reaching 0 => the engine's "dead" lose ending
-  | ["move", string, string] // item -> "inv" | "nowhere" | roomId
+  | ["move", string, string] // item -> "inv" | "nowhere" | "here" (the player's room) | roomId
   | ["goto", string] // move player (fires room entry)
-  | ["npcgo", string, string | null] // move npc (null removes)
+  | ["npcgo", string, string | null] // move npc to a roomId, "here" (the player's room), or null (removes)
+  | ["if", Cond[], Fx[], Fx[]] // branch on conditions: thenFx if all pass, else elseFx
+  | ["slay", string] // npc drops dead with no fight and no onDeath (a scripted death)
   | ["setvar", string, number]
   | ["addvar", string, number]
   | ["check", string, number, Fx[], Fx[]] // skill, dc, okFx, failFx (d20 + skill/attr/perk mods)

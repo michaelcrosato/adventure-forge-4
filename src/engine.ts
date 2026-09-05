@@ -352,7 +352,8 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         break;
       }
       case "move": {
-        const [, item, loc] = fx;
+        const [, item, where] = fx;
+        const loc = where === "here" ? s.room : where;
         if (loc === "inv") {
           if (!s.inv.includes(item)) {
             s.inv.push(item);
@@ -369,7 +370,13 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         enterRoom(world, s, fx[1], events);
         break;
       case "npcgo":
-        s.npcRoom[fx[1]] = fx[2];
+        s.npcRoom[fx[1]] = fx[2] === "here" ? s.room : fx[2];
+        break;
+      case "if":
+        applyFx(world, s, condsOk(world, s, fx[1]) ? fx[2] : fx[3], events);
+        break;
+      case "slay":
+        s.npcHp[fx[1]] = 0;
         break;
       case "setvar":
         s.vars[fx[1]] = fx[2];

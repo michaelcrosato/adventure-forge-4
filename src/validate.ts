@@ -24,7 +24,7 @@ const COND_OPS = new Set([
   "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty",
 ]);
 const FX_OPS = new Set([
-  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "end",
+  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "end",
 ]);
 
 /**
@@ -106,6 +106,7 @@ export function validateWorld(world: World): string[] {
   const classOk = (id: string) => !!world.classes?.[id];
   const perkOk = (id: string) => !!world.perks?.[id];
   const locOk = (l: string) => l === "inv" || l === "nowhere" || roomOk(l);
+  const moveOk = (l: string) => l === "here" || locOk(l); // "here" only makes sense inside an effect
   const attrSet = new Set<string>(ATTRS);
   // a check name is valid if it is a world skill or one of the four attributes
   const checkNameOk = (n: string) => n in (world.skills ?? {}) || attrSet.has(n);
@@ -126,10 +127,16 @@ export function validateWorld(world: World): string[] {
       const op = fx[0];
       if (!FX_OPS.has(op)) { err(`${where}: unknown fx op ${String(op)}`); continue; }
       if (op === "move" && !itemOk(fx[1])) err(`${where}: unknown item ${fx[1]}`);
-      if (op === "move" && !locOk(fx[2])) err(`${where}: bad location ${fx[2]}`);
+      if (op === "move" && !moveOk(fx[2])) err(`${where}: bad location ${fx[2]}`);
       if (op === "goto" && !roomOk(fx[1])) err(`${where}: unknown room ${fx[1]}`);
       if (op === "npcgo" && !npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
-      if (op === "npcgo" && fx[2] !== null && !roomOk(fx[2])) err(`${where}: unknown room ${fx[2]}`);
+      if (op === "npcgo" && fx[2] !== null && fx[2] !== "here" && !roomOk(fx[2])) err(`${where}: unknown room ${fx[2]}`);
+      if (op === "slay" && !npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
+      if (op === "if") {
+        checkConds(`${where}.if`, fx[1]);
+        checkFx(`${where}.if.then`, fx[2]);
+        checkFx(`${where}.if.else`, fx[3]);
+      }
       if (op === "perk" && !perkOk(fx[1])) err(`${where}: unknown perk ${fx[1]}`);
       if (op === "end") endIds.add(fx[2]);
       if (op === "check") {
@@ -286,6 +293,7 @@ export function validateWorld(world: World): string[] {
         if (fx[0] === "goto") gotos.add(fx[1]);
         if (fx[0] === "check") { collectGotos(fx[3]); collectGotos(fx[4]); }
         if (fx[0] === "chance") { collectGotos(fx[2]); collectGotos(fx[3]); }
+        if (fx[0] === "if") { collectGotos(fx[2]); collectGotos(fx[3]); }
       }
     };
     for (const room of Object.values(world.rooms)) {
