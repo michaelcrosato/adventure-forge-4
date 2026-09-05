@@ -1,0 +1,1038 @@
+{
+  "rooms": {
+    "em_east_road": {
+      "name": "Emberfall's East Road",
+      "desc": "The old growth of Thornwold thins behind you into scrub, then into gray drift that isn't quite dirt and isn't quite snow. Ash. East, the wayfire's smoke still shows through the trees. West, a town of glass and cinder waits below a ridge that glitters wrong.",
+      "brief": "Scrub gives way to drifted ash.",
+      "region": "em",
+      "landmark": "Emberfall's east road",
+      "exits": { "east": { "to": "th_wayfire" }, "in": { "to": "em_settlement", "landmark": "Glasswick" } },
+      "onEnterOnce": [
+        ["set", "em_entered"],
+        ["xp", 2],
+        ["say", "This is the hold that was burned once — or so the sayings east of here have it. From where you stand, it looks less like a story and more like a very long, very patient scar."]
+      ],
+      "actions": [
+        {
+          "id": "em_read_marker",
+          "label": "read the boundary cairn",
+          "free": true,
+          "fx": [
+            ["say", "Someone has stacked ash-gray stones into a marker, and someone else has scratched a single word across the topmost: FORGIVEN? The question mark looks older than the rest."]
+          ]
+        }
+      ]
+    },
+    "em_settlement": {
+      "name": "Glasswick",
+      "desc": "A town built on and out of its own ruin: furnace-glow through every window, black glass underfoot worked smooth by generations of boots. Glasswick lives among the wreck of what burned here and hasn't stopped selling the wreck's own beauty since.",
+      "brief": "Glasswick, glass underfoot, furnace-glow.",
+      "region": "em",
+      "landmark": "Glasswick",
+      "exits": {
+        "east": { "to": "em_east_road", "landmark": "the east road" },
+        "north": { "to": "em_glassworks", "landmark": "the glassworks" },
+        "south": { "to": "em_priory", "landmark": "the priory" },
+        "west": { "to": "em_charcoal_yard" },
+        "in": { "to": "em_hearth" }
+      },
+      "onEnterOnce": [
+        ["score", 3],
+        ["xp", 2],
+        ["say", "Glass-blowers thread past each other with molten shapes on the ends of their pipes, unbothered by ruins most towns would have fled outright. Nobody here looks up when the singing carries down off the ridge at dusk."]
+      ],
+      "variants": [
+        {
+          "if": [["flag", "em_hollow_burned"]],
+          "desc": "A town built on and out of its own ruin, and now a second ruin sits fresh over the first: ash from the ridge still drifts down some mornings, settling on glass that was already black. Nobody sweeps it before noon.",
+          "brief": "Glass underfoot. Fresh ash from the ridge."
+        },
+        {
+          "if": [["any", [["flag", "em_hollow_rested"], ["flag", "em_hollow_bargained"]]]],
+          "brief": "Glasswick, glass underfoot. Quieter, most evenings."
+        }
+      ],
+      "actions": [
+        {
+          "id": "em_bearings",
+          "label": "get your bearings",
+          "free": true,
+          "fx": [
+            ["say", "North, the glassworks. South, the priory. West, the charcoal yards and Corrin's scale beyond them. Through the hearth, Ash Row keeps its own two griefs. Past the last roofs, the flats climb toward the singing ridge."]
+          ]
+        },
+        {
+          "id": "em_notice_board",
+          "label": "read the order-board",
+          "free": true,
+          "fx": [
+            ["say", "Chalked orders for window-glass and bottle-work, half of them marked PAID IN CHARCOAL. Underneath, in a different hand: someone still hasn't come back from the mine road, and someone else is asking after the ridge again."]
+          ]
+        }
+      ]
+    },
+    "em_glassworks": {
+      "name": "The Glassworks",
+      "desc": "Heat rolls off three furnaces in waves you can see. Sorra works a molten gather at the end of a long pipe without once looking away from it, apprentices moving around her like they've rehearsed not being underfoot.",
+      "brief": "Furnace-heat, molten glass, Sorra at work.",
+      "region": "em",
+      "landmark": "the glassworks",
+      "exits": { "south": { "to": "em_settlement" } },
+      "actions": [
+        {
+          "id": "em_buy_blade",
+          "label": "buy a glass-edged blade — 9 gold",
+          "if": [["var", "gold", ">=", 9], ["!has", "em_glass_blade"]],
+          "fx": [
+            ["addvar", "gold", -9],
+            ["move", "em_glass_blade", "inv"],
+            ["say", "Black glass ground to an edge no whetstone could manage, set in a plain iron haft. 'Mind the edge finds you as easily as anything else,' Sorra says, not looking up."]
+          ]
+        },
+        {
+          "id": "em_buy_jerkin",
+          "label": "buy an ash-cured jerkin — 7 gold",
+          "if": [["var", "gold", ">=", 7], ["!has", "em_ash_jerkin"]],
+          "fx": [
+            ["addvar", "gold", -7],
+            ["move", "em_ash_jerkin", "inv"],
+            ["say", "Stiff leather worked through with beads of glass no bigger than seed-pearls. It turns a glancing blow better than it looks like it should."]
+          ]
+        },
+        {
+          "id": "em_buy_flask",
+          "label": "buy a quench-flask — 3 gold",
+          "if": [["var", "gold", ">=", 3]],
+          "fx": [
+            ["addvar", "gold", -3],
+            ["move", "em_quench_flask", "inv"],
+            ["say", "Furnace-workers drink this between gathers to keep from cooking where they stand. She fills a flask for you without asking why you'd want one too."]
+          ]
+        }
+      ]
+    },
+    "em_priory": {
+      "name": "The Priory of Ash",
+      "desc": "A small stone house, its plaque by the door worn shiny from being touched more than read. Prior Wenlock keeps it alone now, candles lit against a cold no fire in this valley has ever quite chased off.",
+      "brief": "A small priory, one worn plaque.",
+      "region": "em",
+      "landmark": "the priory",
+      "exits": { "north": { "to": "em_settlement" } },
+      "actions": [
+        {
+          "id": "em_read_plaque",
+          "label": "study the priory's founding-day plaque",
+          "once": true,
+          "fx": [
+            ["xp", 2],
+            ["score", 2],
+            ["set", "em_priory_clue"],
+            ["say", "The plaque names Glasswick's founding-year and the chapel's 'accidental' burning in the same generation, barely a year apart — too fast for coincidence, once you set the two dates side by side."]
+          ]
+        },
+        {
+          "id": "em_press_will",
+          "label": "press Wenlock on the dates (will)",
+          "if": [["flag", "em_priory_clue"], ["!flag", "em_prior_confessed"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "em_prior_confessed"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_church", -1],
+                ["addvar", "appr_osk", 1],
+                ["say", "He goes very still, then says it plain: the order to burn the congregation came from the mother-house itself, and the fire was written up after as an accident. 'Now you know,' he says. 'Word of it will travel. Let it.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "em_press_missed"]],
+                  [
+                    ["set", "em_press_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "He looks at the candle a long moment and won't be moved today — and word that a stranger tried to press the Prior reaches the priory's own ears before you do."]
+                  ],
+                  [
+                    ["say", "He looks at the candle a long moment. 'Some things are between me and that ridge,' he says, and won't be moved past it today."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "em_press_might",
+          "label": "loom over him until he breaks (might)",
+          "if": [["flag", "em_priory_clue"], ["!flag", "em_prior_confessed"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "em_prior_confessed"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_church", -1],
+                ["addvar", "appr_osk", 1],
+                ["say", "You back him against his own altar rail until fear of you outweighs fear of the truth. 'Now you know,' he says, small. 'Word of it will travel. Let it.'"]
+              ],
+              [
+                ["say", "He goes rigid but says nothing, and you're not one to beat confessions out of priors. Not today. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "em_press_wits",
+          "label": "lay the dates against his words (wits)",
+          "if": [["flag", "em_priory_clue"], ["!flag", "em_prior_confessed"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "em_prior_confessed"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_church", -1],
+                ["addvar", "appr_osk", 1],
+                ["say", "You lay the plaque's dates against everything he's already told you and let the arithmetic argue for itself. He can't refute his own chapel's stone. 'Now you know,' he says. 'Word of it will travel. Let it.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "em_press_missed"]],
+                  [
+                    ["set", "em_press_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "The dates almost make the case, not quite enough to pin him — and the priory hears only that a stranger tried to build one against its own Prior."]
+                  ],
+                  [
+                    ["say", "The dates almost line up, almost — not quite enough. He watches you fail to make it stick, and says nothing."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "em_charcoal_yard": {
+      "name": "The Charcoal Yard",
+      "desc": "Stacked cordwood and slow-smoking mounds fill a yard fenced in old cart-wheels. Cutch tends the burns with a long iron rake; a lean figure in patched Company colors, Pike, leans against the fence pretending not to watch the road.",
+      "brief": "Smoking mounds, stacked cordwood.",
+      "region": "em",
+      "exits": { "east": { "to": "em_settlement" }, "north": { "to": "em_ironbound_post" } }
+    },
+    "em_ironbound_post": {
+      "name": "The Ironbound Scale-House",
+      "desc": "A plank scale-house hung with the Ironbound's iron sun. Factor Corrin weighs charcoal sacks against a brass standard, marking a ledger with the flat patience of a man who has done this for a very long time and expects to keep doing it.",
+      "brief": "A scale-house, iron sun, a patient ledger.",
+      "region": "em",
+      "exits": { "south": { "to": "em_charcoal_yard" } },
+      "actions": [
+        {
+          "id": "em_find_error",
+          "label": "find the error in his tally (wits)",
+          "if": [
+            ["flag", "em_knows_debt"],
+            ["!flag", "em_debt_paid"],
+            ["!flag", "em_debt_exposed"],
+            ["!flag", "em_debt_smuggled"]
+          ],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "em_debt_exposed"],
+                ["addvar", "rep_iron", -1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "The tally doesn't add the way Corrin swears it does — a column counted twice, always in the scale-house's favor. Shown plain, he strikes Sorra's debt without much of an argument, jaw tight."]
+              ],
+              [
+                ["say", "The figures are a mess, but an honest one. Whatever's owed, it's owed fair, and the columns won't say otherwise."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "em_pay_debt",
+          "label": "offer to cover Sorra's debt — 10 gold",
+          "if": [
+            ["flag", "em_knows_debt"],
+            ["var", "gold", ">=", 10],
+            ["!flag", "em_debt_paid"],
+            ["!flag", "em_debt_exposed"],
+            ["!flag", "em_debt_smuggled"]
+          ],
+          "fx": [
+            ["addvar", "gold", -10],
+            ["set", "em_debt_paid"],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "Corrin counts it twice, marks the ledger square, and doesn't thank you for it. The furnace stays lit regardless of who understands why."]
+          ]
+        }
+      ]
+    },
+    "em_hearth": {
+      "name": "The Long Hearth",
+      "desc": "A communal hearth-hall, benches worn smooth, a fire that never quite goes out banked in a grate of the town's own black glass. Whoever built it knew a town that lives this close to old fire would need one gentle one to trust.",
+      "brief": "A banked hearth, worn benches.",
+      "region": "em",
+      "exits": { "out": { "to": "em_settlement" }, "east": { "to": "em_ash_row" } },
+      "actions": [
+        {
+          "id": "em_rest",
+          "label": "rest by the long hearth",
+          "fx": [
+            ["hp", 10],
+            ["say", "You sleep warmer than the ash outside has any right to let you, the banked fire doing exactly what it was built for."]
+          ]
+        }
+      ]
+    },
+    "em_ash_row": {
+      "name": "Ash Row",
+      "desc": "A row of low houses built from salvage, patched and re-patched. A boy sorts glass shards by color on an upturned crate; a woman watches the mine road from her doorway the way you'd watch a door you expect to open, eventually.",
+      "brief": "Salvage houses, a sorting boy, a watching woman.",
+      "region": "em",
+      "exits": {
+        "west": { "to": "em_hearth" },
+        "down": {
+          "to": "em_sunken_cellar",
+          "if": [["flag", "em_cellar_found"]],
+          "lockedMsg": "You find no way down from here — not yet, anyway.",
+          "hint": "search the row for a hidden way down"
+        }
+      },
+      "actions": [
+        {
+          "id": "em_find_cellar_wits",
+          "label": "read the row's foundations (wits)",
+          "if": [["!flag", "em_cellar_found"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "em_cellar_found"],
+                ["xp", 2],
+                ["say", "One house's foundation sits a hand's-width too high, propped over nothing but old ash. Whoever built the gap meant it to be found only by someone looking."]
+              ],
+              [["say", "Every foundation in this row looks equally settled to you. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "em_find_cellar_grace",
+          "label": "test the flagstones by feel (grace)",
+          "if": [["!flag", "em_cellar_found"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              10,
+              [
+                ["set", "em_cellar_found"],
+                ["xp", 2],
+                ["say", "One flagstone gives under your weight where the rest don't, a hair's breadth, and only because you were light enough on your feet to feel it move at all."]
+              ],
+              [["say", "Nothing shifts under you that you can find. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "em_find_cellar_might",
+          "label": "lever up the loose flagstone (might)",
+          "if": [["!flag", "em_cellar_found"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "em_cellar_found"],
+                ["xp", 2],
+                ["say", "You wedge a heel under the one flagstone that never quite sat flush and heave it up bodily, revealing a stair down that Ash Row has clearly been stepping around on purpose."]
+              ],
+              [["say", "The stone won't give to plain strength alone. It can be tried again."]]
+            ]
+          ]
+        }
+      ],
+      "variants": [{ "if": [["flag", "em_cellar_found"]], "brief": "Salvage houses. A stair down, newly found." }]
+    },
+    "em_sunken_cellar": {
+      "name": "Brenna's Cellar",
+      "desc": "A dug-out cellar under Ash Row, lit by a single glass lamp. Old bark-strips scored with verse-marks line one wall, and Keeper Brenna sits among them like she's been waiting exactly this long to be found.",
+      "brief": "A hidden cellar, verse-marked bark-strips.",
+      "region": "em",
+      "exits": { "up": { "to": "em_ash_row" } }
+    }
+  },
+  "items": {
+    "em_glass_blade": { "name": "glass-edged blade", "loc": "nowhere", "hit": 1, "dmg": 4 },
+    "em_ash_jerkin": { "name": "ash-cured jerkin", "loc": "nowhere", "armor": 1 },
+    "em_quench_flask": {
+      "name": "quench-flask",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "drink it to ease a wound",
+      "use": [
+        {
+          "fx": [
+            ["hp", 4],
+            ["move", "em_quench_flask", "nowhere"],
+            ["say", "Cool and mineral-sharp. It settles the burn in your throat and the ache besides."]
+          ]
+        }
+      ]
+    },
+    "em_cinder_oil": {
+      "name": "cask of cinder-oil",
+      "loc": "nowhere",
+      "hint": "Corrin sold this same oil before, to others, for the same chapel — ask him how that went"
+    }
+  },
+  "npcs": {
+    "em_sorra": {
+      "name": "Glass-master Sorra",
+      "room": "em_glassworks",
+      "dialogue": true,
+      "desc": "Forearms scarred bright pink from old burns, eyes never leaving the gather on the end of her pipe.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Glass-master Sorra, for what that's worth. Ask your business plain — the furnace doesn't wait on pleasantries, and neither do I.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "the craft, out here",
+          "if": [["flag", "said_em_sorra_greet"]],
+          "once": true,
+          "say": "Every pane and bead in this town started as sand the fire half-melted for us already. Ugly gift, but a gift. We didn't ask for it, and we don't waste it.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "debt",
+          "label": "what troubles the ledger",
+          "if": [["flag", "said_em_sorra_bg"]],
+          "once": true,
+          "say": "Truth, since you asked: I owe the Ironbound factor more than this furnace earns in a season, just to keep the charcoal coming. Corrin holds the paper. I don't much like what he might ask for instead of coin.",
+          "fx": [["set", "em_knows_debt"], ["xp", 2]]
+        },
+        {
+          "id": "after_paid",
+          "label": "the debt, now it's settled",
+          "if": [["flag", "em_debt_paid"]],
+          "once": true,
+          "say": "Whatever you settled with Corrin, my ledger's clean again. I didn't ask how you managed it. I'm glad it's done.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "after_exposed",
+          "label": "the debt, now it's settled",
+          "if": [["flag", "em_debt_exposed"]],
+          "once": true,
+          "say": "You found his numbers lying, and he knows you know it now. First honest breath I've drawn over that ledger in years.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "after_smuggled",
+          "label": "the debt, now it's settled",
+          "if": [["flag", "em_debt_smuggled"]],
+          "once": true,
+          "say": "Pike's runners keep the charcoal coming quieter than Corrin's scale ever will. Riskier, for all of us. I'll take the risk over the debt.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "after_rested",
+          "label": "the singing's stopped",
+          "if": [["flag", "em_hollow_rested"]],
+          "once": true,
+          "say": "Quiet, is it. Good. I always hated that the finest glass in the Reach came out of somebody's worst hour. Rest doesn't undo that. It's something, though.",
+          "fx": [["xp", 2], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "after_bargained",
+          "label": "the singing's quieter",
+          "if": [["flag", "em_hollow_bargained"]],
+          "once": true,
+          "say": "Quieter, not quiet. I'll take quieter over a fifth fire, any evening the furnace is lit.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "after_burned",
+          "label": "the ash from the ridge",
+          "if": [["flag", "em_hollow_burned"]],
+          "once": true,
+          "say": "Same fire, same valley, same result it's always had. I've glass in this shop older than my grandmother that proves fire doesn't finish this. Nobody asked me first.",
+          "fx": [["xp", 1], ["addvar", "rep_iron", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the furnace",
+          "say": "Mind the furnace door. It doesn't care whose hand is careless.",
+          "end": true
+        }
+      ]
+    },
+    "em_wenlock": {
+      "name": "Prior Wenlock",
+      "room": "em_priory",
+      "dialogue": true,
+      "desc": "A thin, gray man whose hands find a candle to tend whenever they've nothing else to hold.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Prior Wenlock, keeper of what's left of the old chapel's memory. Sit, if the ash troubles you. It troubles everyone here, eventually.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "history",
+          "label": "the chapel that burned",
+          "if": [["flag", "said_em_wenlock_greet"]],
+          "once": true,
+          "say": "Four hundred years gone, fire took the old congregation whole. The chapel calls it a tragedy: dry kindling, a bad wind, an unlucky candle. I have never fully believed the wind was to blame.",
+          "fx": [["set", "em_heard_history"], ["xp", 2]]
+        },
+        {
+          "id": "ironbound",
+          "label": "the fires that came after",
+          "if": [["flag", "em_entered"]],
+          "once": true,
+          "say": "Every generation or two, someone decides fire will finish what fire started. The Ironbound tried it again in my own novice years. It never has finished it. I keep hoping this is the century it stops trying.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "osk",
+          "label": "your gray-robed companion",
+          "if": [["inParty", "osk"]],
+          "once": true,
+          "say": "A novice of the gray, this far east. Whatever grief you've carried him through already, don't let him carry this one alone. Some of us don't come back whole from a second fire.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "after_rested",
+          "label": "the singing's stopped",
+          "if": [["flag", "em_hollow_rested"]],
+          "once": true,
+          "say": "I felt it go, the way you'd feel a held breath finally let out. Four hundred years, and the truth is what did it, not the fire. I did not expect to live to say that.",
+          "fx": [["xp", 2], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "after_bargained",
+          "label": "the singing's quieter",
+          "if": [["flag", "em_hollow_bargained"]],
+          "once": true,
+          "say": "Quieter, not rested. I said the words and the world did not end for my saying them. Small mercy, but I've had smaller.",
+          "fx": [["xp", 2], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "after_burned",
+          "label": "the ash from the ridge",
+          "if": [["flag", "em_hollow_burned"]],
+          "once": true,
+          "say": "You burned it again, my own Church's sin still sitting under that ash. I have no confession left that would matter now. Only the same fire, doing what it has always done here.",
+          "fx": [["xp", 1], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his candles",
+          "say": "Go carefully on the ridge path. It has taken more than it's given back, that ground.",
+          "end": true
+        }
+      ]
+    },
+    "em_cutch": {
+      "name": "Cutch",
+      "room": "em_charcoal_yard",
+      "desc": "Soot to the elbows, an iron rake never quite set down.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "the charcoal trade",
+          "once": true,
+          "say": "Char comes off this ash same as anywhere, maybe better — the ground's already halfway there. Ironbound buys most of it. Companies run the rest past them, when they can manage it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "wraith",
+          "label": "something in the flats, at my stacks",
+          "if": [["flag", "em_entered"], ["!flag", "em_wraith_bounty"]],
+          "once": true,
+          "say": "Something's been at my cordwood out past the mine, more than wind or foxes account for. Bring me proof of what's doing it and I'll make the walk worth your while.",
+          "fx": [["set", "em_wraith_bounty"], ["xp", 1]]
+        },
+        {
+          "id": "bounty_paid",
+          "label": "the glass, for the bounty",
+          "if": [["has", "em_wraith_glass"]],
+          "once": true,
+          "say": "That's the thing, all right, or what's left of it. Here — and my stacks thank you, even if they can't say so.",
+          "fx": [["move", "em_wraith_glass", "nowhere"], ["addvar", "gold", 4], ["score", 3], ["xp", 2]]
+        }
+      ]
+    },
+    "em_pike": {
+      "name": "Pike",
+      "room": "em_charcoal_yard",
+      "desc": "Patched Company colors, watching the road like it owes him something.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who runs charcoal past the levy",
+          "once": true,
+          "say": "Free Company, out of Camp Gallows way back, though I've gone half native out here. I run what Corrin's scale would otherwise skim to nothing. Not proud of the risk. Not sorry for it either.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "debt_smuggle",
+          "label": "run Sorra's fuel past the levy",
+          "if": [
+            ["flag", "em_knows_debt"],
+            ["!flag", "em_debt_paid"],
+            ["!flag", "em_debt_exposed"],
+            ["!flag", "em_debt_smuggled"]
+          ],
+          "once": true,
+          "say": "Done. Quiet as I can make it, which is fairly quiet. Tell her the furnace won't go cold on my account.",
+          "fx": [["set", "em_debt_smuggled"], ["addvar", "rep_free", 1], ["addvar", "rep_iron", -1], ["score", 4], ["xp", 3]]
+        },
+        {
+          "id": "after_smuggled",
+          "label": "how the run's holding up",
+          "if": [["flag", "em_debt_smuggled"]],
+          "once": true,
+          "say": "Furnace's still lit, last I heard. Corrin's scale reads heavier than it used to, mind. He's not stupid. Just slow to prove it.",
+          "fx": [["xp", 1]]
+        }
+      ]
+    },
+    "em_corrin": {
+      "name": "Factor Corrin",
+      "room": "em_ironbound_post",
+      "dialogue": true,
+      "desc": "Burn-scarred forearms, a brass weighing-standard he checks against nothing in particular.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who deals iron out here",
+          "once": true,
+          "say": "Factor Corrin, chapterhouse-sworn. I weigh charcoal, I sell fire, and I don't pretend the second part is kind. Someone has to finish what grief starts.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "history",
+          "label": "the ridge, and the fires before yours",
+          "if": [["flag", "said_em_corrin_greet"]],
+          "once": true,
+          "say": "This valley's had Ironbound fire put to it more times than any chapterhouse likes counted. Doctrine says try again. I've buried four predecessors who believed that harder than I do.",
+          "fx": [["set", "em_corrin_doubt"], ["xp", 2]]
+        },
+        {
+          "id": "debt",
+          "label": "Sorra's ledger",
+          "if": [["flag", "em_knows_debt"]],
+          "once": true,
+          "say": "She'll tell you it's cruel. It's arithmetic. Charcoal costs what it costs, and I don't set the price out of spite.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "oil",
+          "label": "cinder-oil, for the chapel",
+          "if": [["flag", "em_corrin_doubt"], ["!has", "em_cinder_oil"]],
+          "once": true,
+          "say": "Fifth time in chapterhouse memory someone's asked me for fire to carry up that ridge. Four before you already tried it. I'll sell it to you anyway — doctrine leaves no room for doubt, whatever I privately think.",
+          "fx": [["move", "em_cinder_oil", "inv"], ["xp", 1]]
+        },
+        {
+          "id": "after_burned",
+          "label": "the fifth fire",
+          "if": [["flag", "em_hollow_burned"]],
+          "once": true,
+          "say": "Same result as the other four. I'll log it the same way. Doctrine doesn't ask me to enjoy the arithmetic, only to keep it.",
+          "fx": [["xp", 1], ["addvar", "rep_iron", 1]]
+        },
+        {
+          "id": "after_settled",
+          "label": "the ridge, now it's quiet",
+          "if": [["any", [["flag", "em_hollow_rested"], ["flag", "em_hollow_bargained"]]]],
+          "once": true,
+          "say": "Rested, or near enough. The chapterhouse won't care to hear fire wasn't the answer here twice in one generation. I might like hearing it. Keep that between us.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bye",
+          "label": "leave the scale-house to its ledger",
+          "say": "Mind your own weight on the way out. Everything gets counted eventually.",
+          "end": true
+        }
+      ]
+    },
+    "em_brenna": {
+      "name": "Keeper Brenna",
+      "room": "em_sunken_cellar",
+      "dialogue": true,
+      "desc": "Bark-strips scored with old marks spread across her lap, hands quick and certain over them.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you, hiding here",
+          "once": true,
+          "say": "Keeper Brenna, though you won't find that name written anywhere in this town, and I'd like to keep it that way.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "why_hiding",
+          "label": "why the Church would want you found",
+          "if": [["flag", "said_em_brenna_greet"]],
+          "once": true,
+          "say": "The old rest-verse for this valley was never lost. The Church buried it on purpose, generations back — easier to keep asking forgiveness than admit there was ever a way to actually finish grieving.",
+          "fx": [["set", "em_heard_brenna"], ["xp", 2]]
+        },
+        {
+          "id": "teach",
+          "label": "ask her to teach you the rest-verse",
+          "if": [["flag", "em_heard_brenna"], ["!flag", "em_verse_known"], ["!flag", "em_hollow_burned"]],
+          "once": true,
+          "say": "Say you mean to use it right, and I'll teach it to you. Once.",
+          "fx": [
+            ["set", "em_verse_known"],
+            ["score", 5],
+            ["xp", 4],
+            ["addvar", "rep_keepers", 1],
+            ["say", "She teaches it low and slow until you have it whole: a verse for a grief the Church itself set burning, older and steadier than any doctrine built to bury it."]
+          ]
+        },
+        {
+          "id": "too_late",
+          "label": "ask about the verse, ridge burned",
+          "if": [["flag", "em_heard_brenna"], ["flag", "em_hollow_burned"], ["!flag", "em_verse_known"]],
+          "once": true,
+          "say": "So it burned again. Then my verse goes unused a while longer — small mercy, I suppose. I kept it for a valley that keeps choosing fire over listening.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "after_rested",
+          "label": "the valley, now it's rested",
+          "if": [["flag", "em_hollow_rested"]],
+          "once": true,
+          "say": "The valley finally used the verse for what it was kept for. I can stop hiding, if I want to. I find I don't quite know how, after this long.",
+          "fx": [["xp", 2], ["addvar", "appr_vell", 1]]
+        },
+        {
+          "id": "after_bargained",
+          "label": "the valley, now it's quieter",
+          "if": [["flag", "em_hollow_bargained"]],
+          "once": true,
+          "say": "Quieter, without my verse in it. I understand why. I still wish it had been mine to give.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "after_burned_had_verse",
+          "label": "the verse you never used",
+          "if": [["flag", "em_hollow_burned"], ["flag", "em_verse_known"]],
+          "once": true,
+          "say": "You had my verse in hand and chose fire instead. I don't have a further word for that. I don't think I need one.",
+          "fx": [["xp", 1], ["addvar", "appr_vell", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the bark-strips",
+          "say": "Mind who you say my name to. I've stayed hidden this long for a reason.",
+          "end": true
+        }
+      ]
+    },
+    "em_pip": {
+      "name": "Pip",
+      "room": "em_ash_row",
+      "dialogue": true,
+      "desc": "A boy sorting glass shards by color into a barrow twice his size, weighing you up like you might be trouble or might be work.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who's the kid with the barrow",
+          "once": true,
+          "say": "Pip. I collect glass — the pretty kind, not the sharp kind, though I've scars proving I don't always tell the difference in time.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "orphan",
+          "label": "why you collect it",
+          "if": [["flag", "said_em_pip_greet"]],
+          "once": true,
+          "say": "Mum and Da went up to talk the last lot of Ironbound out of it, the year before I could walk right. Didn't come down. The glass is the only pretty thing that fire ever left anybody.",
+          "fx": [["set", "em_pip_orphan"], ["xp", 2]]
+        },
+        {
+          "id": "dare",
+          "label": "ask what he wants from the flats",
+          "if": [["flag", "em_pip_orphan"], ["!flag", "em_pip_resolved"]],
+          "once": true,
+          "say": "Bring me one back whole, not broken — bell-shaped glass, out past the mine road. I'll believe the ash isn't only ever bad news.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "keepsake_given",
+          "label": "give Pip the glass shard",
+          "if": [["has", "em_pip_keepsake"]],
+          "once": true,
+          "say": "He turns it over twice in the light before he lets himself grin. 'Whole,' he says, like a word he'd stopped expecting to use. 'Thank you for not breaking it.'",
+          "fx": [
+            ["move", "em_pip_keepsake", "nowhere"],
+            ["set", "em_pip_resolved"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "appr_lys", 1]
+          ]
+        },
+        {
+          "id": "after_rested",
+          "label": "the ridge, now it's rested",
+          "if": [["flag", "em_hollow_rested"]],
+          "once": true,
+          "say": "They're resting? Truly? ...Good. I didn't think 'good' was a thing that fire could still end in.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "after_bargained",
+          "label": "the ridge, now it's quieter",
+          "if": [["flag", "em_hollow_bargained"]],
+          "once": true,
+          "say": "Quieter's not nothing. I'll take quieter.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "after_burned",
+          "label": "the ash on the wind again",
+          "if": [["flag", "em_hollow_burned"]],
+          "once": true,
+          "say": "Again? They did it again? ...That's the same fire that took Mum and Da. Nobody asked me if that was all right.",
+          "fx": [["xp", 1], ["addvar", "appr_osk", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the sorting",
+          "say": "Watch the ash flats. I do, mostly from right here.",
+          "end": true
+        }
+      ]
+    },
+    "em_neave": {
+      "name": "Neave",
+      "room": "em_ash_row",
+      "dialogue": true,
+      "desc": "Watches the mine road from her doorway the way you'd watch a door you still expect to open.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who keeps this watch",
+          "once": true,
+          "say": "Neave. My brother went up past the mine years back, trying to talk the last burning crew out of climbing the ridge. Never came down either.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask what she'd want to know",
+          "if": [["flag", "said_em_neave_greet"]],
+          "once": true,
+          "say": "Anything of his. A scrap, a buckle, anything at all. I've stopped hoping for him. I haven't stopped hoping for that.",
+          "fx": [["set", "em_neave_asked"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "give_truth",
+          "label": "tell her what the ash gave up",
+          "if": [["has", "em_lost_token"], ["!flag", "em_neave_closure"]],
+          "once": true,
+          "say": "You set the scorched token in her hands. She holds it a long moment, then nods, like a question finally answered. 'Years,' she says. 'I can stop asking now.'",
+          "fx": [
+            ["set", "em_neave_closure"],
+            ["set", "em_neave_told_truth"],
+            ["move", "em_lost_token", "nowhere"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_church", 1]
+          ]
+        },
+        {
+          "id": "lie",
+          "label": "tell her he's at peace",
+          "if": [
+            ["flag", "em_neave_asked"],
+            ["!has", "em_lost_token"],
+            ["!flag", "em_neave_closure"],
+            ["flag", "em_hollow_done"]
+          ],
+          "once": true,
+          "say": "You tell her he's at peace, though you found nothing of him at all. She wants it badly enough to believe it. It isn't the truth. It settles her all the same.",
+          "fx": [["set", "em_neave_closure"], ["set", "em_neave_lied"], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "after",
+          "label": "how she's getting on",
+          "if": [["flag", "em_neave_closure"]],
+          "once": true,
+          "say": "Better, some days. The road's quieter without the wondering in it. Thank you, whichever way you managed it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the doorway",
+          "say": "Mind the mine-mouth if you're headed that way. It isn't only sand that opened up out there.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "quests": {
+    "em_q_record": {
+      "name": "The Sealed Record",
+      "start": [["flag", "em_priory_clue"]],
+      "done": [["flag", "em_prior_confessed"]],
+      "stages": [
+        {
+          "if": [["flag", "em_prior_confessed"]],
+          "text": "Wenlock admitted it. The chapel above town may need to hear it too."
+        },
+        {
+          "if": [["flag", "em_priory_clue"]],
+          "text": "The priory's plaque hints at a hidden date. Press Prior Wenlock on it."
+        },
+        { "if": [], "text": "Something about Emberfall's founding doesn't add up. The priory might know more." }
+      ]
+    },
+    "em_q_debt": {
+      "name": "The Glassworks' Debt",
+      "start": [["flag", "em_knows_debt"]],
+      "done": [["any", [["flag", "em_debt_paid"], ["flag", "em_debt_exposed"], ["flag", "em_debt_smuggled"]]]],
+      "stages": [
+        {
+          "if": [["flag", "em_debt_smuggled"]],
+          "text": "Pike runs Sorra's fuel past the levy now, quietly. Corrin hasn't proven he's noticed."
+        },
+        {
+          "if": [["flag", "em_debt_exposed"]],
+          "text": "Corrin's tally was lying. Sorra's debt is struck, and he knows why."
+        },
+        {
+          "if": [["flag", "em_debt_paid"]],
+          "text": "The debt's paid, plainly, in coin. Nobody's honor is on the line for it."
+        },
+        {
+          "if": [["flag", "em_knows_debt"]],
+          "text": "Sorra owes Corrin more than the furnace earns. Pay it, expose his tally (wits), or ask Pike to smuggle her fuel."
+        },
+        { "if": [], "text": "Something's wrong with the glassworks' books, if Sorra will say so." }
+      ]
+    },
+    "em_q_lost": {
+      "name": "Neave's Brother",
+      "start": [["flag", "em_neave_asked"]],
+      "done": [["any", [["flag", "em_neave_told_truth"], ["flag", "em_neave_lied"]]]],
+      "stages": [
+        {
+          "if": [["flag", "em_neave_closure"]],
+          "text": "Neave has her answer, one way or another. Ash Row is quieter for it."
+        },
+        {
+          "if": [["has", "em_lost_token"]],
+          "text": "You found something of Neave's brother in the ash flats. Bring it to Ash Row."
+        },
+        {
+          "if": [["flag", "em_neave_asked"]],
+          "text": "Neave's brother never came down from the ridge. If the ash flats hold anything of his, she wants to know."
+        },
+        { "if": [], "text": "A woman on Ash Row still watches the mine road." }
+      ]
+    },
+    "em_q_keeper": {
+      "name": "The Keeper in Hiding",
+      "start": [["flag", "em_cellar_found"]],
+      "done": [["any", [["flag", "em_verse_known"], ["flag", "em_hollow_done"]]]],
+      "stages": [
+        {
+          "if": [["flag", "em_verse_known"]],
+          "text": "Brenna's rest-verse is yours. Carry it to the roofless chapel with Wenlock's confession."
+        },
+        {
+          "if": [["flag", "em_heard_brenna"]],
+          "text": "Brenna hides from the Church, not from you. Ask her to teach the rest-verse she was told to bury."
+        },
+        {
+          "if": [["flag", "em_cellar_found"]],
+          "text": "A hidden cellar opens under Ash Row. Someone is keeping out of sight down there."
+        },
+        {
+          "if": [],
+          "text": "Ash Row hides something under its own floor, if you look for it (wits, grace, or might)."
+        }
+      ]
+    },
+    "em_q_pip": {
+      "name": "A Whole Piece",
+      "start": [["flag", "em_pip_orphan"]],
+      "done": [["flag", "em_pip_resolved"]],
+      "stages": [
+        {
+          "if": [["has", "em_pip_keepsake"]],
+          "text": "You found a whole bell-shaped shard in the ash flats. Bring it back to Pip on Ash Row."
+        },
+        {
+          "if": [["flag", "em_pip_orphan"]],
+          "text": "Pip wants proof the ash isn't only ever bad news: one whole piece of bell-shaped glass from the flats."
+        },
+        { "if": [], "text": "A child on Ash Row sorts glass by color, looking for something in particular." }
+      ]
+    }
+  },
+  "epilogue": [
+    {
+      "if": [["flag", "em_prior_confessed"]],
+      "text": "Prior Wenlock still tends the priory's worn plaque, though he no longer needs reminding what the true dates say.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "em_debt_smuggled"]],
+      "text": "Pike's runners still slip Glasswick's charcoal past the Ironbound scale, quieter than the law but louder than a secret.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "em_debt_exposed"]],
+      "text": "Corrin's tally reads honest now, ever since a stranger found the column he'd been counting twice.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "em_neave_told_truth"]],
+      "text": "Neave keeps a scorched token on her sill and has stopped watching the mine road every evening.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "em_neave_lied"]],
+      "text": "Neave believes her brother found peace. She never learned otherwise, and Ash Row let her keep believing it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "em_pip_resolved"]],
+      "text": "Pip keeps a whole bell-shaped shard on the windowsill, the one piece of the ash he calls only good news.",
+      "weight": 1
+    }
+  ]
+}

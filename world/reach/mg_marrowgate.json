@@ -1303,6 +1303,19 @@
           ]
         },
         {
+          "id": "em_precedent",
+          "label": "your decree was tried, and failed",
+          "if": [["flag", "em_prior_confessed"]],
+          "once": true,
+          "say": "You tell her plainly: west of Thornwold a valley has been burned for its grief four times already, by her own Ironbound's own method, and the grief only sang louder each time. She does not answer at once.",
+          "fx": [
+            ["xp", 3],
+            ["score", 3],
+            ["addvar", "rep_crown", -1],
+            ["say", "'I did not choose fire blind. It obeyed order everywhere else it was tried.' A long pause. 'Nobody told me it had failed, in the one place that mattered most.' She doesn't say Emberfall's name again while you're there."]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave the Regent to her window",
           "say": "Mind the stair. Everyone who goes down it comes up changed, or does not come up.",
@@ -1648,6 +1661,33 @@
           "fx": [["xp", 2]]
         },
         {
+          "id": "em_emberfall",
+          "label": "the valley burned four times over",
+          "if": [["flag", "em_entered"]],
+          "once": true,
+          "say": "Emberfall. That one's on the chapterhouse's own ledger longer than any other name in it — four burnings before the Reach ever thought to found a Regent's writ on the method.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "em_hollow_burned"]],
+              [
+                ["say", "\"Fifth fire, same result,\" he says, flat. \"I log it the same as the other four. Doctrine doesn't ask me to enjoy the arithmetic.\""],
+                ["addvar", "rep_iron", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["any", [["flag", "em_hollow_rested"], ["flag", "em_hollow_bargained"]]]],
+              [
+                ["say", "\"Rested, or near enough, on a truth instead of a torch.\" His jaw works once. \"Four fires never managed that. I won't repeat it past this room.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to the roll",
           "say": "Every name gets read. Even yours, in the end.",
@@ -1811,6 +1851,34 @@
           "once": true,
           "say": "Word of an unnamed grief carried east reaches even this font. Tended, burned, or given to the water — someone still chose to carry it. That's rite enough for me.",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "em_confession",
+          "label": "the Choir of Ash, west of Thornwold",
+          "if": [["flag", "em_prior_confessed"]],
+          "once": true,
+          "say": "Word comes west that Prior Wenlock finally said the true word over Emberfall's chapel: the mother-house itself ordered that burning, four hundred years gone, and called it an accident after. She goes very still.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "em_hollow_rested"]],
+              [
+                ["say", "'Rested, on the truth at last,' she says. 'I have prayed over that name my whole time in this font and never once been told what I was praying for. Now I know, and I am not sure it was mercy to learn it.'"],
+                ["addvar", "rep_church", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "em_hollow_burned"]],
+              [
+                ["say", "'They burned it anyway. My own Church's fire, lit a fifth time by someone else's hand.' She doesn't raise her voice. 'I don't think I will pray over that one the same way again.'"],
+                ["addvar", "rep_church", -1]
+              ],
+              []
+            ]
+          ]
         },
         {
           "id": "bye",
