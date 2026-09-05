@@ -96,6 +96,13 @@
             ["say", "Old text re-cut more than once: 'Three ways stand past the Spine's shoulder — the Keepers' stair, for hollows rested three; the Regent's writ, for the guard; a way under, for those the Companies vouch.'"]
           ]
         }
+      ],
+      "variants": [
+        {
+          "if": [["var", "hollows_rested", ">=", 3]],
+          "desc": "Flagstones swept clear of snow more from habit than hope. Pilgrims cluster by the gatehouse bell-rope, word of the covenant stair finally open passed hand to hand like a relic. The trail climbs north into the Spine.",
+          "brief": "The courtyard. Pilgrims trading word of the stair."
+        }
       ]
     },
     "cp_pilgrims_hall": {
@@ -332,6 +339,27 @@
           "fx": [["set", "cp_covered_cleft"], ["addvar", "rep_free", 1], ["addvar", "rep_watch", -1], ["xp", 2]]
         },
         {
+          "id": "cp_news_sk_nets",
+          "label": "word off the coast road",
+          "if": [["any", [["flag", "sk_nets_returned"], ["flag", "sk_nets_sold"]]]],
+          "once": true,
+          "say": "A courier climbing from the coast road has news for Bray's log.",
+          "fx": [
+            [
+              "if",
+              [["flag", "sk_nets_returned"]],
+              [
+                ["say", "\"Gullhaven's chandler got her stolen nets back, honest as anything,\" Bray says. \"That's a coast worth trusting.\""],
+                ["addvar", "rep_watch", 1]
+              ],
+              [
+                ["say", "\"Gullhaven's harbourmaster's crew is fishing with somebody else's stolen nets,\" Bray says. \"Watch that coast a while longer.\""],
+                ["addvar", "rep_watch", -1]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "mind the stair",
           "say": "Mind the stair. It's steeper going down than up.",
@@ -484,6 +512,27 @@
           ]
         },
         {
+          "id": "cp_news_ir_fd",
+          "label": "word for the Preceptor's ledger",
+          "if": [["any", [["flag", "ir_hollow_burned"], ["flag", "fd_ironbound_refused"]]]],
+          "once": true,
+          "say": "Crell reads the news off a courier's slip like scripture.",
+          "fx": [
+            [
+              "if",
+              [["flag", "ir_hollow_burned"]],
+              [
+                ["say", "\"Cinderhall's own hollow burned clean, exactly as written.\" Crell almost smiles. \"The order provides for itself.\""],
+                ["addvar", "rep_iron", 1]
+              ],
+              [
+                ["say", "\"The Church turned our mission off Stilt Row in Fenmarch, iron sun and all.\" Crell's voice goes flat. \"Noted, for later.\""],
+                ["addvar", "rep_iron", -1]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to his fire",
           "say": "Stay out of Ironbound business and we'll get along fine.",
@@ -618,6 +667,27 @@
           "once": true,
           "say": "Old Ness kept that clapper eleven winters for someone worth giving it to. I hope whatever Crell paid you was worth what you decided you weren't.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "cp_news_writ",
+          "label": "word of the road north",
+          "if": [["any", [["flag", "regent_writ"], ["var", "hollows_rested", ">=", 3]]]],
+          "once": true,
+          "say": "Corvin has an opinion ready before you've finished telling him.",
+          "fx": [
+            [
+              "if",
+              [["flag", "regent_writ"]],
+              [
+                ["say", "\"The Regent hands out writs now, and calls it mercy.\" His mouth tightens. \"It costs a bill the rites never asked for.\""],
+                ["addvar", "rep_church", -1]
+              ],
+              [
+                ["say", "\"Three hollows rested, and the old stair opened before any writ was ever asked for.\" Corvin allows himself something like a smile."],
+                ["addvar", "rep_church", 1]
+              ]
+            ]
+          ]
         },
         {
           "id": "bye",
@@ -1219,6 +1289,10 @@
     {
       "if": [["flag", "cp_shrine1_done"]],
       "text": "The frozen pilgrims of the Spine keep a quieter vigil now, whatever way you left them."
+    },
+    {
+      "if": [["any", [["flag", "cp_came_by_stair"], ["flag", "cp_came_by_writ"], ["flag", "cp_came_by_cave"]]]],
+      "text": "The pilgrims at St. Ashwyn's Perch name the three roads north like scripture now: the stair earned, the writ bought, the cave forgiven."
     }
   ]
 }

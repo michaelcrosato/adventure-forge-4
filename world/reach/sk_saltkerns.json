@@ -516,6 +516,27 @@
           "fx": [["addvar", "rep_watch", 1]]
         },
         {
+          "id": "sk_news_wm",
+          "label": "word of Highward's record",
+          "if": [["any", [["flag", "wm_record_unsealed"], ["flag", "wm_record_stolen"]]]],
+          "once": true,
+          "say": "Word off the north track reaches the customs post before the ink's even dry elsewhere.",
+          "fx": [
+            [
+              "if",
+              [["flag", "wm_record_unsealed"]],
+              [
+                ["say", "\"Highward opened a sealed record instead of guarding it forever. Properly asked, properly given.\" Brann nods. \"That's how it's done.\""],
+                ["addvar", "rep_watch", 1]
+              ],
+              [
+                ["say", "\"Something walked out of Highward's record-house that nobody signed for.\" Brann's mouth thins. \"Watch that stair now, whoever's watching it.\""],
+                ["addvar", "rep_watch", -1]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave the post to its ledgers",
           "say": "Straight roads, stranger. Fewer questions that way.",
@@ -565,6 +586,27 @@
           "once": true,
           "say": "Rennick's crew is fishing with my own nets now, near as I can tell. I know exactly whose doing that was.",
           "fx": [["addvar", "appr_tamsin", -1]]
+        },
+        {
+          "id": "sk_news_th_toll",
+          "label": "word of a toll settled",
+          "if": [["any", [["flag", "th_rook_paid"], ["flag", "th_rook_swayed"], ["flag", "th_rook_beaten"]]]],
+          "once": true,
+          "say": "A carter off the north track brings talk of Camp Gallows' own toll trouble.",
+          "fx": [
+            [
+              "if",
+              [["any", [["flag", "th_rook_paid"], ["flag", "th_rook_swayed"]]]],
+              [
+                ["say", "\"Paid off or talked down, either way nobody bled for it,\" Marta says, counting her own till. \"That's how you keep a road open.\""],
+                ["addvar", "rep_free", 1]
+              ],
+              [
+                ["say", "\"Settled with a blade, in the end,\" Marta says, and doesn't look pleased. \"Coin spends better than a grudge does.\""],
+                ["addvar", "rep_free", -1]
+              ]
+            ]
+          ]
         },
         {
           "id": "bye",
@@ -703,8 +745,22 @@
           "once": true,
           "say": "First quiet fog we've had in living memory. Nobody in here's said so out loud, but the whole room's easier for it.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "sk_news_th",
+          "label": "talk out of Thornwold",
+          "if": [["flag", "th_fenn_freed"]],
+          "once": true,
+          "say": "\"Heard a Free Company man walked out of a cage at Camp Gallows, forty years late but out.\" Otts sets down a glass. \"Good story, that one.\"",
+          "fx": [["addvar", "rep_free", 1]]
         }
       ]
     }
-  }
+  },
+  "epilogue": [
+    {
+      "if": [["any", [["flag", "sk_helped_free"], ["flag", "sk_sided_watch"]]]],
+      "text": "Gullhaven's taverns argue for years after whether the Free Companies or the Watch came out ahead across the Reach; nobody settles it."
+    }
+  ]
 }

@@ -54,6 +54,13 @@
             ["say", "Voices, or near enough — layered, slow, more felt through the planking than heard. It stops the moment you're sure of it."]
           ]
         }
+      ],
+      "variants": [
+        {
+          "if": [["var", "hollows_burned", ">=", 2]],
+          "desc": "Stilt-houses crowd over black water, gray planking strung rail to rail between them. A length of black ribbon is tied to the landing rail, for hollows the Reach lost to fire this year. Nets dry everywhere and nobody mends them.",
+          "brief": "Reedholm's landing. A black ribbon on the rail."
+        }
       ]
     },
     "fd_net_hall": {
@@ -395,6 +402,28 @@
           "fx": [["xp", 1], ["addvar", "rep_church", -1]]
         },
         {
+          "id": "fd_news_rest",
+          "label": "word of a hollow at rest",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "th_hollow_rested"],
+                ["flag", "wm_hollow_rested"],
+                ["flag", "ir_hollow_rested"],
+                ["flag", "hb_hollow_rested"],
+                ["flag", "sk_hollow_rested"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Halm hears it secondhand, the way he hears most things now, and still it reaches him.",
+          "fx": [
+            ["say", "\"Another hold rested its grief instead of burning it,\" he says, hands finally still. \"Then it can be done gently. Good.\""],
+            ["addvar", "rep_church", 1]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to his candles",
           "say": "Go gently on the walkways. Reedholm loses someone to the water most years; I'd rather not add a name I know.",
@@ -631,6 +660,17 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "fd_news_ir",
+          "label": "word from Cinderhall",
+          "if": [["flag", "ir_aldous_ruined"]],
+          "once": true,
+          "say": "A courier off the coast road brings news from the chapterhouse.",
+          "fx": [
+            ["say", "\"Their own Preceptor, thrown out by his own chapterhouse.\" Iss's jaw goes tight. \"Then the order polices its own house before it lectures mine.\""],
+            ["addvar", "rep_iron", -1]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave the mission to its brazier",
           "say": "Mind the water. It remembers who prayed and who didn't.",
@@ -652,5 +692,11 @@
         }
       ]
     }
-  }
+  },
+  "epilogue": [
+    {
+      "if": [["any", [["var", "hollows_rested", ">=", 1], ["var", "hollows_burned", ">=", 1]]]],
+      "text": "The Priory prays a name for every hold's grief it hears was rested, and burns a candle, not a nave, for every one that wasn't."
+    }
+  ]
 }

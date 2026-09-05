@@ -736,6 +736,27 @@
           ]
         },
         {
+          "id": "th_news_sk",
+          "label": "word from Gullhaven",
+          "if": [["any", [["flag", "sk_helped_free"], ["flag", "sk_sided_watch"]]]],
+          "once": true,
+          "say": "A rider off the south track brings word up from the coast.",
+          "fx": [
+            [
+              "if",
+              [["flag", "sk_helped_free"]],
+              [
+                ["say", "\"Rennick's cart ran the customs post clean, our people, our coin,\" Vane says. \"Good. That's the trade we're in.\""],
+                ["addvar", "rep_free", 1]
+              ],
+              [
+                ["say", "\"The Gullhaven customs sergeant broke our own smuggling run for a payday.\" Vane's jaw sets. \"Noted.\""],
+                ["addvar", "rep_free", -1]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave her to the map",
           "say": "Mind the toll on your way out. Company rules, not mine.",
@@ -761,6 +782,27 @@
           "once": true,
           "say": "Dice, mostly. He's good with a bow and terrible with a wager. Ten gold clears him. I'd take it from anyone; I'd rather take it from someone who cares whether he goes home.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "th_news_hb",
+          "label": "word of the Hollowbrook mounds",
+          "if": [["any", [["flag", "hb_mounds_sold"], ["flag", "hb_mounds_protected"]]]],
+          "once": true,
+          "say": "A peddler passing through has news out of Hollowbrook, the kind Bray always wants first.",
+          "fx": [
+            [
+              "if",
+              [["flag", "hb_mounds_sold"]],
+              [
+                ["say", "\"Crown coin bought a surveyor his map after all,\" Bray says, counting an invisible stack. \"Coin talks. Good to know it still does.\""],
+                ["addvar", "rep_crown", 1]
+              ],
+              [
+                ["say", "\"Crown coin came up short against a mound-warden who wouldn't sell,\" Bray says. \"Poor showing, for a crown.\""],
+                ["addvar", "rep_crown", -1]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -806,6 +848,27 @@
           "once": true,
           "say": "That's the one's been gutting snares along the north track. Good riddance.",
           "fx": [["move", "th_boar_tusk", "nowhere"], ["addvar", "gold", 3], ["xp", 1]]
+        },
+        {
+          "id": "th_news_wm",
+          "label": "word of Highward's beacon",
+          "if": [["any", [["flag", "wm_beacon_lit"], ["flag", "wm_beacon_reported"]]]],
+          "once": true,
+          "say": "Camp talk has carried a soldier's story a long way, out of Wardmoor.",
+          "fx": [
+            [
+              "if",
+              [["flag", "wm_beacon_lit"]],
+              [
+                ["say", "\"Highward's sergeant got that old beacon burning again, proper duty done.\" Coe nods, soldier to soldier."],
+                ["addvar", "rep_watch", 1]
+              ],
+              [
+                ["say", "\"Highward's sergeant wrote the old beacon off instead of climbing to relight it.\" Coe snorts. \"Half a duty.\""],
+                ["addvar", "rep_watch", -1]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -1530,6 +1593,10 @@
     {
       "if": [["flag", "th_rook_swayed"]],
       "text": "Rook and his snares answer to Camp Gallows now, officially this time, and the tolls make it back to the ledger."
+    },
+    {
+      "if": [["var", "hollows_rested", ">=", 3]],
+      "text": "Camp Gallows keeps its own reckoning of every hold that rested its dead instead of burning it, and drinks to the count."
     }
   ]
 }

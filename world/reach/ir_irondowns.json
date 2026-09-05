@@ -716,6 +716,27 @@
             ]
           ]
         },
+        {
+          "id": "ir_news_fd",
+          "label": "word from beyond the downs",
+          "if": [["any", [["flag", "fd_ironbound_exposed"], ["var", "hollows_burned", ">=", 2]]]],
+          "once": true,
+          "say": "News reaches the chapterhouse the way it always does — slow, then all at once.",
+          "fx": [
+            [
+              "if",
+              [["flag", "fd_ironbound_exposed"]],
+              [
+                ["say", "\"Our own mission thrown off Stilt Row in Fenmarch, iron sun and all.\" Aldous's hands go still. \"The Church remembers that kind of insult.\""],
+                ["addvar", "rep_iron", -1]
+              ],
+              [
+                ["say", "\"Two hollows burned clean across the Reach now, no rite, no relic, just fire.\" Aldous almost smiles. \"Word travels. Good.\""],
+                ["addvar", "rep_iron", 1]
+              ]
+            ]
+          ]
+        },
         { "id": "bye", "label": "leave the chapterhouse", "say": "Mind the fires on your way out.", "end": true }
       ]
     },
@@ -944,6 +965,17 @@
           "once": true,
           "say": "You said it. I felt it, somehow, all the way down here — like a held breath let go. Thank you for carrying what I couldn't.",
           "fx": [["xp", 3], ["score", 3], ["addvar", "rep_keepers", 1]]
+        },
+        {
+          "id": "ir_news_hb",
+          "label": "word of a found name",
+          "if": [["flag", "vell_ledger_found"]],
+          "once": true,
+          "say": "\"A Keeper up in Hollowbrook found a name that was struck from a line and hidden,\" Sella says, still sweeping.",
+          "fx": [
+            ["say", "\"Somebody's grief got carried, same as mine did.\" She doesn't look up. \"That's worth something, wherever it happens.\""],
+            ["addvar", "rep_keepers", 1]
+          ]
         },
         {
           "id": "bye",
@@ -1475,6 +1507,10 @@
     {
       "if": [["flag", "ir_crick_closure"]],
       "text": "Old Crick keeps his friend's marked pick on the mantel now, and has mostly stopped apologizing for surviving."
+    },
+    {
+      "if": [["any", [["flag", "fd_ironbound_exposed"], ["flag", "ir_aldous_ruined"]]]],
+      "text": "Cinderhall's chapterhouse changed hands in most tellings of that year, and every hold on the Reach heard some version of why."
     }
   ]
 }

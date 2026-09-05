@@ -38,6 +38,13 @@
             ["say", "Added later, smaller: the moor holds an oath-stone where the first roster swore its watch. Some say they never stood down. The Captain-General keeps what's left of the true record."]
           ]
         }
+      ],
+      "variants": [
+        {
+          "if": [["flag", "regent_writ"]],
+          "desc": "A barbican of dark stone, its portcullis raised on chains thick as a man's arm. A Watch rider's horse stands lathered at the post, the Regent's writ just carried through. South the road drops back toward the Vale.",
+          "brief": "The barbican gate. A rider's horse, lathered, at the post."
+        }
       ]
     },
     "wm_parade": {
@@ -417,6 +424,14 @@
             ["addvar", "rep_watch", -1],
             ["say", "He presses a sealed flask into your hands and turns back to his boots."]
           ]
+        },
+        {
+          "id": "wm_news_burn",
+          "label": "how many hollows have burned",
+          "if": [["var", "hollows_burned", ">=", 2]],
+          "once": true,
+          "say": "\"Two now, maybe more, burned clean across the Reach.\" Fenn stares past you. \"That's not order. That's just fewer places left standing.\"",
+          "fx": [["addvar", "rep_watch", -1]]
         }
       ]
     },
@@ -505,6 +520,27 @@
           "once": true,
           "say": "Half this garrison thinks you did what should've been done centuries back. The other half won't say your name in the mess hall. I keep my own counsel on it.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "wm_news_sk_ir",
+          "label": "the Watch, elsewhere",
+          "if": [["any", [["flag", "sk_sided_watch"], ["flag", "ir_aldous_ruined"]]]],
+          "once": true,
+          "say": "Dispatches from the south reach her desk before you do.",
+          "fx": [
+            [
+              "if",
+              [["flag", "sk_sided_watch"]],
+              [
+                ["say", "\"Gullhaven's customs sergeant sided with the Watch over the harbourmaster's own smuggling.\" She almost smiles. \"Good post, that one.\""],
+                ["addvar", "rep_watch", 1]
+              ],
+              [
+                ["say", "\"A Watch clerk sits at Cinderhall's chapterhouse desk now, backing the miners' hall.\" She nods once. \"That's the job, done right.\""],
+                ["addvar", "rep_watch", 1]
+              ]
+            ]
+          ]
         },
         { "id": "bye", "label": "leave her to her dispatches", "say": "Mind the cairns after dark.", "end": true }
       ]
@@ -682,6 +718,14 @@
           "fx": [["xp", 1], ["addvar", "rep_watch", -1]]
         },
         {
+          "id": "wm_news_hb",
+          "label": "word of a Hollowbrook ledger",
+          "if": [["flag", "vell_ledger_found"]],
+          "once": true,
+          "say": "\"Another sealed shelf opened, and this Reach didn't end because of it,\" she says, half to herself, half to the roll she still hasn't touched.",
+          "fx": [["addvar", "rep_watch", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave her to the shelves",
           "say": "Shut the door. The damp gets into the ink.",
@@ -689,5 +733,11 @@
         }
       ]
     }
-  }
+  },
+  "epilogue": [
+    {
+      "if": [["flag", "regent_writ"]],
+      "text": "Highward's record-house keeps a fresh shelf for what came loose from other holds' old, sealed truths."
+    }
+  ]
 }

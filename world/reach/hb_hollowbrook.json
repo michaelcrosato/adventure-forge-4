@@ -57,6 +57,13 @@
           "label": "rest on the cot",
           "fx": [["hp", 10], ["say", "You sleep to the sound of water on mud, and wake with the ache gone out of your legs."]]
         }
+      ],
+      "variants": [
+        {
+          "if": [["var", "hollows_rested", ">=", 3]],
+          "desc": "Grain-dust and old rope. Generations of harvests are chalked on the beams. A fresh line notes three holds' worth of grief put to rest this year — the first good tally the barn has kept in memory. The shore lies west.",
+          "brief": "The tithe barn. A fresh, good line on the tally."
+        }
       ]
     },
     "hb_warden_house": {
@@ -343,6 +350,28 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "hb_news_burn",
+          "label": "word of another burning",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "th_hollow_burned"],
+                ["flag", "fd_hollow_burned"],
+                ["flag", "wm_hollow_burned"],
+                ["flag", "ir_hollow_burned"],
+                ["flag", "sk_hollow_burned"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "News of another hold's dead reaches him the way all bad news does here — slow, and then it won't leave.",
+          "fx": [
+            ["say", "\"Burned, not rested. Not my ground, but I felt the shape of it anyway.\" He goes back to his maps without looking up."],
+            ["addvar", "rep_keepers", -1]
+          ]
+        },
+        {
           "id": "bye",
           "label": "let him get back to his maps",
           "say": "Mind the ditches after dark. And give the Weeping Cairn east a wide berth after.",
@@ -494,6 +523,27 @@
               ],
               [
                 ["say", "She holds the look a while, then shakes her head. 'Not from me. Go looking yourself, if you mean to know it.'"]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "hb_news_th_wm",
+          "label": "word of an old debt paid",
+          "if": [["any", [["flag", "th_pardon_used"], ["flag", "wm_hollow_rested"]]]],
+          "once": true,
+          "say": "Wren hears it from a pilgrim on the west road, and sits with it a while before she answers.",
+          "fx": [
+            [
+              "if",
+              [["flag", "th_pardon_used"]],
+              [
+                ["say", "\"A pardon read forty years late, over the wrongly hanged.\" She nods slowly. \"That's covenant-keeping. I'll call it that.\""],
+                ["addvar", "rep_keepers", 1]
+              ],
+              [
+                ["say", "\"An oath-stone on the Wardmoor finally sworn true, four hundred years on.\" She nods slowly. \"That's covenant-keeping. I'll call it that.\""],
+                ["addvar", "rep_keepers", 1]
               ]
             ]
           ]
