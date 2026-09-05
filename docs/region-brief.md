@@ -20,11 +20,19 @@ with it. Read, in this order, before writing a line:
 
 ## Deliverable
 
-One file, `world/reach/<code>_<name>.json` (e.g. `fd_fenmarch.json`), a part
-file with only these top-level keys: `rooms`, `items`, `npcs`, `gen`,
-`stamps`, `templates` (only if you add a region-specific one), `quests`,
-`epilogue`, `statusTracks` (optional, at most one). Every id prefixed with
-your code. No `end` effects. No `walkthrough`/`proofs` (root-only).
+Part files named `world/reach/<code>_*.json` (e.g. `fd_fenmarch.json`,
+`fd_wild.json`, `fd_hollow.json`), each with only these top-level keys:
+`rooms`, `items`, `npcs`, `gen`, `stamps`, `templates` (only if you add a
+region-specific one), `quests`, `epilogue`, `statusTracks` (optional, at most
+one). Every id prefixed with your code. No `end` effects. No
+`walkthrough`/`proofs` (root-only).
+
+**Write in parts.** A whole region is far more than one response can emit:
+four authors lost their work to the output limit by writing one huge file.
+Write the settlement first, validate, then the wilderness and stamps,
+validate, then the hollow, quests, and epilogue — each file in its own write,
+each under ~900 lines. The loader merges them; ids must not repeat across
+your files.
 
 Do not edit any other file. Do not commit. Scratch files go under `/tmp`.
 
