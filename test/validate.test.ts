@@ -33,6 +33,19 @@ test("rejects unknown effect ops (closed DSL)", () => {
   assert.ok(errs.some((e) => e.includes("unknown fx op")));
 });
 
+test("rejects authored records missing a field the engine prints or dispatches on", () => {
+  // JSON is not type-checked; a Vale topic once shipped without `say` and
+  // played as `elder: "undefined"`.
+  const w = twoEndings({ gave_in: ["give in"] });
+  w.npcs = { elder: { name: "elder", room: "a", topics: [{ id: "t", label: "talk" } as never] } };
+  w.rooms["a"]!.actions!.push({ id: "mute", fx: [["say", "x"]] } as never);
+  w.items = { rock: { name: "rock" } as never };
+  const errs = validateWorld(w);
+  assert.ok(errs.some((e) => e.includes("npc elder topic t") && e.includes('"say"')), errs.join("\n"));
+  assert.ok(errs.some((e) => e.includes("action mute") && e.includes('"label"')), errs.join("\n"));
+  assert.ok(errs.some((e) => e.includes("item rock") && e.includes('"loc"')), errs.join("\n"));
+});
+
 // ---------- ending proofs ----------
 import type { World } from "../src/types.ts";
 

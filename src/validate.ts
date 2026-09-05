@@ -73,6 +73,33 @@ export function validateWorld(world: World): string[] {
     }
   };
 
+  // ---------- shape ----------
+  // Every authored record must carry the fields the engine prints or
+  // dispatches on. JSON is not type-checked: a topic written without `say`
+  // played as `elder: "undefined"` before this check existed.
+  const need = (where: string, o: object, fields: [name: string, type: "string" | "number" | "array"][]) => {
+    const r = o as Record<string, unknown>;
+    for (const [f, t] of fields) {
+      const ok = t === "array" ? Array.isArray(r[f]) : typeof r[f] === t;
+      if (!ok) err(`${where}: missing or non-${t} "${f}"`);
+    }
+  };
+  need("world", world, [["id", "string"], ["title", "string"], ["intro", "string"], ["start", "string"], ["hp", "number"], ["maxScore", "number"]]);
+  for (const [rid, room] of Object.entries(world.rooms)) {
+    need(`room ${rid}`, room, [["name", "string"], ["desc", "string"]]);
+    for (const a of room.actions ?? [])
+      need(`room ${rid} action ${a.id ?? "?"}`, a, [["id", "string"], ["label", "string"], ["fx", "array"]]);
+  }
+  for (const [iid, item] of Object.entries(world.items)) need(`item ${iid}`, item, [["name", "string"], ["loc", "string"]]);
+  for (const [nid, npc] of Object.entries(world.npcs)) {
+    need(`npc ${nid}`, npc, [["name", "string"]]);
+    if (npc.room !== null && typeof npc.room !== "string") err(`npc ${nid}: "room" must be a room id or null`);
+    for (const t of npc.topics ?? [])
+      need(`npc ${nid} topic ${t.id ?? "?"}`, t, [["id", "string"], ["label", "string"], ["say", "string"]]);
+  }
+  for (const [cid, cls] of Object.entries(world.classes ?? {})) need(`class ${cid}`, cls, [["name", "string"], ["desc", "string"]]);
+  for (const [pid, perk] of Object.entries(world.perks ?? {})) need(`perk ${pid}`, perk, [["name", "string"], ["desc", "string"]]);
+
   // ---------- characters ----------
   for (const [cid, cls] of Object.entries(world.classes ?? {})) {
     for (const a of Object.keys(cls.attrs ?? {}))

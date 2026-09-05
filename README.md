@@ -86,7 +86,7 @@ Lighthouse world averages ~290 chars. `npm run measure` prints the live numbers.
 `npm run verify` (~10s) enforces:
 
 - **Typecheck** — strict, no unchecked indexing.
-- **Tests** (96) — determinism (same seed = byte-identical run, and an engine
+- **Tests** (101) — determinism (same seed = byte-identical run, and an engine
   core that provably never reads the clock), the character layer, worldgen,
   triage promotion rules, the fleet driver and its report honesty check, content
   rules the shipped worlds must keep (no "safe to retry" label on a check whose
@@ -97,14 +97,20 @@ Lighthouse world averages ~290 chars. `npm run measure` prints the live numbers.
   ending carries its own replay-proof**. "Choice matters" is checked, not
   claimed.
 - **Crawler** — seeded random walks over the real engine checking crash,
-  empty-menu, purity, and bounds invariants every step. All 31 vale rooms
-  reached. (60 random walks land on the same lose ending almost every time —
+  empty-menu, purity, bounds, and template-hole invariants every step (a
+  content field left out of the JSON would otherwise reach the player as
+  `"undefined"`, which is how one was caught). All 31 vale rooms reached. (60 random walks land on the same lose ending almost every time —
   that's expected of undirected play, not a coverage gap; the win endings
   are proven by the validator's replay-proofs, not the crawler.)
 
 Every session writes a trace. A playtest report's receipt must equal an
 engine replay of that trace, or the report files as unverified. Neither
 playtest lane can hand-wave a session.
+
+The same bar runs in CI (`.github/workflows/verify.yml`) on Node 20, 22, and
+24 for every push to `main` and every pull request, followed by the
+zero-token mock player and the walkthrough measurement over the real MCP
+server for both worlds.
 
 ## Two playtest lanes
 
@@ -134,7 +140,7 @@ src/triage.ts     reports -> atomic corroborated issues
 src/play.ts       human CLI
 world/vale.json   The Vale of Ash (the game)
 world/lighthouse.json  the small regression world
-test/             96 tests, including the token budget and determinism rules
+test/             101 tests, including the token budget and determinism rules
 loop/             playtest wave, dev cycle, mock player, report checker
 queue/ done/      the one inbox (issues) and its archive
 queue/failed/     issues a dev cycle could not land (quarantined, with the reason)
