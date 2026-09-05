@@ -241,5 +241,55 @@
   "walkthrough": ["be a Scholar — reads the old tongue outright — verses, ledgers, and the dead's own words come easy (wits)", "go south", "read the notice board", "read the notice board again", "read the notice board again", "talk to reeve", "the blight", "seal or open?", "decline to promise", "leave the reeve to the watch", "go west", "ask innkeep: rumors", "go east", "go south", "talk to gray priest", "the old king", "perk: Second Wind (+3 max hp)", "leave him to his candles", "go north", "go north", "go west", "go north", "talk to hunter", "the old barrow", "leave the hunter to the trees", "go east", "go north", "go east", "go north", "go north", "use the hunter's gap under the stone", "go in", "go east", "show the shade your worn half-token", "perk: Fleetfoot (+2 grace checks)", "use king's seal", "go west", "go north", "read the stone walls (scholar)", "go up", "talk to hollow king", "why do you grieve", "step back from the seat", "go down", "go south", "go out", "travel to a known place", "to Last Light square", "go south", "go east", "talk to elder", "open the coffer — I have the king's seal", "leave her to the ledgers", "go west", "go north", "travel to a known place", "to the barrow field", "go south", "go east", "go east", "go south", "go east", "read the wind carvings (scholar)", "go west", "go south", "go east", "read the water verse (scholar)", "perk: Deep Lore (+2 wits checks (scholar))", "travel to a known place", "to the barrow field", "go in", "go north", "go up", "give back the crown and speak the verses", "leave the barrow open to the sky", "go down", "go south", "go out", "travel to a known place", "to Last Light square", "talk to Herald Corvane", "what brings Marrowgate here", "the other hollows", "refuse the Regent's decree", "leave the herald to his horse", "travel to a known place", "to Last Light gate", "ask stub oracle: (stub) end the tale here"],
   "proofs": {
     "crowned_hollow": ["be a Scholar — reads the old tongue outright — verses, ledgers, and the dead's own words come easy (wits)", "go south", "go south", "talk to gray priest", "the old king", "a blessing for the barrow", "leave him to his candles", "go north", "go north", "go north", "go north", "go north", "go north", "go north", "perk: Fleetfoot (+2 grace checks)", "go in", "go north", "read the stone walls (scholar)", "go up", "(no dawn) kneel and take his place", "(no dawn) finish kneeling"]
-  }
+  },
+  "statusPaths": [
+    {
+      "label": "the Watch",
+      "states": [
+        { "if": [["var", "rep_watch", ">=", 2]], "text": "trusted — their gates and escorts open to you" },
+        { "if": [["var", "rep_watch", "<=", -2]], "text": "wary — the Watch holds you longer at every gate" }
+      ],
+      "fallback": "neither friend nor foe"
+    },
+    {
+      "label": "the Gray Church",
+      "states": [
+        { "if": [["var", "rep_church", ">=", 2]], "text": "in your debt — their doors, rites, and secrets are open" },
+        { "if": [["var", "rep_church", "<=", -2]], "text": "cold — no blessing for a burner of the dead" }
+      ],
+      "fallback": "neither friend nor foe"
+    },
+    {
+      "label": "the Ironbound",
+      "states": [
+        { "if": [["var", "rep_iron", ">=", 2]], "text": "counted a brother — fire and iron are yours to ask for" },
+        { "if": [["var", "rep_iron", "<=", -2]], "text": "despised — they will not arm you" }
+      ],
+      "fallback": "neither friend nor foe"
+    },
+    {
+      "label": "the Free Companies",
+      "states": [
+        { "if": [["var", "rep_free", ">=", 2]], "text": "a friend of the Companies — passage and favours" },
+        { "if": [["var", "rep_free", "<=", -2]], "text": "marked — the Companies remember a cheat" }
+      ],
+      "fallback": "neither friend nor foe"
+    },
+    {
+      "label": "the Barrow-Keepers",
+      "states": [
+        { "if": [["var", "rep_keepers", ">=", 2]], "text": "one of theirs — the old rites and roads are yours" },
+        { "if": [["var", "rep_keepers", "<=", -2]], "text": "turned away — they will not teach a burner" }
+      ],
+      "fallback": "neither friend nor foe"
+    },
+    {
+      "label": "the Crown",
+      "states": [
+        { "if": [["var", "rep_crown", ">=", 2]], "text": "in the Regent's favour" },
+        { "if": [["var", "rep_crown", "<=", -2]], "text": "in the Regent's memory, and not kindly" }
+      ],
+      "fallback": "unknown to Marrowgate"
+    }
+  ]
 }
