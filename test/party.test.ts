@@ -241,7 +241,7 @@ test("an aggressive npc strikes at the end of every turn spent in its room, and 
   assert.equal(flee.state.hp, 6);
   assert.doesNotMatch(flee.events.join(" "), /wolf/);
   // rendered as hostile, with hp, even without the display-only `hostile` flag
-  assert.match(render(world, enter.state, []).text, /wolf \(hostile, hp100\/100\)/);
+  assert.match(render(world, enter.state, []).text, /wolf \(hostile, attacks on sight, hp100\/100\)/);
 });
 
 test("an aggressive npc can kill: the dead ending is the engine's, as always", () => {

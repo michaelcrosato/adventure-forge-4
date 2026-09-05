@@ -172,7 +172,8 @@ export function render(
         // an npc's one-line desc shows on the full view (first sight, look), not on revisits
         const tail = opts.full && d.desc ? ` — ${d.desc}` : "";
         if (hp <= 0) return `${d.name} (dead)`;
-        if (d.hostile || d.aggressive) return `${d.name} (hostile, hp${hp}/${d.hp ?? 1})${tail}`;
+        if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1})${tail}`;
+        if (d.hostile) return `${d.name} (hostile, hp${hp}/${d.hp ?? 1})${tail}`;
         return `${d.name} is here${tail}`;
       });
     if (npcs.length) lines.push(npcs.join("; "));
@@ -226,7 +227,11 @@ export function renderStatus(world: World, s: State): string {
   if (world.quests) {
     const q = journal(world, s);
     const active = q.filter((x) => x.status === "active");
-    if (active.length) lines.push(`Quests:\n${active.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
+    // the road (quests marked main) reads first, apart from the side threads
+    const road = active.filter((x) => world.quests?.[x.id]?.main);
+    const side = active.filter((x) => !world.quests?.[x.id]?.main);
+    if (road.length) lines.push(`The road:\n${road.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
+    if (side.length) lines.push(`Quests:\n${side.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
     const done = q.filter((x) => x.status === "done").map((x) => x.name);
     if (done.length) lines.push(`Done: ${done.join(", ")}`);
     const failed = q.filter((x) => x.status === "failed").map((x) => x.name);

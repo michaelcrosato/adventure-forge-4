@@ -168,7 +168,7 @@
         },
         {
           "if": [["flag", "act2_open"], ["var", "hollows_rested", ">=", 3]],
-          "text": "Three hollows rested: the Keepers' pilgrim stair at Coldpass opens for you now. North through Wardmoor, past Highward."
+          "text": "Three hollows rested: the pilgrim stair at Coldpass opens for you. Highward's north road leaves from its record-house."
         },
         {
           "if": [["flag", "act2_open"], ["flag", "regent_writ"]],
@@ -195,7 +195,8 @@
           "text": "You left him grieving. See who comes to Last Light square anyway."
         },
         { "if": [], "text": "The gray runs through nine holds. Settle the Vale's king first; then the roads open." }
-      ]
+      ],
+      "main": true
     },
     "act1": {
       "name": "Act I — The Vale of Ash",
@@ -214,13 +215,19 @@
           "if": [],
           "text": "Settle the Hollow King in the barrow north of the Vale. Last Light knows the roads; its people know more."
         }
-      ]
+      ],
+      "main": true
     }
   },
   "epilogue": [
     {
-      "if": [["flag", "va_king_rested"], ["flag", "va_sealed"]],
+      "if": [["flag", "va_king_rested"], ["flag", "va_sealed"], ["flag", "va_promised_seal"]],
       "text": "In the Vale the barrow doors stay shut, as you promised, and white grass grows back over the hill.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "va_king_rested"], ["flag", "va_sealed"], ["!flag", "va_promised_seal"]],
+      "text": "In the Vale the barrow doors stay shut, as you chose, and white grass grows back over the hill.",
       "weight": 2
     },
     {

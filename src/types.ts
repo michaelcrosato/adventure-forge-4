@@ -285,6 +285,8 @@ export type StampDef = {
  */
 export type QuestDef = {
   name: string;
+  /** A quest of the road itself: `status` lists it first, apart from the side threads. */
+  main?: boolean;
   start?: Cond[];
   done?: Cond[];
   failed?: Cond[];
