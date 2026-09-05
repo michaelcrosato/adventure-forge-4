@@ -6,14 +6,20 @@
  *   EMPTYMENU no legal actions while the game is still open
  *   DESYNC    stepping the same state twice gave different hashes (impurity)
  *   BOUNDS    hp/score/turn outside their contracts
+ *   HOLE      the rendered turn or status contains "undefined", "null", "NaN",
+ *             or "[object Object]" — a missing content field the validator's
+ *             reference checks cannot see, printed as-is to the player
  * Also replays the walkthrough and prints coverage (rooms seen, endings seen).
  * Exit 0 = green. `--replay <trace.json>` re-runs a recorded session and
  * prints its receipt (used to verify playtest reports).
  */
 import { readFileSync, readdirSync } from "node:fs";
 import { hashState, legalActions, newState, receipt, step } from "./engine.ts";
+import { render, renderStatus } from "./format.ts";
 import { loadWorld, replayWalkthrough } from "./validate.ts";
 import type { Trace, World } from "./types.ts";
+
+const HOLE = /\b(?:undefined|null|NaN|\[object Object\])\b/;
 
 function walkRng(seed: number): () => number {
   let a = seed | 0;
@@ -63,6 +69,9 @@ export function crawl(world: World, walks: number, maxSteps: number): {
       roomsSeen.add(state.room);
       if (state.hp < 0 || state.hp > state.maxHp) findings.push(`BOUNDS hp=${state.hp}/${state.maxHp} walk ${w}`);
       if (state.score < 0 || state.score > world.maxScore) findings.push(`BOUNDS score=${state.score} walk ${w}`);
+      const shown = `${render(world, state, out.events, { full: true }).text}\n${renderStatus(world, state)}`;
+      const hole = HOLE.exec(shown);
+      if (hole) findings.push(`HOLE walk ${w} turn ${state.turn} room ${state.room} action ${JSON.stringify(a)}: "${hole[0]}" in output`);
     }
   }
   return { findings, roomsSeen, endingsSeen, steps };
