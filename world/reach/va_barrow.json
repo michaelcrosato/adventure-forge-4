@@ -2,7 +2,7 @@
   "rooms": {
     "va_barrow_field": {
       "name": "Barrow Field",
-      "desc": "A bare hill and two stone doors set into it, facing north. Ivy chokes a loose-looking stone off to one side; a hunter of this hill would know how it moves. The grass here is white, not gray. The wood lies south; a road climbs north toward the moor.",
+      "desc": "A bare hill and two stone doors set into it, facing north. Ivy chokes a loose-looking stone off to one side; the hunter west of the village would know how it moves. The grass here is white, not gray. The wood lies south; a road climbs north toward the moor.",
       "brief": "White grass, stone doors.",
       "region": "va",
       "landmark": "the barrow field",
@@ -335,7 +335,7 @@
           "once": true,
           "fx": [
             ["xp", 1],
-            ["say", "Rest him — verses, the crown returned or broken — and the Reach's great rite stays open. Cut him down: quick, the Regent's answer, and that rite is lost. Keep the crown: he grieves on, and Marrowgate hears it is loose."]
+            ["say", "Rest him — verses, the crown returned or broken — and the great rite stays open. Cut him down: quick, the Regent's answer; that rite is lost. Keep the crown: he grieves on, and a crown can be worn on another seat."]
           ]
         },
         {
@@ -552,7 +552,8 @@
             ["say", "'Forty years I kept faith. It was my own blood who lifted the crown from my sleeping brow and called it inheritance. I do not want the vale to suffer for his theft. I only wanted to be given it back.'"]
           ]
         }
-      ]
+      ],
+      "variants": [{ "if": [["flag", "va_read_seal"]], "hint": "" }]
     },
     "va_keeper_token": {
       "name": "worn half-token",

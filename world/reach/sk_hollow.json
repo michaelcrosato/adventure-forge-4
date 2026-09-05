@@ -2,11 +2,11 @@
   "rooms": {
     "sk_hollow_shingle": {
       "name": "The Hidden Shingle",
-      "desc": "A narrow beach under the point, cut off from Gullhaven by cliff on every side but the sea. Old rope and older bone litter the tideline. Fog sits offshore, thick enough to hide whatever's rowing in it.",
+      "desc": "A narrow beach under the point, cut off from Gullhaven by cliff on every side but the sea. Old rope and older bone litter the tideline. Fog sits offshore; a line of black rock runs out into it from the beach's end, toward a shape too big for a boat.",
       "brief": "A hidden beach; fog offshore.",
       "region": "sk",
       "landmark": "the Lost Fleet",
-      "exits": { "out": { "to": "sk_hollow_reef" } },
+      "exits": { "out": { "to": "sk_hollow_reef", "landmark": "the reef" } },
       "onEnterOnce": [
         ["score", 4],
         ["xp", 3],
@@ -18,7 +18,10 @@
       "desc": "Black rock breaks the surface in a long jagged line, and the fog thickens the further out you wade. Somewhere close, oars dip in water that shows no boat to own them.",
       "brief": "Black reef, oars in the fog.",
       "region": "sk",
-      "exits": { "in": { "to": "sk_hollow_shingle" }, "out": { "to": "sk_hollow_flagship" } },
+      "exits": {
+        "in": { "to": "sk_hollow_shingle", "landmark": "the shingle" },
+        "out": { "to": "sk_hollow_flagship", "landmark": "the wreck" }
+      },
       "onEnterOnce": [["xp", 3]],
       "variants": [{ "if": [["flag", "sk_hollow_resolved"]], "brief": "Black reef. The fog here has thinned." }],
       "actions": [
@@ -196,7 +199,7 @@
       "stages": [
         {
           "if": [["flag", "sk_verse_known"], ["flag", "sk_lighthouse_lit"]],
-          "text": "You know the verse and the Farlight burns. Speak it over the wreck at the Reeve's Pride, past the Point."
+          "text": "You know the verse and the Farlight burns. Follow the reef out from the hidden shingle to the wreck and speak it there."
         },
         {
           "if": [["flag", "sk_bribe_admitted"]],

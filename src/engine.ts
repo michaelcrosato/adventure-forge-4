@@ -410,8 +410,13 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
           if (fx[1].startsWith("appr_")) {
             const id = fx[1].slice(5);
             const npc = world.npcs[id];
-            if (npc && (s.party.includes(id) || s.npcRoom[id] === s.room) && !npcDead(world, s, id))
+            if (npc && (s.party.includes(id) || s.npcRoom[id] === s.room) && !npcDead(world, s, id)) {
               events.push(`${npc.name} ${Math.abs(d) > 1 ? "strongly " : ""}${d > 0 ? "approves" : "disapproves"}.`);
+              if (!s.flags["_seenApproval"]) {
+                s.flags["_seenApproval"] = true;
+                events.push("(Companions judge what you do; their approval opens some doors and closes others.)");
+              }
+            }
           } else if (world.factions?.[fx[1]]) {
             events.push(`(${world.factions[fx[1]]} ${d > 0 ? "+" : ""}${d})`);
           }
@@ -853,7 +858,9 @@ export function step(world: World, prev: State, action: Action): StepOut {
   }
   const s: State = structuredClone(prev);
   const events: string[] = [];
-  s.turn += 1;
+  // opening the travel menu, picking a region, or backing out is browsing, not a turn;
+  // only the journey itself (travelto) and everything else costs one
+  if (action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone") s.turn += 1;
   let attacked: string | null = null; // the npc that already struck back this turn
 
   switch (action.kind) {

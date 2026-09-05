@@ -230,7 +230,8 @@
             ["say", "Words worked into the inside of the band, worn thin: the same plea cut into stone, water, and wind elsewhere in the vale. Set it down, and rest. Whoever made this crown meant it to be given back."]
           ]
         }
-      ]
+      ],
+      "variants": [{ "if": [["flag", "va_read_crown"]], "hint": "" }]
     }
   },
   "npcs": {
@@ -694,6 +695,14 @@
           "once": true,
           "say": "Word reaches me you have taken up with the Free Companies to move about the Reach. The Regent has a long memory for whose roads get used, and whose do not.",
           "fx": [["addvar", "rep_crown", -1], ["xp", 2]]
+        },
+        {
+          "id": "under",
+          "label": "what waits under Marrowgate",
+          "if": [["flag", "va_heard_decree"]],
+          "once": true,
+          "say": "A seat under the palace, older than the Regent's house. It answers to a rite — three holds rested, your king at rest — or to fire, or to a crown on a living head, or to the founding's truth read aloud. She means fire.",
+          "fx": [["xp", 2], ["score", 2]]
         },
         {
           "id": "bye",
