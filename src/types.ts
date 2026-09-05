@@ -58,6 +58,7 @@ export type CustomAction = {
   label: string; // shown verbatim in the menu
   if?: Cond[];
   once?: boolean; // auto-flag `did_<id>` and hide after
+  free?: boolean; // costs no turn and says so in the menu: a flavour action that reads like `look` (getting your bearings)
   fx: Fx[];
 };
 

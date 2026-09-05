@@ -136,6 +136,11 @@ last number); a check buried after a `say` or inside an `if` gets no preview.
 - Every room must be **reachable** from the start through some exit or `goto`
   (conditions ignored). An orphan room is a validator error.
 
+A room action with `"free": true` costs no turn and shows "(free)" in the
+menu: use it for flavour that reads like `look` — getting your bearings from a
+parapet, reading a notice board — so a player is never charged a turn for what
+the rules told them is free. Anything that changes the world keeps its cost.
+
 ## 6. Items
 
 ```json

@@ -167,11 +167,19 @@ export function checkModParts(world: World, s: State, name: string): { label: st
   return parts;
 }
 
+/** The one carried armor item that counts (the best; they do not stack). */
+function bestArmor(world: World, s: State): { armor: number; item: string | null } {
+  let best: { armor: number; item: string | null } = { armor: 0, item: null };
+  for (const id of s.inv) {
+    const a = world.items[id]?.armor ?? 0;
+    if (a > best.armor) best = { armor: a, item: id };
+  }
+  return best;
+}
+
 /** Damage reduction: best carried armor item + perk armor. */
 export function armorOf(world: World, s: State): number {
-  let best = 0;
-  for (const id of s.inv) best = Math.max(best, world.items[id]?.armor ?? 0);
-  return best + perkBonus(world, s, "armor");
+  return bestArmor(world, s).armor + perkBonus(world, s, "armor");
 }
 
 /** Attack-roll bonus: best weapon's hit + might + perk hit bonuses. The one place this sum is defined. */
@@ -180,12 +188,17 @@ function attackBonus(world: World, s: State, w = bestWeapon(world, s)): number {
 }
 
 /** Attack-roll and damage totals an `attack` action would actually use, for the free `status` check. */
-export function combatMods(world: World, s: State): { hit: number; dmg: number; armor: number } {
+export function combatMods(
+  world: World,
+  s: State,
+): { hit: number; dmg: number; armor: number; weapon: string | null; armorItem: string | null } {
   const w = bestWeapon(world, s);
   return {
     hit: attackBonus(world, s, w),
     dmg: w.dmg + perkBonus(world, s, "dmg"),
     armor: armorOf(world, s),
+    weapon: w.item, // the weapon and armor that count: the best carried, not the sum
+    armorItem: bestArmor(world, s).item,
   };
 }
 
@@ -401,7 +414,9 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         applyFx(world, s, condsOk(world, s, fx[1]) ? fx[2] : fx[3], events);
         break;
       case "slay":
+        // a scripted end, not a fight: the room reads "(at rest)", not "(dead)"
         s.npcHp[fx[1]] = 0;
+        s.flags[`laid_${fx[1]}`] = true;
         break;
       case "setvar":
         s.vars[fx[1]] = fx[2];
@@ -826,6 +841,7 @@ export function itemHint(world: World, s: State, id: string): string | undefined
 }
 
 export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: boolean } = {}): string {
+  if (a.kind === "custom" && world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.free) return " (free)";
   if (a.kind === "attack") {
     const def = world.npcs[a.npc];
     if (!def) return "";
@@ -872,7 +888,9 @@ export function step(world: World, prev: State, action: Action): StepOut {
   const events: string[] = [];
   // opening the travel menu, picking a region, or backing out is browsing, not a turn;
   // only the journey itself (travelto) and everything else costs one
-  if (action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone") s.turn += 1;
+  const freeCustom =
+    action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free;
+  if (!freeCustom && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone") s.turn += 1;
   let attacked: string | null = null; // the npc that already struck back this turn
 
   switch (action.kind) {

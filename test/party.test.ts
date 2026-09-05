@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { actionByLabel, actionLabel, inTalkMode, legalActions, newState, step } from "../src/engine.ts";
-import { render, renderStatus } from "../src/format.ts";
+import { render, renderMenu, renderStatus } from "../src/format.ts";
 import { validateWorld } from "../src/validate.ts";
 import type { Action, State, World } from "../src/types.ts";
 
@@ -207,6 +207,34 @@ test("in a conversation, a line that sends a companion away is listed last, neve
   const menu = labels(world, state);
   assert.equal(menu[0], "the trees", "the talk carries on from the top slot");
   assert.equal(menu.indexOf("wait here (leaves the party for now)"), menu.length - 2, "sending her away sits last, just before the way out");
+});
+
+test("a free room action costs no turn and says so; a scripted end reads 'at rest', not 'dead'; the score ceiling lives in status", () => {
+  const world = mini({
+    items: { sword: { name: "sword", loc: "inv", hit: 0, dmg: 2 }, coat: { name: "tarred coat", loc: "inv", armor: 2 }, mail: { name: "mail shirt", loc: "inv", armor: 1 } },
+    npcs: { saint: { name: "St. Mara", room: "a", hp: 3, desc: "A figure at the altar." } },
+  });
+  world.rooms["a"]!.actions = [
+    { id: "bear", label: "get your bearings", free: true, fx: [["say", "Hills to the north."]] },
+    { id: "plaque", label: "read the vigil-plaque", fx: [["slay", "saint"]] },
+  ];
+  let { state } = newState(world, 1);
+  const header = render(world, state, []).text.split("\n")[0]!;
+  assert.match(header, /score0 t0/, "the turn header shows the tally without a ceiling");
+  assert.doesNotMatch(header, /score0\//);
+  assert.match(renderStatus(world, state), /Score: 0\/\d+ \(a bonus tally/, "status names the ceiling and what the score is");
+  assert.ok(labels(world, state).includes("attack St. Mara with sword"));
+  const menu = renderMenu(world, state).text;
+  assert.match(menu, /get your bearings \(free\)/);
+  const out = step(world, state, actionByLabel(world, state, "get your bearings")!);
+  assert.equal(out.state.turn, state.turn, "bearings cost no turn");
+  assert.match(out.events.join(" "), /Hills to the north/);
+  state = out.state;
+  state = doLabel(world, state, "read the vigil-plaque");
+  assert.match(render(world, state, []).text, /St\. Mara \(at rest\)/);
+  assert.doesNotMatch(render(world, state, []).text, /\(dead\)/);
+  assert.ok(!labels(world, state).includes("attack St. Mara with sword"), "the laid to rest are not targets");
+  if (world.classes) assert.match(renderStatus(world, state), /armor\+2 \(tarred coat\)/);
 });
 
 test("companions roll their own attacks after the player's, and a leaving companion stays behind", () => {

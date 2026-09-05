@@ -119,7 +119,7 @@ export function render(
   const lvl = world.classes ? ` L${s.level}` : "";
   const hud = (world.hud ?? []).map((h) => ` ${h.label}${s.vars[h.var] ?? 0}`).join("");
   lines.push(
-    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} score${s.score}/${world.maxScore} t${s.turn}${hud}`,
+    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} score${s.score} t${s.turn}${hud}`,
   );
   if (events.length) lines.push(`[${events.join(" ")}]`);
   if (world.progress) {
@@ -171,7 +171,7 @@ export function render(
         const hp = s.npcHp[id] ?? d.hp ?? 1;
         // an npc's one-line desc shows on the full view (first sight, look), not on revisits
         const tail = opts.full && d.desc ? ` — ${d.desc}` : "";
-        if (hp <= 0) return `${d.name} (dead)`;
+        if (hp <= 0) return `${d.name} (${s.flags[`laid_${id}`] ? "at rest" : "dead"})`;
         if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1})${tail}`;
         if (d.hostile) return `${d.name} (hostile, hp${hp}/${d.hp ?? 1})${tail}`;
         return `${d.name} is here${tail}`;
@@ -210,6 +210,9 @@ export function renderStatus(world: World, s: State): string {
   const obj = world.objectives;
   const recap = Array.isArray(obj) ? obj.find((o) => o.if.every((c) => condOk(world, s, c)))?.text : (obj ?? world.intro);
   if (recap) lines.push(recap);
+  // the score's ceiling lives here, not in every turn's header, where it read as a progress bar
+  if (world.maxScore !== undefined)
+    lines.push(`Score: ${s.score}/${world.maxScore} (a bonus tally of discoveries and choices; it can fill long before the tale ends)`);
   if (s.ended) {
     // the ending screen fits six lines; here the whole telling is free
     const told = (world.epilogue ?? []).filter((ep) => ep.if.every((c) => condOk(world, s, c))).map((ep) => `- ${ep.text}`);
@@ -289,7 +292,9 @@ export function renderStatus(world: World, s: State): string {
     }).join(" ");
     lines.push(`Checks: ${checks}`);
     const cm = combatMods(world, s);
-    lines.push(`Combat: hit${signed(cm.hit)} dmg${signed(cm.dmg)} armor${signed(cm.armor)}`);
+    // name the weapon and armor that count, so a second piece is known not to stack
+    const by = (id: string | null) => (id ? ` (${world.items[id]?.name ?? id})` : "");
+    lines.push(`Combat: hit${signed(cm.hit)} dmg${signed(cm.dmg)}${by(cm.weapon)} armor${signed(cm.armor)}${by(cm.armorItem)}`);
   }
   return lines.length ? lines.join("\n") : "No progress to report.";
 }
