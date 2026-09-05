@@ -35,18 +35,25 @@ type Setter = Origin & { flag: string; chosen: boolean };
 const setters: Setter[] = [];
 const readers = new Map<string, Origin[]>();
 const read = (flag: string, o: Origin) => { (readers.get(flag) ?? readers.set(flag, []).get(flag)!).push(o); };
+/** Counters a branch adds to (`addvar`), by branch label: a branch that feeds a counter the world reads is remembered through it. */
+const counters = new Map<string, Set<string>>();
+const varReads = new Map<string, Origin[]>();
 
 const walkCond = (conds: Cond[] | undefined, o: Origin) => {
   for (const c of conds ?? []) {
     if (c[0] === "flag" || c[0] === "!flag") read(c[1], o);
+    else if (c[0] === "var") (varReads.get(c[1]) ?? varReads.set(c[1], []).get(c[1])!).push(o);
     else if (c[0] === "any") walkCond(c[1], o);
   }
 };
-/** Effects: `set` records a setter; conditions inside `if` are reads. */
+/** Effects: `set` records a setter; `addvar` a counter fed; conditions inside `if` are reads. */
 const walkFx = (fxs: Fx[] | undefined, o: Origin, chosen: boolean) => {
   for (const fx of fxs ?? []) {
     switch (fx[0]) {
       case "set": setters.push({ ...o, flag: fx[1], chosen }); break;
+      case "addvar": // coin is a price, not a memory; standing, regard and tallies are
+        if (chosen && fx[1] !== "gold") (counters.get(o.label) ?? counters.set(o.label, new Set()).get(o.label)!).add(fx[1]);
+        break;
       case "if": walkCond(fx[1], o); walkFx(fx[2], o, chosen); walkFx(fx[3], o, chosen); break;
       case "check": walkFx(fx[3], o, chosen); walkFx(fx[4], o, chosen); break;
       case "chance": walkFx(fx[2], o, chosen); walkFx(fx[3], o, chosen); break;
@@ -106,6 +113,10 @@ for (const row of rows.values()) {
   const containers = new Set(row.setBy.map((s) => s.container));
   const regions = new Set(row.setBy.map((s) => prefixOf(s.container)));
   row.reads = readers.get(row.flag) ?? [];
+  // a branch that feeds a counter (crypts robbed, hollows rested) is remembered wherever the counter is read
+  for (const st of row.setBy)
+    for (const v of counters.get(st.label) ?? [])
+      for (const o of varReads.get(v) ?? []) if (!containers.has(o.container)) row.reads.push({ ...o, kind: `${o.kind} (via ${v})` });
   row.outside = row.reads.filter((o) => !containers.has(o.container));
   row.elsewhere = row.outside.filter((o) => !regions.has(prefixOf(o.container)) && !["epilogue", "status"].includes(o.container));
   row.epilogue = row.reads.some((o) => o.kind === "epilogue");
