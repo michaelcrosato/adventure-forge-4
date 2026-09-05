@@ -316,10 +316,10 @@
       "name": "grave-wight",
       "room": "hb_kingsrest_hall",
       "hostile": true,
-      "hp": 8,
-      "atk": 2,
+      "hp": 15,
+      "atk": 3,
       "df": 8,
-      "desc": "Old mail gone to rust over bone, standing an old post with nothing left to guard but habit.",
+      "desc": "Old mail gone to rust over bone, standing an old post with nothing left to guard but habit. What's left of its grip does not care what you're wearing.",
       "onDeath": [
         [
           "if",
@@ -332,7 +332,8 @@
           ],
           [["say", "It was already still, whatever kept it upright already settled."]]
         ]
-      ]
+      ],
+      "pierce": true
     },
     "hb_eldest_king": {
       "name": "the eldest king",
@@ -524,5 +525,22 @@
       "if": [["flag", "hb_keepers_key_found"]],
       "text": "The Keeper's Key left Barrowmere in a pocket, bound for a pilgrim stair at Coldpass that has not opened in a hundred years."
     }
-  ]
+  ],
+  "items": {
+    "hb_warden_flask": {
+      "name": "a warden's flask",
+      "loc": "hb_kingsrest_mouth",
+      "takeable": true,
+      "hint": "left for whoever goes in past the door, by old custom",
+      "use": [
+        {
+          "fx": [
+            ["hp", 4],
+            ["move", "hb_warden_flask", "nowhere"],
+            ["say", "Barrow-mead, bitter with the iron shavings the old custom calls for. It steadies you more than the taste suggests."]
+          ]
+        }
+      ]
+    }
+  }
 }

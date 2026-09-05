@@ -603,8 +603,8 @@
       "name": "barrow-wight",
       "room": "va_crypt",
       "hostile": true,
-      "hp": 8,
-      "atk": 1,
+      "hp": 13,
+      "atk": 3,
       "df": 5,
       "onDeath": [
         ["xp", 5],
@@ -612,7 +612,9 @@
         ["move", "va_wight_relic", "inv"],
         ["set", "va_wight_passed"],
         ["say", "The wight comes apart into rag and bone. Among the scraps, a ward-token of cold iron, the kind hung over a door to keep grief from walking in."]
-      ]
+      ],
+      "pierce": true,
+      "desc": "Rot-slowed but its reach is not. The chill in its grip finds skin through any mail you carry."
     },
     "va_steward_shade": {
       "name": "steward's shade",
@@ -639,10 +641,10 @@
       "name": "hollow king",
       "room": "va_throne",
       "dialogue": true,
-      "hp": 12,
-      "atk": 3,
+      "hp": 16,
+      "atk": 4,
       "df": 13,
-      "desc": "A king the shape of grief, sitting very still.",
+      "desc": "A king the shape of grief, sitting very still. Cross him, and the cold that answers goes through mail like it was never there.",
       "onDeath": [
         ["score", 25],
         ["xp", 8],
@@ -710,7 +712,8 @@
           "say": "I have waited four hundred years. I can wait while you decide.",
           "end": true
         }
-      ]
+      ],
+      "pierce": true
     }
   },
   "quests": {
