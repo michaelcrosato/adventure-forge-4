@@ -1,0 +1,87 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 574,
+  "receipt": "reach.223.574.366.reach_at_rest.0aaf28e0",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "After promising the reeve to seal the barrow, the quest text says 'The priest will not bless a door meant to shut' — but I had already received the priest's blessing earlier in the same playthrough, and it was never revoked or re-checked; entry into the barrow worked fine regardless.",
+      "where": "Last Light Square / Quest 'The Barrow Doors', after 'promise to seal the barrow'"
+    },
+    {
+      "sev": "P1",
+      "what": "Immediately after persuading Cal to go home, Lys's very next lines describe him as already back in the Vale and asleep ('He is really coming home' / 'He's home... watching him sleep'), while Cal is still standing three feet away at the scout line where the persuasion just happened.",
+      "where": "Camp Gallows — The Scout Line / talk to Lys, 'ask after her brother'"
+    },
+    {
+      "sev": "P2",
+      "what": "Sealing the barrow reads as 'You draw the great doors shut from within the passage,' which sounds like it could trap the player inside, but 'go out' works immediately afterward with zero consequence.",
+      "where": "The Empty Seat (Barrow Field/Throne) / action 'seal the barrow doors behind you'"
+    },
+    {
+      "sev": "P2",
+      "what": "Score hit its literal maximum, 366/366, at turn ~476 of a 574-turn win — while I was still mid-Act-2 with whole regions (the Saltkerns), several companion side-quests, and two Wardmoor quests untouched. The score header claims 'it can fill long before the tale ends,' but hitting the hard cap (not just approaching it) undercuts score as any kind of completion signal.",
+      "where": "status command, right after 'speak the three verses over the court' at The Kings' Rest, Hollowbrook"
+    },
+    {
+      "sev": "P2",
+      "what": "Numbered menu entries for 'talk to <companion>' are not stable turn to turn — the list shrinks/grows as other context-sensitive options appear, and I once selected the wrong companion's dialogue (meant Vell, got Tamsin) because the position I remembered had shifted.",
+      "where": "The Keepers' Hall, Hollowbrook"
+    },
+    {
+      "sev": "P2",
+      "what": "A hidden gold stash was granted silently — no '(+N gold)' tag in the action result the way score/xp gains always get one. I only learned money had changed hands afterward via a follow-up 'look' that mentioned 'the coin someone hid there is gone.'",
+      "where": "Cracked Adit, the Iron Downs / 'work the already-loosened corner' (3rd attempt, nat 20)"
+    },
+    {
+      "sev": "P2",
+      "what": "After the *** WIN *** banner fired, calling status still printed forward-looking Act 3 text ('the Regent will not want you there') and a list of nine unfinished side quests, rather than any indication the story had concluded — only the 'look' output (or re-reading the last act result) shows the win banner.",
+      "where": "status command, called after the WIN screen"
+    },
+    {
+      "sev": "P2",
+      "what": "A carried quest item keeps its original one-time 'how to use it' flavor text in the inventory listing even after that action is completed — e.g. 'the true pardon, unsent (read over the Hanged Company, forty years late)' still shows that instruction after it was already read aloud at the Gallows Glade.",
+      "where": "status/inventory listing, item 'the true pardon, unsent'"
+    },
+    {
+      "sev": "P2",
+      "what": "Companion disapproval is narrated as consequential ('Companions judge what you do... one pushed too far walks out'), but none of the disapprovals I triggered (Brother Osk over sealing the barrow, for instance) produced any visible warning, meter, or actual consequence for the rest of the playthrough.",
+      "where": "Barrow Field, 'seal the barrow doors behind you' (Brother Osk disapproves)"
+    }
+  ],
+  "confusions": [
+    "The hunter's tally-mark hint ('a gap under a fallen stone on the barrow hill's north face, doors skipped entirely') and the room text at Barrow Field ('Ivy chokes a loose-looking stone... the hunter would know how it moves') never resolved into an actual usable action — the loose stone is described on every visit but nothing lets you interact with it.",
+    "Fast travel's 'known places' menu silently omits most rooms inside multi-room mazes (deep in Fenmarch's reeds, Cinderhall's downs, the barrow's own interior) even after repeated visits, with no explanation anywhere of what makes a place 'known' enough to jump to directly.",
+    "Whether picking a class (Scout/Scholar/Warden/Envoy) gates any content beyond starting stats and a couple of class-tagged perks (e.g. 'Shadow Step (+3 grace checks (scout))') is never stated — it only becomes apparent by playing and noticing which perks are marked '(scout)'.",
+    "Gold gains are not consistently flagged the way score/xp gains are, so it is easy to miss exactly where money came from (see the Cracked Adit stash bug above).",
+    "Nothing signals how close a companion is to actually leaving after a disapproval, despite the explicit warning that pushing one 'too far' makes them walk out — every disapproval I saw felt cost-free in the moment.",
+    "The reeve's Barrow Doors quest ('the priest will not bless a door meant to shut') implies the priest's blessing is conditional on the doors staying open, but this is never reconciled with a blessing you may have already banked earlier — the game doesn't say whether promising the reeve retroactively cancels it.",
+    "Several companion personal quests (Two Keepers/Rowan in Thornwold's Understory, Berin's Coin Road to Gullhaven, the sealed letter back to Fenmarch) are planted early but their targets sit dozens of turns away in regions you may have already left, with no in-fiction cue about how costly the round trip will be until you check status and do the mental map yourself.",
+    "It's never clear before committing whether resting a hollow via one method (verses only, crown only, or both) is reversible or whether combining methods is strictly better — I only learned 'both together rests him deeper' by asking the Hollow King directly; a player who doesn't ask could commit to a shallower ending without realizing a better one was available."
+  ],
+  "suggestions": [
+    "Tag every gold change with an explicit '(+N gold)' marker, the same way score and xp gains are always tagged.",
+    "Once a WIN/LOSE fires, have status lead with 'STORY CONCLUDED — see the ending above' instead of continuing to print forward-looking Act/quest text.",
+    "Give the Barrow Field loose-stone/ivy hint an actual distinct action, or drop the flavor line once the hunter's tally-mark clue has already been learned.",
+    "Rewrite 'the priest will not bless a door meant to shut' so it doesn't read as contradicting a blessing the player may already hold.",
+    "Avoid time-skip narration ('he's home, asleep') for a companion who is still physically present in the current scene.",
+    "Give companion disapproval at least one visible signal (a warning line, a shrinking trust indicator) before the stated 'walks out' threshold, so the stakes feel real.",
+    "Refresh a quest item's inventory description once its one-time action is spent, instead of leaving the original 'how to use it' hint indefinitely.",
+    "Pace the score total (or the rate points accrue) so hitting 100% doesn't happen well before whole regions and companion arcs are even touched.",
+    "Keep numbered menu entries for the same companion/action stable turn-to-turn where possible, so a remembered shortcut doesn't misfire after the menu reflows.",
+    "Briefly document (in status or the intro) what determines whether a visited room shows up under 'travel to a known place,' since the rule (landmarks only, not maze interiors) is never stated."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T21-56-50-318Z",
+  "seed": 223,
+  "build": {
+    "rev": "97b050a",
+    "world": "02f9dda9"
+  },
+  "cost_usd": null,
+  "verified": true
+}
