@@ -202,6 +202,11 @@ might want to see it" goes quiet once `said_va_hunter_pelt` is set.
   with `["if", [["inParty", "osk"]], [["say", "Osk: \"...\""]], []]` in room
   effects or topic effects, and move their approval with `addvar appr_<id>`.
 
+Inside a conversation the engine lists a topic whose effects send a companion
+out of the party (`["party", id, "leave"]`) last, just before the way out, so
+the slot a player has been pressing to carry the talk on never dismisses
+anyone by surprise. Author the topics in any order.
+
 ## 8. Wilderness regions (`gen`)
 
 ```json

@@ -647,6 +647,9 @@ export const inTalkMode = (world: World, s: State): boolean =>
   !npcDead(world, s, s.talking) &&
   visibleTopics(world, s, s.talking).length > 0;
 
+/** A topic whose effects send someone out of the party. */
+const partsWays = (t: TopicDef): boolean => (t.fx ?? []).some((f) => f[0] === "party" && f[2] === "leave");
+
 export function legalActions(world: World, s: State): Action[] {
   if (s.ended) return [];
   // class first: nothing else is legal until the player picks who they are
@@ -660,7 +663,9 @@ export function legalActions(world: World, s: State): Action[] {
   // an open conversation: only its topics, and the way out of it
   if (inTalkMode(world, s)) {
     const npc = s.talking!;
-    const topics = visibleTopics(world, s, npc);
+    // a line that sends a companion away goes last, never in the slot the
+    // player has been pressing to carry the conversation on
+    const topics = visibleTopics(world, s, npc).sort((a, b) => Number(partsWays(a)) - Number(partsWays(b)));
     const out: Action[] = topics.map((t) => ({ kind: "talk", npc, topic: t.id }));
     // a farewell line (a topic with `end`) is the way out; the plain "end
     // conversation" only appears when the npc offers none

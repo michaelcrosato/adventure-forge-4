@@ -182,6 +182,33 @@ test("a companion who joins follows the player room to room, is listed as 'with 
   assert.match(renderStatus(world, again.state), /Party: Lys/);
 });
 
+test("in a conversation, a line that sends a companion away is listed last, never where the talk was carried on", () => {
+  const world = mini({
+    npcs: {
+      lys: {
+        name: "Lys",
+        room: "a",
+        hp: 6,
+        dialogue: true,
+        companion: {},
+        topics: [
+          { id: "dismiss", label: "wait here (leaves the party for now)", if: [["inParty", "lys"]], say: "I'll be here.", fx: [["party", "lys", "leave"]] },
+          { id: "join", label: "come with me", if: [["!inParty", "lys"]], say: "Fine.", fx: [["party", "lys", "join"]], once: true },
+          { id: "trees", label: "the trees", say: "Old, and older under that." },
+        ],
+      },
+    },
+  });
+  let { state } = newState(world, 1);
+  state = doLabel(world, state, labels(world, state).find((l) => /talk/.test(l) && /Lys/.test(l))!);
+  state = doLabel(world, state, "come with me");
+  assert.deepEqual(state.party, ["lys"]);
+  assert.ok(inTalkMode(world, state), "the conversation stays open after she joins");
+  const menu = labels(world, state);
+  assert.equal(menu[0], "the trees", "the talk carries on from the top slot");
+  assert.equal(menu.indexOf("wait here (leaves the party for now)"), menu.length - 2, "sending her away sits last, just before the way out");
+});
+
 test("companions roll their own attacks after the player's, and a leaving companion stays behind", () => {
   const world = company();
   let { state } = newState(world, 1);
