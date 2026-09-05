@@ -93,7 +93,8 @@ whole 34-turn session is ~18k chars (~4.7k tokens) of game text.
   turn it moves and opens or closes doors across the realm. Rooms change with
   your choices; a burned village stays burned. Every ending appends the
   epilogue lines your flags have earned, so no two playthroughs end alike.
-- **The world.** Regions with fast travel between discovered landmarks; a
+- **The world.** Regions with fast travel between discovered landmarks
+  (browsing the travel menu is free; only the journey costs a turn); a
   journal that prints "Quest — …" the turn a stage changes; wilderness
   generated from seeded grids with a named scene on every cell; dungeons
   stamped from templates so a hundred barrows can each be written once. The
@@ -175,7 +176,7 @@ world/reach/      its parts — the Vale rebuilt, companions, templates, and eig
 world/vale.json   The Vale of Ash, the original compact world
 world/lighthouse.json  the small regression world
 scripts/          author tools: lint, walk, stubs, land, fmt
-test/             151 tests, including the token budget and determinism rules
+test/             154 tests, including the token budget and determinism rules
 loop/             playtest wave, dev cycle, mock player, report checker
 queue/ done/      the one inbox (issues) and its archive
 docs/             design specs, the authoring guide, review findings

@@ -46,7 +46,13 @@
         "down": { "to": "mg_warrens_1_0", "landmark": "the warrens", "sideTrip": true }
       },
       "onEnterOnce": [["xp", 2], ["score", 3]],
-      "variants": [{ "if": [["flag", "mg_throne_resolved"]], "brief": "The market steps. The drains have stopped breathing." }],
+      "variants": [
+        { "if": [["flag", "mg_throne_resolved"]], "brief": "The market steps. The drains have stopped breathing." },
+        {
+          "if": [["any", [["flag", "mg_bell_rite"], ["flag", "mg_bell_sealed"], ["flag", "mg_bell_burned"]]]],
+          "brief": "The market steps. The drains have gone quiet at last."
+        }
+      ],
       "actions": [
         {
           "id": "mg_listen_market",
@@ -126,7 +132,8 @@
           "hint": "ask Mother Ysme about the pilgrims' door",
           "landmark": "the pilgrims' door",
           "sideTrip": true
-        }
+        },
+        "north": { "to": "mg_chapel_undercroft", "sideTrip": true }
       }
     },
     "mg_regents_way": {
@@ -148,14 +155,85 @@
       "desc": "Racks of pikes, a map of the Reach with pins in it, and Lord Marshal Tarn at a desk too small for him. The Watch in Marrowgate answers to the Regent. The Marshal answers to the Watch, and does not always like it.",
       "brief": "Pikes and a map with pins.",
       "region": "mg",
-      "exits": { "west": { "to": "mg_regents_way" } }
+      "exits": { "west": { "to": "mg_regents_way" }, "down": { "to": "mg_watch_house_cells", "sideTrip": true } },
+      "actions": [
+        {
+          "id": "mg_argue_oath",
+          "label": "argue her oath before Tarn (will)",
+          "if": [
+            ["flag", "mg_watch_knows_novice"],
+            ["!flag", "mg_novice_fine"],
+            ["!flag", "mg_novice_oath"],
+            ["!flag", "mg_novice_break"],
+            ["!flag", "mg_novice_abandoned"]
+          ],
+          "fx": [
+            [
+              "check",
+              "will",
+              12,
+              [
+                ["set", "mg_novice_oath"],
+                ["npcgo", "mg_novice_jailed", "mg_chapel_undercroft"],
+                ["score", 5],
+                ["xp", 4],
+                ["addvar", "rep_church", 1],
+                ["addvar", "appr_osk", 1],
+                ["say", "Tarn hears you out, arms crossed. 'The Church's oath covers rites for the dead, not the living,' he says, 'but I've a hearing to hold, and better things to hold it over.' He signs her release himself."]
+              ],
+              [["say", "Tarn hears you out and is not moved. 'Fine words,' he says. 'Bring me better ones.'"]]
+            ]
+          ]
+        },
+        {
+          "id": "mg_tell_watch_coin",
+          "label": "hand Quill's coin to the Watch",
+          "if": [["has", "mg_free_coin"], ["!flag", "mg_ballot_resolved"]],
+          "fx": [
+            ["move", "mg_free_coin", "nowhere"],
+            ["set", "mg_ballot_told_watch"],
+            ["set", "mg_ballot_resolved"],
+            ["score", 5],
+            ["xp", 3],
+            ["addvar", "rep_watch", 1],
+            ["addvar", "rep_free", -1],
+            ["addvar", "appr_tamsin", 1],
+            ["say", "Tarn turns the purse over once, reads the Company mark, and doesn't ask how you came by it. 'This buys you nothing,' he says, 'but it costs you nothing either, with me.'"]
+          ]
+        }
+      ]
     },
     "mg_ironbound_hall": {
       "name": "The Ironbound Hall",
       "desc": "A hall built like a furnace, all iron doors and drafts. Casks of lamp-oil stand in ranks along the wall. The Preceptor-General stands at a lectern reading the roll of the burned, and does not stop when you come in.",
       "brief": "Iron doors, ranked casks of oil.",
       "region": "mg",
-      "exits": { "east": { "to": "mg_regents_way" } }
+      "exits": { "east": { "to": "mg_regents_way" } },
+      "actions": [
+        {
+          "id": "mg_search_casks",
+          "label": "search the ranked casks (wits)",
+          "if": [["!flag", "mg_oath_proof_found"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              12,
+              [
+                ["set", "mg_oath_proof_found"],
+                ["move", "mg_burn_manifest", "inv"],
+                ["set", "mg_oath_heard"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "One cask sits half a hand's-width out of true with the rest. Behind it, folded flat: a burn-order for Tanners' Row, signed and dated, with no hearing number where a hearing number should be."]
+              ],
+              [
+                ["say", "The casks are ranked too well to hide anything from a glance. The Preceptor keeps reading and does not stop."]
+              ]
+            ]
+          ]
+        }
+      ]
     },
     "mg_palace_gate": {
       "name": "The Palace Gate",
@@ -169,7 +247,8 @@
           "if": [["flag", "mg_admitted"]],
           "lockedMsg": "The captain does not move. 'The Regent's word, or the Marshal's, or turn around.'",
           "hint": "the writ, the Marshal's escort, the servants' door, or force"
-        }
+        },
+        "west": { "to": "mg_servants_way", "sideTrip": true }
       },
       "actions": [
         {
@@ -325,6 +404,29 @@
               [["say", "The lock is older than your fingers know. Penn coughs."]]
             ]
           ]
+        },
+        {
+          "id": "mg_search_hearing_rolls",
+          "label": "search the hearing rolls (wits)",
+          "if": [["!flag", "mg_oath_proof_found"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              11,
+              [
+                ["set", "mg_oath_proof_found"],
+                ["move", "mg_burn_manifest", "inv"],
+                ["set", "mg_oath_heard"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "Properly filed, and properly wrong: a burn-order for Tanners' Row with a hearing number that traces to a hearing that was never held. Someone wanted this findable, eventually, by someone patient."]
+              ],
+              [
+                ["say", "The rolls for that week are thick with names and thin with sense. Penn watches you turn pages and says nothing."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -362,7 +464,8 @@
         "up": { "to": "mg_undercity_stair" },
         "east": { "to": "mg_pilgrims_door" },
         "west": { "to": "mg_smugglers_cut" },
-        "north": { "to": "mg_old_crypts", "landmark": "the old crypts" }
+        "north": { "to": "mg_old_crypts", "landmark": "the old crypts" },
+        "down": { "to": "mg_drowned_chapel" }
       },
       "onEnterOnce": [["xp", 3], ["score", 5], ["say", "Whatever is under Marrowgate, the water knows where it is."]]
     },
@@ -655,7 +758,8 @@
           "to": "mg_free_den",
           "landmark": "a cellar with the Company's mark",
           "sideTrip": true
-        }
+        },
+        { "cell": [0, 1], "dir": "west", "to": "mg_ropewalk_loft", "back": "east", "sideTrip": true }
       ],
       "spots": [
         {
@@ -676,7 +780,8 @@
             ["addvar", "gold", 2],
             ["say", "Two coins in the chalk circle, left as a dare. You take the dare."]
           ]
-        }
+        },
+        { "cell": [2, 0], "npcs": ["mg_dyer"] }
       ],
       "cellFx": {
         "onEnter": [
@@ -858,6 +963,42 @@
           "fx": [["addvar", "rep_crown", 1], ["xp", 2]]
         },
         {
+          "id": "tanners_proof",
+          "label": "the burn-order from Tanners' Row",
+          "if": [
+            ["has", "mg_burn_manifest"],
+            ["!flag", "mg_oath_told_tarn"],
+            ["!flag", "mg_oath_told_regent"],
+            ["!flag", "mg_oath_sold_quill"]
+          ],
+          "say": "You set the burn-order on the table between you and let her read whose hand signed it.",
+          "fx": [
+            ["move", "mg_burn_manifest", "nowhere"],
+            ["set", "mg_oath_told_regent"],
+            ["addvar", "appr_vell", -1],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_crown", 1],
+            ["say", "She reads it twice, then folds it away in a drawer that locks. 'Thank you,' she says, and means the drawer, not the truth in it."]
+          ]
+        },
+        {
+          "id": "oath_word",
+          "label": "what became of the Tanners' Row proof",
+          "if": [["any", [["flag", "mg_oath_told_tarn"], ["flag", "mg_oath_sold_quill"]]]],
+          "once": true,
+          "say": "Word of the Tanners' Row order reaches me eventually. Everything does.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "mg_oath_told_tarn"]],
+              [["say", "'Tarn came to me already knowing,' she says. 'I'll say this for the Marshal: he didn't gloat.'"]],
+              [["say", "'Free Company gossip, this time.' She almost smiles. 'I find I mind less than I once would have.'"]]
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave the Regent to her window",
           "say": "Mind the stair. Everyone who goes down it comes up changed, or does not come up.",
@@ -920,6 +1061,79 @@
           "once": true,
           "say": "A record lifted clean off a sealed shelf at Highward, and you were standing closer to it than most. That is not a debt the Watch forgets easily.",
           "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
+        },
+        {
+          "id": "tanners_row",
+          "label": "who ordered Tanners' Row burned",
+          "once": true,
+          "say": "Dead pulled from Tanners' Row and burned inside a day, no hearing, no name on the order I can find. Someone signed for that fire. I want to know who.",
+          "fx": [["set", "mg_oath_heard"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "proof",
+          "label": "show him the burn-order",
+          "if": [
+            ["has", "mg_burn_manifest"],
+            ["!flag", "mg_oath_told_tarn"],
+            ["!flag", "mg_oath_told_regent"],
+            ["!flag", "mg_oath_sold_quill"]
+          ],
+          "say": "You put the burn-order flat on his desk, over the map with all its pins.",
+          "fx": [
+            ["move", "mg_burn_manifest", "nowhere"],
+            ["set", "mg_oath_told_tarn"],
+            ["score", 7],
+            ["xp", 5],
+            ["addvar", "rep_watch", 2],
+            ["addvar", "appr_tamsin", 1],
+            ["addvar", "gold", 3],
+            ["move", "mg_watch_blade", "inv"],
+            ["say", "He reads it through, and doesn't look up for a while. 'The Preceptor,' he says at last. 'Not the Regent. I needed to hear that, more than I wanted to.' He presses a blade of his own making into your hand."]
+          ]
+        },
+        {
+          "id": "cells_word",
+          "label": "the novice from the cells",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "mg_novice_fine"],
+                ["flag", "mg_novice_oath"],
+                ["flag", "mg_novice_break"],
+                ["flag", "mg_novice_abandoned"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "That novice of Mother Ysme's — word of her reached my desk too.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "mg_novice_fine"]],
+              [["say", "'Paid square,' he says. 'I've no complaint with coin that settles a debt honest.'"]],
+              [
+                [
+                  "if",
+                  [["flag", "mg_novice_oath"]],
+                  [
+                    ["say", "'You argued her free. I still think the Church's oath is a loophole wide enough to drive a cart through. You drove one through it well.'"]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["flag", "mg_novice_break"]],
+                      [
+                        ["say", "'My gaoler still won't say how she got out. I have my suspicions. I am choosing, for now, not to act on them.'"]
+                      ],
+                      [["say", "'Left her to it, did you. The cells don't forget who walks past them.'"]]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
         },
         { "id": "bye", "label": "leave the Marshal to his map", "say": "Keep to the Way after dark.", "end": true }
       ]
@@ -1009,6 +1223,31 @@
           "once": true,
           "say": "Warders thrown off Stilt Row in Fenmarch. Aldous ruined in his own chapterhouse. Both reached me the same season. I do not forgive either quietly.",
           "fx": [["addvar", "rep_iron", -1], ["xp", 1]]
+        },
+        {
+          "id": "bell_word",
+          "label": "the drains under the Lower Town",
+          "if": [["any", [["flag", "mg_bell_rite"], ["flag", "mg_bell_sealed"], ["flag", "mg_bell_burned"]]]],
+          "once": true,
+          "say": "Word reached me. Someone dealt with what was coming up under the Lower Town.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "mg_bell_burned"]],
+              [["say", "'Fire. Finally, someone in this city with sense.'"]],
+              [
+                [
+                  "if",
+                  [["flag", "mg_bell_sealed"]],
+                  [["say", "'Walled it up instead. Half a cure. At least it's quiet.'"]],
+                  [
+                    ["say", "'Words. The Church's answer, not mine — but it held, and I've seen fewer things hold than I'd like.'"]
+                  ]
+                ]
+              ]
+            ]
+          ]
         },
         {
           "id": "bye",
@@ -1104,6 +1343,35 @@
           "once": true,
           "say": "Forty years late, someone finally read a true pardon whole and named every man on it. That is a rite, whatever the Regent's roll calls it.",
           "fx": [["addvar", "rep_church", 1], ["xp", 2]]
+        },
+        {
+          "id": "bell_word",
+          "label": "the gathering under the drains",
+          "if": [["any", [["flag", "mg_bell_rite"], ["flag", "mg_bell_sealed"], ["flag", "mg_bell_burned"]]]],
+          "once": true,
+          "say": "Word reached the chapel of what was under the Lower Town.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "mg_bell_rite"]],
+              [
+                ["say", "'Rested,' she says, and for once looks like she believes her own rites work. 'That's more than I hoped from a stranger.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "mg_bell_sealed"]],
+                  [
+                    ["say", "'Walled in, not settled.' She doesn't hide her disappointment. 'A door shut on grief is still a door on grief.'"]
+                  ],
+                  [
+                    ["say", "She's quiet a long moment. 'You didn't ask me first,' she says, 'and now there's nothing left to ask about.'"]
+                  ]
+                ]
+              ]
+            ]
+          ]
         },
         {
           "id": "bye",
@@ -1226,6 +1494,59 @@
           "once": true,
           "say": "A bribed grave-robber in Hollowbrook, a hatch under the Coldpass brazier — small trades, but the Companies remember who is good for them.",
           "fx": [["addvar", "rep_free", 1], ["xp", 1]]
+        },
+        {
+          "id": "ballot",
+          "label": "a purse for the Lower Town guilds",
+          "once": true,
+          "say": "'The Companies want the guilds' voice on the market steps, and voices cost coin.' He slides a purse across. 'Ropewalk loft, west of the shed. Don't lose it to the drains.'",
+          "fx": [["move", "mg_free_coin", "inv"], ["set", "mg_ballot_heard"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "ballot_word",
+          "label": "what became of the Companies' coin",
+          "if": [["flag", "mg_ballot_resolved"]],
+          "once": true,
+          "say": "That purse of mine — word of it came back to me, one way or another.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "mg_ballot_delivered"]],
+              [["say", "'Landed clean,' he says. 'The Companies don't forget an honest courier.'"]],
+              [
+                [
+                  "if",
+                  [["flag", "mg_ballot_told_watch"]],
+                  [["say", "'Tarn's men came asking about a purse. I don't know what you told them, and I'd rather not.'"]],
+                  [
+                    ["say", "'A purse light by exactly what it should weigh doesn't go unnoticed forever,' he says. 'My cut on anything you need from me just went up.'"]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sell_proof",
+          "label": "sell him the burn-order",
+          "if": [
+            ["has", "mg_burn_manifest"],
+            ["!flag", "mg_oath_told_tarn"],
+            ["!flag", "mg_oath_told_regent"],
+            ["!flag", "mg_oath_sold_quill"]
+          ],
+          "say": "'Now that,' Quill says, eyeing the burn-order, 'is worth something to the right buyer.'",
+          "fx": [
+            ["move", "mg_burn_manifest", "nowhere"],
+            ["set", "mg_oath_sold_quill"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "gold", 6],
+            ["addvar", "rep_free", 1],
+            ["addvar", "appr_tamsin", -1],
+            ["say", "Coin changes hands, and the burn-order changes pockets. 'The Ironbound's own hand on it,' he says, pleased. 'We'll find a use.'"]
+          ]
         },
         {
           "id": "bye",
@@ -1368,6 +1689,31 @@
           "once": true,
           "say": "Every mound the surveyor mapped is a grave I will never get to read properly before someone digs it for its rings. I keep the ledgers. I do not have to like what fills them.",
           "fx": [["addvar", "rep_keepers", -1], ["xp", 1]]
+        },
+        {
+          "id": "oath_word",
+          "label": "the Tanners' Row proof",
+          "if": [["any", [["flag", "mg_oath_told_tarn"], ["flag", "mg_oath_told_regent"], ["flag", "mg_oath_sold_quill"]]]],
+          "once": true,
+          "say": "Whatever you did with what turned up, casks or ledgers, it came from a shelf or a cellar I could have shown you myself.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "mg_oath_told_tarn"]],
+              [["say", "'Told the Marshal outright. Good. A record means nothing kept quiet.'"]],
+              [
+                [
+                  "if",
+                  [["flag", "mg_oath_told_regent"]],
+                  [["say", "'Given to the Regent. I won't ask what she did with it. I can guess.'"]],
+                  [
+                    ["say", "'Sold to the Free Companies. Of all the shelves that could have held it, that's the one I never chained.'"]
+                  ]
+                ]
+              ]
+            ]
+          ]
         },
         {
           "id": "bye",
