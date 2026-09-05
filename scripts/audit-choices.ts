@@ -128,10 +128,21 @@ for (const [region, list] of [...byRegion.entries()].sort()) {
   console.log(`${region.padEnd(6)} ${pad(list.length, 8)} ${pad(remembered.length, 11)} ${pad(list.filter((r) => r.elsewhere.length > 0).length, 10)} ${pad(list.filter((r) => r.epilogue).length, 9)} ${pad(lost.length, 10)}`);
 }
 console.log();
-/** A fork: the place (room or npc) sets more than one distinct chosen flag, one per branch. A gate sets one flag by several routes. */
-const flagsByContainer = new Map<string, Set<string>>();
-for (const row of rows.values()) for (const s of row.setBy) (flagsByContainer.get(s.container) ?? flagsByContainer.set(s.container, new Set()).get(s.container)!).add(row.flag);
-const isFork = (r: Row) => r.setBy.some((s) => (flagsByContainer.get(s.container)?.size ?? 0) > 1);
+/**
+ * A fork: the place (room or npc) offers several branches (distinct actions or
+ * topics) and this flag is set by some of them, not all, so it tells the
+ * branches apart. A flag every branch sets (the fork's done-marker), one set by
+ * a single branch, or one reached by several routes to the same result, is a gate.
+ */
+const branches = new Map<string, Map<string, Set<string>>>(); // container -> branch label -> flags it sets
+for (const row of rows.values()) for (const s of row.setBy) {
+  const per = branches.get(s.container) ?? branches.set(s.container, new Map()).get(s.container)!;
+  (per.get(s.label) ?? per.set(s.label, new Set()).get(s.label)!).add(row.flag);
+}
+const isFork = (r: Row) => r.setBy.some((s) => {
+  const per = [...(branches.get(s.container)?.values() ?? [])];
+  return per.length > 1 && !per.every((set) => set.has(r.flag));
+});
 if (forgotten.length) {
   const forks = forgotten.filter(isFork).sort((a, b) => a.flag.localeCompare(b.flag));
   const gates = forgotten.filter((r) => !isFork(r)).sort((a, b) => a.flag.localeCompare(b.flag));
@@ -142,7 +153,7 @@ if (forgotten.length) {
   console.log(`forks the world forgets (${forks.length}) — one branch of a choice among others, read nowhere but where it was made:`);
   for (const r of forks) show(r);
   console.log();
-  console.log(`gates read only where they stand (${gates.length}) — one flag opened by several routes; fine unless the route was meant to matter:`);
+  console.log(`gates read only where they stand (${gates.length}) — one flag opened by several routes, a fork's done-marker, or a single path; fine unless it was meant to matter:`);
   for (const r of gates) show(r);
 } else console.log("every choice is remembered somewhere");
 

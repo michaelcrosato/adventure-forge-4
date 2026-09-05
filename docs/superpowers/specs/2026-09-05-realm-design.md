@@ -212,8 +212,8 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the first playtest rounds): 415 rooms, 123 npcs, 111
-items, 49 quests, 32 stamped places each with its own sign and reward, 126
+**As built** (after the first playtest rounds): 415 rooms, 126 npcs, 114
+items, 55 quests, 32 stamped places each with its own sign and reward, 144
 epilogue lines, 4 companions, 6 factions, 7 endings each with a proof; every
 gate in the holds and the capital has a force, a craft and a words route, and
 ten waystations on the roads between the holds each put a small choice in the
