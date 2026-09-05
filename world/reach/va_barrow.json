@@ -522,7 +522,7 @@
         },
         {
           "id": "va_kneel",
-          "label": "(no dawn) kneel and take his place",
+          "label": "kneel and take his place (ends the tale)",
           "if": [["!flag", "va_king_resolved"], ["!flag", "va_kneel_warned"]],
           "fx": [
             ["set", "va_kneel_warned"],
@@ -531,7 +531,7 @@
         },
         {
           "id": "va_kneel_confirm",
-          "label": "(no dawn) finish kneeling",
+          "label": "finish kneeling (ends the tale)",
           "if": [["!flag", "va_king_resolved"], ["flag", "va_kneel_warned"]],
           "fx": [
             ["end", "lose", "crowned_hollow", "You kneel. The crown of nothing settles on you, light as ash. The Vale will have a king after all, and no dawn."]
