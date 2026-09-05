@@ -958,7 +958,7 @@
         },
         {
           "id": "force_doors",
-          "label": "force the doors — safe to try as many times as you like",
+          "label": "force the doors — a failed try costs 1 hp",
           "if": [["!class", "warden"], ["!flag", "barrow_open"], ["!flag", "promised_seal"]],
           "fx": [
             ["check", "might", 11,
@@ -969,7 +969,7 @@
         },
         {
           "id": "force_doors_sealed",
-          "label": "force the doors — safe to try as many times as you like",
+          "label": "force the doors — a failed try costs 1 hp",
           "if": [["!class", "warden"], ["!flag", "barrow_open"], ["flag", "promised_seal"]],
           "fx": [
             ["check", "might", 11,
@@ -986,7 +986,7 @@
         },
         {
           "id": "keepers_crack",
-          "label": "trust your scout's eye and work the loose stone by the ivy roots — a hidden way into the barrow, safe to try as many times as you like (scout)",
+          "label": "trust your scout's eye and work the loose stone by the ivy roots — a hidden way into the barrow, a failed try costs 1 hp (scout)",
           "if": [["class", "scout"], ["!flag", "barrow_open"], ["var", "keepers_crack_tries", "<", 1]],
           "fx": [
             ["check", "grace", 10,
@@ -1003,7 +1003,7 @@
         },
         {
           "id": "hidden_passage",
-          "label": "work the loose stone by the ivy roots — a hidden way into the barrow, safe to try as many times as you like (wits)",
+          "label": "work the loose stone by the ivy roots — a hidden way into the barrow, a failed try costs 1 hp (wits)",
           "if": [["!class", "scout"], ["!flag", "barrow_open"]],
           "fx": [
             ["check", "wits", 11,
@@ -1985,16 +1985,28 @@
         {
           "id": "coffer_sealed",
           "label": "the sealed coffer",
-          "if": [["!flag", "heard_grievance"], ["!has", "kings_seal"]],
+          "if": [["!flag", "heard_grievance"], ["!has", "kings_seal"], ["!flag", "asked_coffer_early"]],
           "say": "You ask about the coffer. The elder's hand covers the ledger. \"That's not open to asking — not from you, not yet. Go hear what the dead king himself grieves over, up in the barrow. His seal, if a strongbox there still holds it, would prove it outright, but even without it, come back and tell me what he grieves over. That may be reason enough.\"",
-          "fx": [["xp", 1]]
+          "fx": [["set", "asked_coffer_early"], ["xp", 1]]
+        },
+        {
+          "id": "coffer_sealed_again",
+          "label": "the sealed coffer",
+          "if": [["!flag", "heard_grievance"], ["!has", "kings_seal"], ["flag", "asked_coffer_early"]],
+          "say": "\"Still not open to asking,\" the elder says, not looking up from the ledger. \"Hear the dead king grieve first, up in the barrow — or bring his seal — then we'll speak of it.\""
         },
         {
           "id": "coffer_sealed_seal_early",
           "label": "the sealed coffer",
-          "if": [["!flag", "heard_grievance"], ["has", "kings_seal"]],
+          "if": [["!flag", "heard_grievance"], ["has", "kings_seal"], ["!flag", "asked_coffer_early"]],
           "say": "You set the king's seal on the table between you. The elder's hand stills on the ledger — recognition, not surprise. \"That mark is real. I know it.\" But their grip doesn't loosen. \"Metal doesn't settle what's between him and me. Go hear what he grieves over yourself, up in the barrow — then come back and we'll speak of the coffer.\"",
-          "fx": [["xp", 1]]
+          "fx": [["set", "asked_coffer_early"], ["xp", 1]]
+        },
+        {
+          "id": "coffer_sealed_seal_early_again",
+          "label": "the sealed coffer",
+          "if": [["!flag", "heard_grievance"], ["has", "kings_seal"], ["flag", "asked_coffer_early"]],
+          "say": "The elder's eyes go to the seal at your belt, then back to the ledger. \"I said it: that mark is real, and on its own it isn't enough. Hear him grieve yourself, up in the barrow, then come back.\""
         },
         {
           "id": "coffer_envoy",
