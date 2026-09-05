@@ -6,9 +6,10 @@ Reviewed commit: `11ddd8d5a52223235f0d4c64d796708788d61a07`.
 
 This file records eight confirmed defects, suggested changes, and acceptance checks.
 
-**Status (2026-09-05): all eight fixes applied** in the repository audit on
-branch `claude/repo-audit-cleanup-uo5dgd`. Each item below ends with an
-*Applied* note saying what changed and how the acceptance check was met.
+**Status (2026-09-05): all eight fixes applied** in the repository audit
+([PR #1](https://github.com/michaelcrosato/adventure-forge-4/pull/1), branch
+`claude/repo-audit-cleanup-uo5dgd`). Each item below ends with an *Applied*
+note saying what changed and how the acceptance check was met.
 
 P1 means fix promptly. P2 means fix in the normal development schedule.
 Source links use the reviewed commit so that the evidence remains stable.
