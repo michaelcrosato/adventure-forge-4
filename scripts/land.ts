@@ -21,8 +21,7 @@ const run = (args: string[], quiet = false) => {
 };
 
 const wip = readdirSync("world/reach/wip").filter((f) => f.startsWith(`${code}_`) && f.endsWith(".json"));
-if (wip.length !== 1) { console.error(`expected exactly one world/reach/wip/${code}_*.json, found ${wip.length}`); process.exit(1); }
-const file = wip[0]!;
+if (!wip.length) { console.error(`no world/reach/wip/${code}_*.json to land`); process.exit(1); }
 
 // 1. the author's own root must be clean first
 if (existsSync(`drafts/reach_${code}.json`)) {
@@ -31,9 +30,11 @@ if (existsSync(`drafts/reach_${code}.json`)) {
   catch (e) { console.error(String((e as { stdout?: string }).stdout ?? e)); console.error("private root is not clean — not landing"); process.exit(1); }
 }
 
-// 2. move the part into the realm
-renameSync(`world/reach/wip/${file}`, `world/reach/${file}`);
-console.log(`— moved world/reach/wip/${file} -> world/reach/${file}`);
+// 2. move the part file(s) into the realm
+for (const file of wip) {
+  renameSync(`world/reach/wip/${file}`, `world/reach/${file}`);
+  console.log(`— moved world/reach/wip/${file} -> world/reach/${file}`);
+}
 
 // 3. stubs for whatever is still unwritten
 const landed = readdirSync("world/reach")

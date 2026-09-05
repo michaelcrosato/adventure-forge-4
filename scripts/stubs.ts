@@ -149,11 +149,13 @@ if (mode === "master") {
   const stubs = stubsFor(new Set(["va", code]), true, false);
   writeFileSync(`drafts/stubs_${code}.json`, `${JSON.stringify(stubs, null, 2)}\n`);
   const root = JSON.parse(readFileSync("drafts/reach.json", "utf8")) as Record<string, unknown>;
+  // every world/reach/wip/<code>_*.json — a region may be written as several
+  // part files (settlement, wilderness, hollow) so no single write is huge
   root["include"] = [
     "../world/reach/va_village.json", "../world/reach/va_wood.json", "../world/reach/va_barrow.json",
     "../world/reach/companions.json", "../world/reach/templates.json",
     `stubs_${code}.json`,
-    `../${own}`,
+    `../world/reach/wip/${code}_*.json`,
   ];
   const wt = root["walkthrough"] as unknown[];
   root["walkthrough"] = [wt[0], `ask gray rider: ${END_LABEL}`];
