@@ -1011,7 +1011,7 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   if (a.kind === "take") {
     const owner = world.items[a.item]?.owner;
     const w = owner ? ownerWatching(world, s, owner) : null;
-    return w ? ` (${w.name} is watching)` : "";
+    return w ? ` (${w.name} is watching: taking it is theft)` : "";
   }
   if (a.kind === "company") return ` (${companyHere(world, s).map((id) => world.npcs[id]?.name ?? id).join(", ")})`;
   if (a.kind === "travelregion" && a.region) {

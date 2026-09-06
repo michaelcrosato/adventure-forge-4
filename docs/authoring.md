@@ -24,6 +24,10 @@ A **part file** is a slice of the same world. It may carry only:
   same id is a load error that names both files.
 - lists that concatenate — `gen`, `stamps`, `epilogue`, `statusTracks`,
   `statusPaths`, `hud`.
+A path may name a `var`; its value then prints after the text ("the Watch:
+neither friend nor foe (+1)"), so a standing that moved without changing its
+label still reads as having moved. `status` shows each companion's regard from
+the day they join, and "near leaving" once it reaches −2.
 
 Root-only fields (`id`, `title`, `intro`, `objectives`, `start`, `hp`,
 `maxScore`, `walkthrough`, `progress`) in a part are a load error. Anything

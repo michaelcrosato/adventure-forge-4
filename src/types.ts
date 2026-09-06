@@ -355,6 +355,8 @@ export type World = {
     label: string;
     states: { if: Cond[]; text: string }[];
     fallback?: string;
+    /** A var whose value is shown after the text, e.g. "the Watch: neither friend nor foe (+1)". */
+    var?: string;
     /** Shown only while every condition holds. */
     if?: Cond[];
   }[];

@@ -306,7 +306,7 @@ test("taking an owned thing under its owner's eyes is seen and counted; coin mov
   });
   world.rooms["b"]!.actions = [{ id: "kneel", label: "kneel to the seat", fx: [["end", "lose", "knelt", "You kneel."]] }];
   let { state } = newState(world, 1);
-  assert.match(renderMenu(world, state).text, /take purse \(shopkeeper is watching\)/);
+  assert.match(renderMenu(world, state).text, /take purse \(shopkeeper is watching: taking it is theft\)/);
   const out = step(world, state, actionByLabel(world, state, "take purse")!);
   assert.match(out.events.join(" "), /The shopkeeper sees you take it\./);
   assert.equal(out.state.flags["stole_purse"], true);
@@ -376,7 +376,7 @@ test("blows rotate onto standing companions; one struck to nothing falls back, s
   assert.match(out.events.join(" "), /Lys goes down, and crawls clear of the fight/);
   assert.equal(out.state.flags["down_lys"], true);
   assert.equal(out.state.flags["fell_lys"], true, "the fall is remembered after she is back up");
-  assert.match(renderStatus(world, out.state), /Party: Lys \(hp 1\/4, down\)/);
+  assert.match(renderStatus(world, out.state), /Party: Lys \(regard 0, hp 1\/4, down\)/);
   const idle = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!);
   assert.doesNotMatch(idle.events.join(" "), /Lys (hits|misses)/, "a downed companion takes no part");
   const back = step(world, idle.state, actionByLabel(world, idle.state, "go west")!);

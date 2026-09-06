@@ -246,7 +246,10 @@ export function renderStatus(world: World, s: State): string {
     if (p.if && !p.if.every((c) => condOk(world, s, c))) continue;
     const hit = p.states.find((st) => st.if.every((c) => condOk(world, s, c)));
     const text = hit?.text ?? p.fallback;
-    if (text) lines.push(`${p.label}: ${text}`);
+    // a path that names its var shows the number too, so a "+1" that has not moved the label still reads as something
+    const v = p.var ? (s.vars?.[p.var] ?? 0) : undefined;
+    const num = v === undefined ? "" : ` (${v > 0 ? "+" : ""}${v})`;
+    if (text) lines.push(`${p.label}: ${text}${num}`);
   }
   // the journal: every active quest with its current line, then the closed ones by name
   if (world.quests) {
@@ -286,9 +289,10 @@ export function renderStatus(world: World, s: State): string {
     const party = s.party.map((id) => {
       const def = world.npcs[id];
       const name = def?.name ?? id;
-      const a = s.vars?.[`appr_${id}`];
+      const a = s.vars?.[`appr_${id}`] ?? 0;
       const bits: string[] = [];
-      if (a !== undefined) bits.push(`regard ${a > 0 ? "+" : ""}${a}`);
+      // regard is always shown, from the day they join; at -2 the next thing they mind is the last
+      bits.push(`regard ${a > 0 ? "+" : ""}${a}${a <= -2 ? ", near leaving" : ""}`);
       if (def?.hp !== undefined) bits.push(`hp ${s.npcHp?.[id] ?? def.hp}/${def.hp}${s.flags?.[`down_${id}`] ? ", down" : ""}`);
       return bits.length ? `${name} (${bits.join(", ")})` : name;
     });
