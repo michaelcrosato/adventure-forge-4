@@ -1,0 +1,547 @@
+{
+  "regions": { "sh": { "name": "the Shieldings" } },
+  "gen": [
+    {
+      "id": "sh_plain",
+      "name": "the Shieldings",
+      "seed": 151,
+      "w": 6,
+      "h": 6,
+      "region": "sh",
+      "walls": [[0, 0], [5, 0], [0, 5], [5, 5], [2, 3], [3, 2]],
+      "pools": {
+        "descs": ["Open plough-land, hedge and furrow, gray under a wide sky."],
+        "briefs": ["Open plough-land."],
+        "scenes": []
+      },
+      "links": [
+        { "cell": [2, 0], "dir": "north", "to": "sh_north_road", "back": "south", "landmark": "the north road" },
+        { "cell": [0, 2], "dir": "west", "to": "sh_west_road", "back": "east", "landmark": "the west road" },
+        { "cell": [3, 5], "dir": "south", "to": "sh_ditch_gate", "back": "north", "landmark": "Harrowfield" },
+        { "cell": [2, 2], "dir": "in", "to": "sh_shield_line", "back": "out", "landmark": "the Truce Field" }
+      ],
+      "spots": [
+        {
+          "cell": [1, 0],
+          "name": "Dew-Pond Corner",
+          "desc": "A dew-pond sits shallow in a fold of ground, its rim trodden hard once by men who drank here the night before the wall broke. The water still tastes faintly of iron, Harrowfield says, though nobody living has proved it.",
+          "brief": "A shallow dew-pond, its rim long trodden hard.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_1_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 5 south and 2 east. The Truce Field: 2 south and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 0],
+          "name": "The North Ditch-Crossing",
+          "desc": "The old ditch runs shallow here before the ground climbs toward the hedge. North, hedgerow gives way to the Fallows' dikes; the road that way carries the name of somebody else's grief now.",
+          "brief": "The ditch shallows. North: the Fallows' dikes.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_2_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 5 south and 1 east. The Truce Field: 2 south."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 0],
+          "name": "The High Furrow",
+          "desc": "Plough-ridges climb toward the field's northern hedge, the soil paler here where flint sits close under the topsoil. Even this far from the lines, the furrows run crooked, as if the ploughman's mind was elsewhere.",
+          "brief": "Pale, crooked furrows near the hedge.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_3_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 5 south. The Truce Field: 2 south and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 0],
+          "name": "Crow-Tree Rise",
+          "desc": "A single ash stands black-branched against the sky, and crows keep it the way a garrison keeps a wall — always at least one watching, however still the rest of the plain goes.",
+          "brief": "A crow-kept ash; always one watching.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "sh_bearings_4_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 5 south and 1 west. The Truce Field: 2 south and 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 1],
+          "name": "The Reed Margin",
+          "desc": "Reed and rush still crowd the low ground here, the fen's last reach before the plain firms up for good. The air smells of standing water behind you and turned earth ahead.",
+          "brief": "Reed gives way to firm plough-land.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_0_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 4 south and 3 east. The Truce Field: 1 south and 2 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 1],
+          "name": "The Horse-Mound",
+          "desc": "A long, low mound breaks the plough-land here, turf too thick and old for any furrow to have crossed it. Whatever went into it went in whole, and with its tack still on.",
+          "brief": "A long mound, too old to have been ploughed.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_1_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 4 south and 2 east. The Truce Field: 1 south and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 1],
+          "name": "The Old Horse-Pit",
+          "desc": "A wide pit scars the ground beside the mound, its sides slumped soft with age. Bone shows white at the bottom where the rain has had four hundred years to work at it.",
+          "brief": "A slumped pit, old bone showing white.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "sh_bearings_2_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 4 south and 1 east. The Truce Field: 1 south."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 1],
+          "name": "The Lone Elm",
+          "desc": "One elm stands where a hedge-line ought to run on, the rest of it long grubbed out for firewood or fencing. Rope-galls scar its lowest limb, healed over crooked.",
+          "brief": "A lone elm, an old rope-scar on its limb.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_3_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 4 south. The Truce Field: 1 south and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 1],
+          "name": "The Beacon Rise",
+          "desc": "The ground swells toward a ruined signal-tower, built once to carry warning faster than any rider could. Nobody has lit it in longer than Harrowfield can say, though the brazier at its foot still holds char.",
+          "brief": "Rising ground, a ruined beacon-tower above.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_4_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 4 south and 1 west. The Truce Field: 1 south and 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 1],
+          "name": "Windrow Bank",
+          "desc": "Cut hay lies windrowed along the plain's eastern hedge, turned and left for a hay-making that never quite gets finished before the light goes. Somebody's habit, more than anybody's plan.",
+          "brief": "Windrowed hay along the hedge.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_5_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 4 south and 2 west. The Truce Field: 1 south and 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 2],
+          "name": "The Last Firm Ground",
+          "desc": "The ground stops giving underfoot here, reed and standing water behind, sound plough-earth ahead. West, the drove-road picks its way out of Fenmarch's fen toward this same firm rise.",
+          "brief": "Firm ground at last. West: the drove-road.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_0_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 3 south and 3 east. The Truce Field: 2 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 2],
+          "name": "The Cairn of Bosses",
+          "desc": "A low cairn of dug earth marks where somebody has been turning up old iron with a spade rather than a plough — and among the spoil, unmistakably, the curved bronze of shield-bosses, three or four, still uncounted.",
+          "brief": "A dug cairn; shield-bosses among the spoil.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "sh_bearings_1_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 3 south and 2 east. The Truce Field: 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 2],
+          "name": "The Boundary Stone",
+          "desc": "A squared stone marks some old field-boundary, its carved letters worn to guesswork. Someone has propped a second, newer stone beside it, its face still blank, waiting on a mason who hasn't come yet.",
+          "brief": "An old boundary stone, a blank one beside it.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "sh_bearings_4_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 3 south and 1 west. The Truce Field: 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 2],
+          "name": "East Hedge Corner",
+          "desc": "The plain's hedge turns a hard corner here, thorn grown thick enough to have never once needed mending. Beyond it, country the Shieldings doesn't claim runs on unseen.",
+          "brief": "A thick hedge-corner, thorn unmended.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_5_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 3 south and 2 west. The Truce Field: 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 3],
+          "name": "Reed's End",
+          "desc": "The last true reed gives out against a low bank, fen behind, plough-land ahead for good. A heron stands the boundary like it was posted there on purpose.",
+          "brief": "The fen's last reed; a heron standing guard.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_0_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 2 south and 3 east. The Truce Field: 1 north and 2 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 3],
+          "name": "The Drove-Road",
+          "desc": "A cart-track runs straight across the plain here, ruts pressed by four hundred years of stock driven between the fen and the market roads east, indifferent to whatever the ground beneath it remembers.",
+          "brief": "A straight, rutted drove-track.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_1_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 2 south and 2 east. The Truce Field: 1 north and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 3],
+          "name": "The Shield-Ditch, Further On",
+          "desc": "The old ditch runs on from here, north and west, its line still true enough to walk by moonlight. The field-reeve's plough turns south of it without fail, every season, without anyone telling the new hands why.",
+          "brief": "The ditch runs on, true by moonlight.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_3_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 2 south. The Truce Field: 1 north and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 3],
+          "name": "The Banner-Stump",
+          "desc": "A blackened stump stands alone where nothing else grew back, wood gone hard as iron. Harrowfield says a banner was planted here once and burned to the root rather than be struck.",
+          "brief": "A blackened stump; a banner burned to the root.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "sh_bearings_4_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 2 south and 1 west. The Truce Field: 1 north and 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 3],
+          "name": "Far Hedge",
+          "desc": "The eastern hedge runs thin and gapped here, more suggestion than barrier. Something about the ground beyond it discourages sheep as much as people.",
+          "brief": "A thin, gapped hedge.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_5_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 2 south and 2 west. The Truce Field: 1 north and 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 4],
+          "name": "The Fen Verge",
+          "desc": "Plough-land softens back toward fen at the plain's southwest corner, the last furrows giving up a little earlier every year the dikes go unmended.",
+          "brief": "Plough-land softening back toward fen.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_0_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 1 south and 3 east. The Truce Field: 2 north and 2 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 4],
+          "name": "The Old Chantry Path",
+          "desc": "A path of flat stones leads toward a second, older chapel roof, moss-black and long neglected by the priest who keeps the newer one. Whatever's kept there, he has never once mentioned it unasked.",
+          "brief": "A path to an older, neglected chapel.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_1_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 1 south and 2 east. The Truce Field: 2 north and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 4],
+          "name": "The Turned Furrow",
+          "desc": "The ploughs turn away from a long strip of ground here, leaving it fallow between two worked fields without a fence or a marker to explain why. Every hand in Harrowfield knows to leave it, and none says the word for what it is.",
+          "brief": "A fallow strip; the ploughs simply turn away.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "sh_bearings_2_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 1 south and 1 east. The Truce Field: 2 north."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 4],
+          "name": "Plough's End",
+          "desc": "The worked land runs out here, the last furrow trailing off crooked as if the ploughman looked back once too often. North, the ground belongs to older business entirely.",
+          "brief": "The last furrow, trailing off crooked.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_3_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 1 south. The Truce Field: 2 north and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 4],
+          "name": "The Old Muster Ground",
+          "desc": "Flattened ground and old fire-scars mark where a camp once stood in some strength, cookfire-black still showing through the turf. In, whatever's left of it keeps its own hours.",
+          "brief": "Old fire-scars; a camp's flattened ground.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_4_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 1 south and 1 west. The Truce Field: 2 north and 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 4],
+          "name": "South Hedge",
+          "desc": "The southern hedge runs low and well-kept here, Harrowfield's hand plain in every laid stem. Someone still walks this line every season, whatever else goes untended further out.",
+          "brief": "A low, well-kept hedge.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_5_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 1 south and 2 west. The Truce Field: 2 north and 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 5],
+          "name": "The Ditch-Road",
+          "desc": "A cart-track runs south from the old ditch toward Harrowfield's rooftops, worn by every plough and every funeral the village has sent out this way in living memory.",
+          "brief": "A cart-track south, toward Harrowfield.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_1_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 2 east. The Truce Field: 3 north and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 5],
+          "name": "Harrow's Approach",
+          "desc": "The plain gives way to hedged closes and the first sound of a dog barking, Harrowfield close now south. The ground here has been worked so long it barely remembers being anything else.",
+          "brief": "Hedged closes; Harrowfield close south.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_2_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 1 east. The Truce Field: 3 north."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 5],
+          "name": "The Boundary Hedge",
+          "desc": "The plain's southeast hedge marks Harrowfield's furthest worked ground, laid and relaid every generation by hands that never once asked what lay north of it.",
+          "brief": "The southeast hedge, Harrowfield's edge.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "sh_bearings_4_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the plain runs, Harrowfield is 1 west. The Truce Field: 3 north and 2 west."]]
+            }
+          ]
+        }
+      ],
+      "cellFx": {
+        "onEnter": [
+          [
+            "chance",
+            8,
+            [
+              [
+                "if",
+                [["!npcDead", "sh_levy"]],
+                [
+                  ["npcgo", "sh_levy", "here"],
+                  ["say", "Gray as frost, a shape stands its ground where the light says nothing should be standing at all — a levy who never stood down, still holding a line that broke four hundred years ago."]
+                ],
+                []
+              ]
+            ],
+            []
+          ]
+        ]
+      }
+    }
+  ],
+  "stamps": [
+    {
+      "template": "barrow",
+      "id": "sh_horse_barrow",
+      "at": "sh_plain_1_1",
+      "dir": "down",
+      "back": "up",
+      "sideTrip": true,
+      "landmark": "the Horse-Barrow",
+      "vars": {
+        "NAME": "the Horse-Barrow",
+        "WIGHT": "a horse-wight",
+        "SIGN": "Bit and bridle-rings, corroded to lace, are heaped just inside the doorstone — offerings, or the last of somebody's tack.",
+        "LOOT": "a cavalry officer's spurs, silver gone black"
+      }
+    },
+    {
+      "template": "tower",
+      "id": "sh_beacon",
+      "at": "sh_plain_4_1",
+      "dir": "up",
+      "back": "down",
+      "sideTrip": true,
+      "landmark": "the Levies' Beacon",
+      "vars": {
+        "NAME": "the Levies' Beacon",
+        "WATCHER": "a beacon-keeper's shade",
+        "VIEW": "the whole Shieldings spreads flat and gray below, the old ditch a dark seam across it, Harrowfield's smoke low to the south",
+        "SIGN": "Cold char still fills the brazier at its foot, banked for one fire yet to come.",
+        "LOOT": "a signaller's tinder-horn, dry inside still"
+      }
+    },
+    {
+      "template": "chapel",
+      "id": "sh_bonehouse",
+      "at": "sh_plain_1_4",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the Chantry Bone-House",
+      "vars": {
+        "NAME": "the Chantry Bone-House",
+        "SAINT": "a fever-year shade",
+        "SIGN": "Older bones are stacked here too, tidy and forgotten — a fever, forty years back, Elgin never spoke of.",
+        "LOOT": "a tin reliquary"
+      }
+    },
+    {
+      "template": "camp",
+      "id": "sh_founders_camp",
+      "at": "sh_plain_4_4",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the Founders' Camp",
+      "vars": {
+        "NAME": "the Founders' Camp",
+        "CAPTAIN": "a founding captain's shade",
+        "SIGN": "A charter-stone, blank now, is set flat into the ground by the fire-ring — something was once nailed to it, and read aloud.",
+        "LOOT": "a Free Companies recruiting seal, unbroken"
+      }
+    }
+  ],
+  "npcs": {
+    "sh_levy": {
+      "name": "field-wight",
+      "room": null,
+      "hostile": true,
+      "aggressive": true,
+      "hp": 10,
+      "atk": 2,
+      "df": 10,
+      "desc": "Gray as frost and just as cold to look at, holding a stance no living soldier could keep this long: shield up, feet set, waiting on an order that was never given to stand down.",
+      "onDeath": [
+        ["score", 3],
+        ["xp", 4],
+        ["say", "It goes down the way a held breath finally goes out, gray fading from the air where it stood. Somewhere across the plain, for a moment, the rest of the line seems to notice."]
+      ]
+    }
+  }
+}
