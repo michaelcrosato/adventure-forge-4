@@ -212,8 +212,8 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the fourth playtest round): 464 rooms, 140 npcs, 162
-items, 69 quests, 36 stamped places each with its own sign and reward, 366
+**As built** (after the fifth playtest round): 517 rooms, 153 npcs, 173
+items, 77 quests, 40 stamped places each with its own sign and reward, 380
 epilogue lines, 4 companions, 6 factions, 7 endings each with a proof; every
 gate in the holds and the capital has a force, a craft and a words route, and
 ten waystations on the roads between the holds each put a small choice in the
@@ -352,6 +352,34 @@ oil on terms that cost the company nothing — talk prices down, pay a camp's
 toll in a promise the captain holds them to, and meet plain folk who do not
 trust the smooth talk. Class lines are extra, never the only way: every gate
 keeps its force, craft and words routes for everyone.
+
+**The Fallows** (the eleventh region, `fl`): east of Hollowbrook's south
+dike, the hold the gray already took — emptied in the Winter of Lying Down
+forty years ago, when its people lost the will to stay and lay down in their
+own fields, and the few left standing buried the rest in one long furrow.
+Wickstead, the crossroads village around the last standing chapel, holds the
+emptied hold's grandchildren come back for the land and the people who came
+after them: Old Ede, who was a girl that winter and remembers every name;
+Surveyor Pell, staking the Crown's escheat; Recruiter Dace, drilling the
+desperate for the Companies in an empty barn; Sister Merrow, the Church's
+uninvited rite-giver; Frey, a Keeper who will not say so; Lay-brother Cobb
+with a cart of cinder-oil; Rue Aldern's trade counter; Dain, whose father
+lies in the furrow. A 6×6 walled wilderness of emptied hamlets, a market
+cross with no market and a mill with its wheel still carries four stamped
+places (Longacre Chapel, the Forebarrow, the Picker's Hut, the Sump Camp)
+and leads to the Long Furrow. Rested with every name — Ede's memory, the
+parish roll, the headland's markers — and Frey's verse and Merrow's rite
+together; bargained with a vow that the land stays the dead's (no stakes, no
+muster — declaring it for the Crown or the Companies afterwards breaks the
+bargain); or burned with Cobb's oil, after which the surveyor calls the ash
+farmland. The land question is the region's own fork, wanted by all six
+factions: the Crown's stakes, the Companies' muster, the returners, or
+fallow for the dead. Eight quests (the names for the rite, the boy at the
+row, the surveyor's stakes, the muster in the barn, the woman who won't
+leave, the land, the furrow, the aftermath), 53 rooms, 13 npcs, 80 topics,
+14 epilogue lines, a class moment for each class, all four companions with
+lines on entering and at the furrow; the act recap counts eight holds and
+the tallies run to eight.
 
 ## Build order
 
