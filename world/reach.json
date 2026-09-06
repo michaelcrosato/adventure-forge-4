@@ -1,7 +1,7 @@
 {
   "id": "reach",
   "title": "The Gray Reach",
-  "intro": "The barrow on the hill above Last Light has opened, and a gray blight creeps down the Vale of Ash — crops first, then cattle, then the will to stay. Someone must go up and settle the Hollow King, by verse or by crown or by steel. The Vale is one hold of ten. What you learn under that hill is only the beginning of it. Ask people more than one thing; carry what they give you; choose, and live with it.",
+  "intro": "The barrow on the hill above Last Light has opened, and a gray blight creeps down the Vale of Ash — crops first, then cattle, then the will to stay. Someone must go up and settle the Hollow King, by verse or by crown or by steel. The Vale is one hold of eleven. What you learn under that hill is only the beginning of it. Ask people more than one thing; carry what they give you; choose, and live with it.",
   "objectives": [
     {
       "if": [["flag", "mg_entered"]],
@@ -9,11 +9,11 @@
     },
     {
       "if": [["flag", "act2_open"]],
-      "text": "Act 2: the holds. Seven holds, seven unrested griefs, each to be rested, bargained with, or burned: Thornwold west of the Vale, Fenmarch east, Wardmoor north, the Iron Downs beyond Thornwold, Hollowbrook beyond Fenmarch, the Saltkerns on the coast south of Thornwold, and Emberfall past Thornwold's wayfire — the hold that was burned once. Coldpass, north of Wardmoor, opens on three hollows rested (the Keepers' stair), the Regent's writ (two hollows burned, or two services to Highward's Watch), or the Free Companies' word (Gullhaven or Camp Gallows). The realm is large: the straight road to Marrowgate runs near three hundred turns; a hold seen whole is forty to seventy more, and seeing them all, many times that. Companions can be met in the Vale and asked to come along, as many as will; each carries a grief of their own that ends in a named hold. Reputation with the Watch, the Church, the Ironbound, the Free Companies, the Keepers, and the Crown opens and closes doors."
+      "text": "Act 2: the holds. Eight holds, eight unrested griefs, each to be rested, bargained with, or burned: Thornwold west of the Vale, Fenmarch east, Wardmoor north, the Iron Downs beyond Thornwold, Hollowbrook beyond Fenmarch, the Saltkerns on the coast south of Thornwold, Emberfall past Thornwold's wayfire — the hold that was burned once — and the Fallows east of Hollowbrook's south dike, the hold the gray already took. Coldpass, north of Wardmoor, opens on three hollows rested (the Keepers' stair), the Regent's writ (two hollows burned, or two services to Highward's Watch), or the Free Companies' word (Gullhaven or Camp Gallows). The realm is large: the straight road to Marrowgate runs near three hundred turns; a hold seen whole is forty to seventy more, and seeing them all, many times that. Companions can be met in the Vale and asked to come along, as many as will; each carries a grief of their own that ends in a named hold. Reputation with the Watch, the Church, the Ironbound, the Free Companies, the Keepers, and the Crown opens and closes doors."
     },
     {
       "if": [],
-      "text": "Act 1: settle the Hollow King in the barrow north of the Vale — speak his three verses, return his crown, or end him. Then the roads open: seven holds, each with its own unrested grief, and the pass to Marrowgate beyond. Companions can be met in the Vale and asked to come along, as many as will. Reputation with the Watch, the Church, the Ironbound, the Free Companies, the Keepers, and the Crown opens and closes doors. Kneeling to the king ends your story. The realm is large: the straight road to Marrowgate runs near three hundred turns; seeing every hold whole, many times that."
+      "text": "Act 1: settle the Hollow King in the barrow north of the Vale — speak his three verses, return his crown, or end him. Then the roads open: eight holds, each with its own unrested grief, and the pass to Marrowgate beyond. Companions can be met in the Vale and asked to come along, as many as will. Reputation with the Watch, the Church, the Ironbound, the Free Companies, the Keepers, and the Crown opens and closes doors. Kneeling to the king ends your story. The realm is large: the straight road to Marrowgate runs near three hundred turns; seeing every hold whole, many times that."
     }
   ],
   "start": "va_gate",
@@ -193,7 +193,7 @@
         },
         {
           "if": [["flag", "act2_open"]],
-          "text": "Seven holds, seven unrested griefs. Rest three, earn the Regent's writ, or buy the Companies' road — any opens Coldpass."
+          "text": "Eight holds, eight unrested griefs. Rest three, earn the Regent's writ, or buy the Companies' road — any opens Coldpass."
         },
         {
           "if": [["flag", "va_king_rested"]],
@@ -1672,7 +1672,7 @@
     "rep_crown": "the Crown"
   },
   "statusTracks": [
-    { "var": "hollows_rested", "label": "Hollows rested", "max": 7, "if": [["flag", "act2_open"]] },
-    { "var": "hollows_burned", "label": "Hollows burned", "max": 7, "if": [["flag", "act2_open"]] }
+    { "var": "hollows_rested", "label": "Hollows rested", "max": 8, "if": [["flag", "act2_open"]] },
+    { "var": "hollows_burned", "label": "Hollows burned", "max": 8, "if": [["flag", "act2_open"]] }
   ]
 }
