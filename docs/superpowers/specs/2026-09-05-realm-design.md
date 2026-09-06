@@ -212,23 +212,37 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the sixth playtest round): 517 rooms, 153 npcs, 173
-items, 77 quests, 40 stamped places each with its own sign and reward, 392
-epilogue lines, 4 companions, 6 factions, 7 endings each with a proof; every
-gate in the holds and the capital has a force, a craft and a words route, and
-ten waystations on the roads between the holds each put a small choice in the
-traveller's way. `maxScore` 366, the score the proven walkthrough reaches: a
-Scholar with Lys along rests Thornwold (the Keeper's verse), the Iron Downs
-(the true ledger) and the Saltkerns (the sailors' verse under the Farlight),
-earns the Free Companies' stair in Gullhaven, climbs the Keepers' pilgrim
-stair at Coldpass, hears the first Reeve's confession, and speaks the Great
-Rite — 255 turns, about 417 characters a screen on average. Proofs replay the
-Regent deposed by the Companies, the throne burned with the Regent's own oil,
-the Vale's crown worn on the gray seat, and kneeling to the hollow.
-Twenty-five blind playtests of the whole realm (300–600 turns) reached
-eighteen wins on three different roads — twelve of them at full score — one
-loss, and six players who ran out of turns in the holds; all 426 findings
-they raised are fixed.
+**As built** (after the seventh playtest round): twelve regions, nine holds;
+570 rooms, 167 npcs, 184 items, 86 quests, 44 stamped places each with its own
+sign, reward and hermit's voice, 408 epilogue lines, 4 companions, 6 factions,
+7 endings each with a proof; every gate in the holds and the capital has a
+force, a craft and a words route, ten waystations on the roads between the
+holds each put a small choice in the traveller's way, and a travel list or a
+conversation that outgrows the menu cap turns pages, so neither regions nor
+landmarks are capped. `maxScore` 366, the score the proven walkthrough
+reaches: a Scholar with Lys along rests Thornwold (the Keeper's verse), the
+Iron Downs (the true ledger) and the Saltkerns (the sailors' verse under the
+Farlight), earns the Free Companies' stair in Gullhaven, climbs the Keepers'
+pilgrim stair at Coldpass, hears the first Reeve's confession, and speaks the
+Great Rite — 255 turns, about 417 characters a screen on average. Proofs
+replay the Regent deposed by the Companies, the throne burned with the
+Regent's own oil, the Vale's crown worn on the gray seat, and kneeling to the
+hollow. Thirty-seven blind playtests of the whole realm (300–600 turns)
+reached thirty wins on four different roads, one loss, and six players who
+ran out of turns in the holds; of the 691 findings they raised, 682 are fixed
+or judged by design, and the nine still open are design notes.
+
+**The Meres** (the twelfth region, north of Barrowmere's water): reed-lakes
+and lantern-lit stilt-hamlets around Lantern Holm, where the Keepers drowned
+their first Hall — and the covenant stone with it — sooner than yield it to
+the first Reeve's men. The Drowned Hall's grief is rested by speaking the
+covenant's three words whole (the divers' word, the shrine's word, the
+warden's song), bargained by swearing it before the table (Maren asks, when
+you come back, whether it was kept), or burned with the dam charges, which
+cracks the stone. The covenant carried whole is a fourth road through
+Coldpass, can be read before the Hollow Throne, and the first Reeve's shade
+knows when it is found; the dams question is the region's own fork. Seven
+landmarks, a driftwood hermit, and the act recap counts nine holds.
 
 **Roads Between** (added after the first playtest rounds): a ring of six
 cross-hold quests, each asked in one hold and settled in the next, flagged

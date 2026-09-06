@@ -1,0 +1,70 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 530,
+  "receipt": "reach.331.530.366.reach_at_rest.1ed34ab5",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The hunter promises 'Clear the pack out proper and I'll call the debt paid before you ever show me a pelt' for the wolf-pack quest (Warden-only option). I killed the lean wolf and the gaunt wolf and later showed both trophies to the hunter (each time he reacted warmly and paid herbs+gold), but no 'Quest done' line for that quest ever appeared, and he never said the debt was settled. Unclear whether the promise was actually honored by the game state.",
+      "where": "Hunter's Camp / 'take the wolf pack on yourself (as a Warden)'"
+    },
+    {
+      "sev": "P1",
+      "what": "The Quay, Gullhaven kept printing the stale recap line 'The widow's asking a harder question now.' on every return visit even after Widow Kestrel's follow-up quest ('Gullhaven, After') was fully resolved (said a rite for her husband, quest marked done).",
+      "where": "The Quay, Gullhaven / room recap text"
+    },
+    {
+      "sev": "P1",
+      "what": "'The Wreckers' Roost' quest text says the roost is 'a palisade east along the shore from the quay, past the dunes,' but going east from Gullhaven's quay leads straight onto the Fenmarch coast road, not toward any dunes or palisade. The only wrecker-related content actually found (The Weir, a wrecker scout, the Weeping Caves) was reached via an unrelated southward cliff path from the Farlight/Point. Both 'The Wreckers' Roost' and 'The Missing Nets' were left permanently unresolved despite deliberately searching along the hinted direction.",
+      "where": "Saltkerns Coast Road / go east; quest text for 'The Wreckers' Roost' and 'The Missing Nets'"
+    },
+    {
+      "sev": "P2",
+      "what": "Sela's Hut (Saltkerns, near the salt pans) is a near-verbatim reuse of old Maud's Smoke-Hut (Thornwold's Understory area): identical room description template ('One room: a hearth, a cot, and X mid-task at a bench...'), the same three dialogue options ('press for it plainly / read the signs yourself / offer to help, in trade'), and the identical 'parting gift' payoff line. Reads as copy-pasted content rather than two distinct characters.",
+      "where": "Sela's Hut, Fenmarch vs. Maud's Smoke-Hut, Thornwold"
+    },
+    {
+      "sev": "P2",
+      "what": "Skill-check failure flavor text repeats verbatim across unrelated scenes, e.g. 'So close — that one nearly landed' fired for both the wrestling-ring bet at Camp Gallows and diving for the sunken bell in the Drowned Nave.",
+      "where": "multiple DC-gated actions (Muster Ground ring, Drowned Nave dive)"
+    },
+    {
+      "sev": "P2",
+      "what": "Every Warden-only 'state your business plainly / let your bearing speak' option that touches a Free Company NPC (the hunter's wolf offer, Captain Vane, Harbourmaster Rennick) costs Free Companies standing because it 'reads as Watch.' This is a consistent, real mechanical downside of the Warden class that is never mentioned at character creation, where the Warden is pitched purely on strengths ('steel opens what words and lore cannot').",
+      "where": "character select (Warden) vs. later '(as a Warden)' dialogue options"
+    },
+    {
+      "sev": "P2",
+      "what": "Only one companion 'quarrel' with a dedicated arbitration menu ('X: back her/him' plus a will-check 'call it a draw' option) fired in the whole 530-turn run: the barrow-doors seal-or-open dispute between Tamsin and Osk. Several other sharply divisive choices later (naming the false accuser at the Gallows Glade memorial, exposing the Ironbound's plan to Prior Halm, looming over Halm himself for a confession) produced simultaneous but independent approve/disapprove reactions from companions, never a second 'they both look at you' moment, so the instructed 'let them settle it themselves next time' step could never be exercised.",
+      "where": "companion regard system generally"
+    }
+  ],
+  "confusions": [
+    "'settles this hold's grief: rests it' vs '...: a bargain' labels are accurate and trustworthy wherever they appear, but the specific action set offered at a grief-scene often depends on items/knowledge gathered in an entirely different room with no hint left behind — e.g. the Reeve's Pride wreck shows only the 'pay 6 gold' bargain option until you've separately gotten the sailors' verse from Widow Kestrel AND lit the Farlight lighthouse, and nothing at the wreck itself says a fuller path exists elsewhere on the map.",
+    "Fast travel ('travel to a known place') only lists a handful of named hub landmarks per region, not every room actually visited — several fully-explored dead-end rooms (Widow's Well, The Last Trees, the barrow's inner chambers) had to be walked back to leg-by-leg with no shortcut, even late in the game.",
+    "The reeve's very first 'roads out of the Vale' summary (west=Thornwold, east=Fenmarch via the causeway, north=Wardmoor) never mentions that Fenmarch is also reachable directly from the Saltkerns' coast road — that connection was found by accident while walking toward the smugglers' stair, well after visiting Fenmarch the 'intended' way would have made more sense chronologically.",
+    "Found items sometimes carry a named future payoff in their flyover text (e.g. a name-carved buckle: 'Mara, on Stilt Row, would want to know this was found') that never appears as a tracked quest in status, so it is easy to finish the game still holding loose narrative threads with no record they exist."
+  ],
+  "suggestions": [
+    "Add an explicit 'Quest done: ...' line for promise-based quests resolved purely through combat (the hunter's wolf pack), matching the convention every other quest in the game follows.",
+    "Fix the Wreckers' Roost / Missing Nets direction text so it actually matches the exit from Gullhaven's quay that leads there.",
+    "Give the two hermit-hut side vignettes (Maud, Sela) at least one unique line apiece so they don't read as the same NPC copy-pasted into two different holds.",
+    "Mention a class's hidden reputation trade-off (e.g. the Warden's Free-Companies penalty) somewhere in the class-select text, not only its combat upside.",
+    "Let 'travel to a known place' include any previously-visited room, or at least every dead-end reward room, instead of only named hub landmarks.",
+    "When a grief scene has a richer resolution gated by an item or fact learned elsewhere, add one hint line (the way 'weigh the doors of the seat' did at the Hollow Throne) so the first-seen option doesn't read as the only one.",
+    "Surface a second companion-quarrel opportunity more reliably across a run this long (530 turns, ~3 dozen approve/disapprove beats) so the 'let them settle it themselves' arbitration path is reachable without the player having to guess which specific choice will trigger it."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T06-30-39-532Z",
+  "seed": 331,
+  "build": {
+    "rev": "d9445f5",
+    "world": "22330ff2"
+  },
+  "cost_usd": null,
+  "verified": true
+}

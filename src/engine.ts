@@ -814,7 +814,7 @@ function hollowRoute(fxs: Fx[] | undefined): string | null {
   for (const fx of fxs ?? []) {
     if (fx[0] === "set") {
       const m = /_hollow_(rested|bargained|burned)$/.exec(fx[1]);
-      if (m) return m[1] === "rested" ? "rests it" : m[1] === "bargained" ? "a bargain" : "burns it";
+      if (m) return m[1] === "rested" ? "rests it" : m[1] === "bargained" ? "a bargain: quieter, not rested" : "burns it";
     }
     if (fx[0] === "addvar" && fx[1] === "hollows_burned") tally = "burns it";
     if (fx[0] === "addvar" && fx[1] === "hollows_rested" && !tally) tally = "rests it";

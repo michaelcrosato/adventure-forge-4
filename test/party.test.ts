@@ -358,7 +358,7 @@ test("the menu says when an action settles a hold's grief or a miss costs standi
   world.factions = { rep_church: "the Gray Church" };
   assert.match(renderMenu(world, state).text, /a miss costs standing with the Gray Church/);
   world.rooms["a"]!.actions!.push({ id: "vow", label: "swear the vow", fx: [["set", "x_hollow_bargained"], ["addvar", "hollows_rested", 1]] });
-  assert.match(renderMenu(world, state).text, /swear the vow \(settles this hold's grief: a bargain\)/);
+  assert.match(renderMenu(world, state).text, /swear the vow \(settles this hold's grief: a bargain: quieter, not rested\)/);
   const unmet = step(world, state, actionByLabel(world, state, "snub the hunter")!);
   assert.doesNotMatch(unmet.events.join(" "), /Lys/, "a companion never met is not named: her existence is not news yet");
   state.visited.push("b"); // met her at her camp
