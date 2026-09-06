@@ -212,9 +212,9 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the eleventh playtest round): fourteen regions, eleven holds;
-681 rooms, 199 npcs, 204 items, 102 quests, 52 stamped places each with its own
-sign, reward and hermit's voice, 464 epilogue lines, 4 companions, 6 factions,
+**As built** (after the twelfth playtest round): fifteen regions, twelve holds;
+739 rooms, 212 npcs, 215 items, 109 quests, 56 stamped places each with its own
+sign, reward and hermit's voice, 478 epilogue lines, 4 companions, 6 factions,
 7 endings each with a proof; every gate in the holds and the capital has a
 force, a craft and a words route, every hollow room weighs its grief for
 free, ten waystations on the roads between the holds each put a small choice
@@ -227,8 +227,8 @@ stair in Gullhaven, climbs the Keepers' pilgrim stair at Coldpass, hears the
 first Reeve's confession, and speaks the Great Rite — 255 turns, about 417
 characters a screen on average. Proofs replay the Regent deposed by the
 Companies, the throne burned with the Regent's own oil, the Vale's crown worn
-on the gray seat, and kneeling to the hollow. Forty-six blind playtests of the
-whole realm (300–600 turns) reached thirty-eight wins on four different roads,
+on the gray seat, and kneeling to the hollow. Forty-eight blind playtests of the
+whole realm (300–650 turns) reached forty wins on four different roads,
 one loss, and seven players who ran out of turns (six in the holds, one inside
 the palace with the seat's four doors in view); every one of the 915 findings
 they raised is fixed, disproven by replaying the trace, or judged by design.
@@ -280,6 +280,35 @@ Ironbound's coppice, or left wild — read back in Hornhallow, by the Regent,
 and by the first Reeve's shade, who never sent for his father's hunt. Seven
 quests, 56 rooms, 15 npcs, 14 epilogue lines; every companion has a word on
 entering and on how it went.
+
+**The Shieldings** (the fifteenth region, `sh`): the open plain east of
+Fenmarch's fen and south of the Fallows' dikes, where the winter after the
+first Reeve took the crown his hired Free Companies broke the loyal lords'
+shield-wall by dark and shot down the herald sent out at dusk with the white
+rod to ask a truce for the wounded; the Companies signed their founding
+charter on the field that night, and both lines have held their ground
+unrested since. Harrowfield farms around them: a field-reeve who ploughs
+around the dead's ground, a Crown stone-cutter with a warrant for the first
+Reeve's victory-stone, a Companies pensioner who keeps the founding roll, a
+Keepers' remembrancer with the count of the levies' names, a chantry-priest
+who will bury the dead only all together and so has buried none, an
+Ironbound bone-picker who digs the field for iron, the herald's descendant
+with the rod's shaft and no ferrule, and a ploughman's daughter who once
+answered the lines. Its grief is the Truce Field: rested by making the rod
+whole (the shaft given, taken or found, the ferrule dug from the herald's
+walk) and learning the truce-words from the founding roll, the Keepers'
+count and the chantry's book, then walking out at dusk between the lines;
+bargained by giving the field to the dead, never ploughed or stoned, at the
+price of Harrowfield's bread (a bargain that comes due at the spring
+ploughing); or burned with the bone-picker's cinder-oil, which the Hollow
+Throne recognises too. The stone is the region's own fork — the Crown's
+victory, the Companies' founding, both lines' names with no victor, an
+Envoy's wording both claimants sign, or no stone at all once the field is
+given — read back in Harrowfield, by the Regent, and by the first Reeve's
+shade, who hired the Companies and did not stop the shot. Seven quests, 58
+rooms, 13 npcs, 14 epilogue lines, four stamped places (the Companies' first
+camp among them); every companion has a word on entering and on how it went.
+It hooks on to the Fallows' Southern Dikes and Fenmarch's Trapper's Blind.
 
 **Roads Between** (added after the first playtest rounds): a ring of six
 cross-hold quests, each asked in one hold and settled in the next, flagged

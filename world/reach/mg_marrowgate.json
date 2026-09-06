@@ -815,7 +815,8 @@
                     ["has", "em_cinder_oil"],
                     ["has", "hl_cinder_oil"],
                     ["has", "fl_cinder_oil"],
-                    ["has", "kw_cinder_oil"]
+                    ["has", "kw_cinder_oil"],
+                    ["has", "sh_cinder_oil"]
                   ]
                 ]
               ],
@@ -912,7 +913,8 @@
                 ["has", "em_cinder_oil"],
                 ["has", "hl_cinder_oil"],
                 ["has", "fl_cinder_oil"],
-                ["has", "kw_cinder_oil"]
+                ["has", "kw_cinder_oil"],
+                ["has", "sh_cinder_oil"]
               ]
             ],
             ["!flag", "mg_throne_resolved"]
@@ -926,6 +928,7 @@
             ["if", [["has", "hl_cinder_oil"]], [["move", "hl_cinder_oil", "nowhere"]], []],
             ["if", [["has", "fl_cinder_oil"]], [["move", "fl_cinder_oil", "nowhere"]], []],
             ["if", [["has", "kw_cinder_oil"]], [["move", "kw_cinder_oil", "nowhere"]], []],
+            ["if", [["has", "sh_cinder_oil"]], [["move", "sh_cinder_oil", "nowhere"]], []],
             ["end", "win", "reach_burned", "You break the casks over the seat and put the torch to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace, and mostly mean it."]
           ]
         },
@@ -1597,6 +1600,70 @@
               [
                 ["say", "'Left to the burners and the old rights. Four hundred years of my house's timber, and a stranger gave it back to the trees.'"],
                 ["addvar", "rep_crown", -1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "sh_stone_word",
+          "label": "the Shieldings' stone",
+          "if": [
+            ["flag", "mg_heard_regent"],
+            [
+              "any",
+              [
+                ["flag", "sh_stone_crown"],
+                ["flag", "sh_stone_companies"],
+                ["flag", "sh_stone_names"],
+                ["flag", "sh_stone_broker"],
+                ["flag", "sh_stone_none"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "The Shieldings. My house's first victory and the Companies' first charter, on one field. Word came of what its stone will say.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "sh_stone_crown"]],
+              [
+                ["say", "'The first Reeve's victory, cut in stone. Good. A field that remembers who won stays the crown's.'"],
+                ["addvar", "rep_crown", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_stone_companies"]],
+              [
+                ["say", "'The Companies' founding, on a Reeve's field. They will read it as a deed of title. Perhaps it is one.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_stone_names"]],
+              [
+                ["say", "'Both lines' names and no victor. Four hundred years of my house's page, and a stranger cut it out of the stone.'"],
+                ["addvar", "rep_crown", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_stone_broker"]],
+              [
+                ["say", "'A wording the stone-cutter and the pensioner both signed. An Envoy's answer: everyone a little short-changed, nobody bleeding. It will stand.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_stone_none"]],
+              [
+                ["say", "'No stone at all, on a field my house won. The dead keep their ground and the living keep quiet. I am told that was the bargain.'"]
               ],
               []
             ]
@@ -3135,6 +3202,42 @@
               [["flag", "kw_hollow_burned"]],
               [
                 ["say", "'Burned, with the hunt still out. Then they ride forever, and I sit here forever, and we are even at last.'"]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "mg_reeve_field",
+          "label": "tell him of the field he won",
+          "if": [
+            ["flag", "mg_heard_reeve"],
+            ["any", [["flag", "sh_hollow_rested"], ["flag", "sh_hollow_bargained"], ["flag", "sh_hollow_burned"]]]
+          ],
+          "once": true,
+          "say": "The Shieldings. I hired the Companies because no lord would ride for me, and they broke the wall by dark. The herald — I did not order that. I did not stop it, either. Tell me the field is quiet.",
+          "fx": [
+            ["xp", 2],
+            ["score", 2],
+            [
+              "if",
+              [["flag", "sh_hollow_rested"]],
+              [
+                ["say", "'A truce. Called at last, and by you. Then it is the one thing on that field that was ever done right.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_hollow_bargained"]],
+              [["say", "'Given to them. The plough turned away from my victory. Fair. It was never mine to plough.'"]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_hollow_burned"]],
+              [
+                ["say", "'Burned. Both lines, mine and theirs, waiting for a word, and you gave them fire. So did I, in my way.'"]
               ],
               []
             ]
