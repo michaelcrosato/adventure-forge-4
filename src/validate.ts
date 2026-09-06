@@ -252,12 +252,13 @@ export function validateWorld(world: World): string[] {
   }
   for (const [rid, room] of Object.entries(world.rooms))
     if (room.region !== undefined && !regionOk(room.region)) err(`room ${rid}: unknown region ${room.region}`);
-  // the travel menu must always fit: flat list when small, else regions then one region's list
+  // the travel menu: a flat list when small, else regions then one region's list; a list past
+  // the cap turns pages (engine travelActions), so regions and their landmarks are not capped —
+  // only a big flat world without regions is refused, since regions are what make it browsable
   if (landmarks.length > MENU_CAP - 1) {
     if (!world.regions) err(`fast travel: ${landmarks.length} landmarks exceed the flat menu (${MENU_CAP - 1}) — define regions to group them`);
-    if (perRegion.size > MENU_CAP - 1) err(`fast travel: ${perRegion.size} regions with landmarks exceed the menu (${MENU_CAP - 1})`);
-    for (const [r, n] of perRegion) if (n > MENU_CAP - 1) err(`fast travel: region ${r || "(none)"} has ${n} landmarks, more than the menu holds (${MENU_CAP - 1})`);
   }
+  void perRegion;
   for (const [rid, region] of Object.entries(world.regions ?? {})) need(`region ${rid}`, region, [["name", "string"]]);
 
   if (!roomOk(world.start)) err(`start: unknown room ${world.start}`);

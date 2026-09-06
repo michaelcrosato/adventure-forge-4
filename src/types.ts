@@ -385,7 +385,8 @@ export type Action =
   | { kind: "traveldone" } // close the travel menu (or step back out of a region)
   | { kind: "company" } // open the list of companions to speak with (two or more travelling with you)
   | { kind: "companydone" } // close that list
-  | { kind: "talkmore" }; // turn to the next page of a long conversation (free)
+  | { kind: "talkmore" } // turn to the next page of a long conversation (free)
+  | { kind: "travelmore" }; // turn to the next page of a long travel list (free)
 
 export type Ending = { kind: "win" | "lose"; id: string; text: string };
 
@@ -416,6 +417,7 @@ export type State = {
   travelMenu: string | null; // null: closed; "": destinations (or regions) listed; a region id: that region's destinations
   companyMenu: boolean; // the list of companions to speak with is open (browsing, no turn spent)
   talkPage: number; // which page of a long conversation's topics is showing (0 unless it runs past the menu cap)
+  travelPage: number; // which page of a long travel list (regions, or one region's places) is showing
   ended: Ending | null;
 };
 

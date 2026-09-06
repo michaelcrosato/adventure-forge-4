@@ -134,7 +134,9 @@ last number); a check buried after a `say` or inside an `if` gets no preview.
   offered from any room with no hostile npc present, once a landmark other
   than the current room is known (the lost can always walk back); a room with
   `noTravel: true` (a throne room, a confrontation) must be walked out of. Every
-  landmark needs a `region`. Each region may hold at most 11 landmarks.
+  landmark needs a `region`. A region list, or one region's own list, that would
+  run past the cap turns pages — `more places (n more)`, free and wrapping, with
+  `stay here` or `back` on every page — so neither regions nor landmarks are capped.
   Landmark names are what the player sees: `to Reedholm`.
 - `variants`: first match overrides `name`/`desc`/`brief`. This is how the
   world shows a choice's consequence: a burned village, a reopened mine.

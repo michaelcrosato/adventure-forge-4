@@ -103,12 +103,13 @@ test("validator: travel menus must always fit, regions must exist, landmarks nee
   let errs = validateWorld(big);
   assert.ok(errs.some((e) => e.includes("define regions to group them")), errs.join("\n"));
 
+  // one region holding more landmarks than the menu is fine now: the list turns pages
   const grouped = line(MENU_CAP + 1, () => "one");
   grouped.regions = { one: { name: "One" } };
   grouped.rooms["r0"]!.actions = big.rooms["r0"]!.actions;
   grouped.walkthrough = ["win"];
   errs = validateWorld(grouped);
-  assert.ok(errs.some((e) => e.includes("region one has")), errs.join("\n"));
+  assert.ok(!errs.some((e) => e.includes("fast travel")), errs.join("\n"));
 
   const bad = line(2);
   bad.regions = { a: { name: "A" } };
@@ -388,4 +389,31 @@ test("the first unexplored side-trip exit earns a one-time legend for the * mark
   state = doLabel(world, state, "go west");
   const again = step(world, state, actionByLabel(world, state, "go east")!);
   assert.doesNotMatch(again.events.join(" "), /side path/);
+});
+
+test("a travel list past the cap turns pages: 'more places' is free and wraps, 'stay here' stays on every page", () => {
+  // 14 regions, one known landmark each: the region list alone would be 15 entries
+  const rooms: World["rooms"] = { start: { name: "Start", desc: "Here.", landmark: "the start", region: "r0" } };
+  const regions: World["regions"] = { r0: { name: "Region 0" } };
+  for (let i = 1; i < 14; i++) {
+    rooms[`p${i}`] = { name: `Place ${i}`, desc: "A place.", landmark: `place ${i}`, region: `r${i}` };
+    regions[`r${i}`] = { name: `Region ${i}` };
+  }
+  const world: World = { id: "w", title: "W", intro: "I.", start: "start", hp: 10, maxScore: 1, rooms, items: {}, npcs: {}, walkthrough: [], regions };
+  let { state } = newState(world, 1);
+  for (let i = 1; i < 14; i++) state.visited.push(`p${i}`);
+  state = doLabel(world, state, "travel to a known place");
+  let menu = labels(world, state);
+  assert.equal(menu.length, 12, menu.join(" | "));
+  assert.equal(menu[10], "more places");
+  assert.equal(menu[11], "stay here");
+  const turn = state.turn;
+  state = doLabel(world, state, "more places");
+  assert.equal(state.turn, turn, "turning the page costs no turn");
+  menu = labels(world, state);
+  assert.equal(menu.length, 5, menu.join(" | ")); // 13 regions (the start's own is not a destination): 3 left + more + stay
+  state = doLabel(world, state, "more places");
+  assert.equal(labels(world, state)[0], "toward Region 1", "the pages wrap");
+  state = doLabel(world, state, "toward Region 3");
+  assert.deepEqual(labels(world, state), ["to place 3", "back"]);
 });

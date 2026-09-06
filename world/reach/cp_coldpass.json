@@ -20,8 +20,8 @@
     },
     "cp_pass": {
       "name": "The Pass Gate",
-      "desc": "Iron-bound and narrow, the Regent's stag cut over the arch — the last door before Marrowgate. A guard's brazier gutters by a locked grate. Three ways open it, they say: the Keepers' stair, the Regent's writ, or a way under, for those the Companies vouch for.",
-      "brief": "The pass gate. Three ways, they say.",
+      "desc": "Iron-bound and narrow, the Regent's stag cut over the arch — the last door before Marrowgate. A guard's brazier gutters by a locked grate. Four ways open it, they say: the Keepers' stair, the Regent's writ, a way under, or the Meres' covenant carried whole.",
+      "brief": "The pass gate. Four ways, they say.",
       "region": "cp",
       "landmark": "the Pass Gate",
       "onEnterOnce": [["set", "cp_entered"], ["xp", 2]],
@@ -52,7 +52,12 @@
         {
           "id": "cp_door_stair",
           "label": "climb the Keepers' pilgrim stair",
-          "if": [["any", [["var", "hollows_rested", ">=", 3], ["flag", "hb_keepers_key_found"], ["flag", "me_covenant_carried"]]]],
+          "if": [
+            [
+              "any",
+              [["var", "hollows_rested", ">=", 3], ["flag", "hb_keepers_key_found"], ["flag", "me_covenant_carried"]]
+            ]
+          ],
           "fx": [
             ["set", "cp_came_by_stair"],
             ["say", "A narrow stair the guard doesn't see opens behind the grate. The Keepers still keep this door, quiet as they've always been."],
@@ -110,7 +115,7 @@
           "once": true,
           "fx": [
             ["xp", 1],
-            ["say", "Old text re-cut more than once: 'Three ways stand past the Spine's shoulder — the Keepers' stair, for hollows rested three; the Regent's writ, for the guard; a way under, for those the Companies vouch.'"]
+            ["say", "Old text, re-cut more than once: 'Four ways stand past the Spine's shoulder: the Keepers' stair, for hollows rested three; the Regent's writ; a way under, for those the Companies vouch; the covenant, carried whole.'"]
           ]
         },
         {

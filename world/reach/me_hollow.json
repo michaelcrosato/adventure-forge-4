@@ -42,7 +42,8 @@
           ],
           []
         ]
-      ]
+      ],
+      "landmark": "the Drowned Hall's causeway"
     },
     "me_hollow_nave": {
       "name": "The Drowned Hall — the Flooded Nave",
@@ -268,7 +269,7 @@
         {
           "id": "sv_me_kept",
           "label": "tell her it was read before the throne",
-          "if": [["flag", "said_me_maren_sv_me_ask_read"], ["!flag", "sv_me_after_done"]],
+          "if": [["flag", "said_me_maren_sv_me_ask_read"], ["!flag", "sv_me_after_done"], ["flag", "me_covenant_read"]],
           "once": true,
           "say": "Maren is quiet long enough that the water itself seems to wait with her. \"Then it's kept,\" she says at last, and finally, gladly, lies back down into the black water and does not rise again.",
           "fx": [
@@ -284,7 +285,7 @@
         {
           "id": "sv_me_lapsed",
           "label": "admit it hasn't been read, or won't be",
-          "if": [["flag", "said_me_maren_sv_me_ask_read"], ["!flag", "sv_me_after_done"]],
+          "if": [["flag", "said_me_maren_sv_me_ask_read"], ["!flag", "sv_me_after_done"], ["!flag", "me_covenant_read"]],
           "once": true,
           "say": "\"Then the covenant lied for you, once,\" she says, \"and I will stand this water a while longer, same as before.\" She does not accuse you further than that. She doesn't need to.",
           "fx": [

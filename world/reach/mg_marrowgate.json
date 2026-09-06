@@ -817,6 +817,29 @@
           ]
         },
         {
+          "id": "mg_read_covenant",
+          "label": "read the covenant before the throne",
+          "if": [["has", "me_covenant_stone"], ["!flag", "me_covenant_read"]],
+          "once": true,
+          "fx": [
+            ["set", "me_covenant_read"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "rep_crown", -1],
+            ["say", "You set the covenant stone on the hollow of the seat and read the compact between the living and the dead aloud, whole, where the Reeve's line meant it never to be read. The gray coming up out of the seat thins."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"Read where it was broken. That is the first honest thing said in this room in four hundred years, and I am glad it was you.\""],
+                ["addvar", "appr_vell", 1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "mg_great_rite",
           "label": "speak the Great Rite over the seat",
           "if": [
@@ -2898,6 +2921,24 @@
           "once": true,
           "say": "Reeve of the Vale, once. Then a thief. Then a founder. They built me a king's tomb and I have sat on the lid of it every night since, because I cannot lie down in what I did.",
           "fx": [["xp", 3], ["score", 3], ["set", "mg_heard_reeve"]]
+        },
+        {
+          "id": "mg_reeve_covenant",
+          "label": "tell him the Meres' covenant is found",
+          "if": [["any", [["flag", "me_covenant_carried"], ["flag", "me_covenant_cracked"]]], ["flag", "mg_heard_reeve"]],
+          "once": true,
+          "say": "The covenant. The Meres kept it under water sooner than let me have it, and they were right to. Read it where I sat, if you carry it whole; if it is cracked, then say so, and I will carry that too.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "me_covenant_cracked"]],
+              [
+                ["say", "He looks at the pieces a long while. 'Then it is the two of us,' he says, 'who broke a thing we were given to keep.'"]
+              ],
+              []
+            ]
+          ]
         },
         {
           "id": "father",

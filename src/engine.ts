@@ -364,15 +364,35 @@ function travelRegions(world: World, s: State): string[] {
 /** The travel menu: flat destinations when they fit, else regions first, then one region's destinations. */
 function travelActions(world: World, s: State): Action[] {
   const known = knownLandmarks(world, s);
-  const out: Action[] = [];
+  let list: Action[];
   if (s.travelMenu === "") {
-    if (known.length <= MENU_CAP - 1) for (const id of known) out.push({ kind: "travelto", room: id });
-    else for (const r of travelRegions(world, s)) out.push({ kind: "travelregion", region: r });
+    list =
+      known.length <= MENU_CAP - 1
+        ? known.map((id): Action => ({ kind: "travelto", room: id }))
+        : travelRegions(world, s).map((r): Action => ({ kind: "travelregion", region: r }));
   } else {
-    for (const id of known) if ((world.rooms[id]?.region ?? "") === s.travelMenu) out.push({ kind: "travelto", room: id });
+    list = known.filter((id) => (world.rooms[id]?.region ?? "") === s.travelMenu).map((id): Action => ({ kind: "travelto", room: id }));
   }
+  // a list that has grown past the cap turns pages, like a long conversation:
+  // "more places" (free, wrapping) and the way out stay on every page
+  const paging = list.length + 1 > MENU_CAP;
+  const pageSize = MENU_CAP - 2;
+  const pages = paging ? Math.ceil(list.length / pageSize) : 1;
+  const page = paging ? s.travelPage % pages : 0;
+  const out = paging ? list.slice(page * pageSize, (page + 1) * pageSize) : list;
+  if (paging) out.push({ kind: "travelmore" });
   out.push({ kind: "traveldone" });
   return out;
+}
+
+/** How many travel entries wait on the other pages of the current list. */
+function travelMore(world: World, s: State): number {
+  const known = knownLandmarks(world, s);
+  const total = s.travelMenu === ""
+    ? (known.length <= MENU_CAP - 1 ? known.length : travelRegions(world, s).length)
+    : known.filter((id) => (world.rooms[id]?.region ?? "") === s.travelMenu).length;
+  const shown = travelActions(world, s).filter((a) => a.kind === "travelto" || a.kind === "travelregion").length;
+  return total - shown;
 }
 
 // true while a level-up perk pick is blocking the menu — the room's own
@@ -722,6 +742,7 @@ export function newState(world: World, seed: number): StepOut {
     travelMenu: null,
     companyMenu: false,
     talkPage: 0,
+    travelPage: 0,
     ended: null,
   };
   for (const id of Object.keys(world.items)) if (s.itemLoc[id] === "inv") s.inv.push(id);
@@ -970,6 +991,8 @@ export function actionLabel(world: World, a: Action, s?: State): string {
       return "back";
     case "talkmore":
       return "more to ask";
+    case "travelmore":
+      return "more places";
     case "attack": {
       const npcName = world.npcs[a.npc]?.name ?? a.npc;
       const weapon = s ? bestWeapon(world, s).item : null;
@@ -1081,6 +1104,7 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     return w ? ` (${w.name} is watching: taking it is theft)` : "";
   }
   if (a.kind === "company") return ` (${companyHere(world, s).map((id) => world.npcs[id]?.name ?? id).join(", ")})`;
+  if (a.kind === "travelmore") return ` (${travelMore(world, s)} more)`;
   if (a.kind === "talkmore" && s.talking) {
     // how many topics wait on the other pages
     const rest = visibleTopics(world, s, s.talking).filter((t) => !t.end).length;
@@ -1148,7 +1172,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // only the journey itself (travelto) and everything else costs one
   const freeCustom =
     action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free;
-  if (!freeCustom && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore") s.turn += 1;
+  if (!freeCustom && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore" && action.kind !== "travelmore") s.turn += 1;
   let attacked: string | null = null; // the npc that already struck back this turn
 
   switch (action.kind) {
@@ -1219,15 +1243,22 @@ export function step(world: World, prev: State, action: Action): StepOut {
       break;
     case "travel":
       s.travelMenu = "";
+      s.travelPage = 0;
       break;
     case "travelregion":
       s.travelMenu = action.region;
+      s.travelPage = 0;
+      break;
+    case "travelmore":
+      s.travelPage += 1;
       break;
     case "traveldone":
       // from inside a region list, step back to the region list; else close
       s.travelMenu = s.travelMenu && knownLandmarks(world, s).length > MENU_CAP - 1 ? "" : null;
+      s.travelPage = 0;
       break;
     case "travelto": {
+      s.travelPage = 0;
       s.travelMenu = null;
       events.push(`You travel to ${world.rooms[action.room]?.landmark ?? action.room}.`);
       enterRoom(world, s, action.room, events);

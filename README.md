@@ -6,7 +6,7 @@ green changes. Content is data. Every claim about the game is proven by a
 replay, not asserted.
 
 Two worlds ship today. **The Gray Reach** is the default game: a realm of ten
-regions — the Vale of Ash as its first act, eight holds each with its own
+regions — the Vale of Ash as its first act, nine holds each with its own
 unrested grief, a mountain pass, and a capital where the endings wait — with
 companions who judge you, six factions that remember, fast travel between the
 landmarks you have found, and seven endings, every one replay-proven. **The
@@ -106,7 +106,7 @@ whole 34-turn session is ~18k chars (~4.7k tokens) of game text.
 `npm run verify` (~10s) enforces:
 
 - **Typecheck** — strict, no unchecked indexing.
-- **Tests** (173) — determinism (same seed = byte-identical run, and an engine
+- **Tests** (174) — determinism (same seed = byte-identical run, and an engine
   core that provably never reads the clock), the character layer,
   conversations and companions, travel and the journal, templates and
   stamps, worlds in parts, worldgen scale, triage promotion rules, the fleet
