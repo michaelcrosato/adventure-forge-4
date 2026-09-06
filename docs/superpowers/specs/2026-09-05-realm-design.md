@@ -212,8 +212,8 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the fourth playtest round): 464 rooms, 140 npcs, 161
-items, 69 quests, 36 stamped places each with its own sign and reward, 261
+**As built** (after the fourth playtest round): 464 rooms, 140 npcs, 162
+items, 69 quests, 36 stamped places each with its own sign and reward, 366
 epilogue lines, 4 companions, 6 factions, 7 endings each with a proof; every
 gate in the holds and the capital has a force, a craft and a words route, and
 ten waystations on the roads between the holds each put a small choice in the
@@ -328,6 +328,30 @@ and a Tamsin who won hers promises to stand between the Company's rope and
 Lys's brother; 24 epilogue lines tell how each quarrel ended. Thirty remarks,
 eighteen topics, twelve leaves; none can fire on the walkthrough, which
 travels with Lys alone.
+
+**Origins** (after the fourth playtest round): the four classes were numbers
+only — six class-gated lines in the whole realm. Now each is a role the world
+sees: 160 class-gated actions and topics across the ten regions and the
+seven shared templates, about two per class per region, gated `["class", id]`
+and flagged `or_<class>_<hold>_<what>`, each read back in a variant, a later
+topic, a quest, a faction's standing or an epilogue line (81 of them), and the
+engine tags every such line "(as a Scholar)" in its hint. Wardens get
+sergeants' frankness, orders that open barracks doors without a roll, a tower
+watcher's stair for the old watch's answer, the Marshal's escort token and the
+Preceptor-General's oil on bearing alone — and a cold shoulder, and a point
+lost, wherever the Companies rule. Scouts get free looks that find caches,
+cellars, a false-bottomed skiff and smugglers' marks, easier lines past a den
+or a camp once the spoor is read or the sentries counted, and professional
+courtesy from poachers, fences and runners. Scholars read tallies, charts,
+ledgers, lintels and sills outright, argue with priests, keepers and the
+archivist as peers, and carry Canoness Fane's name from Emberfall to Mother
+Ysme. Envoys broker third branches on existing forks — a truce between
+Cinderhall's hall and chapterhouse, the Ironbound stood down at Fenmarch, a
+toll agreed between Gullhaven's harbourmaster and its sergeant, the Regent's
+oil on terms that cost the company nothing — talk prices down, pay a camp's
+toll in a promise the captain holds them to, and meet plain folk who do not
+trust the smooth talk. Class lines are extra, never the only way: every gate
+keeps its force, craft and words routes for everyone.
 
 ## Build order
 
