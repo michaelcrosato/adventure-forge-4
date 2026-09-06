@@ -254,13 +254,23 @@
           "fx": [
             [
               "if",
-              [["any", [["has", "fd_saint_bell"], ["flag", "fd_prior_confessed"]]]],
-              [
-                ["say", "The rest stands ready: the saint's bell is yours, or Prior Halm's own confession — ring one, or speak the other, over the water."]
-              ],
+              [["has", "fd_saint_bell"]],
+              [["say", "The rest stands ready: the saint's bell is yours — ring it out over the water."]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "fd_prior_confessed"]],
+              [["say", "The rest stands ready: Prior Halm's own confession is yours — speak it over the water."]],
+              []
+            ],
+            [
+              "if",
+              [["!has", "fd_saint_bell"], ["!flag", "fd_prior_confessed"]],
               [
                 ["say", "The rest still wants the saint's bell — dive, reason it out, or haul with tarred rope from the drying racks — or Halm's confession, pressed after the cloister's tablet."]
-              ]
+              ],
+              []
             ],
             [
               "if",
@@ -406,6 +416,10 @@
       "start": [["flag", "fd_bog_bounty"]],
       "done": [["flag", "fd_bog_paid"]],
       "stages": [
+        {
+          "if": [["flag", "fd_bog_charm_paid"], ["!has", "fd_bog_hide"]],
+          "text": "The trader paid for the charm, but a bog-thing still tears her traps by the Eel-Run. Its hide would end it."
+        },
         {
           "if": [["any", [["has", "fd_bog_hide"], ["has", "fd_eelrun_loot"]]]],
           "text": "You have proof from the fens. The eel-trader in Reedholm pays for either kind — bring it to her."

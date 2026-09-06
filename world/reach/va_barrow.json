@@ -349,11 +349,10 @@
           "id": "va_weigh_king",
           "label": "weigh what each choice would mean",
           "if": [["flag", "va_heard_grievance"], ["!flag", "va_king_resolved"]],
-          "once": true,
           "fx": [
-            ["xp", 1],
             ["say", "Rest him — verses, the crown returned or broken — and the great rite stays open. Cut him down: quick, the Regent's answer; that rite is lost. Keep the crown: he grieves on, and a crown can be worn on another seat."]
-          ]
+          ],
+          "free": true
         },
         {
           "id": "va_rite",
@@ -404,7 +403,8 @@
             ["addvar", "appr_vell", 1],
             ["addvar", "appr_osk", 1],
             ["npcgo", "va_hollow_king", null],
-            ["say", "You set the crown in his hands and speak the three verses over him. He listens with the crown where it belongs, and something settles in his face that four centuries could not. He lies down. The doors await your word."]
+            ["say", "You set the crown in his hands and speak the three verses over him. He listens with the crown where it belongs, and something settles in his face that four centuries could not. He lies down. The doors await your word."],
+            ["say", "(The crown stays in the Vale now; the gray seat in Marrowgate will have none to wear.)"]
           ]
         },
         {
@@ -422,7 +422,8 @@
             ["addvar", "rep_keepers", 1],
             ["addvar", "appr_vell", 1],
             ["npcgo", "va_hollow_king", null],
-            ["say", "You set the crown in his hands. He stands, bows once, and lies down at last. The gray goes out of the trees like a tide. The doors wait on your word."]
+            ["say", "You set the crown in his hands. He stands, bows once, and lies down at last. The gray goes out of the trees like a tide. The doors wait on your word."],
+            ["say", "(The crown stays in the Vale now; the gray seat in Marrowgate will have none to wear.)"]
           ]
         },
         {

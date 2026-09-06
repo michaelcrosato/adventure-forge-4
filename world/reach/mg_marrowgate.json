@@ -746,9 +746,7 @@
           "id": "mg_weigh_doors",
           "label": "weigh the doors of the seat",
           "if": [["!flag", "mg_throne_resolved"]],
-          "once": true,
           "fx": [
-            ["xp", 1],
             [
               "if",
               [["var", "hollows_rested", ">=", 3], ["flag", "va_king_rested"], ["flag", "mg_reeve_confessed"]],
@@ -814,7 +812,8 @@
               [["say", "The crown is yours to wear, if you dare the seat."]],
               [["say", "You do not carry the Vale's crown."]]
             ]
-          ]
+          ],
+          "free": true
         },
         {
           "id": "mg_read_covenant",

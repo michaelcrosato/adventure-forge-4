@@ -1116,7 +1116,18 @@
     "th_letter": {
       "name": "a sealed letter, addressed only to Fenmarch's grieving",
       "loc": "nowhere",
-      "hint": "carry it east to Fenmarch, and decide what's owed the dead"
+      "hint": "carry it east to Fenmarch, and decide what's owed the dead",
+      "use": [
+        {
+          "if": [["!flag", "th_letter_read"]],
+          "fx": [
+            ["set", "th_letter_read"],
+            ["xp", 1],
+            ["say", "The seal is cracked already. A soldier's hand: he was at the fen the night the water took its dead, and did nothing, and has carried it since. He asks the grieving's pardon, or their fire, but not their forgetting."]
+          ]
+        },
+        { "fx": [["say", "You know what it says. What is left is where to leave it."]] }
+      ]
     },
     "th_vane_tally": {
       "name": "a bundle of Company tally-sticks",
@@ -1864,6 +1875,14 @@
           "id": "bye",
           "label": "leave him to the cage",
           "say": "Mind the guard doesn't hear the rest of it from someone else first.",
+          "end": true,
+          "if": [["!flag", "th_fenn_freed"]]
+        },
+        {
+          "id": "bye_free",
+          "label": "leave him to the daylight",
+          "if": [["flag", "th_fenn_freed"]],
+          "say": "Mind the road. I've had enough of cages to last me, and I'd not see you in one.",
           "end": true
         }
       ]

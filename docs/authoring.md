@@ -226,6 +226,9 @@ nobody's business but the player's.
   linger in.
 - A remark may carry `fx`, run when it is spoken — a companion who says what
   they think of a theft can also think less of you (`["addvar", "appr_lys", -1]`).
+  One remark a companion a turn, but a remark carrying `fx` is never held
+  behind a plain one, and none speak while a menu is being turned (the
+  travel list, the company list, a conversation's next page).
   A remark whose `fx` sets a quarrel flag (`quarrel_<a>_<b>` or
   `quarrel_<a>_<b>_<tag>`, `<a>`/`<b>` companion ids) is followed by a pointer
   naming the two, since the sides and the settling live in their conversations.

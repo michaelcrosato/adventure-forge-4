@@ -417,9 +417,14 @@
           },
           {
             "id": "r_beast_second",
-            "if": [["npcDead", "va_ash_wolf"], ["npcDead", "va_gaunt_wolf"]],
+            "if": [["npcDead", "va_ash_wolf"], ["npcDead", "va_gaunt_wolf"], ["!flag", "or_warden_va_hunter_sortie"]],
             "say": "Both of them, now. Two things that would have let you walk on by, and you didn't let either. I told you I only say a thing once.",
             "fx": [["addvar", "appr_lys", -1]]
+          },
+          {
+            "id": "r_beast_sortie",
+            "if": [["npcDead", "va_ash_wolf"], ["npcDead", "va_gaunt_wolf"], ["flag", "or_warden_va_hunter_sortie"]],
+            "say": "Both of them. He asked it of you, so I'll keep what I'd have said otherwise. He's counted wolves longer than I have, and he counts the blighted ones twice."
           },
           {
             "id": "r_cp_unresolved",
@@ -3531,7 +3536,8 @@
         ["flag", "lys_brother_home"],
         ["var", "appr_lys", "<", 4],
         ["!flag", "lys_brother_buried"],
-        ["!flag", "lys_brother_lost"]
+        ["!flag", "lys_brother_lost"],
+        ["flag", "lys_joined"]
       ],
       "text": "Lys brought her brother home to the Vale, and the hunter's camp is loud again, for the first time in years.",
       "weight": 1
@@ -3547,7 +3553,7 @@
       "weight": 1
     },
     {
-      "if": [["!flag", "lys_joined"]],
+      "if": [["!flag", "lys_joined"], ["!flag", "lys_brother_home"]],
       "text": "Lys stayed at the hunter's camp, watching the treeline, and never learned how the rest of it ended.",
       "weight": 1
     },
@@ -4151,6 +4157,11 @@
     {
       "if": [["flag", "quarrel_lys_osk_covenant_sour"]],
       "text": "Lys and Osk never settled it, the living's ditches against a kept promise. Neither brings up the Meres first anymore.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "lys_brother_home"], ["!flag", "lys_joined"]],
+      "text": "Cal came home to the hunter's camp without his sister ever leaving it. Lys is still deciding what to say to him.",
       "weight": 1
     }
   ],

@@ -1,0 +1,81 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 559,
+  "receipt": "reach.359.559.366.reach_at_rest.1e0d55dc",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Hollowbrook's verse-progress text repeatedly re-lists verse locations already obtained as still outstanding. After the ring-ditch verse it said 'Two more wait: the ring-ditch, the king's causeway, the mere-stone' (ring-ditch already done); after the causeway verse it said 'The last waits at the ring-ditch, the causeway, or the mere-stone' (both already done, only mere-stone left). The Vale's equivalent verse tracker narrows correctly ('Two more: the sunken shrine...and the barrow's hall' then 'One verse left: the barrow's own hall'), so this is an inconsistency between the two hold implementations.",
+      "where": "The Ring-Ditch / The King's Causeway (Hollowbrook) — 'Three Old Verses' quest text"
+    },
+    {
+      "sev": "P1",
+      "what": "A wits check explicitly warned 'a miss costs standing with the Gray Church,' implying reputation is only at risk on failure. The roll succeeded (14 vs DC10) and the Gray Church reputation still dropped by 1 in the result line.",
+      "where": "The Priory of the Gray Church (Fenmarch) — 'lay the tablet against his words' action"
+    },
+    {
+      "sev": "P1",
+      "what": "The final status screen's 'How the realm remembers you' epilogue lists two directly contradictory fates for the same companion in the same listing: 'Lys brought her brother home to the Vale, and the hunter's camp is loud again, for the first time in years' alongside 'Lys stayed at the hunter's camp, watching the treeline, and never learned how the rest of it ended.'",
+      "where": "final status (post-win) — epilogue list, Lys/Cal thread"
+    },
+    {
+      "sev": "P2",
+      "what": "The free 'weigh what this grief asks' action is explicitly labeled '(free)' at Thornwold's Gallows Glade and Hollowbrook's Old Court (confirmed: turn counter did not advance), but the equivalent 'weigh what each choice would mean' at the Vale's Barrow Throne carries no '(free)' tag and did cost a turn (127->128).",
+      "where": "Throne of the Barrow (Vale of Ash) vs The Gallows Glade / The Kings' Rest — Old Court — 'weigh' action"
+    },
+    {
+      "sev": "P2",
+      "what": "Quest text read 'You're in Thornwold. Find Keeper Rowan, in the Understory, and carry Wren's question to her' while the player character was standing in The Keepers' Hall, Hollowbrook — the opposite hold from the one named.",
+      "where": "The Keepers' Hall (Hollowbrook) — 'Two Keepers, One Covenant' quest, after asking Keeper Wren if any keepers remain elsewhere"
+    },
+    {
+      "sev": "P2",
+      "what": "The second 'weigh what this grief asks' at the Old Court, taken after already holding the Keeper's Key and all three downs verses, described only the Key path as ready ('the Keeper's Key is yours — lay it on the hearth-stone') and never mentioned that the three-verses option (also fully unlocked in the very same action menu, no missing-item caveat) was equally ready.",
+      "where": "The Kings' Rest — the Old Court (Hollowbrook) — second 'weigh' after gathering both key and verses"
+    },
+    {
+      "sev": "P2",
+      "what": "'weigh what this grief asks' at the drowned nave stated 'the saint's bell is yours' before the bell had actually been picked up — it still required a separate wits action ('guess where the bell would hang') to obtain, taken immediately after the weigh.",
+      "where": "The Drowned Nave (Fenmarch) — 'weigh' action, before 'guess where the bell would hang'"
+    },
+    {
+      "sev": "P2",
+      "what": "In a companion's one-on-one dialogue, 'wait here (leaves the party for now)' sits as an ordinary numbered option among conversation topics with no confirmation prompt. Selecting it by misreading the list (intending a neutral 'step back') instantly removed the companion from the party mid-conversation.",
+      "where": "talking to Tamsin, at The Kings' Rest — Mouth (Hollowbrook)"
+    },
+    {
+      "sev": "P2",
+      "what": "After Fenn is freed from the Thornwold stockade (cage shown open, 'Fenn is here' with no guard conflict), talking to him and leaving still produces the pre-release flavor line 'Mind the guard doesn't hear the rest of it from someone else first,' which no longer fits since he has already walked out past the guard on-screen.",
+      "where": "The Stockade (Camp Gallows, Thornwold) — leaving Fenn after 'the Company is pardoned'"
+    }
+  ],
+  "confusions": [
+    "No action ever surfaced to read/preview the sealed letter's contents for 'A Dead Man's Word' before choosing where to leave it (net-hall fire, Priory cloister, or the drowned water) — its meaning only appears as flavor text at the moment of disposal, so the choice among three destinations had to be made blind, with no apparent mechanical difference between them.",
+    "Last Light's notice board groups 'the sunken shrine and the old watchtower east of the wood' as if both lie the same direction, but reaching them later from the watchtower itself shows the shrine is south, not east — a small mismatch between the early hint and the actual layout.",
+    "'weigh' is not guaranteed to persist through a hold's whole arc: at the Vale's Barrow Throne it was offered before the crown+verses were gathered, but once they were in hand the action menu no longer listed a weigh option at all (only the four resolution choices), so a deliberate second visit to re-weigh (as this playthrough's rules asked for) sometimes finds nothing to weigh.",
+    "Ending options 'burn it' and 'sit in it with a crown' were both listed for the Hollow Throne, but by that point the game itself had already had the player give the Vale's crown back to its king (no way to keep or re-take it), so the 'sit in it with a crown' ending was silently unreachable on this playthrough without backtracking hundreds of turns for a different crown — the throne-room text never flagged that this path was foreclosed by an earlier, seemingly unrelated choice made in Act 1."
+  ],
+  "suggestions": [
+    "Make hold verse-progress lines always subtract already-obtained locations from the 'remaining' list, the way the Vale's tracker already does correctly.",
+    "Only apply a check's stated 'a miss costs standing with X' penalty on an actual miss, or reword the warning so it's clear the cost can land regardless of the roll.",
+    "Cross-check companion epilogue lines so one character can't be given two mutually exclusive endings in the same final summary.",
+    "Tag every 'weigh' action consistently as '(free)' (or consistently costed) across all holds, matching the stated design intent of a no-cost scholarly option.",
+    "Add a 'read the letter' option to A Dead Man's Word before its three disposal choices, so a Scholar can see what they're carrying before deciding its fate.",
+    "Move party-dismissal ('wait here') out of the plain numbered dialogue list, or require a second confirmation, since it's the one option there that permanently changes party state rather than just talking.",
+    "Have the 'weigh' option at a hold persist (even if just repeating the same summary) through to the final resolution menu, rather than silently disappearing once the resolution choices unlock.",
+    "When an early, unrelated choice (like returning the Vale's crown) forecloses a late-game ending path (sitting the Hollow Throne with a crown), say so at the time of the early choice, or note the closed path explicitly when the throne is finally weighed."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T08-17-45-464Z",
+  "seed": 359,
+  "build": {
+    "rev": "32c3a4b",
+    "world": "0920b5d0"
+  },
+  "cost_usd": null,
+  "verified": true
+}

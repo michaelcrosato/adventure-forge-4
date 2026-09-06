@@ -326,16 +326,21 @@
                   "if",
                   [["has", "hb_keepers_key"]],
                   [["say", "The rest can be done outright: the Keeper's Key is yours — lay it on the hearth-stone."]],
+                  []
+                ],
+                [
+                  "if",
+                  [["var", "hb_verses_known", ">=", 3]],
+                  [["say", "The rest can be done outright: all three verses are yours — speak them over the court."]],
+                  []
+                ],
+                [
+                  "if",
+                  [["!has", "hb_keepers_key"], ["var", "hb_verses_known", "<", 3]],
                   [
-                    [
-                      "if",
-                      [["var", "hb_verses_known", ">=", 3]],
-                      [["say", "The rest can be done outright: all three verses are yours — speak them over the court."]],
-                      [
-                        ["say", "The rest wants the Keeper's Key, forced or picked from the chest in the Keepers' Hall, or all three old verses from the downs."]
-                      ]
-                    ]
-                  ]
+                    ["say", "The rest wants the Keeper's Key, forced or picked from the chest in the Keepers' Hall, or all three old verses from the downs."]
+                  ],
+                  []
                 ],
                 [
                   "if",
@@ -470,12 +475,28 @@
       "done": [["var", "hb_verses_known", ">=", 3]],
       "stages": [
         {
-          "if": [["var", "hb_verses_known", "=", 2]],
-          "text": "Two of three verses known. The last waits at the ring-ditch, the causeway, or the mere-stone."
+          "if": [["flag", "hb_verse_causeway"], ["flag", "hb_verse_merestone"], ["!flag", "hb_verse_ringditch"]],
+          "text": "Two of three verses known. The last waits at the ring-ditch."
         },
         {
-          "if": [["var", "hb_verses_known", "=", 1]],
-          "text": "One verse known. Two more wait: the ring-ditch, the king's causeway, the mere-stone."
+          "if": [["flag", "hb_verse_ringditch"], ["flag", "hb_verse_merestone"], ["!flag", "hb_verse_causeway"]],
+          "text": "Two of three verses known. The last waits at the king's causeway."
+        },
+        {
+          "if": [["flag", "hb_verse_ringditch"], ["flag", "hb_verse_causeway"], ["!flag", "hb_verse_merestone"]],
+          "text": "Two of three verses known. The last waits at the mere-stone."
+        },
+        {
+          "if": [["flag", "hb_verse_ringditch"], ["!flag", "hb_verse_causeway"], ["!flag", "hb_verse_merestone"]],
+          "text": "One verse known, the ring-ditch's. Two more wait: the king's causeway, the mere-stone."
+        },
+        {
+          "if": [["flag", "hb_verse_causeway"], ["!flag", "hb_verse_ringditch"], ["!flag", "hb_verse_merestone"]],
+          "text": "One verse known, the king's causeway's. Two more wait: the ring-ditch, the mere-stone."
+        },
+        {
+          "if": [["flag", "hb_verse_merestone"], ["!flag", "hb_verse_ringditch"], ["!flag", "hb_verse_causeway"]],
+          "text": "One verse known, the mere-stone's. Two more wait: the ring-ditch, the king's causeway."
         },
         {
           "if": [],

@@ -59,6 +59,9 @@ function canon(v: unknown): string {
   return `{${keys.map((k) => `${JSON.stringify(k)}:${canon(o[k])}`).join(",")}}`;
 }
 
+/** Actions that turn a menu page rather than the world: free, and no time for anyone to speak. */
+const MENU_KINDS = new Set(["travel", "travelregion", "travelmore", "traveldone", "company", "companydone", "talkmore"]);
+
 /** Flags a quarrel sets that are outcomes, not the quarrel itself. */
 const QUARREL_TAILS = new Set(["done", "peace", "sour", "lys", "osk", "tamsin", "vell"]);
 
@@ -618,9 +621,12 @@ function partyRemarks(world: World, s: State, events: string[]): void {
       events.push(`${def.name} leaves your company.`);
       continue;
     }
-    for (const r of def.companion?.remarks ?? []) {
+    // one remark a turn — but a remark that moves regard (or anything else)
+    // is never held back behind a plain one, so a cost lands the turn it is earned
+    const ready = (def.companion?.remarks ?? []).filter((r) => !s.flags[`remarked_${id}_${r.id}`] && condsOk(world, s, r.if));
+    const ordered = [...ready.filter((r) => r.fx?.length), ...ready.filter((r) => !r.fx?.length)];
+    for (const r of ordered) {
       const flag = `remarked_${id}_${r.id}`;
-      if (s.flags[flag] || !condsOk(world, s, r.if)) continue;
       s.flags[flag] = true;
       events.push(`${def.name}: "${r.say}"`);
       if (r.fx) applyFx(world, s, r.fx, events);
@@ -856,16 +862,22 @@ function standingAtRisk(fxs: Fx[] | undefined): string[] {
   return [...new Set(out)];
 }
 
-/** "a miss costs standing with the Gray Church" — names what a failed check would cost, when the world names it. */
-function costsStandingHint(world: World, fxs: Fx[] | undefined): string | null {
-  const vars = standingAtRisk(fxs);
-  if (!vars.length) return null;
-  const names = vars
-    .map((v) => (v.startsWith("rep_") ? world.factions?.[v] : world.npcs[v.slice(5)]?.name))
-    .filter((n): n is string => !!n);
-  if (!names.length) return "a miss costs standing";
-  const list = names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0]!;
-  return `a miss costs standing with ${list}`;
+/** "a miss costs standing with the Gray Church" — names what a check's miss would cost, and what its hit would, when the world names it. */
+function costsStandingHint(world: World, missFx: Fx[] | undefined, hitFx?: Fx[] | undefined): string | null {
+  const name = (v: string) => (v.startsWith("rep_") ? world.factions?.[v] : world.npcs[v.slice(5)]?.name);
+  const withList = (vars: string[]): string => {
+    const names = vars.map(name).filter((n): n is string => !!n);
+    if (!names.length) return "";
+    return ` with ${names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0]!}`;
+  };
+  const miss = standingAtRisk(missFx), hit = standingAtRisk(hitFx);
+  const both = miss.filter((v) => hit.includes(v));
+  const missOnly = miss.filter((v) => !both.includes(v)), hitOnly = hit.filter((v) => !both.includes(v));
+  const parts: string[] = [];
+  if (both.length) parts.push(`costs standing${withList(both)}, hit or miss`);
+  if (missOnly.length) parts.push(`a miss costs standing${withList(missOnly)}`);
+  if (hitOnly.length) parts.push(`a hit costs standing${withList(hitOnly)}`);
+  return parts.length ? parts.join("; ") : null;
 }
 
 /** True when an effect list can end the game somewhere inside it. */
@@ -1166,8 +1178,9 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     const mod = checkMod(world, s, chk[1]);
     const need = Math.max(1, chk[2] - mod);
     parts.push(mod ? `DC ${chk[2]}, ${mod > 0 ? "+" : ""}${mod} ${chk[1]}: roll ${need}+ on the die` : `DC ${chk[2]}, ${chk[1]}: roll ${need}+ on the die`);
-    // a miss that costs standing or regard is said before the die is thrown, like "fail costs 1hp" — and with whom
-    const cost = costsStandingHint(world, chk[4]);
+    // a miss that costs standing or regard is said before the die is thrown, like "fail costs 1hp" — and with whom;
+    // so is a hit that costs it, so the warning never reads as "only a miss"
+    const cost = costsStandingHint(world, chk[4], chk[3]);
     if (cost) parts.push(cost);
   }
   // an action that settles a hold's grief is the one-shot the hold is built around; say so before it is taken, and which way
@@ -1389,7 +1402,8 @@ export function step(world: World, prev: State, action: Action): StepOut {
   if (!s.ended && action.kind !== "perkpick" && action.kind !== "classpick") {
     aggressivePass(world, s, events, attacked);
     recoverDowned(world, s, events, attacked);
-    partyRemarks(world, s, events);
+    // the company speaks on a turn of the world, not while a menu is being turned
+    if (!MENU_KINDS.has(action.kind)) partyRemarks(world, s, events);
   }
   journalEvents(world, prev, s, events);
   // Once, the first time fast travel is on the menu: a playtester walked the
