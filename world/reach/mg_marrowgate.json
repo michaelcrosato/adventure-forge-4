@@ -804,7 +804,8 @@
                     ["has", "ir_oil"],
                     ["has", "em_cinder_oil"],
                     ["has", "hl_cinder_oil"],
-                    ["has", "fl_cinder_oil"]
+                    ["has", "fl_cinder_oil"],
+                    ["has", "kw_cinder_oil"]
                   ]
                 ]
               ],
@@ -900,7 +901,8 @@
                 ["has", "ir_oil"],
                 ["has", "em_cinder_oil"],
                 ["has", "hl_cinder_oil"],
-                ["has", "fl_cinder_oil"]
+                ["has", "fl_cinder_oil"],
+                ["has", "kw_cinder_oil"]
               ]
             ],
             ["!flag", "mg_throne_resolved"]
@@ -914,6 +916,7 @@
             ["if", [["has", "em_cinder_oil"]], [["move", "em_cinder_oil", "nowhere"]], []],
             ["if", [["has", "hl_cinder_oil"]], [["move", "hl_cinder_oil", "nowhere"]], []],
             ["if", [["has", "fl_cinder_oil"]], [["move", "fl_cinder_oil", "nowhere"]], []],
+            ["if", [["has", "kw_cinder_oil"]], [["move", "kw_cinder_oil", "nowhere"]], []],
             ["end", "win", "reach_burned", "You break the casks over the seat and put the torch to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace, and mostly mean it."]
           ]
         },
@@ -1545,6 +1548,43 @@
               "if",
               [["flag", "hl_tithe_common"]],
               [["say", "'A common store. Charming. Ask Tithing who guards it the first lean spring.'"]],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "kw_wood_word",
+          "label": "the Kingswood's oaks",
+          "if": [
+            ["flag", "mg_heard_regent"],
+            ["any", [["flag", "kw_wood_crown"], ["flag", "kw_wood_iron"], ["flag", "kw_wood_wild"]]]
+          ],
+          "once": true,
+          "say": "The Kingswood was the crown's before there was a crown to speak of. Word reached me of what became of its oaks.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "kw_wood_crown"]],
+              [
+                ["say", "'Felled for Marrowgate's yards. Good. A wood that pays is a wood that stays the crown's.'"],
+                ["addvar", "rep_crown", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "kw_wood_iron"]],
+              [["say", "'Coppiced for the forges. The Ironbound will burn it and call the ash mine. I suppose it is.'"]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "kw_wood_wild"]],
+              [
+                ["say", "'Left to the burners and the old rights. Four hundred years of my house's timber, and a stranger gave it back to the trees.'"],
+                ["addvar", "rep_crown", -1]
+              ],
               []
             ]
           ]
@@ -3052,6 +3092,36 @@
               [["flag", "hl_hollow_burned"]],
               [
                 ["say", "'Burned. Like everything else I touched, then. The gray does not mind fire. It minds not being named.'"]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "mg_reeve_hunt",
+          "label": "tell him of his father's hunt",
+          "if": [
+            ["flag", "mg_heard_reeve"],
+            ["any", [["flag", "kw_hollow_rested"], ["flag", "kw_hollow_bargained"], ["flag", "kw_hollow_burned"]]]
+          ],
+          "once": true,
+          "say": "My father's hunt. They were out in the Kingswood that morning, and I never sent the recall. I told myself they would come home on their own. Tell me they did.",
+          "fx": [
+            ["xp", 2],
+            ["score", 2],
+            [
+              "if",
+              [["flag", "kw_hollow_rested"]],
+              [
+                ["say", "'Recalled. By you, with his horn. Then that is one thing of that morning finished the way it should have been.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "kw_hollow_burned"]],
+              [
+                ["say", "'Burned, with the hunt still out. Then they ride forever, and I sit here forever, and we are even at last.'"]
               ],
               []
             ]

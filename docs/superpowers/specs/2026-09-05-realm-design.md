@@ -212,9 +212,9 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the ninth playtest round): thirteen regions, ten holds;
-625 rooms, 183 npcs, 195 items, 95 quests, 48 stamped places each with its own
-sign, reward and hermit's voice, 450 epilogue lines, 4 companions, 6 factions,
+**As built** (after the tenth playtest round): fourteen regions, eleven holds;
+681 rooms, 199 npcs, 204 items, 102 quests, 52 stamped places each with its own
+sign, reward and hermit's voice, 464 epilogue lines, 4 companions, 6 factions,
 7 endings each with a proof; every gate in the holds and the capital has a
 force, a craft and a words route, every hollow room weighs its grief for
 free, ten waystations on the roads between the holds each put a small choice
@@ -227,11 +227,59 @@ stair in Gullhaven, climbs the Keepers' pilgrim stair at Coldpass, hears the
 first Reeve's confession, and speaks the Great Rite — 255 turns, about 417
 characters a screen on average. Proofs replay the Regent deposed by the
 Companies, the throne burned with the Regent's own oil, the Vale's crown worn
-on the gray seat, and kneeling to the hollow. Forty-two blind playtests of the
-whole realm (300–600 turns) reached thirty-five wins on four different roads,
+on the gray seat, and kneeling to the hollow. Forty-four blind playtests of the
+whole realm (300–600 turns) reached thirty-seven wins on four different roads,
 one loss, and six players who ran out of turns in the holds; every one of the
-804 findings they raised is fixed, disproven by replaying the trace, or
+862 findings they raised is fixed, disproven by replaying the trace, or
 judged by design.
+
+**The Meres** (the twelfth region, `me`, north of Barrowmere's water):
+reed-lakes and lantern-lit stilt-hamlets around Lantern Holm, where the
+Keepers drowned their first Hall — and the covenant stone with it — sooner
+than yield it to the first Reeve's men. The Drowned Hall's grief is rested by
+speaking the covenant's three words whole (the divers' word, the shrine's
+word, the warden's song), bargained by swearing it before the table (Maren
+asks, when you come back, whether it was kept), or burned with the dam
+charges, which cracks the stone. The covenant carried whole is a fourth road
+through Coldpass, can be read before the Hollow Throne, and the first Reeve's
+shade knows when it is found; the dams question is the region's own fork.
+Seven landmarks, a driftwood hermit; every companion has a word on entering
+and on how it went.
+
+**The Hearthlands** (the thirteenth region, `hl`): the granary lowland south
+of the Vale's west road and north of the Saltkerns' coast road, Tithing
+around its Tithe Barn — a Crown bailiff, a Watch sergeant on the granary
+steps, a Gray Church almoner with a ledger of the worthy, a Companies
+grain-runner, an Ironbound lay-brother, a Keeper tally-keeper, a widow in
+arrears, a miller, a landlord, a child who counts the sacks. Its grief is the
+Hunger Barn, where the crofters died at doors the first Reeve's order sealed
+and the barn-reeve who kept them hanged himself come spring: rested by
+reading the crofters' names from three tally-sticks and the barn-reeve's
+order together, bargained by opening the working barn as a common store (a
+bargain Marrowgate wants shut again), or burned with cinder-oil (smoke over
+the Vale's west road). The tithe is the region's own fork — the Crown's, the
+Companies', or a common store — read back in Tithing, by the Regent, and by
+the first Reeve's shade. Seven quests, 55 rooms, 17 npcs, 17 epilogue lines;
+every companion has a word on entering and on how it went.
+
+**The Kingswood** (the fourteenth region, `kw`): the old royal hunting forest
+north of the Iron Downs' High Cut and west of Wardmoor's Cairnwatch, under the
+Spine — oak, holly and charcoal smoke, ridings cut for a king's hunt four
+hundred years ago. Hornhallow, the burners' village in the lodge's outer
+court: a charcoal-master, an Ironbound factor, a Crown verderer with an
+unused warrant, a Keeper woodward who half-remembers the recall, a
+Companies fletcher-outlaw in the deep wood, a hermit-priest in the hunt's
+chapel, a huntsman's descendant with a horn she cannot sound, a child who
+answered the hunt's three notes once. Its grief is the Hunt's Stand, where
+the king's own hunt mustered the morning the first Reeve took the crown and
+was never recalled: rested by sounding the recall whole (the horn and three
+notes from three sources), bargained by keeping the rides open to the hunt
+one night a year (a bargain that comes due), or burned with Ironbound
+cinder-oil. The wood is the region's own fork — the Crown's timber, the
+Ironbound's coppice, or left wild — read back in Hornhallow, by the Regent,
+and by the first Reeve's shade, who never sent for his father's hunt. Seven
+quests, 56 rooms, 15 npcs, 14 epilogue lines; every companion has a word on
+entering and on how it went.
 
 **Roads Between** (added after the first playtest rounds): a ring of six
 cross-hold quests, each asked in one hold and settled in the next, flagged
