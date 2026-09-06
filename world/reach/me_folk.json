@@ -1,0 +1,925 @@
+{
+  "npcs": {
+    "me_yarrow": {
+      "name": "Yarrow",
+      "room": "me_lantern_tower",
+      "dialogue": true,
+      "desc": "The mere-folk's headwoman, weathered and sure-footed on a ladder that would unsettle most people on dry ground.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who keeps this light",
+          "once": true,
+          "say": "Yarrow. Headwoman, for whatever that's worth out here — mostly it means I'm the one who decides whose problem a stranger becomes.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_holm",
+          "label": "why Lantern Holm was built here",
+          "if": [["flag", "said_me_yarrow_greet"]],
+          "once": true,
+          "say": "Whoever survived the Hall's drowning built here after, close enough to keep watch on the water, far enough not to sit on what happened. We've kept a lantern lit every night since, in case anyone else needed finding.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_song",
+          "label": "the old song she's known to keep",
+          "if": [["flag", "said_me_yarrow_bg_holm"]],
+          "once": true,
+          "say": "Every headwoman learns it from the last, word for word, and never asks why until she's old enough to be asked it herself. It's a covenant-word, near as I've worked out. I've never had proper reason to say it aloud.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "me_ask_song",
+          "label": "ask her to sing the old song",
+          "if": [["flag", "said_me_yarrow_bg_song"], ["!flag", "me_word_song"]],
+          "say": "Reason enough is reason enough. She sings it low, once, not for performance, and it settles into memory like it was always meant to be carried, not sung twice.",
+          "fx": [
+            ["set", "me_word_song"],
+            ["addvar", "me_covenant_words", 1],
+            ["score", 3],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
+          "id": "me_dams_folk_declare",
+          "label": "tell her the dams stay hers to keep",
+          "if": [
+            ["flag", "said_me_yarrow_bg_holm"],
+            ["!flag", "me_hollow_burned"],
+            ["!flag", "me_dams_crown"],
+            ["!flag", "me_dams_folk"],
+            ["!flag", "me_dams_blown"]
+          ],
+          "say": "You tell her plainly: the dams are the Holm's to mind, not the Crown's and not Hodd's charges. She doesn't thank you in so many words — she just goes back to trimming the wick like the matter's settled.",
+          "fx": [
+            ["set", "me_dams_folk"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "appr_lys", 1]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Drowned Hall, now it rests",
+          "if": [["flag", "me_hollow_rested"]],
+          "once": true,
+          "say": "Every lantern-warden before me lit this light half-wondering if the Hall would ever stop needing it kept. I'll go on lighting it anyway. Old habits earn their keep.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the Drowned Hall, now it's bargained",
+          "if": [["flag", "me_hollow_bargained"]],
+          "once": true,
+          "say": "A promise instead of a rest. I've kept worse bargains on less certain ground than a Keeper's word. Mind you keep yours.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Drowned Hall, now it's burned",
+          "if": [["flag", "me_hollow_burned"]],
+          "once": true,
+          "say": "Four hundred years the water kept it quiet, and one night of Ironbound charge undid the keeping. I won't pretend that sits easy with anyone who mends nets for a living out here.",
+          "fx": [["xp", 1], ["addvar", "appr_osk", -1]]
+        },
+        {
+          "id": "react_dams_crown",
+          "label": "the dams, now they're repaired",
+          "if": [["flag", "me_dams_crown"]],
+          "once": true,
+          "say": "The Regent's fields drink again. Ours drink less for it. I said as much to the assessor and got a receipt for my trouble, which is about the going rate out here.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_dams_folk",
+          "label": "the dams, now they're kept as they were",
+          "if": [["flag", "me_dams_folk"]],
+          "once": true,
+          "say": "The mere stays ours to argue over, at least. That's not nothing, some years.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_dams_blown",
+          "label": "the dams, now they're rubble",
+          "if": [["flag", "me_dams_blown"]],
+          "once": true,
+          "say": "The water's dropping a hand's width a week. Give it a season and half this hamlet will be standing on dry mud wondering what its stilts were for.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_me_rested_ask",
+          "label": "ask what becomes of the covenant stone",
+          "if": [["flag", "me_hollow_rested"], ["flag", "sv_me_back"], ["!flag", "sv_me_after_done"]],
+          "once": true,
+          "say": "It's yours to carry, by rights — you're the one it let go for. But I'd keep it here if you'd let me, where the light never goes out on it again.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_me_rested_carry",
+          "label": "tell her you'll carry it on yourself",
+          "if": [["flag", "said_me_yarrow_sv_me_rested_ask"], ["!flag", "sv_me_after_done"]],
+          "once": true,
+          "say": "She nods, unsurprised. \"Then it travels,\" she says. \"Mind it doesn't end up a curio on somebody's shelf.\"",
+          "fx": [["set", "sv_me_rested_carried"], ["set", "sv_me_after_done"], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "sv_me_rested_leave",
+          "label": "leave the stone at the lantern-tower",
+          "if": [["flag", "said_me_yarrow_sv_me_rested_ask"], ["!flag", "sv_me_after_done"]],
+          "once": true,
+          "say": "You set it in her hands. She sets it in the lantern's own housing, where the light touches it every night without fail. \"Then it's kept properly this time,\" she says. \"That's the least it's owed.\"",
+          "fx": [
+            ["set", "sv_me_rested_kept_holm"],
+            ["set", "sv_me_after_done"],
+            ["move", "me_covenant_stone", "me_lantern_tower"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
+          "id": "sv_me_burned_ask",
+          "label": "ask what becomes of the drained ground",
+          "if": [["flag", "me_hollow_burned"], ["flag", "sv_me_back"], ["!flag", "sv_me_after_done"]],
+          "once": true,
+          "say": "Corliss already has stakes cut for it, given half a chance. I'd rather this hamlet decided its own mud before the Crown decides it for us. Your say carries more than mine will, this once.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_me_burned_crown",
+          "label": "let the Crown claim the drained bed",
+          "if": [["flag", "said_me_yarrow_sv_me_burned_ask"], ["!flag", "sv_me_after_done"]],
+          "once": true,
+          "say": "She takes it without argument, the way she takes most things she's already braced for. \"Then that's settled,\" she says, and goes back to trimming the wick like it costs her nothing. It costs her something.",
+          "fx": [
+            ["set", "sv_me_burned_claimed"],
+            ["set", "sv_me_after_done"],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "appr_lys", -1],
+            ["score", 2],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_me_burned_keep",
+          "label": "keep the drained ground for the Holm",
+          "if": [["flag", "said_me_yarrow_sv_me_burned_ask"], ["!flag", "sv_me_after_done"]],
+          "once": true,
+          "say": "Something in her shoulders eases that you didn't notice was tight until it wasn't. \"Then we'll figure out what grows on dry mud,\" she says. \"Slowly. Same as everything else out here.\"",
+          "fx": [
+            ["set", "sv_me_burned_folk"],
+            ["set", "sv_me_after_done"],
+            ["addvar", "rep_crown", -1],
+            ["addvar", "appr_lys", 1],
+            ["score", 4],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the lantern",
+          "say": "Go carefully on the water. Fog like this doesn't care how well you think you know the channels.",
+          "end": true
+        }
+      ]
+    },
+    "me_loach": {
+      "name": "Canon Loach",
+      "room": "me_eel_chapel",
+      "dialogue": true,
+      "desc": "A Gray Church canon, sleeves permanently damp to the elbow, tending a shrine built for a saint nobody else out here will argue about.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Canon Loach. I keep this shrine, and the claim that goes with it: Saint Ashwyn was born on these stilts, whatever the Perch at Coldpass would rather everyone believed instead.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_claim",
+          "label": "why Coldpass disputes it",
+          "if": [["flag", "said_me_loach_greet"]],
+          "once": true,
+          "say": "A pilgrim shrine draws coin and feet. Coldpass has both already, and no wish to share the saint that earns them. We have neither, and only the truth to argue with. It's a slow argument.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_shrine",
+          "label": "what the shrine actually shows",
+          "if": [["flag", "said_me_loach_bg_claim"]],
+          "once": true,
+          "say": "A birth-plaque, cut in the old hand, older than most of what Coldpass keeps. It also carries one line the covenant itself repeats, near as I can puzzle it — which is either coincidence, or it isn't.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "me_read_shrine",
+          "label": "read the birth-plaque yourself (wits)",
+          "if": [["flag", "said_me_loach_bg_shrine"], ["!flag", "me_word_saint"]],
+          "say": "Go on, then. It's held up to worse eyes than yours.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "me_word_saint"],
+                ["addvar", "me_covenant_words", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["addvar", "rep_church", 1],
+                ["say", "The old cutting gives up its shared line at last, plain once you have it: the covenant's second word, worn into a saint's own plaque long before anyone thought to hide it there on purpose."]
+              ],
+              [["say", "The plaque's cut too shallow in places to trust by eye alone. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "me_saint_declare_church",
+          "label": "declare the shrine proof enough",
+          "if": [["flag", "me_word_saint"], ["!flag", "me_saint_church"], ["!flag", "me_saint_shared"]],
+          "say": "You tell him the plaque settles it as far as you're concerned. He doesn't smile, exactly, but something in him unclenches that's plainly been clenched a long while.",
+          "fx": [["set", "me_saint_church"], ["score", 5], ["xp", 3], ["addvar", "rep_church", 2], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "me_saint_declare_shared",
+          "label": "broker a shared saint",
+          "if": [["class", "envoy"], ["flag", "me_word_saint"], ["!flag", "me_saint_church"], ["!flag", "me_saint_shared"]],
+          "say": "You put it to him plainly: two shrines, one saint, neither side loses standing by admitting the other's half is also true. He turns it over like a coin he's not sure is counterfeit, then nods, slow.",
+          "fx": [
+            ["set", "me_saint_shared"],
+            ["score", 6],
+            ["xp", 4],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 1],
+            ["addvar", "or_envoy_words", 1],
+            ["set", "or_envoy_me_saint"]
+          ]
+        },
+        {
+          "id": "react_shared",
+          "label": "ask how the shared claim is holding",
+          "if": [["flag", "me_saint_shared"]],
+          "once": true,
+          "say": "Coldpass hasn't taken back a word of it, which from that Perch is as good as an apology. I'll settle for as good as.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Drowned Hall, now it rests",
+          "if": [["flag", "me_hollow_rested"]],
+          "once": true,
+          "say": "A rite spoken forty generations late is still a rite. I intend to write the mother-house about it, and this time I don't much care if they'd rather I didn't.",
+          "fx": [["xp", 1], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Drowned Hall, now it's burned",
+          "if": [["flag", "me_hollow_burned"]],
+          "once": true,
+          "say": "Fire where a rite belonged, same story this Church keeps failing to finish before someone else finishes it for us. I'm tired of writing this letter.",
+          "fx": [["xp", 1], ["addvar", "rep_iron", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the shrine",
+          "say": "Go carefully past the eel-weir at low tide. It bites, given the chance, same as most things worth keeping.",
+          "end": true
+        }
+      ]
+    },
+    "me_sael": {
+      "name": "Sael",
+      "room": "me_divers_platform",
+      "dialogue": true,
+      "desc": "A diver matriarch, weathered brown, coiling weighted line with hands that have done this since before you were born.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Sael. Keeper-trained, and I've never once seen the sense in hiding it out here — anyone who watches me dive for 'debts to the dead' works out what I am inside a season anyway.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_dive",
+          "label": "what she dives for",
+          "if": [["flag", "said_me_sael_greet"]],
+          "once": true,
+          "say": "Stones off the Hall's own walls, one at a time, over years — my mother did it, and hers before that. Some of what we bring up still carries a covenant-word, if you know to look past the weed on it.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "me_dive_check",
+          "label": "dive for a covenant-stone (grace)",
+          "if": [["flag", "said_me_sael_bg_dive"], ["!flag", "me_word_divers"]],
+          "say": "Line's here if you want it. Mind the cold takes your breath faster than you think down there.",
+          "fx": [
+            [
+              "check",
+              "grace",
+              10,
+              [
+                ["set", "me_word_divers"],
+                ["addvar", "me_covenant_words", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["addvar", "rep_keepers", 1],
+                ["say", "Your hand finds a weed-clogged stone on the third pass, and the word cut into it comes clear the moment you're back on the platform, breath ragged and hands shaking with cold."]
+              ],
+              [
+                ["say", "The cold beats you back before your hand finds anything worth surfacing with. It can be tried again, once you've warmed through."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "me_pay_dive",
+          "label": "pay Sael to bring one up (5 gold)",
+          "if": [["flag", "said_me_sael_bg_dive"], ["!flag", "me_word_divers"], ["var", "gold", ">=", 5]],
+          "say": "Coin works too, if your lungs don't. Everyone's welcome to their own way down.",
+          "fx": [
+            ["addvar", "gold", -5],
+            ["set", "me_word_divers"],
+            ["addvar", "me_covenant_words", 1],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "She's under and back before you've finished counting your own breath held in sympathy, a weed-clogged stone in hand and the word on it plain to a diver's practiced eye."]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Drowned Hall, now it rests",
+          "if": [["flag", "me_hollow_rested"]],
+          "once": true,
+          "say": "First time in my life I've dived that water without feeling watched from underneath. I didn't know how much of a weight that was until it lifted.",
+          "fx": [["xp", 1], ["addvar", "rep_keepers", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Drowned Hall, now it's burned",
+          "if": [["flag", "me_hollow_burned"]],
+          "once": true,
+          "say": "There's nothing left down there worth diving for now. My mother's whole trade, gone in a night, and I'm the one who has to decide what my daughter learns instead.",
+          "fx": [["xp", 1], ["addvar", "appr_vell", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the line",
+          "say": "Keep clear of the Deep Cut if you're out there without me. Some water's not worth your own curiosity.",
+          "end": true
+        }
+      ]
+    },
+    "me_hodd": {
+      "name": "Hodd",
+      "room": "me_charge_barge",
+      "dialogue": true,
+      "desc": "An Ironbound dam-wright, forearms scarred pale from old burns, counting charge-casks like a woman who has already made up her mind about them.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Hodd, dam-wright, Ironbound. I've studied these old dams a full season now. They'll come down clean, when someone finally says the word.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_iron",
+          "label": "why she wants the dams gone",
+          "if": [["flag", "said_me_hodd_greet"]],
+          "once": true,
+          "say": "Four hundred years of water hiding a grief nobody had the nerve to look at plainly. Drain it, and the Hall lies open to daylight and to anyone honest enough to deal with what's actually there.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "me_take_charges",
+          "label": "ask her for a keg of charges",
+          "if": [["!has", "me_dam_charges"]],
+          "say": "She hands it over without a flicker of hesitation, like she's been waiting the whole season for someone to finally ask.",
+          "fx": [["move", "me_dam_charges", "inv"], ["xp", 1]]
+        },
+        {
+          "id": "me_dams_blown_standalone",
+          "label": "tell her to blow the dams regardless",
+          "if": [
+            ["!flag", "me_hollow_burned"],
+            ["!flag", "me_dams_crown"],
+            ["!flag", "me_dams_folk"],
+            ["!flag", "me_dams_blown"],
+            ["flag", "me_hollow_done"]
+          ],
+          "say": "Even a rested Hall doesn't need drowned fields sitting on top of it forever, far as she's concerned. She's asking you to mean it, not merely allow it.",
+          "fx": [
+            ["set", "me_dams_blown"],
+            ["score", 5],
+            ["xp", 3],
+            ["addvar", "rep_iron", 2],
+            ["addvar", "rep_watch", -2],
+            ["say", "She doesn't wait for you to change your mind. By the week's end the old dams are rubble, and the mere is already an inch shallower than it was."]
+          ]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hall, now it's burned",
+          "if": [["flag", "me_hollow_burned"]],
+          "once": true,
+          "say": "Clean work, if I say so myself. My order will hear of it before the water finishes dropping.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hall, now it rests",
+          "if": [["flag", "me_hollow_rested"]],
+          "once": true,
+          "say": "A rite worked, then. Fine. I still trust fire to finish what a rite only postpones, but I'll grant you this one held.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the casks",
+          "say": "Mind the charges stay dry until you mean to use them. Damp powder's worse than none at all.",
+          "end": true
+        }
+      ]
+    },
+    "me_corliss": {
+      "name": "Assessor Corliss",
+      "room": "me_assessor_boat",
+      "dialogue": true,
+      "desc": "A Crown assessor, ink-stained to the wrist, totting figures in a ledger chained to the desk like it might otherwise argue back.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Assessor Corliss, Crown service. Every drowned field in the Meres is worth something on a Regent's map, whatever it's worth to whoever's still fishing over it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_ledger",
+          "label": "what the ledger actually says",
+          "if": [["flag", "said_me_corliss_greet"]],
+          "once": true,
+          "say": "Every furlong the mere covers, valued as if it were still dry cropland, and owed to the Crown by an old escheat nobody living remembers being written. I only total the figures. I didn't write the law.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "me_read_ledger",
+          "label": "read the ledger's fine print (wits)",
+          "if": [["flag", "said_me_corliss_bg_ledger"], ["!flag", "me_ledger_read"]],
+          "say": "Be my guest. Most people's eyes glaze over before the second column.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "me_ledger_read"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "The fine print tells a different story than the totals: these fields were pledged to the Keepers' covenant generations before any escheat clause existed, a debt the Crown's own ledger never formally cleared."]
+              ],
+              [["say", "The columns swim before you make sense of them. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "me_challenge_ledger",
+          "label": "put the pledge to him plainly",
+          "if": [["flag", "me_ledger_read"], ["!flag", "me_ledger_challenged"]],
+          "say": "He goes quiet long enough that you know you've landed it. \"I'll note the discrepancy,\" he says at last, carefully, like a man deciding how much of his own career to spend on honesty today.",
+          "fx": [
+            ["set", "me_ledger_challenged"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_crown", -1],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_vell", 1]
+          ]
+        },
+        {
+          "id": "me_dams_crown_declare",
+          "label": "help him press for the dams' repair",
+          "if": [
+            ["flag", "said_me_corliss_bg_ledger"],
+            ["!flag", "me_hollow_burned"],
+            ["!flag", "me_dams_crown"],
+            ["!flag", "me_dams_folk"],
+            ["!flag", "me_dams_blown"]
+          ],
+          "say": "You tell him the dams are worth repairing, whatever the mere-folk think of it. He's already drafting the order before you finish the sentence.",
+          "fx": [
+            ["set", "me_dams_crown"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "rep_keepers", -2],
+            ["addvar", "appr_vell", -1]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hall, now it rests",
+          "if": [["flag", "me_hollow_rested"]],
+          "once": true,
+          "say": "Rested ground still surveys the same as any other, on my ledger. I've priced worse consciences onto tidier maps than this one.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_ledger_challenged",
+          "label": "ask if the discrepancy went anywhere",
+          "if": [["flag", "me_ledger_challenged"]],
+          "once": true,
+          "say": "Marrowgate hasn't answered the note yet. I don't expect they will in my lifetime. I filed it anyway. Some things are worth filing even unanswered.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the columns",
+          "say": "Mind the ledger stays dry. Ink and mere-damp don't agree with each other, or with my accounts.",
+          "end": true
+        }
+      ]
+    },
+    "me_reave": {
+      "name": "Captain Reave",
+      "room": "me_boathouse",
+      "dialogue": true,
+      "desc": "A Free Companies boat-captain, squinting permanently against fog that never quite lifts from around the boathouse.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Captain Reave. My crew runs the fog-channels to Marrowgate for the Companies, quiet cargo mostly, and quieter questions about what's in it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_fog",
+          "label": "what makes the fog-run dangerous",
+          "if": [["flag", "said_me_reave_greet"]],
+          "once": true,
+          "say": "Wrong channel in a bad fog and you're skiff-wreck and cargo lost, same as anyone. Right channel, and Marrowgate never even notices you arrived. Knowing which is which is the whole trade.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "me_fogrun_ask",
+          "label": "ask what she wants done",
+          "if": [["flag", "said_me_reave_bg_fog"]],
+          "once": true,
+          "say": "One run through the worst of the fog-channels, a package the Companies would rather the Crown's men never weighed. Do it clean, and the Companies remember who ran it for them.",
+          "fx": [["set", "me_fogrun_offered"], ["xp", 1]]
+        },
+        {
+          "id": "me_fogrun_help",
+          "label": "run the package through the fog (will)",
+          "if": [
+            ["flag", "me_fogrun_offered"],
+            ["!flag", "me_fogrun_done"],
+            ["!flag", "me_fogrun_refused"],
+            ["!flag", "me_fogrun_reported"],
+            ["!flag", "me_fogrun_shutdown"]
+          ],
+          "say": "Then get in the skiff and trust the pole more than your own eyes.",
+          "fx": [
+            [
+              "if",
+              [["flag", "or_scout_me_marks"]],
+              [
+                ["set", "me_fogrun_done"],
+                ["set", "free_passage"],
+                ["score", 8],
+                ["xp", 5],
+                ["addvar", "rep_free", 2],
+                ["say", "You already know the safe line from the chalk-marks, and the run goes so smoothly Reave almost looks disappointed there was nothing to prove. 'The Companies will take you under the pass for that,' she says."]
+              ],
+              [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "me_fogrun_done"],
+                    ["set", "free_passage"],
+                    ["score", 8],
+                    ["xp", 5],
+                    ["addvar", "rep_free", 2],
+                    ["say", "You hold your nerve through three wrong turns and one right one that feels wrong, and come out the far side of the fog with the package dry. 'The Companies will take you under the pass for that,' Reave says."]
+                  ],
+                  [
+                    ["say", "The fog turns you around twice before you find the channel again, package and nerve both a little worse for it. It can be tried again."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "me_fogrun_refuse",
+          "label": "refuse the run outright",
+          "if": [
+            ["flag", "me_fogrun_offered"],
+            ["!flag", "me_fogrun_done"],
+            ["!flag", "me_fogrun_refused"],
+            ["!flag", "me_fogrun_reported"],
+            ["!flag", "me_fogrun_shutdown"]
+          ],
+          "say": "She takes it without much surprise. \"Your business,\" she says. \"The offer doesn't come round twice, mind.\"",
+          "fx": [["set", "me_fogrun_refused"], ["xp", 1], ["addvar", "rep_free", -1]]
+        },
+        {
+          "id": "me_fogrun_report",
+          "label": "report the run to the Watch instead",
+          "if": [
+            ["flag", "me_fogrun_offered"],
+            ["!flag", "me_fogrun_done"],
+            ["!flag", "me_fogrun_refused"],
+            ["!flag", "me_fogrun_reported"],
+            ["!flag", "me_fogrun_shutdown"]
+          ],
+          "say": "Word reaches the nearest Watch post faster than Reave expects, and the fog-channel she named goes quiet for a season. She doesn't confront you about it. She doesn't have to; she already knows exactly who talked.",
+          "fx": [
+            ["set", "me_fogrun_reported"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_watch", 2],
+            ["addvar", "rep_free", -2]
+          ]
+        },
+        {
+          "id": "me_fogrun_shutdown",
+          "label": "order the boathouse crew to stand down",
+          "if": [
+            ["class", "warden"],
+            ["flag", "me_fogrun_offered"],
+            ["!flag", "me_fogrun_done"],
+            ["!flag", "me_fogrun_refused"],
+            ["!flag", "me_fogrun_reported"],
+            ["!flag", "me_fogrun_shutdown"]
+          ],
+          "say": "You give the order the way the old watch gives orders: plain, once, bearing behind it. Nobody at the boathouse crosses you, Reave least of all — she's run against watchmen before, and knows which fights are worth losing.",
+          "fx": [
+            ["set", "me_fogrun_shutdown"],
+            ["set", "or_warden_me_crew"],
+            ["score", 6],
+            ["xp", 4],
+            ["addvar", "rep_watch", 2],
+            ["addvar", "rep_free", -2]
+          ]
+        },
+        {
+          "id": "react_free_passage",
+          "label": "ask about the Companies' pass",
+          "if": [["flag", "free_passage"], ["flag", "me_fogrun_done"]],
+          "once": true,
+          "say": "Word's already gone ahead of you. Whichever cave you use to cross under the Spine, the Companies there will know your name before you finish climbing.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the boathouse",
+          "say": "Mind the fog past dusk. It doesn't care whose business you're on.",
+          "end": true
+        }
+      ]
+    },
+    "me_wick": {
+      "name": "Wick",
+      "room": "me_hearth_hall",
+      "dialogue": true,
+      "desc": "A lantern-holm child of nine or ten, trimming wicks with more care than the job strictly needs, listening for something under the hearth's own noise.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Wick. Everyone calls me that on account of the trimming, not the other way round, whatever Osk thinks is funny about it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_singing",
+          "label": "what she hears on still nights",
+          "if": [["flag", "said_me_wick_greet"]],
+          "once": true,
+          "say": "Singing, out past the causeway stones, on nights still enough to carry it. Nobody else says they hear it. I know what I hear.",
+          "fx": [["set", "me_wick_heard"], ["xp", 2]]
+        },
+        {
+          "id": "me_wick_confirm",
+          "label": "promise to go listen for yourself",
+          "if": [
+            ["flag", "me_wick_heard"],
+            ["!flag", "me_wick_comforted"],
+            ["!flag", "me_wick_confirmed"],
+            ["!flag", "me_wick_dismissed"]
+          ],
+          "say": "She looks up properly for the first time since you sat down. \"You'd actually go?\" she says, like the offer alone is worth more than most people's whole opinion of her.",
+          "fx": [["set", "me_wick_confirmed"], ["score", 3], ["xp", 2], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "me_wick_comfort",
+          "label": "tell her it's likely just the wind",
+          "if": [
+            ["flag", "me_wick_heard"],
+            ["!flag", "me_wick_comforted"],
+            ["!flag", "me_wick_confirmed"],
+            ["!flag", "me_wick_dismissed"]
+          ],
+          "say": "\"Maybe,\" she says, in the tone of someone humoring an adult rather than being convinced by one. She goes back to the wicks without arguing further.",
+          "fx": [["set", "me_wick_comforted"], ["xp", 1]]
+        },
+        {
+          "id": "me_wick_dismiss",
+          "label": "tell her to keep off the water at night",
+          "if": [
+            ["flag", "me_wick_heard"],
+            ["!flag", "me_wick_comforted"],
+            ["!flag", "me_wick_confirmed"],
+            ["!flag", "me_wick_dismissed"]
+          ],
+          "say": "\"I don't wander,\" she says, a little stung. \"I listen from the landing. That's not the same thing.\" She trims the next wick harder than it needs.",
+          "fx": [["set", "me_wick_dismissed"], ["xp", 1], ["addvar", "appr_tamsin", 1], ["addvar", "appr_lys", -1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "ask if the singing's stopped",
+          "if": [["flag", "me_wick_heard"], ["flag", "me_hollow_rested"]],
+          "once": true,
+          "say": "\"Quieter,\" she says, listening properly before she answers. \"Not gone. Quieter, like something finally got said back to whoever was singing it.\"",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "ask if the singing's stopped",
+          "if": [["flag", "me_wick_heard"], ["flag", "me_hollow_bargained"]],
+          "once": true,
+          "say": "\"Still there,\" she says, \"but it doesn't sound as sad as it used to. More like waiting than grieving.\" She doesn't ask you what that means. You're not sure you could tell her.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "ask if the singing's stopped",
+          "if": [["flag", "me_wick_heard"], ["flag", "me_hollow_burned"]],
+          "once": true,
+          "say": "\"Gone,\" she says, flat. \"All the way gone. I thought I'd be glad of the quiet. I'm not, much.\"",
+          "fx": [["xp", 1], ["addvar", "appr_osk", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the wicks",
+          "say": "All right. I'll still be listening, whether you believe me or not.",
+          "end": true
+        }
+      ]
+    },
+    "me_beda": {
+      "name": "Beda",
+      "room": "me_trade_counter",
+      "desc": "A trader counting stock twice by chalk-mark habit, quick to notice a hand near anything she hasn't sold yet.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Beda. I run the counter, such as it is — smoked eel, tarred rope, and whatever else washes up worth selling twice.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_returner",
+          "label": "how she came to trade here",
+          "if": [["flag", "said_me_beda_greet"]],
+          "once": true,
+          "say": "Somebody has to sell rope to people who live on stilts over water. Turns out that's steadier work than it sounds, once you learn to count everything twice.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "react_theft",
+          "label": "about the missing rope, since",
+          "if": [["flag", "stole_me_tarred_rope"], ["!flag", "me_rope_paid"]],
+          "once": true,
+          "say": "\"I count twice for a reason,\" she says, not quite looking at you. \"Now I'll count three times, and remember exactly why.\"",
+          "fx": [["addvar", "rep_watch", -1]]
+        }
+      ]
+    }
+  },
+  "items": {
+    "me_dam_charges": {
+      "name": "a keg of Ironbound charges",
+      "loc": "nowhere",
+      "hint": "burns however wet the stone is — Hodd, at the charge barge, keeps a supply"
+    }
+  },
+  "quests": {
+    "me_q_dams": {
+      "name": "The Old Dams",
+      "start": [["flag", "me_entered"]],
+      "done": [["any", [["flag", "me_dams_crown"], ["flag", "me_dams_folk"], ["flag", "me_dams_blown"]]]],
+      "stages": [
+        {
+          "if": [["flag", "me_dams_crown"]],
+          "text": "The mere-dams are repaired for the Regent's fields. Corliss's ledger closes the matter."
+        },
+        {
+          "if": [["flag", "me_dams_folk"]],
+          "text": "The dams stand as they always have, the mere-folk's own to keep or lose."
+        },
+        {
+          "if": [["flag", "me_dams_blown"]],
+          "text": "Hodd's charges took the old dams down. The mere is thinning, field by field."
+        },
+        {
+          "if": [["flag", "me_hollow_burned"]],
+          "text": "The Hall's burning already answered the dams' question. Nothing left to decide there."
+        },
+        {
+          "if": [["flag", "me_hollow_done"]],
+          "text": "Repair the dams for the Crown (Corliss), leave them be (Yarrow), or let Hodd blow them anyway."
+        },
+        {
+          "if": [],
+          "text": "The old mere-dams could be repaired, left alone, or blown. Corliss, Yarrow, and Hodd each want a say."
+        }
+      ]
+    },
+    "me_q_fogrun": {
+      "name": "The Fog-Run",
+      "start": [["flag", "me_fogrun_offered"]],
+      "done": [
+        [
+          "any",
+          [
+            ["flag", "me_fogrun_done"],
+            ["flag", "me_fogrun_refused"],
+            ["flag", "me_fogrun_reported"],
+            ["flag", "me_fogrun_shutdown"]
+          ]
+        ]
+      ],
+      "stages": [
+        {
+          "if": [["flag", "or_scout_me_marks"]],
+          "text": "You've already read the safe channel-marks. Running Reave's package through the fog should go easier for it."
+        },
+        {
+          "if": [],
+          "text": "Captain Reave, at the boathouse, wants a package run through the fog-channels to Marrowgate."
+        }
+      ]
+    },
+    "me_q_saint": {
+      "name": "Saint Ashwyn's Birthplace",
+      "start": [["flag", "said_me_loach_bg_claim"]],
+      "done": [["any", [["flag", "me_saint_church"], ["flag", "me_saint_shared"]]]],
+      "stages": [
+        {
+          "if": [["flag", "me_saint_church"]],
+          "text": "Canon Loach's claim stands: Ashwyn was born on Lantern Holm's stilts, whatever Coldpass says."
+        },
+        {
+          "if": [["flag", "me_saint_shared"]],
+          "text": "The saint is shared now, between both shrines. Neither Church house lost anything saying so."
+        },
+        {
+          "if": [["flag", "me_word_saint"]],
+          "text": "The birth-plaque is read. Declare it proof at the chapel, or leave the claim exactly as contested as it was."
+        },
+        {
+          "if": [],
+          "text": "Canon Loach's chapel keeps a claim Coldpass disputes: read the shrine's own birth-plaque to test it."
+        }
+      ]
+    },
+    "me_q_ledger": {
+      "name": "The Assessor's Ledger",
+      "start": [["flag", "said_me_corliss_bg_ledger"]],
+      "done": [["flag", "me_ledger_challenged"]],
+      "stages": [
+        {
+          "if": [["flag", "me_ledger_read"]],
+          "text": "The ledger's fine print is read. Put the covenant pledge to Corliss plainly, at the assessor's boat."
+        },
+        {
+          "if": [],
+          "text": "Assessor Corliss counts the drowned fields as the Regent's. His own ledger may say otherwise, read closely."
+        }
+      ]
+    },
+    "me_q_wick": {
+      "name": "The Child Who Hears the Drowned",
+      "start": [["flag", "me_wick_heard"]],
+      "done": [["any", [["flag", "me_wick_comforted"], ["flag", "me_wick_confirmed"], ["flag", "me_wick_dismissed"]]]],
+      "stages": [
+        {
+          "if": [],
+          "text": "Wick hears singing from the water on still nights. Comfort her, promise to check, or tell her to stop, at the hearth."
+        }
+      ]
+    }
+  }
+}

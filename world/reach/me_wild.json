@@ -1,0 +1,609 @@
+{
+  "regions": { "me": { "name": "the Meres" } },
+  "gen": [
+    {
+      "id": "me_reeds",
+      "name": "the Meres",
+      "seed": 71,
+      "w": 6,
+      "h": 6,
+      "region": "me",
+      "walls": [[0, 0], [5, 0], [0, 5], [5, 5], [4, 2], [1, 3]],
+      "pools": {
+        "descs": ["Reed and black water, fog thick enough to lose the far bank."],
+        "briefs": ["Reed, water, fog."],
+        "scenes": []
+      },
+      "links": [
+        { "cell": [2, 5], "dir": "south", "to": "me_south_shore", "back": "north", "landmark": "the south shore" },
+        { "cell": [5, 4], "dir": "east", "to": "me_holm_landing", "back": "out", "landmark": "Lantern Holm" },
+        {
+          "cell": [2, 0],
+          "dir": "north",
+          "to": "me_hollow_causeway",
+          "back": "south",
+          "landmark": "the Drowned Hall"
+        }
+      ],
+      "spots": [
+        {
+          "cell": [1, 0],
+          "name": "The Cracked Dam",
+          "desc": "One of the old mere-dams, its lip fractured and weeping a thin curtain of water into the channel below. East, the channel narrows toward whatever the dams were raised to hold back in the first place.",
+          "brief": "A cracked dam, weeping water. East: open water.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_1_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 4 south and 4 east. The Drowned Hall: 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 0],
+          "name": "The Hall's Shadow",
+          "desc": "Reed thins here, and on still days the water clears enough to show a shape below it — a roofline, maybe, or a wall, too regular to be mud. North, causeway-stones break the surface, leading toward whatever the shape belongs to.",
+          "brief": "Clear water, a shape below. North: the causeway.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_2_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 4 south and 3 east. The Drowned Hall: here."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 0],
+          "name": "The Last Reed-Bank",
+          "desc": "The reed grows taller here than a standing man, thick enough to swallow sound. Nothing marks this stretch but the reed itself, and the water moving through it too slow to call a current.",
+          "brief": "Tall reed, slow water.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_3_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 4 south and 2 east. The Drowned Hall: 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 0],
+          "name": "The Drowned Lanthorn",
+          "desc": "A tower's stump breaks the surface here, black stone gone green, older than Lantern Holm's own light by a lifetime or more. This held the first lantern, before the Holm's was raised. North, its stair still climbs into the dark.",
+          "brief": "A drowned tower-stump. North: a stair climbs.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_4_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 4 south and 1 east. The Drowned Hall: 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 1],
+          "name": "West Slough",
+          "desc": "The channel widens into a slough choked with duckweed, green enough in patches to look like solid ground. It isn't. Something disturbs the green every so often, well below where you can see.",
+          "brief": "A duckweed slough. Something moves under it.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_0_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 3 south and 5 east. The Drowned Hall: 1 north and 2 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 1],
+          "name": "The Eel Weir",
+          "desc": "A woven weir spans the channel here, old work kept in repair by somebody who still checks it. Whatever the weir was built to catch, it has been catching it a very long time.",
+          "brief": "An old, tended eel-weir.",
+          "items": ["me_eel_spear"],
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_1_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 3 south and 4 east. The Drowned Hall: 1 north and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 1],
+          "name": "The Lantern Post",
+          "desc": "A post at a channel junction once carried a lantern of its own; the iron cage is empty now, rusted shut. Four ways meet here, none of them marked by anything but habit and memory.",
+          "brief": "An empty lantern-post, four ways meeting.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_2_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 3 south and 3 east. The Drowned Hall: 1 north."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 1],
+          "name": "Reed-Break",
+          "desc": "A gap in the reed opens a straight sightline south, and on a still morning voices carry up it from wherever the gap leads — laughter, and the flat count of someone drilling something.",
+          "brief": "A gap in the reed. South: voices carry.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_3_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 3 south and 2 east. The Drowned Hall: 1 north and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 1],
+          "name": "The Long Reeds",
+          "desc": "The reed-bed runs unbroken in every direction here, tall enough to lose the sky if you stop paying attention to your own feet. Fog pools between the stalks even at midday.",
+          "brief": "Unbroken reed, fog at midday.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_4_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 3 south and 1 east. The Drowned Hall: 1 north and 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 1],
+          "name": "The Far Bank",
+          "desc": "The channel widens toward a low bank at the region's eastern edge, mud packed hard by something that comes here to drink or to watch. Whichever it is, it isn't here now.",
+          "brief": "A wide, muddy bank.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_5_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 3 south. The Drowned Hall: 1 north and 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 2],
+          "name": "Ferrystone",
+          "desc": "A flat mooring-stone breaks the water, grooved deep where centuries of rope wore into it. West, past a reed-choked stretch, a chapel roof shows just clear of the waterline.",
+          "brief": "A worn mooring-stone. West: a chapel roof.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_0_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 2 south and 5 east. The Drowned Hall: 2 north and 2 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 2],
+          "name": "Weed Shallows",
+          "desc": "The water shallows to knee-depth over a bed of waving weed, clear enough here to see your own boots. Small fish scatter ahead of every step, and do not come back until you've gone.",
+          "brief": "Clear, weedy shallows.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_1_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 2 south and 4 east. The Drowned Hall: 2 north and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 2],
+          "name": "Slack Water",
+          "desc": "The channels meet here and go still, black and mirror-flat under the fog. It is, by some distance, the quietest place in the Meres, and nobody who lives here seems to like that about it.",
+          "brief": "Flat, mirror-still water.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_2_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 2 south and 3 east. The Drowned Hall: 2 north."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 2],
+          "name": "Skiffwrack Shallows",
+          "desc": "Broken skiff-ribs stick up from the mud like the bones of something that used to swim. A gap in the reed, easy to miss unless you're looking for it, leads in toward whoever wrecked them made camp after.",
+          "brief": "Wrecked skiff-ribs. A hidden way in.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_3_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 2 south and 2 east. The Drowned Hall: 2 north and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 2],
+          "name": "The Deep Cut",
+          "desc": "The channel drops away here, deep enough that a dropped stone takes its time reaching bottom. Fishers avoid it by long habit, and nobody who asks why gets a straight answer.",
+          "brief": "A deep, avoided channel.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_5_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 2 south. The Drowned Hall: 2 north and 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 3],
+          "name": "Cold Slough",
+          "desc": "The water runs colder here than anywhere else in the Meres, for no reason anyone has ever explained to a stranger's satisfaction. A patch of reed-tar has been worked into a rough salve and left under a stone, oddly.",
+          "brief": "Unaccountably cold water.",
+          "items": ["me_reed_tar_salve"],
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_0_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 1 south and 5 east. The south shore: 2 south and 2 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 3],
+          "name": "The Drowned Orchard",
+          "desc": "Dead apple trees stand in ranks below the waterline, black branches breaking the surface like a fence with nothing left to keep in. Someone's orchard, once, before the dams went in.",
+          "brief": "A drowned orchard, black branches.",
+          "onEnterOnce": [["xp", 2]],
+          "actions": [
+            {
+              "id": "me_bearings_2_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 1 south and 3 east. The south shore: 2 south."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 3],
+          "name": "Rushlight Flat",
+          "desc": "A flat stretch of shallow water and taller rush, easy walking by mere standards. Someone has bent a few stalks into a marker nobody living remembers the meaning of.",
+          "brief": "Shallow flat, an old bent-rush marker.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_3_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 1 south and 2 east. The south shore: 2 south and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 3],
+          "name": "The Narrow Gut",
+          "desc": "The channel narrows to barely a skiff's width, banks pressing close on either side. Anything coming the other way would have nowhere to go but through you.",
+          "brief": "A narrow, pinched channel.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_4_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 1 south and 1 east. The south shore: 2 south and 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 3],
+          "name": "East Reed Wall",
+          "desc": "The reed grows into an actual wall here, a solid green barrier taller than a door. Something has pushed through it more than once, low to the water, leaving a ragged gap that closes back in slowly.",
+          "brief": "A wall of reed, pushed through once.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_5_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 1 south. The south shore: 2 south and 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 4],
+          "name": "Nix's Mooring",
+          "desc": "A single mooring-post stands alone in open water, rope coiled neat around its base by someone who clearly means to come back. West, a raft-hut rides low and patient on the current.",
+          "brief": "A lone mooring-post. West: a raft-hut.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_0_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 5 east. The south shore: 1 south and 2 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 4],
+          "name": "The Long Pole",
+          "desc": "A poling-channel runs straight and true here, the one stretch of the Meres anyone bothers to keep clear. Whoever cut it did careful, patient work, a long time before you came along to use it.",
+          "brief": "A cleared, straight poling-channel.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_1_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 4 east. The south shore: 1 south and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 4],
+          "name": "Fogshallow",
+          "desc": "A second stilt-hamlet, smaller than Lantern Holm, its walkways sound but every door standing open. Whoever lived here left in a hurry some fog-thick night, and nobody has moved back in since.",
+          "brief": "An emptied stilt-hamlet, doors open.",
+          "onEnterOnce": [["xp", 2]],
+          "actions": [
+            {
+              "id": "me_bearings_2_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 3 east. The south shore: 1 south."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 4],
+          "name": "Millstone Deep",
+          "desc": "A millstone lies flat on the channel floor, visible only when the water runs clear, the mill it served long since gone to timber and memory. Coin-sized fish shelter in its worn center groove.",
+          "brief": "A sunk millstone, fish in its groove.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_3_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 2 east. The south shore: 1 south and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 4],
+          "name": "Near Holm Water",
+          "desc": "Lantern light catches on the fog here even by day, faint but steady. East, past one more stretch of open water, Lantern Holm's own stilts and walkways are waiting, closer now than anywhere else out here.",
+          "brief": "Faint lantern-glow. East: Lantern Holm, close.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_4_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 1 east. The south shore: 1 south and 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 4],
+          "name": "Holm's Edge",
+          "desc": "The last stretch of open water before Lantern Holm itself, a half-sunk mooring-post driven in for skiffs that don't quite reach the hamlet's own landing. East, the stilts and walkways rise out of the fog at last.",
+          "brief": "The mere's edge. East: Lantern Holm's stilts.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_5_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is here. The south shore: 1 south and 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 5],
+          "name": "The Causeway Stones",
+          "desc": "Worked stones show just under the water in a line too straight for the mere to have made, an old causeway drowned along with everything else out here. It goes nowhere you can walk anymore.",
+          "brief": "A drowned, straight-laid causeway.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_1_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 1 north and 4 east. The south shore: 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 5],
+          "name": "The Landing Reeds",
+          "desc": "The reed thins toward drier ground here, and the mud firms up underfoot. South, past the last of the standing water, the causeway from Hollowbrook's barrow downs meets the mere at last.",
+          "brief": "Thinning reed. South: the south shore.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_2_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 1 north and 3 east. The south shore: here."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 5],
+          "name": "South Slough",
+          "desc": "A shallow, sluggish slough marks the mere's southern reach, water the color of strong tea and no cleaner for the comparison. Frogs go quiet all at once when you pass, then start again behind you.",
+          "brief": "A tea-colored, sluggish slough.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_3_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 1 north and 2 east. The south shore: 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 5],
+          "name": "The Last Bank",
+          "desc": "A low bank marks the mere's edge here, reed giving out to bare mud and, past it, country the Meres don't claim. Whatever holds lie beyond it are somebody else's fog to walk through.",
+          "brief": "A low bank, the mere's true edge.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "me_bearings_4_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, Lantern Holm is 1 north and 1 east. The south shore: 2 west."]]
+            }
+          ]
+        }
+      ],
+      "cellFx": {
+        "onEnter": [
+          [
+            "chance",
+            8,
+            [
+              [
+                "if",
+                [["!npcDead", "me_mere_wight"]],
+                [
+                  ["npcgo", "me_mere_wight", "here"],
+                  ["say", "The water beside you breaks without a splash, and something gray and dripping stands up out of it, in no hurry at all."]
+                ],
+                []
+              ]
+            ],
+            []
+          ]
+        ]
+      }
+    }
+  ],
+  "stamps": [
+    {
+      "template": "chapel",
+      "id": "me_ferry_chantry",
+      "at": "me_reeds_0_2",
+      "dir": "west",
+      "back": "east",
+      "sideTrip": true,
+      "landmark": "the Ferry Chantry",
+      "vars": {
+        "NAME": "the Ferry Chantry",
+        "SAINT": "a drowned ferryman's shade",
+        "SIGN": "A mooring-ring is bolted to the porch itself, as if the chapel once expected to be boarded, not walked into.",
+        "LOOT": "a tin ferry-toll box, empty"
+      }
+    },
+    {
+      "template": "tower",
+      "id": "me_first_lanthorn",
+      "at": "me_reeds_4_0",
+      "dir": "north",
+      "back": "south",
+      "sideTrip": true,
+      "landmark": "the First Lanthorn",
+      "vars": {
+        "NAME": "the First Lanthorn",
+        "WATCHER": "a lightkeeper's shade",
+        "VIEW": "the whole mere shows at once, channel and island and fog-bank, Lantern Holm's true light small and steady in the middle of it",
+        "SIGN": "The old lens, cracked through, still sits in its cradle at the top.",
+        "LOOT": "a lightkeeper's brass tally-wheel"
+      }
+    },
+    {
+      "template": "hut",
+      "id": "me_driftwood_hut",
+      "at": "me_reeds_0_4",
+      "dir": "west",
+      "back": "east",
+      "sideTrip": true,
+      "landmark": "the Driftwood Hut",
+      "vars": {
+        "NAME": "the Driftwood Hut",
+        "HERMIT": "Nix, a raft-hermit",
+        "SIGN": "The hut rides on lashed driftwood, rocking gently. Nix hasn't touched shore in years, and won't.",
+        "LOOT": "a jar of pickled eels, oddly generous"
+      }
+    },
+    {
+      "template": "camp",
+      "id": "me_skiffwrack_camp",
+      "at": "me_reeds_3_2",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "Skiffwrack Camp",
+      "vars": {
+        "NAME": "Skiffwrack Camp",
+        "CAPTAIN": "a Free Companies fog-runner",
+        "SIGN": "Oilcloth bundles are stacked and covered against the damp, none of them marked with what they hold.",
+        "LOOT": "a fog-runner's marked chart, half of Marrowgate's back channels on it"
+      }
+    }
+  ],
+  "items": {
+    "me_eel_spear": {
+      "name": "a barbed eel-spear",
+      "loc": "nowhere",
+      "takeable": true,
+      "hit": 1,
+      "dmg": 2,
+      "hint": "short-hafted, wicked-barbed, made for close water-work"
+    },
+    "me_reed_tar_salve": {
+      "name": "a pot of reed-tar salve",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "black, bitter-smelling, seals a wound fast",
+      "use": [
+        {
+          "fx": [
+            ["hp", 3],
+            ["move", "me_reed_tar_salve", "nowhere"],
+            ["say", "It stings going on and stops stinging almost as fast, the wound already closing under the tar."]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "me_mere_wight": {
+      "name": "mere-wight",
+      "room": null,
+      "hostile": true,
+      "aggressive": true,
+      "hp": 8,
+      "atk": 2,
+      "df": 9,
+      "desc": "Waterlogged and gray, moving with a slow, dripping patience that never quite looks tired.",
+      "onDeath": [
+        ["score", 3],
+        ["xp", 3],
+        ["say", "It goes down without a struggle worth the name, and the mere takes it back without a ripple to mark where."]
+      ]
+    }
+  }
+}
