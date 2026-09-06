@@ -212,8 +212,8 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the fifth playtest round): 517 rooms, 153 npcs, 173
-items, 77 quests, 40 stamped places each with its own sign and reward, 380
+**As built** (after the sixth playtest round): 517 rooms, 153 npcs, 173
+items, 77 quests, 40 stamped places each with its own sign and reward, 392
 epilogue lines, 4 companions, 6 factions, 7 endings each with a proof; every
 gate in the holds and the capital has a force, a craft and a words route, and
 ten waystations on the roads between the holds each put a small choice in the
@@ -327,7 +327,14 @@ throne, an Osk who won his quarrel will not speak a rite beside a third fire,
 and a Tamsin who won hers promises to stand between the Company's rope and
 Lys's brother; 24 epilogue lines tell how each quarrel ended. Thirty remarks,
 eighteen topics, twelve leaves; none can fire on the walkthrough, which
-travels with Lys alone.
+travels with Lys alone. Two more quarrels wait on the first road, where every
+party walks: Osk and Tamsin over the Vale's barrow doors (sealed or left open
+— whichever lost the argument raises it), Lys and Vell over the Hollow King's
+crown kept or the king slain (a crown given back satisfies them both); the
+same three ways to settle them, and no leaving over the first argument of the
+road. Each companion's ending lines about their own grief are mutually
+exclusive — forgiven, avenged, truth known and unresolved, never went —
+whatever order things happened in.
 
 **Origins** (after the fourth playtest round): the four classes were numbers
 only — six class-gated lines in the whole realm. Now each is a role the world
