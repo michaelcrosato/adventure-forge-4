@@ -322,12 +322,17 @@ export function knownLandmarks(world: World, s: State): string[] {
  * came to a place they know; only the destinations are landmarks, and nobody
  * strolls away from a confrontation.
  */
+/** Hostile as things stand: a `hostile` or `aggressive` def that content has not calmed (`["calm", id]`). */
+export const hostileNow = (world: World, s: State, id: string): boolean =>
+  !!(world.npcs[id]?.hostile || world.npcs[id]?.aggressive) && !s.flags[`calm_${id}`];
+export const aggressiveNow = (world: World, s: State, id: string): boolean =>
+  !!world.npcs[id]?.aggressive && !s.flags[`calm_${id}`];
+
 export function travelAvailable(world: World, s: State): boolean {
   if (world.rooms[s.room]?.noTravel) return false;
   if (!knownLandmarks(world, s).length) return false;
   for (const id of Object.keys(world.npcs)) {
-    const def = world.npcs[id]!;
-    if ((def.aggressive || def.hostile) && s.npcRoom[id] === s.room && !npcDead(world, s, id) && !s.party.includes(id)) return false;
+    if (hostileNow(world, s, id) && s.npcRoom[id] === s.room && !npcDead(world, s, id) && !s.party.includes(id)) return false;
   }
   return true;
 }
@@ -434,6 +439,15 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
       case "if":
         applyFx(world, s, condsOk(world, s, fx[1]) ? fx[2] : fx[3], events);
         break;
+      case "calm": {
+        // a words route that ends a standoff: the npc stands down for the rest of the game
+        if (!s.flags[`calm_${fx[1]}`]) {
+          s.flags[`calm_${fx[1]}`] = true;
+          const who = world.npcs[fx[1]];
+          if (who && s.npcRoom[fx[1]] === s.room && !npcDead(world, s, fx[1])) events.push(`${TheName(who.name)} stands down.`);
+        }
+        break;
+      }
       case "slay":
         // a scripted end, not a fight: the room reads "(at rest)", not "(dead)"
         s.npcHp[fx[1]] = 0;
@@ -626,7 +640,7 @@ function companionStruck(world: World, s: State, def: NpcDef, id: string, events
 function recoverDowned(world: World, s: State, events: string[], attacked: string | null): void {
   // the fight is still on while something aggressive stands here, or while the player is trading blows
   const hostile = Object.keys(world.npcs).some(
-    (id) => world.npcs[id]!.aggressive && !s.party.includes(id) && s.npcRoom[id] === s.room && !npcDead(world, s, id),
+    (id) => aggressiveNow(world, s, id) && !s.party.includes(id) && s.npcRoom[id] === s.room && !npcDead(world, s, id),
   );
   if (hostile || attacked) return;
   for (const id of s.party) {
@@ -674,7 +688,7 @@ function aggressivePass(world: World, s: State, events: string[], except: string
   for (const id of Object.keys(world.npcs)) {
     if (s.ended) return;
     const def = world.npcs[id]!;
-    if (!def.aggressive || id === except || s.party.includes(id)) continue;
+    if (!aggressiveNow(world, s, id) || id === except || s.party.includes(id)) continue;
     if (s.npcRoom[id] !== s.room || npcDead(world, s, id)) continue;
     npcStrike(world, s, id, events, "attacks");
   }
@@ -900,7 +914,7 @@ export function legalActions(world: World, s: State): Action[] {
     // companions are not targets; a stranger who has drawn no blade is one, but
     // the option waits at the foot of the menu, after everything else here
     if (def.hp !== undefined && !s.party.includes(npc))
-      (def.hostile || def.aggressive ? out : late).push({ kind: "attack", npc });
+      (hostileNow(world, s, npc) ? out : late).push({ kind: "attack", npc });
   }
   for (const id of s.inv) {
     for (const u of world.items[id]?.use ?? []) {

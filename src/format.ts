@@ -184,6 +184,8 @@ export function render(
         const tail = opts.full && d.desc ? ` — ${d.desc}` : "";
         if (hp <= 0) return `${d.name} (${s.flags[`laid_${id}`] ? "at rest" : "dead"})`;
         const pierce = d.pierce ? ", armor useless" : "";
+        // a standoff content has ended (`calm`) reads as the peace it is
+        if ((d.aggressive || d.hostile) && s.flags[`calm_${id}`]) return `${d.name} is here (stood down)${tail}`;
         if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1}${pierce})${tail}`;
         // a hostile that is not aggressive never strikes first: say so, so walking past reads as the choice it is
         if (d.hostile) return `${d.name} (hostile, holds its ground, hp${hp}/${d.hp ?? 1}${pierce}${talks.has(id) ? ", will hear you out" : ""})${tail}`;

@@ -24,7 +24,7 @@ const COND_OPS = new Set([
   "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "any",
 ]);
 const FX_OPS = new Set([
-  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "end",
+  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "calm", "end",
 ]);
 
 /**
@@ -136,6 +136,7 @@ export function validateWorld(world: World): string[] {
       if (op === "npcgo" && !npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
       if (op === "npcgo" && fx[2] !== null && fx[2] !== "here" && !roomOk(fx[2])) err(`${where}: unknown room ${fx[2]}`);
       if (op === "slay" && !npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
+      if (op === "calm" && !npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
       if (op === "if") {
         checkConds(`${where}.if`, fx[1]);
         checkFx(`${where}.if.then`, fx[2]);

@@ -36,6 +36,7 @@ export type Fx =
   | ["npcgo", string, string | null] // move npc to a roomId, "here" (the player's room), or null (removes)
   | ["if", Cond[], Fx[], Fx[]] // branch on conditions: thenFx if all pass, else elseFx
   | ["slay", string] // npc drops dead with no fight and no onDeath (a scripted death)
+  | ["calm", string] // a hostile npc stands down for good: no longer blocks travel, no longer reads hostile, attack listed last
   | ["setvar", string, number]
   | ["addvar", string, number]
   | ["check", string, number, Fx[], Fx[]] // skill, dc, okFx, failFx (d20 + skill/attr/perk mods)

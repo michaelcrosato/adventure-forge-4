@@ -784,3 +784,26 @@ test("a conversation that runs past the menu cap turns pages: 'more to ask' is f
   assert.ok(!labels(small, s2).includes("more to ask"));
   assert.equal(labels(small, s2).length, 12);
 });
+
+// ---------- a standoff ended by words ----------
+test("calm: a hostile who stands down no longer blocks travel, reads as at peace, and is attacked only as a last resort", () => {
+  const world = mini({
+    rooms: {
+      a: { name: "A", desc: "Room A.", landmark: "the square", exits: { east: { to: "b" } } },
+      b: { name: "B", desc: "Room B.", landmark: "the larder", exits: { west: { to: "a" } } },
+    },
+    npcs: { rook: { name: "Rook", room: "b", hp: 8, atk: 2, hostile: true, topics: [{ id: "deal", label: "trade him respect", say: "Fair.", fx: [["calm", "rook"]] }] } },
+  });
+  let { state } = newState(world, 1);
+  state = doLabel(world, state, "go east");
+  let menu = labels(world, state);
+  assert.ok(!menu.includes("travel to a known place"), "a standoff blocks travel");
+  assert.match(render(world, state, []).text, /Rook \(hostile, holds its ground/);
+  const out = step(world, state, actionByLabel(world, state, "ask Rook: trade him respect")!);
+  assert.ok(out.events.some((e) => /Rook stands down\./.test(e)), out.events.join(" | "));
+  state = out.state;
+  menu = labels(world, state);
+  assert.ok(menu.includes("travel to a known place"), "the standoff is over: travel is back");
+  assert.equal(menu[menu.length - 1], "attack Rook with bare hands", "attacking a man at peace is the last thing on the menu");
+  assert.match(render(world, state, []).text, /Rook is here \(stood down\)/);
+});

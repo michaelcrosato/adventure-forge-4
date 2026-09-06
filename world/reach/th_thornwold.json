@@ -1168,6 +1168,21 @@
           "fx": [["set", "free_passage"], ["score", 4], ["xp", 3], ["addvar", "rep_free", 1]]
         },
         {
+          "id": "favor_not_yet",
+          "label": "the road, now Rook's dealt with",
+          "if": [
+            ["flag", "th_heard_passage"],
+            ["var", "rep_free", "<", 1],
+            ["!flag", "free_passage"],
+            ["flag", "th_rook_dealt"],
+            ["!flag", "cp_came_by_stair"],
+            ["!flag", "cp_came_by_writ"],
+            ["!flag", "cp_came_by_cave"]
+          ],
+          "say": "Rook's dealt with, and I'll remember it. But the Companies don't sell the road on one favour to a stranger they've no other reason to trust. Do us a good turn somewhere, and ask me again.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "ask_lys_brother",
           "label": "ask after Lys's brother",
           "if": [["!flag", "lys_brother_found"]],
@@ -1910,7 +1925,8 @@
             ["set", "or_scout_th_rook"],
             ["move", "th_free_blade", "inv"],
             ["score", 4],
-            ["xp", 3]
+            ["xp", 3],
+            ["calm", "th_rook"]
           ]
         }
       ]

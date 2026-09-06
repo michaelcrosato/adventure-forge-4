@@ -88,6 +88,7 @@ Effects run in order and stop the moment the game ends.
 | `["if", conds, thenFx, elseFx]` | branch inside an effect list |
 | `["party", npc, "join"]` / `["party", npc, "leave"]` | companion joins / leaves (npc needs a `companion` block) |
 | `["slay", npc]` | scripted death: no fight, no onDeath |
+| `["calm", npc]` | a hostile stands down for good: no longer blocks fast travel, reads "is here (stood down)", and attacking them is listed last — for a words route that ends a standoff without the npc leaving |
 | `["end", "win"|"lose", endingId, text]` | ends the game (every ending id needs a proof — see §10) |
 
 `check` skills are the four attributes `might`, `grace`, `wits`, `will`, or a
