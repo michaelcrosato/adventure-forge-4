@@ -1387,6 +1387,55 @@
           "label": "leave the Regent to her window",
           "say": "Mind the stair. Everyone who goes down it comes up changed, or does not come up.",
           "end": true
+        },
+        {
+          "id": "envoy_record",
+          "label": "what the court has heard of you",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "or_envoy_mg_terms"],
+                ["flag", "or_envoy_ir_broker"],
+                ["flag", "or_envoy_hb_broker"],
+                ["flag", "or_envoy_sk_broker"],
+                ["flag", "or_envoy_th_haggle"],
+                ["flag", "or_envoy_wm_split"],
+                ["flag", "or_envoy_cp_split"],
+                ["flag", "or_envoy_em_broker"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Every toll paid in a promise instead of coin reaches this chamber eventually. I have read enough of your work now to know your price is rarely gold.",
+          "fx": [
+            ["xp", 2],
+            ["addvar", "rep_crown", 1],
+            [
+              "if",
+              [["flag", "or_envoy_mg_terms"]],
+              [
+                ["say", "\"You talked me down from a title to a favor, in this very room. I still notice when I have been managed. I mind less than I did.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "or_envoy_ir_broker"]],
+              [
+                ["say", "\"Cinderhall's chapterhouse keeps its Preceptor and pays its dead, quietly, on your terms. That is a truce, not a mercy. I note the distinction.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "or_envoy_hb_broker"]],
+              [
+                ["say", "\"A grave-robber's trade talked into a smaller shape instead of a hanging. Hollowbrook kept its chandler and its shelf both. Efficient.\""]
+              ],
+              []
+            ]
+          ]
         }
       ]
     },
@@ -1587,6 +1636,55 @@
           "once": true,
           "say": "\"More than one hold's written to me about goods gone missing behind a stranger's back,\" Tarn says. \"The Watch keeps a ledger too, same as the chapterhouse.\"",
           "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
+        },
+        {
+          "id": "warden_record",
+          "label": "what the Watch has heard of you",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "or_warden_ir_frank_truth"],
+                ["flag", "or_warden_hb_deputized"],
+                ["flag", "or_warden_hb_arrest"],
+                ["flag", "or_warden_th_vane"],
+                ["flag", "or_warden_wm_hale"],
+                ["flag", "or_warden_va_hunter_sortie_done"],
+                ["flag", "or_warden_cp_bray_watch"]
+              ]
+            ],
+            ["flag", "mg_admitted"]
+          ],
+          "once": true,
+          "say": "Every garrison between here and the coast has filed a word on you, one way or another. A soldier's record precedes them into any room, mine included.",
+          "fx": [
+            ["xp", 2],
+            ["addvar", "rep_watch", 1],
+            [
+              "if",
+              [["flag", "or_warden_ir_frank_truth"]],
+              [
+                ["say", "\"Frank Aldous's confession, was it. That costs a chapterhouse more than any writ of mine could.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["any", [["flag", "or_warden_hb_deputized"], ["flag", "or_warden_hb_arrest"]]]],
+              [
+                ["say", "\"Stood your own watch in Hollowbrook, then made the arrest stick without a blade drawn. That is Watch work, whoever swore you to it.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["any", [["flag", "or_warden_th_vane"], ["flag", "or_warden_wm_hale"]]]],
+              [
+                ["say", "\"Vane clocked you at a glance in Thornwold; Hale wanted to write you into a report she cannot file. Bearing like that is not taught.\""]
+              ],
+              []
+            ]
+          ]
         }
       ]
     },
@@ -2372,6 +2470,56 @@
               []
             ]
           ]
+        },
+        {
+          "id": "scout_record",
+          "label": "what the trade says about you",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "or_scout_ir_cache"],
+                ["flag", "or_scout_th_rook"],
+                ["flag", "or_scout_sk_mark"],
+                ["flag", "or_scout_hb_fence"],
+                ["flag", "or_scout_wm_armoury"],
+                ["flag", "or_scout_va_flagstone"],
+                ["flag", "or_scout_em_sign"],
+                ["flag", "or_scout_cp_cleft"]
+              ]
+            ],
+            ["flag", "mg_admitted"]
+          ],
+          "once": true,
+          "say": "The Companies keep better track of quiet hands than the Watch keeps of loud ones. Word of yours has crossed more than one border ahead of you.",
+          "fx": [
+            ["xp", 2],
+            ["addvar", "rep_free", 1],
+            [
+              "if",
+              [["flag", "or_scout_ir_cache"]],
+              [
+                ["say", "\"A runner's cache spotted clean in Cinderhall, coin and all. Only someone who has run one themselves finds those.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "or_scout_th_rook"]],
+              [
+                ["say", "\"Rook does not trade his own blade for nothing. One quiet hand to another, he called it. That's a compliment, from him.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "or_scout_sk_mark"]],
+              [
+                ["say", "\"Rennick's chalk-marks, read at a glance in Gullhaven. Half his crew still doesn't know a stranger cracked that code.\""]
+              ],
+              []
+            ]
+          ]
         }
       ]
     },
@@ -2590,6 +2738,55 @@
               [["flag", "sv_ir_rested_unmarked"]],
               [
                 ["say", "\"The scratches stand uncut under the company's sign,\" she says. \"A ledger keeps a name four hundred years. A scratch lasts till the next rain. I wish you'd chosen the stone.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "scholar_record",
+          "label": "what the pages say of you",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "or_scholar_cp_fost"],
+                ["flag", "or_scholar_ir_tally_dates"],
+                ["flag", "or_scholar_wm_wynne"],
+                ["flag", "or_scholar_hb_chest"],
+                ["flag", "or_scholar_sk_plate"],
+                ["flag", "or_scholar_th_waymarker"],
+                ["flag", "or_scholar_va_ledger"],
+                ["flag", "or_scholar_em_mason"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "A scholar reads what a shelf will not say aloud. Word of yours reached this hall in the hand of the pages themselves, ahead of any messenger.",
+          "fx": [
+            ["xp", 2],
+            ["addvar", "rep_keepers", 1],
+            [
+              "if",
+              [["flag", "or_scholar_cp_fost"]],
+              [
+                ["say", "\"A rite for a throne under a palace, read whole at Coldpass. Whoever wrote that knew this palace long before I ever did.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "or_scholar_ir_tally_dates"]],
+              [
+                ["say", "\"Cinderhall's own tally-dates, read plain against its story. That is exactly how I would have caught the lie myself.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "or_scholar_wm_wynne"]],
+              [
+                ["say", "\"Highward's shelf-mark still reads that no word was ever sent. I have wondered about that line for twenty years. Now someone else has too.\""]
               ],
               []
             ]

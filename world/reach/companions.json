@@ -372,6 +372,26 @@
             "id": "r_quarrel_lys_vell_sour_lys",
             "if": [["flag", "quarrel_lys_vell_vell"]],
             "say": "A promise doesn't stop being one just because you can prove it was never going to work."
+          },
+          {
+            "id": "r_or_sk_em_cold",
+            "if": [["any", [["flag", "or_warden_sk_cold"], ["flag", "or_warden_em_cold"]]]],
+            "say": "Whoever you just talked to went cold the moment they placed you as Watch. That is exactly how my brother's Company treats outsiders."
+          },
+          {
+            "id": "r_or_th_cal_letter_later",
+            "if": [["flag", "or_envoy_th_cal_letter"], ["flag", "mg_entered"]],
+            "say": "That letter to Cal was your idea, back in Thornwold. I still think about what it cost him to actually send it."
+          },
+          {
+            "id": "r_or_va_hunter_sortie_pride",
+            "if": [["flag", "or_warden_va_hunter_sortie_done"]],
+            "say": "My father does not hand out that kind of praise. 'A soldier's count' is exactly how he would put it. I am still deciding how I feel about that."
+          },
+          {
+            "id": "r_or_hb_sk_fence_dry",
+            "if": [["any", [["flag", "or_scout_hb_fence"], ["flag", "or_scout_sk_lookout"]]]],
+            "say": "Professional courtesy with smugglers is not the same as trust. Noted, and left there."
           }
         ],
         "leaves": [
@@ -957,6 +977,21 @@
             "id": "r_quarrel_osk_vell_sour_osk",
             "if": [["flag", "quarrel_osk_vell_vell"], ["flag", "mg_entered"]],
             "say": "Every city since Emberfall, I think of that confession sitting in someone's ledger, out of his hands for good now."
+          },
+          {
+            "id": "r_or_em_doctrine_hard",
+            "if": [["flag", "or_scholar_em_doctrine"]],
+            "say": "Canoness Fane's own order, read back to a prior until he confessed it. My own Church, in that first fire. I have no verse ready for that yet."
+          },
+          {
+            "id": "r_or_hb_ir_broker_uneasy",
+            "if": [["any", [["flag", "or_envoy_hb_broker"], ["flag", "or_envoy_ir_broker"]]]],
+            "say": "A quiet truce instead of a reckoning, twice now. Maybe that is mercy. It still itches like a rite left half-said."
+          },
+          {
+            "id": "r_or_va_flagstone_later",
+            "if": [["flag", "or_scout_va_flagstone"], ["flag", "fd_entered"]],
+            "say": "That carving found me a world from here, before I even knew this water existed. I still do not know what to make of that."
           }
         ],
         "leaves": [
@@ -1550,6 +1585,23 @@
             "id": "r_quarrel_tamsin_vell_sour_tamsin",
             "if": [["flag", "quarrel_tamsin_vell_vell"]],
             "say": "Hope your true history's worth what it costs the next recruit who believed in that wall."
+          },
+          {
+            "id": "r_or_ir_frank_or_tally",
+            "if": [["any", [["flag", "or_warden_ir_frank_truth"], ["flag", "or_scholar_ir_tally_dates"]]]],
+            "say": "Aldous's own truth, pulled plain instead of beaten out of him. That's the kind of dealing I trust, soldier or scholar.",
+            "fx": [["addvar", "appr_tamsin", 1]]
+          },
+          {
+            "id": "r_or_hb_watch_arrest",
+            "if": [["any", [["flag", "or_warden_hb_deputized"], ["flag", "or_warden_hb_arrest"]]]],
+            "say": "You stood your own watch, then settled it yourself, no Keeper's blessing needed. That's authority the plain way — earned, not worn.",
+            "fx": [["addvar", "appr_tamsin", 1]]
+          },
+          {
+            "id": "r_or_th_wm_bearing",
+            "if": [["any", [["flag", "or_warden_th_vane"], ["flag", "or_warden_wm_hale"]]]],
+            "say": "A captain and a sergeant, different colors, same read on you at a glance. Soldiers know soldiers. I'd take that over a medal."
           }
         ],
         "leaves": [
@@ -2139,6 +2191,27 @@
             "id": "r_quarrel_lys_vell_grateful_vell",
             "if": [["flag", "quarrel_lys_vell_vell"]],
             "say": "Thank you for not romanticizing an arrangement that was never going to hold."
+          },
+          {
+            "id": "r_or_hb_mg_peer",
+            "if": [["any", [["flag", "or_scholar_hb_peer"], ["flag", "or_scholar_mg_penn"]]]],
+            "say": "Arguing a covenant's terms until a Keeper forgets to be wary of you — I have built a career on exactly that trick. Effective, isn't it.",
+            "fx": [["addvar", "appr_vell", 1]]
+          },
+          {
+            "id": "r_or_mg_terms_noted",
+            "if": [["flag", "or_envoy_mg_terms"]],
+            "say": "You walked out of her solar with oil and her thanks, and none of it touched what I am to this palace. I noticed how carefully you managed that."
+          },
+          {
+            "id": "r_or_th_rowan_later",
+            "if": [["flag", "or_scholar_th_rowan"], ["flag", "mg_entered"]],
+            "say": "A name kept at Hollowbrook, one of the old line, living and hidden. I said very little when you learned that. I am still saying very little."
+          },
+          {
+            "id": "r_or_wm_va_reading_later",
+            "if": [["any", [["flag", "or_envoy_wm_gossip"], ["flag", "or_envoy_va_herald"]]], ["flag", "mg_entered"]],
+            "say": "A spymaster's gossip, a herald's script — you read both the same careful way, half a Reach apart. I have kept a private tally of it."
           }
         ],
         "leaves": [
@@ -2729,9 +2802,22 @@
         ["!flag", "tamsin_mine_forgiven"],
         ["!flag", "ir_miners_sold"],
         ["!flag", "tamsin_left"],
-        ["!flag", "tamsin_dead"]
+        ["!flag", "tamsin_dead"],
+        ["!flag", "tamsin_mine_truth"]
       ],
       "text": "Tamsin never got to Cinderhall with you. The mine keeps its answer, and she keeps swinging at whatever is nearest."
+    },
+    {
+      "if": [
+        ["flag", "tamsin_mine_truth"],
+        ["!flag", "tamsin_mine_avenged"],
+        ["!flag", "tamsin_mine_forgiven"],
+        ["!flag", "ir_miners_sold"],
+        ["!flag", "tamsin_left"],
+        ["!flag", "tamsin_dead"]
+      ],
+      "text": "Tamsin has her answer about the mine now. She has not told you, or herself, what she means to do with it.",
+      "weight": 1
     },
     {
       "if": [
