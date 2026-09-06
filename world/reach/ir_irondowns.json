@@ -618,6 +618,47 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "ir_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "ir_hollow_resolved"]],
+          "fx": [
+            [
+              "if",
+              [["flag", "tamsin_mine_truth"], ["!flag", "ir_miners_sold"]],
+              [
+                ["say", "The truth stands ready to speak: Aldous's order is known, and the Hundred haven't been sold out from under it."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "ir_miners_sold"]],
+                  [["say", "The truth was sold for hush-gold instead of spoken — that rest is closed to you now."]],
+                  [
+                    ["say", "The truth still wants finding — read the true ledger, or wrench the crate apart (either), at the working face, one turn out."]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "if",
+              [["flag", "ir_hall_backing"]],
+              [["say", "The hall's claim stands ready: the miners' hall backs you — declare it (will)."]],
+              [
+                ["say", "The hall's claim wants backing — deal fairly with the Free Companies or the Watch (standing 1), then ask Ness at the head-frame."]
+              ]
+            ],
+            [
+              "if",
+              [["has", "ir_oil"]],
+              [["say", "The burn stands ready: a cask of Ironbound oil is yours."]],
+              [
+                ["say", "The burn wants a cask of oil — Preceptor Aldous gives one, at the chapterhouse, to anyone finishing a hollow clean — or bring it down yourself (might), no oil needed."]
+              ]
+            ]
+          ]
         }
       ]
     }

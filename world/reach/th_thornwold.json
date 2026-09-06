@@ -812,6 +812,40 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "th_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "th_hollow_done"]],
+          "fx": [
+            [
+              "if",
+              [["any", [["has", "th_pardon"], ["flag", "th_verse_known"]]]],
+              [
+                ["say", "The rest stands ready: the true pardon is yours, or Keeper Rowan's verse — read one, or speak the other, and the turning stops."]
+              ],
+              [
+                ["say", "The rest still wants the true pardon — search Quartermaster Bray's dead-letter box (wits) — or Keeper Rowan's verse, taught in the Understory."]
+              ]
+            ],
+            [
+              "if",
+              [["flag", "th_asked_captain_oath"]],
+              [
+                ["say", "The bargain stands ready: Captain Vane means to bring the Company here to swear the old oath (will)."]
+              ],
+              [
+                ["say", "The bargain wants Captain Vane's oath first — ask her, at her tent past the muster, to bring the Company to swear it."]
+              ]
+            ],
+            [
+              "if",
+              [["has", "th_pitch_oil"]],
+              [["say", "The burn stands ready: a jug of pitch-oil is yours (might; a failed try costs 1 hp)."]],
+              [["say", "The burn wants a jug of pitch-oil — Quartermaster Bray sells one at his wagon for 8 gold."]]
+            ]
+          ]
         }
       ]
     },

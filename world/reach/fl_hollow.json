@@ -218,6 +218,65 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "fl_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "fl_hollow_done"]],
+          "fx": [
+            [
+              "if",
+              [["var", "fl_names_known", ">=", 3], ["flag", "fl_church_rite_known"], ["flag", "fl_keeper_verse_known"]],
+              [["say", "The rest stands ready: names, rite, and verse are all yours — speak them together at the cairn."]],
+              [
+                [
+                  "if",
+                  [["var", "fl_names_known", ">=", 3], ["flag", "fl_church_rite_known"]],
+                  [["say", "Names and rite are yours. The rest wants Frey's verse — press her on what she is, then ask."]],
+                  [
+                    [
+                      "if",
+                      [["var", "fl_names_known", ">=", 3], ["flag", "fl_keeper_verse_known"]],
+                      [
+                        ["say", "Names and verse are yours. The rest wants Sister Merrow's rite — hear her doubts, then ask her for it."]
+                      ],
+                      [
+                        [
+                          "if",
+                          [["flag", "fl_church_rite_known"], ["flag", "fl_keeper_verse_known"]],
+                          [
+                            ["say", "Rite and verse are yours. Names still want three sources: Ede's memory, the parish roll, the headland's markers."]
+                          ],
+                          [
+                            [
+                              "if",
+                              [["var", "fl_names_known", ">=", 3]],
+                              [
+                                ["say", "The names are whole. The rite is Merrow's, once she owns her doubts; the verse is Frey's, once you press her."]
+                              ],
+                              [
+                                ["say", "The rest wants three things: names (Ede, the parish roll, the headland's markers), Sister Merrow's rite, and Frey's verse."]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            ["say", "The bargain stands ready either way: swear the land stays theirs (will), or raise stones the whole length (might)."],
+            [
+              "if",
+              [["has", "fl_cinder_oil"]],
+              [["say", "The burn stands ready: Ironbound cinder-oil is yours (might; a failed try costs 1 hp)."]],
+              [
+                ["say", "The burn wants Ironbound cinder-oil — Lay-brother Cobb will give it, at the cart lot, for the asking."]
+              ]
+            ]
+          ]
         }
       ]
     }

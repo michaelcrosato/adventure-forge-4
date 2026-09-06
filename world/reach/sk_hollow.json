@@ -133,6 +133,61 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "sk_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "sk_hollow_resolved"]],
+          "fx": [
+            [
+              "if",
+              [["flag", "sk_verse_known"], ["flag", "sk_lighthouse_lit"]],
+              [
+                ["say", "The rest stands ready: the sailors' verse is yours, and the Farlight burns — speak it here, over the wreck."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "sk_verse_known"]],
+                  [["say", "You have the sailors' verse. The rest still wants the Farlight lit, out on the point."]],
+                  [
+                    [
+                      "if",
+                      [["flag", "sk_lighthouse_lit"]],
+                      [
+                        ["say", "The Farlight burns. The rest still wants the sailors' verse — Widow Kestrel, or Brother Osk, in Gullhaven."]
+                      ],
+                      [
+                        ["say", "The rest wants both: the sailors' verse (Widow Kestrel or Brother Osk, in Gullhaven) and the Farlight lit, on the point."]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "if",
+              [["flag", "sk_bribe_admitted"], ["var", "gold", ">=", 6]],
+              [["say", "The bargain stands ready: the wreck-right is 6 gold, and the old bribe is out."]],
+              [
+                [
+                  "if",
+                  [["flag", "sk_bribe_admitted"]],
+                  [["say", "The old bribe is out — the wreck-right costs 6 gold, which you don't have yet."]],
+                  [
+                    ["say", "The bargain wants the old bribe named first — read the wreck-charts for truth (wits), at the harbourmaster's house."]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "if",
+              [["has", "sk_pitch_torch"]],
+              [["say", "The burn stands ready: a pitch-soaked torch is yours (might)."]],
+              [["say", "The burn wants a pitch-soaked torch — Marta sells one at the chandlery for 5 gold."]]
+            ]
+          ]
         }
       ]
     }

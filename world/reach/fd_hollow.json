@@ -245,6 +245,33 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "fd_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "fd_hollow_done"]],
+          "fx": [
+            [
+              "if",
+              [["any", [["has", "fd_saint_bell"], ["flag", "fd_prior_confessed"]]]],
+              [
+                ["say", "The rest stands ready: the saint's bell is yours, or Prior Halm's own confession — ring one, or speak the other, over the water."]
+              ],
+              [
+                ["say", "The rest still wants the saint's bell — dive, reason it out, or haul with tarred rope from the drying racks — or Halm's confession, pressed after the cloister's tablet."]
+              ]
+            ],
+            [
+              "if",
+              [["has", "fd_pitch"]],
+              [["say", "The burn stands ready: Warder Iss's pitch is yours, from the Ironbound mission on Stilt Row."]],
+              [
+                ["say", "The burn wants a skin of Ironbound pitch — Warder Iss gives it, at the mission on Stilt Row, to those who side with her."]
+              ]
+            ],
+            ["say", "The water's tithe can be sworn now (will) — no finding needed, though a botched vow costs the church's trust."]
+          ]
         }
       ]
     },

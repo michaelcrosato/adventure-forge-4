@@ -225,6 +225,49 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "wm_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "wm_oath_resolved"]],
+          "fx": [
+            [
+              "if",
+              [["!flag", "wm_oath_heard"]],
+              [
+                ["say", "Nothing here can be settled until the ring is heard out — ask the oath-captain why he still stands."]
+              ],
+              [
+                [
+                  "if",
+                  [["has", "wm_founding_record"]],
+                  [["say", "The rest can be read clean: the true founding record is yours — speak it to the ring."]],
+                  [
+                    ["say", "The rest can be puzzled out by wits alone — or read clean from the true founding record, which Wynne might unseal at the record-house."]
+                  ]
+                ],
+                [
+                  "if",
+                  [["var", "rep_watch", ">=", 1]],
+                  [
+                    ["say", "The bargain stands ready: the Watch trusts you enough (standing 1) to swear a new oath here (will)."]
+                  ],
+                  [
+                    ["say", "The bargain wants the Watch's trust (standing 1) — or plead the ring down on nerve alone (will), risking Highward's opinion."]
+                  ]
+                ],
+                [
+                  "if",
+                  [["has", "wm_oil_flask"]],
+                  [["say", "The burn stands ready: a flask of lamp oil is yours — put it to the stone."]],
+                  [
+                    ["say", "The burn wants a flask of lamp oil — Corporal Fenn, in the barracks, gives it reluctantly — or break the stone by might alone."]
+                  ]
+                ]
+              ]
+            ]
+          ]
         }
       ]
     },

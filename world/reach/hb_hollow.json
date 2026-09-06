@@ -308,6 +308,52 @@
               [["say", "The hearth-stone is older and harder than you are tonight. It doesn't so much as chip."]]
             ]
           ]
+        },
+        {
+          "id": "hb_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "hb_kingsrest_resolved"]],
+          "fx": [
+            [
+              "if",
+              [["!flag", "hb_heard_grievance"]],
+              [
+                ["say", "Nothing here can be settled until the old court's grievance is heard — ask the eldest king what he wants."]
+              ],
+              [
+                [
+                  "if",
+                  [["has", "hb_keepers_key"]],
+                  [["say", "The rest can be done outright: the Keeper's Key is yours — lay it on the hearth-stone."]],
+                  [
+                    [
+                      "if",
+                      [["var", "hb_verses_known", ">=", 3]],
+                      [["say", "The rest can be done outright: all three verses are yours — speak them over the court."]],
+                      [
+                        ["say", "The rest wants the Keeper's Key, forced or picked from the chest in the Keepers' Hall, or all three old verses from the downs."]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "if",
+                  [["has", "hb_grave_good"]],
+                  [["say", "The bargain stands ready: the queen's ring is yours — return it to the court."]],
+                  [["say", "The bargain wants the queen's ring — buy it, lift it, or labor for it, at the chandler's shop."]]
+                ],
+                [
+                  "if",
+                  [["has", "hb_pitch_jar"]],
+                  [["say", "The burn stands ready: a jar of pitch is yours — break it here."]],
+                  [
+                    ["say", "The burn wants a jar of pitch from the chandler's shop — or shatter the hearth-stone yourself (might), pitch or none."]
+                  ]
+                ]
+              ]
+            ]
+          ]
         }
       ]
     }

@@ -145,6 +145,58 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "em_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "em_hollow_done"]],
+          "fx": [
+            [
+              "if",
+              [["flag", "em_prior_confessed"], ["flag", "em_verse_known"]],
+              [
+                ["say", "The rest stands ready: Wenlock's confession and Brenna's rest-verse are both yours — speak them together."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "em_prior_confessed"]],
+                  [
+                    ["say", "You hold Wenlock's confession. Alone it settles a bargain; add Brenna's rest-verse, from hiding in the sunken cellar, for the fuller rest."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["flag", "em_verse_known"]],
+                      [
+                        ["say", "You hold Brenna's rest-verse. It wants Wenlock's confession too — press him, at the priory, after reading the founding-day plaque."]
+                      ],
+                      [
+                        ["say", "The rest wants Wenlock's confession (the priory, after its founding-day plaque) and Brenna's rest-verse (she hides in the sunken cellar)."]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "if",
+              [["has", "em_chapel_bell"]],
+              [["say", "A second bargain stands ready: the recovered bell is yours — ring it here."]],
+              [
+                ["say", "A second bargain waits through the inner door, in the fused vestry — a bell still sealed under the glass."]
+              ]
+            ],
+            [
+              "if",
+              [["has", "em_cinder_oil"]],
+              [["say", "The burn stands ready: a cask of cinder-oil is yours (might; a failed try costs 1 hp)."]],
+              [
+                ["say", "The burn wants cinder-oil — Factor Corrin will give it, bound by doctrine, at the Ironbound Scale-House."]
+              ]
+            ]
+          ]
         }
       ]
     },

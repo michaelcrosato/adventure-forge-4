@@ -204,6 +204,84 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "me_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "me_hollow_done"]],
+          "fx": [
+            [
+              "if",
+              [["!flag", "me_hollow_grievance"]],
+              [["say", "Nothing here can be settled until the Hall's grievance is heard — ask Maren what happened here."]],
+              [
+                [
+                  "if",
+                  [["var", "me_covenant_words", ">=", 3]],
+                  [["say", "The rest stands ready: all three covenant words are yours — speak them whole, over the stone."]],
+                  [
+                    [
+                      "if",
+                      [["flag", "me_word_divers"], ["flag", "me_word_saint"]],
+                      [
+                        ["say", "The divers' word and the shrine's word are yours. The last is Yarrow's old song, at the lantern-tower."]
+                      ],
+                      [
+                        [
+                          "if",
+                          [["flag", "me_word_divers"], ["flag", "me_word_song"]],
+                          [
+                            ["say", "The divers' word and the warden's song are yours. The last waits at the shrine, in the eel-priest's chapel."]
+                          ],
+                          [
+                            [
+                              "if",
+                              [["flag", "me_word_saint"], ["flag", "me_word_song"]],
+                              [["say", "The shrine's word and the warden's song are yours. The last is Sael's, at the divers' platform."]],
+                              [
+                                [
+                                  "if",
+                                  [["flag", "me_word_divers"]],
+                                  [["say", "The divers' word is yours. Two remain: the shrine at the chapel, and Yarrow's song at the tower."]],
+                                  [
+                                    [
+                                      "if",
+                                      [["flag", "me_word_saint"]],
+                                      [["say", "The shrine's word is yours. Two remain: Sael's at the platform, and Yarrow's song at the tower."]],
+                                      [
+                                        [
+                                          "if",
+                                          [["flag", "me_word_song"]],
+                                          [["say", "The warden's song is yours. Two remain: Sael's at the platform, and the shrine at the chapel."]],
+                                          [
+                                            ["say", "The rest wants three words: the divers' stones, the saint's shrine, and the lantern-warden's old song."]
+                                          ]
+                                        ]
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                ["say", "The bargain stands ready regardless: swear to carry the covenant to Marrowgate yourself (will)."],
+                [
+                  "if",
+                  [["has", "me_dam_charges"]],
+                  [
+                    ["say", "The burn stands ready: Hodd's charges are yours — break them here (might; a failed try costs 1 hp)."]
+                  ],
+                  [["say", "The burn wants Ironbound charges — Hodd, the dam-wright, gives you a keg for the asking."]]
+                ]
+              ]
+            ]
+          ]
         }
       ]
     }
