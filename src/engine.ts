@@ -976,6 +976,9 @@ export function legalActions(world: World, s: State): Action[] {
       if (hostileNow(world, s, npc)) out.push({ kind: "attack", npc });
       else if (!def.dialogue || spokenWith(s, npc)) late.push({ kind: "attack", npc });
     }
+    // a hostile that holds its ground can be left alone in so many words: free,
+    // so the peaceable road past it is a choice on the menu, not a guess
+    if (def.hp !== undefined && hostileNow(world, s, npc) && !aggressiveNow(world, s, npc) && !s.flags[`left_${npc}`]) out.push({ kind: "leave", npc });
   }
   for (const id of s.inv) {
     for (const u of world.items[id]?.use ?? []) {
@@ -1015,6 +1018,8 @@ export function actionLabel(world: World, a: Action, s?: State): string {
     }
     case "talkto":
       return `talk to ${world.npcs[a.npc]?.name ?? a.npc}`;
+    case "leave":
+      return `leave ${world.npcs[a.npc]?.name ?? a.npc} be`;
     case "endtalk":
       return "end conversation";
     case "travel":
@@ -1138,6 +1143,7 @@ function classTag(world: World, s: State, a: Action): string {
 export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: boolean } = {}): string {
   const who = classTag(world, s, a);
   if (a.kind === "custom" && world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.free) return who ? ` (free; ${who})` : " (free)";
+  if (a.kind === "leave") return " (free)";
   if (a.kind === "take") {
     const owner = world.items[a.item]?.owner;
     const w = owner ? ownerWatching(world, s, owner) : null;
@@ -1218,7 +1224,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // only the journey itself (travelto) and everything else costs one
   const freeCustom =
     action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free;
-  if (!freeCustom && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore" && action.kind !== "travelmore") s.turn += 1;
+  if (!freeCustom && action.kind !== "leave" && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore" && action.kind !== "travelmore") s.turn += 1;
   let attacked: string | null = null; // the npc that already struck back this turn
 
   switch (action.kind) {
@@ -1398,6 +1404,12 @@ export function step(world: World, prev: State, action: Action): StepOut {
       for (const id of def.perks ?? []) grantPerk(world, s, id, events);
       events.push(`You are ${article(def.name)} ${def.name}.`);
       enterRoom(world, s, world.start, events);
+      break;
+    }
+    case "leave": {
+      const def = world.npcs[action.npc];
+      s.flags[`left_${action.npc}`] = true;
+      events.push(`You give ${def?.name ?? action.npc} a wide berth. It holds its ground and lets you.`);
       break;
     }
     case "perkpick": {

@@ -210,7 +210,12 @@
         {
           "id": "kw_factor_argue",
           "label": "argue him off the coppice (will)",
-          "if": [["flag", "kw_factor_bg"], ["!flag", "kw_factor_refused"]],
+          "if": [
+            ["flag", "kw_factor_bg"],
+            ["!flag", "kw_factor_refused"],
+            ["!flag", "kw_wood_wild"],
+            ["!flag", "kw_wood_iron"]
+          ],
           "say": "Go on, then. Make the case Cinderhall's forges can do without.",
           "fx": [
             [
@@ -240,7 +245,13 @@
         {
           "id": "kw_factor_pay",
           "label": "pay him to drop the plan (10 gold)",
-          "if": [["flag", "kw_factor_bg"], ["!flag", "kw_factor_refused"], ["var", "gold", ">=", 10]],
+          "if": [
+            ["flag", "kw_factor_bg"],
+            ["!flag", "kw_factor_refused"],
+            ["var", "gold", ">=", 10],
+            ["!flag", "kw_wood_wild"],
+            ["!flag", "kw_wood_iron"]
+          ],
           "say": "Ten gold to walk away from a wood I mean to strip anyway? Convince me.",
           "fx": [
             ["addvar", "gold", -10],
@@ -347,7 +358,12 @@
         {
           "id": "kw_verderer_argue",
           "label": "argue him out of the warrant (will)",
-          "if": [["flag", "kw_verderer_bg"], ["!flag", "kw_verderer_refused"]],
+          "if": [
+            ["flag", "kw_verderer_bg"],
+            ["!flag", "kw_verderer_refused"],
+            ["!flag", "kw_wood_wild"],
+            ["!flag", "kw_wood_crown"]
+          ],
           "say": "Go on, then. Give me a better reason to sit on this warrant than the one I've already got.",
           "fx": [
             [
@@ -377,7 +393,12 @@
         {
           "id": "kw_verderer_force",
           "label": "make the cost of refusal plain (might)",
-          "if": [["flag", "kw_verderer_bg"], ["!flag", "kw_verderer_refused"]],
+          "if": [
+            ["flag", "kw_verderer_bg"],
+            ["!flag", "kw_verderer_refused"],
+            ["!flag", "kw_wood_wild"],
+            ["!flag", "kw_wood_crown"]
+          ],
           "say": "Threaten a Crown officer in his own post? Go on, then. I'm listening.",
           "fx": [
             [
@@ -416,7 +437,9 @@
             ["addvar", "rep_iron", 1],
             ["addvar", "rep_keepers", 1],
             ["addvar", "or_envoy_words", 1],
-            ["say", "You draft terms neither asked for and both can live with: warrant and coppice held in abeyance, the rides kept as they are, so long as neither side moves first. Colm signs. Marrick signs. Neither loves it."]
+            ["say", "You draft terms neither asked for and both can live with: warrant and coppice held in abeyance, the rides kept as they are, so long as neither side moves first. Colm signs. Marrick signs. Neither loves it."],
+            ["set", "kw_verderer_refused"],
+            ["set", "kw_factor_refused"]
           ]
         },
         {
@@ -810,7 +833,7 @@
           "label": "tell her to send it to the Keepers' Hall",
           "if": [["flag", "said_kw_descendant_sv_kw_rested_ask"], ["!flag", "sv_kw_after_done"]],
           "once": true,
-          "say": "\"Barrowmere, then,\" she says, already wrapping it for the road, \"so it isn't only Hornhallow that remembers how the hunt finally came home.\"",
+          "say": "\"The Keepers' Hall at Barrowmere, then,\" she says, already wrapping it for the road, \"so it isn't only Hornhallow that remembers how the hunt finally came home.\"",
           "fx": [
             ["set", "sv_kw_rested_sent"],
             ["set", "sv_kw_after_done"],

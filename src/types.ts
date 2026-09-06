@@ -378,7 +378,8 @@ export type Action =
   | { kind: "custom"; room: string; id: string }
   | { kind: "classpick"; id: string } // choose who you are (first menu when a world has classes)
   | { kind: "perkpick"; id: string } // choose a perk after a level-up
-  | { kind: "talkto"; npc: string } // open a conversation with a `dialogue` npc
+  | { kind: "talkto"; npc: string }
+  | { kind: "leave"; npc: string } // give a hostile that holds its ground a wide berth: free, sets left_<npc> // open a conversation with a `dialogue` npc
   | { kind: "endtalk" } // close the open conversation
   | { kind: "travel" } // open the fast-travel menu (from a landmark room)
   | { kind: "travelregion"; region: string } // narrow the travel menu to one region

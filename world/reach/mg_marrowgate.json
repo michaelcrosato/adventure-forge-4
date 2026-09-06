@@ -742,7 +742,17 @@
       "landmark": "the first Reeve's tomb",
       "exits": { "south": { "to": "mg_old_crypts" }, "north": { "to": "mg_hollow_throne", "landmark": "the Hollow Throne" } },
       "onEnterOnce": [["xp", 3], ["score", 5]],
-      "variants": [{ "if": [["flag", "mg_reeve_confessed"]], "brief": "The barred stag. The shade sits straighter now." }]
+      "variants": [{ "if": [["flag", "mg_reeve_confessed"]], "brief": "The barred stag. The shade sits straighter now." }],
+      "actions": [
+        {
+          "id": "mg_tomb_rest",
+          "label": "rest a while by the lid",
+          "fx": [
+            ["hp", 10],
+            ["say", "You sit with your back to a king's tomb and sleep, badly. The shade does not mind; it has had four hundred years of worse company than yours."]
+          ]
+        }
+      ]
     },
     "mg_hollow_throne": {
       "name": "The Hollow Throne",
@@ -1215,7 +1225,8 @@
             ["addvar", "appr_osk", -2],
             ["addvar", "appr_vell", -1],
             ["xp", 3]
-          ]
+          ],
+          "commits": true
         },
         {
           "id": "refuse",
@@ -1229,7 +1240,8 @@
             ["addvar", "appr_osk", 1],
             ["addvar", "appr_lys", 1],
             ["xp", 2]
-          ]
+          ],
+          "commits": true
         },
         {
           "id": "theft",
@@ -1420,7 +1432,8 @@
             ["say", "'Useful,' she says at last, and has a purse brought. 'The exile line, alive and walking. That is worth knowing, and worth paying for.'"],
             ["if", [["flag", "vell_kept_secret"]], [["set", "vell_oath_broken"], ["addvar", "appr_vell", -4]], []],
             ["if", [["!flag", "vell_kept_secret"]], [["addvar", "appr_vell", -2]], []]
-          ]
+          ],
+          "commits": true
         },
         {
           "id": "em_precedent",
@@ -1459,7 +1472,8 @@
             ["xp", 3],
             ["addvar", "appr_osk", -1],
             ["addvar", "appr_lys", -1]
-          ]
+          ],
+          "commits": true
         },
         {
           "id": "fl_land_word",

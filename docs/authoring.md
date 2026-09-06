@@ -233,6 +233,8 @@ nobody's business but the player's.
   player stays in its room — walking through costs hp, and leaving is the
   answer. Use aggressive sparingly and never on a room the main path must
   linger in.
+  A hostile that holds its ground also puts `leave <name> be` on the menu —
+  free, sets `left_<npc>` — so walking past it is a choice in so many words.
 - A remark may carry `fx`, run when it is spoken — a companion who says what
   they think of a theft can also think less of you (`["addvar", "appr_lys", -1]`).
   One remark a companion a turn, but a remark carrying `fx` is never held
