@@ -50,7 +50,23 @@
           "label": "listen at the doors",
           "free": true,
           "fx": [
-            ["say", "Nothing. Not wind, not settling timber, not even the ordinary quiet of an empty building. Whatever is still here doesn't make sound to be heard by the living."]
+            [
+              "if",
+              [["flag", "hl_hollow_rested"]],
+              [
+                ["say", "Quiet. The ordinary kind, now: timber settling, a mouse in the straw, wind under the door. Whatever was here to be heard has been heard."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "hl_hollow_burned"]],
+                  [["say", "Charred timber ticks as it cools. Nothing else. Nothing else will."]],
+                  [
+                    ["say", "Nothing. Not wind, not settling timber, not even the ordinary quiet of an empty building. Whatever is still here doesn't make sound to be heard by the living."]
+                  ]
+                ]
+              ]
+            ]
           ]
         }
       ]

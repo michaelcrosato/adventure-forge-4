@@ -796,9 +796,22 @@
             ],
             [
               "if",
-              [["any", [["flag", "mg_has_oil"], ["has", "ir_oil"], ["has", "em_cinder_oil"]]]],
+              [
+                [
+                  "any",
+                  [
+                    ["flag", "mg_has_oil"],
+                    ["has", "ir_oil"],
+                    ["has", "em_cinder_oil"],
+                    ["has", "hl_cinder_oil"],
+                    ["has", "fl_cinder_oil"]
+                  ]
+                ]
+              ],
               [["say", "The oil is yours, one cask or the other — enough to burn the seat clean."]],
-              [["say", "No oil yet: the Ironbound keep casks at Cinderhall, and the palace has its own."]]
+              [
+                ["say", "No oil yet: any Ironbound cask will do — Cinderhall keeps them, so do the lay-brothers in the holds — and the palace has its own."]
+              ]
             ],
             [
               "if",
@@ -880,7 +893,16 @@
           "id": "mg_burn_throne",
           "label": "burn the throne with the oil you carry",
           "if": [
-            ["any", [["flag", "mg_has_oil"], ["has", "ir_oil"], ["has", "em_cinder_oil"]]],
+            [
+              "any",
+              [
+                ["flag", "mg_has_oil"],
+                ["has", "ir_oil"],
+                ["has", "em_cinder_oil"],
+                ["has", "hl_cinder_oil"],
+                ["has", "fl_cinder_oil"]
+              ]
+            ],
             ["!flag", "mg_throne_resolved"]
           ],
           "fx": [
@@ -890,6 +912,8 @@
             ["set", "mg_burned_throne"],
             ["if", [["has", "ir_oil"]], [["move", "ir_oil", "nowhere"]], []],
             ["if", [["has", "em_cinder_oil"]], [["move", "em_cinder_oil", "nowhere"]], []],
+            ["if", [["has", "hl_cinder_oil"]], [["move", "hl_cinder_oil", "nowhere"]], []],
+            ["if", [["has", "fl_cinder_oil"]], [["move", "fl_cinder_oil", "nowhere"]], []],
             ["end", "win", "reach_burned", "You break the casks over the seat and put the torch to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace, and mostly mean it."]
           ]
         },

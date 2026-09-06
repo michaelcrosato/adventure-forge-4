@@ -767,6 +767,14 @@
           "id": "bye",
           "label": "leave him to his columns",
           "say": "Mind the steps on your way out. They're steeper than the ledger makes them sound.",
+          "end": true,
+          "if": [["!flag", "hl_tithe_common"], ["!flag", "hl_tithe_free"]]
+        },
+        {
+          "id": "bye_lost",
+          "label": "leave him to his columns",
+          "if": [["any", [["flag", "hl_tithe_common"], ["flag", "hl_tithe_free"]]]],
+          "say": "Mind the steps on your way out. They're the Crown's, whatever the barn is now, and the Crown will be back for the rest in its own time.",
           "end": true
         }
       ]
