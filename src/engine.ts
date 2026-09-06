@@ -333,6 +333,21 @@ export function travelAvailable(world: World, s: State): boolean {
 
 export const inTravelMode = (world: World, s: State): boolean => s.travelMenu !== null && travelAvailable(world, s);
 
+/**
+ * Companions standing here who could be spoken with: alive, `dialogue`, with
+ * something to say. Two or more fold into one "speak with the company" entry
+ * that opens a list of them — browsing, like the travel menu — so a full party
+ * never crowds a room's menu past the cap. One alone keeps its own entry, so
+ * walkthroughs and proofs that travel with a single companion replay unchanged.
+ */
+export function companyHere(world: World, s: State): string[] {
+  return s.party.filter((id) => {
+    const def = world.npcs[id];
+    return !!def?.dialogue && s.npcRoom[id] === s.room && !npcDead(world, s, id) && visibleTopics(world, s, id).length > 0;
+  });
+}
+export const inCompanyMode = (world: World, s: State): boolean => s.companyMenu && companyHere(world, s).length >= 2;
+
 /** Regions with at least one known landmark, in world order — the grouping used when the flat list would overflow the menu. */
 function travelRegions(world: World, s: State): string[] {
   const seen = new Set<string>();
@@ -688,6 +703,7 @@ export function newState(world: World, seed: number): StepOut {
     party: [],
     talking: null,
     travelMenu: null,
+    companyMenu: false,
     ended: null,
   };
   for (const id of Object.keys(world.items)) if (s.itemLoc[id] === "inv") s.inv.push(id);
@@ -800,9 +816,15 @@ export function legalActions(world: World, s: State): Action[] {
   }
   // the travel menu: destinations (or regions), and the way out of it
   if (inTravelMode(world, s)) return travelActions(world, s);
+  // the company list: the companions to speak with, and the way out of it
+  if (inCompanyMode(world, s)) return [...companyHere(world, s).map((npc): Action => ({ kind: "talkto", npc })), { kind: "companydone" }];
   const out: Action[] = [];
   const room = world.rooms[s.room];
   if (!room) return out;
+  // two or more companions to speak with fold into one entry, listed where the first of them would have been
+  const company = companyHere(world, s);
+  const folded = new Set(company.length >= 2 ? company : []);
+  let companyListed = false;
   const late: Action[] = []; // attacks on the peaceable, listed after everything else
   for (const dir of Object.keys(room.exits ?? {})) out.push({ kind: "go", dir });
   if (roomIsDark(world, s)) return out; // in the dark you can only feel for exits
@@ -813,6 +835,11 @@ export function legalActions(world: World, s: State): Action[] {
     if (world.items[id]?.takeable) out.push({ kind: "take", item: id });
   for (const npc of npcsHere(world, s)) {
     const def = world.npcs[npc]!;
+    if (folded.has(npc)) {
+      if (!companyListed) out.push({ kind: "company" });
+      companyListed = true;
+      continue;
+    }
     const topics = visibleTopics(world, s, npc);
     if (def.dialogue) {
       if (topics.length) out.push({ kind: "talkto", npc });
@@ -872,6 +899,10 @@ export function actionLabel(world: World, a: Action, s?: State): string {
       return `to ${world.rooms[a.room]?.landmark ?? a.room}`;
     case "traveldone":
       return s?.travelMenu ? "back" : "stay here";
+    case "company":
+      return "speak with the company";
+    case "companydone":
+      return "back";
     case "attack": {
       const npcName = world.npcs[a.npc]?.name ?? a.npc;
       const weapon = s ? bestWeapon(world, s).item : null;
@@ -982,6 +1013,7 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     const w = owner ? ownerWatching(world, s, owner) : null;
     return w ? ` (${w.name} is watching)` : "";
   }
+  if (a.kind === "company") return ` (${companyHere(world, s).map((id) => world.npcs[id]?.name ?? id).join(", ")})`;
   if (a.kind === "travelregion" && a.region) {
     // a region entry opens a second menu; say how many known places wait behind it
     const n = knownLandmarks(world, s).filter((id) => (world.rooms[id]?.region ?? "") === a.region).length;
@@ -1041,7 +1073,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // only the journey itself (travelto) and everything else costs one
   const freeCustom =
     action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free;
-  if (!freeCustom && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone") s.turn += 1;
+  if (!freeCustom && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone") s.turn += 1;
   let attacked: string | null = null; // the npc that already struck back this turn
 
   switch (action.kind) {
@@ -1091,9 +1123,16 @@ export function step(world: World, prev: State, action: Action): StepOut {
     }
     case "talkto":
       s.talking = action.npc;
+      s.companyMenu = false; // picked from the company list: the conversation replaces it
       break;
     case "endtalk":
       s.talking = null;
+      break;
+    case "company":
+      s.companyMenu = true;
+      break;
+    case "companydone":
+      s.companyMenu = false;
       break;
     case "travel":
       s.travelMenu = "";

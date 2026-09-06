@@ -626,3 +626,66 @@ test("approval and named-faction changes print the turn they happen — companio
   assert.doesNotMatch(away.events.join(" "), /Lys approves/);
   assert.match(away.events.join(" "), /\(the Watch -2\)/, "a faction's standing always prints");
 });
+
+// ---------- the company list ----------
+const companions = (n: number): World["npcs"] => {
+  const names = ["Lys", "Osk", "Tamsin", "Vell"].slice(0, n);
+  return Object.fromEntries(
+    names.map((name) => [
+      name.toLowerCase(),
+      {
+        name,
+        room: "a",
+        dialogue: true,
+        hp: 8,
+        companion: { hit: 1, dmg: 1 },
+        topics: [
+          { id: "how", label: "how are you holding up", say: "Well enough." },
+          { id: "bye", label: "walk on", say: "After you.", end: true },
+        ],
+      },
+    ]),
+  );
+};
+
+test("two or more companions fold into one 'speak with the company' entry that opens a free list of them", () => {
+  const world = mini({
+    npcs: { ...companions(3), elder: { name: "elder", room: "a", dialogue: true, topics: [{ id: "hi", label: "greet", say: "Hm." }] } },
+  });
+  let { state } = newState(world, 1);
+  state.party = ["lys", "osk", "tamsin"];
+  const menu = labels(world, state);
+  assert.equal(menu.filter((l) => l === "speak with the company").length, 1, menu.join(" | "));
+  assert.ok(!menu.some((l) => /^talk to (Lys|Osk|Tamsin)$/.test(l)), "companions' own entries are folded");
+  assert.ok(menu.includes("talk to elder"), "a local npc keeps their own entry");
+  const hinted = renderMenu(world, state).text;
+  assert.match(hinted, /speak with the company \(Lys, Osk, Tamsin\)/);
+  const turn = state.turn;
+  state = doLabel(world, state, "speak with the company");
+  assert.equal(state.turn, turn, "browsing the company costs no turn");
+  assert.deepEqual(labels(world, state), ["talk to Lys", "talk to Osk", "talk to Tamsin", "back"]);
+  assert.match(render(world, state, []).text, /Your company:/);
+  const back = doLabel(world, state, "back");
+  assert.equal(back.turn, turn);
+  assert.ok(labels(world, back).includes("speak with the company"), "back returns to the room");
+  state = doLabel(world, state, "talk to Osk");
+  assert.ok(inTalkMode(world, state));
+  assert.equal(state.companyMenu, false, "a conversation replaces the list");
+  state = doLabel(world, state, "walk on");
+  assert.ok(!inTalkMode(world, state));
+  assert.ok(labels(world, state).includes("speak with the company"), "ending the talk returns to the room menu");
+});
+
+test("one companion keeps their own 'talk to' entry, so single-companion walkthroughs replay unchanged", () => {
+  const world = mini({ npcs: companions(2) });
+  const { state } = newState(world, 1);
+  state.party = ["lys"];
+  const menu = labels(world, state);
+  assert.ok(menu.includes("talk to Lys"), menu.join(" | "));
+  assert.ok(!menu.includes("speak with the company"));
+  // a companion who has walked ahead is not in the list
+  const both = newState(world, 1).state;
+  both.party = ["lys", "osk"];
+  both.npcRoom["osk"] = "b";
+  assert.ok(labels(world, both).includes("talk to Lys") && !labels(world, both).includes("speak with the company"));
+});

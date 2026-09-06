@@ -222,6 +222,13 @@ nobody's business but the player's.
   their definitions live in `companions.json`. In your region, react to them
   with `["if", [["inParty", "osk"]], [["say", "Osk: \"...\""]], []]` in room
   effects or topic effects, and move their approval with `addvar appr_<id>`.
+- **The company list.** When two or more companions who can be spoken with
+  stand with the player, their `talk to` entries fold into one `speak with the
+  company (Lys, Osk)` entry that opens a list of them — browsing, free, like
+  the travel menu; `back` closes it, and picking one opens their conversation.
+  A single companion keeps their own entry, so a walkthrough that travels with
+  one replays unchanged. This is what keeps a full party of four from crowding
+  a hub room's menu past the cap of 12.
 
 Inside a conversation the engine lists a topic whose effects send a companion
 out of the party (`["party", id, "leave"]`) last, just before the way out, so

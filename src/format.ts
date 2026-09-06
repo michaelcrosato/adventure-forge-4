@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomView } from "./engine.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomView } from "./engine.ts";
 import { ATTRS, EPILOGUE_CAP, EPILOGUE_CHARS } from "./types.ts";
 import type { Action, Cond, State, World } from "./types.ts";
 
@@ -152,6 +152,13 @@ export function render(
   if (inTravelMode(world, s)) {
     const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push("Travel — places you know:");
+    lines.push(menu.text);
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+  }
+  // the company list: who is with you, nothing else
+  if (inCompanyMode(world, s)) {
+    const menu = renderMenu(world, s, { itemHints: !!opts.full });
+    lines.push("Your company:");
     lines.push(menu.text);
     return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
   }

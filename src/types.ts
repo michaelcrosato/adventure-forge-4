@@ -379,7 +379,9 @@ export type Action =
   | { kind: "travel" } // open the fast-travel menu (from a landmark room)
   | { kind: "travelregion"; region: string } // narrow the travel menu to one region
   | { kind: "travelto"; room: string } // go to a discovered landmark
-  | { kind: "traveldone" }; // close the travel menu (or step back out of a region)
+  | { kind: "traveldone" } // close the travel menu (or step back out of a region)
+  | { kind: "company" } // open the list of companions to speak with (two or more travelling with you)
+  | { kind: "companydone" }; // close that list
 
 export type Ending = { kind: "win" | "lose"; id: string; text: string };
 
@@ -408,6 +410,7 @@ export type State = {
   party: string[]; // companions travelling with the player, in join order
   talking: string | null; // npc id while a conversation is open (conversation mode)
   travelMenu: string | null; // null: closed; "": destinations (or regions) listed; a region id: that region's destinations
+  companyMenu: boolean; // the list of companions to speak with is open (browsing, no turn spent)
   ended: Ending | null;
 };
 
