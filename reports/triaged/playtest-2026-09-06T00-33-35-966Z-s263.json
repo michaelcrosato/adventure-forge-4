@@ -1,0 +1,109 @@
+{
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 3,
+  "turns": 582,
+  "receipt": "reach.263.582.366.reach_burned.29427a55",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Choosing to cooperate with Envoy Crell (telling him where the Keeper texts were hidden) paid gold and +1 Ironbound reputation, yet the log reads 'Quest failed: The Envoy's Demand' — a deliberate, rewarded choice is labeled as failure.",
+      "where": "The Guesthouse (St. Ashwyn's Perch) / 'tell him where the texts are'"
+    },
+    {
+      "sev": "P1",
+      "what": "Forcing open the chained shelf revealed the founding ledger and scored points, but the log reads 'Quest failed: The Exile's Ledger' because Vell's secret came out involuntarily — a successful, in-character action is bookkept as a failure with no distinguishing flavor from an actual mistake.",
+      "where": "The Hall of Ledgers, Marrowgate / 'snap the chain by main strength'"
+    },
+    {
+      "sev": "P1",
+      "what": "'Quest done: The Choir of Ash' is recorded even though the burn explicitly backfired in the fiction ('the singing's already started again, louder than before') — completion state doesn't distinguish a grief actually resolved from one made worse.",
+      "where": "The Roofless Chapel, Emberfall / 'burn it with cinder-oil'"
+    },
+    {
+      "sev": "P1",
+      "what": "After burning the Hundred Gallery, Tamsin says 'Whatever's left of the truth about that mine burns with it,' implying the evidence is gone, but the very same scene still lets me confront Preceptor Aldous with 'the truth' minutes later as if the ledger's contents survived intact.",
+      "where": "The Hundred Gallery — Ash / Ironbound Chapterhouse, Cinderhall"
+    },
+    {
+      "sev": "P1",
+      "what": "Killing the two Thornwold toll-men — petty extortionists Captain Vane herself dismissed as 'Company rules, not mine' — permanently marked Free Companies reputation with no warning, silently foreclosing 'The Smugglers' Road' and Vane's oath-quest for the rest of the run.",
+      "where": "The Toll Stand, Thornwold / 'attack toll-men'"
+    },
+    {
+      "sev": "P1",
+      "what": "Companion disapproval for burning a grief or fighting is only revealed after the irreversible action resolves, while other checks explicitly warn '(a miss costs standing)' beforehand — inconsistent forewarning for similarly weighty consequences.",
+      "where": "Wolf Scrape (Lys disapproves after a kill) / Gallows Glade, Hundred Gallery, Oath-Ground (companions disapprove post-burn)"
+    },
+    {
+      "sev": "P2",
+      "what": "Bought 'an Ironbound hauberk' for 10 gold; no wear/equip action ever appeared afterward, and the Combat line kept reading 'armor+6 (mail shirt)' for the rest of the game, so there is no way to tell whether the purchase did anything.",
+      "where": "The Ironbound Chapterhouse, Cinderhall / 'buy an Ironbound hauberk'"
+    },
+    {
+      "sev": "P2",
+      "what": "Item consumption is inconsistent: 'a jug of pitch-oil' vanished from inventory after burning the Gallows Glade, but 'a cask of cinder-oil' survived being poured over the Roofless Chapel and stayed in the pack the rest of the run.",
+      "where": "Gallows Glade, Thornwold vs. The Roofless Chapel, Emberfall"
+    },
+    {
+      "sev": "P2",
+      "what": "'Attacks on sight' monsters (lean wolf, gray boar, Lost Sentry, honour guard) land their first hit in the very line that introduces them, giving a blind player zero turn to eat a healing item or otherwise prepare.",
+      "where": "Charcoal Ring / Wood's Edge / Cairn Field / The Old Crypts"
+    },
+    {
+      "sev": "P2",
+      "what": "No 'flee' or 'retreat' option ever appeared in any combat menu across ~15 fights; there is no visible way to disengage from a losing fight.",
+      "where": "all combat encounters"
+    },
+    {
+      "sev": "P2",
+      "what": "Brother Osk's 'ask him to come back' prompt gates on an unstated condition ('Give me more than words'); the one concrete lever found ('back him against the priory's counsel') raised his approval but still did not satisfy the return condition, and no further hint pointed anywhere else in the ~450 turns that followed.",
+      "where": "Last Light Square / talk to Brother Osk"
+    },
+    {
+      "sev": "P2",
+      "what": "The Wardmoor archivist's sealed-shelf puzzle only offered its might/grace fallback options after the will-based 'persuade' option was tried and failed once (costing Watch standing) — a player who doesn't retry after a 'no' would never learn forceful alternatives existed.",
+      "where": "The Record-House, Highward / talk to the archivist"
+    },
+    {
+      "sev": "P2",
+      "what": "Trophy and keepsake items (lean wolf's pelt, gaunt rib-bone, peat-stained bronze torc, old captain's seal-ring, saint's small reliquary, etc.) stay in inventory forever after their one use, with no drop/discard action, so the pack only grows — 23 items carried by game's end.",
+      "where": "status / carrying list, throughout"
+    },
+    {
+      "sev": "P2",
+      "what": "Two unrelated NPCs are both generically labeled 'the archivist' in their room descriptions (Highward's record-keeper and Marrowgate's Archivist Penn), which could confuse a player trying to recall which archivist holds which key or secret.",
+      "where": "The Record-House, Highward vs. The Hall of Ledgers, Marrowgate"
+    }
+  ],
+  "confusions": [
+    "Nothing in the game states up front how many hollows need burning for the Regent's writ (2) versus the Keepers' stair (3 rested) or the Free Companies' word — I only learned '2 burned' from one throwaway herald line at turn 143 and had to remember it unaided for the rest of the run.",
+    "Choosing to burn, rest, or bargain a hold's grief is framed as a one-shot, irreversible choice only at the moment of the final action ('settles this hold's grief') — there is no earlier signal that gathering all three resolution items (e.g. verses, pardon, oath) will still only let you pick one.",
+    "The ending epilogue's own summary ('Three holds or more went to the torch') is vaguer than and doesn't cleanly match the tracked 'Hollows burned: 5/7' stat shown on the final status screen, leaving the exact tally ambiguous.",
+    "It's unclear whether 'go in'/'go down' optional side rooms (marked with *) ever contain content required for the main line, versus always being pure bonus — I always investigated them out of caution, at a steady trickle of turn cost.",
+    "The game warns 'a miss costs standing' on some persuasion-type checks but not others (e.g. cornering Preceptor Aldous, which has no such warning) with no visible rule for which checks carry that risk."
+  ],
+  "suggestions": [
+    "Show an armor/damage before-and-after preview on any gear purchase so the player can tell if it's an upgrade.",
+    "Make oil-item consumption consistent: either every cask/jug is single-use, or clearly mark reusable containers as such.",
+    "Split quest-completion state into 'resolved' vs. 'backfired' so a burn that makes a grief worse doesn't log identically to one that fixed it.",
+    "Rename 'Quest failed' to something like 'Quest resolved (their way)' when the outcome is really a deliberate, rewarded value choice rather than a mistake.",
+    "Warn before a fight or exposure choice if it will cost a companion's regard or lock a faction-gated quest chain, the way some checks already warn about standing.",
+    "Add a 'drop'/'discard' action for spent trophy and keepsake items so the carry list doesn't grow without bound.",
+    "Add a lightweight 'flee' option to combat for players who are under-built for a given encounter.",
+    "Give the two separate 'archivist' NPCs distinct titles (e.g. 'the record-keeper' vs. 'Archivist Penn') to avoid cross-referencing confusion.",
+    "State the hollow-burned/hollow-rested thresholds for each Coldpass route somewhere persistent (e.g. in status) instead of only in one early, easy-to-miss line of dialogue.",
+    "Have the ending epilogue's tallies quote the exact tracked numbers rather than a vaguer rounded phrase."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T00-33-35-966Z",
+  "seed": 263,
+  "build": {
+    "rev": "126226f",
+    "world": "b9d7cc47"
+  },
+  "cost_usd": null,
+  "verified": true
+}
