@@ -521,6 +521,34 @@
           "fx": [["set", "hl_runner_bg"], ["xp", 2]]
         },
         {
+          "id": "hl_tithe_free_declare",
+          "label": "back the Companies' claim on the tithe",
+          "if": [
+            ["flag", "hl_runner_bg"],
+            ["!flag", "hl_tithe_crown"],
+            ["!flag", "hl_tithe_free"],
+            ["!flag", "hl_tithe_common"]
+          ],
+          "say": "You want the Companies running Tithing's own tithe? Say that plain, and mean it.",
+          "fx": [
+            ["set", "hl_tithe_free"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_free", 2],
+            ["addvar", "rep_crown", -2],
+            [
+              "if",
+              [["flag", "hl_hollow_burned"]],
+              [
+                ["say", "\"With the old grief burned to ash,\" Sparrow says, \"there's nobody left to argue the tally should stay Crown business.\" He chalks the board himself."]
+              ],
+              [
+                ["say", "He doesn't smile, exactly, but he chalks a fresh board right there, in daylight, like he's been waiting years for the excuse."]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "hl_grainrun_offer",
           "label": "ask what he needs run",
           "if": [["flag", "hl_runner_bg"], ["!class", "warden"], ["!flag", "hl_grainrun_offered"]],
