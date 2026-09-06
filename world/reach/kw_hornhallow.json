@@ -1,0 +1,278 @@
+{
+  "rooms": {
+    "kw_outer_court": {
+      "name": "Hornhallow — the Outer Court",
+      "desc": "The old hunting lodge's outer court, cobbled and swept, ringed by burners' shacks, the verderer's post, and the Ironbound's scale-house. Charcoal-smoke sits low most mornings. Every path in Hornhallow starts here.",
+      "brief": "The outer court, ringed by shacks and offices.",
+      "region": "kw",
+      "landmark": "Hornhallow",
+      "exits": {
+        "north": { "to": "kw_kennel_hearth", "landmark": "the Kennel Hearth" },
+        "south": { "to": "kw_verderer_post", "landmark": "the verderer's post" },
+        "east": { "to": "kw_charcoal_yard", "landmark": "the charcoal-master's yard" },
+        "west": { "to": "kw_woodward_cot", "landmark": "the woodward's cot" },
+        "up": { "to": "kw_weigh_house", "landmark": "the weigh-house" },
+        "out": { "to": "kw_ride_gate", "landmark": "the ride-gate" }
+      },
+      "variants": [
+        {
+          "if": [["flag", "kw_hollow_rested"]],
+          "desc": "The outer court, cobbled and swept. Charcoal-smoke still sits low most mornings, but nobody flinches anymore at a horn carrying from the wood after dark.",
+          "brief": "The court, quiet at last."
+        },
+        {
+          "if": [["flag", "kw_hollow_bargained"]],
+          "desc": "The outer court, cobbled and swept. A watch-fire is kept laid year-round now, ready for the one night it's needed, and everyone knows which night that is without being told.",
+          "brief": "The court, a fire kept ready."
+        },
+        {
+          "if": [["flag", "kw_hollow_burned"]],
+          "desc": "The outer court, cobbled and swept. Some mornings the smoke off the burners' clamps has a different, older smell to it, and nobody in Hornhallow will say what.",
+          "brief": "The court, and a stranger smoke some mornings."
+        }
+      ],
+      "actions": [
+        {
+          "id": "kw_read_tally_board",
+          "label": "read the guild's charcoal-tally board",
+          "free": true,
+          "fx": [
+            ["say", "Chalked columns: clamps fired, sacks carried, sacks sold to Cinderhall. The Ironbound's count and the guild's own never quite agree, and both sides know it."]
+          ]
+        }
+      ]
+    },
+    "kw_kennel_hearth": {
+      "name": "The Kennel Hearth",
+      "desc": "A long hearth-hall built against the old kennel wall, stone still scored where chain-rings once hung. It smells of woodsmoke and, faintly, of dog, though no hound has slept here in four hundred years.",
+      "brief": "The hearth-hall, the old kennel wall behind it.",
+      "region": "kw",
+      "landmark": "the Kennel Hearth",
+      "exits": { "south": { "to": "kw_outer_court" }, "east": { "to": "kw_trade_counter", "landmark": "the trade counter" } },
+      "onEnter": [["if", [["flag", "kw_hollow_done"], ["!flag", "sv_kw_back"]], [["set", "sv_kw_back"]], []]],
+      "actions": [
+        {
+          "id": "kw_rest",
+          "label": "rest by the hearth",
+          "fx": [
+            ["hp", 10],
+            ["say", "You sleep to the tick of the fire and wake stiff but whole. Sabel is already up, turning something over in her hands by the light of the coals."]
+          ]
+        }
+      ]
+    },
+    "kw_trade_counter": {
+      "name": "The Packhorse Counter",
+      "desc": "A plank counter under a lean-to, rope and pitch and traveling gear stacked behind it. Hask trades with whoever comes down off the rides, charcoal-burners and the odd Crown rider alike.",
+      "brief": "A trade counter, gear stacked behind it.",
+      "region": "kw",
+      "exits": { "west": { "to": "kw_kennel_hearth" } },
+      "actions": [
+        {
+          "id": "kw_buy_spear",
+          "label": "buy a huntsman's boar-spear (9 gold)",
+          "if": [["!has", "kw_boar_spear"], ["var", "gold", ">=", 9]],
+          "fx": [
+            ["addvar", "gold", -9],
+            ["move", "kw_boar_spear", "inv"],
+            ["say", "Hask hands it over crossways, the old way. \"Broad head, cross-bar so it doesn't run through and lose you your grip. Someone's hunt spear, once.\""]
+          ]
+        },
+        {
+          "id": "kw_buy_venison",
+          "label": "buy a twist of dried venison (3 gold)",
+          "if": [["!has", "kw_dried_venison"], ["var", "gold", ">=", 3]],
+          "fx": [
+            ["addvar", "gold", -3],
+            ["move", "kw_dried_venison", "inv"],
+            ["say", "Hask weighs it once, out of habit, and wraps it in oiled cloth. \"Off the wood, same as everything else here.\""]
+          ]
+        }
+      ]
+    },
+    "kw_verderer_post": {
+      "name": "The Verderer's Post",
+      "desc": "A narrow office of Crown timber, a felling-warrant pinned flat under glass on the desk, its seal unbroken. Maps of the ridings cover one whole wall, every oak worth felling already marked in red.",
+      "brief": "The verderer's office, a warrant under glass.",
+      "region": "kw",
+      "landmark": "the verderer's post",
+      "exits": { "north": { "to": "kw_outer_court" } }
+    },
+    "kw_weigh_house": {
+      "name": "The Ironbound Weigh-House",
+      "desc": "A stone scale-house, the Ironbound's own beam-scale bolted to the floor. Sacked charcoal is stacked to the rafters on one side, empty floor waiting on the other — floor enough, the factor likes to say, for the whole wood.",
+      "brief": "The weigh-house, a beam-scale bolted down.",
+      "region": "kw",
+      "landmark": "the weigh-house",
+      "exits": { "down": { "to": "kw_outer_court" } }
+    },
+    "kw_charcoal_yard": {
+      "name": "The Charcoal-Master's Yard",
+      "desc": "A working yard, three clamps smoking under their turf in slow relay, cordwood stacked in ricks head-high. Everything here is black-handed and practical, down to the guild's own brass scale, weighed twice a day.",
+      "brief": "The yard, clamps smoking under turf.",
+      "region": "kw",
+      "landmark": "the charcoal-master's yard",
+      "exits": { "west": { "to": "kw_outer_court" } }
+    },
+    "kw_woodward_cot": {
+      "name": "The Woodward's Cot",
+      "desc": "A one-room cot at the wood's edge, old ride-maps curling on every wall, chalk-marks for boundaries nobody living set. Hollis keeps it as bare as a Keeper's cell, though he'd never call himself one outright.",
+      "brief": "The woodward's cot, old maps on the walls.",
+      "region": "kw",
+      "landmark": "the woodward's cot",
+      "exits": { "east": { "to": "kw_outer_court" }, "in": { "to": "kw_hunt_chapel", "landmark": "the hunt's chapel" } }
+    },
+    "kw_hunt_chapel": {
+      "name": "The Hunt's Chapel",
+      "desc": "A small chapel gone half to ruin, roof open to the sky over the old nave, a huntsman's saint carved crude above the door. Father Twyne keeps what's left of it, sweeping leaves off a floor nobody else visits.",
+      "brief": "The ruined chapel, a huntsman's saint over the door.",
+      "region": "kw",
+      "landmark": "the hunt's chapel",
+      "exits": { "out": { "to": "kw_woodward_cot" } }
+    },
+    "kw_ride_gate": {
+      "name": "The Ride-Gate",
+      "desc": "The last gate before the ridings proper, its timbers scarred by four hundred years of charcoal-carts. Past it the wood closes in fast, and the light changes the way it does before rain.",
+      "brief": "The last gate before the ridings.",
+      "region": "kw",
+      "exits": { "in": { "to": "kw_outer_court" } },
+      "variants": [
+        {
+          "if": [["flag", "kw_wood_crown"]],
+          "desc": "The last gate before the ridings. Beyond it, stumps show pale where the verderer's marked oaks have already come down, cart-ruts cut fresh and deep toward Marrowgate's road.",
+          "brief": "The gate. Fresh stumps show beyond it."
+        },
+        {
+          "if": [["flag", "kw_wood_iron"]],
+          "desc": "The last gate before the ridings. Beyond it the wood stands thinner every season, coppice-cuts spreading outward from the gate in a slow, deliberate ring toward Cinderhall.",
+          "brief": "The gate. Coppice-cuts spread beyond it."
+        },
+        {
+          "if": [["flag", "kw_wood_wild"]],
+          "desc": "The last gate before the ridings, standing open the way it always has. Nothing beyond it has changed, which out here counts for a great deal.",
+          "brief": "The gate. Unchanged beyond it, and glad of it."
+        }
+      ]
+    },
+    "kw_south_track": {
+      "name": "The South Track",
+      "desc": "The ridings narrow and straighten here, running south toward bare downs and a smudge of forge-smoke on the horizon. Behind you the wood closes ranks again, oak and holly, dense as a shut door.",
+      "brief": "The south track, downs on the horizon.",
+      "region": "kw",
+      "landmark": "the south track",
+      "onEnterOnce": [
+        ["set", "kw_entered"],
+        ["xp", 2],
+        ["say", "This is the Kingswood: the old royal hunting forest under the Spine, where a king's hunt rode out four hundred years ago and never came home."],
+        [
+          "if",
+          [["inParty", "lys"]],
+          [
+            ["say", "Lys: \"Hounds and a horn, and a hunt that never once came home. I've tracked plenty that went quiet. None of them stayed quiet four hundred years.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "vell"]],
+          [
+            ["say", "Vell: \"The king's own hunt, out the very morning my line stole his crown. I don't think that's coincidence. I don't think anyone has ever asked if it was.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "tamsin"]],
+          [
+            ["say", "Tamsin: \"Charcoal country. Every clamp in this wood feeds Cinderhall's forges, one way or another. Someone's been burning this place a long time before we got here.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Osk: \"A hunt's chapel, out here past the law. I wonder what saint they prayed to before they rode, and whether anyone still does.\""]
+          ],
+          []
+        ]
+      ]
+    },
+    "kw_east_track": {
+      "name": "The East Track",
+      "desc": "The ridings thin here, oak giving slowly over to open heather. East, the trees fall away into Wardmoor's wide gray moor; behind you the Kingswood shuts close again, dense and watchful.",
+      "brief": "The east track, moor opening beyond it.",
+      "region": "kw",
+      "landmark": "the east track",
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "kw_entered"]],
+          [
+            ["set", "kw_entered"],
+            ["xp", 2],
+            ["say", "This is the Kingswood: the old royal hunting forest under the Spine, where a king's hunt rode out four hundred years ago and never came home."],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [
+                ["say", "Lys: \"Hounds and a horn, and a hunt that never once came home. I've tracked plenty that went quiet. None of them stayed quiet four hundred years.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"The king's own hunt, out the very morning my line stole his crown. I don't think that's coincidence. I don't think anyone has ever asked if it was.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "tamsin"]],
+              [
+                ["say", "Tamsin: \"Charcoal country. Every clamp in this wood feeds Cinderhall's forges, one way or another. Someone's been burning this place a long time before we got here.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Osk: \"A hunt's chapel, out here past the law. I wonder what saint they prayed to before they rode, and whether anyone still does.\""]
+              ],
+              []
+            ]
+          ],
+          []
+        ]
+      ]
+    }
+  },
+  "items": {
+    "kw_boar_spear": {
+      "name": "a huntsman's boar-spear",
+      "loc": "nowhere",
+      "takeable": true,
+      "hit": 1,
+      "dmg": 3,
+      "hint": "broad-headed, cross-barred; a step above a belt-knife"
+    },
+    "kw_dried_venison": {
+      "name": "a twist of dried venison",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "off the wood; eat it to ease a wound",
+      "use": [
+        {
+          "fx": [
+            ["hp", 3],
+            ["move", "kw_dried_venison", "nowhere"],
+            ["say", "Tough going, well salted, and it sits well enough. The ache eases before you've finished chewing."]
+          ]
+        }
+      ]
+    }
+  }
+}
