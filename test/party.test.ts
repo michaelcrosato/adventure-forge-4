@@ -689,3 +689,35 @@ test("one companion keeps their own 'talk to' entry, so single-companion walkthr
   both.npcRoom["osk"] = "b";
   assert.ok(labels(world, both).includes("talk to Lys") && !labels(world, both).includes("speak with the company"));
 });
+
+// ---------- the company rests ----------
+test("a room action that heals — a rest — heals the companions standing here too; an item heals only the player", () => {
+  const world = mini({
+    rooms: {
+      a: { name: "A", desc: "Room A.", exits: { east: { to: "b" } }, actions: [{ id: "rest", label: "rest by the fire", fx: [["hp", 5], ["say", "Warm."]] }] },
+      b: { name: "B", desc: "Room B.", exits: { west: { to: "a" } } },
+    },
+    items: { herbs: { name: "herbs", loc: "inv", use: [{ fx: [["hp", 3], ["move", "herbs", "nowhere"]] }] } },
+    npcs: {
+      ...companions(2),
+    },
+  });
+  let { state } = newState(world, 1);
+  state.party = ["lys", "osk"];
+  state.hp = 4;
+  state.npcHp["lys"] = 3;
+  state.npcHp["osk"] = 8; // already whole
+  state.npcRoom["osk"] = "b"; // walked ahead: not here, not healed
+  state.npcHp["osk"] = 2;
+  let out = step(world, state, actionByLabel(world, state, "rest by the fire")!);
+  state = out.state;
+  assert.equal(state.hp, 9);
+  assert.equal(state.npcHp["lys"], 8, "Lys heals with the player, capped at her full hp");
+  assert.equal(state.npcHp["osk"], 2, "a companion elsewhere is not healed");
+  assert.ok(out.events.some((e) => /\(Lys hp\+5, 8\/8\)/.test(e)), out.events.join(" | "));
+  state.hp = 4;
+  state.npcHp["lys"] = 3;
+  out = step(world, state, actionByLabel(world, state, "use herbs")!);
+  assert.equal(out.state.hp, 7);
+  assert.equal(out.state.npcHp["lys"], 3, "an item's use heals only whoever takes it");
+});

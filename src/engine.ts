@@ -1199,6 +1199,23 @@ export function step(world: World, prev: State, action: Action): StepOut {
       if (!a) break;
       if (a.once) s.flags[`did_${a.id}`] = true;
       applyFx(world, s, a.fx, events);
+      // a rest is the company's, not the player's alone: a room action that
+      // heals (a hearth, a bunk) heals the companions standing here by the same
+      // measure — an item's use heals only whoever takes it
+      const rest = a.fx?.find((f) => f[0] === "hp" && f[1] > 0);
+      if (rest && !s.ended) {
+        for (const id of s.party) {
+          const def = world.npcs[id];
+          if (!def?.companion || npcDead(world, s, id) || s.npcRoom[id] !== s.room) continue;
+          const max = def.hp ?? 1;
+          const before = s.npcHp[id] ?? max;
+          const after = Math.min(max, before + (rest[1] as number));
+          if (after > before) {
+            s.npcHp[id] = after;
+            events.push(`(${def.name} hp+${after - before}, ${after}/${max})`);
+          }
+        }
+      }
       break;
     }
     case "classpick": {

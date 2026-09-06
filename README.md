@@ -106,7 +106,7 @@ whole 34-turn session is ~18k chars (~4.7k tokens) of game text.
 `npm run verify` (~10s) enforces:
 
 - **Typecheck** — strict, no unchecked indexing.
-- **Tests** (168) — determinism (same seed = byte-identical run, and an engine
+- **Tests** (169) — determinism (same seed = byte-identical run, and an engine
   core that provably never reads the clock), the character layer,
   conversations and companions, travel and the journal, templates and
   stamps, worlds in parts, worldgen scale, triage promotion rules, the fleet

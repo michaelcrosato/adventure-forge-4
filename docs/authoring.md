@@ -229,6 +229,11 @@ nobody's business but the player's.
   A single companion keeps their own entry, so a walkthrough that travels with
   one replays unchanged. This is what keeps a full party of four from crowding
   a hub room's menu past the cap of 12.
+- **The company rests.** A room action with a positive `hp` effect — the
+  hearth's `rest`, an empty bunk — heals the companions standing with the
+  player by the same measure ("(Lys hp+5, 8/10)"), so a company hurt in a
+  fight is whole again at the next inn. An item's use heals only whoever takes
+  it.
 
 Inside a conversation the engine lists a topic whose effects send a companion
 out of the party (`["party", id, "leave"]`) last, just before the way out, so
