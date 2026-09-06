@@ -1,0 +1,775 @@
+{
+  "rooms": {
+    "hl_north_lane": {
+      "name": "The North Lane",
+      "desc": "A tithe-lane runs between hedgerows here, wide enough for two carts to pass at a squeeze. North, the Vale of Ash; south, the lane runs on into open fields, Tithing's granary roof just visible past them.",
+      "brief": "The north lane. Vale north, fields south.",
+      "region": "hl",
+      "landmark": "the north lane",
+      "exits": { "north": { "to": "va_west_road", "landmark": "the Vale of Ash" } },
+      "onEnterOnce": [
+        ["set", "hl_entered"],
+        ["xp", 2],
+        ["say", "This is the Hearthlands: granary lowland that fed the whole Vale, until a Reeve's order shut a tithe-barn's doors on the crofters who grew the grain, one hard winter four hundred years gone."],
+        [
+          "if",
+          [["inParty", "vell"]],
+          [
+            ["say", "Vell: \"My own line's first Reeve, and a barn full of people his order starved. I have read every history written of that winter. Not one names this place.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Osk: \"An almoner kept the worthy names, and a barn-reeve kept the doors. Two duties, and neither one was mercy. I don't like how familiar that sounds.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "tamsin"]],
+          [
+            ["say", "Tamsin: \"Feeding a town is simple arithmetic — grain in, mouths fed. Somebody did those sums here and left the crofters out of the count on purpose.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "lys"]],
+          [
+            ["say", "Lys: \"Doors locked from the inside, against people who grew the grain with their own hands. I've seen animals treated better, and called it husbandry.\""]
+          ],
+          []
+        ]
+      ]
+    },
+    "hl_south_lane": {
+      "name": "The South Lane",
+      "desc": "The tithe-lane gathers itself here for the last stretch south, hedgerows giving way to salt air. South, the Saltkerns' coast road; north, the lane runs back into the Hearthlands' long fields.",
+      "brief": "The south lane. Coast road south, fields north.",
+      "region": "hl",
+      "landmark": "the south lane",
+      "exits": { "south": { "to": "sk_coast_road", "landmark": "the Saltkerns" } },
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "hl_entered"]],
+          [
+            ["set", "hl_entered"],
+            ["xp", 2],
+            ["say", "This is the Hearthlands: granary lowland that fed the whole Vale, until a Reeve's order shut a tithe-barn's doors on the crofters who grew the grain, one hard winter four hundred years gone."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"My own line's first Reeve, and a barn full of people his order starved. I have read every history written of that winter. Not one names this place.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Osk: \"An almoner kept the worthy names, and a barn-reeve kept the doors. Two duties, and neither one was mercy. I don't like how familiar that sounds.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "tamsin"]],
+              [
+                ["say", "Tamsin: \"Feeding a town is simple arithmetic — grain in, mouths fed. Somebody did those sums here and left the crofters out of the count on purpose.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [
+                ["say", "Lys: \"Doors locked from the inside, against people who grew the grain with their own hands. I've seen animals treated better, and called it husbandry.\""]
+              ],
+              []
+            ]
+          ],
+          []
+        ]
+      ]
+    },
+    "hl_market_cross": {
+      "name": "Tithing Market Cross",
+      "desc": "A weathered stone cross stands where the tithe-lanes meet, worn tithe-measures cut into its base by generations of bailiffs checking their sacks against the standard. Tithing's roofs crowd close on every side.",
+      "brief": "The market cross, old tithe-measures cut in stone.",
+      "region": "hl",
+      "landmark": "Tithing",
+      "exits": {
+        "north": { "to": "hl_granary_steps", "landmark": "the granary steps" },
+        "south": { "to": "hl_tally_cottage", "landmark": "the tally-keeper's cottage" },
+        "east": { "to": "hl_almonry", "landmark": "the almonry" },
+        "west": { "to": "hl_counting_house", "landmark": "the counting-house" },
+        "up": { "to": "hl_full_measure", "landmark": "the Full Measure" },
+        "down": { "to": "hl_chandlers", "landmark": "the chandler's counter" },
+        "in": { "to": "hl_back_lane", "landmark": "the back lane" }
+      },
+      "variants": [
+        { "if": [["flag", "hl_tithe_crown"]], "brief": "The cross. Fresh Crown paint on the granary door." },
+        { "if": [["flag", "hl_tithe_free"]], "brief": "The cross. A Companies' placard over the granary steps." },
+        {
+          "if": [["flag", "hl_tithe_common"]],
+          "brief": "The cross. The granary door stands propped wide, common now."
+        },
+        { "if": [["flag", "hl_hollow_burned"]], "brief": "The cross. Smoke still finds the market some evenings." },
+        { "if": [["flag", "hl_hollow_rested"]], "brief": "The cross. Tithing sleeps easier than it has in memory." },
+        {
+          "if": [["flag", "hl_hollow_bargained"]],
+          "brief": "The cross. Quieter fields, and a promise nobody's tested yet."
+        }
+      ],
+      "actions": [
+        {
+          "id": "hl_read_measures",
+          "label": "read the cut tithe-measures",
+          "free": true,
+          "fx": [
+            ["say", "Notches for the standard sack, re-cut every few decades as the old ones wore smooth. The oldest notch of all is deeper than the rest, as if someone leaned on the chisel."]
+          ]
+        }
+      ]
+    },
+    "hl_full_measure": {
+      "name": "The Full Measure",
+      "desc": "Tithing's one hearth-hall, named for a sack filled to the brim and not a grain short. Long tables, a fire that never quite goes out, and a landlord who has heard every complaint about the tithe there is to hear.",
+      "brief": "The Full Measure, hearth and long tables.",
+      "region": "hl",
+      "exits": { "down": { "to": "hl_market_cross" } },
+      "onEnter": [["if", [["flag", "hl_hollow_done"], ["!flag", "sv_hl_back"]], [["set", "sv_hl_back"]], []]],
+      "actions": [
+        {
+          "id": "hl_rest",
+          "label": "rest by the hearth",
+          "fx": [
+            ["hp", 10],
+            ["say", "You sleep to the smell of woodsmoke and old grain-dust, and wake stiff but whole, well before anyone else stirs the fire."]
+          ]
+        }
+      ]
+    },
+    "hl_granary_steps": {
+      "name": "The Granary Steps",
+      "desc": "Broad stone steps climb to the working Tithe Barn's doors, a Watch pike planted at the top of them and a queue of sacks waiting their turn at the scales below. The granary's thatch shows gray-gold above the lintel.",
+      "brief": "The granary steps, Watch-guarded.",
+      "region": "hl",
+      "landmark": "the granary steps",
+      "exits": { "south": { "to": "hl_market_cross" } },
+      "variants": [
+        {
+          "if": [["flag", "hl_barn_opened"]],
+          "desc": "The working Tithe Barn's doors stand propped wide now, the Watch pike leaned unused against the jamb. Anyone hungry climbs these steps these days, not only the bailiff's sack-counters.",
+          "brief": "The steps. The barn stands open, common now."
+        },
+        { "if": [["flag", "hl_tithe_free"]], "brief": "The steps. A Companies' pennant hangs where the Watch's did." }
+      ],
+      "actions": [
+        {
+          "id": "hl_pay_tithe_yourself",
+          "label": "pay the tithe yourself (8 gold)",
+          "if": [
+            ["flag", "hl_hollow_grievance"],
+            ["!flag", "hl_hollow_done"],
+            ["!flag", "hl_tithe_crown"],
+            ["!flag", "hl_tithe_free"],
+            ["var", "gold", ">=", 8]
+          ],
+          "fx": [
+            ["addvar", "gold", -8],
+            ["set", "hl_hollow_bargained"],
+            ["set", "hl_hollow_done"],
+            ["set", "hl_barn_opened"],
+            ["set", "hl_tithe_common"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "hollows_bargained", 1],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "rep_watch", 2],
+            ["addvar", "appr_tamsin", 1],
+            ["addvar", "appr_lys", 1],
+            ["score", 20],
+            ["xp", 8],
+            ["say", "You pay the tithe out of your own pocket and tell the sergeant plainly what it buys: the granary's doors, open to anyone hungry, starting today. Nobody argues with coin already counted."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"Bought, not spoken. It is not what I would have chosen. It is still more than four hundred years managed on its own.\""]
+              ],
+              []
+            ]
+          ]
+        }
+      ]
+    },
+    "hl_counting_house": {
+      "name": "The Counting-House",
+      "desc": "A narrow stone office off the market cross, ledgers stacked to the rafters and a strongbox bolted to the floor beside the writing-desk. Bailiff Vance keeps every column of the Regent's tithe balanced to the last grain.",
+      "brief": "The counting-house, ledgers and a strongbox.",
+      "region": "hl",
+      "landmark": "the counting-house",
+      "exits": { "east": { "to": "hl_market_cross" } },
+      "variants": [
+        {
+          "if": [["flag", "hl_barn_opened"]],
+          "brief": "The counting-house. Vance's ledger has a new, thinner column."
+        }
+      ],
+      "actions": [
+        {
+          "id": "hl_force_strongbox",
+          "label": "force the strongbox (might, 1hp on fail)",
+          "if": [
+            ["flag", "hl_hollow_grievance"],
+            ["!flag", "hl_hollow_done"],
+            ["!flag", "hl_tithe_crown"],
+            ["!flag", "hl_tithe_free"]
+          ],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "hl_hollow_bargained"],
+                ["set", "hl_hollow_done"],
+                ["set", "hl_barn_opened"],
+                ["set", "hl_tithe_common"],
+                ["addvar", "hollows_rested", 1],
+                ["addvar", "hollows_bargained", 1],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "rep_watch", 2],
+                ["addvar", "appr_tamsin", 1],
+                ["addvar", "appr_vell", -1],
+                ["score", 20],
+                ["xp", 8],
+                ["say", "The strongbox gives with a crack of old iron, and you carry its tithe-stores straight to the granary steps yourself. Vance protests exactly once, then starts recounting his ledgers instead."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["say", "Vell: \"That strongbox held the order's own copy of title. I hope you didn't break what you didn't read first.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The lock holds, and Vance is already shouting for the steps' guard. You're driven back a step, the strongbox unmarked."]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "hl_almonry": {
+      "name": "The Almonry",
+      "desc": "A low stone hall where the Gray Church doles grain to whoever the ledger names worthy that week. Sister Winnow keeps the book herself, in a hand too neat for the decisions it records.",
+      "brief": "The almonry, and the ledger of the worthy.",
+      "region": "hl",
+      "landmark": "the almonry",
+      "exits": { "west": { "to": "hl_market_cross" } },
+      "variants": [
+        {
+          "if": [["flag", "hl_barn_opened"]],
+          "brief": "The almonry. Fewer names get weighed against the ledger now."
+        }
+      ],
+      "actions": [
+        {
+          "id": "hl_alter_ledger",
+          "label": "alter the almoner's ledger (wits)",
+          "if": [
+            ["flag", "hl_hollow_grievance"],
+            ["!flag", "hl_hollow_done"],
+            ["!flag", "hl_tithe_crown"],
+            ["!flag", "hl_tithe_free"]
+          ],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "hl_hollow_bargained"],
+                ["set", "hl_hollow_done"],
+                ["set", "hl_barn_opened"],
+                ["set", "hl_tithe_common"],
+                ["addvar", "hollows_rested", 1],
+                ["addvar", "hollows_bargained", 1],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "rep_watch", 2],
+                ["addvar", "appr_tamsin", 1],
+                ["addvar", "appr_osk", -1],
+                ["score", 20],
+                ["xp", 8],
+                ["say", "A stroke of the pen where the ledger reads \"worthy,\" and every name in Tithing qualifies from this week on. Winnow finds the entry later, and says nothing, which tells you she'd have written it herself if she'd dared."],
+                [
+                  "if",
+                  [["inParty", "osk"]],
+                  [
+                    ["say", "Osk: \"I understand exactly why you did it. I still don't like watching a Church ledger get quietly rewritten, even toward mercy.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["say", "Winnow's own hand is in the margin of every page, and she knows her own book too well for the change to hold. The ink smears before it dries. It can be tried again."]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "hl_millrace": {
+      "name": "The Millrace",
+      "desc": "Water drives the wheel here in a steady, grinding rhythm, grain going in dusty and coming out flour by the same measure it always has. Dunn the miller times the whole operation by ear, without once looking up.",
+      "brief": "The millrace, the wheel turning.",
+      "region": "hl",
+      "landmark": "the millrace",
+      "exits": { "west": { "to": "hl_back_lane" } }
+    },
+    "hl_tally_cottage": {
+      "name": "The Tally-Keeper's Cottage",
+      "desc": "A one-room cottage hung floor to rafter with tally-sticks, notched and bundled by year, by household, by name. Nobody in Tithing has asked to read them in longer than anyone can say.",
+      "brief": "The cottage, tally-sticks hung everywhere.",
+      "region": "hl",
+      "landmark": "the tally-keeper's cottage",
+      "exits": { "north": { "to": "hl_market_cross" } }
+    },
+    "hl_chandlers": {
+      "name": "The Chandler's Counter",
+      "desc": "A plank counter stacked with rope, lamp oil, and dry goods for whoever's headed out into the fields or further. Ness keeps the count in chalk and an eye on every hand that comes near the shelf.",
+      "brief": "The chandler's counter, rope and lamp oil.",
+      "region": "hl",
+      "exits": { "up": { "to": "hl_market_cross" } },
+      "actions": [
+        {
+          "id": "hl_buy_lantern_oil",
+          "label": "buy a flask of lantern oil (4 gold)",
+          "if": [["!has", "hl_lantern_oil"], ["var", "gold", ">=", 4]],
+          "fx": [
+            ["addvar", "gold", -4],
+            ["move", "hl_lantern_oil", "inv"],
+            ["say", "Ness wraps the flask without comment, chalk-tally already climbing before you've turned to go."]
+          ]
+        },
+        {
+          "id": "hl_buy_bread",
+          "label": "buy a heel of tithe-bread (3 gold)",
+          "if": [["!has", "hl_tithe_bread"], ["var", "gold", ">=", 3]],
+          "fx": [
+            ["addvar", "gold", -3],
+            ["move", "hl_tithe_bread", "inv"],
+            ["say", "Dense, dark, and stamped with the granary's own mark on the crust. \"Same flour as the tithe,\" Ness says. \"Only difference is you paid for yours.\""]
+          ]
+        }
+      ]
+    },
+    "hl_back_lane": {
+      "name": "The Back Lane",
+      "desc": "A narrow lane runs behind the granary, out of sight of the steps and the counting-house both, sacks passing hand to hand between one shadow and the next. Nobody chalks a tally back here.",
+      "brief": "The back lane, behind the granary.",
+      "region": "hl",
+      "landmark": "the back lane",
+      "exits": { "out": { "to": "hl_market_cross" }, "east": { "to": "hl_millrace" } },
+      "variants": [
+        { "if": [["flag", "hl_grainrun_done"]], "brief": "The back lane. One more run went clean, and quiet." },
+        {
+          "if": [["flag", "hl_grainrun_reported"]],
+          "brief": "The back lane. Watch boots pass through here regularly now."
+        }
+      ],
+      "actions": [
+        {
+          "id": "hl_scout_backlane",
+          "label": "read the back lane's own marks",
+          "free": true,
+          "if": [["class", "scout"], ["!flag", "hl_backlane_read"]],
+          "fx": [
+            ["set", "hl_backlane_read"],
+            ["addvar", "or_scout_marks", 1],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "Boot-scuffs favoring one wall, a chalk-tally rubbed thin in exactly the spot a nervous thumb would rub it: two sacks a week leave uncounted, same as the hedge-gap already told you."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "hl_lantern_oil": {
+      "name": "a flask of lantern oil",
+      "loc": "nowhere",
+      "takeable": true,
+      "light": true,
+      "hint": "lights a dark room while lit"
+    },
+    "hl_tithe_bread": {
+      "name": "a heel of tithe-bread",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "dense and dark — eat it to ease a wound",
+      "use": [
+        {
+          "fx": [
+            ["hp", 3],
+            ["move", "hl_tithe_bread", "nowhere"],
+            ["say", "Plain, filling, and a little bitter at the crust, same as everything else this town grows."]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "hl_bailiff": {
+      "name": "Bailiff Vance",
+      "room": "hl_counting_house",
+      "dialogue": true,
+      "desc": "A Crown bailiff, ledger open on the counting-desk, tallying this year's tithe against a column of figures that never once comes out in the crofters' favor.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Bailiff Vance, Crown service. I collect the Regent's tithe out of Tithing, same as it's been collected since this barn was built. Older business than me.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_tithe",
+          "label": "why the tithe still comes here",
+          "if": [["flag", "said_hl_bailiff_greet"]],
+          "once": true,
+          "say": "Grain country pays in grain, always has. Four sacks in ten to the Regent, the rest stays. Simple arithmetic, and it's fed this town rather better than most holds on the Reach manage.",
+          "fx": [["set", "hl_bailiff_bg"], ["xp", 2]]
+        },
+        {
+          "id": "bg_order",
+          "label": "what he knows of the old order",
+          "if": [["flag", "hl_hollow_grievance"], ["flag", "said_hl_bailiff_bg_tithe"]],
+          "once": true,
+          "say": "There's a copy in my strongbox, filed as title same as any deed — the order that shut those doors. I didn't write it. I only keep what the office is owed to keep.",
+          "fx": [["set", "hl_bailiff_order_known"], ["xp", 2]]
+        },
+        {
+          "id": "hl_order_buy",
+          "label": "buy the order's copy (6 gold)",
+          "if": [["flag", "hl_bailiff_order_known"], ["!flag", "hl_order_known"], ["var", "gold", ">=", 6]],
+          "say": "Title's title. Six, and it's yours to read — the counting-house has no more use for it than the Regent does.",
+          "fx": [
+            ["addvar", "gold", -6],
+            ["set", "hl_order_known"],
+            ["set", "hl_order_source_bailiff"],
+            ["score", 3],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "hl_order_force",
+          "label": "force it out of him (might, 1hp on fail)",
+          "if": [["flag", "hl_bailiff_order_known"], ["!flag", "hl_order_known"]],
+          "say": "Touch that strongbox and you'll answer to the steps' guard, whoever you are.",
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "hl_order_known"],
+                ["set", "hl_order_source_bailiff"],
+                ["addvar", "rep_crown", -1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "You put a shoulder to the box before he can stop you. The order comes up under a layer of tithe receipts, and Vance doesn't try to take it back."]
+              ],
+              [
+                ["hp", -1],
+                ["say", "He's between you and the box before you reach it, and calling for the steps' guard besides. You're driven back a step."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "hl_order_argue",
+          "label": "argue him into admitting it (will)",
+          "if": [["flag", "hl_bailiff_order_known"], ["!flag", "hl_order_known"]],
+          "say": "Go on, then. Convince me the Regent's own title copy is anyone's business but the Crown's.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "hl_order_known"],
+                ["set", "hl_order_source_bailiff"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "You make the case plainly: a title nobody will show is a title nobody trusts. Vance considers that longer than you expect, then unlocks the box himself."]
+              ],
+              [
+                ["say", "\"Not today,\" he says, and goes back to his columns like the matter's closed. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "hl_bargain_persuade",
+          "label": "persuade him to open the barn (will)",
+          "if": [
+            ["flag", "hl_hollow_grievance"],
+            ["!flag", "hl_hollow_done"],
+            ["!flag", "hl_tithe_crown"],
+            ["!flag", "hl_tithe_free"]
+          ],
+          "say": "Open the working barn to anyone who's hungry? That's the Regent's grain you're asking me to give away.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "hl_hollow_bargained"],
+                ["set", "hl_hollow_done"],
+                ["set", "hl_barn_opened"],
+                ["set", "hl_tithe_common"],
+                ["addvar", "hollows_rested", 1],
+                ["addvar", "hollows_bargained", 1],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "rep_watch", 2],
+                ["addvar", "appr_tamsin", 1],
+                ["addvar", "appr_vell", 1],
+                ["score", 20],
+                ["xp", 8],
+                ["say", "You give him a reason that outweighs the ledger, and Vance writes the order himself rather than have history write it for him a second time. The granary doors go back on their hinges by evening."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["say", "Vell: \"He signed it himself. That is not nothing, coming from a man whose whole office exists to keep the theft tidy.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "hl_bargain_missed"]],
+                  [
+                    ["set", "hl_bargain_missed"],
+                    ["addvar", "rep_crown", -1],
+                    ["say", "\"The Regent's grain is the Regent's grain,\" he says, and means it. You haven't moved him — and word of a stranger's failed petition reaches the counting-house's own ledger, somehow."]
+                  ],
+                  [["say", "\"The Regent's grain is the Regent's grain,\" he says again, unmoved."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "hl_broker_tithe",
+          "label": "broker a tithe both sides sign",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "hl_bailiff_bg"],
+            ["flag", "hl_runner_bg"],
+            ["!flag", "hl_tithe_crown"],
+            ["!flag", "hl_tithe_free"],
+            ["!flag", "hl_tithe_common"]
+          ],
+          "say": "The runner's word, on Crown grain? I'd want to hear you make that case.",
+          "fx": [
+            ["set", "hl_tithe_common"],
+            ["set", "or_envoy_hl_tithe"],
+            ["score", 10],
+            ["xp", 6],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_free", 1],
+            ["addvar", "or_envoy_words", 1],
+            ["say", "You put Vance and Sparrow in one room and give each what they need instead of what they asked for: Vance keeps his tally honest, Sparrow keeps a route nobody has to run in the dark anymore. Neither loves it. Both sign."]
+          ]
+        },
+        {
+          "id": "hl_tithe_crown_declare",
+          "label": "back the Crown's claim on the tithe",
+          "if": [
+            ["flag", "hl_bailiff_bg"],
+            ["!flag", "hl_tithe_crown"],
+            ["!flag", "hl_tithe_free"],
+            ["!flag", "hl_tithe_common"]
+          ],
+          "say": "Then we're agreed. The tithe stays exactly as it's always been, and the Regent's ledger closes clean.",
+          "fx": [
+            ["set", "hl_tithe_crown"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "rep_free", -2],
+            [
+              "if",
+              [["flag", "hl_hollow_burned"]],
+              [
+                ["say", "\"With the old grief burned to ash,\" Vance adds, not quite smiling, \"there's nobody left standing to argue it should be otherwise.\""]
+              ],
+              [
+                ["say", "He closes the ledger with something close to satisfaction. It is the tidiest ending his office could ask for."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "hl_widow_pay",
+          "label": "pay the widow's arrears (8 gold)",
+          "if": [
+            ["flag", "hl_widow_heard"],
+            ["!flag", "hl_widow_paid"],
+            ["!flag", "hl_widow_argued"],
+            ["!flag", "hl_widow_lost"],
+            ["var", "gold", ">=", 8]
+          ],
+          "say": "Her debt, your coin. Not my business how you came by either.",
+          "fx": [["addvar", "gold", -8], ["set", "hl_widow_paid"], ["score", 4], ["xp", 3], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "hl_widow_argue",
+          "label": "argue her case (will)",
+          "if": [
+            ["flag", "hl_widow_heard"],
+            ["!flag", "hl_widow_paid"],
+            ["!flag", "hl_widow_argued"],
+            ["!flag", "hl_widow_lost"]
+          ],
+          "say": "Go on, then. Convince me arrears don't mean what they say.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "hl_widow_argued"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_crown", -1],
+                ["addvar", "appr_lys", 1],
+                ["say", "You make the case that a working croft is worth more paid slow than seized quick, and Vance, against what looks like his own habit, writes off the debt rather than argue further."]
+              ],
+              [["say", "\"Arrears are arrears,\" he says, and doesn't budge. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "hl_widow_confirm",
+          "label": "tell him to take the croft",
+          "if": [
+            ["flag", "hl_widow_heard"],
+            ["!flag", "hl_widow_paid"],
+            ["!flag", "hl_widow_argued"],
+            ["!flag", "hl_widow_lost"]
+          ],
+          "say": "Vance nods, unsurprised, and marks it in the ledger without a flicker. \"Efficient of you,\" he says, and means it as a compliment.",
+          "fx": [["set", "hl_widow_lost"], ["xp", 1], ["addvar", "rep_crown", 1], ["addvar", "appr_lys", -1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunger Barn, now it's rested",
+          "if": [["flag", "hl_hollow_rested"]],
+          "once": true,
+          "say": "Names and an order, both read aloud at once. My ledgers don't have a column for that, and for once I'm not sure I want them to.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the Hunger Barn, now it's bargained",
+          "if": [["flag", "hl_hollow_bargained"]],
+          "once": true,
+          "say": "A promise instead of a rite. I've collected worse debts on thinner paper. Mind it's kept, whoever ends up owing it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunger Barn, now it's burned",
+          "if": [["flag", "hl_hollow_burned"]],
+          "once": true,
+          "say": "Cleared ground surveys the same as any other, on my ledger. I've priced worse consciences onto tidier maps.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_tithe_free",
+          "label": "the tithe, now the Companies hold it",
+          "if": [["flag", "hl_tithe_free"]],
+          "once": true,
+          "say": "My office still exists. My tally doesn't balance the way it used to. I'll be writing to Marrowgate about that for years.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_hl_bargain_ask",
+          "label": "ask about the report to Marrowgate",
+          "if": [
+            ["any", [["flag", "hl_hollow_bargained"], ["flag", "hl_tithe_common"]]],
+            ["flag", "sv_hl_back"],
+            ["!flag", "sv_hl_after_done"]
+          ],
+          "once": true,
+          "say": "Marrowgate's had my report on the open barn a month now. They want it shut, tithe run the old way. I'd rather it weren't my decision alone this time.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_hl_bargain_pay",
+          "label": "pay to keep it open yourself (10 gold)",
+          "if": [["flag", "said_hl_bailiff_sv_hl_bargain_ask"], ["!flag", "sv_hl_after_done"], ["var", "gold", ">=", 10]],
+          "once": true,
+          "say": "You settle it in coin, same as before. Vance takes it without argument, and files the report as answered rather than escalated.",
+          "fx": [
+            ["addvar", "gold", -10],
+            ["set", "sv_hl_bargained_paid"],
+            ["set", "sv_hl_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_tamsin", 1]
+          ]
+        },
+        {
+          "id": "sv_hl_bargain_hold",
+          "label": "send him to Tithing itself, not to you",
+          "if": [["flag", "said_hl_bailiff_sv_hl_bargain_ask"], ["!flag", "sv_hl_after_done"]],
+          "once": true,
+          "say": "You tell him it isn't yours to answer for a second time — the town made the promise, the town should keep it. He puts it to the market cross instead, and gets his answer there.",
+          "fx": [
+            ["set", "sv_hl_bargained_honored"],
+            ["set", "sv_hl_after_done"],
+            ["score", 5],
+            ["xp", 3],
+            ["addvar", "rep_watch", 1]
+          ]
+        },
+        {
+          "id": "sv_hl_bargain_lapse",
+          "label": "tell him to shut it",
+          "if": [["flag", "said_hl_bailiff_sv_hl_bargain_ask"], ["!flag", "sv_hl_after_done"]],
+          "once": true,
+          "say": "\"Orders are orders,\" you tell him, and he doesn't argue the point twice. The granary doors are barred again within the week, tally board back to its old columns.",
+          "fx": [
+            ["set", "sv_hl_bargained_broken"],
+            ["set", "hl_bargain_broken"],
+            ["set", "sv_hl_after_done"],
+            ["score", 2],
+            ["xp", 1],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "appr_lys", -1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his columns",
+          "say": "Mind the steps on your way out. They're steeper than the ledger makes them sound.",
+          "end": true
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,888 @@
+{
+  "items": {
+    "hl_chandler_scale": {
+      "name": "a set of brass tithe-scales",
+      "loc": "hl_chandlers",
+      "takeable": true,
+      "owner": "hl_chandler",
+      "hint": "Ness balances her counter on these twice a day; she'd notice them gone"
+    }
+  },
+  "npcs": {
+    "hl_sergeant": {
+      "name": "Sergeant Rook",
+      "room": "hl_granary_steps",
+      "dialogue": true,
+      "desc": "A Watch sergeant planted at the top of the granary steps, pike grounded, eyes on the queue of sacks below more out of habit than suspicion.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who guards this barn",
+          "once": true,
+          "say": "Sergeant Rook, the Watch. I stand these steps so the tithe gets weighed fair and carried safe. Someone always has to.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_duty",
+          "label": "what the Watch actually guards here",
+          "if": [["flag", "said_hl_sergeant_greet"]],
+          "once": true,
+          "say": "Grain, mostly, and the count of it. I try not to think too hard about the winter this post first got cut into stone. Some duties you keep because they're yours, not because you'd choose them fresh.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "hl_warden_recognize",
+          "label": "speak to him as one of the old watch",
+          "if": [["class", "warden"], ["!flag", "or_warden_hl_word"]],
+          "say": "He looks you over a beat longer than a stranger usually rates, and something in his stance eases.",
+          "fx": [
+            ["set", "or_warden_hl_word"],
+            ["addvar", "or_warden_word", 1],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "Rook straightens without meaning to. \"One of us, then,\" he says, low. \"Vance keeps a title-copy of the old order in his strongbox. Filed proper. Thought you'd want that from someone who won't charge you.\""]
+          ]
+        },
+        {
+          "id": "bg_runner",
+          "label": "about the back lane's traffic",
+          "if": [["flag", "said_hl_sergeant_bg_duty"]],
+          "once": true,
+          "say": "Sparrow won't meet my eye on his good days, let alone his bad ones. I could make it my business. Some duties I choose not to keep, either.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunger Barn, now it's rested",
+          "if": [["flag", "hl_hollow_rested"]],
+          "once": true,
+          "say": "Names and an order, spoken together at last. I've stood these steps ten years without once hearing either. Feels lighter, standing here today.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the Hunger Barn, now it's bargained",
+          "if": [["flag", "hl_hollow_bargained"]],
+          "once": true,
+          "say": "A promise instead of a rite. I'll stand these steps either way. Doesn't cost me anything to stand them gladder.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunger Barn, now it's burned",
+          "if": [["flag", "hl_hollow_burned"]],
+          "once": true,
+          "say": "Ash instead of a beam. Quicker than an argument, I'll grant it that. Doesn't make the standing here any easier, some mornings.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_barn_opened",
+          "label": "the granary steps, now the barn's open",
+          "if": [["flag", "hl_barn_opened"]],
+          "once": true,
+          "say": "Odd, guarding a door that isn't locked against anyone anymore. I find I don't mind the odd of it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the steps",
+          "say": "Mind the queue on your way past. Nobody likes losing their place in it twice.",
+          "end": true
+        }
+      ]
+    },
+    "hl_almoner": {
+      "name": "Sister Winnow",
+      "room": "hl_almonry",
+      "dialogue": true,
+      "desc": "A Gray Church almoner, ink-stained fingers never far from the ledger that decides who eats from the barn this week.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Almoner Winnow, Gray Church. I weigh the grain the barn gives out against the names the ledger says have earned it. Someone has to hold that line.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_ledger",
+          "label": "how a name earns the ledger's grain",
+          "if": [["flag", "said_hl_almoner_greet"]],
+          "once": true,
+          "say": "Worthy or not, the ledger calls it — need, conduct, whether the household's tithe is current. I didn't write the test. I only mark who passes it.",
+          "fx": [["set", "hl_almoner_bg"], ["xp", 2]]
+        },
+        {
+          "id": "hl_read_ledger_check",
+          "label": "read the ledger's older tally (wits)",
+          "if": [["flag", "hl_almoner_bg"], ["!flag", "hl_tick_almonry"]],
+          "say": "Go on, then. It's held up to worse eyes than yours.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "hl_tick_almonry"],
+                ["addvar", "hl_ticks_known", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["addvar", "rep_church", 1],
+                ["say", "Behind the current tally, an older page: names, sacks, dates from that first winter, kept because nobody had the nerve to burn what a ledger recorded."]
+              ],
+              [["say", "The old ink has run past easy reading in the damp. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "hl_ask_unworthy",
+          "label": "ask who was written unworthy that winter",
+          "if": [["flag", "hl_tick_almonry"], ["!flag", "hl_ledger_unworthy_known"]],
+          "say": "There's a column for it, if you want to see it. I'd rather you didn't want to.",
+          "fx": [
+            ["set", "hl_ledger_unworthy_known"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "A dozen names, marked with one small word, the winter the barn's doors stayed shut. Whoever wrote it never once had to look the marked in the eye."]
+          ]
+        },
+        {
+          "id": "hl_press_hand",
+          "label": "press her on whose hand wrote it (wits)",
+          "if": [["flag", "hl_ledger_unworthy_known"], ["!flag", "hl_ledger_hand_known"]],
+          "say": "You want to know that badly?",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "hl_ledger_hand_known"],
+                ["score", 3],
+                ["xp", 4],
+                ["addvar", "rep_church", -1],
+                ["say", "The hand is the same one that signed the order to bar the doors: the barn-reeve's own. He kept the ledger of the worthy and the count of the dead in the same careful script, and never once let the two pages touch."]
+              ],
+              [["say", "The old page gives up nothing further to a glance. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "hl_read_ledger_scholar",
+          "label": "read the older tally outright",
+          "if": [["class", "scholar"], ["!flag", "hl_tick_almonry"], ["flag", "hl_almoner_bg"]],
+          "say": "Winnow barely looks up from her own work as you reach past her for the older pages yourself.",
+          "fx": [
+            ["set", "hl_tick_almonry"],
+            ["addvar", "hl_ticks_known", 1],
+            ["score", 3],
+            ["xp", 3],
+            ["addvar", "rep_church", 1],
+            ["say", "You have the older page read before Winnow finishes offering to fetch a candle: names, sacks, dates, kept whole since the first winter, because nobody had the nerve to burn what a ledger recorded."]
+          ]
+        },
+        {
+          "id": "hl_tithe_common_declare",
+          "label": "back a common store for the tithe",
+          "if": [
+            ["flag", "hl_almoner_bg"],
+            ["!flag", "hl_tithe_crown"],
+            ["!flag", "hl_tithe_free"],
+            ["!flag", "hl_tithe_common"]
+          ],
+          "say": "The barn open to whoever's hungry, worthy or not? I have wanted to say yes to that for longer than you've been asking.",
+          "fx": [
+            ["set", "hl_tithe_common"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_church", 2],
+            ["addvar", "rep_crown", -2],
+            [
+              "if",
+              [["flag", "hl_hollow_rested"]],
+              [
+                ["say", "\"With the names finally spoken,\" she adds, \"it would be a poor mercy to keep the grain locked up behind them.\""]
+              ],
+              [["say", "She closes the ledger's worthy-column and doesn't reopen it while you're still standing there."]]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunger Barn, now it's rested",
+          "if": [["flag", "hl_hollow_rested"]],
+          "once": true,
+          "say": "A rite forty generations late is still a rite. I mean to write the mother-house about this ledger's older page, and this time I don't much care if they'd rather I didn't.",
+          "fx": [["xp", 1], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunger Barn, now it's burned",
+          "if": [["flag", "hl_hollow_burned"]],
+          "once": true,
+          "say": "Fire, where a rite was owed twice over. I'm tired of this being the Church's answer whenever the waiting runs long enough.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_tithe_crown",
+          "label": "the tithe, now the Crown keeps it",
+          "if": [["flag", "hl_tithe_crown"]],
+          "once": true,
+          "say": "The ledger's worthy-column stays exactly as busy as it's always been, then. I'll keep weighing names against it, same as before.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_hl_burned_ask",
+          "label": "ask what becomes of the burned ground",
+          "if": [["flag", "hl_hollow_burned"], ["flag", "sv_hl_back"], ["!flag", "sv_hl_after_done"]],
+          "once": true,
+          "say": "Bailiff Vance already has his eye on the cleared ground for a new granary. I'd rather Tithing decided what stands there before his ledger does. Your say carries further than mine will, this once.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_hl_burned_marked",
+          "label": "urge a plain marker over the ash",
+          "if": [["flag", "said_hl_almoner_sv_hl_burned_ask"], ["!flag", "sv_hl_after_done"]],
+          "once": true,
+          "say": "She has the marker cut within the week, plain stone, no ledger-column of worthy names attached to it this time. \"That much, at least, I can still give them,\" she says.",
+          "fx": [
+            ["set", "sv_hl_burned_marked"],
+            ["set", "sv_hl_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_church", 1]
+          ]
+        },
+        {
+          "id": "sv_hl_burned_claimed",
+          "label": "let the bailiff build over it",
+          "if": [["flag", "said_hl_almoner_sv_hl_burned_ask"], ["!flag", "sv_hl_after_done"]],
+          "once": true,
+          "say": "She doesn't argue, exactly, but she doesn't come to see the new granary raised, either. \"Practical,\" she says of it, the way people say a word they've decided not to fight.",
+          "fx": [
+            ["set", "sv_hl_burned_claimed"],
+            ["set", "sv_hl_after_done"],
+            ["score", 2],
+            ["xp", 1],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "appr_osk", -1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the ledger",
+          "say": "Go carefully. And come back, if you ever want the older pages read plain instead of guessed at.",
+          "end": true
+        }
+      ]
+    },
+    "hl_tallykeeper": {
+      "name": "Sela",
+      "room": "hl_tally_cottage",
+      "dialogue": true,
+      "desc": "An old woman surrounded floor to rafter by tally-sticks, notching a fresh one without looking up from the count already running in her head.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Sela. Keeper-trained, and no reason to hide it — I've kept this hold's tallies longer than anyone left has been alive to ask why.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_ticks",
+          "label": "what the tally-sticks actually count",
+          "if": [["flag", "said_hl_tallykeeper_greet"]],
+          "once": true,
+          "say": "Every household, every winter, every name that stopped answering to a knock. Nobody's asked to read them back in longer than I care to say. I keep them anyway. Somebody should.",
+          "fx": [["set", "hl_tallykeeper_bg"], ["xp", 2]]
+        },
+        {
+          "id": "hl_tick_keeper_ask",
+          "label": "ask her to read the tally-sticks",
+          "if": [["flag", "hl_tallykeeper_bg"], ["!flag", "hl_tick_keeper"]],
+          "say": "You're the first to ask outright in forty generations of keeping. Sit, then. This takes as long as it takes.",
+          "fx": [
+            ["set", "hl_tick_keeper"],
+            ["addvar", "hl_ticks_known", 1],
+            ["score", 3],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1],
+            ["say", "She reads them stick by stick, name by name, in the flat, unhurried voice of someone who has said this exact list to herself a thousand times and never once aloud to another living person."]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunger Barn, now it's rested",
+          "if": [["flag", "hl_hollow_rested"]],
+          "once": true,
+          "say": "Read at last, and not only to myself. I'll keep the sticks anyway. Reading them once doesn't unteach the habit of forty generations.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the Hunger Barn, now it's bargained",
+          "if": [["flag", "hl_hollow_bargained"]],
+          "once": true,
+          "say": "A bargain isn't a reading. The sticks stay unread, whatever else got settled. I notice the difference, even if nobody else does.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunger Barn, now it's burned",
+          "if": [["flag", "hl_hollow_burned"]],
+          "once": true,
+          "say": "The barn's gone. The sticks are still here, in my hands, unburned. Forty generations of keeping was never about the building.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_hl_rested_ask",
+          "label": "ask what becomes of the read sticks",
+          "if": [["flag", "hl_hollow_rested"], ["flag", "sv_hl_back"], ["!flag", "sv_hl_after_done"]],
+          "once": true,
+          "say": "They're read now, but they're still just sticks in a cottage. Someone ought to decide what that means for the keeping of them, going forward.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_hl_rested_keep",
+          "label": "tell her to hang the sticks up plain",
+          "if": [["flag", "said_hl_tallykeeper_sv_hl_rested_ask"], ["!flag", "sv_hl_after_done"]],
+          "once": true,
+          "say": "She nods, and hangs the read sticks along the cottage wall in plain sight, no longer bundled away from asking eyes. \"About time somebody could see them without needing to ask first,\" she says.",
+          "fx": [
+            ["set", "sv_hl_rested_kept"],
+            ["set", "sv_hl_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
+          "id": "sv_hl_rested_send",
+          "label": "send the names on to Barrowmere",
+          "if": [["flag", "said_hl_tallykeeper_sv_hl_rested_ask"], ["!flag", "sv_hl_after_done"]],
+          "once": true,
+          "say": "\"The Keepers' Hall, then,\" she says, already reaching for a courier's satchel. \"So it isn't only Tithing that remembers, if Tithing ever forgets again.\"",
+          "fx": [
+            ["set", "sv_hl_rested_sent"],
+            ["set", "sv_hl_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_vell", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the tallies",
+          "say": "Go on. The sticks will still be here whenever anyone else finally asks.",
+          "end": true
+        }
+      ]
+    },
+    "hl_widow": {
+      "name": "Widow Elsbet",
+      "room": null,
+      "dialogue": true,
+      "desc": "A woman working a scrap of croft past the boundary hedge, turning soil that owes her nothing and gets worked anyway, out of stubbornness more than hope.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Widow Elsbet. I keep this croft since my husband didn't come back from a bad winter's fever. The bailiff's decided I owe more for it than I've got.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_arrears",
+          "label": "what she owes, and why",
+          "if": [["flag", "said_hl_widow_greet"]],
+          "once": true,
+          "say": "Arrears, the bailiff calls it. Three bad harvests running, and a tithe that doesn't care whose fields failed. He wants the croft for the debt. I want to keep working it.",
+          "fx": [["set", "hl_widow_heard"], ["xp", 2]]
+        },
+        {
+          "id": "hl_tick_widow_ask",
+          "label": "ask for her family's tally-stick",
+          "if": [["flag", "hl_widow_heard"], ["!flag", "hl_tick_widow"]],
+          "say": "My husband's people, back to the winter itself. I've kept it because nobody ever asked for it back.",
+          "fx": [
+            ["set", "hl_tick_widow"],
+            ["addvar", "hl_ticks_known", 1],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "She brings out a stick worn smooth by handling, notched with names going back further than the croft's own deed. She reads it to you plain, and doesn't ask why you wanted it."]
+          ]
+        },
+        {
+          "id": "react_widow_paid",
+          "label": "ask how the croft's faring",
+          "if": [["flag", "hl_widow_paid"]],
+          "once": true,
+          "say": "Debt-free, for the first time since my husband died. I don't quite know what to do with the relief of it yet.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_widow_argued",
+          "label": "ask how the croft's faring",
+          "if": [["flag", "hl_widow_argued"]],
+          "once": true,
+          "say": "Vance struck the debt himself, in front of witnesses. I didn't think words alone could do that. Yours did.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_widow_lost",
+          "label": "ask how she's managing",
+          "if": [["flag", "hl_widow_lost"]],
+          "once": true,
+          "say": "Managing. That's the whole of the answer I've got left to give you.",
+          "fx": [["xp", 1], ["addvar", "appr_lys", -1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunger Barn, now it's rested",
+          "if": [["flag", "hl_hollow_rested"]],
+          "once": true,
+          "say": "My husband's people are in that count now, spoken properly. Whatever else this year costs me, that much is paid in full.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the croft",
+          "say": "Go carefully. And thank you, whatever else comes of the asking.",
+          "end": true
+        }
+      ]
+    },
+    "hl_miller": {
+      "name": "Dunn",
+      "room": "hl_millrace",
+      "dialogue": true,
+      "desc": "The miller, flour to the elbows, timing the wheel's turn by ear without once glancing up from the hopper.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Dunn. I mill what the fields bring in, tithe grain and the rest both, and try not to think too hard about which sack is which by the time it's flour.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_mill",
+          "label": "milling the tithe's own grain",
+          "if": [["flag", "said_hl_miller_greet"]],
+          "once": true,
+          "say": "Same wheel, same water, same measure since before the Hunger Barn ever locked a door. The mill doesn't care whose grief the grain used to be.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunger Barn, now it's rested",
+          "if": [["flag", "hl_hollow_rested"]],
+          "once": true,
+          "say": "Can't say the wheel turns any different. Can say I sleep a little easier hearing it turn.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunger Barn, now it's burned",
+          "if": [["flag", "hl_hollow_burned"]],
+          "once": true,
+          "say": "Smoke on the wind some mornings, this way. The wheel keeps turning regardless. Wheels do that.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the wheel",
+          "say": "Mind the sluice-gate. It's older than it looks and meaner than it sounds.",
+          "end": true
+        }
+      ]
+    },
+    "hl_runner": {
+      "name": "Sparrow",
+      "room": "hl_back_lane",
+      "dialogue": true,
+      "desc": "A Free Companies runner, light on his feet even standing still, counting shadows in the lane the way other people count sheep.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Sparrow. I run sacks the tithe never sees, out past the hedge-gap and down to the coast road, for anyone tired of the Regent taking four in ten.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_runner",
+          "label": "how the sacks get past the tithe",
+          "if": [["flag", "said_hl_runner_greet"]],
+          "once": true,
+          "say": "Quiet boots, a gap in the hedge nobody's chalked on any board, and a count that never quite matches what the sergeant sees leave. Simple, if you know the line.",
+          "fx": [["set", "hl_runner_bg"], ["xp", 2]]
+        },
+        {
+          "id": "hl_grainrun_offer",
+          "label": "ask what he needs run",
+          "if": [["flag", "hl_runner_bg"], ["!class", "warden"], ["!flag", "hl_grainrun_offered"]],
+          "say": "One load, past the tally, down to Sack Road and on to the coast. Do it clean, and the Companies remember who ran it.",
+          "fx": [["set", "hl_grainrun_offered"], ["xp", 1]]
+        },
+        {
+          "id": "hl_grainrun_warden",
+          "label": "ask what he needs run",
+          "if": [
+            ["flag", "hl_runner_bg"],
+            ["class", "warden"],
+            ["!flag", "hl_grainrun_offered"],
+            ["!flag", "hl_grainrun_warden_told"]
+          ],
+          "say": "He looks at your bearing, not your face, and finds somewhere else to be busy.",
+          "fx": [
+            ["set", "hl_grainrun_warden_told"],
+            ["xp", 1],
+            ["say", "Sparrow doesn't offer a Watch-cut coat the run. He's run against wardens before, and doesn't care to again."]
+          ]
+        },
+        {
+          "id": "hl_grainrun_help",
+          "label": "run the sacks past the tithe (will)",
+          "if": [
+            ["flag", "hl_grainrun_offered"],
+            ["!flag", "hl_grainrun_done"],
+            ["!flag", "hl_grainrun_refused"],
+            ["!flag", "hl_grainrun_reported"]
+          ],
+          "say": "Then get moving. The gap doesn't stay unwatched forever.",
+          "fx": [
+            [
+              "if",
+              [["flag", "hl_gap_read"]],
+              [
+                ["set", "hl_grainrun_done"],
+                ["set", "free_passage"],
+                ["score", 8],
+                ["xp", 5],
+                ["addvar", "rep_free", 2],
+                ["say", "You already know the gap's own rhythm from reading its marks, and the run goes so smooth Sparrow looks faintly disappointed there was nothing to prove. \"The Companies will take you under the pass for that,\" he says."]
+              ],
+              [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "hl_grainrun_done"],
+                    ["set", "free_passage"],
+                    ["score", 8],
+                    ["xp", 5],
+                    ["addvar", "rep_free", 2],
+                    ["say", "You hold your nerve through the gap and down the lane, sacks dry and count short by exactly as much as it should be. \"The Companies will take you under the pass for that,\" Sparrow says."]
+                  ],
+                  [
+                    ["say", "A dog barks at the wrong moment and you're back at the gap empty-handed, the run blown for tonight. It can be tried again."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "hl_grainrun_refuse",
+          "label": "refuse the run outright",
+          "if": [
+            ["flag", "hl_grainrun_offered"],
+            ["!flag", "hl_grainrun_done"],
+            ["!flag", "hl_grainrun_refused"],
+            ["!flag", "hl_grainrun_reported"]
+          ],
+          "say": "Your business. The offer doesn't come round twice, mind.",
+          "fx": [["set", "hl_grainrun_refused"], ["xp", 1], ["addvar", "rep_free", -1]]
+        },
+        {
+          "id": "hl_grainrun_report",
+          "label": "report the gap to Sergeant Rook instead",
+          "if": [
+            ["flag", "hl_grainrun_offered"],
+            ["!flag", "hl_grainrun_done"],
+            ["!flag", "hl_grainrun_refused"],
+            ["!flag", "hl_grainrun_reported"]
+          ],
+          "say": "Word reaches the granary steps faster than Sparrow expects, and the hedge-gap goes watched for a season. He doesn't confront you over it. He doesn't need to; he already knows who talked.",
+          "fx": [
+            ["set", "hl_grainrun_reported"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_watch", 2],
+            ["addvar", "rep_free", -2]
+          ]
+        },
+        {
+          "id": "react_free_passage",
+          "label": "ask about the Companies' pass",
+          "if": [["flag", "free_passage"], ["flag", "hl_grainrun_done"]],
+          "once": true,
+          "say": "Word's already gone ahead of you. Whichever cave you use under the Spine, the Companies there will know your name before you finish climbing.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunger Barn, now it's burned",
+          "if": [["flag", "hl_hollow_burned"]],
+          "once": true,
+          "say": "Fewer eyes on the fields at night, with that grief burned quiet. Good for the trade, if I'm honest, which I try to be about the parts that don't cost me anything.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_tithe_free",
+          "label": "the tithe, now the Companies hold it",
+          "if": [["flag", "hl_tithe_free"]],
+          "once": true,
+          "say": "Runs in daylight now, chalked on a board same as anyone's. Feels strange, not having to watch the hedge-gap for it anymore.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the lane",
+          "say": "Keep to the shadows on your way out. Habit's cheaper than getting caught out of it.",
+          "end": true
+        }
+      ]
+    },
+    "hl_layman": {
+      "name": "Lay-brother Emmet",
+      "room": "hl_back_lane",
+      "dialogue": true,
+      "desc": "An Ironbound lay-brother, cheerful in the particular way of someone who has made his peace with fire being the answer to most things, a cart of oil-casks parked behind him.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Lay-brother, Ironbound. I keep a cart of good cinder-oil and considerable patience for a barn that hasn't yet asked me to use either.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_iron",
+          "label": "his opinion of old barns",
+          "if": [["flag", "said_hl_layman_greet"]],
+          "once": true,
+          "say": "An old barn with a grief locked in it is a barn waiting on fire, whatever rite anyone tries first. Four hundred years of nobody having the nerve is proof enough for my order. I can wait for Tithing to agree.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "hl_take_oil",
+          "label": "ask him for a cask of cinder-oil",
+          "if": [["!has", "hl_cinder_oil"]],
+          "say": "He hands it over without hesitation, like he's been waiting the whole season for someone to finally ask. \"Use it well,\" he says. \"Or don't. Either way I'll know by the smoke.\"",
+          "fx": [["move", "hl_cinder_oil", "inv"], ["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunger Barn, now it's burned",
+          "if": [["flag", "hl_hollow_burned"]],
+          "once": true,
+          "say": "There. Forty generations of nobody having the nerve, and one traveler with a cask finally ended it. My order will hear of this before the smoke clears.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunger Barn, now it rests",
+          "if": [["flag", "hl_hollow_rested"]],
+          "once": true,
+          "say": "A rite worked, then. Fine. I'll grant it worked. I still don't trust it to hold the way a fire holds.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his cart",
+          "say": "Careful with that cask on the road. It burns however wet the ground gets — that's rather the point of it.",
+          "end": true
+        }
+      ]
+    },
+    "hl_child": {
+      "name": "Peg",
+      "room": "hl_back_lane",
+      "dialogue": true,
+      "desc": "A girl of nine or ten, chalk stub behind one ear, keeping her own private count of every sack that passes through the lane.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Peg. I count the sacks. Nobody asked me to. Somebody should, and the grown-ups are all bad at arithmetic when it's inconvenient.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_count",
+          "label": "what her counting's turned up",
+          "if": [["flag", "said_hl_child_greet"]],
+          "once": true,
+          "say": "Nine sacks in on a good week. Only seven ever get chalked on the granary's own board. I've counted it a dozen times. It's always seven.",
+          "fx": [["set", "hl_child_count_known"], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "react_grainrun",
+          "label": "ask if the count's changed",
+          "if": [["flag", "hl_child_count_known"], ["any", [["flag", "hl_grainrun_done"], ["flag", "hl_grainrun_reported"]]]],
+          "once": true,
+          "say": "Still seven some weeks, nine some others. I've stopped trying to guess which is the honest number. Maybe there isn't one.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunger Barn, now it's rested",
+          "if": [["flag", "hl_hollow_rested"]],
+          "once": true,
+          "say": "My gran used to say a name from that winter sometimes, when she thought nobody was listening. I wonder if it was one of the ones you spoke.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the counting",
+          "say": "I'll keep counting. Somebody should, even if it's only me.",
+          "end": true
+        }
+      ]
+    },
+    "hl_chandler": {
+      "name": "Ness",
+      "room": "hl_chandlers",
+      "desc": "A chandler weighing every sale twice on brass scales, quick to notice a hand near anything she hasn't sold yet.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Ness. I keep the counter — rope, oil, dry goods, and a scale honest enough that even the bailiff trusts my weights over his own.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_trade",
+          "label": "trading this close to the tithe",
+          "if": [["flag", "said_hl_chandler_greet"]],
+          "once": true,
+          "say": "Somebody has to sell what the tithe doesn't take. Turns out that's steadier work than it sounds, so long as you weigh everything twice.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "react_theft",
+          "label": "about the missing scales, since",
+          "if": [["flag", "stole_hl_chandler_scale"]],
+          "once": true,
+          "say": "\"I weigh twice for a reason,\" she says, not quite looking at you. \"Now I'll weigh three times, and remember exactly why.\"",
+          "fx": [["addvar", "rep_watch", -1]]
+        }
+      ]
+    }
+  },
+  "quests": {
+    "hl_q_ticks": {
+      "name": "The Tally-Sticks",
+      "start": [["flag", "hl_hollow_grievance"]],
+      "done": [["var", "hl_ticks_known", ">=", 3]],
+      "stages": [
+        {
+          "if": [["flag", "hl_tick_keeper"], ["flag", "hl_tick_widow"], ["!flag", "hl_tick_almonry"]],
+          "text": "Sela's stick and the widow's are yours. The last is the almonry's ledger, or Saint Garner's chapel, in the fields."
+        },
+        {
+          "if": [["flag", "hl_tick_keeper"], ["flag", "hl_tick_almonry"], ["!flag", "hl_tick_widow"]],
+          "text": "Sela's stick and the almonry's tally are yours. The last waits at the widow's croft, out past the boundary hedge."
+        },
+        {
+          "if": [["flag", "hl_tick_widow"], ["flag", "hl_tick_almonry"], ["!flag", "hl_tick_keeper"]],
+          "text": "The widow's stick and the almonry's tally are yours. The last is Sela's, at the tally-keeper's cottage."
+        },
+        {
+          "if": [["flag", "hl_tick_keeper"], ["!flag", "hl_tick_widow"], ["!flag", "hl_tick_almonry"]],
+          "text": "Sela's stick is yours. Two remain: the widow's croft, and the almonry's ledger (or the chapel)."
+        },
+        {
+          "if": [["flag", "hl_tick_widow"], ["!flag", "hl_tick_keeper"], ["!flag", "hl_tick_almonry"]],
+          "text": "The widow's stick is yours. Two remain: Sela's cottage, and the almonry's ledger (or the chapel)."
+        },
+        {
+          "if": [["flag", "hl_tick_almonry"], ["!flag", "hl_tick_keeper"], ["!flag", "hl_tick_widow"]],
+          "text": "The almonry's tally is yours. Two remain: Sela's cottage, and the widow's croft."
+        },
+        {
+          "if": [],
+          "text": "The rite wants three sticks: the tally-keeper Sela's, the widow's croft, and the almonry's ledger (or the chapel)."
+        }
+      ]
+    },
+    "hl_q_tithe": {
+      "name": "The Tithe Question",
+      "start": [["any", [["flag", "hl_bailiff_bg"], ["flag", "hl_runner_bg"], ["flag", "hl_almoner_bg"]]]],
+      "done": [["any", [["flag", "hl_tithe_crown"], ["flag", "hl_tithe_free"], ["flag", "hl_tithe_common"]]]],
+      "stages": [
+        {
+          "if": [["flag", "hl_tithe_crown"]],
+          "text": "The tithe stays the Crown's. Bailiff Vance's ledger closes clean, exactly as it always has."
+        },
+        {
+          "if": [["flag", "hl_tithe_free"]],
+          "text": "The tithe runs the Free Companies' way now. Sparrow's sacks move in daylight, chalked on a board."
+        },
+        {
+          "if": [["flag", "hl_tithe_common"]],
+          "text": "The tithe becomes a common store. The granary steps see anyone hungry now, not only the counted worthy."
+        },
+        {
+          "if": [],
+          "text": "Three claims stand on the tithe: the bailiff's, the runner's, and a common store an Envoy could broker. Back one."
+        }
+      ]
+    },
+    "hl_q_grainrun": {
+      "name": "The Grain Run",
+      "start": [["flag", "hl_grainrun_offered"]],
+      "done": [["any", [["flag", "hl_grainrun_done"], ["flag", "hl_grainrun_refused"], ["flag", "hl_grainrun_reported"]]]],
+      "stages": [
+        {
+          "if": [["flag", "hl_gap_read"]],
+          "text": "You've read the hedge-gap's marks. Running Sparrow's sacks past the tithe should go easier for it."
+        },
+        {
+          "if": [],
+          "text": "Sparrow, at the back lane, wants a load of sacks run past the tithe count, out through the hedge-gap to the coast road."
+        }
+      ]
+    },
+    "hl_q_ledger": {
+      "name": "The Almoner's Ledger",
+      "start": [["flag", "hl_almoner_bg"]],
+      "done": [["flag", "hl_ledger_hand_known"]],
+      "stages": [
+        {
+          "if": [["flag", "hl_ledger_unworthy_known"]],
+          "text": "The ledger names who was written unworthy that winter. Press Sister Winnow, at the almonry, on whose hand wrote it."
+        },
+        {
+          "if": [["flag", "hl_tick_almonry"]],
+          "text": "The almonry's older tally is read. Ask Sister Winnow who was written unworthy that winter."
+        },
+        {
+          "if": [],
+          "text": "Sister Winnow's almonry keeps an old ledger of the worthy. Ask her what its older pages actually say."
+        }
+      ]
+    },
+    "hl_q_widow": {
+      "name": "The Widow's Croft",
+      "start": [["flag", "said_hl_widow_greet"]],
+      "done": [["any", [["flag", "hl_widow_paid"], ["flag", "hl_widow_argued"], ["flag", "hl_widow_lost"]]]],
+      "stages": [
+        {
+          "if": [["flag", "hl_widow_heard"]],
+          "text": "Widow Elsbet's croft is wanted for arrears. Pay her debt, argue her case, or let it be taken, at the counting-house."
+        },
+        {
+          "if": [],
+          "text": "A widow works a croft out past the boundary hedge. Hear what she owes, and why, before deciding anything."
+        }
+      ]
+    }
+  }
+}
