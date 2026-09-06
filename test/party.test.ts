@@ -735,3 +735,29 @@ test("the first time something that strikes through armor stands in the room, th
   out = step(world, out.state, actionByLabel(world, out.state, "go east")!);
   assert.ok(!out.events.some((e) => /strikes through armor/.test(e)), "said once");
 });
+
+// ---------- long conversations turn pages ----------
+test("a conversation that runs past the menu cap turns pages: 'more to ask' is free, the farewell stays on every page", () => {
+  const topics = Array.from({ length: 15 }, (_, i) => ({ id: `t${i}`, label: `topic ${i}`, say: `Answer ${i}.` }));
+  const world = mini({ npcs: { sage: { name: "sage", room: "a", dialogue: true, topics: [...topics, { id: "bye", label: "take your leave", say: "Go.", end: true }] } } });
+  let { state } = newState(world, 1);
+  state = doLabel(world, state, "talk to sage");
+  let menu = labels(world, state);
+  assert.equal(menu.length, 12, menu.join(" | "));
+  assert.equal(menu[10], "more to ask");
+  assert.equal(menu[11], "take your leave");
+  assert.match(renderMenu(world, state).text, /more to ask \(5 more\)/);
+  const turn = state.turn;
+  state = doLabel(world, state, "more to ask");
+  assert.equal(state.turn, turn, "turning the page costs no turn");
+  menu = labels(world, state);
+  assert.deepEqual(menu, ["topic 10", "topic 11", "topic 12", "topic 13", "topic 14", "more to ask", "take your leave"]);
+  state = doLabel(world, state, "more to ask");
+  assert.equal(labels(world, state)[0], "topic 0", "the pages wrap");
+  // a short conversation never pages
+  const small = mini({ npcs: { sage: { name: "sage", room: "a", dialogue: true, topics: topics.slice(0, 11) } } });
+  let { state: s2 } = newState(small, 1);
+  s2 = doLabel(small, s2, "talk to sage");
+  assert.ok(!labels(small, s2).includes("more to ask"));
+  assert.equal(labels(small, s2).length, 12);
+});

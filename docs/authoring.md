@@ -226,6 +226,10 @@ nobody's business but the player's.
   their definitions live in `companions.json`. In your region, react to them
   with `["if", [["inParty", "osk"]], [["say", "Osk: \"...\""]], []]` in room
   effects or topic effects, and move their approval with `addvar appr_<id>`.
+- **Long conversations turn pages.** When an npc's visible topics and the way
+  out would run past the cap of 12, the menu shows a page of topics, `more to
+  ask (n more)` — free, wrapping — and the farewell on every page, so a
+  conversation dense with once-only echoes never crowds the menu.
 - **The company list.** When two or more companions who can be spoken with
   stand with the player, their `talk to` entries fold into one `speak with the
   company (Lys, Osk)` entry that opens a list of them — browsing, free, like

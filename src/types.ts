@@ -383,7 +383,8 @@ export type Action =
   | { kind: "travelto"; room: string } // go to a discovered landmark
   | { kind: "traveldone" } // close the travel menu (or step back out of a region)
   | { kind: "company" } // open the list of companions to speak with (two or more travelling with you)
-  | { kind: "companydone" }; // close that list
+  | { kind: "companydone" } // close that list
+  | { kind: "talkmore" }; // turn to the next page of a long conversation (free)
 
 export type Ending = { kind: "win" | "lose"; id: string; text: string };
 
@@ -413,6 +414,7 @@ export type State = {
   talking: string | null; // npc id while a conversation is open (conversation mode)
   travelMenu: string | null; // null: closed; "": destinations (or regions) listed; a region id: that region's destinations
   companyMenu: boolean; // the list of companions to speak with is open (browsing, no turn spent)
+  talkPage: number; // which page of a long conversation's topics is showing (0 unless it runs past the menu cap)
   ended: Ending | null;
 };
 

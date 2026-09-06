@@ -704,6 +704,7 @@ export function newState(world: World, seed: number): StepOut {
     talking: null,
     travelMenu: null,
     companyMenu: false,
+    talkPage: 0,
     ended: null,
   };
   for (const id of Object.keys(world.items)) if (s.itemLoc[id] === "inv") s.inv.push(id);
@@ -808,11 +809,21 @@ export function legalActions(world: World, s: State): Action[] {
     // a line that sends a companion away goes last, never in the slot the
     // player has been pressing to carry the conversation on
     const topics = visibleTopics(world, s, npc).sort((a, b) => Number(partsWays(a)) - Number(partsWays(b)));
-    const out: Action[] = topics.map((t) => ({ kind: "talk", npc, topic: t.id }));
     // a farewell line (a topic with `end`) is the way out; the plain "end
     // conversation" only appears when the npc offers none
-    if (!topics.some((t) => t.end)) out.push({ kind: "endtalk" });
-    return out;
+    const ends = topics.filter((t) => t.end);
+    const rest = topics.filter((t) => !t.end);
+    const outro: Action[] = ends.length ? ends.map((t): Action => ({ kind: "talk", npc, topic: t.id })) : [{ kind: "endtalk" }];
+    // a conversation that has grown past the cap turns pages: the farewell stays
+    // on every page, and "more to ask" (free) turns to the next
+    const paging = rest.length + outro.length > MENU_CAP;
+    const pageSize = Math.max(1, MENU_CAP - outro.length - 1);
+    const pages = paging ? Math.ceil(rest.length / pageSize) : 1;
+    const page = paging ? s.talkPage % pages : 0;
+    const shown = paging ? rest.slice(page * pageSize, (page + 1) * pageSize) : rest;
+    const out: Action[] = shown.map((t): Action => ({ kind: "talk", npc, topic: t.id }));
+    if (paging) out.push({ kind: "talkmore" });
+    return [...out, ...outro];
   }
   // the travel menu: destinations (or regions), and the way out of it
   if (inTravelMode(world, s)) return travelActions(world, s);
@@ -903,6 +914,8 @@ export function actionLabel(world: World, a: Action, s?: State): string {
       return "speak with the company";
     case "companydone":
       return "back";
+    case "talkmore":
+      return "more to ask";
     case "attack": {
       const npcName = world.npcs[a.npc]?.name ?? a.npc;
       const weapon = s ? bestWeapon(world, s).item : null;
@@ -1014,6 +1027,12 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     return w ? ` (${w.name} is watching: taking it is theft)` : "";
   }
   if (a.kind === "company") return ` (${companyHere(world, s).map((id) => world.npcs[id]?.name ?? id).join(", ")})`;
+  if (a.kind === "talkmore" && s.talking) {
+    // how many topics wait on the other pages
+    const rest = visibleTopics(world, s, s.talking).filter((t) => !t.end).length;
+    const here = legalActions(world, s).filter((x) => x.kind === "talk").length - visibleTopics(world, s, s.talking).filter((t) => t.end).length;
+    return ` (${rest - here} more)`;
+  }
   if (a.kind === "travelregion" && a.region) {
     // a region entry opens a second menu; say how many known places wait behind it
     const n = knownLandmarks(world, s).filter((id) => (world.rooms[id]?.region ?? "") === a.region).length;
@@ -1073,7 +1092,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // only the journey itself (travelto) and everything else costs one
   const freeCustom =
     action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free;
-  if (!freeCustom && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone") s.turn += 1;
+  if (!freeCustom && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore") s.turn += 1;
   let attacked: string | null = null; // the npc that already struck back this turn
 
   switch (action.kind) {
@@ -1118,15 +1137,23 @@ export function step(world: World, prev: State, action: Action): StepOut {
       // a conversation closes on its own when the line says so, or when the
       // npc has nothing left to say / is no longer here (inTalkMode covers
       // the latter two — clearing here just keeps the state tidy)
-      if (s.talking === action.npc && (t.end || !inTalkMode(world, s))) s.talking = null;
+      if (s.talking === action.npc && (t.end || !inTalkMode(world, s))) {
+        s.talking = null;
+        s.talkPage = 0;
+      }
       break;
     }
     case "talkto":
       s.talking = action.npc;
+      s.talkPage = 0;
       s.companyMenu = false; // picked from the company list: the conversation replaces it
       break;
     case "endtalk":
       s.talking = null;
+      s.talkPage = 0;
+      break;
+    case "talkmore":
+      s.talkPage += 1;
       break;
     case "company":
       s.companyMenu = true;
