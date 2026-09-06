@@ -1745,6 +1745,14 @@
           "once": true,
           "say": "\"A novice's medallion, from my own hall.\" Hald doesn't look up from the roll. \"I log thefts the same as fires. Both get remembered.\"",
           "fx": [["addvar", "rep_iron", -1], ["xp", 1]]
+        },
+        {
+          "id": "mg_preceptor_bell",
+          "label": "the Choir's bell, made whole",
+          "if": [["flag", "em_bell_whole"]],
+          "once": true,
+          "say": "The Cinder Watch's clapper, back in Emberfall's cracked bell. It rings, they tell me. Not true, but whole. My chapterhouse broke that bell four times over; I'll write it down that someone else mended it.",
+          "fx": [["xp", 2], ["addvar", "rep_iron", 1]]
         }
       ]
     },
@@ -1946,6 +1954,45 @@
           "once": true,
           "say": "\"Ash to the wrists, and short candles besides,\" she says. \"This font has had worse done to it than theft. That doesn't make it nothing.\"",
           "fx": [["addvar", "rep_church", -1], ["xp", 1]]
+        },
+        {
+          "id": "mg_mother_wenlock",
+          "label": "Prior Wenlock's answer",
+          "if": [
+            [
+              "any",
+              [["flag", "em_bargain_broken"], ["flag", "sv_em_bargained_honored"], ["flag", "sv_em_bargained_paid"]]
+            ]
+          ],
+          "once": true,
+          "say": "The mother-house sent to Emberfall for an answer: the confession or the bell. I have had a copy of the reply on my desk for a week. I have not decided what to feel about it.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "em_bargain_broken"]],
+              [
+                ["say", "\"He wrote them what they wanted to hear, and kept his collar,\" she says. \"Four hundred years of the same letter. I had hoped that one would be different.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sv_em_bargained_honored"]],
+              [
+                ["say", "\"He stood by his true word and they took his parish for it,\" she says. \"I have written to the mother-house. They will not like my letter. Good.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sv_em_bargained_paid"]],
+              [
+                ["say", "\"Someone vouched for him, and the mother-house, for once, listened,\" she says. \"He keeps his parish and his confession both. That is rarer than a miracle.\""]
+              ],
+              []
+            ]
+          ]
         }
       ]
     },
@@ -2202,6 +2249,32 @@
               []
             ]
           ]
+        },
+        {
+          "id": "mg_quill_gull_tithe",
+          "label": "Gullhaven's spring tithe",
+          "if": [["any", [["flag", "sk_bargain_broken"], ["flag", "sv_sk_bargained_paid"]]]],
+          "once": true,
+          "say": "Sailors off the Saltkerns drink here when the Marrow's too dear. They've one story between them this month, and it's Rennick's purse.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "sk_bargain_broken"]],
+              [
+                ["say", "\"He let the spring tithe lapse, and oars sounded off the point that night,\" Quill says. \"Once. The sort of once that sells a great deal of drink.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sv_sk_bargained_paid"]],
+              [
+                ["say", "\"Someone endowed the tithe outright, years of it in one purse,\" Quill says. \"Rennick's telling it as his own idea already. Nobody's buying that, but they're buying the story.\""]
+              ],
+              []
+            ]
+          ]
         }
       ]
     },
@@ -2369,6 +2442,45 @@
           "label": "leave Penn to his candle",
           "say": "Mind the shelves. They are the only honest thing in this palace.",
           "end": true
+        },
+        {
+          "id": "mg_penn_marker",
+          "label": "Cinderhall's Marker Stone",
+          "if": [
+            [
+              "any",
+              [["flag", "sv_ir_rested_stone_hall"], ["flag", "sv_ir_rested_broker"], ["flag", "sv_ir_rested_unmarked"]]
+            ]
+          ],
+          "once": true,
+          "say": "Word from the Downs reached this hall before it reached the Regent. It usually does. The Hundred's names, and the company's boundary stone.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "sv_ir_rested_stone_hall"]],
+              [
+                ["say", "\"The miners' hall cut the names in, rough, and the company has written to complain,\" she says. \"I have filed the complaint under the names.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sv_ir_rested_broker"]],
+              [
+                ["say", "\"The company paid for the cutting itself, once someone talked it round,\" she says. \"Its ledger calls that a gift. Mine calls it the least it owed.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sv_ir_rested_unmarked"]],
+              [
+                ["say", "\"The scratches stand uncut under the company's sign,\" she says. \"A ledger keeps a name four hundred years. A scratch lasts till the next rain. I wish you'd chosen the stone.\""]
+              ],
+              []
+            ]
+          ]
         }
       ]
     },
@@ -2538,6 +2650,41 @@
           "label": "leave him on the lid",
           "say": "Go on. I have heard every footstep for four hundred years. Yours is not the last.",
           "end": true
+        },
+        {
+          "id": "mg_reeve_lapsed",
+          "label": "bargains the holds let lapse",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "th_bargain_broken"],
+                ["flag", "fd_bargain_broken"],
+                ["flag", "wm_bargain_broken"],
+                ["flag", "ir_bargain_broken"],
+                ["flag", "hb_bargain_broken"],
+                ["flag", "sk_bargain_broken"],
+                ["flag", "em_bargain_broken"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "You bargained with a hollow and let the living side of it lapse. I made a bargain like that once. The stone under this city is what came of it. The dead keep the ledger; I would know.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "th_bargain_broken"]],
+              [["say", "\"Thornwold's toll, struck from the ledger at your word.\""]],
+              []
+            ],
+            ["if", [["flag", "fd_bargain_broken"]], [["say", "\"Fenmarch's tithe, refused to the water.\""]], []],
+            ["if", [["flag", "wm_bargain_broken"]], [["say", "\"Wardmoor's patrols, quietly stopped.\""]], []],
+            ["if", [["flag", "ir_bargain_broken"]], [["say", "\"Cinderhall's vigil, ended inside a season.\""]], []],
+            ["if", [["flag", "hb_bargain_broken"]], [["say", "\"Hollowbrook's mound, sold by the name.\""]], []],
+            ["if", [["flag", "sk_bargain_broken"]], [["say", "\"Gullhaven's spring tithe, skipped.\""]], []],
+            ["if", [["flag", "em_bargain_broken"]], [["say", "\"Emberfall's true word, taken back.\""]], []]
+          ]
         }
       ]
     },

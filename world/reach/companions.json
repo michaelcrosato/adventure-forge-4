@@ -273,6 +273,37 @@
             "say": "You pray over every grave we pass. I do not think you have noticed you do it. — Osk: \"I have noticed. I just do not expect anyone else to.\""
           },
           {
+            "id": "r_sv_th_burned_harsh",
+            "if": [["flag", "sv_th_burned_harsh"]],
+            "say": "A new rope on the old tree. You burned the glade to end the hanging, then handed Coe the next one. I'll remember which of those you meant."
+          },
+          {
+            "id": "r_sv_th_burned_spared",
+            "if": [["flag", "sv_th_burned_spared"]],
+            "say": "Bare tree, and staying bare. Good. Some things you have to keep saying no to, or the camp forgets it ever heard the word."
+          },
+          {
+            "id": "r_sv_th_bargained_paid",
+            "if": [["flag", "sv_th_bargained_paid"]],
+            "say": "Coin for a toll no one living owed. Bray won't thank you. The men under the glade might, if the dead keep ledgers. I think they do."
+          },
+          {
+            "id": "r_hb_bargain_broken",
+            "if": [["flag", "hb_bargain_broken"]],
+            "say": "You let him sell the mound. The ring went back so she'd lie quiet, and now she's a mark on some buyer's map. That was a promise, and we broke it.",
+            "fx": [["addvar", "appr_lys", -1]]
+          },
+          {
+            "id": "r_sv_hb_bargained_paid",
+            "if": [["flag", "sv_hb_bargained_paid"]],
+            "say": "You paid a thief not to steal. Odd way to keep a promise, but it kept. The mound stays lost, which is the only way it stays hers."
+          },
+          {
+            "id": "r_sv_em_burned_left",
+            "if": [["flag", "sv_em_burned_left"]],
+            "say": "Neave's gone east of the ash. Five fires couldn't move her; you did it with seven gold and a wagon. Kindest thing I've seen this side of Thornwold."
+          },
+          {
             "id": "r_theft_habit",
             "if": [["var", "thefts", ">=", 2]],
             "say": "Twice now. That's not hunger talking. That's a habit.",
@@ -724,6 +755,26 @@
             ],
             "say": "From a chapel's own altar. I don't have a verse for that kind of taking.",
             "fx": [["addvar", "appr_osk", -1]]
+          },
+          {
+            "id": "r_sv_fd_rested_named",
+            "if": [["flag", "sv_fd_rested_named"]],
+            "say": "You said the boy's name over the water alone. No bell, no Prior. My mother's rite was much the same, when it finally came. It counts. I promise you it counts."
+          },
+          {
+            "id": "r_sv_fd_rested_refused",
+            "if": [["flag", "sv_fd_rested_refused"]],
+            "say": "The rite was for the congregation. The Priory said that for forty years about everyone the water took who wasn't on its roll. I hoped we'd stopped saying it."
+          },
+          {
+            "id": "r_sv_fd_burned_claimed",
+            "if": [["flag", "sv_fd_burned_claimed"]],
+            "say": "Nets in the nave. My family's water. I know the dead don't need it; I said the same once, to make a burning easier. It wasn't true then either."
+          },
+          {
+            "id": "r_sv_fd_burned_spared",
+            "if": [["flag", "sv_fd_burned_spared"]],
+            "say": "Some water stays a grave. Thank you for saying it to her, so I didn't have to. I'm not sure I could have kept my voice level."
           }
         ],
         "leaves": [
@@ -1153,6 +1204,37 @@
             "if": [["flag", "stole_va_smith_tongs"]],
             "say": "That's my old master's iron gone missing. Put it back, or don't call yourself square with that forge again.",
             "fx": [["addvar", "appr_tamsin", -1]]
+          },
+          {
+            "id": "r_ir_bargain_broken",
+            "if": [["flag", "ir_bargain_broken"]],
+            "say": "The vigil's off. The Hundred got a promise out of Cinderhall and it lasted a season. I have kept longer watches for men I liked less.",
+            "fx": [["addvar", "appr_tamsin", -1]]
+          },
+          {
+            "id": "r_sv_ir_bargained_paid",
+            "if": [["flag", "sv_ir_bargained_paid"]],
+            "say": "A warden's wage, so no lad loses his sleep to the dead. That is how a watch is meant to be kept: paid, and by someone who chose it."
+          },
+          {
+            "id": "r_sv_ir_rested_unmarked",
+            "if": [["flag", "sv_ir_rested_unmarked"]],
+            "say": "The scratches stay, and the company's sign stays over them. You could have given the Hundred a stone. Never mind. Someone with a chisel will, one night."
+          },
+          {
+            "id": "r_sv_wm_rested_cairn",
+            "if": [["flag", "sv_wm_rested_cairn"]],
+            "say": "A cairn on ground the Watch earned honestly. Four hundred years guarding a thief's road, and the first true stone goes up in my lifetime. I'll take that."
+          },
+          {
+            "id": "r_sv_wm_bargained_honored",
+            "if": [["flag", "sv_wm_bargained_honored"]],
+            "say": "The garrison eats thin so the patrols keep walking. Nobody made them. That's the Watch I joined, when I was fool enough to think it was the only kind."
+          },
+          {
+            "id": "r_sv_wm_bargained_paid",
+            "if": [["flag", "sv_wm_bargained_paid"]],
+            "say": "You paid the Watch's shortfall out of your own purse. The quartermaster will never trust it. I do. Don't make a habit of carrying us, though."
           }
         ],
         "leaves": [
@@ -1571,6 +1653,32 @@
             ],
             "say": "Whatever that was worth, it was worth more sitting where someone could still read it.",
             "fx": [["addvar", "appr_vell", -1]]
+          },
+          {
+            "id": "r_sv_hb_rested_deferred",
+            "if": [["flag", "sv_hb_rested_deferred"]],
+            "say": "You sent the widow to Wren instead of ruling on it yourself. Correct. A Hall's custom bends only from the inside, and only once someone stands in it and asks."
+          },
+          {
+            "id": "r_sk_bargain_broken",
+            "if": [["flag", "sk_bargain_broken"]],
+            "say": "Oars off the point, once, and then not again. That was the tithe's receipt being torn up. Old debts don't wear thin, they wait. I'd have paid it.",
+            "fx": [["addvar", "appr_vell", -1]]
+          },
+          {
+            "id": "r_sv_sk_bargained_paid",
+            "if": [["flag", "sv_sk_bargained_paid"]],
+            "say": "Years of tithe paid at once. Gullhaven gets to stop arguing with itself every spring. As bookkeeping goes, that's the finest thing you've done. I mean it kindly."
+          },
+          {
+            "id": "r_sv_wm_burned_claimed",
+            "if": [["flag", "sv_wm_burned_claimed"]],
+            "say": "Peat cut from the oath-ground. Four centuries of history, sold by the sod. I'd mind more if the history had been true. As it stands, I mind a little."
+          },
+          {
+            "id": "r_sv_wm_burned_spared",
+            "if": [["flag", "sv_wm_burned_spared"]],
+            "say": "The ash stays untouched. The Watch will call it reverence; I'd call it evidence. Either way, someone a century on will be glad it's still there to read."
           }
         ],
         "leaves": [
