@@ -877,6 +877,50 @@
           "fx": [["addvar", "rep_church", 1], ["perk", "fd_halm_blessing"], ["score", 2], ["xp", 2]]
         },
         {
+          "id": "fd_word_sh",
+          "label": "word of the Shieldings' truce",
+          "if": [["any", [["flag", "sh_hollow_rested"], ["flag", "sh_hollow_bargained"], ["flag", "sh_hollow_burned"]]]],
+          "once": true,
+          "say": "Word of the Shieldings reaches the priory the way grief always does — slow, then all at once.",
+          "fx": [
+            [
+              "if",
+              [["flag", "sh_hollow_rested"]],
+              [
+                ["say", "A truce spoken whole at last, both lines stood down at dusk after four hundred years. I light a candle for that gladly, and mean it."],
+                ["addvar", "rep_church", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_hollow_bargained"]],
+              [
+                ["say", "The field given whole to its dead, no plough, no stone ever again. Nearer a rite than a bargain, if you ask what a priest calls rest."],
+                ["addvar", "rep_church", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_hollow_burned"]],
+              [
+                ["say", "Cinder-oil where two lines waited only to be told they could stop. I have no rite for that, and I have stopped pretending I might find one."],
+                ["addvar", "rep_church", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_stone_names"]],
+              [
+                ["say", "Both lines' names cut even on one stone, no victor claimed. That, at least, is nearer a rite than any stone I have seen raised."]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to his candles",
           "say": "Go gently on the walkways. Reedholm loses someone to the water most years; I'd rather not add a name I know.",

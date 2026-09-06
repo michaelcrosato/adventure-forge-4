@@ -3113,6 +3113,75 @@
               []
             ]
           ]
+        },
+        {
+          "id": "mg_penn_sh_stone",
+          "label": "the Shieldings' stone",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "sh_stone_crown"],
+                ["flag", "sh_stone_companies"],
+                ["flag", "sh_stone_names"],
+                ["flag", "sh_stone_broker"],
+                ["flag", "sh_stone_none"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Word of the Shieldings reached this hall ahead of the Regent, same as always. The records give that whole field one page, and the herald a single unnamed line.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "sh_stone_crown"]],
+              [
+                ["say", "\"The Crown's victory stands cut into the old ditch now,\" Penn says. \"My own ledger calls it a victory too. I have never been sure either of us has the right to.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_stone_companies"]],
+              [
+                ["say", "\"The Companies' founding stands cut there instead,\" Penn says. \"A stranger reading it would think the Crown was never on that field. My ledger says otherwise.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_stone_names"]],
+              [
+                ["say", "\"Both lines, cut small and even, no victor claimed,\" Penn says. \"That is the nearest thing to an honest stone I have heard of standing anywhere in the Reach.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_stone_broker"]],
+              [
+                ["say", "\"A wording neither side quite loves, brokered rather than won,\" Penn says. \"I have filed worse compromises under kinder names.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_stone_none"]],
+              [
+                ["say", "\"No stone at all, in the end — the field given whole to its dead.\" Penn sets down his candle. \"The records will have to be enough. They rarely are.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["class", "scholar"], ["flag", "sh_stone_names"]],
+              [
+                ["say", "\"One thing more, reader to reader,\" Penn adds, lower. \"The Keepers' own count never lost the herald's name the rest of us dropped. Bern, it says. Tell no one where you heard it.\""]
+              ],
+              []
+            ]
+          ]
         }
       ]
     },

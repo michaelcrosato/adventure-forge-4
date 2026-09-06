@@ -800,6 +800,50 @@
           ]
         },
         {
+          "id": "sk_word_hl",
+          "label": "word of the Hearthlands' barn",
+          "if": [["any", [["flag", "hl_hollow_rested"], ["flag", "hl_hollow_bargained"], ["flag", "hl_hollow_burned"]]]],
+          "once": true,
+          "say": "Word off the north lane reaches the customs post before the ink's even dry elsewhere.",
+          "fx": [
+            [
+              "if",
+              [["flag", "hl_hollow_rested"]],
+              [
+                ["say", "\"Tithing's barn rests, they're saying — names read, order named, nothing left unaccounted.\" Brann nods. \"That's a ledger I'd trust.\""],
+                ["addvar", "rep_watch", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_hollow_bargained"]],
+              [
+                ["say", "\"The tithe barn's a common store now, coin found to cover it.\" Brann almost smiles. \"Fed and counted both. I'll take that arithmetic.\""],
+                ["addvar", "rep_watch", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_hollow_burned"]],
+              [
+                ["say", "\"Somebody burned Tithing's own granary-barn.\" Brann's mouth thins. \"A fire needs explaining same as a theft does. I'd want that report.\""],
+                ["addvar", "rep_watch", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_tithe_free"]],
+              [
+                ["say", "\"And the Free Companies chalk the sacks now, word says.\" Brann's jaw sets. \"That's a rope this post will be measuring for years yet.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "sk_passage_thanked",
           "label": "since you told her of Rennick",
           "if": [["flag", "sk_passage_informed"]],

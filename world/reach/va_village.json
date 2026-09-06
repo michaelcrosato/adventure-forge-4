@@ -715,6 +715,42 @@
           "say": "Three holds now, quieted by rite instead of fire. I did not think I would live to hear that said of even one. Whatever you are doing out there, the Church is grateful for it.",
           "fx": [["addvar", "rep_church", 1], ["xp", 2]]
         },
+        {
+          "id": "va_word_hl",
+          "label": "word from the Hearthlands",
+          "if": [["any", [["flag", "hl_hollow_rested"], ["flag", "hl_hollow_bargained"], ["flag", "hl_hollow_burned"]]]],
+          "once": true,
+          "say": "Riders off the west road bring word down from Tithing, the way they always do when a hollow's fate is settled.",
+          "fx": [
+            [
+              "if",
+              [["flag", "hl_hollow_rested"]],
+              [
+                ["say", "Names read plain over an order that starved them — that is the whole of what a rite should do. I did not expect it done so far from any chapel."],
+                ["addvar", "rep_church", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_hollow_bargained"]],
+              [
+                ["say", "A granary opened instead of a grief spoken. Kinder than starving twice, I grant it. Still no rite in it, and the names still wait unspoken."],
+                ["addvar", "rep_church", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_hollow_burned"]],
+              [
+                ["say", "Cinder-oil on a barn that already had its dead. Fire answers nothing a rite was meant to answer. I light a candle for it regardless."],
+                ["addvar", "rep_church", -1]
+              ],
+              []
+            ]
+          ]
+        },
         { "id": "bye", "label": "leave him to his candles", "say": "Go carefully.", "end": true },
         {
           "id": "va_priest_theft",

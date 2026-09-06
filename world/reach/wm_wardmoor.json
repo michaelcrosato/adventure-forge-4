@@ -1407,6 +1407,42 @@
           "fx": [["addvar", "rep_watch", 1]]
         },
         {
+          "id": "wm_word_kw",
+          "label": "word of the Kingswood's hunt",
+          "if": [["any", [["flag", "kw_hollow_rested"], ["flag", "kw_hollow_bargained"], ["flag", "kw_hollow_burned"]]]],
+          "once": true,
+          "say": "A courier off the west road leaves word for the shelves before his boots are even off.",
+          "fx": [
+            [
+              "if",
+              [["flag", "kw_hollow_rested"]],
+              [
+                ["say", "\"The old hunt's recalled, whole, they say — a horn and three notes, nothing left unaccounted.\" Wynne files it without looking up."],
+                ["addvar", "rep_watch", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "kw_hollow_bargained"]],
+              [
+                ["say", "\"The rides stay open one night a year now, by agreement.\" Wynne frowns faintly. \"A bargain renewed forever isn't a muster stood down.\""],
+                ["addvar", "rep_watch", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "kw_hollow_burned"]],
+              [
+                ["say", "\"The Hunt's Stand burned with the hunt still unaccounted.\" Wynne's pen stops. \"That's not a muster ended. That's one nobody calls home now.\""],
+                ["addvar", "rep_watch", -1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave her to the shelves",
           "say": "Shut the door. The damp gets into the ink.",

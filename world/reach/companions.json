@@ -566,6 +566,77 @@
             "id": "r_sh_hollow_burned",
             "if": [["flag", "sh_hollow_burned"]],
             "say": "You burned two lines of men who were waiting to be told they could stop. Dusk here will be worse now, not better. I know fire."
+          },
+          {
+            "id": "r_pair_lys_osk_hl",
+            "if": [["inParty", "osk"], ["flag", "hl_entered"]],
+            "say": "Grain in every barn but the one that mattered, and a Church ledger deciding who counted as worthy of the rest. — Osk: \"I have read what 'worthy' meant on that page. I would not have made the list either.\""
+          },
+          {
+            "id": "r_pair_lys_tamsin_hl",
+            "if": [["inParty", "tamsin"], ["flag", "hl_entered"]],
+            "say": "Fields fat enough to feed the Vale, and a barn that starved the people who grew it. — Tamsin: \"Whoever wrote that order knew exactly how much grain was inside. That wasn't neglect. That was arithmetic.\""
+          },
+          {
+            "id": "r_pair_lys_vell_hl",
+            "if": [["inParty", "vell"], ["flag", "hl_entered"]],
+            "say": "A granary big enough to feed a kingdom, and a barn locked on the ones who filled it. — Vell: \"My own line's order, my own line's tithe. This Reach keeps finding new ways to implicate me before I've done anything myself.\""
+          },
+          {
+            "id": "r_pair_lys_osk_kw",
+            "if": [["inParty", "osk"], ["flag", "kw_entered"]],
+            "say": "Ridings cut for a hunt that mustered once and never rode home. My own kind of grief, dressed up in oak and horn-calls. — Osk: \"No rite was ever said over it either. Four centuries, and nobody thought to try.\""
+          },
+          {
+            "id": "r_pair_lys_tamsin_kw",
+            "if": [["inParty", "tamsin"], ["flag", "kw_entered"]],
+            "say": "A hunt that never came home, and the wood still stands like it's waiting on them. I know that kind of waiting. — Tamsin: \"I know the kind that just keeps burning charcoal regardless. Waiting doesn't stack cords.\""
+          },
+          {
+            "id": "r_pair_lys_vell_kw",
+            "if": [["inParty", "vell"], ["flag", "kw_entered"]],
+            "say": "They rode out the morning the crown was stolen, and nobody blew them home. That's a long time to hunt nothing. — Vell: \"My own first ancestor's hunt. I have wanted to stand in these ridings since I first read of them.\""
+          },
+          {
+            "id": "r_pair_lys_osk_sh",
+            "if": [["inParty", "osk"], ["flag", "sh_entered"]],
+            "say": "A herald shot walking out with a white rod, and a Company born the same night on the strength of it. Ugly way to start anything. — Osk: \"Uglier that no rite's been said over either line in four hundred years.\""
+          },
+          {
+            "id": "r_pair_lys_tamsin_sh",
+            "if": [["inParty", "tamsin"], ["flag", "sh_entered"]],
+            "say": "They say the crows never left this field. I believe every word of it. — Tamsin: \"The Companies were born here too, same dusk. Worth remembering, next time someone calls a hired sword answerable to nobody.\""
+          },
+          {
+            "id": "r_pair_lys_vell_sh",
+            "if": [["inParty", "vell"], ["flag", "sh_entered"]],
+            "say": "A truce asked for and answered with an arrow. I don't think this ground has forgiven anyone yet. — Vell: \"My own line hired the swords that broke that wall. I did not expect to feel this, standing on the ground it cost.\""
+          },
+          {
+            "id": "r_pair_lys_vell_kw_bargained",
+            "if": [["inParty", "vell"], ["flag", "kw_hollow_bargained"]],
+            "say": "A night a year the rides stay open, the burners losing sleep for it. Feels like a debt due forever. — Vell: \"Or paid honestly, on a fixed date, not pretended away. I've seen worse bargains carry my family's name.\""
+          },
+          {
+            "id": "r_quarrel_lys_tamsin_wood_open",
+            "if": [
+              ["inParty", "lys"],
+              ["inParty", "tamsin"],
+              ["any", [["flag", "kw_hollow_rested"], ["flag", "kw_hollow_bargained"]]],
+              ["!flag", "quarrel_lys_tamsin_wood"]
+            ],
+            "say": "A wood that just got its hunt home again, and Cinderhall's already counting cords off it. — Tamsin: \"The forges have to eat something. A managed coppice is a fair trade for wood this good.\" They both look at you.",
+            "fx": [["set", "quarrel_lys_tamsin_wood"]]
+          },
+          {
+            "id": "r_quarrel_lys_tamsin_wood_grateful_lys",
+            "if": [["flag", "quarrel_lys_tamsin_wood_lys"]],
+            "say": "Still glad I said it. A wood barely home from four hundred years riding can wait a season to be cut."
+          },
+          {
+            "id": "r_quarrel_lys_tamsin_wood_sour_lys",
+            "if": [["flag", "quarrel_lys_tamsin_wood_tamsin"]],
+            "say": "Fair trade. Right. Tell that to whatever's left riding those ridings by winter."
           }
         ],
         "leaves": [
@@ -1077,6 +1148,45 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "quarrel_lys_tamsin_wood_side_lys",
+          "label": "back Lys — the wood's earned its quiet",
+          "if": [["flag", "quarrel_lys_tamsin_wood"], ["!flag", "quarrel_lys_tamsin_wood_done"]],
+          "once": true,
+          "say": "Good — it just came home. It can have a season before anyone's cutting it again. — Tamsin only shakes her head, unconvinced.",
+          "fx": [
+            ["addvar", "appr_lys", 2],
+            ["addvar", "appr_tamsin", -2],
+            ["set", "quarrel_lys_tamsin_wood_lys"],
+            ["set", "quarrel_lys_tamsin_wood_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_tamsin_wood_settle_b",
+          "label": "call the coppice a draw (will)",
+          "if": [["flag", "quarrel_lys_tamsin_wood"], ["!flag", "quarrel_lys_tamsin_wood_done"]],
+          "once": true,
+          "say": "You tell them plainly whether the Kingswood feeds a hearth or a hunt isn't yours to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_tamsin_wood_peace"],
+                ["set", "quarrel_lys_tamsin_wood_done"],
+                ["say", "\"...Fair. It was Cinderhall's argument before it was mine to make.\" — Tamsin, almost gracious: \"Nor mine to make you keep.\""]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["set", "quarrel_lys_tamsin_wood_sour"],
+                ["set", "quarrel_lys_tamsin_wood_done"],
+                ["say", "Neither wanted that answer. — Lys watches the treeline; Tamsin goes back to counting cords, done with the talk."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -1549,6 +1659,62 @@
             "id": "r_sh_hollow_bargained",
             "if": [["flag", "sh_hollow_bargained"]],
             "say": "The ground left to them, and Harrowfield shorter of bread for it. The Church would call that a fair tithe. I've stopped saying what the Church would call things."
+          },
+          {
+            "id": "r_pair_osk_tamsin_hl",
+            "if": [["inParty", "tamsin"], ["flag", "hl_entered"]],
+            "say": "A Church almonry once kept a ledger of who deserved to eat. I have never been proud of that page. — Tamsin: \"Then be glad someone finally reads it aloud instead of just filing it.\""
+          },
+          {
+            "id": "r_pair_osk_vell_hl",
+            "if": [["inParty", "vell"], ["flag", "hl_entered"]],
+            "say": "The tithe barn, and the ledger that decided who it fed. Two duties, and I am not sure either one was mercy. — Vell: \"Duties rarely are, once you read the fine print underneath them.\""
+          },
+          {
+            "id": "r_pair_osk_tamsin_kw",
+            "if": [["inParty", "tamsin"], ["flag", "kw_entered"]],
+            "say": "A hunt mustered and never recalled, four hundred years unspoken over. I don't think anyone thought it needed a rite. — Tamsin: \"Nobody thought the horn needed fixing either, until you did.\""
+          },
+          {
+            "id": "r_pair_osk_vell_kw",
+            "if": [["inParty", "vell"], ["flag", "kw_entered"]],
+            "say": "Charcoal-smoke over ridings cut for a king's hunt. Whatever grief lives in this wood, nobody in four centuries thought to name it. — Vell: \"Someone did, once. He just never sent for it. That someone was mine.\""
+          },
+          {
+            "id": "r_pair_osk_tamsin_sh",
+            "if": [["inParty", "tamsin"], ["flag", "sh_entered"]],
+            "say": "A shield-wall broken by dark, a charter signed before the herald's blood was cold. I want to meet whichever priest has buried nobody here. — Tamsin: \"That charter's why the Companies answer to a captain, not a crown.\""
+          },
+          {
+            "id": "r_pair_osk_vell_sh",
+            "if": [["inParty", "vell"], ["flag", "sh_entered"]],
+            "say": "Two lines unburied four hundred years, and a chantry a mile off has buried neither. Grief gets swept to worse ground. — Vell: \"My own line's fault, this one. I hired the men who broke that wall by blood I never chose.\""
+          },
+          {
+            "id": "r_pair_osk_tamsin_hl_burned",
+            "if": [["inParty", "tamsin"], ["flag", "hl_hollow_burned"]],
+            "say": "Cinder-oil again, and another door that will never open to answer for what happened behind it. I don't think fire is an apology. — Tamsin: \"It isn't meant as one. It's meant to end a thing an apology never would have.\""
+          },
+          {
+            "id": "r_pair_osk_vell_sh_rested",
+            "if": [["inParty", "vell"], ["flag", "sh_hollow_rested"]],
+            "say": "A truce called at last, not one word of it mine to say. I'm glad regardless — some rites need no collar to be real. — Vell: \"This one needed no priest. Just the rod, the words, and someone willing to walk them at dusk.\""
+          },
+          {
+            "id": "r_quarrel_osk_vell_barn_open",
+            "if": [["inParty", "osk"], ["inParty", "vell"], ["flag", "hl_hollow_rested"], ["!flag", "quarrel_osk_vell_barn"]],
+            "say": "The almonry's ledger marked half these names unworthy before any seal touched that door. A record won't feed a soul. — Vell: \"A name kept can't be starved twice. I want them written down.\" They both look at you.",
+            "fx": [["set", "quarrel_osk_vell_barn"]]
+          },
+          {
+            "id": "r_quarrel_osk_vell_barn_grateful_osk",
+            "if": [["flag", "quarrel_osk_vell_barn_osk"]],
+            "say": "Still glad I said it. A ledger never once fed anyone; I'll not pretend a new one would."
+          },
+          {
+            "id": "r_quarrel_osk_vell_barn_sour_osk",
+            "if": [["flag", "quarrel_osk_vell_barn_vell"]],
+            "say": "Written down properly. Fine. Tell me when ink has ever once opened a barn door."
           }
         ],
         "leaves": [
@@ -2032,6 +2198,45 @@
                 ["set", "quarrel_osk_vell_nave_sour"],
                 ["set", "quarrel_osk_vell_nave_done"],
                 ["say", "Neither of you looks satisfied. — Vell taps the notebook shut, and doesn't open it again today."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_osk_vell_barn_side_osk",
+          "label": "back Osk — no ledger feeds the living",
+          "if": [["flag", "quarrel_osk_vell_barn"], ["!flag", "quarrel_osk_vell_barn_done"]],
+          "once": true,
+          "say": "Good. Somebody should say plainly that paper never once fed a crofter. — Vell only makes a note, unconvinced but careful about it.",
+          "fx": [
+            ["addvar", "appr_osk", 2],
+            ["addvar", "appr_vell", -2],
+            ["set", "quarrel_osk_vell_barn_osk"],
+            ["set", "quarrel_osk_vell_barn_done"]
+          ]
+        },
+        {
+          "id": "quarrel_osk_vell_barn_settle_b",
+          "label": "call the record a draw (will)",
+          "if": [["flag", "quarrel_osk_vell_barn"], ["!flag", "quarrel_osk_vell_barn_done"]],
+          "once": true,
+          "say": "You tell them plainly whether the barn's dead get a record or a rite isn't yours to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_osk_vell_barn_peace"],
+                ["set", "quarrel_osk_vell_barn_done"],
+                ["say", "\"...Fair. The ledger was ours to answer for, not yours.\" — Vell, after a moment: \"Fair. Noted. Not forgotten.\""]
+              ],
+              [
+                ["addvar", "appr_osk", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_osk_vell_barn_sour"],
+                ["set", "quarrel_osk_vell_barn_done"],
+                ["say", "Neither wanted that answer. — Osk says a verse under his breath; Vell writes something down without saying what."]
               ]
             ]
           ]
@@ -2525,6 +2730,52 @@
             "id": "r_sh_hollow_burned",
             "if": [["flag", "sh_hollow_burned"]],
             "say": "Cinder-oil on a battlefield. The bosses will come out of the ash by the cartload, and the Ironbound will thank you. I keep finding I don't want their thanks."
+          },
+          {
+            "id": "r_pair_tamsin_vell_hl",
+            "if": [["inParty", "vell"], ["flag", "hl_entered"]],
+            "say": "Four sacks in ten to the Crown, same as it's run four hundred years. Somebody does that math and never asks who goes hungry for it. — Vell: \"I've read the Crown's own math on this tithe. It never once shows its work.\""
+          },
+          {
+            "id": "r_pair_tamsin_vell_kw",
+            "if": [["inParty", "vell"], ["flag", "kw_entered"]],
+            "say": "Every forge in Cinderhall eats this wood by the cartload, and I never once asked whose hunt it used to be. — Vell: \"Mine, near enough. My own first ancestor's father's hunt, riding on your charcoal money now.\""
+          },
+          {
+            "id": "r_pair_tamsin_vell_sh",
+            "if": [["inParty", "vell"], ["flag", "sh_entered"]],
+            "say": "The Companies were born on this ground, out of a broken truce and someone's itchy trigger-finger. — Vell: \"My own ancestor's trigger-finger, near enough. I have never said that plainly to anyone before you.\""
+          },
+          {
+            "id": "r_quarrel_tamsin_vell_charter_open",
+            "if": [
+              ["inParty", "tamsin"],
+              ["inParty", "vell"],
+              ["any", [["flag", "sh_hollow_rested"], ["flag", "sh_hollow_bargained"]]],
+              ["!flag", "quarrel_tamsin_vell_charter"]
+            ],
+            "say": "The Companies' charter was signed the night a herald was shot asking truce. The Watch takes no coin for its wall. — Vell: \"My line hired them. No lord would ride that winter.\" They both look at you.",
+            "fx": [["set", "quarrel_tamsin_vell_charter"]]
+          },
+          {
+            "id": "r_quarrel_tamsin_vell_charter_grateful_tamsin",
+            "if": [["flag", "quarrel_tamsin_vell_charter_tamsin"]],
+            "say": "Still glad I said it. The Watch never once took a coin for that wall, then or now."
+          },
+          {
+            "id": "r_quarrel_tamsin_vell_charter_sour_tamsin",
+            "if": [["flag", "quarrel_tamsin_vell_charter_vell"]],
+            "say": "Honest coin. Right. Ask the herald's line what an honest sword bought them."
+          },
+          {
+            "id": "r_quarrel_lys_tamsin_wood_grateful_tamsin",
+            "if": [["flag", "quarrel_lys_tamsin_wood_tamsin"]],
+            "say": "Cinderhall's hearths stay lit either way. Didn't need the vote of confidence, but I'll take it."
+          },
+          {
+            "id": "r_quarrel_lys_tamsin_wood_sour_tamsin",
+            "if": [["flag", "quarrel_lys_tamsin_wood_lys"]],
+            "say": "Soft is how a forge goes cold. I'll say it as many times as it takes."
           }
         ],
         "leaves": [
@@ -3009,6 +3260,84 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "quarrel_lys_tamsin_wood_side_tamsin",
+          "label": "back Tamsin — the forges have to eat",
+          "if": [["flag", "quarrel_lys_tamsin_wood"], ["!flag", "quarrel_lys_tamsin_wood_done"]],
+          "once": true,
+          "say": "Good. A coppice cut fair keeps Cinderhall's hearths lit without anyone starving for it. — Lys says nothing, just watches the treeline longer than usual.",
+          "fx": [
+            ["addvar", "appr_tamsin", 2],
+            ["addvar", "appr_lys", -2],
+            ["set", "quarrel_lys_tamsin_wood_tamsin"],
+            ["set", "quarrel_lys_tamsin_wood_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_tamsin_wood_settle",
+          "label": "call the coppice a draw (will)",
+          "if": [["flag", "quarrel_lys_tamsin_wood"], ["!flag", "quarrel_lys_tamsin_wood_done"]],
+          "once": true,
+          "say": "You tell them plainly whether the Kingswood feeds a hearth or a hunt isn't yours to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_tamsin_wood_peace"],
+                ["set", "quarrel_lys_tamsin_wood_done"],
+                ["say", "\"...Fair. It was Cinderhall's argument before it was mine to make.\" — Tamsin, almost gracious: \"Nor mine to make you keep.\""]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["set", "quarrel_lys_tamsin_wood_sour"],
+                ["set", "quarrel_lys_tamsin_wood_done"],
+                ["say", "Neither wanted that answer. — Lys watches the treeline; Tamsin goes back to counting cords, done with the talk."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_tamsin_vell_charter_side_tamsin",
+          "label": "back Tamsin — an honest wall owes no one",
+          "if": [["flag", "quarrel_tamsin_vell_charter"], ["!flag", "quarrel_tamsin_vell_charter_done"]],
+          "once": true,
+          "say": "Good. Someone should say the Watch's way costs less than it looks. — Vell makes a note, unconvinced but careful about it.",
+          "fx": [
+            ["addvar", "appr_tamsin", 2],
+            ["addvar", "appr_vell", -2],
+            ["set", "quarrel_tamsin_vell_charter_tamsin"],
+            ["set", "quarrel_tamsin_vell_charter_done"]
+          ]
+        },
+        {
+          "id": "quarrel_tamsin_vell_charter_settle_b",
+          "label": "call the charter a draw (will)",
+          "if": [["flag", "quarrel_tamsin_vell_charter"], ["!flag", "quarrel_tamsin_vell_charter_done"]],
+          "once": true,
+          "say": "You tell them plainly whose coin bought the Shieldings' peace isn't yours to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_tamsin_vell_charter_peace"],
+                ["set", "quarrel_tamsin_vell_charter_done"],
+                ["say", "\"...Fair. It was the Watch's pride talking, not the field's.\" — Vell, after a moment: \"Fair. Noted. Not forgotten.\""]
+              ],
+              [
+                ["addvar", "appr_tamsin", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_tamsin_vell_charter_sour"],
+                ["set", "quarrel_tamsin_vell_charter_done"],
+                ["say", "Neither wanted that answer. — Tamsin goes back to counting the field's iron; Vell writes something down without saying what."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -3490,6 +3819,26 @@
             "id": "r_sh_hollow_burned",
             "if": [["flag", "sh_hollow_burned"]],
             "say": "My line broke that wall with hired swords, and now the field is ash. The Ashreeves' victory is complete. I did not think I could be more ashamed of it."
+          },
+          {
+            "id": "r_quarrel_osk_vell_barn_grateful_vell",
+            "if": [["flag", "quarrel_osk_vell_barn_vell"]],
+            "say": "Still glad you saw it my way. A name kept is harder to starve twice."
+          },
+          {
+            "id": "r_quarrel_osk_vell_barn_sour_vell",
+            "if": [["flag", "quarrel_osk_vell_barn_osk"]],
+            "say": "No record, then. I keep finding this Reach prefers its dead convenient to its dead remembered."
+          },
+          {
+            "id": "r_quarrel_tamsin_vell_charter_grateful_vell",
+            "if": [["flag", "quarrel_tamsin_vell_charter_vell"]],
+            "say": "Still glad you saw it plain. A sword that shows up beats a lord who doesn't."
+          },
+          {
+            "id": "r_quarrel_tamsin_vell_charter_sour_vell",
+            "if": [["flag", "quarrel_tamsin_vell_charter_tamsin"]],
+            "say": "No lord came that winter. I keep finding this Reach prefers its rescues tidy to its rescues real."
           }
         ],
         "leaves": [
@@ -3985,6 +4334,84 @@
                 ["set", "quarrel_osk_vell_sour"],
                 ["set", "quarrel_osk_vell_done"],
                 ["say", "You go quiet in the way that means you mind. — Vell writes something down without saying what."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_osk_vell_barn_side_vell",
+          "label": "back Vell — write every name down",
+          "if": [["flag", "quarrel_osk_vell_barn"], ["!flag", "quarrel_osk_vell_barn_done"]],
+          "once": true,
+          "say": "Thank you. A name written down is a name that outlives the ledger that once starved it. — Osk says nothing, just looks at the barn's doors a while longer.",
+          "fx": [
+            ["addvar", "appr_vell", 2],
+            ["addvar", "appr_osk", -2],
+            ["set", "quarrel_osk_vell_barn_vell"],
+            ["set", "quarrel_osk_vell_barn_done"]
+          ]
+        },
+        {
+          "id": "quarrel_osk_vell_barn_settle",
+          "label": "call the record a draw (will)",
+          "if": [["flag", "quarrel_osk_vell_barn"], ["!flag", "quarrel_osk_vell_barn_done"]],
+          "once": true,
+          "say": "You tell them plainly whether the barn's dead get a record or a rite isn't yours to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_osk_vell_barn_peace"],
+                ["set", "quarrel_osk_vell_barn_done"],
+                ["say", "\"...Fair. The ledger was ours to answer for, not yours.\" — Vell, after a moment: \"Fair. Noted. Not forgotten.\""]
+              ],
+              [
+                ["addvar", "appr_osk", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_osk_vell_barn_sour"],
+                ["set", "quarrel_osk_vell_barn_done"],
+                ["say", "Neither wanted that answer. — Osk says a verse under his breath; Vell writes something down without saying what."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_tamsin_vell_charter_side_vell",
+          "label": "back Vell — showing up is honest enough",
+          "if": [["flag", "quarrel_tamsin_vell_charter"], ["!flag", "quarrel_tamsin_vell_charter_done"]],
+          "once": true,
+          "say": "Thank you. Showing up counts for more out here than anyone's paid to admit. — Tamsin only shakes her head, unconvinced.",
+          "fx": [
+            ["addvar", "appr_vell", 2],
+            ["addvar", "appr_tamsin", -2],
+            ["set", "quarrel_tamsin_vell_charter_vell"],
+            ["set", "quarrel_tamsin_vell_charter_done"]
+          ]
+        },
+        {
+          "id": "quarrel_tamsin_vell_charter_settle",
+          "label": "call the charter a draw (will)",
+          "if": [["flag", "quarrel_tamsin_vell_charter"], ["!flag", "quarrel_tamsin_vell_charter_done"]],
+          "once": true,
+          "say": "You tell them plainly whose coin bought the Shieldings' peace isn't yours to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_tamsin_vell_charter_peace"],
+                ["set", "quarrel_tamsin_vell_charter_done"],
+                ["say", "\"...Fair. It was the Watch's pride talking, not the field's.\" — Vell, after a moment: \"Fair. Noted. Not forgotten.\""]
+              ],
+              [
+                ["addvar", "appr_tamsin", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_tamsin_vell_charter_sour"],
+                ["set", "quarrel_tamsin_vell_charter_done"],
+                ["say", "Neither wanted that answer. — Tamsin goes back to counting the field's iron; Vell writes something down without saying what."]
               ]
             ]
           ]
@@ -4741,6 +5168,66 @@
     {
       "if": [["flag", "lys_brother_home"], ["!flag", "lys_joined"]],
       "text": "Cal came home to the hunter's camp without his sister ever leaving it. Lys is still deciding what to say to him.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_vell_barn_osk"]],
+      "text": "You backed Osk on the Hunger Barn's names. Vell keeps her own private record anyway; Osk still doesn't call it a kindness.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_vell_barn_vell"]],
+      "text": "You backed Vell on the Hunger Barn's names. They stand written now, somewhere Osk still doesn't trust a ledger to keep safe.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_vell_barn_peace"], ["flag", "quarrel_osk_vell_barn_done"]],
+      "text": "You told Osk and Vell the Hunger Barn's names weren't yours to settle between them. They let it go, mostly.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_vell_barn_sour"]],
+      "text": "Osk and Vell never settled it, a rite against a record over the Hunger Barn's dead. Neither brings up Tithing first anymore.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_tamsin_wood_lys"]],
+      "text": "You backed Lys on the Kingswood's coppice. The rides stayed quiet a season longer; Tamsin still calls that wasted timber.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_tamsin_wood_tamsin"]],
+      "text": "You backed Tamsin's coppice. Cinderhall's forges keep their cords; Lys still flinches at every felled oak on that road.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_tamsin_wood_peace"], ["flag", "quarrel_lys_tamsin_wood_done"]],
+      "text": "You told Lys and Tamsin the Kingswood's coppice wasn't yours to referee between them. They let it go, mostly.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_tamsin_wood_sour"]],
+      "text": "Lys and Tamsin never settled it, a hunt's quiet against a forge's hunger. Neither brings up the coppice first anymore.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_tamsin_vell_charter_tamsin"]],
+      "text": "You backed Tamsin on the Shieldings' charter. Vell still keeps the ledger of what a hired sword bought that winter.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_tamsin_vell_charter_vell"]],
+      "text": "You backed Vell on the Shieldings' charter. Tamsin still trusts an unpaid wall over a paid one, whatever it cost that night.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_tamsin_vell_charter_peace"], ["flag", "quarrel_tamsin_vell_charter_done"]],
+      "text": "You told Tamsin and Vell the Shieldings' charter wasn't yours to referee between them. They let it go, mostly.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_tamsin_vell_charter_sour"]],
+      "text": "Tamsin and Vell never settled it, an honest wall against a hired one. Neither brings up the charter first anymore.",
       "weight": 1
     }
   ],

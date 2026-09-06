@@ -1113,6 +1113,50 @@
               []
             ]
           ]
+        },
+        {
+          "id": "ir_word_kw",
+          "label": "word of the Hunt's Stand",
+          "if": [["any", [["flag", "kw_hollow_rested"], ["flag", "kw_hollow_bargained"], ["flag", "kw_hollow_burned"]]]],
+          "once": true,
+          "say": "News reaches the chapterhouse from the Kingswood, the way it always does.",
+          "fx": [
+            [
+              "if",
+              [["flag", "kw_hollow_rested"]],
+              [
+                ["say", "\"A horn recalled that hunt instead of fire ending it,\" Aldous says. \"Slower than our way. The wood stands whole, so I withhold complaint.\""],
+                ["addvar", "rep_iron", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "kw_hollow_bargained"]],
+              [
+                ["say", "\"One night a year the rides stay open, they tell me.\" Aldous sets down his pen. \"A standing debt is a strange thing to call settled.\""],
+                ["addvar", "rep_iron", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "kw_hollow_burned"]],
+              [
+                ["say", "\"The Hunt's Stand burned, horn-post and all.\" Aldous almost smiles. \"That is how a grief is finished properly. No debt, no waiting.\""],
+                ["addvar", "rep_iron", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "kw_wood_iron"]],
+              [
+                ["say", "\"And the coppice is ours now, cut by our own rings,\" he adds. \"That much of the wood went as it should have from the start.\""]
+              ],
+              []
+            ]
+          ]
         }
       ]
     },

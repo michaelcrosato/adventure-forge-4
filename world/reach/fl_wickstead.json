@@ -957,6 +957,42 @@
           ]
         },
         {
+          "id": "fl_word_sh",
+          "label": "word of the Shieldings' field",
+          "if": [["any", [["flag", "sh_hollow_rested"], ["flag", "sh_hollow_bargained"], ["flag", "sh_hollow_burned"]]]],
+          "once": true,
+          "say": "A runner off the coin road brings Dace word of the field the Companies were born on.",
+          "fx": [
+            [
+              "if",
+              [["flag", "sh_hollow_rested"]],
+              [
+                ["say", "\"Called at last. Our own birthplace, quiet after four hundred years.\" Dace stands straighter for it. \"Every recruit should hear that story told right.\""],
+                ["addvar", "rep_free", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_hollow_bargained"]],
+              [
+                ["say", "\"Given whole to the dead — no stone, no muster, not even ours.\" Dace's jaw tightens. \"Our own founding ground, and we don't get a marker on it.\""],
+                ["addvar", "rep_free", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "sh_hollow_burned"]],
+              [
+                ["say", "\"Burned to bare ash, birthplace and all.\" Dace says nothing for a moment. \"Four hundred years, and nothing left to show a recruit but the story.\""],
+                ["addvar", "rep_free", -1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to his cadence",
           "say": "Watch yourself out there. Everyone's recruiting for something, one way or another.",
