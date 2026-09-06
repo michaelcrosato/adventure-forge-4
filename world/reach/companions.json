@@ -305,13 +305,13 @@
           },
           {
             "id": "r_theft_4",
-            "if": [["var", "thefts", ">=", 4]],
+            "if": [["var", "thefts_with_lys", ">=", 4]],
             "say": "Four. Hunger has an end to it. This doesn't.",
             "fx": [["addvar", "appr_lys", -1]]
           },
           {
             "id": "r_theft_habit",
-            "if": [["var", "thefts", ">=", 2]],
+            "if": [["var", "thefts_with_lys", ">=", 2]],
             "say": "Twice now. That's not hunger talking. That's a habit.",
             "fx": [["addvar", "appr_lys", -1]]
           },
@@ -424,7 +424,7 @@
           {
             "id": "r_beast_sortie",
             "if": [["npcDead", "va_ash_wolf"], ["npcDead", "va_gaunt_wolf"], ["flag", "or_warden_va_hunter_sortie"]],
-            "say": "Both of them. He asked it of you, so I'll keep what I'd have said otherwise. He's counted wolves longer than I have, and he counts the blighted ones twice."
+            "say": "Both of them. My father asked it of you, so I'll keep what I'd have said otherwise. He's counted wolves longer than I have, and he counts the blighted ones twice."
           },
           {
             "id": "r_cp_unresolved",
@@ -530,6 +530,12 @@
             "id": "r_hl_hollow_burned",
             "if": [["flag", "hl_hollow_burned"]],
             "say": "They died at a shut door, and we burned the door. I'll not say it was wrong. I'll not say it was for them, either."
+          },
+          {
+            "id": "r_theft_6",
+            "if": [["var", "thefts_with_lys", ">=", 6]],
+            "say": "Six. I've hunted things with less appetite than that.",
+            "fx": [["addvar", "appr_lys", -1]]
           }
         ],
         "leaves": [
@@ -926,6 +932,110 @@
             ["set", "quarrel_lys_osk_covenant_lys"],
             ["set", "quarrel_lys_osk_covenant_done"]
           ]
+        },
+        {
+          "id": "quarrel_lys_tamsin_camp_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_lys_tamsin_camp"], ["!flag", "quarrel_lys_tamsin_camp_done"]],
+          "once": true,
+          "say": "You tell them plainly what Camp Gallows charges on the road isn't yours to referee between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_tamsin_camp_peace"],
+                ["set", "quarrel_lys_tamsin_camp_done"],
+                ["say", "\"...Fair. Wasn't my ledger to begin with.\" — Tamsin, almost gracious: \"Nor mine to make you keep.\""]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["set", "quarrel_lys_tamsin_camp_sour"],
+                ["set", "quarrel_lys_tamsin_camp_done"],
+                ["say", "Neither wanted that answer. — Lys watches the road; Tamsin goes back to her whetstone, done with the talk."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_lys_osk_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_lys_osk"], ["!flag", "quarrel_lys_osk_done"]],
+          "once": true,
+          "say": "You tell them plainly the sexton's roll isn't a fight for you to referee.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_osk_peace"],
+                ["set", "quarrel_lys_osk_done"],
+                ["say", "\"...Fair. It was between me and the Priory before she ever heard the boy's name.\" — Lys just shrugs, already watching the road again."]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_osk", -1],
+                ["set", "quarrel_lys_osk_sour"],
+                ["set", "quarrel_lys_osk_done"],
+                ["say", "Neither wanted that answer. — Lys mutters something about people who won't pick a side; you get only silence back from him, which is worse."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_lys_osk_covenant_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_lys_osk_covenant"], ["!flag", "quarrel_lys_osk_covenant_done"]],
+          "once": true,
+          "say": "You tell them plainly what the covenant is worth now isn't a fight for you to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_osk_covenant_peace"],
+                ["set", "quarrel_lys_osk_covenant_done"],
+                ["say", "\"...Fair. It was Maren's promise before it was ours to weigh.\" — Osk, quiet: \"Fair. I can carry that much unresolved.\""]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_osk", -1],
+                ["set", "quarrel_lys_osk_covenant_sour"],
+                ["set", "quarrel_lys_osk_covenant_done"],
+                ["say", "Neither wanted that answer. — Lys watches the water; Osk says a verse under his breath, for no one in particular."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_lys_vell_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_lys_vell"], ["!flag", "quarrel_lys_vell_done"]],
+          "once": true,
+          "say": "You tell them plainly the broken bargain isn't a fight for you to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_vell_peace"],
+                ["set", "quarrel_lys_vell_done"],
+                ["say", "\"...An acceptable abstention.\" — Lys just nods once, already watching the road instead."]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_lys_vell_sour"],
+                ["set", "quarrel_lys_vell_done"],
+                ["say", "You'd let a debt collector off easy too, near as Lys is concerned. — Vell mutters something about the impossibility of pleasing hunters."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -1283,7 +1393,7 @@
           },
           {
             "id": "r_theft_4",
-            "if": [["var", "thefts", ">=", 4]],
+            "if": [["var", "thefts_with_osk", ">=", 4]],
             "say": "Four times now. I stopped finding verses for it at two. I'm running out of silences too.",
             "fx": [["addvar", "appr_osk", -1]]
           },
@@ -1362,6 +1472,12 @@
             "id": "r_hl_hollow_burned",
             "if": [["flag", "hl_hollow_burned"]],
             "say": "The Hunger Barn is ash, and the ledger of the worthy with it. I should feel absolved. I feel like a page was torn out."
+          },
+          {
+            "id": "r_theft_6",
+            "if": [["var", "thefts_with_osk", ">=", 6]],
+            "say": "I have stopped counting. I have not stopped noticing, and neither has anyone we pass.",
+            "fx": [["addvar", "appr_osk", -1]]
           }
         ],
         "leaves": [
@@ -1796,6 +1912,58 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "quarrel_osk_tamsin_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_osk_tamsin"], ["!flag", "quarrel_osk_tamsin_done"]],
+          "once": true,
+          "say": "You tell them plainly this fire isn't yours to referee.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_osk_tamsin_peace"],
+                ["set", "quarrel_osk_tamsin_done"],
+                ["say", "\"Fine. Wasn't going to stop swinging a hammer over a novice's feelings anyway.\" — Osk, dry for once: \"Noted, with love.\""]
+              ],
+              [
+                ["addvar", "appr_osk", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["set", "quarrel_osk_tamsin_sour"],
+                ["set", "quarrel_osk_tamsin_done"],
+                ["say", "You're as bad as the rest of the ditherers, near as Tamsin's concerned. — Osk just looks at the ground and doesn't argue the word."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_osk_vell_nave_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_osk_vell_nave"], ["!flag", "quarrel_osk_vell_nave_done"]],
+          "once": true,
+          "say": "You tell them plainly the drowned nave isn't a fight for you to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_osk_vell_nave_peace"],
+                ["set", "quarrel_osk_vell_nave_done"],
+                ["say", "\"...Fair. It was Fenmarch's grief before it was your footnote.\" — Vell, almost gracious: \"Noted. I can wait.\""]
+              ],
+              [
+                ["addvar", "appr_osk", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_osk_vell_nave_sour"],
+                ["set", "quarrel_osk_vell_nave_done"],
+                ["say", "Neither of you looks satisfied. — Vell taps the notebook shut, and doesn't open it again today."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -2037,7 +2205,7 @@
           },
           {
             "id": "r_theft_any",
-            "if": [["var", "thefts", ">=", 1]],
+            "if": [["var", "thefts_with_tamsin", ">=", 1]],
             "say": "You don't lift a keeper's own goods from under their nose. That's not clever. That's just taking.",
             "fx": [["addvar", "appr_tamsin", -1]]
           },
@@ -2143,19 +2311,19 @@
           },
           {
             "id": "r_theft_3",
-            "if": [["var", "thefts", ">=", 3]],
+            "if": [["var", "thefts_with_tamsin", ">=", 3]],
             "say": "Three. I said I don't give second warnings. Consider this the sound of me counting, not warning.",
             "fx": [["addvar", "appr_tamsin", -1]]
           },
           {
             "id": "r_theft_4",
-            "if": [["var", "thefts", ">=", 4]],
+            "if": [["var", "thefts_with_tamsin", ">=", 4]],
             "say": "Four times, from under people's noses. You've had all the words you're getting out of me on it.",
             "fx": [["addvar", "appr_tamsin", -1]]
           },
           {
             "id": "r_theft_6",
-            "if": [["var", "thefts", ">=", 6]],
+            "if": [["var", "thefts_with_tamsin", ">=", 6]],
             "say": "I've stopped counting. That should worry you more than the counting did.",
             "fx": [["addvar", "appr_tamsin", -1]]
           },
@@ -2165,9 +2333,21 @@
               ["flag", "cp_entered"],
               ["!flag", "tamsin_mine_avenged"],
               ["!flag", "tamsin_mine_forgiven"],
-              ["!flag", "ir_miners_sold"]
+              ["!flag", "ir_miners_sold"],
+              ["!flag", "tamsin_mine_truth"]
             ],
             "say": "Cinderhall's behind us, and I still don't know who lied about that collapse. That's mine to finish. Not yours to carry."
+          },
+          {
+            "id": "r_cp_truth_unfinished",
+            "if": [
+              ["flag", "cp_entered"],
+              ["flag", "tamsin_mine_truth"],
+              ["!flag", "tamsin_mine_avenged"],
+              ["!flag", "tamsin_mine_forgiven"],
+              ["!flag", "ir_miners_sold"]
+            ],
+            "say": "Cinderhall's behind us. I know who lied about that collapse now, and I haven't decided what that's worth. That's mine to finish. Not yours to carry."
           },
           {
             "id": "r_pair_tamsin_vell_fl",
@@ -2650,6 +2830,84 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "quarrel_lys_tamsin_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_lys_tamsin"], ["!flag", "quarrel_lys_tamsin_done"]],
+          "once": true,
+          "say": "You tell them plainly the glade's rope isn't a fight for you to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_tamsin_peace"],
+                ["set", "quarrel_lys_tamsin_done"],
+                ["say", "\"...Fair. It was Vane's camp before it was my brother's problem.\" — Tamsin grunts something that might be agreement."]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["set", "quarrel_lys_tamsin_sour"],
+                ["set", "quarrel_lys_tamsin_done"],
+                ["say", "You'd let the wolves vote on the sheep pen too, near as Lys is concerned. — Tamsin just goes back to her whetstone, done with the talk."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_osk_tamsin_doors_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_osk_tamsin_doors"], ["!flag", "quarrel_osk_tamsin_doors_done"]],
+          "once": true,
+          "say": "You tell them plainly the barrow door isn't yours to fight over between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_osk_tamsin_doors_peace"],
+                ["set", "quarrel_osk_tamsin_doors_done"],
+                ["say", "\"...Fair. The door's shut either way now.\" — Tamsin, almost gracious: \"Wasn't going to keep arguing stone.\""]
+              ],
+              [
+                ["addvar", "appr_osk", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["set", "quarrel_osk_tamsin_doors_sour"],
+                ["set", "quarrel_osk_tamsin_doors_done"],
+                ["say", "Neither wanted to let it go that easily. — Osk and Tamsin go quiet, in the way that means they mean to keep disagreeing, just not out loud."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_osk_tamsin_aldous_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_osk_tamsin_aldous"], ["!flag", "quarrel_osk_tamsin_aldous_done"]],
+          "once": true,
+          "say": "You tell them plainly what Aldous deserves isn't a verdict for you to hand down between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_osk_tamsin_aldous_peace"],
+                ["set", "quarrel_osk_tamsin_aldous_done"],
+                ["say", "\"Fine. He answered for it. That's the arithmetic closed.\" — Osk, quiet: \"I hope closed isn't the same as finished, for him.\""]
+              ],
+              [
+                ["addvar", "appr_osk", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["set", "quarrel_osk_tamsin_aldous_sour"],
+                ["set", "quarrel_osk_tamsin_aldous_done"],
+                ["say", "Neither of you looks satisfied. — Osk says a verse under his breath; Tamsin just checks the edge on her hammer."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -2999,7 +3257,7 @@
           },
           {
             "id": "r_theft_5",
-            "if": [["var", "thefts", ">=", 5]],
+            "if": [["var", "thefts_with_vell", ">=", 5]],
             "say": "Five things taken that were watched. I catalogue habits for a living; I know what this one is called.",
             "fx": [["addvar", "appr_vell", -1]]
           },
@@ -3468,6 +3726,136 @@
             ["addvar", "appr_tamsin", -2],
             ["set", "quarrel_tamsin_vell_goods_vell"],
             ["set", "quarrel_tamsin_vell_goods_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_vell_crown_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_lys_vell_crown"], ["!flag", "quarrel_lys_vell_crown_done"]],
+          "once": true,
+          "say": "You tell them plainly the crown isn't yours to fight over between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_vell_crown_peace"],
+                ["set", "quarrel_lys_vell_crown_done"],
+                ["say", "\"...Fair. It was never mine to grieve or study for you.\" — Vell, after a moment: \"Fair. Noted. Not forgotten.\""]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_lys_vell_crown_sour"],
+                ["set", "quarrel_lys_vell_crown_done"],
+                ["say", "Neither wanted that answer. — Lys watches the road; Vell writes something down without saying what."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_lys_vell_pride_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_lys_vell_pride"], ["!flag", "quarrel_lys_vell_pride_done"]],
+          "once": true,
+          "say": "You tell them plainly what's left of the Reeve's Pride isn't yours to fight over between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_vell_pride_peace"],
+                ["set", "quarrel_lys_vell_pride_done"],
+                ["say", "\"...Fair. It was never mine to grieve for you.\" — Vell, after a moment: \"Fair. Noted. Not forgotten.\""]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_lys_vell_pride_sour"],
+                ["set", "quarrel_lys_vell_pride_done"],
+                ["say", "You'd let the wreckers vote on history too, near as Vell's concerned. — Lys just shrugs, still watching the water."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_tamsin_vell_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_tamsin_vell"], ["!flag", "quarrel_tamsin_vell_done"]],
+          "once": true,
+          "say": "You tell them plainly the fort's founding isn't a fight for you to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_tamsin_vell_peace"],
+                ["set", "quarrel_tamsin_vell_done"],
+                ["say", "\"...Fine. Wasn't my lie to begin with.\" — Vell, almost gracious: \"Nor mine to force on people still standing that wall.\""]
+              ],
+              [
+                ["addvar", "appr_tamsin", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_tamsin_vell_sour"],
+                ["set", "quarrel_tamsin_vell_done"],
+                ["say", "You're as bad as a politician, near as Tamsin's concerned. — Vell says nothing, which from Vell is its own verdict."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_tamsin_vell_goods_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_tamsin_vell_goods"], ["!flag", "quarrel_tamsin_vell_goods_done"]],
+          "once": true,
+          "say": "You tell them plainly what leaves the barrows isn't a fight for you to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_tamsin_vell_goods_peace"],
+                ["set", "quarrel_tamsin_vell_goods_done"],
+                ["say", "\"...Fine. Wasn't my counter to police anyway.\" — Vell, almost gracious: \"Nor mine to shut on people who need the coin.\""]
+              ],
+              [
+                ["addvar", "appr_tamsin", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_tamsin_vell_goods_sour"],
+                ["set", "quarrel_tamsin_vell_goods_done"],
+                ["say", "Neither wanted that answer. — Tamsin goes back to her gear; Vell writes something down without saying what."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_osk_vell_settle_b",
+          "label": "call it a draw between them (will)",
+          "if": [["flag", "quarrel_osk_vell"], ["!flag", "quarrel_osk_vell_done"]],
+          "once": true,
+          "say": "You tell them plainly the prior's confession isn't a fight for you to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_osk_vell_peace"],
+                ["set", "quarrel_osk_vell_done"],
+                ["say", "\"...That's fair. It should have been his choice from the start.\" — Vell, after a moment: \"Fair. Noted. Not forgotten.\""]
+              ],
+              [
+                ["addvar", "appr_osk", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_osk_vell_sour"],
+                ["set", "quarrel_osk_vell_done"],
+                ["say", "You go quiet in the way that means you mind. — Vell writes something down without saying what."]
+              ]
+            ]
           ]
         }
       ]

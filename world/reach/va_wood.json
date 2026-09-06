@@ -252,22 +252,38 @@
           ],
           "desc": "A lean-to and a smoke rack at the wood's west edge, hides stretched to cure, herbs bundled to dry in the smoke. The hunter watches the trees, not you. His son's bow-string hangs unused by the rack, waiting on a homecoming that hasn't come.",
           "brief": "Lean-to and smoke. An unused bow-string waits."
+        },
+        {
+          "if": [["inParty", "lys"]],
+          "desc": "A lean-to and a smoke rack at the wood's west edge, hides stretched to cure, herbs bundled to dry in the smoke. The hunter watches the trees, not you. The place where his daughter sat is empty, her fletching left in a neat row.",
+          "brief": "Lean-to and smoke. Lys's place is empty."
         }
       ],
       "actions": [
         {
           "id": "va_camp_tally",
           "label": "read the tally marks by the smoke rack",
-          "if": [["!flag", "va_knows_gap"]],
+          "if": [["!flag", "va_camp_tally_read"]],
           "fx": [
             [
               "check",
               "wits",
               9,
               [
-                ["set", "va_knows_gap"],
-                ["xp", 2],
-                ["say", "Not idle scratches — a hunter's shorthand. A gap under a fallen stone on the barrow hill's north face, doors skipped entirely. Someone has been going in and out for years."]
+                ["set", "va_camp_tally_read"],
+                [
+                  "if",
+                  [["flag", "va_knows_gap"]],
+                  [
+                    ["xp", 1],
+                    ["say", "A hunter's shorthand, and it says what the hunter told you: a gap under a fallen stone on the barrow hill's north face. The marks are older than his telling."]
+                  ],
+                  [
+                    ["set", "va_knows_gap"],
+                    ["xp", 2],
+                    ["say", "Not idle scratches — a hunter's shorthand. A gap under a fallen stone on the barrow hill's north face, doors skipped entirely. Someone has been going in and out for years."]
+                  ]
+                ]
               ],
               [["say", "Scratches. A hunter's private shorthand; the hunter could read them for you."]]
             ]

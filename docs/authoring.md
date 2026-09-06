@@ -181,7 +181,9 @@ might want to see it" goes quiet once `said_va_hunter_pelt` is set.
 An item may name an `owner` (an npc id). Taking it while the owner stands
 alive in the room is seen: the take entry warns "(<owner> is watching)", the
 take prints that they saw it, the flag `stole_<item>` is set and the counter
-`thefts` grows by one — read them back in the owner's topics, a faction's
+`thefts` grows by one, as does `thefts_with_<companion>` for each companion
+in the party at the time (so a companion judges only thefts they were there
+for) — read them back in the owner's topics, a faction's
 standing, a companion's remark, the epilogue. Taking it while they are away is
 nobody's business but the player's.
 
@@ -233,6 +235,8 @@ nobody's business but the player's.
   One remark a companion a turn, but a remark carrying `fx` is never held
   behind a plain one, and none speak while a menu is being turned (the
   travel list, the company list, a conversation's next page).
+  An action or topic whose top-level `fx` moves a companion's regard shows it in
+  its hint ("Lys +2, Osk -2"), so a side taken is taken knowingly.
   A remark whose `fx` sets a quarrel flag (`quarrel_<a>_<b>` or
   `quarrel_<a>_<b>_<tag>`, `<a>`/`<b>` companion ids) is followed by a pointer
   naming the two, since the sides and the settling live in their conversations.

@@ -1186,6 +1186,11 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   // an action that settles a hold's grief is the one-shot the hold is built around; say so before it is taken, and which way
   const route = fx ? hollowRoute(fx) : null;
   if (route) parts.push(`settles this hold's grief: ${route}`);
+  // regard an action moves outright (a side taken in a quarrel, an oath sworn to a companion) is said by name and number
+  const moves = (fx ?? [])
+    .filter((f): f is ["addvar", string, number] => f[0] === "addvar" && f[1].startsWith("appr_") && f[2] !== 0)
+    .map((f) => `${world.npcs[f[1].slice(5)]?.name ?? f[1].slice(5)} ${f[2] > 0 ? "+" : "-"}${Math.abs(f[2])}`);
+  if (moves.length) parts.push(moves.join(", "));
   if (who) parts.unshift(who);
   if (parts.length) return ` (${parts.join("; ")})`;
   if (a.kind === "use" && opts.itemHints !== false) {
@@ -1239,6 +1244,8 @@ export function step(world: World, prev: State, action: Action): StepOut {
       if (owner) {
         s.flags[`stole_${action.item}`] = true;
         s.vars["thefts"] = (s.vars["thefts"] ?? 0) + 1;
+        // and a count per companion who was there for it, so nobody judges a theft they never saw
+        for (const id of s.party) s.vars[`thefts_with_${id}`] = (s.vars[`thefts_with_${id}`] ?? 0) + 1;
         events.push(`${TheName(owner.name)} sees you take it.`);
       }
       break;

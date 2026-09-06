@@ -357,7 +357,7 @@
             ["!flag", "va_left_open"]
           ],
           "once": true,
-          "say": "Good. The watch stands with you. Take the shield — it has stopped worse than claws. I'm holding you to it: when he rests, the doors shut.",
+          "say": "Good. The watch stands with you. Take the shield; it has stopped worse than claws. I'm holding you to it: when he rests, the doors shut. The priest won't bless a door sworn shut, mind — ask him first if you want both.",
           "fx": [
             ["set", "va_promised_seal"],
             ["addvar", "rep_watch", 1],
@@ -887,7 +887,7 @@
           "label": "swear to burn the hollows for the Regent",
           "if": [["flag", "va_heard_decree"], ["!flag", "va_swore_burn"], ["!flag", "va_refused_herald"]],
           "once": true,
-          "say": "Then the Regent has a hand in the Vale. Burn two, and Cinderhall's chapterhouse will write you a writ for Coldpass. Fail, and Marrowgate has a long memory.",
+          "say": "Then the Regent has a hand in the Vale. Burn a hollow clean, and Cinderhall's chapterhouse will write you a writ for Coldpass. Fail, and Marrowgate has a long memory.",
           "fx": [
             ["set", "va_swore_burn"],
             ["addvar", "rep_crown", 1],
@@ -1004,8 +1004,8 @@
       "weight": 1
     },
     {
-      "if": [["flag", "va_swore_burn"], ["var", "hollows_burned", ">=", 2]],
-      "text": "Last Light remembers the oath you swore the herald — two hollows burned before you ever asked for the writ.",
+      "if": [["flag", "va_swore_burn"], ["var", "hollows_burned", ">=", 1]],
+      "text": "Last Light remembers the oath you swore the herald — a hollow burned clean before you ever asked for the writ.",
       "weight": 2
     },
     {
