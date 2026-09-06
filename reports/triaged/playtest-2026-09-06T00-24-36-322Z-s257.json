@@ -1,0 +1,83 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 530,
+  "receipt": "receipt:reach.257.530.366.reach_at_rest.693569e5",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Captain Vane's 'Smugglers' Road' quest sends the player to find 'Rook, at the Rope Larder' in Thornwold's deep wood. After visiting 9 distinct wood rooms (Wood's Edge, Fox Crossing, Heartwood Hollow, Root Tangle, Listening Break, Silent Reach, Waiting Bough, Gallows Glade, Fallen Muster) neither Rook nor a 'Rope Larder' ever turned up, and no room's exit list named them as a direction. Had to abandon the thread.",
+      "where": "Thornwold deep wood / 'The Smugglers' Road' quest (Captain Vane's Tent)"
+    },
+    {
+      "sev": "P1",
+      "what": "'The Hidden Root' quest says 'From Camp Gallows go west to the far side, then north one stand: the black thorn opens north,' but none of the deep-wood rooms I reached ever offered a 'black thorn' exit or matching direction. Never found the Keepers' hideout.",
+      "where": "Camp Gallows — Muster Ground (Sergeant Coe) / 'The Hidden Root' quest"
+    },
+    {
+      "sev": "P1",
+      "what": "'The Lost Sentry' quest asks you to put down a moor-wight on the Wardmoor moor. Explored 8 distinct moor tiles (Moor Road, Cairn Field, Twin Ruts, Peat Score, Long Sight, Windbreak Stones, Last Cairn, Tower Rise/signal tower) and never encountered it. Corporal Fenn's hint ('you'll hear them before you see them in a mist') implies a time/weather trigger the game gives no way to check or force.",
+      "where": "Wardmoor moor / 'The Lost Sentry' quest (Sergeant Rook, Highward parade ground)"
+    },
+    {
+      "sev": "P1",
+      "what": "Vell's personal quest ('The Exile's Ledger') consistently names its destination 'the Keepers' Hall in Hollowbrook' in every quest/status listing all game. The final ending epilogue instead calls the same still-unresolved location 'Barrowmere' ('Vell's ledger stayed unread in Barrowmere... The great mound's door still stands at Barrowmere's edge'). The name is never 'Barrowmere' anywhere else.",
+      "where": "status quest log ('The Exile's Ledger') vs. the WIN epilogue"
+    },
+    {
+      "sev": "P2",
+      "what": "At the Regent's Chambers, after I refused to help burn the Hollow Throne, Regent Ysolde says 'The stair is barred and the archivist is loyal... it can wait past you' — but Archivist Penn had already handed me the barred-stair key earlier that same visit, so the stair was not in fact barred to me. Line contradicts what I'd already done.",
+      "where": "The Regent's Chambers, Marrowgate / dialogue with Regent Ysolde"
+    },
+    {
+      "sev": "P2",
+      "what": "At The Drowned Nave, 'say what you learned of the flood' sits in the same menu as three grief-resolving actions (ring the bell / speak Halm's confession / promise a tithe, each tagged '(settles this hold's grief)') but carries no such tag itself and only prints flavor text ('The singing doesn't stop') with no progress. Easy to mistake for a fourth resolution.",
+      "where": "The Drowned Nave, Fenmarch"
+    },
+    {
+      "sev": "P2",
+      "what": "Thornwold's central hold-grief (The Gallows Glade) offers only two resolution actions and both are WILL-gated ('speak the rest-oath from memory' DC12, 'swear the Company's oath' DC11) — no wits/lore option, unlike almost every other read-aloud/verse resolution in the game, which favored a Scholar. With will+2 at the time I failed 4 rolls in a row (7,1,2,6 vs needed 10/9+) before succeeding, losing Barrow-Keepers and Free Companies standing along the way.",
+      "where": "The Gallows Glade, Thornwold"
+    },
+    {
+      "sev": "P2",
+      "what": "Feedback on reputation cost from failed checks was inconsistent at the same spot: the first failed attempt at each of the two glade options named a specific faction hit; the next two failed retries of the same action reported no reputation change at all ('It can be tried again.'); the eventual successful roll then cost reputation again despite succeeding. Never explained whether repeat failures compound a hidden penalty.",
+      "where": "The Gallows Glade, Thornwold"
+    },
+    {
+      "sev": "P2",
+      "what": "After sealing the Vale barrow's doors for good, returning to Barrow Field still shows the 'go in' option's locked-reason text listing all three hypothetical unlock methods ('the blessing, force, or the loose stone') even though the doors are now permanently sealed and none of those apply any more.",
+      "where": "Barrow Field, the Vale of Ash"
+    },
+    {
+      "sev": "P2",
+      "what": "Two unrelated NPCs are both simply called 'Rook' — the woods poacher Captain Vane wants dealt with near Camp Gallows (Thornwold), and Sergeant Rook, the drill instructor at Highward (Wardmoor). Neither is given a distinguishing title in casual reference, risking confusion when tracking quest targets by name across regions.",
+      "where": "Captain Vane's Tent (Thornwold) / The Parade Ground (Wardmoor)"
+    }
+  ],
+  "confusions": [
+    "The ending epilogue names places/threads no quest, NPC, or status line ever surfaced in ~530 turns of thorough play: 'the Choir of Ash... above Glasswick' and 'the Farlight' off Gullhaven's point. A first-time player has no way to know these exist or how they'd be reached.",
+    "Score hit the maximum (366/366) around turn 466, roughly 64 turns before the actual ending, while four entire named holds (Emberfall, the Saltkerns, Hollowbrook) and at least one Free Company hub (Gullhaven) were never visited. Nothing signals that huge parts of the world remain unseen once the score caps out, so a completionist could easily read '366/366' as 'I've seen it all.'",
+    "The innkeeper's early hint that 'the priest's blessing... opens those doors without a fight' never mentions this is mutually exclusive with promising the reeve to seal the barrow; you only learn the two are in tension when the priest flatly refuses at the chapel, after the promise is already locked in."
+  ],
+  "suggestions": [
+    "Give the deep-wood / moor side-quests (Rope Larder Rook, Hidden Root black thorn, Lost Sentry) exit labels or bearings that actually match a reachable room, or drop the specific place-names from the quest text if they're not meant to be found on the visited paths.",
+    "Fix the Hollowbrook/Barrowmere naming mismatch for Vell's 'Exile's Ledger' destination.",
+    "Add a wits/lore-based option to The Gallows Glade's grief resolution so Scholar-type builds aren't forced into repeated risky WILL rolls at Thornwold's central story beat.",
+    "Give the two 'Rook' NPCs distinct names or titles so quest text referencing 'Rook' is unambiguous across regions.",
+    "Clean up conditional 'locked' reason text once a state becomes permanent (e.g., the sealed Barrow Field door).",
+    "Surface remaining unexplored breadth even after the score caps, e.g. 'score maxed, but N holds are still unrested/unvisited', so players know finishing isn't the same as having seen everything."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T00-24-36-322Z",
+  "seed": 257,
+  "build": {
+    "rev": "126226f",
+    "world": "b9d7cc47"
+  },
+  "cost_usd": null,
+  "verified": false
+}
