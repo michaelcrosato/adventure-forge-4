@@ -212,8 +212,11 @@ nobody's business but the player's.
   the room's menu waits. Use for anyone with 4+ topics. A topic with
   `"end": true` is a farewell: it closes the conversation after its line, and
   while one is visible the plain `end conversation` entry is not shown — so
-  give every conversation-mode npc a farewell. Gate later topics on earlier
-  ones with `said_<npc>_<topic>` flags to build a tree.
+  give every conversation-mode npc a farewell. A topic with `"commits": true`
+  (an oath broken, a betrayal) is listed late in the conversation, next to a
+  line that parts ways, so a menu that shrinks as questions are answered never
+  slides it into the number the player has been pressing. Gate later topics on
+  earlier ones with `said_<npc>_<topic>` flags to build a tree.
 - Keep a topic's `say` under ~220 characters. Split long speeches across
   chained topics; the player chooses to hear more.
 - Npc `name`s: common nouns lowercase and without an article ("barrow-wight",

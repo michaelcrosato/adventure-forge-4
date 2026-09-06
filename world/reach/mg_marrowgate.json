@@ -212,6 +212,29 @@
       "exits": { "west": { "to": "mg_regents_way" }, "down": { "to": "mg_watch_house_cells", "sideTrip": true } },
       "actions": [
         {
+          "id": "mg_pay_fine",
+          "label": "pay her fine (8 gold)",
+          "if": [
+            ["flag", "mg_watch_knows_novice"],
+            ["var", "gold", ">=", 8],
+            ["!flag", "mg_novice_fine"],
+            ["!flag", "mg_novice_oath"],
+            ["!flag", "mg_novice_break"],
+            ["!flag", "mg_novice_abandoned"]
+          ],
+          "once": true,
+          "fx": [
+            ["addvar", "gold", -8],
+            ["set", "mg_novice_fine"],
+            ["npcgo", "mg_novice_jailed", "mg_chapel_undercroft"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 1],
+            ["say", "Tarn counts it twice and writes her name off the board. 'The Watch doesn't sell releases,' he says. 'It fines rites held at night. Same coin, better word.' She is walked out to the undercroft."]
+          ]
+        },
+        {
           "id": "mg_argue_oath",
           "label": "argue her oath before Tarn (will)",
           "if": [
@@ -1338,7 +1361,8 @@
             ["xp", 3],
             ["addvar", "rep_crown", 1],
             ["say", "She reads it twice, then folds it away in a drawer that locks. 'Thank you,' she says, and means the drawer, not the truth in it."]
-          ]
+          ],
+          "commits": true
         },
         {
           "id": "oath_word",

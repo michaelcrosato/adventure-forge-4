@@ -167,39 +167,41 @@
                   "if",
                   [["flag", "hl_tick_keeper"], ["flag", "hl_tick_widow"]],
                   [
-                    ["say", "Sela's stick and the widow's are yours. The last is the almonry's older ledger, or Saint Garner's chapel, out in the fields."]
+                    ["say", "Brida's stick and the widow's are yours. The last is the almonry's older ledger, or Saint Garner's chapel, out in the fields."]
                   ],
                   [
                     [
                       "if",
                       [["flag", "hl_tick_keeper"], ["flag", "hl_tick_almonry"]],
                       [
-                        ["say", "Sela's stick and the almonry's tally are yours. The last waits at the widow's croft, out past the boundary hedge."]
+                        ["say", "Brida's stick and the almonry's tally are yours. The last waits at the widow's croft, out past the boundary hedge."]
                       ],
                       [
                         [
                           "if",
                           [["flag", "hl_tick_widow"], ["flag", "hl_tick_almonry"]],
                           [
-                            ["say", "The widow's stick and the almonry's tally are yours. The last is Sela's, at the tally-keeper's cottage."]
+                            ["say", "The widow's stick and the almonry's tally are yours. The last is Brida's, at the tally-keeper's cottage."]
                           ],
                           [
                             [
                               "if",
                               [["flag", "hl_tick_keeper"]],
-                              [["say", "Sela's stick is yours. Two remain: the widow's croft, and the almonry's ledger (or the chapel)."]],
+                              [["say", "Brida's stick is yours. Two remain: the widow's croft, and the almonry's ledger (or the chapel)."]],
                               [
                                 [
                                   "if",
                                   [["flag", "hl_tick_widow"]],
-                                  [["say", "The widow's stick is yours. Two remain: Sela's cottage, and the almonry's ledger (or the chapel)."]],
+                                  [
+                                    ["say", "The widow's stick is yours. Two remain: Brida's cottage, and the almonry's ledger (or the chapel)."]
+                                  ],
                                   [
                                     [
                                       "if",
                                       [["flag", "hl_tick_almonry"]],
-                                      [["say", "The almonry's tally is yours. Two remain: Sela's cottage, and the widow's croft."]],
+                                      [["say", "The almonry's tally is yours. Two remain: Brida's cottage, and the widow's croft."]],
                                       [
-                                        ["say", "The rest wants three tally-sticks: the tally-keeper Sela's, the widow's croft, and the almonry's older ledger (or the chapel)."]
+                                        ["say", "The rest wants three tally-sticks: the tally-keeper Brida's, the widow's croft, and the almonry's older ledger (or the chapel)."]
                                       ]
                                     ]
                                   ]
@@ -395,6 +397,22 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "react_hollow_bargained",
+          "label": "the barn opened, in your name",
+          "if": [["flag", "hl_hollow_bargained"]],
+          "once": true,
+          "say": "Opened. The living barn, not this one. That is more than I did, and less than they are owed. I will keep the beam a while longer; it is not a punishment, only a place.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the barn burned",
+          "if": [["flag", "hl_hollow_burned"]],
+          "once": true,
+          "say": "Fire, where they died of cold. There is a symmetry in it a barn-reeve can admire. It does not name them. Nothing you do now will.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "step back from the beam",
           "say": "Go carefully on the ladder. It's held longer than it had any right to.",
@@ -426,7 +444,7 @@
       "stages": [
         {
           "if": [["flag", "hl_hollow_rested"], ["!flag", "said_hl_tallykeeper_sv_hl_rested_ask"]],
-          "text": "The barn rests. Sela, at the tally-keeper's cottage, wonders what becomes of the sticks now they're read."
+          "text": "The barn rests. Brida, at the tally-keeper's cottage, wonders what becomes of the sticks now they're read."
         },
         {
           "if": [
@@ -449,7 +467,7 @@
       "label": "The Hearthlands' Tally-Sticks",
       "max": 3,
       "remaining": [
-        { "flag": "hl_tick_keeper", "label": "the tally-keeper Sela" },
+        { "flag": "hl_tick_keeper", "label": "the tally-keeper Brida" },
         { "flag": "hl_tick_widow", "label": "the widow's croft" },
         { "flag": "hl_tick_almonry", "label": "the almonry's older ledger" }
       ],
@@ -506,7 +524,7 @@
     },
     {
       "if": [["flag", "sv_hl_rested_kept"]],
-      "text": "The tally-sticks hang plain in Sela's cottage now, read once and kept for anyone who asks again."
+      "text": "The tally-sticks hang plain in Brida's cottage now, read once and kept for anyone who asks again."
     },
     {
       "if": [["flag", "sv_hl_rested_sent"]],

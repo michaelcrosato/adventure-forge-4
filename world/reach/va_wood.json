@@ -603,8 +603,25 @@
           "label": "turn your best charm on him (a gamble)",
           "if": [["class", "envoy"], ["flag", "said_va_hunter_wood"]],
           "once": true,
-          "say": "He watches the trees while you talk, not you, and answers exactly as plainly as before you started. \"Wood doesn't care how well a thing's said,\" he says. \"Neither do I, much.\"",
-          "fx": [["set", "or_envoy_va_hunter_mistrust"], ["xp", 1]]
+          "say": "You give him your best. He watches the trees while you talk, not you.",
+          "fx": [
+            ["set", "or_envoy_va_hunter_mistrust"],
+            ["xp", 1],
+            [
+              "check",
+              "will",
+              13,
+              [
+                ["score", 2],
+                ["xp", 2],
+                ["addvar", "rep_free", 1],
+                ["say", "Somewhere in it he snorts, which from him is laughter. \"Wood doesn't care how well a thing's said,\" he says. \"But I'll tell the Companies you can talk. That's worth something on the west road.\""]
+              ],
+              [
+                ["say", "He answers exactly as plainly as before you started. \"Wood doesn't care how well a thing's said,\" he says. \"Neither do I, much.\""]
+              ]
+            ]
+          ]
         },
         { "id": "bye", "label": "leave the hunter to the trees", "say": "Keep iron close.", "end": true }
       ]

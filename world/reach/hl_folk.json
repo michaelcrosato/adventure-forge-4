@@ -5,7 +5,7 @@
       "loc": "hl_chandlers",
       "takeable": true,
       "owner": "hl_chandler",
-      "hint": "Ness balances her counter on these twice a day; she'd notice them gone"
+      "hint": "Orrin balances her counter on these twice a day; she'd notice them gone"
     }
   },
   "npcs": {
@@ -269,6 +269,14 @@
           ]
         },
         {
+          "id": "react_hollow_bargained",
+          "label": "the granary, open now",
+          "if": [["flag", "hl_hollow_bargained"]],
+          "once": true,
+          "say": "An open granary. The ledger of the worthy has no page for everyone. I shall have to learn to write one, and I find I do not mind the lesson.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave her to the ledger",
           "say": "Go carefully. And come back, if you ever want the older pages read plain instead of guessed at.",
@@ -277,7 +285,7 @@
       ]
     },
     "hl_tallykeeper": {
-      "name": "Sela",
+      "name": "Brida",
       "room": "hl_tally_cottage",
       "dialogue": true,
       "desc": "An old woman surrounded floor to rafter by tally-sticks, notching a fresh one without looking up from the count already running in her head.",
@@ -286,7 +294,7 @@
           "id": "greet",
           "label": "who are you",
           "once": true,
-          "say": "Sela. Keeper-trained, and no reason to hide it — I've kept this hold's tallies longer than anyone left has been alive to ask why.",
+          "say": "Brida. Keeper-trained, and no reason to hide it — I've kept this hold's tallies longer than anyone left has been alive to ask why.",
           "fx": [["xp", 1]]
         },
         {
@@ -492,6 +500,14 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "react_hollow_bargained",
+          "label": "the open granary",
+          "if": [["flag", "hl_hollow_bargained"]],
+          "once": true,
+          "say": "Open barn, same millstone. I grind what comes. It's just that now it comes from everyone and goes back to everyone, and nobody stands at my door counting.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave him to the wheel",
           "say": "Mind the sluice-gate. It's older than it looks and meaner than it sounds.",
@@ -669,6 +685,14 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "react_hollow_bargained",
+          "label": "the common store",
+          "if": [["flag", "hl_hollow_bargained"]],
+          "once": true,
+          "say": "A common store. Half my trade gone honest overnight. I'd be angrier if I weren't so relieved. The hedge-gap can grow over now.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave him to the lane",
           "say": "Keep to the shadows on your way out. Habit's cheaper than getting caught out of it.",
@@ -721,6 +745,14 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "react_hollow_bargained",
+          "label": "the barn, opened not burned",
+          "if": [["flag", "hl_hollow_bargained"]],
+          "once": true,
+          "say": "Opened, not burned. The oil stays on the cart, then. I'll not pretend I'm not a little sorry; I'll not pretend it's the worse answer, either.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave him to his cart",
           "say": "Careful with that cask on the road. It burns however wet the ground gets — that's rather the point of it.",
@@ -766,6 +798,14 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "react_hollow_bargained",
+          "label": "the sacks, now",
+          "if": [["flag", "hl_hollow_bargained"]],
+          "once": true,
+          "say": "The sacks don't leave by the back lane anymore. They leave by the front, and everyone counts them. I've nothing to count. I might learn letters instead.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave her to the counting",
           "say": "I'll keep counting. Somebody should, even if it's only me.",
@@ -774,7 +814,7 @@
       ]
     },
     "hl_chandler": {
-      "name": "Ness",
+      "name": "Orrin",
       "room": "hl_chandlers",
       "desc": "A chandler weighing every sale twice on brass scales, quick to notice a hand near anything she hasn't sold yet.",
       "topics": [
@@ -782,7 +822,7 @@
           "id": "greet",
           "label": "who are you",
           "once": true,
-          "say": "Ness. I keep the counter — rope, oil, dry goods, and a scale honest enough that even the bailiff trusts my weights over his own.",
+          "say": "Orrin. I keep the counter — rope, oil, dry goods, and a scale honest enough that even the bailiff trusts my weights over his own.",
           "fx": [["xp", 1]]
         },
         {
@@ -812,31 +852,31 @@
       "stages": [
         {
           "if": [["flag", "hl_tick_keeper"], ["flag", "hl_tick_widow"], ["!flag", "hl_tick_almonry"]],
-          "text": "Sela's stick and the widow's are yours. The last is the almonry's ledger, or Saint Garner's chapel, in the fields."
+          "text": "Brida's stick and the widow's are yours. The last is the almonry's ledger, or Saint Garner's chapel, in the fields."
         },
         {
           "if": [["flag", "hl_tick_keeper"], ["flag", "hl_tick_almonry"], ["!flag", "hl_tick_widow"]],
-          "text": "Sela's stick and the almonry's tally are yours. The last waits at the widow's croft, out past the boundary hedge."
+          "text": "Brida's stick and the almonry's tally are yours. The last waits at the widow's croft, out past the boundary hedge."
         },
         {
           "if": [["flag", "hl_tick_widow"], ["flag", "hl_tick_almonry"], ["!flag", "hl_tick_keeper"]],
-          "text": "The widow's stick and the almonry's tally are yours. The last is Sela's, at the tally-keeper's cottage."
+          "text": "The widow's stick and the almonry's tally are yours. The last is Brida's, at the tally-keeper's cottage."
         },
         {
           "if": [["flag", "hl_tick_keeper"], ["!flag", "hl_tick_widow"], ["!flag", "hl_tick_almonry"]],
-          "text": "Sela's stick is yours. Two remain: the widow's croft, and the almonry's ledger (or the chapel)."
+          "text": "Brida's stick is yours. Two remain: the widow's croft, and the almonry's ledger (or the chapel)."
         },
         {
           "if": [["flag", "hl_tick_widow"], ["!flag", "hl_tick_keeper"], ["!flag", "hl_tick_almonry"]],
-          "text": "The widow's stick is yours. Two remain: Sela's cottage, and the almonry's ledger (or the chapel)."
+          "text": "The widow's stick is yours. Two remain: Brida's cottage, and the almonry's ledger (or the chapel)."
         },
         {
           "if": [["flag", "hl_tick_almonry"], ["!flag", "hl_tick_keeper"], ["!flag", "hl_tick_widow"]],
-          "text": "The almonry's tally is yours. Two remain: Sela's cottage, and the widow's croft."
+          "text": "The almonry's tally is yours. Two remain: Brida's cottage, and the widow's croft."
         },
         {
           "if": [],
-          "text": "The rite wants three sticks: the tally-keeper Sela's, the widow's croft, and the almonry's ledger (or the chapel)."
+          "text": "The rite wants three sticks: the tally-keeper Brida's, the widow's croft, and the almonry's ledger (or the chapel)."
         }
       ]
     },

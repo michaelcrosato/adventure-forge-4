@@ -1311,8 +1311,25 @@
           "label": "turn on the charm (a gamble)",
           "if": [["class", "envoy"], ["flag", "said_ir_crick_greet"], ["!flag", "or_envoy_ir_smooth"]],
           "once": true,
-          "say": "You lay it on warm, an easy smile. Crick just looks at you until you stop. 'Save it for someone who wasn't already digging in the dark before you were born,' he says. Whatever that charm buys, it isn't his patience.",
-          "fx": [["set", "or_envoy_ir_smooth"], ["xp", 1]]
+          "say": "You lay it on warm, an easy smile.",
+          "fx": [
+            ["set", "or_envoy_ir_smooth"],
+            ["xp", 1],
+            [
+              "check",
+              "will",
+              13,
+              [
+                ["score", 2],
+                ["xp", 2],
+                ["addvar", "gold", 2],
+                ["say", "Crick looks at you a long while, then laughs, once, like a cough. \"Nobody's tried that on me since the company recruiter. He got two coins for it. So do you.\""]
+              ],
+              [
+                ["say", "Crick just looks at you until you stop. \"Save it for someone who wasn't already digging in the dark before you were born,\" he says. Whatever that charm buys, it isn't his patience."]
+              ]
+            ]
+          ]
         },
         {
           "id": "bye",
@@ -1518,7 +1535,8 @@
             ["addvar", "rep_free", -2],
             ["score", 3],
             ["say", "She counts it out without being asked twice. The tally stays exactly as wrong as it was."]
-          ]
+          ],
+          "commits": true
         },
         {
           "id": "after_sold",

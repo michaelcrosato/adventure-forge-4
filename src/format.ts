@@ -303,7 +303,9 @@ export function renderStatus(world: World, s: State): string {
       if (def?.hp !== undefined) bits.push(`hp ${s.npcHp?.[id] ?? def.hp}/${def.hp}${s.flags?.[`down_${id}`] ? ", down" : ""}`);
       return bits.length ? `${name} (${bits.join(", ")})` : name;
     });
-    lines.push(`Party: ${party.join(", ")}`);
+    // a companion at half strength or less: say where healing is, since no carried item reaches them
+    const hurt = s.party.some((id) => { const def = world.npcs[id]; return def?.hp !== undefined && (s.npcHp?.[id] ?? def.hp) * 2 <= def.hp; });
+    lines.push(`Party: ${party.join(", ")}${hurt ? " — a rest at any hearth heals them" : ""}`);
   }
   if (s.perks?.length) {
     const perks = s.perks.map((id) => {

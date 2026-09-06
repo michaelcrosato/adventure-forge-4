@@ -124,6 +124,7 @@ export type TopicDef = {
   say: string;
   fx?: Fx[];
   end?: boolean; // conversation mode only: this line closes the conversation
+  commits?: boolean; // a line that commits you (an oath broken, a betrayal): listed late in the conversation, like one that parts ways
 };
 
 /**

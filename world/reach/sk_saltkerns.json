@@ -15,7 +15,11 @@
       "brief": "The shell road runs east along the cliff.",
       "region": "sk",
       "landmark": "Saltkerns coast road",
-      "exits": { "east": { "to": "fd_coast_road" }, "in": { "to": "sk_settlement" }, "north": { "to": "hl_south_lane", "landmark": "the Hearthlands" } },
+      "exits": {
+        "east": { "to": "fd_coast_road" },
+        "in": { "to": "sk_settlement" },
+        "north": { "to": "hl_south_lane", "landmark": "the Hearthlands" }
+      },
       "onEnterOnce": [["set", "sk_entered"], ["xp", 2]]
     },
     "sk_smugglers_stair": {
@@ -34,7 +38,11 @@
         "in": { "to": "sk_settlement" },
         "down": { "to": "sk_lookout_nook", "sideTrip": true, "landmark": "a lookout's nook" }
       },
-      "onEnterOnce": [["set", "sk_entered"], ["xp", 2]]
+      "onEnterOnce": [
+        ["set", "sk_entered"],
+        ["xp", 2],
+        ["say", "This stair goes under the pass to Coldpass, past every hold between. Nothing closes behind you, but a companion's grief left in those holds stays unfinished unless you walk back for it."]
+      ]
     },
     "sk_settlement": {
       "name": "The Quay, Gullhaven",

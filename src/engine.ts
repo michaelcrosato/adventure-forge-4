@@ -916,7 +916,11 @@ export function legalActions(world: World, s: State): Action[] {
     const npc = s.talking!;
     // a line that sends a companion away goes last, never in the slot the
     // player has been pressing to carry the conversation on
-    const topics = visibleTopics(world, s, npc).sort((a, b) => Number(partsWays(a)) - Number(partsWays(b)));
+    // ... and so does a line that commits you to something (`commits: true`), so
+    // a menu that shrinks as questions are answered never slides a betrayal into
+    // the number the player has been pressing
+    const late = (t: TopicDef) => Number(partsWays(t) || !!t.commits);
+    const topics = visibleTopics(world, s, npc).sort((a, b) => late(a) - late(b));
     // a farewell line (a topic with `end`) is the way out; the plain "end
     // conversation" only appears when the npc offers none
     const ends = topics.filter((t) => t.end);

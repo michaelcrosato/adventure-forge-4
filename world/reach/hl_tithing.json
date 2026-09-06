@@ -345,7 +345,7 @@
     },
     "hl_chandlers": {
       "name": "The Chandler's Counter",
-      "desc": "A plank counter stacked with rope, lamp oil, and dry goods for whoever's headed out into the fields or further. Ness keeps the count in chalk and an eye on every hand that comes near the shelf.",
+      "desc": "A plank counter stacked with rope, lamp oil, and dry goods for whoever's headed out into the fields or further. Orrin keeps the count in chalk and an eye on every hand that comes near the shelf.",
       "brief": "The chandler's counter, rope and lamp oil.",
       "region": "hl",
       "exits": { "up": { "to": "hl_market_cross" } },
@@ -357,7 +357,7 @@
           "fx": [
             ["addvar", "gold", -4],
             ["move", "hl_lantern_oil", "inv"],
-            ["say", "Ness wraps the flask without comment, chalk-tally already climbing before you've turned to go."]
+            ["say", "Orrin wraps the flask without comment, chalk-tally already climbing before you've turned to go."]
           ]
         },
         {
@@ -367,7 +367,7 @@
           "fx": [
             ["addvar", "gold", -3],
             ["move", "hl_tithe_bread", "inv"],
-            ["say", "Dense, dark, and stamped with the granary's own mark on the crust. \"Same flour as the tithe,\" Ness says. \"Only difference is you paid for yours.\""]
+            ["say", "Dense, dark, and stamped with the granary's own mark on the crust. \"Same flour as the tithe,\" Orrin says. \"Only difference is you paid for yours.\""]
           ]
         }
       ]
@@ -767,6 +767,68 @@
           "id": "bye",
           "label": "leave him to his columns",
           "say": "Mind the steps on your way out. They're steeper than the ledger makes them sound.",
+          "end": true
+        }
+      ]
+    },
+    "hl_landlord": {
+      "name": "Hobb, the landlord",
+      "room": "hl_full_measure",
+      "desc": "Wipes the same table twice while he decides what you are.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Hobb. The Full Measure's mine, and every complaint about the tithe ends up at this table sooner or later. I pour, I listen, I forget by morning. That's the trade.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "tithe",
+          "label": "the complaints about the tithe",
+          "if": [["flag", "said_hl_landlord_greet"]],
+          "once": true,
+          "say": "Everyone pays it and everyone hates it, and every one of them eats bread from the barn it fills. You'll not hear a Tithing man say both halves in one breath. I hear both, every night.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_barn",
+          "label": "what Tithing says of the barn now",
+          "if": [["any", [["flag", "hl_hollow_rested"], ["flag", "hl_hollow_bargained"], ["flag", "hl_hollow_burned"]]]],
+          "once": true,
+          "say": "The table's talk has changed, I'll say that.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "hl_hollow_rested"]],
+              [
+                ["say", "'They're saying the names,' Hobb says. 'Over their cups, like a grace. Four hundred years and nobody thought to.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_hollow_bargained"]],
+              [
+                ["say", "'Open granary,' he says. 'Half of them think it's the end of Tithing and half think it's the start. They drink the same either way.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_hollow_burned"]],
+              [
+                ["say", "'Smoke over the fields for two days,' he says. 'Nobody's said the word barn since. Nobody's said much.'"]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his table",
+          "say": "Mind the step. It's older than the tithe.",
           "end": true
         }
       ]
