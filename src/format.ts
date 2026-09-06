@@ -263,7 +263,10 @@ export function renderStatus(world: World, s: State): string {
     const road = active.filter((x) => world.quests?.[x.id]?.main);
     const side = active.filter((x) => !world.quests?.[x.id]?.main);
     if (road.length) lines.push(`${s.ended ? "The road, as it ended" : "The road"}:\n${road.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
-    if (side.length) lines.push(`${s.ended ? "Left undone" : "Quests"}:\n${side.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
+    // a hold's grief — the quest that settles its hollow — is named as such, so
+    // a town's side threads never read as the thing the hold is waiting on
+    const grief = (id: string) => /_hollow_|hollows_|hollow_(resolved|done|good)/.test(JSON.stringify(world.quests?.[id]?.done ?? []));
+    if (side.length) lines.push(`${s.ended ? "Left undone" : "Quests"}:\n${side.map((x) => `- ${x.name}${grief(x.id) ? " (this hold's grief)" : ""}: ${x.text}`).join("\n")}`);
     const done = q.filter((x) => x.status === "done").map((x) => x.name);
     if (done.length) lines.push(`Done: ${done.join(", ")}`);
     const failed = q.filter((x) => x.status === "failed").map((x) => x.name);

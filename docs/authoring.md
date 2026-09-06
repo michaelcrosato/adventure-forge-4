@@ -368,7 +368,10 @@ it standing somewhere.
   epilogue line, uncapped — the ending screen shows the six that weigh most.
 - A quest lists once `start` passes (default: from the beginning) until
   `done` or `failed`. `main: true` marks a quest of the road itself: `status`
-  lists those first, under "The road:", apart from the side threads. Stages are tried top to bottom; put the most advanced
+  lists those first, under "The road:", apart from the side threads; among
+  those, a quest whose `done` settles a hollow (a `<p>_hollow_*` flag or the
+  `hollows_*` tallies) is marked "(this hold's grief)", so a town's side
+  threads never read as the thing the hold waits on. Stages are tried top to bottom; put the most advanced
   first. Any change prints `Quest — name: text` the turn it happens (several quests
   beginning on one turn collapse to one `Journal: …` line); `status` lists
   the journal. Every region quest (4–6 per region) needs a stage for
