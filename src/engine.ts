@@ -304,7 +304,7 @@ function journalEvents(world: World, before: State, after: State, events: string
     // together, or its end came first) was never the player's to finish: no announcement
     if (!p && (q.status === "done" || q.status === "failed")) continue;
     if (q.status === "done") events.push(`Quest done: ${q.name}.`);
-    else if (q.status === "failed") events.push(`Quest failed: ${q.name}.`);
+    else if (q.status === "failed") events.push(`Quest closed: ${q.name} — its asker's wish is past meeting.`);
     else if (q.text) events.push(`Quest — ${q.name}: ${q.text}`);
   }
 }
