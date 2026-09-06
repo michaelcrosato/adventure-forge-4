@@ -212,8 +212,8 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the first playtest rounds): 464 rooms, 139 npcs, 129
-items, 62 quests, 36 stamped places each with its own sign and reward, 180
+**As built** (after the fourth playtest round): 464 rooms, 140 npcs, 161
+items, 69 quests, 36 stamped places each with its own sign and reward, 261
 epilogue lines, 4 companions, 6 factions, 7 endings each with a proof; every
 gate in the holds and the capital has a force, a craft and a words route, and
 ten waystations on the roads between the holds each put a small choice in the
@@ -224,10 +224,11 @@ earns the Free Companies' stair in Gullhaven, climbs the Keepers' pilgrim
 stair at Coldpass, hears the first Reeve's confession, and speaks the Great
 Rite — 255 turns, about 417 characters a screen on average. Proofs replay the
 Regent deposed by the Companies, the throne burned with the Regent's own oil,
-the Vale's crown worn on the gray seat, and kneeling to the hollow. Thirteen
-blind playtests of the whole realm (300–600 turns) reached seven wins on three
-different roads — five of them at full score — and one loss; their findings
-are fixed.
+the Vale's crown worn on the gray seat, and kneeling to the hollow.
+Twenty-five blind playtests of the whole realm (300–600 turns) reached
+eighteen wins on three different roads — twelve of them at full score — one
+loss, and six players who ran out of turns in the holds; all 426 findings
+they raised are fixed.
 
 **Roads Between** (added after the first playtest rounds): a ring of six
 cross-hold quests, each asked in one hold and settled in the next, flagged
@@ -282,8 +283,33 @@ thirty paired exchanges fire when both are present — entering a hold
 together, a hollow's fate they disagree on, each road into Marrowgate, the
 Hollow Throne, one of them having gone down, one high and one low in regard —
 and twelve pair epilogue lines tell what became of two of them together or at
-odds. Owned things (the `owner` field) let the world notice theft; the
-content pass marking owners across the holds is in flight.
+odds. Owned things (the `owner` field) let the world notice theft: 31 owned
+items across eleven settlements, 29 owner reactions, the Watch and Quill on a
+habit of it, and the company thinking less of a thief.
+
+**Second visits** (after the fourth playtest round): every hold has an
+aftermath once its hollow's fate is settled, flagged `sv_<hold>_*` and
+started silently from the settlement's own `onEnter`. Each fate gets its own
+beat with a fork: the rested hold's thanks with a price (the Hundred's names
+on Cinderhall's Marker Stone, a netmender's boy the bell's rite never
+covered, a barrow-widow's ordinary mound, the officer's name on Thornwold's
+memorial stone, Highward's freed oath-ground, a drowned husband's rest, the
+Choir's silence and the chapel's glass), the bargain come due (a toll to
+Marrowgate, a tithe to the water, a vigil over the Hundred, the queen's mound
+for sale, the wreck-right tithe, the Watch's patrols outrunning the ledger,
+Prior Wenlock answering to the mother-house — each payable yourself, kept by
+the hold at its own cost, or let lapse with `<hold>_bargain_broken`), and the
+burned hold's grievance (a new rope on the old tree, nets over the burned
+nave, peat cut from the oath-ground, a plaque for Aldous against the
+Hundred's names, fire-freed grave-goods at the chandler's counter, wreckers
+diving the Pride, Neave leaving the ash). Twenty-one vignettes, 81 topics,
+seven `<hold>_q_after` quests, 24 room variants, 59 epilogue lines, one new
+npc; every branch is read back in its hold's epilogue, 21 companion remarks
+read them on the road (a broken bargain costs regard with the companion whose
+line it crosses), and five Marrowgate topics — Archivist Penn on the Marker
+Stone, Mother Ysme on Wenlock's answer, Quill on Gullhaven's tithe, the
+Preceptor-General on the Choir's bell made whole, the first Reeve's shade on
+every bargain a hold let lapse — carry the word to the capital.
 
 ## Build order
 
