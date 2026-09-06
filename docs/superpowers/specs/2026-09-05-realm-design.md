@@ -212,7 +212,7 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the seventh playtest round): twelve regions, nine holds;
+**As built** (after the eighth playtest round): thirteen regions, ten holds;
 570 rooms, 167 npcs, 184 items, 86 quests, 44 stamped places each with its own
 sign, reward and hermit's voice, 408 epilogue lines, 4 companions, 6 factions,
 7 endings each with a proof; every gate in the holds and the capital has a
@@ -242,7 +242,23 @@ you come back, whether it was kept), or burned with the dam charges, which
 cracks the stone. The covenant carried whole is a fourth road through
 Coldpass, can be read before the Hollow Throne, and the first Reeve's shade
 knows when it is found; the dams question is the region's own fork. Seven
-landmarks, a driftwood hermit, and the act recap counts nine holds.
+landmarks, a driftwood hermit, and the act recap counts ten holds.
+
+**The Hearthlands** (the thirteenth region, `hl`): the granary lowland south
+of the Vale's west road and north of the Saltkerns' coast road, Tithing
+around its Tithe Barn — a Crown bailiff, a Watch sergeant on the granary
+steps, a Gray Church almoner with a ledger of the worthy, a Companies
+grain-runner, an Ironbound lay-brother, a Keeper tally-keeper, a widow in
+arrears, a miller, a child who counts the sacks. Its grief is the Hunger
+Barn, where the crofters died at doors the first Reeve's order sealed and
+the barn-reeve who kept them hanged himself come spring: rested by reading
+the crofters' names from three tally-sticks and the barn-reeve's order
+together, bargained by opening the working barn as a common store (a bargain
+Marrowgate wants shut again), or burned with cinder-oil (smoke over the
+Vale's west road). The tithe is the region's own fork — the Crown's, the
+Companies', or a common store — read back in Tithing, by the Regent, and by
+the first Reeve's shade. Seven quests, 55 rooms, 16 npcs, 17 epilogue
+lines; every companion has a word on entering and on how it went.
 
 **Roads Between** (added after the first playtest rounds): a ring of six
 cross-hold quests, each asked in one hold and settled in the next, flagged

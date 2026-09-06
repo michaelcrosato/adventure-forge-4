@@ -247,6 +247,11 @@
       },
       "variants": [
         {
+          "if": [["flag", "hl_hollow_burned"]],
+          "desc": "The old road west runs between the last fields and the wood's edge. South, down the tithe-lane, a column of smoke stands over the Hearthlands and does not thin. Woodsmoke shows north through the trees; the gate lies east.",
+          "brief": "The west road. Smoke stands south, over the Hearthlands."
+        },
+        {
           "if": [["var", "hollows_rested", ">=", 3]],
           "brief": "The milestone. Thornwold west, and a thinner gray behind it.",
           "desc": "The old road west runs between the last fields and the wood's edge. The milestone still reads THORNWOLD, worn to a guess — and the gray that hung over these fields has thinned to almost nothing."
@@ -675,7 +680,7 @@
           "label": "the king rests",
           "if": [["flag", "va_king_rested"]],
           "once": true,
-          "say": "I felt it in the candles. Whatever you said or gave him, it was the right thing. There are nine more hollows in the Reach, if the rider's talk is true, and no keepers left to speak over them.",
+          "say": "I felt it in the candles. Whatever you said or gave him, it was the right thing. There are ten more hollows in the Reach, if the rider's talk is true, and no keepers left to speak over them.",
           "fx": [["xp", 2], ["addvar", "rep_church", 1]]
         },
         {
@@ -874,7 +879,7 @@
           "label": "the other hollows",
           "if": [["flag", "va_heard_decree"]],
           "once": true,
-          "say": "Fenmarch's nave. Thornwold's company. The Iron Downs' mine. Wardmoor's founding. The Saltkerns' fleet. Hollowbrook's barrows. Emberfall's choir. The Fallows' furrow. The Meres' drowned Hall. Nine, and Marrowgate beyond.",
+          "say": "Fenmarch's nave. Thornwold's camp. The Downs' mine. Wardmoor's founding. The Saltkerns' fleet. Hollowbrook's barrows. Emberfall's choir. The Fallows' furrow. The Meres' Hall. The Hearthlands' barn. Ten, and Marrowgate.",
           "fx": [["xp", 2]]
         },
         {

@@ -1468,6 +1468,40 @@
           ]
         },
         {
+          "id": "hl_tithe_word",
+          "label": "the Hearthlands' tithe",
+          "if": [
+            ["flag", "mg_heard_regent"],
+            ["any", [["flag", "hl_tithe_crown"], ["flag", "hl_tithe_free"], ["flag", "hl_tithe_common"]]]
+          ],
+          "once": true,
+          "say": "The Hearthlands' tithe has fed this city since before it was one. Word reached me of what became of it.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "hl_tithe_crown"]],
+              [["say", "'Kept for the Crown. Good. Bread is the one loyalty I can count.'"], ["addvar", "rep_crown", 1]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_tithe_free"]],
+              [
+                ["say", "'Handed to the Companies. So the men who sell me swords will sell me bread, at their price.'"],
+                ["addvar", "rep_crown", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_tithe_common"]],
+              [["say", "'A common store. Charming. Ask Tithing who guards it the first lean spring.'"]],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave the Regent to her window",
           "say": "Mind the stair. Everyone who goes down it comes up changed, or does not come up.",
@@ -2940,6 +2974,36 @@
               [["flag", "me_covenant_cracked"]],
               [
                 ["say", "He looks at the pieces a long while. 'Then it is the two of us,' he says, 'who broke a thing we were given to keep.'"]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "mg_reeve_barn",
+          "label": "tell him of the Hunger Barn",
+          "if": [
+            ["flag", "mg_heard_reeve"],
+            ["any", [["flag", "hl_hollow_rested"], ["flag", "hl_hollow_bargained"], ["flag", "hl_hollow_burned"]]]
+          ],
+          "once": true,
+          "say": "The barn. I sent the order and never went to see the doors. The Vale ate; I called that the whole of it. Tell me what stood outside them.",
+          "fx": [
+            ["xp", 2],
+            ["score", 2],
+            [
+              "if",
+              [["flag", "hl_hollow_rested"]],
+              [
+                ["say", "'Their names, and my order, together. Then it is said twice over, and I have one less thing to sit on this lid for.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_hollow_burned"]],
+              [
+                ["say", "'Burned. Like everything else I touched, then. The gray does not mind fire. It minds not being named.'"]
               ],
               []
             ]
