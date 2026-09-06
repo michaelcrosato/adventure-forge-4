@@ -95,6 +95,20 @@
             ["xp", 1],
             ["say", "Old text re-cut more than once: 'Three ways stand past the Spine's shoulder — the Keepers' stair, for hollows rested three; the Regent's writ, for the guard; a way under, for those the Companies vouch.'"]
           ]
+        },
+        {
+          "id": "cp_cleft_scout",
+          "label": "read the boot-scuffs at the gate (Scout)",
+          "if": [["class", "scout"], ["!flag", "cp_found_cleft"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "cp_found_cleft"],
+            ["set", "or_scout_cp_cleft"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "Too many boots have crossed this yard wrong for it to be pilgrim traffic — heel-heavy, angled east, toward the Spine. Whoever's using that cleft, they pass through here first."]
+          ]
         }
       ],
       "variants": [
@@ -130,6 +144,18 @@
             ["move", "cp_pilgrim_cloak", "inv"],
             ["say", "Sister Enna hands it over without haggling. 'Wind finds the gaps in a thin coat first,' she says. 'Don't let it find yours.'"]
           ]
+        },
+        {
+          "id": "cp_credit_cloak",
+          "label": "arrange credit for the cloak (Envoy)",
+          "if": [["class", "envoy"], ["!has", "cp_pilgrim_cloak"], ["!flag", "stole_cp_enna_bread"]],
+          "once": true,
+          "fx": [
+            ["move", "cp_pilgrim_cloak", "inv"],
+            ["set", "or_envoy_cp_credit"],
+            ["xp", 1],
+            ["say", "\"On your word, then,\" Sister Enna says, and hands the cloak over before you've offered a single coin. Nobody else gets that from her."]
+          ]
         }
       ]
     },
@@ -158,6 +184,18 @@
           "fx": [
             ["xp", 1],
             ["say", "Beneath it, wrapped in oilcloth: pages in a hand older than the Church's own records. You set them back exactly as you found them."]
+          ]
+        },
+        {
+          "id": "cp_pages_scholar",
+          "label": "read the hidden pages outright (Scholar)",
+          "if": [["class", "scholar"]],
+          "once": true,
+          "fx": [
+            ["set", "or_scholar_cp_fost"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "You lift the flagstone and read them where they lie: a rite for a throne under a palace, not a chapel — words meant for a rest no living Church has spoken in generations."]
           ]
         }
       ]
@@ -241,6 +279,18 @@
             ["addvar", "gold", -3],
             ["move", "cp_bell_clapper", "inv"],
             ["say", "She takes the coin without much interest and hands the clapper over. \"Wasn't really about the coin. But it'll do.\""]
+          ]
+        },
+        {
+          "id": "cp_maud_scout",
+          "label": "let her read you, quiet to quiet (Scout)",
+          "if": [["class", "scout"], ["!has", "cp_bell_clapper"], ["flag", "said_cp_ness_ask_clapper"]],
+          "once": true,
+          "fx": [
+            ["move", "cp_bell_clapper", "inv"],
+            ["set", "or_scout_cp_maud"],
+            ["xp", 2],
+            ["say", "\"You're not the first quiet-footed sort who's come up this track without being heard first,\" she says, and hands the clapper over without a word about will or coin."]
           ]
         }
       ]
@@ -399,6 +449,26 @@
           "once": true,
           "say": "\"Word comes up the stair same as everything else,\" Bray says. \"More than one hold's counted its goods short behind you. I'll be counting too.\"",
           "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
+        },
+        {
+          "id": "warden_watch_ask",
+          "label": "agree to stand an extra watch",
+          "if": [["class", "warden"], ["flag", "said_cp_bray_greet"]],
+          "once": true,
+          "say": "\"Didn't ask,\" he says, \"but since you're offering — keep an eye on that stretch east of the shrine while you're up there. One soldier's watch is worth three travelers' rumors.\"",
+          "fx": [["set", "or_warden_cp_bray_watch"], ["xp", 1]]
+        },
+        {
+          "id": "warden_watch_collect",
+          "label": "collect what standing watch earned you",
+          "if": [
+            ["class", "warden"],
+            ["flag", "or_warden_cp_bray_watch"],
+            ["any", [["flag", "cp_reported_cleft"], ["flag", "cp_covered_cleft"]]]
+          ],
+          "once": true,
+          "say": "\"Watch stood, word kept, whichever way you told it.\" He presses coin into your hand, soldier to soldier. \"That's what the stair's log ought to say more often.\"",
+          "fx": [["set", "or_warden_cp_bray_done"], ["addvar", "gold", 3], ["xp", 2]]
         }
       ]
     },
@@ -565,6 +635,34 @@
                 ["addvar", "rep_iron", -1]
               ]
             ]
+          ]
+        },
+        {
+          "id": "warden_rank",
+          "label": "make your rank plain to him",
+          "if": [["class", "warden"], ["flag", "said_cp_crell_greet"]],
+          "once": true,
+          "say": "He looks you over, unimpressed. \"A badge means something at a Watch gate. Out here it's just more weight to carry uphill.\" The Ironbound answer to fire, not to rank.",
+          "fx": [["set", "or_warden_cp_crell_cold"], ["xp", 1]]
+        },
+        {
+          "id": "envoy_split",
+          "label": "offer him a face-saving trade (Envoy)",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "said_cp_crell_demand"],
+            ["!flag", "cp_fost_protected"],
+            ["!flag", "cp_fost_betrayed"]
+          ],
+          "once": true,
+          "say": "You don't refuse him and you don't hand him the flagstone either. You offer a written confession of \"cooperation\" for his ledger, nothing more. He takes the paper win over the real one.",
+          "fx": [
+            ["set", "cp_fost_protected"],
+            ["set", "or_envoy_cp_split"],
+            ["addvar", "gold", 4],
+            ["addvar", "rep_keepers", 1],
+            ["score", 4],
+            ["xp", 3]
           ]
         },
         {
@@ -769,6 +867,14 @@
           "once": true,
           "say": "\"The bell gets lit on faith and good wax both,\" the abbot says. \"You've cost the pilgrims one of those. I won't forget which.\"",
           "fx": [["addvar", "rep_church", -1], ["xp", 1]]
+        },
+        {
+          "id": "scholar_peer",
+          "label": "press him on the stair-rite's true words",
+          "if": [["class", "scholar"], ["flag", "said_cp_abbot_the_ways"]],
+          "once": true,
+          "say": "He studies you the way he'd study a fellow monk, not a pilgrim. \"Three hollows rested opens it — that much the texts agree on. What they don't agree on is why three, and not one, or all of them.\"",
+          "fx": [["set", "or_scholar_cp_corvin"], ["xp", 2], ["addvar", "rep_church", 1]]
         }
       ]
     },
@@ -1368,6 +1474,46 @@
     {
       "if": [["any", [["flag", "cp_came_by_stair"], ["flag", "cp_came_by_writ"], ["flag", "cp_came_by_cave"]]]],
       "text": "The pilgrims at St. Ashwyn's Perch name the three roads north like scripture now: the stair earned, the writ bought, the cave forgiven."
+    },
+    {
+      "if": [["any", [["flag", "or_warden_cp_bray_watch"], ["flag", "or_warden_cp_bray_done"]]]],
+      "text": "Sergeant Bray still logs one Warden's watch on the stair as worth three ordinary travelers' word.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_cp_crell_cold"]],
+      "text": "Envoy Crell still says a Watch badge bought a Warden nothing at St. Ashwyn's Perch but a longer climb.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_cp_fost"]],
+      "text": "Brother Fost never learned that a scholar once read his hidden pages where they lay, unasked.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_cp_corvin"]],
+      "text": "Abbot Corvin still says one scholar asked the stair-rite's real question, and left him without an answer.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_cp_split"]],
+      "text": "Envoy Crell's ledger still says the Perch's scriptorium cooperated. Brother Fost knows better and says nothing.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_cp_credit"]],
+      "text": "Sister Enna still says she gave credit exactly once at St. Ashwyn's Perch, and hasn't decided if she'll again.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_cp_cleft"]],
+      "text": "The Smugglers' Cleft was old news to one traveler before their boots ever left the courtyard.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_cp_maud"]],
+      "text": "Old Maud still says she can spot the Spine's quiet sort from the ordinary pilgrims at twenty paces.",
+      "weight": 1
     }
   ]
 }

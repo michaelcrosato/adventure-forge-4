@@ -197,6 +197,31 @@
             ["xp", 1],
             ["say", "She turns it over once, shrugs, and pays four coin for the curiosity of it."]
           ]
+        },
+        {
+          "id": "fd_haggle_cloak",
+          "label": "haggle the oilskin cloak (Envoy, 4 gold)",
+          "if": [["class", "envoy"], ["var", "gold", ">=", 4], ["!has", "fd_oilskin_cloak"]],
+          "once": true,
+          "fx": [
+            ["addvar", "gold", -4],
+            ["move", "fd_oilskin_cloak", "inv"],
+            ["set", "or_envoy_fd_haggle"],
+            ["say", "You talk the price down two coin before she's finished naming it, and she lets you, more amused than annoyed."]
+          ]
+        },
+        {
+          "id": "fd_fence_ward",
+          "label": "trade her the ward-coin, quietly (Scout)",
+          "if": [["class", "scout"], ["has", "fd_cairn_ward"]],
+          "once": true,
+          "fx": [
+            ["move", "fd_cairn_ward", "nowhere"],
+            ["addvar", "gold", 6],
+            ["xp", 1],
+            ["set", "or_scout_fd_fence"],
+            ["say", "No questions, no scale weighed against it, just coin passed hand to hand under the counter. \"Didn't see a thing,\" she says. Neither did you."]
+          ]
         }
       ]
     },
@@ -345,6 +370,19 @@
             ["score", 3],
             ["xp", 2],
             ["say", "You wedge the letter behind the one clear tablet. Whoever wrote it, and whoever it was for, Reedholm will remember them now, unnamed or not."]
+          ]
+        },
+        {
+          "id": "fd_tablet_scholar",
+          "label": "read the second hand outright (Scholar)",
+          "if": [["class", "scholar"], ["flag", "fd_read_tablet"], ["!flag", "fd_knows_sexton_hint"]],
+          "once": true,
+          "fx": [
+            ["set", "fd_knows_sexton_hint"],
+            ["set", "or_scholar_fd_tablet"],
+            ["score", 1],
+            ["xp", 2],
+            ["say", "You don't need the sexton to place the second hand: younger than the mason's cut, hurried, and — you'd stake your training on it — the Prior's own, decades before he wore the title."]
           ]
         }
       ]
@@ -899,6 +937,14 @@
             ["addvar", "rep_church", -2],
             ["addvar", "appr_osk", -1]
           ]
+        },
+        {
+          "id": "scholar_peer",
+          "label": "press him in the old tongue",
+          "if": [["class", "scholar"], ["flag", "said_fd_prior_flood"]],
+          "once": true,
+          "say": "You quote the rite he should have rung the bell over, word for word, in the tongue it was cut in. He flinches. \"You read it as I was taught it,\" he says. \"Not as I've let it become.\"",
+          "fx": [["set", "or_scholar_fd_halm"], ["xp", 2], ["addvar", "rep_church", 1]]
         }
       ]
     },
@@ -1015,6 +1061,14 @@
           "once": true,
           "say": "He pats down the hall's tools before you're even out of sight now. \"Word doesn't travel free to hands that don't ask first,\" he says.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "scout_press",
+          "label": "press him for what he's not saying",
+          "if": [["class", "scout"], ["flag", "said_fd_netkeep_greet"]],
+          "once": true,
+          "say": "He doesn't answer right away. \"Funny,\" he says at last, counting his tools without quite looking at them. \"Most folk don't notice what I'm not saying.\"",
+          "fx": [["set", "or_scout_fd_netkeep_wary"], ["xp", 1]]
         }
       ]
     },
@@ -1124,6 +1178,30 @@
             ["addvar", "rep_church", 1],
             ["addvar", "appr_osk", 1]
           ]
+        },
+        {
+          "id": "warden_sortie_ask",
+          "label": "take the reed-cuts on as your own watch",
+          "if": [["class", "warden"], ["flag", "fd_bog_bounty"]],
+          "once": true,
+          "say": "\"Bounty's bounty for anyone,\" she says, \"but you've the look of someone who'd call it duty instead. Suits me either way, so long as my traps stop coming back in pieces.\"",
+          "fx": [["set", "or_warden_fd_bog_asked"], ["xp", 1]]
+        },
+        {
+          "id": "warden_sortie_report",
+          "label": "report the reed-cuts stand quiet now",
+          "if": [["class", "warden"], ["flag", "or_warden_fd_bog_asked"], ["npcDead", "fd_bog_thing"]],
+          "once": true,
+          "say": "\"Quiet, is it. Good.\" She counts out a soldier's due rather than a bounty-hunter's, without being asked twice.",
+          "fx": [["set", "or_warden_fd_bog"], ["addvar", "gold", 2], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "envoy_haggle_after",
+          "label": "ask why she cut you that price",
+          "if": [["class", "envoy"], ["flag", "or_envoy_fd_haggle"]],
+          "once": true,
+          "say": "\"Because you'd have talked me down to less if I'd let you keep going,\" she says. \"I know when to stop losing.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -1267,6 +1345,35 @@
           "fx": [
             ["say", "\"Their own Preceptor, thrown out by his own chapterhouse.\" Iss's jaw goes tight. \"Then the order polices its own house before it lectures mine.\""],
             ["addvar", "rep_iron", -1]
+          ]
+        },
+        {
+          "id": "warden_frank",
+          "label": "let her read you, soldier to zealot",
+          "if": [["class", "warden"], ["flag", "said_fd_ironbound_warder_greet"]],
+          "once": true,
+          "say": "She looks you over the way she'd look over a recruit. \"You've stood a line before. Good — then you know a hundred years of prayer hasn't put out one grief. Iron has, everywhere we've tried it.\"",
+          "fx": [["set", "or_warden_fd_iss"], ["xp", 2], ["addvar", "rep_iron", 1]]
+        },
+        {
+          "id": "envoy_broker",
+          "label": "make the maths simple for her",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "said_fd_ironbound_warder_order"],
+            ["!flag", "fd_ironbound_sided"],
+            ["!flag", "fd_ironbound_refused"],
+            ["!flag", "fd_ironbound_exposed"]
+          ],
+          "once": true,
+          "say": "You don't threaten and you don't concede. A public loss to the Church costs her order more than a quiet stand-down ever will, plainly put. She takes the arithmetic of it, and hands over a little for the trouble.",
+          "fx": [
+            ["set", "fd_ironbound_refused"],
+            ["set", "or_envoy_fd_broker"],
+            ["addvar", "gold", 5],
+            ["addvar", "rep_church", 1],
+            ["score", 4],
+            ["xp", 3]
           ]
         },
         {
@@ -1438,6 +1545,46 @@
     {
       "if": [["flag", "sv_fd_burned_spared"]],
       "text": "The burned nave's water stays empty of nets, by Reedholm's own choice, ash or no ash, grave or no grave.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_fd_iss"]],
+      "text": "Warder Iss still says one traveler through Reedholm carried a soldier's bearing under a stranger's coat.",
+      "weight": 1
+    },
+    {
+      "if": [["any", [["flag", "or_warden_fd_bog"], ["flag", "or_warden_fd_bog_asked"]]]],
+      "text": "The eel-trader still calls it the one bounty a Warden wouldn't take payment for like a bounty.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_fd_tablet"]],
+      "text": "The Priory's cloister keeps its one clear tablet. A scholar once named the second hand without being told.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_fd_halm"]],
+      "text": "Prior Halm still says one scholar quoted the drowned rite back at him better than he'd let himself keep it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_fd_broker"]],
+      "text": "Warder Iss pulled her mission off Stilt Row over a stranger's arithmetic, not a threat or a plea.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_fd_haggle"]],
+      "text": "The eel-market's trader still says she knows better than to haggle long with a silver tongue.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_fd_fence"]],
+      "text": "A corroded ward-coin passed under Reedholm's eel-counter once, no questions asked on either side.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_fd_netkeep_wary"]],
+      "text": "The net-hall's keeper still counts his tools twice when a certain quiet sort passes through, and won't say why.",
       "weight": 1
     }
   ],

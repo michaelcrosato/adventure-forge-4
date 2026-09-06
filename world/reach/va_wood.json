@@ -560,6 +560,36 @@
             ["say", "The hunter presses a bundle of herbs and three coins into your hands."]
           ]
         },
+        {
+          "id": "warden_sortie_ask",
+          "label": "take the wolf pack on yourself",
+          "if": [["class", "warden"], ["flag", "said_va_hunter_wood"]],
+          "once": true,
+          "say": "\"Wolves are the wood's business, usually,\" he says, sizing you up. \"Yours too, if you want it. Clear the pack out proper and I'll call the debt paid before you ever show me a pelt.\"",
+          "fx": [["set", "or_warden_va_hunter_sortie"], ["xp", 1]]
+        },
+        {
+          "id": "warden_sortie_report",
+          "label": "report the pack ended, as ordered",
+          "if": [
+            ["class", "warden"],
+            ["flag", "or_warden_va_hunter_sortie"],
+            ["npcDead", "va_ash_wolf"],
+            ["npcDead", "va_gaunt_wolf"],
+            ["npcDead", "va_lean_wolf"]
+          ],
+          "once": true,
+          "say": "\"All three,\" he says, not needing the fangs shown. \"That's a soldier's count, not a bounty-hunter's.\" He pays out double what the trophies alone would have earned.",
+          "fx": [["set", "or_warden_va_hunter_sortie_done"], ["addvar", "gold", 4], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "envoy_charm",
+          "label": "turn your best charm on him",
+          "if": [["class", "envoy"], ["flag", "said_va_hunter_wood"]],
+          "once": true,
+          "say": "He watches the trees while you talk, not you, and answers exactly as plainly as before you started. \"Wood doesn't care how well a thing's said,\" he says. \"Neither do I, much.\"",
+          "fx": [["set", "or_envoy_va_hunter_mistrust"], ["xp", 1]]
+        },
         { "id": "bye", "label": "leave the hunter to the trees", "say": "Keep iron close.", "end": true }
       ]
     },

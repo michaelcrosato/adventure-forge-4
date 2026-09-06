@@ -133,7 +133,32 @@
       "desc": "A small stone chapel, candles against the dark. The priest wears ash on both hands; a young novice sweeps the same flagstone over and over. Wax and damp stone smell like the inside of a well. A door east leads to the elder's house.",
       "brief": "Candles in the dark.",
       "region": "va",
-      "exits": { "north": { "to": "va_square" }, "east": { "to": "va_elder_house" } }
+      "exits": { "north": { "to": "va_square" }, "east": { "to": "va_elder_house" } },
+      "actions": [
+        {
+          "id": "va_flagstone_scout",
+          "label": "look under the swept flagstone (Scout)",
+          "if": [["class", "scout"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_scout_va_flagstone"],
+            ["score", 2],
+            ["xp", 2],
+            ["move", "va_fenfolk_carving", "inv"],
+            ["say", "Nobody sweeps one flagstone for a season without a reason. Underneath: a small carved fen-bird, worn smooth by a thumb, not by the water it came from."],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Osk goes very still. \"That was my sister's. I thought I'd lost it on the road here.\""],
+                ["addvar", "appr_osk", 1]
+              ],
+              []
+            ]
+          ]
+        }
+      ]
     },
     "va_elder_house": {
       "name": "Elder's House",
@@ -173,6 +198,18 @@
               ],
               [["say", "The pins hold. The elder turns a page without looking up."]]
             ]
+          ]
+        },
+        {
+          "id": "va_ledger_scholar",
+          "label": "read the crossed name outright (Scholar)",
+          "if": [["class", "scholar"]],
+          "once": true,
+          "fx": [
+            ["set", "or_scholar_va_ledger"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "You don't need the elder's guarded silence to read what's under the scratched-out ink: a reeve's name, and beneath the crossing-out, the word GIVEN, not TAKEN — someone's own hand, arguing with itself."]
           ]
         }
       ]
@@ -255,6 +292,12 @@
       "takeable": true,
       "owner": "va_gray_priest",
       "hint": "kept lit against the damp, one at a time"
+    },
+    "va_fenfolk_carving": {
+      "name": "a small carved fen-bird",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "worn smooth by a thumb — someone from the fens carried this a long way"
     }
   },
   "npcs": {
@@ -410,6 +453,14 @@
           "once": true,
           "say": "\"Word travels with the riders — more than one hold's counted its goods short since you passed through,\" the reeve says. \"The watch doesn't forget whose hands those were.\"",
           "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
+        },
+        {
+          "id": "warden_frank",
+          "label": "ask what the watch really thinks",
+          "if": [["class", "warden"], ["flag", "said_va_reeve_blight"]],
+          "once": true,
+          "say": "He drops the notice-board voice. \"Truth: three of my watch won't walk past the gate after dark. You're the first blade through here who didn't need that explained twice.\"",
+          "fx": [["set", "or_warden_va_reeve"], ["xp", 2], ["addvar", "rep_watch", 1]]
         }
       ]
     },
@@ -613,6 +664,14 @@
           "once": true,
           "say": "\"Ash on my hands, and short candles besides,\" he says, not looking up. \"The Church notices what leaves a chapel unblessed. So do I.\"",
           "fx": [["addvar", "rep_church", -1], ["xp", 1]]
+        },
+        {
+          "id": "scholar_peer",
+          "label": "the barrow-keepers, in the old tongue",
+          "if": [["class", "scholar"], ["flag", "said_va_gray_priest_old_king"]],
+          "once": true,
+          "say": "You answer him in the old tongue without thinking. His manner changes at once. \"A reader. Then know it plain: the keepers who stood at every barrow door didn't fall away — someone let them lapse, and meant to.\"",
+          "fx": [["set", "or_scholar_va_priest"], ["xp", 2], ["addvar", "rep_keepers", 1]]
         }
       ]
     },
@@ -706,6 +765,14 @@
           "if": [["flag", "va_coffer_picked"]],
           "once": true,
           "say": "She has found fresh scratches round the keyhole, bright over old rust. \"Someone tried this before ever asking,\" she says. Not quite a question.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "scholar_ledger_ask",
+          "label": "ask what GIVEN was meant to mean",
+          "if": [["class", "scholar"], ["flag", "or_scholar_va_ledger"]],
+          "once": true,
+          "say": "Her hands still on the page. \"My grandmother's hand, that. She never once said which word she believed. I've wondered my whole life which one she died still doubting.\"",
           "fx": [["xp", 1]]
         },
         { "id": "bye", "label": "leave her to the ledgers", "say": "Shut the door. The wood is close.", "end": true }
@@ -807,6 +874,28 @@
           "fx": [["xp", 2], ["score", 2]]
         },
         {
+          "id": "envoy_broker",
+          "label": "read his real terms, not his script",
+          "if": [["class", "envoy"], ["flag", "va_heard_decree"], ["!flag", "va_swore_burn"], ["!flag", "va_refused_herald"]],
+          "once": true,
+          "say": "You don't swear and you don't refuse; you name the shape of the choice he's actually offering. He almost smiles. \"Sharper than most who come through here.\" He presses coin on you \"for the road,\" unofficially.",
+          "fx": [
+            ["set", "or_envoy_va_herald"],
+            ["xp", 2],
+            ["score", 2],
+            ["addvar", "gold", 4],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"He wasn't wrong to notice. That kind of reading is worth more than the coin.\""],
+                ["addvar", "appr_vell", 1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave the herald to his horse",
           "say": "The Regent will hear of you either way.",
@@ -855,6 +944,46 @@
       "if": [["var", "thefts", ">=", 3]],
       "text": "By the third hold counting its goods short, the story had a shape: a stranger who took what was watched and paid nothing for it.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_va_reeve"]],
+      "text": "The reeve of Last Light still says a Warden came through once who didn't need the danger explained twice.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_va_hunter_sortie_done"]],
+      "text": "The hunter still tells it as a soldier's count: a Warden who cleared his wolves like a duty, not a bounty.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_va_priest"]],
+      "text": "The gray priest still says a scholar passed through who answered him in the old tongue, unprompted.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_va_ledger"]],
+      "text": "Last Light's elder never did learn how a stranger read her grandmother's crossed-out word without asking.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_va_herald"]],
+      "text": "Herald Corvane still tells Marrowgate he met one traveler in the Vale who never once showed him a hand.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_va_hunter_mistrust"]],
+      "text": "The hunter still says the wood taught him to trust a plain word over a pretty one, long before any envoy tried him.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_va_flagstone"]],
+      "text": "The gray chapel's swept flagstone stays swept. Only one traveler ever thought to look under it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_va_hunter_sortie"], ["!flag", "or_warden_va_hunter_sortie_done"]],
+      "text": "The hunter still says a Warden once took his wolves on as personal business, and never came back to collect.",
+      "weight": 0
     }
   ]
 }

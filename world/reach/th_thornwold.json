@@ -300,6 +300,50 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "th_haggle_cal_debt",
+          "label": "haggle Cal's debt (Envoy, 6 gold)",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "lys_brother_found"],
+            ["!flag", "lys_brother_home"],
+            ["!flag", "lys_brother_buried"],
+            ["!flag", "lys_brother_lost"],
+            ["var", "gold", ">=", 6]
+          ],
+          "once": true,
+          "fx": [
+            ["addvar", "gold", -6],
+            ["set", "or_envoy_th_haggle"],
+            ["score", 6],
+            ["xp", 4],
+            [
+              "if",
+              [["flag", "th_cal_staying"]],
+              [
+                ["set", "lys_brother_cleared"],
+                ["say", "You talk the tally down before Bray's even finished naming it. \"Six clears it,\" you say, and somehow it does. Cal stays on with a clean name."]
+              ],
+              [
+                ["set", "lys_brother_home"],
+                ["say", "You talk the tally down before Bray's even finished naming it. \"Six clears it,\" you say, and somehow it does. Cal has no more reason to stay."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "th_wagon_gap_scout",
+          "label": "check under the wagon's boards (Scout)",
+          "if": [["class", "scout"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_scout_th_wagon_gap"],
+            ["addvar", "gold", 3],
+            ["xp", 1],
+            ["say", "A gap between two boards, worn smooth by a hand that's used it for years. Someone's private stash, forgotten or abandoned: three coin, tucked past where a tally would ever look."]
+          ]
         }
       ],
       "variants": [
@@ -838,6 +882,18 @@
             ["xp", 1],
             ["say", "One of them squints, then elbows the other. \"Vane's, this one. Let it go.\" The pole lifts before you've said a word more."]
           ]
+        },
+        {
+          "id": "th_toll_warden",
+          "label": "let your bearing speak (Warden)",
+          "if": [["class", "warden"], ["!flag", "th_toll_resolved"]],
+          "fx": [
+            ["set", "th_toll_resolved"],
+            ["set", "or_warden_th_toll"],
+            ["npcgo", "th_toll_men", null],
+            ["xp", 1],
+            ["say", "Neither of them reaches for the pole. \"Not worth the argument,\" the nearer one mutters, and waves you through without a coin changing hands."]
+          ]
         }
       ]
     },
@@ -956,6 +1012,20 @@
               ],
               [["xp", 1], ["say", "The bramble's thicker than it looks, thorn for every handhold. It can be tried again."]]
             ]
+          ]
+        },
+        {
+          "id": "th_waymarker_scholar",
+          "label": "read the waymarker outright (Scholar)",
+          "if": [["class", "scholar"], ["!flag", "th_waymarker_resolved"]],
+          "fx": [
+            ["set", "th_waymarker_resolved"],
+            ["set", "th_waymarker_verse"],
+            ["set", "or_scholar_th_waymarker"],
+            ["addvar", "rep_keepers", 1],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "The shallow script needs no patience from you: \"what the fire forgets, the root remembers still.\" It reads as plainly as a signpost."]
           ]
         }
       ]
@@ -1239,6 +1309,14 @@
           "once": true,
           "say": "Rook. Camped two stands west of here, then one north — past Fox Crossing, at what's left of an old snare-line we call the Rope Larder. Skims coin off travelers before my toll-men ever see it.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "warden_frank",
+          "label": "let her read your bearing plain",
+          "if": [["class", "warden"], ["flag", "said_th_vane_greet"]],
+          "once": true,
+          "say": "She doesn't ask if you served the Watch; she just talks like you did. \"Half my roster's owed wages I can't cover past the next contract.\" Her own men go quiet when they clock the same bearing.",
+          "fx": [["set", "or_warden_th_vane"], ["xp", 2], ["addvar", "rep_watch", 1], ["addvar", "rep_free", -1]]
         }
       ]
     },
@@ -1395,6 +1473,14 @@
             ["xp", 2],
             ["addvar", "rep_keepers", -2]
           ]
+        },
+        {
+          "id": "envoy_haggle_after",
+          "label": "ask if the discount still rankles",
+          "if": [["class", "envoy"], ["flag", "or_envoy_th_haggle"]],
+          "once": true,
+          "say": "\"Rankles,\" he says, not looking up from the ledger. \"Also correct, near as I can figure. I'll be watching my own sums closer from now on.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -1593,6 +1679,33 @@
           "fx": [["xp", 1], ["set", "th_cal_staying"]]
         },
         {
+          "id": "envoy_letter",
+          "label": "get him to write her, at least",
+          "if": [
+            ["class", "envoy"],
+            ["!flag", "lys_brother_home"],
+            ["!flag", "lys_brother_buried"],
+            ["!flag", "lys_brother_lost"]
+          ],
+          "once": true,
+          "say": "You don't ask him to choose between the Company and his sister; you ask him why it has to be either. He turns that over a while. \"...A letter, I could manage. Staying doesn't have to mean gone.\"",
+          "fx": [
+            ["set", "th_cal_staying"],
+            ["set", "or_envoy_th_cal_letter"],
+            ["score", 3],
+            ["xp", 2],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [
+                ["say", "Lys: \"A letter's not him standing in the doorway. But it's more than I had this morning. Thank you.\""],
+                ["addvar", "appr_lys", 1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to his arrows",
           "say": "Watch the road for me, if you're headed east.",
@@ -1724,6 +1837,21 @@
           "once": true,
           "say": "\"Once,\" he says, not looking up from the tally. \"Snares don't lie. Something went through here quiet, and it wasn't the wind.\" He doesn't ask who.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "scout_trade",
+          "label": "trade him professional respect (Scout)",
+          "if": [["class", "scout"], ["!flag", "th_rook_dealt"]],
+          "once": true,
+          "say": "You don't offer coin or a threat, just a nod that says you know exactly what he's running here. He nods back, slower. \"...Fair enough. One quiet hand to another.\" He tosses you his own blade, grip-first.",
+          "fx": [
+            ["set", "th_rook_dealt"],
+            ["set", "th_rook_traded"],
+            ["set", "or_scout_th_rook"],
+            ["move", "th_free_blade", "inv"],
+            ["score", 4],
+            ["xp", 3]
+          ]
         }
       ]
     },
@@ -1847,6 +1975,27 @@
             ["addvar", "appr_vell", -1],
             ["score", 3],
             ["xp", 2]
+          ]
+        },
+        {
+          "id": "scholar_peer",
+          "label": "ask what the Keepers still won't say",
+          "if": [["class", "scholar"], ["flag", "th_heard_covenant"]],
+          "once": true,
+          "say": "Rowan weighs you the way one reader weighs another. \"The Hollowbrook Hall keeps a name that isn't spoken here — one of the old crown-line, living, and hiding it. That's all the old covenant lets me give a stranger.\"",
+          "fx": [
+            ["set", "or_scholar_th_rowan"],
+            ["xp", 2],
+            ["addvar", "rep_keepers", 1],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell goes very quiet. \"Is that so,\" they say, in a voice that means the opposite of idle."],
+                ["addvar", "appr_vell", 1]
+              ],
+              []
+            ]
           ]
         },
         {
@@ -2464,6 +2613,46 @@
     {
       "if": [["flag", "sv_th_burned_spared"]],
       "text": "The gallows tree at Camp Gallows stands bare and stays bare. Camp Gallows decided one burning was reckoning enough.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_th_vane"]],
+      "text": "Vane still says a Watch-trained hand came through Camp Gallows once, and the dicing went quiet while he talked.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_th_toll"]],
+      "text": "The toll-men at Camp Gallows still wave a certain kind of stranger through without a word, no coin needed.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_th_waymarker"]],
+      "text": "The old waymarker's verse is common knowledge in Camp Gallows now, ever since a scholar read it at a glance.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_th_rowan"]],
+      "text": "Keeper Rowan still says one scholar earned more of the old covenant's truth than most Keepers ever offer a stranger.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_th_haggle"]],
+      "text": "Quartermaster Bray still checks his own sums twice, ever since a silver tongue talked a debt down in front of him.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_th_cal_letter"]],
+      "text": "Cal writes home from Camp Gallows now, a habit an envoy talked him into instead of a homecoming.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_th_wagon_gap"]],
+      "text": "The quartermaster's wagon keeps a gap in its boards that only one traveler ever thought to check.",
+      "weight": 1
+    },
+    {
+      "if": [["any", [["flag", "th_rook_traded"], ["flag", "or_scout_th_rook"]]]],
+      "text": "Rook still tells it as the one time a stranger settled his account with a nod, not a blade or a coin.",
       "weight": 1
     }
   ]

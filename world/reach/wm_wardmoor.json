@@ -155,6 +155,19 @@
             ["move", "wm_field_dressing", "inv"],
             ["say", "Boiled linen and a pot of salve, rolled tight. The quartermaster hands it over without looking up from the ledger."]
           ]
+        },
+        {
+          "id": "wm_armoury_scout",
+          "label": "check behind the shield racks (Scout)",
+          "if": [["class", "scout"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_scout_wm_armoury"],
+            ["addvar", "gold", 3],
+            ["xp", 1],
+            ["say", "The quartermaster counts every rivet twice, and still missed this: three coin, dropped behind the racks years back and never chased."]
+          ]
         }
       ]
     },
@@ -447,6 +460,18 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "wm_courier_scholar",
+          "label": "read the letter outright (Scholar)",
+          "if": [["class", "scholar"], ["!flag", "wm_courier_resolved"]],
+          "fx": [
+            ["set", "wm_courier_resolved"],
+            ["set", "or_scholar_wm_courier"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "The seal gives cleanly under a practiced hand. Grain counts, mostly — and beneath them, a tally of holds the Regent means to \"settle personally\" if their grief isn't dealt with soon."]
+          ]
         }
       ]
     },
@@ -511,6 +536,17 @@
             ["score", 2],
             ["xp", 1],
             ["say", "She pockets it fast and won't meet your eyes doing it. The rope comes down anyway."]
+          ]
+        },
+        {
+          "id": "wm_checkpoint_warden",
+          "label": "show them your bearing (Warden)",
+          "if": [["class", "warden"], ["!flag", "wm_checkpoint_resolved"]],
+          "fx": [
+            ["set", "wm_checkpoint_resolved"],
+            ["set", "or_warden_wm_checkpoint"],
+            ["xp", 1],
+            ["say", "Neither of them so much as reaches for the rope. \"Go on,\" the nearer one says. \"You'd have stopped the same way in our place.\""]
           ]
         }
       ]
@@ -684,6 +720,14 @@
           "once": true,
           "say": "\"A corporal at the record-house has heard of light fingers working more than one hold,\" Hale says. \"Highward doesn't forget whose hands those were.\"",
           "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
+        },
+        {
+          "id": "warden_frank",
+          "label": "ask her to size up the garrison, plainly",
+          "if": [["class", "warden"], ["flag", "said_wm_sgt_rook_duty"]],
+          "once": true,
+          "say": "She drops the drillyard voice for a soldier's honesty. \"Half these recruits couldn't hold the wall a season back. You could. Wish I could put that in a report the Captain-General would read.\"",
+          "fx": [["set", "or_warden_wm_hale"], ["xp", 2], ["addvar", "rep_watch", 1]]
         }
       ]
     },
@@ -773,6 +817,43 @@
             ["addvar", "rep_keepers", -1],
             ["addvar", "rep_watch", -1]
           ]
+        },
+        {
+          "id": "envoy_split",
+          "label": "split the shortfall (Envoy, 6 gold)",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "wm_heard_bill"],
+            ["var", "gold", ">=", 6],
+            ["!flag", "sv_wm_bargained_paid"],
+            ["!flag", "sv_wm_bargained_honored"],
+            ["!flag", "wm_bargain_broken"]
+          ],
+          "once": true,
+          "say": "You don't offer to cover it all, and you don't leave it all to the garrison either — you split it down the middle. She weighs the offer like a woman who expected to like it less than she does. \"...Done,\" she says.",
+          "fx": [
+            ["addvar", "gold", -6],
+            ["set", "sv_wm_bargained_paid"],
+            ["set", "or_envoy_wm_split"],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "envoy_split_after",
+          "label": "ask if the split settled things",
+          "if": [["class", "envoy"], ["flag", "or_envoy_wm_split"]],
+          "once": true,
+          "say": "\"Settled enough that nobody's arguing about it anymore,\" she says. \"That's more than most bargains manage.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "scout_wary",
+          "label": "hold her gaze a beat too long",
+          "if": [["class", "scout"], ["flag", "said_wm_quartermaster_greet"]],
+          "once": true,
+          "say": "She doesn't say anything, but her count of the racks gets visibly slower while you're standing there. \"Everything's checked twice,\" she says again, to nobody in particular.",
+          "fx": [["set", "or_scout_wm_quartermaster_wary"], ["xp", 1]]
         }
       ]
     },
@@ -1142,6 +1223,23 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "envoy_gossip",
+          "label": "get him talking off his script",
+          "if": [["class", "envoy"], ["flag", "said_wm_envoy_greet"]],
+          "once": true,
+          "say": "You trade him gossip for gossip, professional to professional, till he forgets he's counting you instead of talking to you. \"The Regent trusts almost no one left in that palace,\" he admits. \"Almost.\"",
+          "fx": [
+            ["set", "or_envoy_wm_gossip"],
+            ["xp", 2],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [["say", "Vell: \"Almost. That word's doing a great deal of work.\""], ["addvar", "appr_vell", 1]],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave the envoy to his ledger",
           "say": "The Regent will hear your name either way.",
@@ -1313,6 +1411,14 @@
           "once": true,
           "say": "\"I index what's missing as carefully as what's shelved,\" Wynne says, not looking up. \"You're indexed now, too.\"",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "scholar_peer",
+          "label": "read the founding outright (Scholar)",
+          "if": [["class", "scholar"], ["flag", "wm_founding_known"]],
+          "once": true,
+          "say": "You read the shelf-mark aloud, archivist to archivist, and Wynne doesn't stop you. \"'Hold the road till I send word.' No word was ever sent.\" She says nothing back, which says enough.",
+          "fx": [["set", "or_scholar_wm_wynne"], ["xp", 2], ["addvar", "rep_watch", 1]]
         }
       ]
     },
@@ -1427,6 +1533,46 @@
     {
       "if": [["flag", "sv_wm_burned_spared"]],
       "text": "The burned oath-ground lies uncut, by Highward's own choice. The peat-cutters found other ground, and didn't complain twice.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_wm_checkpoint"]],
+      "text": "Highward's checkpoint still waves a certain kind of stranger through without a word of the usual questioning.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_wm_hale"]],
+      "text": "Sergeant Hale still says one Warden could have held the wall better than half her recruits, and told her so plainly.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_wm_wynne"]],
+      "text": "Wynne the archivist still says a scholar read her sealed shelf aloud before she'd decided whether to allow it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_wm_courier"]],
+      "text": "A courier's sealed dispatch reached Highward with its wax unbroken by anyone but a scholar's trained hand.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_wm_gossip"]],
+      "text": "The Marrowgate envoy at Highward still says one traveler got more off his script than his post allows.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_wm_split"]],
+      "text": "Highward's quartermaster settled the new oath's cost down the middle once, on an envoy's word, and it held.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_wm_armoury"]],
+      "text": "The armoury's racks are still counted twice by the quartermaster, and still missed the same gap once.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_wm_quartermaster_wary"]],
+      "text": "Highward's quartermaster still counts the armoury racks slower than usual, and has never said why.",
       "weight": 1
     }
   ],
