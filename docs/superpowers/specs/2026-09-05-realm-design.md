@@ -214,7 +214,7 @@ Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
 **As built** (after the twelfth playtest round): fifteen regions, twelve holds;
 739 rooms, 212 npcs, 215 items, 109 quests, 56 stamped places each with its own
-sign, reward and hermit's voice, 478 epilogue lines, 4 companions, 6 factions,
+sign, reward and hermit's voice, 490 epilogue lines, 4 companions, 6 factions,
 7 endings each with a proof; every gate in the holds and the capital has a
 force, a craft and a words route, every hollow room weighs its grief for
 free, ten waystations on the roads between the holds each put a small choice
@@ -309,6 +309,23 @@ shade, who hired the Companies and did not stop the shot. Seven quests, 58
 rooms, 13 npcs, 14 epilogue lines, four stamped places (the Companies' first
 camp among them); every companion has a word on entering and on how it went.
 It hooks on to the Fallows' Southern Dikes and Fenmarch's Trapper's Blind.
+
+**The company in the newest holds** (after the twelfth round): the three
+holds added last — the Hearthlands, the Kingswood and the Shieldings — get
+what the first nine had. Twenty-one pair exchanges fire when two companions
+enter one of them together or watch its grief go the way they disagree on;
+three more rest-road quarrels (Brother Osk and Vell over the Hunger Barn's
+names, Lys and Tamsin over the Kingswood's charcoal, Tamsin and Vell over the
+Companies' charter on the Truce Field) mirror the six before them — an
+opening remark with the engine's pointer, a side to take on each companion
+at +2/−2 said in the hint, a will check to call it a draw, grudges carried
+on, four epilogue lines each; word of each hold's fate reaches two
+neighbouring settlements along faction lines (the Vale's priest and
+Gullhaven's sergeant on the Hearthlands, Cinderhall's chapterhouse and
+Highward's record-house on the Kingswood, Fenmarch's Priory and Wickstead's
+recruiter on the Shieldings), moving the faction that carried it; and
+Archivist Penn reads the Shieldings' stone back, with a Scholar's line naming
+the herald the records left unnamed. Seventeen quarrels, fifty-one exchanges.
 
 **Roads Between** (added after the first playtest rounds): a ring of six
 cross-hold quests, each asked in one hold and settled in the next, flagged
