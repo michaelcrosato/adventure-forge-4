@@ -142,6 +142,12 @@ menu: use it for flavour that reads like `look` — getting your bearings from a
 parapet, reading a notice board — so a player is never charged a turn for what
 the rules told them is free. Anything that changes the world keeps its cost.
 
+A room action or topic with a top-level `["class", c]` condition shows
+"(as a Scholar)" after its label — "(free; as a Scout)" when it is also free —
+unless the label already names the class, so a player sees which of their
+choices their own class opened. Class lines are extra, never the only route:
+every gate keeps its force, craft and words ways for everyone.
+
 ## 6. Items
 
 ```json

@@ -955,8 +955,28 @@ export function itemHint(world: World, s: State, id: string): string | undefined
   return hint ? hint : undefined;
 }
 
+/**
+ * "as a Scholar" for a room action or topic the player's class opened: a
+ * top-level `["class", c]` condition on the def, so a player can see which of
+ * their choices are theirs alone. Silent when the label already names the class.
+ */
+function classTag(world: World, s: State, a: Action): string {
+  if (!s.classId) return "";
+  const def =
+    a.kind === "custom"
+      ? world.rooms[a.room]?.actions?.find((x) => x.id === a.id)
+      : a.kind === "talk"
+        ? world.npcs[a.npc]?.topics?.find((x) => x.id === a.topic)
+        : undefined;
+  if (!def?.if?.some((c) => c[0] === "class" && c[1] === s.classId)) return "";
+  const name = world.classes?.[s.classId]?.name;
+  if (!name || def.label.toLowerCase().includes(name.toLowerCase())) return "";
+  return `as ${article(name)} ${name}`;
+}
+
 export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: boolean } = {}): string {
-  if (a.kind === "custom" && world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.free) return " (free)";
+  const who = classTag(world, s, a);
+  if (a.kind === "custom" && world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.free) return who ? ` (free; ${who})` : " (free)";
   if (a.kind === "take") {
     const owner = world.items[a.item]?.owner;
     const w = owner ? ownerWatching(world, s, owner) : null;
@@ -998,6 +1018,7 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   }
   // an action that settles a hold's grief is the one-shot the hold is built around; say so before it is taken
   if (fx && fxSettlesHollow(fx)) parts.push("settles this hold's grief");
+  if (who) parts.unshift(who);
   if (parts.length) return ` (${parts.join("; ")})`;
   if (a.kind === "use" && opts.itemHints !== false) {
     // an item's use can sit in the menu for the rest of the game, so its hint
