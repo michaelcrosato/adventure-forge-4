@@ -454,7 +454,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
             const id = fx[1].slice(5);
             const npc = world.npcs[id];
             if (npc && (s.party.includes(id) || s.npcRoom[id] === s.room) && !npcDead(world, s, id)) {
-              events.push(`${npc.name} ${Math.abs(d) > 1 ? "strongly " : ""}${d > 0 ? "approves" : "disapproves"}.`);
+              events.push(`${npc.name} ${Math.abs(d) > 1 ? "strongly " : ""}${d > 0 ? "approves" : "disapproves"} (${d > 0 ? "+" : ""}${d}).`);
               if (!s.flags["_seenApproval"]) {
                 s.flags["_seenApproval"] = true;
                 events.push("(Companions judge what you do: their regard opens some doors and closes others, and one pushed too far walks out.)");
@@ -762,24 +762,61 @@ function ownerWatching(world: World, s: State, owner: string): NpcDef | null {
 
 /** True when an effect list counts a hollow rested or burned somewhere inside it. */
 function fxSettlesHollow(fxs: Fx[] | undefined): boolean {
+  return hollowRoute(fxs) !== null;
+}
+
+/**
+ * Which way an effect list settles a hold's grief — "rests it", "a bargain"
+ * or "burns it" — read from the `<code>_hollow_rested|bargained|burned` flag
+ * it sets, else from the tally it feeds; null when it settles nothing. Said in
+ * the menu, so a player keeping to one road can tell the three apart.
+ */
+function hollowRoute(fxs: Fx[] | undefined): string | null {
+  let tally: string | null = null;
   for (const fx of fxs ?? []) {
-    if (fx[0] === "addvar" && (fx[1] === "hollows_rested" || fx[1] === "hollows_burned")) return true;
-    if (fx[0] === "if" && (fxSettlesHollow(fx[2]) || fxSettlesHollow(fx[3]))) return true;
-    if (fx[0] === "check" && (fxSettlesHollow(fx[3]) || fxSettlesHollow(fx[4]))) return true;
-    if (fx[0] === "chance" && (fxSettlesHollow(fx[2]) || fxSettlesHollow(fx[3]))) return true;
+    if (fx[0] === "set") {
+      const m = /_hollow_(rested|bargained|burned)$/.exec(fx[1]);
+      if (m) return m[1] === "rested" ? "rests it" : m[1] === "bargained" ? "a bargain" : "burns it";
+    }
+    if (fx[0] === "addvar" && fx[1] === "hollows_burned") tally = "burns it";
+    if (fx[0] === "addvar" && fx[1] === "hollows_rested" && !tally) tally = "rests it";
+    const inner =
+      fx[0] === "if" ? hollowRoute(fx[2]) ?? hollowRoute(fx[3])
+      : fx[0] === "check" ? hollowRoute(fx[3]) ?? hollowRoute(fx[4])
+      : fx[0] === "chance" ? hollowRoute(fx[2]) ?? hollowRoute(fx[3])
+      : null;
+    if (inner) return inner;
   }
-  return false;
+  return tally;
 }
 
 /** True when an effect list lowers a faction's standing or a companion's regard somewhere inside it. */
 function fxCostsStanding(fxs: Fx[] | undefined): boolean {
+  return standingAtRisk(fxs).length > 0;
+}
+
+/** The standing vars (`rep_*`, `appr_*`) an effect list can lower, in order of appearance. */
+function standingAtRisk(fxs: Fx[] | undefined): string[] {
+  const out: string[] = [];
   for (const fx of fxs ?? []) {
-    if (fx[0] === "addvar" && fx[2] < 0 && (fx[1].startsWith("rep_") || fx[1].startsWith("appr_"))) return true;
-    if (fx[0] === "if" && (fxCostsStanding(fx[2]) || fxCostsStanding(fx[3]))) return true;
-    if (fx[0] === "check" && (fxCostsStanding(fx[3]) || fxCostsStanding(fx[4]))) return true;
-    if (fx[0] === "chance" && (fxCostsStanding(fx[2]) || fxCostsStanding(fx[3]))) return true;
+    if (fx[0] === "addvar" && fx[2] < 0 && (fx[1].startsWith("rep_") || fx[1].startsWith("appr_"))) out.push(fx[1]);
+    if (fx[0] === "if") out.push(...standingAtRisk(fx[2]), ...standingAtRisk(fx[3]));
+    if (fx[0] === "check") out.push(...standingAtRisk(fx[3]), ...standingAtRisk(fx[4]));
+    if (fx[0] === "chance") out.push(...standingAtRisk(fx[2]), ...standingAtRisk(fx[3]));
   }
-  return false;
+  return [...new Set(out)];
+}
+
+/** "a miss costs standing with the Gray Church" — names what a failed check would cost, when the world names it. */
+function costsStandingHint(world: World, fxs: Fx[] | undefined): string | null {
+  const vars = standingAtRisk(fxs);
+  if (!vars.length) return null;
+  const names = vars
+    .map((v) => (v.startsWith("rep_") ? world.factions?.[v] : world.npcs[v.slice(5)]?.name))
+    .filter((n): n is string => !!n);
+  if (!names.length) return "a miss costs standing";
+  const list = names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0]!;
+  return `a miss costs standing with ${list}`;
 }
 
 /** True when an effect list can end the game somewhere inside it. */
@@ -1067,11 +1104,13 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     const mod = checkMod(world, s, chk[1]);
     const need = Math.max(1, chk[2] - mod);
     parts.push(mod ? `DC ${chk[2]}, ${mod > 0 ? "+" : ""}${mod} ${chk[1]}: roll ${need}+ on the die` : `DC ${chk[2]}, ${chk[1]}: roll ${need}+ on the die`);
-    // a miss that costs standing or regard is said before the die is thrown, like "fail costs 1hp"
-    if (fxCostsStanding(chk[4])) parts.push("a miss costs standing");
+    // a miss that costs standing or regard is said before the die is thrown, like "fail costs 1hp" — and with whom
+    const cost = costsStandingHint(world, chk[4]);
+    if (cost) parts.push(cost);
   }
-  // an action that settles a hold's grief is the one-shot the hold is built around; say so before it is taken
-  if (fx && fxSettlesHollow(fx)) parts.push("settles this hold's grief");
+  // an action that settles a hold's grief is the one-shot the hold is built around; say so before it is taken, and which way
+  const route = fx ? hollowRoute(fx) : null;
+  if (route) parts.push(`settles this hold's grief: ${route}`);
   if (who) parts.unshift(who);
   if (parts.length) return ` (${parts.join("; ")})`;
   if (a.kind === "use" && opts.itemHints !== false) {

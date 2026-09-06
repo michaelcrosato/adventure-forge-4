@@ -353,13 +353,20 @@ test("the menu says when an action settles a hold's grief or a miss costs standi
   ];
   const { state } = newState(world, 1);
   const menu = renderMenu(world, state).text;
-  assert.match(menu, /speak the rite \(settles this hold's grief\)/);
-  assert.match(menu, /press the prior \(will\) \(DC 10, will: roll 10\+ on the die; a miss costs standing\)/);
+  assert.match(menu, /speak the rite \(settles this hold's grief: rests it\)/);
+  assert.match(menu, /press the prior \(will\) \(DC 10, will: roll 10\+ on the die; a miss costs standing\)/, "no faction names in this world: the plain warning");
+  world.factions = { rep_church: "the Gray Church" };
+  assert.match(renderMenu(world, state).text, /a miss costs standing with the Gray Church/);
+  world.rooms["a"]!.actions!.push({ id: "vow", label: "swear the vow", fx: [["set", "x_hollow_bargained"], ["addvar", "hollows_rested", 1]] });
+  assert.match(renderMenu(world, state).text, /swear the vow \(settles this hold's grief: a bargain\)/);
   const unmet = step(world, state, actionByLabel(world, state, "snub the hunter")!);
   assert.doesNotMatch(unmet.events.join(" "), /Lys/, "a companion never met is not named: her existence is not news yet");
   state.visited.push("b"); // met her at her camp
   const out = step(world, state, actionByLabel(world, state, "snub the hunter")!);
   assert.match(out.events.join(" "), /\(Lys -1, when word reaches them\)/, "she is a room away, and still the move is told");
+  state.npcRoom["lys"] = "a";
+  const here = step(world, state, actionByLabel(world, state, "snub the hunter")!);
+  assert.match(here.events.join(" "), /Lys disapproves \(-1\)\./, "present, the move is told with its number");
 });
 
 test("a quest once done stays done in the journal, even if its failed condition later comes true", () => {
@@ -412,7 +419,7 @@ test("a remark can carry effects: a companion who speaks their mind can also thi
   let { state } = newState(world, 1);
   state = doLabel(world, state, "ask Lys: come with me");
   const out = step(world, state, actionByLabel(world, state, "take purse")!);
-  assert.match(out.events.join(" "), /Lys: "That's a habit\." Lys disapproves\./);
+  assert.match(out.events.join(" "), /Lys: "That's a habit\." Lys disapproves \(-1\)\./);
   assert.equal(out.state.vars["appr_lys"], -1);
 });
 
@@ -628,10 +635,10 @@ test("approval and named-faction changes print the turn they happen — companio
   let { state } = newState(world, 1);
   // Lys stands in the room: her reaction shows even before she joins
   let out = step(world, state, actionByLabel(world, state, "be kind")!);
-  assert.match(out.events.join(" "), /Lys approves\./);
+  assert.match(out.events.join(" "), /Lys approves \(\+1\)\./);
   assert.match(out.events.join(" "), /\(the Watch -2\)/);
   out = step(world, out.state, actionByLabel(world, out.state, "be cruel")!);
-  assert.match(out.events.join(" "), /Lys strongly disapproves\./);
+  assert.match(out.events.join(" "), /Lys strongly disapproves \(-2\)\./);
   // far away and not in the party: silent
   state = out.state;
   state = doLabel(world, state, "go east");

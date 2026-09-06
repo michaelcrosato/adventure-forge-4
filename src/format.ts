@@ -226,6 +226,8 @@ export function renderStatus(world: World, s: State): string {
   if (s.ended) lines.push("The tale is told. What follows is how things stood at the end; the quests listed are the ones left undone.");
   else if (recap) lines.push(recap);
   // the score's ceiling lives here, not in every turn's header, where it read as a progress bar
+  // the turn, so a player counting a budget need not cross-reference the last screen's header
+  if (s.turn > 0) lines.push(`Turn ${s.turn}.`);
   if (world.maxScore !== undefined)
     lines.push(`Score: ${s.score}/${world.maxScore} (a bonus tally of discoveries and choices; it can fill long before the tale ends)`);
   if (s.ended) {
