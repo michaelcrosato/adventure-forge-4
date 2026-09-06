@@ -304,6 +304,12 @@
             "say": "Neave's gone east of the ash. Five fires couldn't move her; you did it with seven gold and a wagon. Kindest thing I've seen this side of Thornwold."
           },
           {
+            "id": "r_theft_4",
+            "if": [["var", "thefts", ">=", 4]],
+            "say": "Four. Hunger has an end to it. This doesn't.",
+            "fx": [["addvar", "appr_lys", -1]]
+          },
+          {
             "id": "r_theft_habit",
             "if": [["var", "thefts", ">=", 2]],
             "say": "Twice now. That's not hunger talking. That's a habit.",
@@ -992,6 +998,12 @@
             "id": "r_or_va_flagstone_later",
             "if": [["flag", "or_scout_va_flagstone"], ["flag", "fd_entered"]],
             "say": "That carving found me a world from here, before I even knew this water existed. I still do not know what to make of that."
+          },
+          {
+            "id": "r_theft_4",
+            "if": [["var", "thefts", ">=", 4]],
+            "say": "Four times now. I stopped finding verses for it at two. I'm running out of silences too.",
+            "fx": [["addvar", "appr_osk", -1]]
           }
         ],
         "leaves": [
@@ -1602,6 +1614,24 @@
             "id": "r_or_th_wm_bearing",
             "if": [["any", [["flag", "or_warden_th_vane"], ["flag", "or_warden_wm_hale"]]]],
             "say": "A captain and a sergeant, different colors, same read on you at a glance. Soldiers know soldiers. I'd take that over a medal."
+          },
+          {
+            "id": "r_theft_3",
+            "if": [["var", "thefts", ">=", 3]],
+            "say": "Three. I said I don't give second warnings. Consider this the sound of me counting, not warning.",
+            "fx": [["addvar", "appr_tamsin", -1]]
+          },
+          {
+            "id": "r_theft_4",
+            "if": [["var", "thefts", ">=", 4]],
+            "say": "Four times, from under people's noses. You've had all the words you're getting out of me on it.",
+            "fx": [["addvar", "appr_tamsin", -1]]
+          },
+          {
+            "id": "r_theft_6",
+            "if": [["var", "thefts", ">=", 6]],
+            "say": "I've stopped counting. That should worry you more than the counting did.",
+            "fx": [["addvar", "appr_tamsin", -1]]
           }
         ],
         "leaves": [
@@ -2212,6 +2242,12 @@
             "id": "r_or_wm_va_reading_later",
             "if": [["any", [["flag", "or_envoy_wm_gossip"], ["flag", "or_envoy_va_herald"]]], ["flag", "mg_entered"]],
             "say": "A spymaster's gossip, a herald's script — you read both the same careful way, half a Reach apart. I have kept a private tally of it."
+          },
+          {
+            "id": "r_theft_5",
+            "if": [["var", "thefts", ">=", 5]],
+            "say": "Five things taken that were watched. I catalogue habits for a living; I know what this one is called.",
+            "fx": [["addvar", "appr_vell", -1]]
           }
         ],
         "leaves": [
