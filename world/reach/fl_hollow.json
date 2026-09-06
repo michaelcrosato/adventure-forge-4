@@ -233,6 +233,22 @@
           "text": "Names, rite, and verse are all yours. Speak them together at the cairn to rest the furrow whole."
         },
         {
+          "if": [["var", "fl_names_known", ">=", 3], ["flag", "fl_church_rite_known"], ["!flag", "fl_keeper_verse_known"]],
+          "text": "Names and rite are yours. The verse is Frey's: hear the Winter from Ede, press Frey on what she is, then ask her."
+        },
+        {
+          "if": [["var", "fl_names_known", ">=", 3], ["flag", "fl_keeper_verse_known"], ["!flag", "fl_church_rite_known"]],
+          "text": "Names and verse are yours. The rite is Sister Merrow's: hear her doubts about the Church, then ask her for it."
+        },
+        {
+          "if": [["var", "fl_names_known", ">=", 3], ["!flag", "fl_church_rite_known"], ["!flag", "fl_keeper_verse_known"]],
+          "text": "The names are whole. The rite is Merrow's, once she owns her doubts; the verse is Frey's, once you press her."
+        },
+        {
+          "if": [["flag", "fl_church_rite_known"], ["flag", "fl_keeper_verse_known"], ["var", "fl_names_known", "<", 3]],
+          "text": "Rite and verse are yours. The names still want three sources: Ede's memory, the parish roll, the headland's markers."
+        },
+        {
           "if": [["has", "fl_cinder_oil"]],
           "text": "You carry Ironbound cinder-oil. Burn the furrow at the cairn, if that's the ending you'll answer for."
         },
