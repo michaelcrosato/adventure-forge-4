@@ -126,7 +126,7 @@
           "id": "wm_buy_blade",
           "label": "buy a watch-issue blade (8 gold)",
           "once": true,
-          "if": [["var", "gold", ">=", 8]],
+          "if": [["var", "gold", ">=", 8], ["!flag", "stole_wm_spare_mail"], ["!flag", "stole_wm_spare_spear"]],
           "fx": [
             ["addvar", "gold", -8],
             ["move", "wm_watch_blade", "inv"],
@@ -149,7 +149,7 @@
         {
           "id": "wm_buy_dressing",
           "label": "buy a field dressing (3 gold)",
-          "if": [["var", "gold", ">=", 3]],
+          "if": [["var", "gold", ">=", 3], ["!flag", "stole_wm_spare_mail"], ["!flag", "stole_wm_spare_spear"]],
           "fx": [
             ["addvar", "gold", -3],
             ["move", "wm_field_dressing", "inv"],
@@ -1149,7 +1149,7 @@
           "id": "writ",
           "label": "ask for the Regent's writ",
           "if": [["!flag", "regent_writ"], ["!flag", "said_wm_envoy_writ_no"]],
-          "say": "Burn a hollow for the Ironbound, or give this Watch two honest services, and I'll write you passage to Marrowgate myself. Have you done either yet?",
+          "say": "Burn a hollow clean for the Ironbound, or give this Watch two honest services, and I'll write you passage to Marrowgate myself. Have you done either yet?",
           "fx": [
             [
               "if",
@@ -1159,7 +1159,7 @@
                 ["score", 6],
                 ["xp", 3],
                 ["addvar", "rep_crown", 1],
-                ["say", "A hollow put to the fire is proof enough for the Regent. The writ is yours."]
+                ["say", "One hollow burned clean is proof enough by the Regent's own measure. The writ is yours."]
               ],
               [
                 [
@@ -1170,11 +1170,11 @@
                     ["score", 6],
                     ["xp", 3],
                     ["addvar", "rep_crown", 1],
-                    ["say", "Highward vouches for you twice over. That is more than most captains get. The writ is yours."]
+                    ["say", "Two honest services to this Watch — the Regent's own measure. Highward vouches for you twice over. The writ is yours."]
                   ],
                   [
                     ["set", "said_wm_envoy_writ_no"],
-                    ["say", "Not yet, then. Serve the Watch, or serve the Ironbound's fire. I keep count either way."]
+                    ["say", "Not yet, then. One hollow burned, or two services done — I keep count either way."]
                   ]
                 ]
               ]
@@ -1195,7 +1195,7 @@
                 ["score", 6],
                 ["xp", 3],
                 ["addvar", "rep_crown", 1],
-                ["say", "A hollow burned settles it. The writ is yours."]
+                ["say", "One hollow burned settles it, the Regent's own count. The writ is yours."]
               ],
               [
                 [

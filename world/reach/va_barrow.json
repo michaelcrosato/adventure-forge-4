@@ -49,7 +49,12 @@
               "check",
               "might",
               11,
-              [["set", "va_barrow_open"], ["xp", 2], ["say", "Stone grinds on stone. The doors open."]],
+              [
+                ["set", "va_barrow_open"],
+                ["set", "va_barrow_forced"],
+                ["xp", 2],
+                ["say", "Stone grinds on stone. The doors open."]
+              ],
               [["hp", -1], ["say", "The doors do not move, and the recoil wrenches your shoulder."]]
             ]
           ]
@@ -60,6 +65,7 @@
           "if": [["class", "warden"], ["!flag", "va_barrow_open"]],
           "fx": [
             ["set", "va_barrow_open"],
+            ["set", "va_barrow_forced"],
             ["xp", 2],
             ["say", "One good shoulder is all it takes. Stone grinds on stone and gives way at once."]
           ]
@@ -75,6 +81,7 @@
               11,
               [
                 ["set", "va_barrow_open"],
+                ["set", "va_barrow_gapped"],
                 ["xp", 2],
                 ["move", "va_keeper_token", "inv"],
                 ["say", "The stone gives when you lean on it; roots and old rain have hollowed a gap beneath. Wedged in the gap, a worn half-token."]
@@ -89,6 +96,7 @@
           "if": [["!flag", "va_barrow_open"], ["flag", "va_knows_gap"]],
           "fx": [
             ["set", "va_barrow_open"],
+            ["set", "va_barrow_gapped"],
             ["xp", 2],
             ["move", "va_keeper_token", "inv"],
             ["say", "Right where the tally said: the stone lifts, and the gap beneath is worn smooth by years of someone's knees. Wedged in it, a worn half-token."]
@@ -717,7 +725,15 @@
         {
           "id": "bye",
           "label": "step back from the seat",
+          "if": [["!flag", "va_king_forsaken"]],
           "say": "I have waited four hundred years. I can wait while you decide.",
+          "end": true
+        },
+        {
+          "id": "bye_forsaken",
+          "label": "step back from the seat",
+          "if": [["flag", "va_king_forsaken"]],
+          "say": "Keep it, then. I have waited four hundred years for the wrong reason. I can wait a while longer for no reason at all.",
           "end": true
         }
       ],
@@ -825,7 +841,7 @@
       "text": "Of the Hollow King the Vale says only that he sleeps, crowned, and that the grass on his hill is the greenest in the Reach."
     },
     {
-      "if": [["flag", "va_broke_promise"], ["!has", "va_watch_shield"]],
+      "if": [["flag", "va_broke_promise"], ["!flag", "va_sealed"], ["!has", "va_watch_shield"]],
       "text": "The reeve of Last Light kept the watch shield you gave back, and never spoke your name again."
     },
     {
@@ -833,8 +849,8 @@
       "text": "No wolves run the Ashwood now. The hunter says the wood is quieter for it, and does not say whether that is good."
     },
     {
-      "if": [["flag", "va_broke_promise"], ["has", "va_watch_shield"]],
-      "text": "The reeve of Last Light never got his watch shield back, nor a word of why, and never spoke your name again."
+      "if": [["flag", "va_broke_promise"], ["!flag", "va_sealed"], ["has", "va_watch_shield"]],
+      "text": "The reeve of Last Light never got a word of why, and never spoke your name again, though he never asked for the shield back."
     },
     {
       "if": [["flag", "or_scout_va_king_tread"]],

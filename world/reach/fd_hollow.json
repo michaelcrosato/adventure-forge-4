@@ -153,6 +153,7 @@
                 ["set", "fd_hollow_done"],
                 ["set", "osk_family_rested"],
                 ["addvar", "hollows_rested", 1],
+                ["addvar", "hollows_bargained", 1],
                 ["addvar", "rep_church", 1],
                 ["addvar", "rep_iron", -1],
                 ["addvar", "appr_osk", 1],
@@ -407,7 +408,12 @@
       "weight": 2
     },
     {
-      "if": [["!flag", "fd_hollow_rested"], ["!flag", "fd_hollow_bargained"], ["!flag", "fd_hollow_burned"]],
+      "if": [
+        ["flag", "fd_entered"],
+        ["!flag", "fd_hollow_rested"],
+        ["!flag", "fd_hollow_bargained"],
+        ["!flag", "fd_hollow_burned"]
+      ],
       "text": "The singing under the water was never answered. It's still there some dusks, if you know to listen.",
       "weight": 1
     },

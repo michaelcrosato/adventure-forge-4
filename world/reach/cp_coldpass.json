@@ -33,6 +33,23 @@
       ],
       "actions": [
         {
+          "id": "cp_gate_dual_ways",
+          "label": "weigh the writ against the stair",
+          "if": [
+            ["any", [["var", "hollows_rested", ">=", 3], ["flag", "hb_keepers_key_found"]]],
+            ["flag", "regent_writ"],
+            ["!flag", "cp_came_by_stair"],
+            ["!flag", "cp_came_by_writ"],
+            ["!flag", "cp_came_by_cave"]
+          ],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "Both roads stand open to you: the Keepers' quiet stair, and the Regent's own writ. Whichever you use, the guard at this gate will remember you by that one, and no other."]
+          ]
+        },
+        {
           "id": "cp_door_stair",
           "label": "climb the Keepers' pilgrim stair",
           "if": [["any", [["var", "hollows_rested", ">=", 3], ["flag", "hb_keepers_key_found"]]]],
@@ -74,7 +91,7 @@
     },
     "cp_courtyard": {
       "name": "St. Ashwyn's Perch — Courtyard",
-      "desc": "Flagstones swept clear of snow more from habit than hope. A gatehouse bell-rope hangs slack by the door. The pilgrims' hall lies east, the scriptorium west, the bell-tower's stair up, a guesthouse in, and a trail climbing north into the Spine.",
+      "desc": "Flagstones swept clear of snow more from habit than hope. A gatehouse bell-rope hangs slack by the door. The pilgrims' hall lies east, the scriptorium west, the bell-tower up, a guesthouse in, and a windy trail climbing north into the Spine.",
       "brief": "The swept courtyard.",
       "region": "cp",
       "landmark": "St. Ashwyn's Perch",
@@ -114,7 +131,7 @@
       "variants": [
         {
           "if": [["var", "hollows_rested", ">=", 3]],
-          "desc": "Flagstones swept clear of snow more from habit than hope. Pilgrims cluster by the gatehouse bell-rope, word of the covenant stair finally open passed hand to hand like a relic. The trail climbs north into the Spine.",
+          "desc": "Flagstones swept clear of snow more from habit than hope. Pilgrims cluster by the gatehouse bell-rope, word of the covenant stair finally open passed hand to hand like a relic. The trail climbs north into the Spine, wind and all.",
           "brief": "The courtyard. Pilgrims trading word of the stair."
         }
       ]
@@ -929,7 +946,7 @@
         {
           "cell": [2, 3],
           "name": "The Waystone Trail",
-          "desc": "The trail levels here, and the monastery's roofline shows south, below. Scree slides west; a line of pilgrim-cairns marches east; north the ground climbs hard into rock, toward whatever waits up there.",
+          "desc": "The trail levels here, and the monastery's roofline shows south, below. Scree slides west; a line of pilgrim-cairns marches east; north the ground climbs hard into rock. The wind up here already finds every gap a cloak leaves open.",
           "brief": "The trail levels. The Perch is south, below.",
           "onEnterOnce": [["xp", 1]]
         },

@@ -108,7 +108,7 @@
     },
     "fd_net_hall": {
       "name": "The Net-Hall",
-      "desc": "Long tables under a low roof, hung thick with nets that smell of tar and fish. A banked fire keeps the worst of the damp out. The eel-market lies north, the Priory south, the rest of Reedholm east; the landing is west.",
+      "desc": "Long tables under a low roof, hung thick with nets that smell of tar and fish. A banked fire keeps the worst of the damp out. The eel-market lies north, the Priory south, Stilt Row east; the landing is west.",
       "brief": "Nets and a banked fire.",
       "region": "fd",
       "exits": {
@@ -392,6 +392,7 @@
       "desc": "Leaning houses on stilts, walkways slick underfoot. A child's shoe hangs from one rail, small and gray, and nobody has taken it down in years. The net-hall lies west.",
       "brief": "Leaning houses, a small gray shoe.",
       "region": "fd",
+      "landmark": "Stilt Row",
       "exits": {
         "west": { "to": "fd_net_hall" },
         "north": { "to": "fd_drying_racks" },
@@ -1055,6 +1056,14 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "after_bargained",
+          "label": "the tithe on the water",
+          "if": [["flag", "fd_hollow_bargained"]],
+          "once": true,
+          "say": "A tenth of every catch, mine included, going back to the water every year now. Quieter's worth something. I just wish it cost somebody else's nets too.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "fd_netkeep_theft",
           "label": "about the net-needle, since",
           "if": [["flag", "stole_fd_netkeep_needle"]],
@@ -1128,6 +1137,14 @@
           "if": [["flag", "fd_entered"]],
           "once": true,
           "say": "Bad for business, zealots. Folk don't linger to buy eel with a brazier and a burning-sermon two doors down.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "after_bargained",
+          "label": "the tithe on the water",
+          "if": [["flag", "fd_hollow_bargained"]],
+          "once": true,
+          "say": "A tenth of every haul, straight back to the water, same as rent to a landlord that never shows its face. I can live with quieter. My ledger's less sure of it.",
           "fx": [["xp", 1]]
         },
         {
@@ -1457,6 +1474,55 @@
               []
             ]
           ]
+        },
+        {
+          "id": "tell_home",
+          "label": "tell her plainly: send him home",
+          "if": [
+            ["flag", "fd_asked_perrin"],
+            ["flag", "wm_perrin_torn"],
+            ["!flag", "rb_fd_wm_home"],
+            ["!flag", "rb_fd_wm_hidden"],
+            ["!flag", "rb_fd_wm_reported"]
+          ],
+          "once": true,
+          "say": "You tell her plain: he's alive, and torn enough to walk the west road home some nights if nobody stops him. She's moving before you finish, out toward the causeway. \"Then nobody's stopping him this time.\"",
+          "fx": [
+            ["set", "rb_fd_wm_home"],
+            ["set", "rb_fd_wm_done"],
+            ["addvar", "rep_watch", -1],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "appr_lys", 1]
+          ]
+        },
+        {
+          "id": "tell_hidden",
+          "label": "tell her not to force his hand",
+          "if": [
+            ["flag", "fd_asked_perrin"],
+            ["flag", "wm_perrin_torn"],
+            ["!flag", "rb_fd_wm_home"],
+            ["!flag", "rb_fd_wm_hidden"],
+            ["!flag", "rb_fd_wm_reported"]
+          ],
+          "once": true,
+          "say": "You tell her he's wavering, not run yet, and that pushing him now might be the thing that finally does it. She lets a breath out slow. \"Steadier's better than gone. My thanks for the gentler word.\"",
+          "fx": [["set", "rb_fd_wm_hidden"], ["set", "rb_fd_wm_done"], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "tell_reported",
+          "label": "tell her the Watch should know, plainly",
+          "if": [
+            ["flag", "fd_asked_perrin"],
+            ["flag", "wm_perrin_torn"],
+            ["!flag", "rb_fd_wm_home"],
+            ["!flag", "rb_fd_wm_hidden"],
+            ["!flag", "rb_fd_wm_reported"]
+          ],
+          "once": true,
+          "say": "You tell her the truth carries a risk: named to his sergeant, he stays, but watched. She weighs it a long moment. \"Watched and alive beats free and dead on some road. Tell them, then, if you must.\"",
+          "fx": [["set", "rb_fd_wm_reported"], ["set", "rb_fd_wm_done"], ["addvar", "rep_watch", 2], ["score", 3], ["xp", 2]]
         },
         {
           "id": "pending",

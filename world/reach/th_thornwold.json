@@ -161,7 +161,8 @@
             ["flag", "lys_brother_found"],
             ["!flag", "lys_brother_home"],
             ["!flag", "lys_brother_buried"],
-            ["!flag", "lys_brother_lost"]
+            ["!flag", "lys_brother_lost"],
+            ["!flag", "lys_brother_cleared"]
           ],
           "fx": [
             [
@@ -225,6 +226,7 @@
             ["!flag", "lys_brother_home"],
             ["!flag", "lys_brother_buried"],
             ["!flag", "lys_brother_lost"],
+            ["!flag", "lys_brother_cleared"],
             ["var", "gold", ">=", 10]
           ],
           "once": true,
@@ -272,7 +274,8 @@
             ["flag", "lys_brother_found"],
             ["!flag", "lys_brother_home"],
             ["!flag", "lys_brother_buried"],
-            ["!flag", "lys_brother_lost"]
+            ["!flag", "lys_brother_lost"],
+            ["!flag", "lys_brother_cleared"]
           ],
           "fx": [
             [
@@ -310,6 +313,7 @@
             ["!flag", "lys_brother_home"],
             ["!flag", "lys_brother_buried"],
             ["!flag", "lys_brother_lost"],
+            ["!flag", "lys_brother_cleared"],
             ["var", "gold", ">=", 6]
           ],
           "once": true,
@@ -369,8 +373,8 @@
     },
     "th_cookfire": {
       "name": "The Cook-Fire",
-      "desc": "A great iron pot hangs over coals that never quite go out. The cook ladles without looking up, and the smell alone is worth the walk from the muster ground.",
-      "brief": "An iron pot, coals banked low.",
+      "desc": "A great iron pot hangs over coals that never quite go out. The cook ladles without looking up, and the smell alone is worth the walk from the muster ground. South past the smoke, someone is putting arrows into straw, methodically.",
+      "brief": "An iron pot, coals banked low. Arrows land south.",
       "region": "th",
       "exits": { "east": { "to": "th_muster" }, "south": { "to": "th_scout_line" } },
       "actions": [
@@ -389,6 +393,7 @@
       "desc": "A row of stakes hung with straw targets, arrows bristling from most of them. A young man in faded Company colors nocks another shaft, form good and aim better — he has the look of someone who took up a bow to stop thinking about something else.",
       "brief": "Straw targets. A young archer.",
       "region": "th",
+      "landmark": "the scout line",
       "exits": { "north": { "to": "th_cookfire" } },
       "onEnter": [
         [
@@ -740,6 +745,7 @@
                 ["set", "th_hollow_done"],
                 ["set", "th_hollow_bargained"],
                 ["addvar", "hollows_rested", 1],
+                ["addvar", "hollows_bargained", 1],
                 ["score", 20],
                 ["xp", 8],
                 ["addvar", "rep_free", 2],
@@ -1041,7 +1047,13 @@
       "name": "the true pardon, unsent",
       "loc": "nowhere",
       "hint": "signed at Marrowgate, forty years late — read it where the Company can hear it",
-      "variants": [{ "if": [["flag", "th_pardon_used"]], "hint": "read over the Company at last; a keepsake now" }]
+      "variants": [
+        { "if": [["flag", "th_pardon_used"]], "hint": "read over the Company at last; a keepsake now" },
+        {
+          "if": [["flag", "th_hollow_burned"]],
+          "hint": "the glade is ash now; there is nowhere left to read this aloud"
+        }
+      ]
     },
     "th_free_blade": {
       "name": "a Free Company blade",
@@ -1113,7 +1125,7 @@
           "label": "propose the Company swear an oath",
           "if": [["flag", "th_heard_captain_lore"], ["!flag", "th_asked_captain_oath"]],
           "once": true,
-          "say": "...You're not wrong that we owe them something. I'll bring the Company to the glade myself — west past the Waiting Bough — when you're ready to lead the words. Don't waste it.",
+          "say": "...You're not wrong that we owe them something. I'll bring the Company to the glade myself — eight stands due west, straight through the wood, past the gray sergeant at the Waiting Bough. Don't waste it.",
           "fx": [["set", "th_asked_captain_oath"], ["xp", 2]]
         },
         {
@@ -1154,6 +1166,14 @@
           "once": true,
           "say": "Rook off our backs is worth more to me than coin. The road's yours — walk it under my word, and mind the tide.",
           "fx": [["set", "free_passage"], ["score", 4], ["xp", 3], ["addvar", "rep_free", 1]]
+        },
+        {
+          "id": "ask_lys_brother",
+          "label": "ask after Lys's brother",
+          "if": [["!flag", "lys_brother_found"]],
+          "once": true,
+          "say": "There's an archer at the scout line who might be who you're after — in from the gate to the muster ground, west to the cook-fire, then south. Name's Cal, if that helps any.",
+          "fx": [["xp", 1]]
         },
         {
           "id": "about_cal",
@@ -1255,7 +1275,7 @@
           "id": "ask_favor",
           "label": "what favor would buy the road",
           "if": [["flag", "th_heard_passage"], ["!flag", "free_passage"], ["!flag", "th_rook_dealt"]],
-          "say": "Rook, at the Rope Larder, poaching my woods and my patience. Deal with him — however you like, so long as it sticks — and the road under Coldpass is yours for nothing.",
+          "say": "Rook's camped two stands west of the gate, then one north past Fox Crossing — the Rope Larder, we call it. Deal with him however you like, so long as it sticks, and the road under Coldpass is yours for nothing.",
           "fx": [["xp", 1]]
         },
         {
@@ -1329,6 +1349,14 @@
           "label": "the wagon's trade",
           "once": true,
           "say": "Oil, iron, rope, the odd blade — and every debt anyone in this camp has ever run up. Ask, and if it's in the ledger I'll deal fair.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask_lys_brother",
+          "label": "ask after Lys's brother",
+          "if": [["!flag", "lys_brother_found"]],
+          "once": true,
+          "say": "Cal, you mean. Owes me more than he's paid. You'll find him at the scout line — in to the muster ground, west to the cook-fire, then south past it.",
           "fx": [["xp", 1]]
         },
         {
@@ -1494,6 +1522,14 @@
           "once": true,
           "say": "Everyone here's heard the tree groan at night. Half think it's the wind. Keepers hide west in the wood — past five stands, at its far corner — and a fool in the stockade dug up something he shouldn't have.",
           "fx": [["set", "th_heard_understory"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "ask_lys_brother",
+          "label": "ask after Lys's brother",
+          "if": [["!flag", "lys_brother_found"]],
+          "once": true,
+          "say": "Young archer, keeps to himself? That's Cal. Scout line's south of the cook-fire — in from the gate, west at the muster ground, then south.",
+          "fx": [["xp", 1]]
         },
         {
           "id": "vale_word_rested",
@@ -1749,6 +1785,30 @@
           "once": true,
           "say": "He reads your face before you speak. 'You read it. Out loud, where they could hear.' The guard, who heard the glade go quiet, unbars the cage without a word, and Fenn walks out into forty years of daylight.",
           "fx": [["set", "th_fenn_freed"], ["score", 3], ["xp", 2], ["addvar", "rep_free", 1]]
+        },
+        {
+          "id": "reaction_rested",
+          "label": "ask what he makes of the glade now",
+          "if": [["flag", "th_hollow_rested"], ["!flag", "th_pardon_used"]],
+          "once": true,
+          "say": "\"Rested proper, without my paper ever leaving Bray's box,\" he says, quiet. \"The dead don't care much whose words did it, I'd guess. Wish I'd known that going in.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "reaction_bargained",
+          "label": "ask what he makes of the glade now",
+          "if": [["flag", "th_hollow_bargained"]],
+          "once": true,
+          "say": "\"An oath instead of a pardon,\" he says. \"Maybe that's honester anyway — the living saying sorry beats the dead reading a paper they never asked to hear.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "reaction_burned",
+          "label": "ask what he makes of the glade now",
+          "if": [["flag", "th_hollow_burned"]],
+          "once": true,
+          "say": "He's quiet a long moment. \"Burned. Whatever I dug up went in the fire with the rest of them, the officer's lie right along with it. Some proof isn't worth the finding, it turns out.\"",
+          "fx": [["xp", 1], ["addvar", "rep_iron", -1]]
         },
         {
           "id": "bye",
@@ -2379,7 +2439,7 @@
       "stages": [
         {
           "if": [["has", "th_pardon"]],
-          "text": "The pardon is yours. Read it at the gallows glade: due west of Camp Gallows through the wood, four stands on."
+          "text": "The pardon is yours. Read it at the gallows glade: due west of Camp Gallows through the wood, eight stands on."
         },
         {
           "if": [["flag", "th_pardon_clue"]],
@@ -2398,11 +2458,11 @@
       "stages": [
         {
           "if": [["flag", "th_verse_known"]],
-          "text": "You know the rest-verse. Speak it over the Company at the Gallows Glade, west past the Waiting Bough."
+          "text": "You know the rest-verse. Speak it at the Gallows Glade: eight stands west, past the Waiting Bough."
         },
         {
           "if": [["has", "th_pardon"]],
-          "text": "The pardon is yours. Read it at the Gallows Glade, west past the Waiting Bough and the gray sergeant."
+          "text": "The pardon is yours. Read it at the Gallows Glade: eight stands west, past the Waiting Bough's sergeant."
         },
         {
           "if": [],

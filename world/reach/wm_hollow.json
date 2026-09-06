@@ -118,6 +118,7 @@
                 ["set", "wm_oath_resolved"],
                 ["set", "wm_hollow_bargained"],
                 ["addvar", "hollows_rested", 1],
+                ["addvar", "hollows_bargained", 1],
                 ["score", 20],
                 ["xp", 8],
                 ["addvar", "rep_watch", 2],
@@ -201,6 +202,7 @@
                 ["set", "wm_oath_resolved"],
                 ["set", "wm_hollow_bargained"],
                 ["addvar", "hollows_rested", 1],
+                ["addvar", "hollows_bargained", 1],
                 ["score", 20],
                 ["xp", 8],
                 ["addvar", "rep_watch", 2],
@@ -411,7 +413,7 @@
       "weight": 2
     },
     {
-      "if": [["!flag", "wm_oath_resolved"]],
+      "if": [["flag", "wm_entered"], ["!flag", "wm_oath_resolved"]],
       "text": "The oath-stone still stands on the moor, and the old guard with it, waiting on a word that was never going to come."
     },
     {

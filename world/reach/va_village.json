@@ -90,6 +90,25 @@
             ["score", 3],
             ["say", "Smaller, older, added by someone who did not sign: his crown was taken from his barrow by his own blood. That is why he cannot rest. The elder keeps what the first reeve left behind."]
           ]
+        },
+        {
+          "id": "va_notice_4",
+          "label": "read the notice board again",
+          "if": [["flag", "va_notice_3"], ["flag", "va_doors_decided"], ["!flag", "va_notice_4"]],
+          "fx": [
+            ["set", "va_notice_4"],
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "va_sealed"]],
+              [
+                ["say", "A fresh hand has added beneath the rest: the king is settled, and the barrow sealed for good. Let the hill be quiet now."]
+              ],
+              [
+                ["say", "A fresh hand has added beneath the rest: the king is settled, and the barrow stands open to the sky, by the priest's old counsel."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -188,13 +207,13 @@
               11,
               [
                 ["set", "va_coffer_opened"],
-                ["set", "va_coffer_picked"],
                 ["move", "va_crown", "inv"],
                 ["score", 10],
                 ["xp", 3],
                 ["addvar", "appr_lys", 1],
                 ["addvar", "appr_vell", -1],
-                ["say", "Quiet fingers find the old lock's give while the elder's back is turned. Inside: the crown, old iron, heavy for its size, something engraved inside the band."]
+                ["say", "Quiet fingers find the old lock's give while the elder's back is turned. Inside: the crown, old iron, heavy for its size, something engraved inside the band."],
+                ["chance", 40, [["set", "va_coffer_picked"], ["addvar", "thefts", 1]], []]
               ],
               [["say", "The pins hold. The elder turns a page without looking up."]]
             ]
@@ -366,7 +385,7 @@
           "label": "about the promise I broke",
           "if": [["flag", "va_broke_promise"]],
           "once": true,
-          "say": "He told me himself, in his way. I'd rather have heard it from you first. I'll take it plain over hearing it from no one. The watch remembers, though. It always has.",
+          "say": "Nobody needed to tell me. A broken word doesn't stay quiet on its own. I'd have taken it from you first, if you'd offered. The watch remembers, though. It always has.",
           "fx": [["xp", 2], ["addvar", "rep_watch", 1]]
         },
         {
@@ -442,9 +461,20 @@
         {
           "id": "reeve_blessed_open",
           "label": "the priest opened the barrow",
-          "if": [["flag", "va_promised_seal"], ["flag", "va_barrow_open"], ["!flag", "va_doors_decided"]],
+          "if": [["flag", "va_promised_seal"], ["flag", "va_barrow_blessed"], ["!flag", "va_doors_decided"]],
           "once": true,
           "say": "The priest opened it for you, I hear, blessing and all. Fine. Doors open to go in. Shut them after, as you said, and we'll have no quarrel."
+        },
+        {
+          "id": "reeve_forced_open",
+          "label": "the barrow, opened your own way",
+          "if": [
+            ["flag", "va_promised_seal"],
+            ["any", [["flag", "va_barrow_forced"], ["flag", "va_barrow_gapped"]]],
+            ["!flag", "va_doors_decided"]
+          ],
+          "once": true,
+          "say": "Word is the doors stand open and the priest never laid a hand on them. However you managed it, you'll still shut them after, as you said, and we'll have no quarrel."
         },
         {
           "id": "thefts_watch",
@@ -479,7 +509,7 @@
           "id": "factions",
           "label": "the reeve and the priest",
           "once": true,
-          "say": "Those two haven't agreed in years. The reeve wants the barrow shut for good; the priest wants it open, still grieving the king. His blessing opens the doors — but not for anyone who promised the reeve to shut them.",
+          "say": "Those two haven't agreed in years. The reeve wants it shut after; the priest wants it grieved open first. Ask his blessing before promising the reeve — both wishes hold. Promise first, and he wants his own way past it.",
           "fx": [["xp", 1]]
         },
         {
@@ -539,9 +569,17 @@
         {
           "id": "doors_open",
           "label": "the open barrow doors",
-          "if": [["flag", "va_barrow_open"]],
+          "if": [["flag", "va_barrow_open"], ["!flag", "va_sealed"]],
           "once": true,
           "say": "Word beat you back to the square — the barrow stands open. I've fitted edges for that wood my whole life and never expected the doors to be the thing that gave.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "doors_sealed",
+          "label": "the sealed barrow doors",
+          "if": [["flag", "va_sealed"]],
+          "once": true,
+          "say": "Word is you shut it again once he was done grieving. Whatever's left up there stays in the dark now — might be the wiser road, for once.",
           "fx": [["xp", 2]]
         },
         {
@@ -579,7 +617,7 @@
           "if": [["flag", "va_heard_oldking"], ["!flag", "va_barrow_open"], ["!flag", "va_promised_seal"]],
           "once": true,
           "say": "Go with the gray blessing, then. Far off, the stone doors grind open. No promise binds them shut. Go when you're ready.",
-          "fx": [["set", "va_barrow_open"], ["addvar", "rep_church", 1]]
+          "fx": [["set", "va_barrow_open"], ["set", "va_barrow_blessed"], ["addvar", "rep_church", 1]]
         },
         {
           "id": "blessing_refused",
@@ -590,7 +628,7 @@
         {
           "id": "release",
           "label": "break my word to the reeve: release me",
-          "if": [["flag", "va_promised_seal"]],
+          "if": [["flag", "va_promised_seal"], ["!flag", "va_doors_decided"]],
           "once": true,
           "say": "Vows are not mine to unmake, only to witness broken. I'll say nothing to the reeve. You will have to, in the end. Go with a clear path, if not a clear conscience.",
           "fx": [
@@ -638,6 +676,14 @@
           "if": [["flag", "va_king_slain"]],
           "once": true,
           "say": "You killed a grieving man because he was already dead. I will pray over the dust. I will not pretend it was a rite.",
+          "fx": [["xp", 1], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "after_forsaken",
+          "label": "the crown, kept after all",
+          "if": [["flag", "va_king_forsaken"]],
+          "once": true,
+          "say": "You heard him grieve and walked out with his crown in your pack anyway. I have no rite for a door left open on a man nobody meant to answer. I will light the candle regardless.",
           "fx": [["xp", 1], ["addvar", "rep_church", -1]]
         },
         {
@@ -765,6 +811,30 @@
           "if": [["flag", "va_coffer_picked"]],
           "once": true,
           "say": "She has found fresh scratches round the keyhole, bright over old rust. \"Someone tried this before ever asking,\" she says. Not quite a question.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "king_rested",
+          "label": "the king rests",
+          "if": [["flag", "va_king_rested"]],
+          "once": true,
+          "say": "He rests, then. Four hundred years I kept that coffer shut, weighing which fear was worse. Turns out neither was the one worth keeping.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "king_slain",
+          "label": "the king is dust",
+          "if": [["flag", "va_king_slain"]],
+          "once": true,
+          "say": "Dust. Whatever was in that coffer, it didn't save him from a blade in the end. I don't know if that makes the keeping of it foolish or just late.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "king_forsaken",
+          "label": "the crown, kept after all",
+          "if": [["flag", "va_king_forsaken"]],
+          "once": true,
+          "say": "So the crown walks free of the vale, and the king stays where he was. I sat on that coffer forty years to spare us this. Mind where you carry it.",
           "fx": [["xp", 1]]
         },
         {
