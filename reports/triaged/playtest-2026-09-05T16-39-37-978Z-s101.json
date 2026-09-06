@@ -1,0 +1,58 @@
+{
+  "verdict": "stuck",
+  "fun": 4,
+  "clarity": 3,
+  "turns": 600,
+  "receipt": "",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Priest dialogue option 'release me from my promise' reads as an innocuous question but silently breaks the player's earlier promise to the reeve and immediately fails the 'Barrow Doors' quest, with no confirmation and no warning that the phrasing was itself the irrevocable action.",
+      "where": "Gray Chapel / talking with gray priest"
+    },
+    {
+      "sev": "P1",
+      "what": "Two major quest chains ('The True Pardon' at Thornwold, 'Hob's Marked Pick'/'Wenna's Name'/'The Hundred' at Cinderhall) name a destination ('the gallows glade', 'the Hundred Gallery') but give no directional guidance to find it; each is buried many rooms deep in an unmarked wilderness maze of 15-20+ near-identical tiles. I spent roughly 100 turns wandering for each before stumbling onto the correct thread by chance (a stray 'gallows road' exit label, a lucky westward detour).",
+      "where": "Thornwold deep wood / Iron Downs spoil-heaps"
+    },
+    {
+      "sev": "P1",
+      "what": "Reaching Coldpass/Marrowgate required 'the Keeper's Key', obtainable only from an NPC (Keeper Wren) in a third, distant hold (Hollowbrook/Barrowmere) that nothing in the main quest text pointed to. The quest line read 'The Keepers can open the pilgrim stair at Coldpass, north past Wardmoor,' which reads as a literal direction (walk north from Wardmoor) rather than 'go find a specific Keeper elsewhere and get a key first.' I only found this by chance while chasing a companion's unrelated sidequest.",
+      "where": "status / The Gray quest text"
+    },
+    {
+      "sev": "P2",
+      "what": "Fenn, imprisoned in Camp Gallows' stockade for uncovering proof the Company's 40-year-old hanging was unlawful, never got a resolution. Even after I found the true pardon and read it publicly at the gallows glade (clearing the Company's name), his dialogue stayed frozen at 'leave him to the cage' / 'mind the guard doesn't hear the rest of it first' with no new options.",
+      "where": "Camp Gallows — The Stockade"
+    },
+    {
+      "sev": "P2",
+      "what": "Several 'barrow' side-dungeons in different regions (the Opened Cairn on Highward's moor, the Cutter's Barrow in Thornwold) and both watch-towers (Highward's Old Watchtower stair, Thornwold's Long Watch stair) are verbatim copy-paste content: identical wight fight, identical 'small worn ring' reward in an identical alcove line, identical shade-on-the-stair riddle, identical 'a cracked spyglass' reward at the top. Noticeable once you've done it twice."
+    }
+  ],
+  "confusions": [
+    "The intro states 'the straight road to Marrowgate runs near three hundred turns, a thorough one twice that [600]' — but genuinely thorough play (every NPC, every companion recruited, every optional room) in just 2 of the promised 6 side-holds plus the starting Vale used the entire 600-turn budget without ever leaving for Marrowgate. The stated pacing badly undersold the world's real size relative to the turn cap.",
+    "No in-game waypoint or 'head toward <quest target>' signal exists for named-but-unmapped locations; 'get your bearings' and 'travel to a known place' are only available in a handful of hub rooms, not generally in the wilderness mazes where they'd help most.",
+    "Companion approval/disapproval is tracked and announced (e.g. Lys disapproving of killing a starving wolf) but its practical consequences are never explained — unclear if it gates content, breaks the party, or is purely flavor.",
+    "It was never clear why some connecting rooms offer 'travel to a known place' and others (often visually identical wilderness tiles) do not."
+  ],
+  "suggestions": [
+    "Give named-but-unfound quest destinations (a 'glade', 'the Hundred Gallery', etc.) at least one directional breadcrumb in the quest text itself, e.g. 'follow the gallows road west past the hanging bough.'",
+    "Recalibrate or caveat the turn-budget guidance so players know a single side-hold, done thoroughly, can consume the entire 'thorough' estimate — or scale rewards/necessity so less-than-total exploration is clearly sufficient.",
+    "Add a confirmation step to any single dialogue line that silently completes/fails a standing quest (like breaking a promise), especially when the line is phrased as a question rather than a declarative action.",
+    "Close or signpost the Fenn stockade thread once the pardon is read publicly — right now it looks solvable but is a dead end.",
+    "Vary the copy-paste wight/shade/tower dungeons (different loot, different flavor text) so repeat visits don't feel like padding.",
+    "Make 'get your bearings' / 'travel to a known place' available more consistently in sprawling wilderness zones, not just at a few named hubs."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T16-39-37-978Z",
+  "seed": 101,
+  "build": {
+    "rev": "1104cc4",
+    "world": "4b87149c"
+  },
+  "cost_usd": null,
+  "verified": false
+}

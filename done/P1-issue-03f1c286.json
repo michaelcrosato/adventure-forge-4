@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "kind": "issue",
+  "id": "03f1c286",
+  "priority": "P1",
+  "unit_kind": "bug",
+  "title": "This whole session was played through the mcp__tinyforge__(new_game/act/look/status) tool interface rather than the `npm run turn` CLI. loop/report-check.mjs looks for a matching trace file under runs/ to replay and verify the final receipt; none existed for this session's seed, so the checker filed the report with verified:false even though the run completed a real *** WIN *** with a well-formed receipt. The MCP-tool entry point and the CLI entry point appear not to share the same trace/runs storage (or the MCP server runs from a different working directory), which undermines the receipt-verification pipeline for anyone playing via the tool interface.",
+  "where": "loop/report-check.mjs replay step, after playing via mcp__tinyforge__act/new_game rather than `npm run -s turn`",
+  "corroboration": 1,
+  "verified_reports": 0,
+  "evidence": [
+    {
+      "report": "playtest-2026-09-06T08-10-53-801Z-s367.json",
+      "seed": 367,
+      "quote": "This whole session was played through the mcp__tinyforge__(new_game/act/look/status) tool interface rather than the `npm run turn` CLI. loop/report-check.mjs looks for a matching trace file under runs/ to replay and verify the final receipt; none existed for this session's seed, so the checker filed the report with verified:false even though the run completed a real *** WIN *** with a well-formed receipt. The MCP-tool entry point and the CLI entry point appear not to share the same trace/runs storage (or the MCP server runs from a different working directory), which undermines the receipt-verification pipeline for anyone playing via the tool interface."
+    }
+  ],
+  "builds": [
+    {
+      "rev": "32c3a4b",
+      "world": "0920b5d0"
+    }
+  ],
+  "created": "2026-09-06T08:12:28.160Z"
+}

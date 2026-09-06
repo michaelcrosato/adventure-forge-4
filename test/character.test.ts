@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionLabel, legalActions, newState, step, xpForLevel } from "../src/engine.ts";
+import { actionLabel, legalActions, newState, oddsHint, step, xpForLevel } from "../src/engine.ts";
 import type { Action, State, World } from "../src/types.ts";
 
 const mini = (over: Partial<World> = {}): World => ({
@@ -247,4 +247,42 @@ test("class picks and perk picks replay deterministically (same seed, same hash)
     return state;
   };
   assert.deepEqual(run(), run());
+});
+
+test("a room action or topic the class opened says so in its hint, unless its label already does", () => {
+  const world = mini({
+    classes: CLASSES,
+    rooms: {
+      a: {
+        name: "A",
+        desc: "Room A.",
+        actions: [
+          { id: "read", label: "read the tally-stone outright", if: [["class", "scholar"]], fx: [["say", "You read it."]] },
+          { id: "read2", label: "read the stone (Scholar)", if: [["class", "scholar"]], fx: [["say", "You read it."]] },
+          { id: "peek", label: "look over the wall", free: true, if: [["class", "scholar"]], fx: [["say", "A yard."]] },
+          { id: "kick", label: "kick the stone", fx: [["say", "Ow."]] },
+          { id: "weigh", label: "weigh the stone", if: [["class", "scholar"]], fx: [["check", "wits", 10, [["say", "Heavy."]], [["say", "Hm."]]]] },
+        ],
+      },
+      b: { name: "B", desc: "Room B." },
+    },
+    npcs: { priest: { name: "Priest", room: "a", topics: [{ id: "lore", label: "the old tongue", if: [["class", "scholar"]], say: "You read it, then." }] } },
+  });
+  let { state } = newState(world, 1);
+  state = step(world, state, { kind: "classpick", id: "scholar" }).state;
+  const hint = (id: string) => oddsHint(world, state, { kind: "custom", room: "a", id });
+  assert.equal(hint("read"), " (as a Scholar)");
+  assert.equal(hint("read2"), "");
+  assert.equal(hint("peek"), " (free; as a Scholar)");
+  assert.equal(hint("kick"), "");
+  assert.match(hint("weigh"), /^ \(as a Scholar; DC 10, \+2 wits: roll 8\+ on the die\)$/);
+  assert.equal(oddsHint(world, state, { kind: "talk", npc: "priest", topic: "lore" }), " (as a Scholar)");
+  // the label itself never changes, so walkthroughs that match on it still replay
+  const legal = legalActions(world, state);
+  const read = legal.find((x) => x.kind === "custom" && x.id === "read")!;
+  assert.equal(actionLabel(world, read, state), "read the tally-stone outright");
+  // a Warden never sees the Scholar's line at all
+  let { state: w } = newState(world, 1);
+  w = step(world, w, { kind: "classpick", id: "warden" }).state;
+  assert.ok(!legalActions(world, w).some((x) => x.kind === "custom" && x.id === "read"));
 });

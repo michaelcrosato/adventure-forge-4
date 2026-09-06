@@ -1,0 +1,80 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 594,
+  "receipt": "reach.271.594.366.reach_at_rest.95b5c220",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Final epilogue line 'Tamsin never got to Cinderhall with you. The mine keeps its answer, and she keeps swinging at whatever is nearest.' directly contradicts the playthrough: Tamsin traveled to Cinderhall with the party, stood vigil at 'The Hundred Gallery — Deep' ('Tamsin stops just inside the door... This is it'), and approved multiple times on-site, including 'You've earned my back in a fight.' A different epilogue line in the same status screen ('You told Tamsin to make them answer for the mine. She did...') correctly reflects this, so the two lines actively contradict each other.",
+      "where": "status (ending epilogue) / Tamsin companion-outcome text"
+    },
+    {
+      "sev": "P1",
+      "what": "No way found to heal companion HP outside of combat. Brother Osk dropped to 3/8 hp around turn 260 (a lucky wolf hit) and stayed there for the rest of the 330-turn playthrough; 'rest by the fire'/'rest among the nets' and herb items only restored the player's own hp, never a companion's.",
+      "where": "The Net-Hall / rest among the nets; wild herbs, dried herbs, bitter forest bark items"
+    },
+    {
+      "sev": "P1",
+      "what": "Sequencing trap that turned out to be a false alarm but reads as a real threat: getting the gray priest's blessing to open the barrow doors, then promising the reeve to seal them, prompted the innkeep to warn 'his blessing opens the doors — but not for anyone who promised the reeve to shut them.' In practice the doors were already open and sealing them afterward worked with no penalty or contradiction shown at the throne. The warning implies a broken/blocked outcome that never materializes, which is confusing regardless of order chosen.",
+      "where": "The Last Light Inn / ask innkeep: the reeve and the priest"
+    },
+    {
+      "sev": "P2",
+      "what": "The Last Light Square notice board still prints the original 'settle the king in it and the doors are to be sealed' text verbatim on 'read the notice board again' even after the Hollow King is fully rested and the doors already resolved — every other town fixture (reeve, priest, Herald Corvane) got updated post-resolution lines, but the board did not.",
+      "where": "Last Light Square / read the notice board again"
+    },
+    {
+      "sev": "P2",
+      "what": "'win his debt clear at the ring (might)' kept appearing in the Muster Ground's menu after Cal's debt had already been cleared (for free, via the tally-error wits check) and 'Cal's Reckoning' was marked done — a stale option for an already-resolved quest.",
+      "where": "Camp Gallows / The Muster Ground"
+    },
+    {
+      "sev": "P2",
+      "what": "Skill checks with no in-fiction cost for retrying (e.g. old Maud's 'read the signs yourself' and 'offer to help, in trade' at Maud's Smoke-Hut) can be attempted again immediately after a failure with the exact same odds and no new information — nothing changes between a fail and the next identical attempt, which undercuts the tension of the roll.",
+      "where": "Thornwold / Maud's Smoke-Hut"
+    },
+    {
+      "sev": "P2",
+      "what": "Companion regard is tracked only as a hidden number surfaced by 'status'; the warning text ('If it happens again, I'm gone') gives no sense of scale, so after Brother Osk hit regard -2 there was no way to tell how close he actually was to leaving versus the warning being mostly flavor.",
+      "where": "Party / Brother Osk regard threshold"
+    },
+    {
+      "sev": "P2",
+      "what": "Reputation categorical labels lag behind the numeric deltas shown in bracketed feedback: 'the Watch: neither friend nor foe' persisted in status even right after a '(the Watch +1)' event, so the player has no visible sense of what threshold moves the label.",
+      "where": "status / faction reputation labels"
+    },
+    {
+      "sev": "P2",
+      "what": "Direction-finding for some off-the-beaten-path quest destinations gave precise step counts (Sergeant Coe: 'west five stands from Camp Gallows to the Listening Break, then north twice') while others gave none (Captain Vane's 'west past the Waiting Bough' for the Hanged Company), leading to roughly 15 turns of undirected backtracking through an interconnected forest grid before finding it.",
+      "where": "Thornwold / Captain Vane's Tent, 'propose the Company swear an oath'"
+    }
+  ],
+  "confusions": [
+    "The barrow-doors seal/open promise system (reeve wants sealed, priest's blessing implies open) is resolved cleanly at the throne, but the intermediate warning from the innkeep about the blessing being voided reads as a bigger deal than it turns out to be — nothing in the final scene flagged that the blessing had actually been overridden or preserved.",
+    "It's not always clear from an item's own flavor text whether it's still 'live' for a quest elsewhere (tarnished locket's 'MAREN' name, the true founding record) versus purely a keepsake ('nothing is owed on it') — both phrasings look similar in the carry-list until you dig into status.",
+    "Whether a companion can actually die at 0 hp, and what that would do to the run, was never demonstrated or explained; the closest companion (Osk) sat at 3/8 for ~330 turns without any escalating warning.",
+    "The Iron Downs' 'declare the miners' hall's claim' resolution is explicitly softer than the other two hollow-rests ('The Hundred do not rest, exactly — but they are minded now, not abandoned'), which is a nice nuance, but nothing on the choice menu itself flagged that this option was categorically different in kind from 'speak the truth' or 'bring the gallery down' before picking it."
+  ],
+  "suggestions": [
+    "Fix the Iron Downs epilogue flag so the 'Tamsin never got to Cinderhall with you' line cannot fire when the player actually completed the Hundred Gallery questline with Tamsin in the party.",
+    "Let 'rest by the fire'/'rest among the nets' and healing herbs also restore some companion hp, since there is currently no other sink for it once combat ends.",
+    "Refresh the Last Light notice board's text once the Hollow King is settled, matching the reeve/priest's own updated lines.",
+    "Gate out menu options tied to a quest stage that's already been resolved by another route (e.g. Cal's ring-fight after his debt is already cleared).",
+    "Show companions' regard as a small visible meter or threshold hint (e.g. 'one more like that and Osk leaves') rather than only a flat warning line, so the stakes of a disapproval are legible in the moment.",
+    "Standardize travel hints for secondary quest destinations (step counts / landmark chains) the way Sergeant Coe's Understory directions do, especially for one-off destinations reached only through a single NPC's dialogue.",
+    "Surface the faction-reputation numeric thresholds (or at least trend arrows) alongside the categorical label so a '+1' that doesn't move the label doesn't read as having done nothing."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T02-12-22-702Z",
+  "seed": 271,
+  "build": {
+    "rev": "8b6cfab",
+    "world": "83d82a03"
+  },
+  "cost_usd": null,
+  "verified": true
+}

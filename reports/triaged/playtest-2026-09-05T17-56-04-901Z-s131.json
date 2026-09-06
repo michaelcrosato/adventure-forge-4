@@ -1,0 +1,46 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 5,
+  "turns": 586,
+  "receipt": "reach.131.586.366.reach_at_rest.b16ff213",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Ending epilogue states 'In the Vale the barrow doors stay shut, as you promised' even though I explicitly chose 'decline to promise' when the reeve first offered (t7-9); I only sealed the doors later as a free, unprompted choice at the throne. The text asserts a promise that was never made.",
+      "where": "Marrowgate/Hollow Throne ending screen, re: Last Light Square reeve dialogue"
+    },
+    {
+      "sev": "P2",
+      "what": "'The Mission's Order' quest (Ironbound plan to burn Fenmarch's drowned nave) never leaves the open quest list even after I told Warder Iss the nave was already settled peacefully and she acknowledged it ('Wasn't fire, but quiet's something') — functionally resolved but journal keeps listing it as open for the rest of the run.",
+      "where": "The Ironbound Mission, Fenmarch / status journal"
+    },
+    {
+      "sev": "P2",
+      "what": "Directional hint 'North through the spoil, four heaps of spoil, then east' for the Hundred Gallery adit was ambiguous about which rooms count as a 'heap' — I overshot by one room (to The High Cut, a non-heap surface working) before backtracking to find the actual turn.",
+      "where": "Cinderhall head-frame bearings / Iron Downs spoil rooms"
+    }
+  ],
+  "confusions": [
+    "Whether declining to promise the reeve about the barrow doors locked in 'no' or just deferred the choice wasn't obvious until I re-asked and it explicitly said 'ask again if you change your mind' — good once found, but a beat of uncertainty.",
+    "The Keeper's Key's item description ('the pilgrims' stair at Coldpass, if the old talk holds') pointed to only one of its two actual uses; at Hollowbrook's Kings' Rest door I nearly spent it there out of fear I'd need a different key for Coldpass, only discovering the non-consuming verses alternative by exhausting dialogue options first.",
+    "No consistent signal for which hostile creatures attack on sight versus which merely guard a spot and leave you alone if you don't engage (the Gray Cairn husk never moved; the Charcoal Ring wolf and a couple of wights attacked the instant I entered) — learned only by trial."
+  ],
+  "suggestions": [
+    "Make the ending epilogue's barrow-doors line conditional on an actual promise having been given, or reword it to 'as you chose' so it's accurate regardless of path.",
+    "Auto-close or reword quests like The Mission's Order once their outcome is achieved through an alternate route, instead of leaving a resolved thread listed as open.",
+    "Replace ambiguous 'N heaps, then E' style counting directions with a named landmark cue (e.g. 'follow the cinder track east once the spoil gives way to bare rock') to reduce miscounting.",
+    "Flag which open quests are load-bearing for reaching an ending versus purely optional flavor, since by the endgame a dozen-plus side quests sit open with no way to tell which (if any) still matter."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T17-56-04-901Z",
+  "seed": 131,
+  "build": {
+    "rev": "46e0d8f",
+    "world": "d7a93610"
+  },
+  "cost_usd": null,
+  "verified": true
+}

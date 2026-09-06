@@ -1,0 +1,1722 @@
+{
+  "rooms": {
+    "fd_causeway_west": {
+      "name": "Fenmarch Causeway",
+      "desc": "Packed stone gives way to reed and standing water. Fenmarch's stilt-roofs show ahead through the reeds, gray on gray. West the causeway climbs back dry toward the Vale.",
+      "brief": "The causeway sinks into reed and water.",
+      "region": "fd",
+      "landmark": "Fenmarch causeway",
+      "exits": {
+        "west": { "to": "va_causeway" },
+        "in": { "to": "fd_settlement", "landmark": "Reedholm" },
+        "south": { "to": "fd_way_shrine", "sideTrip": true, "landmark": "a wayside shrine" }
+      },
+      "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
+    },
+    "fd_north_dike": {
+      "name": "Fenmarch North Dike",
+      "desc": "A raised dike holds the fen back from firmer ground. North the land climbs toward Hollowbrook's barrows; south the reeds close back over Reedholm's roofs.",
+      "brief": "The dike holds back the fen.",
+      "region": "fd",
+      "landmark": "Fenmarch north dike",
+      "exits": {
+        "north": { "to": "hb_south_dike" },
+        "in": { "to": "fd_settlement", "landmark": "Reedholm" },
+        "down": { "to": "fd_ford", "sideTrip": true, "landmark": "a washed-out ford" }
+      },
+      "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
+    },
+    "fd_coast_road": {
+      "name": "Fenmarch Coast Road",
+      "desc": "The road runs south on a spine of shingle between fen and open coast, salt creeping into the reed-smell. South it climbs toward the Saltkerns; north, Reedholm's stilts stand over black water.",
+      "brief": "Shingle spine, fen and sea.",
+      "region": "fd",
+      "landmark": "Fenmarch coast road",
+      "exits": {
+        "south": { "to": "sk_coast_road" },
+        "in": { "to": "fd_settlement", "landmark": "Reedholm" },
+        "east": { "to": "fd_wayside_camp", "sideTrip": true, "landmark": "a roadside camp" }
+      },
+      "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
+    },
+    "fd_settlement": {
+      "name": "Reedholm — the Landing",
+      "desc": "Stilt-houses crowd over black water, gray planking strung rail to rail between them. Nets dry everywhere and nobody mends them. A causeway runs west, a dike north, a shingle road south; the settlement crowds east, and a boardwalk trails out into open reed.",
+      "brief": "Reedholm's landing, stilts over black water.",
+      "region": "fd",
+      "landmark": "Reedholm",
+      "exits": {
+        "west": { "to": "fd_causeway_west", "landmark": "the causeway" },
+        "north": { "to": "fd_north_dike", "landmark": "the north dike" },
+        "south": { "to": "fd_coast_road", "landmark": "the coast road" },
+        "east": { "to": "fd_net_hall", "landmark": "the net-hall" }
+      },
+      "onEnterOnce": [
+        ["score", 3],
+        ["xp", 2],
+        ["say", "Somewhere past the last stilt-house, faint under the water at dusk, something sings. Nobody in Reedholm looks up when it does."]
+      ],
+      "actions": [
+        {
+          "id": "fd_landing_listen",
+          "label": "listen to the water",
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "Voices, or near enough — layered, slow, more felt through the planking than heard. It stops the moment you're sure of it."]
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "if": [["any", [["flag", "sv_fd_rested_named"], ["flag", "sv_fd_rested_refused"]]]],
+          "desc": "Stilt-houses crowd over black water, quiet now where the singing used to carry at dusk. Nets dry everywhere, and for once a few hands are out mending them instead of just watching the water.",
+          "brief": "Reedholm's landing, quiet, nets finally mended."
+        },
+        {
+          "if": [
+            [
+              "any",
+              [["flag", "sv_fd_bargained_paid"], ["flag", "sv_fd_bargained_honored"], ["flag", "fd_bargain_broken"]]
+            ]
+          ],
+          "desc": "Stilt-houses crowd over black water. The water's tithe came due this season, one way or another, and Reedholm still stands to talk about how it went.",
+          "brief": "Reedholm's landing. The tithe came due, one way or another."
+        },
+        {
+          "if": [["any", [["flag", "sv_fd_burned_claimed"], ["flag", "sv_fd_burned_spared"]]]],
+          "desc": "Stilt-houses crowd over black water gone merely dark where the nave burned. Reedholm has already decided, one way or another, what that water is for now.",
+          "brief": "Reedholm's landing. The burned water's use, decided."
+        },
+        {
+          "if": [["var", "hollows_burned", ">=", 2]],
+          "desc": "Stilt-houses crowd over black water, gray planking strung rail to rail between them. A length of black ribbon is tied to the landing rail, for hollows the Reach lost to fire this year. Nets dry everywhere and nobody mends them.",
+          "brief": "Reedholm's landing. A black ribbon on the rail."
+        }
+      ],
+      "onEnter": [
+        [
+          "if",
+          [
+            ["any", [["flag", "fd_hollow_rested"], ["flag", "fd_hollow_bargained"], ["flag", "fd_hollow_burned"]]],
+            ["!flag", "sv_fd_back"]
+          ],
+          [["set", "sv_fd_back"]],
+          []
+        ]
+      ]
+    },
+    "fd_net_hall": {
+      "name": "The Net-Hall",
+      "desc": "Long tables under a low roof, hung thick with nets that smell of tar and fish. A banked fire keeps the worst of the damp out. The eel-market lies north, the Priory south, Stilt Row east; the landing is west.",
+      "brief": "Nets and a banked fire.",
+      "region": "fd",
+      "exits": {
+        "west": { "to": "fd_settlement" },
+        "north": { "to": "fd_eel_market", "landmark": "the eel-market" },
+        "south": { "to": "fd_priory", "landmark": "the Priory" },
+        "east": { "to": "fd_stilt_row" }
+      },
+      "actions": [
+        {
+          "id": "fd_rest",
+          "label": "rest among the nets",
+          "fx": [["hp", 10], ["say", "You sleep salt-damp and warm enough, rocked by the water under the planks."]]
+        },
+        {
+          "id": "fd_letter_burn",
+          "label": "feed the letter to the banked fire",
+          "if": [["has", "th_letter"]],
+          "once": true,
+          "fx": [
+            ["move", "th_letter", "nowhere"],
+            ["set", "rb_th_fd_burn"],
+            ["addvar", "rep_iron", 1],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "The old paper catches fast and is ash before the words could trouble anyone further. Whatever the dead man meant to confess, the fire has it now instead of Reedholm."]
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "if": [["flag", "fd_wayside_helped"]],
+          "brief": "Nets, a banked fire, and a driftwood-cart family warming through."
+        },
+        {
+          "if": [["flag", "fd_wayside_refused"]],
+          "brief": "Nets, a banked fire, a driftwood-cart family keeping to the corner."
+        }
+      ]
+    },
+    "fd_eel_market": {
+      "name": "The Eel-Market",
+      "desc": "Baskets of live eels hiss and slap in shallow tubs. A trader missing two fingers weighs catch against coin, calling prices to no one in particular. The net-hall lies south.",
+      "brief": "Eels in tubs, a two-fingered scale.",
+      "region": "fd",
+      "exits": { "south": { "to": "fd_net_hall" } },
+      "actions": [
+        {
+          "id": "fd_buy_spear",
+          "label": "buy an eel-spear — 8 gold",
+          "if": [["var", "gold", ">=", 8], ["!has", "fd_eel_spear"]],
+          "fx": [
+            ["addvar", "gold", -8],
+            ["move", "fd_eel_spear", "inv"],
+            ["say", "A long spear, barbed for eel-work and balanced well enough for worse. 'Mind the barb coming back out,' she says."]
+          ]
+        },
+        {
+          "id": "fd_buy_cloak",
+          "label": "buy an oilskin cloak — 6 gold",
+          "if": [["var", "gold", ">=", 6], ["!has", "fd_oilskin_cloak"]],
+          "fx": [
+            ["addvar", "gold", -6],
+            ["move", "fd_oilskin_cloak", "inv"],
+            ["say", "Stiff with tar and salt, and it sheds water like it means it."]
+          ]
+        },
+        {
+          "id": "fd_buy_smoked",
+          "label": "buy smoked eel — 3 gold",
+          "if": [["var", "gold", ">=", 3], ["!flag", "stole_fd_trader_scale"]],
+          "fx": [
+            ["addvar", "gold", -3],
+            ["move", "fd_smoked_eel", "inv"],
+            ["say", "She wraps a length of smoked eel in waxed cloth without being asked twice."]
+          ]
+        },
+        {
+          "id": "fd_sell_ward",
+          "label": "sell the corroded ward-coin",
+          "if": [["has", "fd_cairn_ward"]],
+          "once": true,
+          "fx": [
+            ["move", "fd_cairn_ward", "nowhere"],
+            ["addvar", "gold", 4],
+            ["xp", 1],
+            ["say", "She turns it over once, shrugs, and pays four coin for the curiosity of it."]
+          ]
+        },
+        {
+          "id": "fd_haggle_cloak",
+          "label": "haggle the oilskin cloak (4 gold)",
+          "if": [["class", "envoy"], ["var", "gold", ">=", 4], ["!has", "fd_oilskin_cloak"]],
+          "once": true,
+          "fx": [
+            ["addvar", "gold", -4],
+            ["move", "fd_oilskin_cloak", "inv"],
+            ["set", "or_envoy_fd_haggle"],
+            ["say", "You talk the price down two coin before she's finished naming it, and she lets you, more amused than annoyed."]
+          ]
+        },
+        {
+          "id": "fd_fence_ward",
+          "label": "trade her the ward-coin, quietly",
+          "if": [["class", "scout"], ["has", "fd_cairn_ward"]],
+          "once": true,
+          "fx": [
+            ["move", "fd_cairn_ward", "nowhere"],
+            ["addvar", "gold", 6],
+            ["xp", 1],
+            ["set", "or_scout_fd_fence"],
+            ["say", "No questions, no scale weighed against it, just coin passed hand to hand under the counter. \"Didn't see a thing,\" she says. Neither did you."]
+          ]
+        }
+      ]
+    },
+    "fd_priory": {
+      "name": "The Priory of the Gray Church",
+      "desc": "Stone among the stilts, older than Reedholm itself — the mother-house of the Gray Church, or what's left of it. Prior Halm keeps candles lit against the damp. A cloister leads east.",
+      "brief": "Stone among stilts, candles lit.",
+      "region": "fd",
+      "exits": { "north": { "to": "fd_net_hall" }, "east": { "to": "fd_priory_cloister" } },
+      "actions": [
+        {
+          "id": "fd_confess",
+          "label": "press Halm on the tablet (will)",
+          "if": [["flag", "fd_read_tablet"], ["!flag", "fd_prior_confessed"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "fd_prior_confessed"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_church", -1],
+                ["addvar", "appr_osk", 1],
+                ["say", "He goes very still, then says it plain: they heard the bell-ringer's own warning and prayed over it instead. 'Now you know,' he says. 'Do with it what you will.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "fd_confess_missed"]],
+                  [
+                    ["set", "fd_confess_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "He looks at the floor a long moment and won't be moved today — and something in how you pressed him will reach the Priory's own ears before you do."]
+                  ],
+                  [
+                    ["say", "He looks at the floor a long moment. 'Some things are between me and that water,' he says, and won't be moved past it today."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_press_might",
+          "label": "loom over him until he breaks (might)",
+          "if": [["flag", "fd_read_tablet"], ["!flag", "fd_prior_confessed"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "fd_prior_confessed"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_church", -1],
+                ["addvar", "appr_osk", 1],
+                ["say", "You back him against the altar rail until the fear of you outweighs the fear of the water. 'Now you know,' he says, small. 'Do with it what you will.'"]
+              ],
+              [
+                ["say", "He goes rigid but says nothing, and you're not a man who beats confessions out of priests. Not today, anyway. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_press_wits",
+          "label": "lay the tablet against his words (wits)",
+          "if": [["flag", "fd_read_tablet"], ["!flag", "fd_prior_confessed"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "fd_prior_confessed"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_church", -1],
+                ["addvar", "appr_osk", 1],
+                ["say", "You lay the tablet's scraped confession next to his own account of the flood and let the dates do the arguing. He can't refute his own hand. 'Now you know,' he says. 'Do with it what you will.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "fd_press_wits_missed"]],
+                  [
+                    ["set", "fd_press_wits_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "The dates almost line up, not quite enough to pin him — and the Priory hears only that a stranger tried to build a case against its own Prior."]
+                  ],
+                  [
+                    ["say", "The dates almost line up, almost — not quite enough to pin him with. He watches you fail to make the case, and says nothing."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_expose_ironbound",
+          "label": "tell Halm what the Ironbound mean to do",
+          "if": [
+            ["flag", "fd_knows_ironbound_plan"],
+            ["!flag", "fd_ironbound_sided"],
+            ["!flag", "fd_ironbound_gone"],
+            ["!flag", "or_envoy_fd_broker"],
+            ["!flag", "fd_ironbound_refused"]
+          ],
+          "once": true,
+          "fx": [
+            ["set", "fd_ironbound_exposed"],
+            ["set", "fd_ironbound_gone"],
+            ["addvar", "rep_church", 1],
+            ["addvar", "rep_iron", -2],
+            ["npcgo", "fd_ironbound_warder", null],
+            ["npcgo", "fd_ironbound_second", null],
+            ["say", "Halm's face goes hard in a way you haven't seen on him. By evening the Priory's own men have walked the Ironbound off Stilt Row, iron sun and all. 'Not in my water,' is all he says of it."]
+          ]
+        }
+      ]
+    },
+    "fd_priory_cloister": {
+      "name": "The Cloister",
+      "desc": "A covered walk rings a drowned garden, more mud than green now. Grave-tablets line the inner wall, names worn past reading — except one, kept clear of moss on purpose. The Priory lies west.",
+      "brief": "The drowned garden, one clear tablet.",
+      "region": "fd",
+      "exits": { "west": { "to": "fd_priory" } },
+      "actions": [
+        {
+          "id": "fd_read_tablet",
+          "label": "read the one clear grave-tablet",
+          "once": true,
+          "fx": [
+            ["set", "fd_read_tablet"],
+            ["xp", 3],
+            ["score", 2],
+            ["say", "A name, a date — the flood's year — and beneath it, scraped by a different, later hand: THE DOOR STOOD OPEN. THEY CHOSE TO PRAY. Not a mason's line. Someone's confession, half-erased since."]
+          ]
+        },
+        {
+          "id": "fd_letter_tablets",
+          "label": "leave the letter with the grave-tablets",
+          "if": [["has", "th_letter"]],
+          "once": true,
+          "fx": [
+            ["move", "th_letter", "nowhere"],
+            ["set", "rb_th_fd_tablets"],
+            ["addvar", "rep_church", 1],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "You wedge the letter behind the one clear tablet. Whoever wrote it, and whoever it was for, Reedholm will remember them now, unnamed or not."]
+          ]
+        },
+        {
+          "id": "fd_tablet_scholar",
+          "label": "read the second hand outright",
+          "if": [["class", "scholar"], ["flag", "fd_read_tablet"], ["!flag", "fd_knows_sexton_hint"]],
+          "once": true,
+          "fx": [
+            ["set", "fd_knows_sexton_hint"],
+            ["set", "or_scholar_fd_tablet"],
+            ["score", 1],
+            ["xp", 2],
+            ["say", "You don't need the sexton to place the second hand: younger than the mason's cut, hurried, and — you'd stake your training on it — the Prior's own, decades before he wore the title."]
+          ]
+        }
+      ]
+    },
+    "fd_stilt_row": {
+      "name": "Stilt Row",
+      "desc": "Leaning houses on stilts, walkways slick underfoot. A child's shoe hangs from one rail, small and gray, and nobody has taken it down in years. The net-hall lies west.",
+      "brief": "Leaning houses, a small gray shoe.",
+      "region": "fd",
+      "landmark": "Stilt Row",
+      "exits": {
+        "west": { "to": "fd_net_hall" },
+        "north": { "to": "fd_drying_racks" },
+        "south": { "to": "fd_ironbound_camp", "landmark": "the Ironbound mission" }
+      }
+    },
+    "fd_drying_racks": {
+      "name": "The Drying Racks",
+      "desc": "Racks of split eel curing over a low fire. Whoever tends them has stepped away — a knife's stuck in the block, a coil of tarred rope beside it.",
+      "brief": "Curing eel, a knife left in the block.",
+      "region": "fd",
+      "exits": { "south": { "to": "fd_stilt_row" } },
+      "actions": [
+        {
+          "id": "fd_take_rope",
+          "label": "take the coil of tarred rope",
+          "once": true,
+          "if": [["!has", "fd_tarred_rope"]],
+          "fx": [
+            ["move", "fd_tarred_rope", "inv"],
+            ["xp", 1],
+            ["say", "Good rope, tarred against the wet. Whoever left it isn't likely to miss one coil."]
+          ]
+        }
+      ]
+    },
+    "fd_ironbound_camp": {
+      "name": "The Ironbound Mission",
+      "desc": "A netshed requisitioned and hung with the Ironbound's iron sun. A brazier stays lit day and night. Two of them keep it, waiting on an order to burn the nave and be done with the singing.",
+      "brief": "A netshed, an iron sun, a lit brazier.",
+      "region": "fd",
+      "exits": { "north": { "to": "fd_stilt_row" } },
+      "variants": [
+        {
+          "if": [["flag", "fd_ironbound_gone"]],
+          "desc": "The netshed stands empty, the iron sun taken down. Ash from the brazier is the only sign they were ever here.",
+          "brief": "Empty netshed, cold ash."
+        }
+      ]
+    },
+    "fd_way_shrine": {
+      "name": "The Wayside Shrine",
+      "desc": "A hump of dry ground beside the causeway, a gray-stone niche wedged with candle stubs. A shrine-keeper kneels by a pilgrim laid on a traveler's cloak, breath gone shallow and slow.",
+      "brief": "A candle-niche, a keeper, a dying pilgrim.",
+      "region": "fd",
+      "exits": { "north": { "to": "fd_causeway_west" } },
+      "onEnterOnce": [
+        ["xp", 1],
+        [
+          "if",
+          [["flag", "va_king_rested"]],
+          [
+            ["say", "Word crossed the causeway days back: the Vale's king sleeps easier now. The keeper lit an extra candle for it."]
+          ],
+          [
+            [
+              "if",
+              [["flag", "va_king_slain"]],
+              [
+                ["say", "Word crossed the causeway days back: the Vale's king fell to the blade. The keeper lights no extra candle for that kind of rest."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "va_king_forsaken"]],
+                  [
+                    ["say", "Word crossed the causeway days back: the Vale's king was left to his barrow, neither rested nor slain. The keeper only sighs at that."]
+                  ],
+                  []
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "id": "fd_shrine_sit",
+          "label": "sit with the dying pilgrim (will)",
+          "if": [["!flag", "fd_shrine_resolved"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              9,
+              [
+                ["set", "fd_shrine_resolved"],
+                ["set", "fd_shrine_sat"],
+                ["addvar", "rep_church", 1],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "You find the words, low and plain, and hold their hand until the breath just stops, easier than it was. The keeper says nothing. Nothing needs saying."]
+              ],
+              [
+                ["set", "fd_shrine_resolved"],
+                ["set", "fd_shrine_sat"],
+                ["xp", 1],
+                ["say", "You sit, but the words don't come, not the right ones. They go before you find them. The keeper closes the eyes for you, gently, like it's not the first time."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_shrine_carry",
+          "label": "offer to carry a token onward",
+          "if": [["!flag", "fd_shrine_resolved"]],
+          "fx": [
+            ["set", "fd_shrine_resolved"],
+            ["move", "fd_shrine_token", "inv"],
+            ["score", 1],
+            ["xp", 1],
+            ["say", "The keeper presses a small clay token into your hand, warm from the candle-niche. \"Leave it at the next chapel's altar,\" they say. \"Let the name travel that far.\""]
+          ]
+        }
+      ]
+    },
+    "fd_ford": {
+      "name": "The Washed Ford",
+      "desc": "A plank footbridge that isn't, not since the spring flood took its middle third. What's left leans toward a channel running faster than fen water has any right to.",
+      "brief": "A broken footbridge, a fast channel.",
+      "region": "fd",
+      "exits": { "up": { "to": "fd_north_dike" } },
+      "onEnterOnce": [
+        ["xp", 1],
+        [
+          "if",
+          [["flag", "hb_hollow_burned"]],
+          [
+            ["say", "Ash rides the current down from Hollowbrook some mornings, thin and gray. Nobody at the dike has said why out loud."]
+          ],
+          [
+            [
+              "if",
+              [["flag", "hb_hollow_rested"]],
+              [
+                ["say", "The channel's run clearer since word came down that Hollowbrook's mound went quiet. Small mercies, this far from the mere."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "hb_hollow_bargained"]],
+                  [
+                    ["say", "Word came down that Hollowbrook bought its grief quiet. The channel doesn't care either way, but you do."]
+                  ],
+                  []
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "id": "fd_ford_might",
+          "label": "force the ford — fail costs 2hp (might)",
+          "if": [["!flag", "fd_ford_crossed"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "fd_ford_crossed"],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "You put your shoulder into the current and cross by main strength, plank or no plank. It's cold, and it's done."]
+              ],
+              [
+                ["hp", -2],
+                ["say", "The current wants you more than the far bank does. You claw back out, soaked and short some strength for it."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_ford_grace",
+          "label": "cross the ford — fail costs 1hp (grace)",
+          "if": [["!flag", "fd_ford_crossed"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              10,
+              [
+                ["set", "fd_ford_crossed"],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "You find the give in each plank before it finds you, and cross light-footed over the gap the flood left."]
+              ],
+              [["hp", -1], ["say", "One plank answers your weight wrong, and you go down hard on the good one, winded."]]
+            ]
+          ]
+        },
+        {
+          "id": "fd_ford_detour",
+          "label": "backtrack for the long way round",
+          "if": [["!flag", "fd_ford_crossed"]],
+          "fx": [
+            ["set", "fd_ford_crossed"],
+            ["say", "You lose the better part of an hour finding a drier crossing upstream, but you cross dry, and that's worth something too."]
+          ]
+        }
+      ]
+    },
+    "fd_wayside_camp": {
+      "name": "The Drovers' Halt",
+      "desc": "A hollow off the shingle, sheltered by dune-grass. A family has pulled a handcart off the road and built a low fire, penny-pinching driftwood, watching the coast road both ways.",
+      "brief": "A driftwood fire, a handcart family.",
+      "region": "fd",
+      "exits": { "west": { "to": "fd_coast_road" } },
+      "onEnterOnce": [["xp", 1]],
+      "variants": [
+        {
+          "if": [["var", "hollows_burned", ">=", 1]],
+          "name": "The Refugees' Halt",
+          "desc": "A hollow off the shingle, sheltered by dune-grass. A family sits close around a driftwood fire, what they carried out of a burned hold stacked small beside them — not much, and all of it.",
+          "brief": "A driftwood fire, a burned hold's family."
+        }
+      ],
+      "actions": [
+        {
+          "id": "fd_wayside_coin",
+          "label": "share coin with the family",
+          "if": [["var", "gold", ">=", 2], ["!flag", "fd_wayside_resolved"]],
+          "fx": [
+            ["addvar", "gold", -2],
+            ["set", "fd_wayside_resolved"],
+            ["set", "fd_wayside_helped"],
+            ["addvar", "rep_church", 1],
+            ["score", 2],
+            ["xp", 1],
+            [
+              "if",
+              [["var", "hollows_burned", ">=", 1]],
+              [
+                ["say", "You press coin into the mother's hand. She doesn't thank you in words — just holds it a moment like it's heavier than coin should be."]
+              ],
+              [
+                ["say", "The drover nods you a real thanks and pockets it without counting. \"Every hold pays a toll somewhere,\" he says. \"Glad this one's kind.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_wayside_food",
+          "label": "share food with the family",
+          "if": [["!flag", "fd_wayside_resolved"]],
+          "fx": [
+            ["set", "fd_wayside_resolved"],
+            ["set", "fd_wayside_helped"],
+            ["addvar", "rep_church", 1],
+            ["score", 2],
+            ["xp", 1],
+            [
+              "if",
+              [["var", "hollows_burned", ">=", 1]],
+              [
+                ["say", "You hand over what's left of your own rations. The children don't wait for permission before eating."]
+              ],
+              [
+                ["say", "You share out your rations without being asked twice. The drover's wife insists on trading you a strip of dried meat for it anyway."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_wayside_refuse",
+          "label": "turn them away",
+          "if": [["!flag", "fd_wayside_resolved"]],
+          "fx": [
+            ["set", "fd_wayside_resolved"],
+            ["set", "fd_wayside_refused"],
+            ["addvar", "rep_church", -1],
+            ["xp", 1],
+            [
+              "if",
+              [["var", "hollows_burned", ">=", 1]],
+              [
+                ["say", "You keep walking. Behind you, nobody calls out — they've learned better by now than to expect otherwise."]
+              ],
+              [
+                ["say", "You keep walking. The drover doesn't call out either, just watches you go with the look of a man revising his opinion of strangers."]
+              ]
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "fd_eel_spear": { "name": "eel-spear", "loc": "nowhere", "hit": 1, "dmg": 4 },
+    "fd_oilskin_cloak": { "name": "oilskin cloak", "loc": "nowhere", "armor": 1 },
+    "fd_smoked_eel": {
+      "name": "smoked eel",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "eat it to ease a wound",
+      "use": [
+        {
+          "fx": [
+            ["hp", 4],
+            ["move", "fd_smoked_eel", "nowhere"],
+            ["say", "Salt and smoke; it settles the stomach and eases the ache."]
+          ]
+        }
+      ]
+    },
+    "fd_tarred_rope": {
+      "name": "coil of tarred rope",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "good for hauling something heavy up out of black water",
+      "variants": [{ "if": [["flag", "fd_hollow_done"]], "hint": "" }]
+    },
+    "fd_pitch": {
+      "name": "skin of Ironbound pitch",
+      "loc": "nowhere",
+      "hint": "the Ironbound's own brand-oil, meant for burning what won't rest"
+    },
+    "fd_shrine_token": {
+      "name": "the pilgrim's clay token",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "leave it at the next chapel's altar"
+    },
+    "fd_prior_candle": {
+      "name": "a fat altar candle, unlit",
+      "loc": "fd_priory",
+      "takeable": true,
+      "owner": "fd_prior",
+      "hint": "Church wax, meant for the drowned nave's altar"
+    },
+    "fd_trader_scale": {
+      "name": "a set of brass scale-weights",
+      "loc": "fd_eel_market",
+      "takeable": true,
+      "owner": "fd_eel_trader",
+      "hint": "keeps the trader honest, or looks like it"
+    },
+    "fd_netkeep_needle": {
+      "name": "a bone net-needle",
+      "loc": "fd_net_hall",
+      "takeable": true,
+      "owner": "fd_netkeep",
+      "hint": "worth little except to someone who knows knots"
+    }
+  },
+  "npcs": {
+    "fd_prior": {
+      "name": "Prior Halm",
+      "room": "fd_priory",
+      "dialogue": true,
+      "desc": "A thin man in gray, hands never quite still, watching the water through the door as much as you.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Prior Halm, for what that's worth these days. Sit if the damp doesn't trouble you — it troubles everyone eventually, in Fenmarch.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "mother_house",
+          "label": "this Priory",
+          "if": [["flag", "said_fd_prior_greet"]],
+          "once": true,
+          "say": "This is the Gray Church's mother-house — every gray priest between here and Coldpass trained under this roof once, mine included. Little enough to show for it now.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "flood",
+          "label": "the flood",
+          "if": [["flag", "said_fd_prior_mother_house"]],
+          "once": true,
+          "say": "Twenty years gone, the water rose in a night and took the old nave and its whole congregation with it. We prayed instead of ringing the warning bell. I did not choose that. I was young enough not to be asked.",
+          "fx": [["xp", 2], ["set", "fd_knows_hollow"]]
+        },
+        {
+          "id": "fault_rumor",
+          "label": "what folk say about the flood",
+          "if": [["flag", "said_fd_prior_flood"]],
+          "once": true,
+          "say": "Some in Reedholm say the Priory chose prayer over the bell on purpose, to test their faith. I've never found the courage to ask which of my elders believed that — or whether I would have.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "osk",
+          "label": "your novice, Brother Osk",
+          "if": [["flag", "osk_joined"]],
+          "once": true,
+          "say": "Sent to me green and hopeful, and I've taught him rites for a grief he had never stood in front of, not until you brought him this far east. I owe him better than I've given him.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "ironbound",
+          "label": "the Ironbound on Stilt Row",
+          "if": [["flag", "fd_entered"]],
+          "once": true,
+          "say": "Two of the Ironbound have pitched camp on Stilt Row, waiting to burn the nave and be done with it. They aren't wrong that something must be done. I only wish they'd asked before they arrived.",
+          "fx": [["set", "fd_knows_ironbound_plan"], ["xp", 2]]
+        },
+        {
+          "id": "after_rested",
+          "label": "the singing's stopped",
+          "if": [["flag", "fd_hollow_rested"]],
+          "once": true,
+          "say": "I felt it go, like a held breath finally let out. Whatever you did down there, it was mercy, and Fenmarch will not forget it soon.",
+          "fx": [["xp", 2], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "after_bargained",
+          "label": "the tithe you promised",
+          "if": [["flag", "fd_hollow_bargained"]],
+          "once": true,
+          "say": "Quieter, they tell me, not gone. A tithe's not absolution, but it's honest dealing, and the water seems to have taken it as such. I can live with quieter.",
+          "fx": [["xp", 2], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "after_burned",
+          "label": "the fire on the water",
+          "if": [["flag", "fd_hollow_burned"]],
+          "once": true,
+          "say": "You burned them. I understand the reasoning — I may even understand the mercy in it — but I buried my own faith in that water once, and now there's nothing left down there to visit.",
+          "fx": [["xp", 1], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "fd_news_rest",
+          "label": "word of a hollow at rest",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "th_hollow_rested"],
+                ["flag", "wm_hollow_rested"],
+                ["flag", "ir_hollow_rested"],
+                ["flag", "hb_hollow_rested"],
+                ["flag", "sk_hollow_rested"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Halm hears it secondhand, the way he hears most things now, and still it reaches him.",
+          "fx": [
+            ["say", "\"Another hold rested its grief instead of burning it,\" he says, hands finally still. \"Then it can be done gently. Good.\""],
+            ["addvar", "rep_church", 1]
+          ]
+        },
+        {
+          "id": "shrine_token",
+          "label": "leave the pilgrim's token at the altar",
+          "if": [["has", "fd_shrine_token"]],
+          "once": true,
+          "say": "Halm takes the token without a word and sets it among the others on the sill. \"One more name the water didn't get to keep quiet,\" he says. \"My thanks for carrying it.\"",
+          "fx": [
+            ["move", "fd_shrine_token", "nowhere"],
+            ["addvar", "rep_church", 1],
+            ["score", 2],
+            ["xp", 1],
+            ["set", "fd_shrine_token_church"]
+          ]
+        },
+        {
+          "id": "fd_crypts_robbed",
+          "label": "word of a robbed crypt",
+          "if": [["var", "crypts_robbed", ">=", 1]],
+          "once": true,
+          "say": "Word travels a Church roof faster than you'd think. However it happened, wherever, a crypt robbed is a crypt robbed. That doesn't sit easy with me.",
+          "fx": [["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "fd_crypts_laid",
+          "label": "word of the dead well kept",
+          "if": [["var", "crypts_laid", ">=", 2]],
+          "once": true,
+          "say": "You've a habit of leaving the dead better than you found them. That's rarer than you'd think, and the Church remembers who does it. Take this — small, but it's meant.",
+          "fx": [["addvar", "rep_church", 1], ["perk", "fd_halm_blessing"], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his candles",
+          "say": "Go gently on the walkways. Reedholm loses someone to the water most years; I'd rather not add a name I know.",
+          "end": true
+        },
+        {
+          "id": "fd_prior_theft",
+          "label": "about the altar candle, since",
+          "if": [["flag", "stole_fd_prior_candle"]],
+          "once": true,
+          "say": "Halm counts the candles now before he counts the collection plate. \"Take from the drowned's own altar, and pray to them yourself next time,\" he says.",
+          "fx": [["addvar", "rep_church", -1], ["xp", 1]]
+        },
+        {
+          "id": "tithe_due",
+          "label": "the first tithe",
+          "if": [["flag", "fd_hollow_bargained"]],
+          "once": true,
+          "say": "Halm says the first tithe comes due at the dark of the month — a tenth of Reedholm's catch, promised to water that keeps a better ledger than most men.",
+          "fx": [["set", "fd_heard_tithe"], ["xp", 1]]
+        },
+        {
+          "id": "tithe_pay_self",
+          "label": "pay the tithe yourself (10 gold)",
+          "if": [
+            ["flag", "fd_heard_tithe"],
+            ["var", "gold", ">=", 10],
+            ["!flag", "sv_fd_bargained_paid"],
+            ["!flag", "sv_fd_bargained_honored"],
+            ["!flag", "fd_bargain_broken"]
+          ],
+          "once": true,
+          "say": "You cover the tenth yourself, coin instead of catch. Halm takes it to the water personally, and Reedholm's nets stay full a while longer for it.",
+          "fx": [["addvar", "gold", -10], ["set", "sv_fd_bargained_paid"], ["score", 4], ["xp", 3], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "tithe_honor",
+          "label": "let the eel-market pay it as promised",
+          "if": [
+            ["flag", "fd_heard_tithe"],
+            ["!flag", "sv_fd_bargained_paid"],
+            ["!flag", "sv_fd_bargained_honored"],
+            ["!flag", "fd_bargain_broken"]
+          ],
+          "once": true,
+          "say": "The eel-market weighs out its tenth same as any other toll, grumbling about a lean season made leaner. Halm calls it faith kept. The trader calls it Tuesday.",
+          "fx": [["set", "sv_fd_bargained_honored"], ["score", 3], ["xp", 2], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "tithe_break",
+          "label": "tell Halm the water can whistle for it",
+          "if": [
+            ["flag", "fd_heard_tithe"],
+            ["!flag", "sv_fd_bargained_paid"],
+            ["!flag", "sv_fd_bargained_honored"],
+            ["!flag", "fd_bargain_broken"]
+          ],
+          "once": true,
+          "say": "Halm's face goes the color of the water outside. \"You don't renegotiate with what's drowned,\" he says. Whether the water agrees, Reedholm will learn in its own time.",
+          "fx": [
+            ["set", "sv_fd_bargained_broken"],
+            ["set", "fd_bargain_broken"],
+            ["score", 2],
+            ["xp", 2],
+            ["addvar", "rep_church", -2],
+            ["addvar", "appr_osk", -1]
+          ]
+        },
+        {
+          "id": "scholar_peer",
+          "label": "press him in the old tongue",
+          "if": [["class", "scholar"], ["flag", "said_fd_prior_flood"]],
+          "once": true,
+          "say": "You quote the rite he should have rung the bell over, word for word, in the tongue it was cut in. He flinches. \"You read it as I was taught it,\" he says. \"Not as I've let it become.\"",
+          "fx": [["set", "or_scholar_fd_halm"], ["xp", 2], ["addvar", "rep_church", 1]]
+        }
+      ]
+    },
+    "fd_sexton": {
+      "name": "old sexton",
+      "room": "fd_priory_cloister",
+      "desc": "Bent low over the one clear tablet, scraping moss that keeps coming back.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "the tablet you keep clear",
+          "once": true,
+          "say": "Someone has to. The rest can go under the moss; that one, never. It isn't for the dead's sake I keep it — it's for the Priory's memory, which is shorter.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "hint",
+          "label": "what happened, the year of the flood",
+          "if": [["flag", "said_fd_sexton_greet"]],
+          "once": true,
+          "say": "The water rose faster than anyone thought it could, and the Priory prayed instead of ringing the bell to run. Halm wasn't Prior then. He was young, and he watched it happen.",
+          "fx": [["xp", 2], ["set", "fd_knows_sexton_hint"]]
+        },
+        {
+          "id": "missed_name",
+          "label": "a name the rite missed",
+          "if": [["flag", "fd_hollow_rested"]],
+          "once": true,
+          "say": "The sexton says one more went into that water the night of the flood — a netmender's boy who drowned reaching for the chapel steps from outside, never counted among the congregation the bell rang for.",
+          "fx": [["set", "fd_heard_missed_name"], ["xp", 1]]
+        },
+        {
+          "id": "missed_carry",
+          "label": "carry his name back to the nave",
+          "if": [["flag", "fd_heard_missed_name"], ["!flag", "sv_fd_rested_named"], ["!flag", "sv_fd_rested_refused"]],
+          "once": true,
+          "say": "You go back out to the drowned nave and speak the boy's name over the water, alone. Nothing answers. You say it anyway, and somehow that turns out to be the whole point.",
+          "fx": [
+            ["set", "sv_fd_rested_named"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 1]
+          ]
+        },
+        {
+          "id": "missed_refuse",
+          "label": "the rite was for the congregation",
+          "if": [["flag", "fd_heard_missed_name"], ["!flag", "sv_fd_rested_named"], ["!flag", "sv_fd_rested_refused"]],
+          "once": true,
+          "say": "You tell him the bell rang for the congregation, not for every soul the water ever took. The sexton nods, like he expected as much, and goes back to scraping moss that keeps coming back.",
+          "fx": [
+            ["set", "sv_fd_rested_refused"],
+            ["score", 2],
+            ["xp", 1],
+            ["addvar", "rep_church", -1],
+            ["addvar", "appr_osk", -1]
+          ]
+        }
+      ]
+    },
+    "fd_netkeep": {
+      "name": "netkeep",
+      "room": "fd_net_hall",
+      "desc": "Mending net by firelight, fingers quick despite the poor light.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "the hall",
+          "once": true,
+          "say": "Warm, dry-ish, and nobody drowns under this roof. That's the whole of what I promise anyone. Steer clear of the old Flood-Watch tower past the reeds; it leans worse every year.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "rumor",
+          "label": "what folk are saying",
+          "if": [["flag", "said_fd_netkeep_greet"], ["!flag", "stole_fd_netkeep_needle"]],
+          "once": true,
+          "say": "That the singing's gotten louder since the Ironbound pitched their camp on Stilt Row. Whether that's the water answering them or just Reedholm's nerves, I couldn't say.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "drover_family",
+          "label": "the driftwood-cart family",
+          "if": [["any", [["flag", "fd_wayside_helped"], ["flag", "fd_wayside_refused"]]]],
+          "once": true,
+          "say": "The netkeep nods toward the corner where they've settled.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "fd_wayside_helped"]],
+              [
+                ["say", "\"Word reached us a stranger shared coin and bread with them on the coast road. That's why they trust this roof enough to stay,\" the netkeep says."]
+              ],
+              [
+                ["say", "\"They don't say much about the coast road,\" the netkeep says. \"Whatever happened out there, it's why they watch the door more than the fire.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "after",
+          "label": "the smoke over the water",
+          "if": [["flag", "fd_hollow_burned"]],
+          "once": true,
+          "say": "I've mended nets under worse skies. Never one I helped make, though.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "after_bargained",
+          "label": "the tithe on the water",
+          "if": [["flag", "fd_hollow_bargained"]],
+          "once": true,
+          "say": "A tenth of every catch, mine included, going back to the water every year now. Quieter's worth something. I just wish it cost somebody else's nets too.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "fd_netkeep_theft",
+          "label": "about the net-needle, since",
+          "if": [["flag", "stole_fd_netkeep_needle"]],
+          "once": true,
+          "say": "He pats down the hall's tools before you're even out of sight now. \"Word doesn't travel free to hands that don't ask first,\" he says.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "scout_press",
+          "label": "press him for what he's not saying",
+          "if": [["class", "scout"], ["flag", "said_fd_netkeep_greet"]],
+          "once": true,
+          "say": "He doesn't answer right away. \"Funny,\" he says at last, counting his tools without quite looking at them. \"Most folk don't notice what I'm not saying.\"",
+          "fx": [["set", "or_scout_fd_netkeep_wary"], ["xp", 1]]
+        }
+      ]
+    },
+    "fd_eel_trader": {
+      "name": "eel-trader",
+      "room": "fd_eel_market",
+      "desc": "Two fingers gone at the second knuckle, and quick enough with the rest not to miss them.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "the trade",
+          "once": true,
+          "say": "Eels don't care whose water they're in. Been a leaner catch since something's been tearing my traps out past the reed-line — near the Eel-Run some nights, just as often nowhere close to it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bounty",
+          "label": "the traps somebody's tearing out",
+          "if": [["flag", "said_fd_eel_trader_greet"], ["!flag", "fd_bog_bounty"]],
+          "once": true,
+          "say": "Some kind of bog-thing, near as I can tell — past my landing, one stand west then one south, by the Eel-Run. Proof pays three or four, whichever den it comes from.",
+          "fx": [["set", "fd_bog_bounty"], ["xp", 1]]
+        },
+        {
+          "id": "bounty_paid",
+          "label": "the hide, for the bounty",
+          "if": [["has", "fd_bog_hide"]],
+          "once": true,
+          "say": "That's the hide, all right. Ugly thing. Here — and my traps thank you, even if they can't say so themselves.",
+          "fx": [
+            ["move", "fd_bog_hide", "nowhere"],
+            ["set", "fd_bog_paid"],
+            ["addvar", "gold", 4],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "She counts four coins into your palm without haggling, which from her is its own kind of thanks."]
+          ]
+        },
+        {
+          "id": "bounty_charm",
+          "label": "the eel-trap charm, for the bounty",
+          "if": [["has", "fd_eelrun_loot"], ["!flag", "fd_bog_paid"]],
+          "once": true,
+          "say": "Not what's tearing my traps — different bite, different drag. But you went out for my sake and came back with something. That's worth a coin or two.",
+          "fx": [
+            ["move", "fd_eelrun_loot", "nowhere"],
+            ["set", "fd_bog_charm_paid"],
+            ["addvar", "gold", 2],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "She counts out two coins, slower than she did for the hide. 'For the trying,' she says. 'Not for the eel.'"]
+          ]
+        },
+        {
+          "id": "ironbound",
+          "label": "the Ironbound on Stilt Row",
+          "if": [["flag", "fd_entered"]],
+          "once": true,
+          "say": "Bad for business, zealots. Folk don't linger to buy eel with a brazier and a burning-sermon two doors down.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "after_bargained",
+          "label": "the tithe on the water",
+          "if": [["flag", "fd_hollow_bargained"]],
+          "once": true,
+          "say": "A tenth of every haul, straight back to the water, same as rent to a landlord that never shows its face. I can live with quieter. My ledger's less sure of it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "banter",
+          "label": "the smell of the eel-market",
+          "say": "Tubs and brine, morning to night. You get used to it, or you don't stay."
+        },
+        {
+          "id": "fd_eel_trader_theft",
+          "label": "about the scale-weights, since",
+          "if": [["flag", "stole_fd_trader_scale"]],
+          "once": true,
+          "say": "She's counted her weights twice since. \"Fingers that quick don't get my good prices anymore,\" she says, and means it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ash_claim",
+          "label": "a claim on the burned water",
+          "if": [["flag", "fd_hollow_burned"]],
+          "once": true,
+          "say": "The eel-trader wants to stake nets over the burned nave's water — nothing sings there to spook the catch anymore, she says — and asks you to put the idea to Halm before she does.",
+          "fx": [["set", "fd_heard_ash_claim"], ["xp", 1]]
+        },
+        {
+          "id": "ash_back",
+          "label": "back her claim to the Prior",
+          "if": [["flag", "fd_heard_ash_claim"], ["!flag", "sv_fd_burned_claimed"], ["!flag", "sv_fd_burned_spared"]],
+          "once": true,
+          "say": "You put it to Halm plainly: the dead don't need the water anymore. He doesn't argue, which is somehow worse than if he had. Her nets go in within the week.",
+          "fx": [
+            ["set", "sv_fd_burned_claimed"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_church", -1],
+            ["addvar", "appr_osk", -1]
+          ]
+        },
+        {
+          "id": "ash_refuse",
+          "label": "tell her to leave the ash in peace",
+          "if": [["flag", "fd_heard_ash_claim"], ["!flag", "sv_fd_burned_claimed"], ["!flag", "sv_fd_burned_spared"]],
+          "once": true,
+          "say": "You tell her some water stays a grave whether anything sings in it or not. She shrugs and takes her nets elsewhere, no harder feelings than a missed sale usually costs.",
+          "fx": [
+            ["set", "sv_fd_burned_spared"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 1]
+          ]
+        },
+        {
+          "id": "warden_sortie_ask",
+          "label": "take the reed-cuts on as your own watch",
+          "if": [["class", "warden"], ["flag", "fd_bog_bounty"]],
+          "once": true,
+          "say": "\"Bounty's bounty for anyone,\" she says, \"but you've the look of someone who'd call it duty instead. Suits me either way, so long as my traps stop coming back in pieces.\"",
+          "fx": [["set", "or_warden_fd_bog_asked"], ["xp", 1]]
+        },
+        {
+          "id": "warden_sortie_report",
+          "label": "report the reed-cuts stand quiet now",
+          "if": [["class", "warden"], ["flag", "or_warden_fd_bog_asked"], ["npcDead", "fd_bog_thing"]],
+          "once": true,
+          "say": "\"Quiet, is it. Good.\" She counts out a soldier's due rather than a bounty-hunter's, without being asked twice.",
+          "fx": [["set", "or_warden_fd_bog"], ["addvar", "gold", 2], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "envoy_haggle_after",
+          "label": "ask why she cut you that price",
+          "if": [["class", "envoy"], ["flag", "or_envoy_fd_haggle"]],
+          "once": true,
+          "say": "\"Because you'd have talked me down to less if I'd let you keep going,\" she says. \"I know when to stop losing.\"",
+          "fx": [["xp", 1]]
+        }
+      ]
+    },
+    "fd_mara": {
+      "name": "Mara",
+      "room": "fd_stilt_row",
+      "dialogue": true,
+      "desc": "Hangs washing that never quite dries, watching the water more than the line.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Lived on this row longer than most of the houses have stood. My husband went out checking eel-traps the night of the flood, twenty years gone. Never came back to be buried.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "ask",
+          "label": "ask about her husband",
+          "if": [["flag", "said_fd_mara_greet"], ["!flag", "fd_mara_asked"]],
+          "once": true,
+          "say": "If you go down there — if you find anything of his, a ring, a boot-buckle, anything — I'd want to know. Even now. Especially now.",
+          "fx": [["set", "fd_mara_asked"], ["xp", 2]]
+        },
+        {
+          "id": "give_truth",
+          "label": "tell her what the water gave up",
+          "if": [["has", "fd_grief_token"], ["!flag", "fd_mara_closure"]],
+          "once": true,
+          "say": "You set the buckle in her hands, black with years underwater. She holds it a long moment, then nods, like a question finally answered. 'Twenty years,' she says. 'I can stop asking now.'",
+          "fx": [
+            ["set", "fd_mara_closure"],
+            ["set", "fd_mara_told_truth"],
+            ["move", "fd_grief_token", "nowhere"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_church", 1]
+          ]
+        },
+        {
+          "id": "lie",
+          "label": "tell her he's at peace",
+          "if": [
+            ["flag", "fd_mara_asked"],
+            ["!has", "fd_grief_token"],
+            ["!flag", "fd_mara_closure"],
+            ["flag", "fd_hollow_done"]
+          ],
+          "once": true,
+          "say": "You tell her he's at peace, though you found nothing of him at all. She wants to believe it badly enough that she does. It isn't the truth. It settles her all the same.",
+          "fx": [["set", "fd_mara_closure"], ["set", "fd_mara_lied"], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "after",
+          "label": "how she's getting on",
+          "if": [["flag", "fd_mara_closure"]],
+          "once": true,
+          "say": "Better, some days. The row's quieter without the wondering in it. Thank you for that, whichever way you managed it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the washing",
+          "say": "Mind the planks past the third house. They've been rotten for years.",
+          "end": true
+        }
+      ]
+    },
+    "fd_ironbound_warder": {
+      "name": "Warder Iss",
+      "room": "fd_ironbound_camp",
+      "dialogue": true,
+      "desc": "An iron sun on a cord at her throat, watching the water like it owes her something.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Ironbound, out of Cinderhall. That nave's been singing grief into this water for a hundred years and the Church has done nothing but pray at it. We don't pray. We finish things.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "order",
+          "label": "the order you're waiting on",
+          "if": [["flag", "said_fd_ironbound_warder_greet"]],
+          "once": true,
+          "say": "Preceptor's word, or our own patience running out first. Either way, that nave burns eventually. Help us do it clean and it goes easier on everyone in these stilts.",
+          "fx": [["set", "fd_knows_ironbound_plan"], ["xp", 2]]
+        },
+        {
+          "id": "pitch",
+          "label": "side with them: take their pitch",
+          "if": [
+            ["flag", "said_fd_ironbound_warder_order"],
+            ["!has", "fd_pitch"],
+            ["!flag", "fd_hollow_done"],
+            ["!flag", "fd_ironbound_refused"],
+            ["!flag", "fd_ironbound_exposed"]
+          ],
+          "once": true,
+          "say": "Now you're talking sense. Take it — and when you're standing over that water, remember whose fire you're carrying.",
+          "fx": [
+            ["move", "fd_pitch", "inv"],
+            ["set", "fd_ironbound_sided"],
+            ["addvar", "rep_iron", 1],
+            ["addvar", "rep_church", -1],
+            ["xp", 1]
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "tell her the Church handles its own dead",
+          "if": [
+            ["flag", "said_fd_ironbound_warder_order"],
+            ["!flag", "fd_ironbound_sided"],
+            ["!flag", "fd_ironbound_refused"]
+          ],
+          "once": true,
+          "say": "Your funeral, not ours — but then, everything down here already is somebody's funeral. Suit yourself.",
+          "fx": [
+            ["set", "fd_ironbound_refused"],
+            ["addvar", "rep_church", 1],
+            ["addvar", "rep_iron", -1],
+            ["addvar", "appr_osk", 1]
+          ]
+        },
+        {
+          "id": "after_done",
+          "label": "the nave, now it's settled",
+          "if": [["flag", "fd_hollow_done"], ["!flag", "fd_hollow_burned"]],
+          "once": true,
+          "say": "Quiet, is it. Wasn't fire, but quiet's something. We'll take word of it back to Cinderhall regardless — a hollow dealt with is a hollow dealt with, our way or not.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "fd_news_ir",
+          "label": "word from Cinderhall",
+          "if": [["flag", "ir_aldous_ruined"]],
+          "once": true,
+          "say": "A courier off the coast road brings news from the chapterhouse.",
+          "fx": [
+            ["say", "\"Their own Preceptor, thrown out by his own chapterhouse.\" Iss's jaw goes tight. \"Then the order polices its own house before it lectures mine.\""],
+            ["addvar", "rep_iron", -1]
+          ]
+        },
+        {
+          "id": "warden_frank",
+          "label": "let her read you, soldier to zealot",
+          "if": [["class", "warden"], ["flag", "said_fd_ironbound_warder_greet"]],
+          "once": true,
+          "say": "She looks you over the way she'd look over a recruit. \"You've stood a line before. Good — then you know a hundred years of prayer hasn't put out one grief. Iron has, everywhere we've tried it.\"",
+          "fx": [["set", "or_warden_fd_iss"], ["xp", 2], ["addvar", "rep_iron", 1]]
+        },
+        {
+          "id": "envoy_broker",
+          "label": "make the maths simple for her",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "said_fd_ironbound_warder_order"],
+            ["!flag", "fd_ironbound_sided"],
+            ["!flag", "fd_ironbound_refused"],
+            ["!flag", "fd_ironbound_exposed"]
+          ],
+          "once": true,
+          "say": "You don't threaten and you don't concede. A public loss to the Church costs her order more than a quiet stand-down ever will, plainly put. She takes the arithmetic of it, and hands over a little for the trouble.",
+          "fx": [
+            ["set", "fd_ironbound_refused"],
+            ["set", "or_envoy_fd_broker"],
+            ["addvar", "gold", 5],
+            ["addvar", "rep_church", 1],
+            ["score", 4],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave the mission to its brazier",
+          "say": "Mind the water. It remembers who prayed and who didn't.",
+          "end": true
+        }
+      ]
+    },
+    "fd_ironbound_second": {
+      "name": "the second zealot",
+      "room": "fd_ironbound_camp",
+      "desc": "Feeds the brazier without being told to, and watches you over the flame.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "say nothing, just look at him",
+          "once": true,
+          "say": "He doesn't look up from the fire. 'Warder does the talking,' he says, and goes back to feeding it.",
+          "fx": [["xp", 1]]
+        }
+      ]
+    },
+    "fd_perrins_mother": {
+      "name": "Perrin's mother",
+      "room": "fd_settlement",
+      "desc": "Watches the causeway more than the water, a boy's bedding still folded on the shelf.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who keeps this vigil at the landing",
+          "once": true,
+          "say": "Perrin's mother, is who. My boy went to pay a debt in the Watch's colors, two winters gone to Highward. I keep his bed made up regardless.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask after her son at Highward",
+          "if": [["flag", "said_fd_perrins_mother_greet"]],
+          "once": true,
+          "say": "If you're bound for Wardmoor, ask the barracks after Perrin. Tell me true, whatever you find. I'd rather know than keep hoping blind.",
+          "fx": [["set", "fd_asked_perrin"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "done",
+          "label": "tell her what became of Perrin",
+          "if": [
+            ["flag", "fd_asked_perrin"],
+            ["any", [["flag", "rb_fd_wm_home"], ["flag", "rb_fd_wm_hidden"], ["flag", "rb_fd_wm_reported"]]]
+          ],
+          "once": true,
+          "say": "She's been watching the causeway every evening since you asked.",
+          "fx": [
+            ["set", "fd_perrin_told"],
+            ["score", 6],
+            ["xp", 3],
+            [
+              "if",
+              [["flag", "rb_fd_wm_home"]],
+              [
+                ["say", "She doesn't wait for you to finish the sentence before she's moving — down the road, toward whatever's coming."],
+                ["addvar", "appr_lys", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_fd_wm_hidden"]],
+              [
+                ["say", "\"Steadier, not home,\" she says, and nods like that's the better mercy. \"I can live with steadier.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_fd_wm_reported"]],
+              [
+                ["say", "She goes very quiet, then thanks you for the truth of it, which is not the same as thanking you for the news."],
+                ["addvar", "rep_watch", 1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "tell_home",
+          "label": "tell her plainly: send him home",
+          "if": [
+            ["flag", "fd_asked_perrin"],
+            ["flag", "wm_perrin_torn"],
+            ["!flag", "rb_fd_wm_home"],
+            ["!flag", "rb_fd_wm_hidden"],
+            ["!flag", "rb_fd_wm_reported"]
+          ],
+          "once": true,
+          "say": "You tell her plain: he's alive, and torn enough to walk the west road home some nights if nobody stops him. She's moving before you finish, out toward the causeway. \"Then nobody's stopping him this time.\"",
+          "fx": [
+            ["set", "rb_fd_wm_home"],
+            ["set", "rb_fd_wm_done"],
+            ["addvar", "rep_watch", -1],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "appr_lys", 1]
+          ]
+        },
+        {
+          "id": "tell_hidden",
+          "label": "tell her not to force his hand",
+          "if": [
+            ["flag", "fd_asked_perrin"],
+            ["flag", "wm_perrin_torn"],
+            ["!flag", "rb_fd_wm_home"],
+            ["!flag", "rb_fd_wm_hidden"],
+            ["!flag", "rb_fd_wm_reported"]
+          ],
+          "once": true,
+          "say": "You tell her he's wavering, not run yet, and that pushing him now might be the thing that finally does it. She lets a breath out slow. \"Steadier's better than gone. My thanks for the gentler word.\"",
+          "fx": [["set", "rb_fd_wm_hidden"], ["set", "rb_fd_wm_done"], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "tell_reported",
+          "label": "tell her the Watch should know, plainly",
+          "if": [
+            ["flag", "fd_asked_perrin"],
+            ["flag", "wm_perrin_torn"],
+            ["!flag", "rb_fd_wm_home"],
+            ["!flag", "rb_fd_wm_hidden"],
+            ["!flag", "rb_fd_wm_reported"]
+          ],
+          "once": true,
+          "say": "You tell her the truth carries a risk: named to his sergeant, he stays, but watched. She weighs it a long moment. \"Watched and alive beats free and dead on some road. Tell them, then, if you must.\"",
+          "fx": [["set", "rb_fd_wm_reported"], ["set", "rb_fd_wm_done"], ["addvar", "rep_watch", 2], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "pending",
+          "label": "tell her you've no word yet",
+          "if": [
+            ["flag", "fd_asked_perrin"],
+            ["!flag", "rb_fd_wm_home"],
+            ["!flag", "rb_fd_wm_hidden"],
+            ["!flag", "rb_fd_wm_reported"]
+          ],
+          "say": "She only nods, the way she's nodded every evening for two winters. \"Bed's still made,\" she says."
+        }
+      ]
+    }
+  },
+  "epilogue": [
+    {
+      "if": [["any", [["var", "hollows_rested", ">=", 1], ["var", "hollows_burned", ">=", 1]]]],
+      "text": "The Priory prays a name for every hold's grief it hears was rested, and burns a candle, not a nave, for every one that wasn't."
+    },
+    {
+      "if": [["flag", "fd_shrine_sat"]],
+      "text": "The wayside shrine's keeper still tells travelers of the stranger who sat with a dying pilgrim rather than just walk on.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "fd_wayside_helped"]],
+      "text": "Travelers on the coast road still speak of a stranger who shared what little they had with a family on the road.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_th_fd_tablets"]],
+      "text": "One more name rests among the Priory's grave-tablets now, carried east by a stranger, unread by anyone else.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_th_fd_burn"]],
+      "text": "A dead man's letter went into Reedholm's banked fire, unread. Whatever he meant to confess, the ash keeps it now.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_th_fd_water"]],
+      "text": "A sealed letter went down into the drowned nave's black water, joining a grief it never asked to keep.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "fd_shrine_token_church"]],
+      "text": "The pilgrim's token reached the Priory altar after all, one more name the water didn't keep quiet.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "fd_wayside_refused"]],
+      "text": "Travelers on the coast road still speak of a stranger who looked a hungry family over and kept walking.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_rested_named"]],
+      "text": "A netmender's boy the rite missed has his name said now too, alone over the drowned nave, by a stranger who thought it mattered.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_rested_refused"]],
+      "text": "One name the rite missed stays unspoken. The sexton still scrapes moss off the one tablet Reedholm agreed to remember.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_bargained_paid"]],
+      "text": "A stranger's purse paid Reedholm's first tithe. Prior Halm has never explained where exactly that coin went into the water.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_bargained_honored"]],
+      "text": "Reedholm pays its tithe from the catch, same tenth, same grumbling, every season the eel-market can least afford it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "fd_bargain_broken"]],
+      "text": "Reedholm never paid the water's tithe. The Priory doesn't say aloud what it thinks that silence is costing them.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_burned_claimed"]],
+      "text": "Nets go out now over the burned nave's water. The eel-trader doesn't say what, if anything, comes up tangled in them.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_burned_spared"]],
+      "text": "The burned nave's water stays empty of nets, by Reedholm's own choice, ash or no ash, grave or no grave.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_fd_iss"]],
+      "text": "Warder Iss still says one traveler through Reedholm carried a soldier's bearing under a stranger's coat.",
+      "weight": 1
+    },
+    {
+      "if": [["any", [["flag", "or_warden_fd_bog"], ["flag", "or_warden_fd_bog_asked"]]]],
+      "text": "The eel-trader still calls it the one bounty a Warden wouldn't take payment for like a bounty.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_fd_tablet"]],
+      "text": "The Priory's cloister keeps its one clear tablet. A scholar once named the second hand without being told.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_fd_halm"]],
+      "text": "Prior Halm still says one scholar quoted the drowned rite back at him better than he'd let himself keep it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_fd_broker"]],
+      "text": "Warder Iss pulled her mission off Stilt Row over a stranger's arithmetic, not a threat or a plea.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_fd_haggle"]],
+      "text": "The eel-market's trader still says she knows better than to haggle long with a silver tongue.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_fd_fence"]],
+      "text": "A corroded ward-coin passed under Reedholm's eel-counter once, no questions asked on either side.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_fd_netkeep_wary"]],
+      "text": "The net-hall's keeper still counts his tools twice when a certain quiet sort passes through, and won't say why.",
+      "weight": 1
+    }
+  ],
+  "quests": {
+    "fd_q_perrin": {
+      "name": "Perrin's Mother",
+      "start": [["flag", "fd_asked_perrin"]],
+      "done": [["flag", "fd_perrin_told"]],
+      "stages": [
+        {
+          "if": [["any", [["flag", "rb_fd_wm_home"], ["flag", "rb_fd_wm_hidden"], ["flag", "rb_fd_wm_reported"]]]],
+          "text": "Perrin's fate is settled. Tell his mother in Reedholm, as you promised her."
+        },
+        { "if": [["flag", "wm_entered"]], "text": "You're in Wardmoor. Ask after Perrin at Highward's barracks." },
+        {
+          "if": [],
+          "text": "A Reedholm mother wants word of her son, pressed into the Watch at Highward, in Wardmoor."
+        }
+      ]
+    },
+    "fd_q_after": {
+      "name": "After the Nave",
+      "start": [["flag", "sv_fd_back"]],
+      "done": [
+        [
+          "any",
+          [
+            ["flag", "sv_fd_rested_named"],
+            ["flag", "sv_fd_rested_refused"],
+            ["flag", "sv_fd_bargained_paid"],
+            ["flag", "sv_fd_bargained_honored"],
+            ["flag", "fd_bargain_broken"],
+            ["flag", "sv_fd_burned_claimed"],
+            ["flag", "sv_fd_burned_spared"]
+          ]
+        ]
+      ],
+      "stages": [
+        {
+          "if": [["flag", "fd_hollow_rested"]],
+          "text": "The old sexton has a name the rite missed. He's at the Priory cloister."
+        },
+        {
+          "if": [["flag", "fd_hollow_bargained"]],
+          "text": "Prior Halm has word of the first tithe. Find him at the Priory."
+        },
+        {
+          "if": [["flag", "fd_hollow_burned"]],
+          "text": "The eel-trader has an idea about the burned water. Find her at the market."
+        }
+      ]
+    }
+  },
+  "perks": {
+    "fd_halm_blessing": {
+      "name": "Halm's Blessing",
+      "desc": "+1 will checks (a Prior's word, kept)",
+      "require": { "level": 99 },
+      "bonus": { "check": { "will": 1 } }
+    }
+  }
+}

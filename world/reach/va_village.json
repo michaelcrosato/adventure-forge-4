@@ -1,0 +1,1072 @@
+{
+  "rooms": {
+    "va_gate": {
+      "name": "Village Gate",
+      "desc": "The last gate before the wood. Lanterns burn all day here now. The Ashwood waits north, gray on gray; the square lies south, and the old west road runs off toward Thornwold.",
+      "brief": "Lanterns at the gate.",
+      "region": "va",
+      "landmark": "Last Light gate",
+      "exits": {
+        "south": { "to": "va_square" },
+        "north": { "to": "va_wood_1_3", "landmark": "the Ashwood" },
+        "west": { "to": "va_west_road", "landmark": "the west road" }
+      },
+      "onEnterOnce": [["set", "va_entered"]],
+      "actions": [
+        {
+          "id": "va_gate_bearings",
+          "label": "get your bearings",
+          "fx": [
+            ["say", "North through the wood the trail climbs to the barrow. Bear east among the trees for the sunken shrine and the old watchtower; west for the hunter's camp. Last Light's square, inn, forge, and chapel lie south."]
+          ],
+          "free": true
+        }
+      ],
+      "variants": [
+        {
+          "if": [["var", "hollows_rested", ">=", 3]],
+          "brief": "Lanterns at the gate. The gray past the wood is thinner now.",
+          "desc": "The last gate before the wood. Lanterns still burn all day, more from habit than need now — the gray past the trees has thinned with every hold that has found its rest."
+        }
+      ]
+    },
+    "va_square": {
+      "name": "Last Light Square",
+      "desc": "Packed earth and a dry well. The reeve keeps watch by a notice board nobody reads twice. Inn west, forge east, chapel south; the gate north, and east past the well a causeway runs out into the fens.",
+      "brief": "The dry well.",
+      "region": "va",
+      "landmark": "Last Light square",
+      "exits": {
+        "north": { "to": "va_gate" },
+        "west": { "to": "va_inn" },
+        "east": { "to": "va_forge" },
+        "south": { "to": "va_chapel" },
+        "out": { "to": "va_causeway", "landmark": "the fen causeway" }
+      },
+      "onEnter": [
+        [
+          "if",
+          [["flag", "act2_open"], ["!flag", "va_herald_arrived"]],
+          [
+            ["set", "va_herald_arrived"],
+            ["npcgo", "va_herald", "here"],
+            ["say", "A rider in Marrowgate gray has tied a lathered horse at the well. He is reading the notice board with the face of a man reading a charge sheet."]
+          ],
+          []
+        ]
+      ],
+      "variants": [
+        { "if": [["flag", "va_king_rested"]], "brief": "The dry well. The air is clearer than it was." },
+        { "if": [["flag", "va_king_slain"]], "brief": "The dry well. The gray has thinned, not gone." }
+      ],
+      "actions": [
+        {
+          "id": "va_notice_1",
+          "label": "read the notice board",
+          "if": [["!flag", "va_notice_1"]],
+          "fx": [
+            ["set", "va_notice_1"],
+            ["xp", 1],
+            ["say", "By order of the reeve: the barrow on the hill is opened and the king in it will not rest. Folk call him the Hollow King. He is to be settled and the doors sealed after. Volunteers to the reeve. Read on."]
+          ]
+        },
+        {
+          "id": "va_notice_2",
+          "label": "read the notice board again",
+          "if": [["flag", "va_notice_1"], ["!flag", "va_notice_2"]],
+          "fx": [
+            ["set", "va_notice_2"],
+            ["xp", 1],
+            ["say", "Beneath, in a finer hand: grief sealed in stone festers; leave the doors open. Three verses were cut for him: sunken shrine, old watchtower (both east of the wood), the barrow's hall. Speak them; he sleeps. — the priest"]
+          ]
+        },
+        {
+          "id": "va_notice_3",
+          "label": "read the notice board again",
+          "if": [["flag", "va_notice_2"], ["!flag", "va_notice_3"]],
+          "fx": [
+            ["set", "va_notice_3"],
+            ["xp", 1],
+            ["score", 3],
+            ["say", "Smaller, older, added by someone who did not sign: his crown was taken from his barrow by his own blood. That is why he cannot rest. The elder keeps what the first reeve left behind."]
+          ]
+        },
+        {
+          "id": "va_notice_4",
+          "label": "read the notice board again",
+          "if": [["flag", "va_notice_3"], ["flag", "va_doors_decided"], ["!flag", "va_notice_4"]],
+          "fx": [
+            ["set", "va_notice_4"],
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "va_sealed"]],
+              [
+                ["say", "A fresh hand has added beneath the rest: the king is settled, and the barrow sealed for good. Let the hill be quiet now."]
+              ],
+              [
+                ["say", "A fresh hand has added beneath the rest: the king is settled, and the barrow stands open to the sky, by the priest's old counsel."]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "va_inn": {
+      "name": "The Last Light Inn",
+      "desc": "A low fire, empty tables, and an innkeep glad of any face. A traveller in road-worn gray sits nearest the hearth with a book, and does not look up until you are close. The square lies east.",
+      "brief": "Low fire, a traveller by the hearth.",
+      "region": "va",
+      "exits": { "east": { "to": "va_square" } },
+      "actions": [
+        {
+          "id": "va_rest",
+          "label": "rest by the fire",
+          "fx": [["hp", 10], ["say", "You sleep without dreams and wake steadier."]]
+        }
+      ]
+    },
+    "va_forge": {
+      "name": "The Forge",
+      "desc": "Coals banked low, breathing orange when the bellows sigh. The smith works with the door open, watching the road more than the anvil. Her apprentice hammers at the second anvil and does not miss a stroke when you come in. The square lies west.",
+      "brief": "Banked coals, two anvils.",
+      "region": "va",
+      "exits": { "west": { "to": "va_square" } },
+      "actions": [
+        {
+          "id": "va_take_blade",
+          "label": "take the plain sword from the wall",
+          "if": [["!has", "va_plain_sword"], ["!flag", "va_blade_taken"]],
+          "fx": [
+            ["set", "va_blade_taken"],
+            ["move", "va_plain_sword", "inv"],
+            ["perk", "keen_edge"],
+            ["xp", 2],
+            ["say", "You lift a plain sword from the wall and test the edge. Sound work. The smith nods once and puts a true edge on it while you wait."]
+          ]
+        }
+      ]
+    },
+    "va_chapel": {
+      "name": "Gray Chapel",
+      "desc": "A small stone chapel, candles against the dark. The priest wears ash on both hands; a young novice sweeps the same flagstone over and over. Wax and damp stone smell like the inside of a well. A door east leads to the elder's house.",
+      "brief": "Candles in the dark.",
+      "region": "va",
+      "exits": { "north": { "to": "va_square" }, "east": { "to": "va_elder_house" } },
+      "actions": [
+        {
+          "id": "va_flagstone_scout",
+          "label": "look under the swept flagstone",
+          "if": [["class", "scout"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_scout_va_flagstone"],
+            ["score", 2],
+            ["xp", 2],
+            ["move", "va_fenfolk_carving", "inv"],
+            ["say", "Nobody sweeps one flagstone for a season without a reason. Underneath: a small carved fen-bird, worn smooth by a thumb, not by the water it came from."],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Osk goes very still. \"That was my sister's. I thought I'd lost it on the road here.\""],
+                ["addvar", "appr_osk", 1]
+              ],
+              []
+            ]
+          ]
+        }
+      ]
+    },
+    "va_elder_house": {
+      "name": "Elder's House",
+      "desc": "Ledgers, dust, and an iron coffer on the mantel. The lock looks sturdy, but the elder's own doubt is the real seal on it. The shutters are closed against the wood. The chapel lies west.",
+      "brief": "The locked coffer.",
+      "region": "va",
+      "exits": { "west": { "to": "va_chapel" } },
+      "variants": [{ "if": [["flag", "va_coffer_opened"]], "brief": "The coffer stands open and empty." }],
+      "actions": [
+        {
+          "id": "va_ledgers",
+          "label": "study the elder's ledgers",
+          "once": true,
+          "fx": [
+            ["xp", 2],
+            ["say", "Tithes, harvests, a line for every reeve, back four hundred years. One entry is pressed hard enough to tear the page: the year the crown went missing. The first reeve's name is written there, and then crossed out."]
+          ]
+        },
+        {
+          "id": "va_pick_coffer",
+          "label": "pick the coffer's lock (grace)",
+          "if": [["flag", "va_heard_grievance"], ["!flag", "va_coffer_opened"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              11,
+              [
+                ["set", "va_coffer_opened"],
+                ["move", "va_crown", "inv"],
+                ["score", 10],
+                ["xp", 3],
+                ["addvar", "appr_lys", 1],
+                ["addvar", "appr_vell", -1],
+                ["say", "Quiet fingers find the old lock's give while the elder's back is turned. Inside: the crown, old iron, heavy for its size, something engraved inside the band."],
+                ["chance", 40, [["set", "va_coffer_picked"], ["addvar", "thefts", 1]], []]
+              ],
+              [["say", "The pins hold. The elder turns a page without looking up."]]
+            ]
+          ]
+        },
+        {
+          "id": "va_ledger_scholar",
+          "label": "read the crossed name outright",
+          "if": [["class", "scholar"]],
+          "once": true,
+          "fx": [
+            ["set", "or_scholar_va_ledger"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "You don't need the elder's guarded silence to read what's under the scratched-out ink: a reeve's name, and beneath the crossing-out, the word GIVEN, not TAKEN — someone's own hand, arguing with itself."]
+          ]
+        }
+      ]
+    },
+    "va_west_road": {
+      "name": "The West Road",
+      "desc": "The old road west runs between the last fields and the wood's edge. A milestone reads THORNWOLD, worn to a guess. Woodsmoke shows north through the trees; the gate lies east. A tithe-lane cuts south toward the Hearthlands.",
+      "brief": "The milestone. Thornwold west.",
+      "region": "va",
+      "landmark": "the Vale's west road",
+      "exits": {
+        "east": { "to": "va_gate" },
+        "north": { "to": "va_hunters_camp", "landmark": "the hunter's camp" },
+        "west": { "to": "th_east_edge", "landmark": "Thornwold" },
+        "south": { "to": "hl_north_lane", "landmark": "the Hearthlands" }
+      },
+      "variants": [
+        {
+          "if": [["flag", "hl_hollow_burned"]],
+          "desc": "The old road west runs between the last fields and the wood's edge. South, down the tithe-lane, a column of smoke stands over the Hearthlands and does not thin. Woodsmoke shows north through the trees; the gate lies east.",
+          "brief": "The west road. Smoke stands south, over the Hearthlands."
+        },
+        {
+          "if": [["var", "hollows_rested", ">=", 3]],
+          "brief": "The milestone. Thornwold west, and a thinner gray behind it.",
+          "desc": "The old road west runs between the last fields and the wood's edge. The milestone still reads THORNWOLD, worn to a guess — and the gray that hung over these fields has thinned to almost nothing."
+        }
+      ]
+    },
+    "va_causeway": {
+      "name": "The Fen Causeway",
+      "desc": "A raised road of packed stone runs east from the square into low ground. Reeds on either side, and the smell of standing water. Fenmarch lies that way.",
+      "brief": "The causeway east.",
+      "region": "va",
+      "landmark": "the fen causeway",
+      "exits": { "west": { "to": "va_square" }, "east": { "to": "fd_causeway_west", "landmark": "Fenmarch" } }
+    },
+    "va_north_road": {
+      "name": "The North Road",
+      "desc": "Past the barrow hill the trail widens into a road and climbs toward moorland. A watch-stone stands at the edge of the Vale with Highward's mark cut into it. The barrow field lies south.",
+      "brief": "The watch-stone. Wardmoor north.",
+      "region": "va",
+      "landmark": "the Vale's north road",
+      "exits": { "south": { "to": "va_barrow_field" }, "north": { "to": "wm_south_gate", "landmark": "Wardmoor" } }
+    }
+  },
+  "items": {
+    "va_short_sword": { "name": "short sword", "loc": "nowhere", "hit": 1, "dmg": 3 },
+    "va_hunting_knife": { "name": "hunting knife", "loc": "nowhere", "hit": 1, "dmg": 2 },
+    "va_belt_knife": { "name": "belt knife", "loc": "nowhere", "hit": 0, "dmg": 2 },
+    "va_plain_sword": { "name": "plain sword", "loc": "nowhere", "hit": 1, "dmg": 3 },
+    "va_watch_shield": { "name": "watch shield", "loc": "nowhere", "armor": 1 },
+    "va_crown": {
+      "name": "iron crown",
+      "loc": "nowhere",
+      "hint": "read the engraving inside the band; a throne in Marrowgate was cut to take it, or to go without",
+      "use": [
+        {
+          "if": [["!flag", "va_read_crown"]],
+          "fx": [
+            ["set", "va_read_crown"],
+            ["xp", 2],
+            ["say", "Words worked into the inside of the band, worn thin: the same plea cut into stone, water, and wind elsewhere in the vale. Set it down, and rest. Whoever made this crown meant it to be given back."]
+          ]
+        }
+      ],
+      "variants": [{ "if": [["flag", "va_read_crown"]], "hint": "" }]
+    },
+    "va_smith_tongs": {
+      "name": "a set of smith's tongs",
+      "loc": "va_forge",
+      "takeable": true,
+      "owner": "va_smith",
+      "hint": "good steel, kept for the anvil, not the road"
+    },
+    "va_inn_coin_dish": {
+      "name": "a chipped coin-dish",
+      "loc": "va_inn",
+      "takeable": true,
+      "owner": "va_innkeep",
+      "hint": "tips left by travelers who didn't want to owe the house"
+    },
+    "va_chapel_candles": {
+      "name": "a bundle of blessed candles",
+      "loc": "va_chapel",
+      "takeable": true,
+      "owner": "va_gray_priest",
+      "hint": "kept lit against the damp, one at a time"
+    },
+    "va_fenfolk_carving": {
+      "name": "a small carved fen-bird",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "worn smooth by a thumb — someone from the fens carried this a long way"
+    }
+  },
+  "npcs": {
+    "va_reeve": {
+      "name": "reeve",
+      "room": "va_square",
+      "dialogue": true,
+      "desc": "Gray at the temples, a watch-cloak over farm clothes.",
+      "topics": [
+        {
+          "id": "blight",
+          "label": "the blight",
+          "once": true,
+          "say": "It kills slow. Crops first, then cattle, then the will to stay. It started the night the barrow opened. Settle the king in it and this ends — the priest says verses, the old tales say his crown. I say whichever works.",
+          "fx": [["score", 5], ["xp", 3], ["set", "va_heard_reeve_blight"]]
+        },
+        {
+          "id": "doors",
+          "label": "seal or open?",
+          "once": true,
+          "if": [["flag", "va_heard_reeve_blight"]],
+          "say": "When he rests, those doors get sealed. That's what I want; the priest wants the opposite, and he won't bless a door sworn shut, so see him first if you want both. Give me your word and the watch stands with you, or not.",
+          "fx": [["set", "va_heard_reeve_ask"]]
+        },
+        {
+          "id": "promise",
+          "label": "promise to seal the barrow",
+          "if": [
+            ["flag", "va_heard_reeve_ask"],
+            ["!flag", "va_promised_seal"],
+            ["!flag", "va_broke_promise"],
+            ["!flag", "va_left_open"]
+          ],
+          "once": true,
+          "say": "Good. The watch stands with you. Take the shield; it has stopped worse than claws. I'm holding you to it: when he rests, the doors shut. The priest won't bless a door sworn shut, mind — ask him first if you want both.",
+          "fx": [
+            ["set", "va_promised_seal"],
+            ["addvar", "rep_watch", 1],
+            ["move", "va_watch_shield", "inv"],
+            ["addvar", "appr_tamsin", 1],
+            ["addvar", "appr_osk", -1]
+          ]
+        },
+        {
+          "id": "decline",
+          "label": "decline to promise",
+          "if": [
+            ["flag", "va_heard_reeve_ask"],
+            ["!flag", "va_promised_seal"],
+            ["!flag", "va_broke_promise"],
+            ["!flag", "va_left_open"]
+          ],
+          "once": true,
+          "say": "Then say so plain, and I'll hold nothing against you. The doors are yours to decide when you stand there. Ask again if you change your mind.",
+          "fx": [["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "roads",
+          "label": "the roads out of the Vale",
+          "once": true,
+          "say": "West to Thornwold, if you like bandits. East over the causeway to Fenmarch, if you like wet feet; the Saltkerns' coast road gets there too, the long way. North past the barrow to Wardmoor, once the barrow's dealt with.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "confess",
+          "label": "about the promise I broke",
+          "if": [["flag", "va_broke_promise"]],
+          "once": true,
+          "say": "Nobody needed to tell me. A broken word doesn't stay quiet on its own. I'd have taken it from you first, if you'd offered. The watch remembers, though. It always has.",
+          "fx": [["xp", 2], ["addvar", "rep_watch", 1]]
+        },
+        {
+          "id": "reeve_left_open",
+          "label": "ask about the doors, left open",
+          "if": [["flag", "va_left_open"], ["!flag", "va_broke_promise"]],
+          "once": true,
+          "say": "You left his doors open to the sky. No promise broken — you never gave me one. Still, the Watch marks what stands open on my patch, promised or not.",
+          "fx": [["xp", 1], ["addvar", "rep_watch", -1]]
+        },
+        {
+          "id": "scrap",
+          "label": "the scrap of cloth from the crow tree",
+          "if": [["has", "va_crow_scrap"]],
+          "once": true,
+          "say": "Watch gray. Fine-woven — a reeve's cloth, not a common one's. There was a reeve before me, generations back, who went up that hill and never came down. I thought that a story.",
+          "fx": [
+            ["xp", 2],
+            ["score", 3],
+            ["addvar", "gold", 4],
+            ["say", "The reeve presses four coins on you for bringing it back."]
+          ]
+        },
+        {
+          "id": "after_rest",
+          "label": "the king rests",
+          "if": [["flag", "va_king_rested"], ["flag", "va_sealed"]],
+          "once": true,
+          "say": "Sealed, as you said. The watch won't forget that. Nor will Marrowgate, by the look of that rider.",
+          "fx": [["addvar", "rep_watch", 1], ["xp", 2]]
+        },
+        {
+          "id": "after_open",
+          "label": "the king rests",
+          "if": [["flag", "va_king_rested"], ["!flag", "va_sealed"]],
+          "once": true,
+          "say": "Open. Well. He rests, and the fields will tell me whether you were right. I hope you were.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "after_slain",
+          "label": "the king is dust",
+          "if": [["flag", "va_king_slain"]],
+          "once": true,
+          "say": "Dust. That's an ending the watch understands. Whether it's an ending the hill understands, we'll see by harvest.",
+          "fx": [["xp", 2], ["addvar", "rep_watch", 1]]
+        },
+        {
+          "id": "word_rested",
+          "label": "word from the rested holds",
+          "if": [["var", "hollows_rested", ">=", 1]],
+          "once": true,
+          "say": "Riders bring word some holds are settling their dead the slow way — verses, bargains, whatever holds. Last Light did the same, near enough. Good to hear we are not alone in it.",
+          "fx": [["addvar", "rep_watch", 1], ["xp", 2]]
+        },
+        {
+          "id": "word_burned",
+          "label": "word from the burned holds",
+          "if": [["var", "hollows_burned", ">=", 1]],
+          "once": true,
+          "say": "Word of holds put to the torch reaches even here. Quicker than what we did. I will not say it is wrong. I will not say I would have chosen it either.",
+          "fx": [["addvar", "rep_iron", 1], ["xp", 2]]
+        },
+        {
+          "id": "word_writ",
+          "label": "word of a Regent's writ",
+          "if": [["flag", "regent_writ"]],
+          "once": true,
+          "say": "A rider says someone is carrying the Regent's own writ now. That is not a paper Marrowgate hands out for nothing. You have been busy out there.",
+          "fx": [["addvar", "rep_crown", 1], ["xp", 2]]
+        },
+        { "id": "bye", "label": "leave the reeve to the watch", "say": "Mind the wood.", "end": true },
+        {
+          "id": "reeve_blessed_open",
+          "label": "the priest opened the barrow",
+          "if": [["flag", "va_promised_seal"], ["flag", "va_barrow_blessed"], ["!flag", "va_doors_decided"]],
+          "once": true,
+          "say": "The priest opened it for you, I hear, blessing and all. Fine. Doors open to go in. Shut them after, as you said, and we'll have no quarrel."
+        },
+        {
+          "id": "reeve_forced_open",
+          "label": "the barrow, opened your own way",
+          "if": [
+            ["flag", "va_promised_seal"],
+            ["any", [["flag", "va_barrow_forced"], ["flag", "va_barrow_gapped"]]],
+            ["!flag", "va_doors_decided"]
+          ],
+          "once": true,
+          "say": "Word is the doors stand open and the priest never laid a hand on them. However you managed it, you'll still shut them after, as you said, and we'll have no quarrel."
+        },
+        {
+          "id": "thefts_watch",
+          "label": "word of light fingers about the Reach",
+          "if": [["var", "thefts", ">=", 2]],
+          "once": true,
+          "say": "\"Word travels with the riders — more than one hold's counted its goods short since you passed through,\" the reeve says. \"The watch doesn't forget whose hands those were.\"",
+          "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
+        },
+        {
+          "id": "warden_frank",
+          "label": "ask what the watch really thinks",
+          "if": [["class", "warden"], ["flag", "said_va_reeve_blight"]],
+          "once": true,
+          "say": "He drops the notice-board voice. \"Truth: three of my watch won't walk past the gate after dark. You're the first blade through here who didn't need that explained twice.\"",
+          "fx": [["set", "or_warden_va_reeve"], ["xp", 2], ["addvar", "rep_watch", 1]]
+        }
+      ]
+    },
+    "va_innkeep": {
+      "name": "innkeep",
+      "room": "va_inn",
+      "topics": [
+        {
+          "id": "rumors",
+          "label": "rumors",
+          "once": true,
+          "say": "Verses, they say — one in the sunken shrine, one up the old watchtower, one in the barrow stone. A scholar reads them quick; anyone else puzzles them out. The one by the hearth knows more about that than I do.",
+          "fx": [["score", 5], ["xp", 2]]
+        },
+        {
+          "id": "company",
+          "label": "who might come along",
+          "once": true,
+          "say": "Company for the road? Tamsin at the forge across the square, Brother Osk at the chapel, Vell nursing ale in my corner — and the hunter's girl, Lys, at her father's camp: west from the gate, then north off the west road.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "factions",
+          "label": "the reeve and the priest",
+          "once": true,
+          "say": "Those two haven't agreed in years. The reeve wants it shut after; the priest wants it grieved open first. Ask his blessing before promising the reeve — both wishes hold. Promise first, and he wants his own way past it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "locket",
+          "label": "the locket from the well",
+          "if": [["has", "va_widows_locket"]],
+          "once": true,
+          "say": "Not a name I know, and I know most who've passed this counter. Half the vale's secrets end up here sooner or later. Keep it. Someone in the Reach will know it.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "va_innkeep_theft",
+          "label": "about the coin-dish, since",
+          "if": [["flag", "stole_va_inn_coin_dish"]],
+          "once": true,
+          "say": "\"Saw you pocket that,\" he says, not unkindly. \"I'll not chase a guest over copper. I'll just remember your face at the door.\"",
+          "fx": [["xp", 1]]
+        }
+      ]
+    },
+    "va_smith": {
+      "name": "smith",
+      "room": "va_forge",
+      "dialogue": true,
+      "desc": "Forearms like cordwood; she watches the road, not the anvil.",
+      "topics": [
+        {
+          "id": "steel",
+          "label": "steel for the barrow",
+          "once": true,
+          "say": "Take the plain sword off the wall, no charge. If it's the crown you're after, the elder keeps it — coffer's locked, east past the chapel, and she won't open it for asking.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "trade",
+          "label": "the smith's trade",
+          "once": true,
+          "say": "Every blade in this square passed through my hands or my mother's. None come back from that wood the same. Still, they come back.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "apprentice",
+          "label": "your apprentice",
+          "once": true,
+          "if": [["!flag", "stole_va_smith_tongs"]],
+          "say": "Tamsin. Best hands I've trained and the worst temper. Her mother died in the Iron Downs when the Hundred came down — the mine, north and west of here. She's not said the word 'mine' since. Don't you say it either.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "old_king",
+          "label": "the old king's steel",
+          "if": [["flag", "va_heard_oldking"]],
+          "once": true,
+          "say": "My grandmother swore something of his went missing in that barrow and was never found. Turns out it was the crown. Old tales keep better than iron.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "doors_open",
+          "label": "the open barrow doors",
+          "if": [["flag", "va_barrow_open"], ["!flag", "va_sealed"]],
+          "once": true,
+          "say": "Word beat you back to the square — the barrow stands open. I've fitted edges for that wood my whole life and never expected the doors to be the thing that gave.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "doors_sealed",
+          "label": "the sealed barrow doors",
+          "if": [["flag", "va_sealed"]],
+          "once": true,
+          "say": "Word is you shut it again once he was done grieving. Whatever's left up there stays in the dark now — might be the wiser road, for once.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the forge",
+          "say": "Come back with the blade in one piece.",
+          "end": true
+        },
+        {
+          "id": "va_smith_theft",
+          "label": "about the tongs, since",
+          "if": [["flag", "stole_va_smith_tongs"]],
+          "once": true,
+          "say": "She's counted her tools since. \"A smith minds her own iron. Whatever else you came for, you'll get it plainer than you got that.\"",
+          "fx": [["xp", 1]]
+        }
+      ]
+    },
+    "va_gray_priest": {
+      "name": "gray priest",
+      "room": "va_chapel",
+      "dialogue": true,
+      "desc": "Ash on both hands, and a voice that has said too many rites.",
+      "topics": [
+        {
+          "id": "old_king",
+          "label": "the old king",
+          "once": true,
+          "say": "He was a good king, long ago, and robbed of his crown in his own grave — the vale calls him the Hollow King now. Sealed in stone, grief festers; open sky lets it go. Ask me for a blessing and I'll open those doors.",
+          "fx": [["set", "va_heard_oldking"], ["score", 5], ["xp", 3], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "blessing",
+          "label": "a blessing for the barrow",
+          "if": [["flag", "va_heard_oldking"], ["!flag", "va_barrow_open"], ["!flag", "va_promised_seal"]],
+          "once": true,
+          "say": "Go with the gray blessing, then. Far off, the stone doors grind open. No promise binds them shut. Go when you're ready.",
+          "fx": [["set", "va_barrow_open"], ["set", "va_barrow_blessed"], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "blessing_refused",
+          "label": "a blessing for the barrow",
+          "if": [["flag", "va_heard_oldking"], ["!flag", "va_barrow_open"], ["flag", "va_promised_seal"]],
+          "say": "You've promised the reeve to seal him in. I'll not open a door for a man who means to shut it on grief. Force it, or find another way, or come back released from your word."
+        },
+        {
+          "id": "release",
+          "label": "break my word to the reeve: release me",
+          "if": [["flag", "va_promised_seal"], ["!flag", "va_doors_decided"]],
+          "once": true,
+          "say": "Vows are not mine to unmake, only to witness broken. I'll say nothing to the reeve. You will have to, in the end. Go with a clear path, if not a clear conscience.",
+          "fx": [
+            ["clear", "va_promised_seal"],
+            ["set", "va_broke_promise"],
+            ["addvar", "rep_watch", -1],
+            ["addvar", "rep_church", 1],
+            ["perk", "quiet_resolve"],
+            ["addvar", "appr_tamsin", -1]
+          ]
+        },
+        {
+          "id": "novice",
+          "label": "the novice with the broom",
+          "once": true,
+          "say": "Brother Osk. His people were fenfolk — Fenmarch, east over the causeway. The water took them. He came to me to learn what to say over the drowned, and I have not had the heart to tell him I don't know.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "ash",
+          "label": "the ash on your hands",
+          "once": true,
+          "say": "Every barrow I've opened leaves its mark. This one will mark you too, whichever road you take to it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "token",
+          "label": "show the worn half-token",
+          "if": [["has", "va_keeper_token"]],
+          "once": true,
+          "say": "The raised-hand ward, snapped in two. One of mine, or one who wore this collar before me. We each left a token at that door so the old king would never be quite alone. There were keepers once, for every barrow. Not now.",
+          "fx": [["xp", 2], ["addvar", "rep_church", 1], ["addvar", "rep_keepers", 1]]
+        },
+        {
+          "id": "after_rest",
+          "label": "the king rests",
+          "if": [["flag", "va_king_rested"]],
+          "once": true,
+          "say": "I felt it in the candles. Whatever you said or gave him, it was the right thing. There are eleven more hollows in the Reach, if the rider's talk is true, and no keepers left to speak over them.",
+          "fx": [["xp", 2], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "after_slain",
+          "label": "the king is dust",
+          "if": [["flag", "va_king_slain"]],
+          "once": true,
+          "say": "You killed a grieving man because he was already dead. I will pray over the dust. I will not pretend it was a rite.",
+          "fx": [["xp", 1], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "after_forsaken",
+          "label": "the crown, kept after all",
+          "if": [["flag", "va_king_forsaken"]],
+          "once": true,
+          "say": "You heard him grieve and walked out with his crown in your pack anyway. I have no rite for a door left open on a man nobody meant to answer. I will light the candle regardless.",
+          "fx": [["xp", 1], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "grief_burned",
+          "label": "grief for the burned holds",
+          "if": [["var", "hollows_burned", ">=", 1]],
+          "once": true,
+          "say": "Every hold put to the fire is a door that will never open again, and grief with nowhere left to go. I light a candle for each one. It does not feel like enough.",
+          "fx": [["addvar", "rep_church", -1], ["xp", 2]]
+        },
+        {
+          "id": "three_rested",
+          "label": "three hollows settled gently",
+          "if": [["var", "hollows_rested", ">=", 3]],
+          "once": true,
+          "say": "Three holds now, quieted by rite instead of fire. I did not think I would live to hear that said of even one. Whatever you are doing out there, the Church is grateful for it.",
+          "fx": [["addvar", "rep_church", 1], ["xp", 2]]
+        },
+        { "id": "bye", "label": "leave him to his candles", "say": "Go carefully.", "end": true },
+        {
+          "id": "va_priest_theft",
+          "label": "about the candles, since",
+          "if": [["flag", "stole_va_chapel_candles"]],
+          "once": true,
+          "say": "\"Ash on my hands, and short candles besides,\" he says, not looking up. \"The Church notices what leaves a chapel unblessed. So do I.\"",
+          "fx": [["addvar", "rep_church", -1], ["xp", 1]]
+        },
+        {
+          "id": "scholar_peer",
+          "label": "the barrow-keepers, in the old tongue",
+          "if": [["class", "scholar"], ["flag", "said_va_gray_priest_old_king"]],
+          "once": true,
+          "say": "You answer him in the old tongue without thinking. His manner changes at once. \"A reader. Then know it plain: the keepers who stood at every barrow door didn't fall away — someone let them lapse, and meant to.\"",
+          "fx": [["set", "or_scholar_va_priest"], ["xp", 2], ["addvar", "rep_keepers", 1]]
+        }
+      ]
+    },
+    "va_elder": {
+      "name": "elder",
+      "room": "va_elder_house",
+      "dialogue": true,
+      "desc": "Older than the ledgers on the table, and no more forgiving.",
+      "topics": [
+        {
+          "id": "vale",
+          "label": "the vale",
+          "once": true,
+          "say": "Four hundred years this village has kept the wood's edge. It will not end on my page of the ledger.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "coffer_early",
+          "label": "the sealed coffer",
+          "if": [["!flag", "va_heard_grievance"], ["!flag", "va_coffer_opened"]],
+          "say": "Not open to asking — not from you, not yet. It holds the old king's crown, if you must know why it matters. Go hear what the dead king grieves over, up in the barrow. Then come back.",
+          "fx": [["if", [["!flag", "va_asked_coffer_early"]], [["set", "va_asked_coffer_early"], ["xp", 1]], []]]
+        },
+        {
+          "id": "coffer_seal",
+          "label": "open the coffer — I have the king's seal",
+          "if": [["flag", "va_heard_grievance"], ["has", "va_kings_seal"], ["!flag", "va_coffer_opened"]],
+          "once": true,
+          "say": "His own seal, and his own grief in your mouth. My doubt has nowhere left to stand.",
+          "fx": [
+            ["set", "va_coffer_opened"],
+            ["move", "va_crown", "inv"],
+            ["score", 10],
+            ["xp", 3],
+            ["say", "The coffer opens without another word. The crown is old iron, heavy for its size, something engraved inside the band."]
+          ]
+        },
+        {
+          "id": "coffer_press",
+          "label": "press the king's grievance (will)",
+          "if": [["flag", "va_heard_grievance"], ["!has", "va_kings_seal"], ["!flag", "va_coffer_opened"]],
+          "say": "No lock holds this shut, only my own doubt. You press the old king's grievance on me anyway.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "va_coffer_opened"],
+                ["move", "va_crown", "inv"],
+                ["score", 10],
+                ["xp", 3],
+                ["say", "At last your will outlasts the elder's. Her hands unclench, and she opens the coffer. The crown is old iron, heavy for its size, something engraved inside the band."]
+              ],
+              [
+                ["addvar", "va_coffer_tries", 1],
+                [
+                  "if",
+                  [["var", "va_coffer_tries", ">=", 3]],
+                  [
+                    ["set", "va_coffer_opened"],
+                    ["move", "va_crown", "inv"],
+                    ["score", 10],
+                    ["xp", 3],
+                    ["say", "Patience does what a quick word could not. The elder's resolve breaks, and she opens the coffer. The crown is old iron, heavy for its size."]
+                  ],
+                  [["say", "Her hands stay closed on the ledger. Not yet — but they're less sure than they were. Press again."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "brother",
+          "label": "the elder's years",
+          "once": true,
+          "say": "I've buried two reeves and outlasted three bad harvests in this chair. The wood took my brother, years before any king lost his crown. I don't forget what it takes.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "after",
+          "label": "what the crown cost you",
+          "if": [["flag", "va_coffer_opened"]],
+          "once": true,
+          "say": "Four hundred years that coffer stayed shut. Whatever you do with what was in it, do it where I don't have to watch.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "lock_scratched",
+          "label": "about the coffer's lock",
+          "if": [["flag", "va_coffer_picked"]],
+          "once": true,
+          "say": "She has found fresh scratches round the keyhole, bright over old rust. \"Someone tried this before ever asking,\" she says. Not quite a question.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "king_rested",
+          "label": "the king rests",
+          "if": [["flag", "va_king_rested"]],
+          "once": true,
+          "say": "He rests, then. Four hundred years I kept that coffer shut, weighing which fear was worse. Turns out neither was the one worth keeping.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "king_slain",
+          "label": "the king is dust",
+          "if": [["flag", "va_king_slain"]],
+          "once": true,
+          "say": "Dust. Whatever was in that coffer, it didn't save him from a blade in the end. I don't know if that makes the keeping of it foolish or just late.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "king_forsaken",
+          "label": "the crown, kept after all",
+          "if": [["flag", "va_king_forsaken"]],
+          "once": true,
+          "say": "So the crown walks free of the vale, and the king stays where he was. I sat on that coffer forty years to spare us this. Mind where you carry it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "scholar_ledger_ask",
+          "label": "ask what GIVEN was meant to mean",
+          "if": [["class", "scholar"], ["flag", "or_scholar_va_ledger"]],
+          "once": true,
+          "say": "Her hands still on the page. \"My grandmother's hand, that. She never once said which word she believed. I've wondered my whole life which one she died still doubting.\"",
+          "fx": [["xp", 1]]
+        },
+        { "id": "bye", "label": "leave her to the ledgers", "say": "Shut the door. The wood is close.", "end": true }
+      ]
+    },
+    "va_herald": {
+      "name": "Herald Corvane",
+      "room": null,
+      "dialogue": true,
+      "desc": "Marrowgate gray, a Regent's badge, and a way of standing that expects a chair.",
+      "topics": [
+        {
+          "id": "decree",
+          "label": "what brings Marrowgate here",
+          "once": true,
+          "say": "The Regent's word. The gray is treason against the living; every hollow in the Reach is to be burned out, root and rite. The Ironbound will see to it. You settled the Vale's — the Regent notices such things.",
+          "fx": [["set", "va_met_herald"], ["xp", 3], ["score", 2], ["set", "va_heard_decree"]]
+        },
+        {
+          "id": "holds",
+          "label": "the other hollows",
+          "if": [["flag", "va_heard_decree"]],
+          "once": true,
+          "say": "Fenmarch's nave, Thornwold's camp, Downs' mine, Wardmoor's founding, Saltkerns' fleet, Hollowbrook's barrows, Emberfall's choir, Fallows' furrow, Meres' Hall, Hearthlands' barn, Kingswood's hunt. Eleven, and Marrowgate.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "swear",
+          "label": "swear to burn the hollows for the Regent",
+          "if": [["flag", "va_heard_decree"], ["!flag", "va_swore_burn"], ["!flag", "va_refused_herald"]],
+          "once": true,
+          "say": "Then the Regent has a hand in the Vale. Burn a hollow clean, and Cinderhall's chapterhouse will write you a writ for Coldpass. Fail, and Marrowgate has a long memory.",
+          "fx": [
+            ["set", "va_swore_burn"],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_iron", 1],
+            ["addvar", "rep_church", -1],
+            ["addvar", "appr_osk", -1],
+            ["addvar", "appr_tamsin", 1],
+            ["addvar", "appr_lys", -1],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [["say", "Brother Osk: \"You swore to burn them. I heard every word. I don't think I can un-hear it.\""]],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [["say", "Lys: \"Fire for grief that never raised a hand against you. That's the word you just gave.\""]],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "refuse the Regent's decree",
+          "if": [["flag", "va_heard_decree"], ["!flag", "va_swore_burn"], ["!flag", "va_refused_herald"]],
+          "once": true,
+          "say": "Refusal noted. Marrowgate does not need your sword; it needs your silence, and it seldom gets that either. The pass at Coldpass is watched. Good day.",
+          "fx": [
+            ["set", "va_refused_herald"],
+            ["addvar", "rep_crown", -1],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 1],
+            ["addvar", "appr_lys", 1]
+          ]
+        },
+        {
+          "id": "crown",
+          "label": "the crown you carry",
+          "if": [["has", "va_crown"], ["flag", "va_heard_decree"]],
+          "once": true,
+          "say": "The herald's eyes go to your pack and stay there a moment too long. 'Old iron,' he says. 'Worthless. I'd be glad to take it off your hands for the Regent's collection.'",
+          "fx": [["xp", 2], ["addvar", "appr_vell", 1]]
+        },
+        {
+          "id": "writ_earned",
+          "label": "the writ two burned holds bought",
+          "if": [["var", "hollows_burned", ">=", 2], ["!npcDead", "va_herald"]],
+          "once": true,
+          "say": "Two hollows to the torch already. The chapterhouse at Cinderhall will have your writ waiting, if you go and claim it. The Regent keeps her word to those who keep theirs.",
+          "fx": [["addvar", "rep_crown", 1], ["xp", 2]]
+        },
+        {
+          "id": "free_disapproval",
+          "label": "word you went under with the Companies",
+          "if": [["flag", "free_passage"], ["!npcDead", "va_herald"]],
+          "once": true,
+          "say": "Word reaches me you have taken up with the Free Companies to move about the Reach. The Regent has a long memory for whose roads get used, and whose do not.",
+          "fx": [["addvar", "rep_crown", -1], ["xp", 2]]
+        },
+        {
+          "id": "under",
+          "label": "what waits under Marrowgate",
+          "if": [["flag", "va_heard_decree"]],
+          "once": true,
+          "say": "A seat under the palace, older than the Regent's house. It answers to a rite — three holds rested, your king at rest — or to fire, or to a crown on a living head, or to the founding's truth read aloud. She means fire.",
+          "fx": [["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "envoy_broker",
+          "label": "read his real terms, not his script",
+          "if": [["class", "envoy"], ["flag", "va_heard_decree"], ["!flag", "va_swore_burn"], ["!flag", "va_refused_herald"]],
+          "once": true,
+          "say": "You don't swear and you don't refuse; you name the shape of the choice he's actually offering. He almost smiles. \"Sharper than most who come through here.\" He presses coin on you \"for the road,\" unofficially.",
+          "fx": [
+            ["set", "or_envoy_va_herald"],
+            ["xp", 2],
+            ["score", 2],
+            ["addvar", "gold", 4],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"He wasn't wrong to notice. That kind of reading is worth more than the coin.\""],
+                ["addvar", "appr_vell", 1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave the herald to his horse",
+          "say": "The Regent will hear of you either way.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "epilogue": [
+    {
+      "if": [["var", "hollows_rested", ">=", 1], ["var", "hollows_burned", ">=", 1]],
+      "text": "Some holds rest easier now; others only rest because the fire left nothing to grieve with.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "cp_came_by_writ"]],
+      "text": "Last Light heard you crossed at Coldpass on the Regent's own writ, not the pilgrim stair.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "cp_came_by_cave"]],
+      "text": "Last Light heard you went under the mountain on the Free Companies' word, not the crown's.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "va_swore_burn"], ["var", "hollows_burned", ">=", 1]],
+      "text": "Last Light remembers the oath you swore the herald — a hollow burned clean before you ever asked for the writ.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "va_swore_burn"], ["var", "hollows_burned", "<", 2], ["var", "hollows_rested", ">=", 1]],
+      "text": "You swore to burn the hollows for the Regent, then settled one without fire. Marrowgate does not forget a broken oath.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "va_refused_herald"]],
+      "text": "You told the Regent's herald no, plain, in Last Light square. The Free Companies still toast you for it.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "thefts", ">=", 1]],
+      "text": "Word gets around a hold fast: whose hands took what wasn't offered, and who saw them do it.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "thefts", ">=", 3]],
+      "text": "By the third hold counting its goods short, the story had a shape: a stranger who took what was watched and paid nothing for it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_va_reeve"]],
+      "text": "The reeve of Last Light still says a Warden came through once who didn't need the danger explained twice.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_va_hunter_sortie_done"]],
+      "text": "The hunter still tells it as a soldier's count: a Warden who cleared his wolves like a duty, not a bounty.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_va_priest"]],
+      "text": "The gray priest still says a scholar passed through who answered him in the old tongue, unprompted.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_va_ledger"]],
+      "text": "Last Light's elder never did learn how a stranger read her grandmother's crossed-out word without asking.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_va_herald"]],
+      "text": "Herald Corvane still tells Marrowgate he met one traveler in the Vale who never once showed him a hand.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_va_hunter_mistrust"]],
+      "text": "The hunter still says the wood taught him to trust a plain word over a pretty one, long before any envoy tried him.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_va_flagstone"]],
+      "text": "The gray chapel's swept flagstone stays swept. Only one traveler ever thought to look under it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_va_hunter_sortie"], ["!flag", "or_warden_va_hunter_sortie_done"]],
+      "text": "The hunter still says a Warden once took his wolves on as personal business, and never came back to collect.",
+      "weight": 0
+    }
+  ]
+}

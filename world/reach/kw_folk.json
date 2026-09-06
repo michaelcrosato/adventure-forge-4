@@ -1,0 +1,972 @@
+{
+  "items": {
+    "kw_charcoal_scale": {
+      "name": "a burner's brass weighing-scale",
+      "loc": "kw_charcoal_yard",
+      "takeable": true,
+      "owner": "kw_charcoal_master",
+      "hint": "Garrow weighs every sack on this twice; he'd notice it gone"
+    }
+  },
+  "npcs": {
+    "kw_charcoal_master": {
+      "name": "Garrow",
+      "room": "kw_charcoal_yard",
+      "dialogue": true,
+      "desc": "The charcoal-master, black to the elbows and unbothered by it, running the burners' guild the way he runs a clamp — slow, steady, and never quite out of his sight.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Garrow. I run the burners' guild — every clamp in the Kingswood answers to me, one way or another, and I answer to Cinderhall for the count of what they burn.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "burning a king's own hunting wood",
+          "if": [["flag", "said_kw_charcoal_master_greet"]],
+          "once": true,
+          "say": "Nobody's hunted here in four hundred years. A wood that isn't hunted is a wood that's wasted, near as I've ever seen it — and the Ironbound pay well for good charcoal.",
+          "fx": [["set", "kw_charcoal_bg"], ["xp", 2]]
+        },
+        {
+          "id": "react_theft",
+          "label": "about the missing scale, since",
+          "if": [["flag", "stole_kw_charcoal_scale"]],
+          "once": true,
+          "say": "\"Weighed everything twice for thirty years,\" he says, not quite looking at you. \"Now I'll weigh it three times, and know exactly why.\"",
+          "fx": [["addvar", "rep_free", -1]]
+        },
+        {
+          "id": "kw_strike_bargain",
+          "label": "strike the burners' bargain",
+          "if": [
+            ["flag", "kw_charcoal_bg"],
+            ["flag", "kw_verderer_refused"],
+            ["flag", "kw_factor_refused"],
+            ["!flag", "kw_hollow_done"],
+            ["!flag", "kw_wood_crown"],
+            ["!flag", "kw_wood_iron"]
+          ],
+          "once": true,
+          "say": "You lay it out plain: the warrant refused, the coppice refused, the rides kept open — on the burners' own word to pay the hunt one night a year, and not argue the toll.",
+          "fx": [
+            ["set", "kw_hollow_bargained"],
+            ["set", "kw_hollow_done"],
+            ["set", "kw_rides_kept"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "hollows_bargained", 1],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "rep_iron", -2],
+            ["addvar", "appr_lys", 1],
+            ["addvar", "appr_tamsin", -1],
+            ["score", 20],
+            ["xp", 8],
+            ["say", "Garrow chews on it, then nods slow. \"One night's fear a year, against a warrant and a coppice both. My clamp-men have paid worse for less.\" He spits and shakes on it, guild-fashion, and the bargain is struck."]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunt's Stand, now it rests",
+          "if": [["flag", "kw_hollow_rested"]],
+          "once": true,
+          "say": "No fire, no toll, no bargain — just a horn, sounded proper. I didn't think that was on offer. Good to be wrong, this once.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained_after",
+          "label": "the bargain, now the ink's dry on it",
+          "if": [["flag", "kw_hollow_bargained"]],
+          "once": true,
+          "say": "Struck it myself, and I'd strike it again. A night's fear's a fair price for keeping this wood in burners' hands, not a warrant's or a factor's.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunt's Stand, now it's burned",
+          "if": [["flag", "kw_hollow_burned"]],
+          "once": true,
+          "say": "Marrick's oil, I'd wager, one way or another. Fewer horns on still nights now, I'll grant it that. My clamp-men will sleep easier for it, whatever else it cost.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_wood_crown",
+          "label": "the wood, now the Crown's felling it",
+          "if": [["flag", "kw_wood_crown"]],
+          "once": true,
+          "say": "Fine oaks going to Marrowgate's timber-yards instead of my clamps. The guild will manage on what's left. We always have.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_wood_iron",
+          "label": "the wood, now the Ironbound coppice it",
+          "if": [["flag", "kw_wood_iron"]],
+          "once": true,
+          "say": "Marrick's coppice runs right through half my working clamps' ground. He'll pay for the disturbance, or he'll answer to the guild about it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_wood_wild",
+          "label": "the wood, left as it was",
+          "if": [["flag", "kw_wood_wild"]],
+          "once": true,
+          "say": "Same rides, same clamps, same count as it's always run. Suits me. A guild likes nothing better than a wood that doesn't change under it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_kw_bargain_ask",
+          "label": "ask about the night the hunt rides",
+          "if": [["flag", "kw_hollow_bargained"], ["flag", "sv_kw_back"], ["!flag", "sv_kw_after_done"]],
+          "once": true,
+          "say": "The night's coming due again — every clamp banked early, every door barred, and half the guild too frightened to sleep. I'd not blame anyone who wanted it to just be over.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_kw_bargain_pay",
+          "label": "pay to keep it yourself (10 gold)",
+          "if": [
+            ["flag", "said_kw_charcoal_master_sv_kw_bargain_ask"],
+            ["!flag", "sv_kw_after_done"],
+            ["var", "gold", ">=", 10]
+          ],
+          "once": true,
+          "say": "You settle it in coin, quiet, so nobody in Hornhallow has to spend the night afraid. Garrow takes it without argument and banks the guild's own fire early anyway, out of habit.",
+          "fx": [
+            ["addvar", "gold", -10],
+            ["set", "sv_kw_bargained_paid"],
+            ["set", "sv_kw_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_tamsin", 1]
+          ]
+        },
+        {
+          "id": "sv_kw_bargain_hold",
+          "label": "tell him the guild pays its own way",
+          "if": [["flag", "said_kw_charcoal_master_sv_kw_bargain_ask"], ["!flag", "sv_kw_after_done"]],
+          "once": true,
+          "say": "\"Fair,\" he says, after a moment. \"It was ours to strike. It's ours to keep.\" The guild pays the night's fear out of its own coffers, same as it always has, and doesn't complain of it where you can hear.",
+          "fx": [
+            ["set", "sv_kw_bargained_honored"],
+            ["set", "sv_kw_after_done"],
+            ["score", 5],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
+          "id": "sv_kw_bargain_lapse",
+          "label": "tell him to close the rides after all",
+          "if": [["flag", "said_kw_charcoal_master_sv_kw_bargain_ask"], ["!flag", "sv_kw_after_done"]],
+          "once": true,
+          "say": "\"If that's your word,\" he says, and doesn't argue it twice. The rides go chained within the week, and nobody in Hornhallow will say out loud what they're afraid rides through them now, unanswered.",
+          "fx": [
+            ["set", "sv_kw_bargained_broken"],
+            ["set", "kw_bargain_broken"],
+            ["set", "sv_kw_after_done"],
+            ["score", 2],
+            ["xp", 1],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "appr_lys", -1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the clamps",
+          "say": "Mind the smoke on your way out. Some mornings it's thicker than others, and I'd rather you didn't ask why.",
+          "end": true
+        }
+      ]
+    },
+    "kw_factor": {
+      "name": "Marrick",
+      "room": "kw_weigh_house",
+      "dialogue": true,
+      "desc": "The Ironbound factor, ledger open on the scale-house counter, tallying sacks against a quota that only ever grows.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Marrick, Ironbound. I buy every sack of charcoal this wood can spare, and I mean to buy a good deal more of it before I'm through.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "coppicing the whole Kingswood",
+          "if": [["flag", "said_kw_factor_greet"]],
+          "once": true,
+          "say": "Coppice it in rings, cut and let grow, cut again — Cinderhall's forges could run on this wood alone for a century, if the guild would stop treating every oak like a shrine.",
+          "fx": [["set", "kw_factor_bg"], ["xp", 2]]
+        },
+        {
+          "id": "kw_take_oil",
+          "label": "ask him for a cask of cinder-oil",
+          "if": [["!has", "kw_cinder_oil"]],
+          "say": "He hands it over without much ceremony, like he's been waiting all season for someone to finally ask. \"Use it well. Or don't. Either way I'll know by the smoke.\"",
+          "fx": [["move", "kw_cinder_oil", "inv"], ["xp", 1]]
+        },
+        {
+          "id": "kw_factor_argue",
+          "label": "argue him off the coppice (will)",
+          "if": [
+            ["flag", "kw_factor_bg"],
+            ["!flag", "kw_factor_refused"],
+            ["!flag", "kw_wood_wild"],
+            ["!flag", "kw_wood_iron"]
+          ],
+          "say": "Go on, then. Make the case Cinderhall's forges can do without.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "kw_factor_refused"],
+                ["addvar", "rep_iron", -1],
+                ["say", "You lay out exactly what a stripped Kingswood costs the Ironbound in standing with everyone else on the Reach, and Marrick, for once, does the sum himself. \"...Fine. Leave it.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "kw_factor_missed"]],
+                  [
+                    ["set", "kw_factor_missed"],
+                    ["addvar", "rep_iron", -1],
+                    ["say", "\"The forges eat what the forges eat,\" he says, unmoved. Word of a failed petition reaches Cinderhall before you've left the yard. It can be tried again."]
+                  ],
+                  [["say", "\"The forges eat what the forges eat,\" he says again, and goes back to his ledger."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "kw_factor_pay",
+          "label": "pay him to drop the plan (10 gold)",
+          "if": [
+            ["flag", "kw_factor_bg"],
+            ["!flag", "kw_factor_refused"],
+            ["var", "gold", ">=", 10],
+            ["!flag", "kw_wood_wild"],
+            ["!flag", "kw_wood_iron"]
+          ],
+          "say": "Ten gold to walk away from a wood I mean to strip anyway? Convince me.",
+          "fx": [
+            ["addvar", "gold", -10],
+            ["set", "kw_factor_refused"],
+            ["addvar", "rep_iron", -1],
+            ["say", "He weighs the coin the way he weighs everything else, twice, and pockets it without a flicker. \"Cinderhall will find its charcoal elsewhere, then. Your coin, your quiet.\""]
+          ]
+        },
+        {
+          "id": "kw_wood_iron_declare",
+          "label": "back the Ironbound's coppice",
+          "if": [
+            ["flag", "kw_factor_bg"],
+            ["!flag", "kw_wood_crown"],
+            ["!flag", "kw_wood_iron"],
+            ["!flag", "kw_wood_wild"],
+            ["!flag", "kw_rides_kept"]
+          ],
+          "say": "Then we're agreed. Cinderhall gets its wood, in rings, same as I always meant to take it.",
+          "fx": [
+            ["set", "kw_wood_iron"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_iron", 2],
+            ["addvar", "rep_free", -2],
+            [
+              "if",
+              [["flag", "kw_hollow_burned"]],
+              [
+                ["say", "\"With the Stand's grief burned out of it,\" he adds, \"nobody argues the wood's haunted anymore. Makes the felling go a good deal easier.\""]
+              ],
+              [
+                ["say", "He has the coppice-lines chalked on the ridings within the week, working outward from Hornhallow's own gate."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunt's Stand, now it rests",
+          "if": [["flag", "kw_hollow_rested"]],
+          "once": true,
+          "say": "A horn instead of a fire. Slower, and I'll grant it costs the Ironbound nothing either way. I still think fire was the better bargain.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the Hunt's Stand, now it's bargained",
+          "if": [["flag", "kw_hollow_bargained"]],
+          "once": true,
+          "say": "A night's fear, once a year, instead of a clean burn. My order will hear I offered oil and Hornhallow chose to keep being frightened instead. Their choice.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunt's Stand, now it's burned",
+          "if": [["flag", "kw_hollow_burned"]],
+          "once": true,
+          "say": "There. Four hundred years, and one cask finally ended it. My order will hear of this before the ash cools.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his ledger",
+          "say": "Mind the scales on your way out. They're truer than most men you'll meet on this road.",
+          "end": true
+        }
+      ]
+    },
+    "kw_verderer": {
+      "name": "Colm",
+      "room": "kw_verderer_post",
+      "dialogue": true,
+      "desc": "The Crown verderer, a warrant weighing on him more than his coat does, marking oaks on his own wall-map like a man doing a job he no longer quite believes in.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Colm, verderer, Crown-appointed. I hold the warrant to fell the Kingswood's best oaks for Marrowgate's own timber-yards, and I've held it eleven years without using it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why the warrant's gone unused",
+          "if": [["flag", "said_kw_verderer_greet"]],
+          "once": true,
+          "say": "Fell a king's own hunting-wood, and something about it always goes wrong for the crew that swings the axe. I've stopped calling it superstition. I've started calling it a warning.",
+          "fx": [["set", "kw_verderer_bg"], ["xp", 2]]
+        },
+        {
+          "id": "kw_warden_recognize",
+          "label": "speak to him as one of the old watch",
+          "if": [["class", "warden"], ["!flag", "or_warden_kw_verderer"]],
+          "say": "He looks you over the way he'd look over a report from a superior, not a stranger.",
+          "fx": [
+            ["set", "or_warden_kw_verderer"],
+            ["addvar", "or_warden_word", 1],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "\"Crown's man, then, same as me, whatever coat you're wearing now,\" Colm says, straightening. \"You'll get a plain answer from this office. Not everyone does.\""]
+          ]
+        },
+        {
+          "id": "kw_verderer_argue",
+          "label": "argue him out of the warrant (will)",
+          "if": [
+            ["flag", "kw_verderer_bg"],
+            ["!flag", "kw_verderer_refused"],
+            ["!flag", "kw_wood_wild"],
+            ["!flag", "kw_wood_crown"]
+          ],
+          "say": "Go on, then. Give me a better reason to sit on this warrant than the one I've already got.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "kw_verderer_refused"],
+                ["addvar", "rep_crown", -1],
+                ["say", "You give him the reason plainly, and something in his shoulders eases, like a decision he's wanted permission for. \"...Then it stays unused. Let Marrowgate send its own crew, if it wants those oaks so badly.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "kw_verderer_missed"]],
+                  [
+                    ["set", "kw_verderer_missed"],
+                    ["addvar", "rep_crown", -1],
+                    ["say", "\"The warrant stands regardless,\" he says, not quite meeting your eye — and the office notes a stranger's petition, tried and failed here. It can be tried again."]
+                  ],
+                  [["say", "\"The warrant stands regardless,\" he says again, and goes back to his map."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "kw_verderer_force",
+          "label": "make the cost of refusal plain (might)",
+          "if": [
+            ["flag", "kw_verderer_bg"],
+            ["!flag", "kw_verderer_refused"],
+            ["!flag", "kw_wood_wild"],
+            ["!flag", "kw_wood_crown"]
+          ],
+          "say": "Threaten a Crown officer in his own post? Go on, then. I'm listening.",
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "kw_verderer_refused"],
+                ["addvar", "rep_crown", -1],
+                ["say", "You make it plain, in terms he can't mistake, exactly how this goes if he doesn't set the warrant aside. He sets it aside. \"...Noted,\" is all he says, and doesn't look up again."]
+              ],
+              [
+                ["say", "He doesn't so much as flinch. \"I've had worse said to me by better men. The warrant stands.\" It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "kw_broker_wood",
+          "label": "broker a shared claim on the wood",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "kw_verderer_bg"],
+            ["flag", "kw_factor_bg"],
+            ["!flag", "kw_wood_crown"],
+            ["!flag", "kw_wood_iron"],
+            ["!flag", "kw_wood_wild"]
+          ],
+          "say": "Marrick's coppice and my warrant both, on the same wood? I'd want to see that written down before I believed it.",
+          "fx": [
+            ["set", "kw_wood_wild"],
+            ["set", "or_envoy_kw_broker"],
+            ["score", 10],
+            ["xp", 6],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_iron", 1],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "or_envoy_words", 1],
+            ["say", "You draft terms neither asked for and both can live with: warrant and coppice held in abeyance, the rides kept as they are, so long as neither side moves first. Colm signs. Marrick signs. Neither loves it."],
+            ["set", "kw_verderer_refused"],
+            ["set", "kw_factor_refused"]
+          ]
+        },
+        {
+          "id": "kw_wood_crown_declare",
+          "label": "back the Crown's felling warrant",
+          "if": [
+            ["flag", "kw_verderer_bg"],
+            ["!flag", "kw_wood_crown"],
+            ["!flag", "kw_wood_iron"],
+            ["!flag", "kw_wood_wild"],
+            ["!flag", "kw_rides_kept"]
+          ],
+          "say": "Then it's done. Marrowgate gets its timber, and I get to stop lying awake over a warrant I never wanted.",
+          "fx": [
+            ["set", "kw_wood_crown"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "rep_keepers", -2],
+            [
+              "if",
+              [["flag", "kw_hollow_burned"]],
+              [
+                ["say", "\"With the Stand's grief burned out of it,\" he says, breaking the warrant's seal at last, \"nobody's left to argue the wood is haunted. The felling goes forward without a second thought.\""]
+              ],
+              [
+                ["say", "He breaks the seal himself, hand steadier than you'd expect. The first crew goes in within the week."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunt's Stand, now it rests",
+          "if": [["flag", "kw_hollow_rested"]],
+          "once": true,
+          "say": "A horn, properly sounded. I confess I hoped that was the answer, and never once believed I'd see it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the Hunt's Stand, now it's bargained",
+          "if": [["flag", "kw_hollow_bargained"]],
+          "once": true,
+          "say": "A bargain, not a warrant. It'll hold better than my sitting on this desk ever did. I mean that as a compliment to whoever struck it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunt's Stand, now it's burned",
+          "if": [["flag", "kw_hollow_burned"]],
+          "once": true,
+          "say": "Fire, where eleven years of my own caution never quite dared. I don't know whether to envy the nerve or mourn what it cost.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the map",
+          "say": "Mind the ridings on your way out. Every mark on that wall is a tree that's outlived better men than either of us.",
+          "end": true
+        }
+      ]
+    },
+    "kw_woodward": {
+      "name": "Hollis",
+      "room": "kw_woodward_cot",
+      "dialogue": true,
+      "desc": "An old man in Keeper-plain gray, though he wears no chain to say so, walking the ridings' bounds by habit long after anyone asked him to.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Hollis. Woodward, for want of a better word — I walk the old rides and keep them cut, same as my father did, and his before him.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "the recall he half-remembers",
+          "if": [["flag", "said_kw_woodward_greet"]],
+          "once": true,
+          "say": "There's a call meant to bring that hunt home, three notes, and I know two of them by heart and stumble on the third every single time. Nobody ever taught it to me properly. I only ever half-heard it, as a boy.",
+          "fx": [["set", "kw_woodward_bg"], ["xp", 2]]
+        },
+        {
+          "id": "kw_coax_call",
+          "label": "coax the old call out of him (will)",
+          "if": [["flag", "kw_woodward_bg"], ["!flag", "kw_note_woodward"]],
+          "say": "Ask me to hum it plain, and you're asking me to try the note that's failed me my whole life. Go on, then, if you mean it.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "kw_note_woodward"],
+                ["addvar", "kw_notes_known", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "He hums it slow, and you catch what he never could: the third note isn't higher, like the first two — it drops, low and short, easy to lose if you're listening for a rise. He goes quiet a long moment after."]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "kw_woodward_missed"]],
+                  [
+                    ["set", "kw_woodward_missed"],
+                    ["say", "He hums the two notes true and the third comes out wrong again, same as it always has. \"Sixty years,\" he says, \"and I've never once landed it.\" It can be tried again."]
+                  ],
+                  [
+                    ["say", "The third note slips away from him again. He shakes his head, more tired than frustrated. It can be tried again."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "kw_wood_wild_declare",
+          "label": "keep the rides exactly as they are",
+          "if": [["flag", "kw_woodward_bg"], ["!flag", "kw_wood_crown"], ["!flag", "kw_wood_iron"], ["!flag", "kw_wood_wild"]],
+          "say": "You want my honest word on it? Leave it be. It's held four hundred years without anyone's warrant. It doesn't need one now.",
+          "fx": [
+            ["set", "kw_wood_wild"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            [
+              "if",
+              [["flag", "kw_hollow_rested"]],
+              [
+                ["say", "\"With the recall sounded whole,\" he says, \"nobody in Hornhallow will hear of closing a ride that hunt itself just walked home along.\""]
+              ],
+              [
+                ["say", "He marks it on his own map in a hand that means to be believed, and walks the bounds that same afternoon, same as always."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the recall, now it's sounded",
+          "if": [["flag", "kw_hollow_rested"]],
+          "once": true,
+          "say": "Whole, at last. Sixty years I carried two notes and a hole where the third should be. Whoever finished it — thank them for me, if you ever get the chance.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the bargain, now it's struck",
+          "if": [["flag", "kw_hollow_bargained"]],
+          "once": true,
+          "say": "Not the recall whole. Still, the rides stay open, which was the half of it I could actually do something about. I'll take that half.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunt's Stand, now it's burned",
+          "if": [["flag", "kw_hollow_burned"]],
+          "once": true,
+          "say": "Sixty years of carrying that call, and now there's nothing left for it to answer. I don't know what to do with my mornings now, honestly.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his rounds",
+          "say": "Mind the old marks on the trees. Half of them are older than the warrant, and truer.",
+          "end": true
+        }
+      ]
+    },
+    "kw_priest": {
+      "name": "Father Twyne",
+      "room": "kw_hunt_chapel",
+      "dialogue": true,
+      "desc": "A Gray Church hermit-priest, robe more patch than cloth, sweeping a floor that only he and the weather ever visit.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Father Twyne. I keep this chapel because somebody ought to, though I couldn't tell you the last soul who prayed here before me.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "the huntsman's saint",
+          "if": [["flag", "said_kw_priest_greet"]],
+          "once": true,
+          "say": "Old and mostly forgotten — patron of whoever rides out and doesn't come home. The hunt should have prayed here before they left. I've often wondered if they simply didn't have time.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "kw_ward_child",
+          "label": "offer to ward Fry against the horn",
+          "if": [
+            ["flag", "kw_child_worried"],
+            ["!flag", "kw_child_warded"],
+            ["!flag", "kw_child_answered_back"],
+            ["!flag", "kw_child_dismissed"]
+          ],
+          "say": "That child. She told me too, in her own way — wouldn't say the word 'horn' outright, just asked whether answering a thing made it yours forever. I've a ward I can put on her, if you think she'd let me.",
+          "fx": [
+            ["set", "kw_child_warded"],
+            ["score", 3],
+            ["xp", 3],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 1],
+            ["say", "He walks to the ride-gate that evening and says something quiet over her, an old huntsman's-saint ward against being called twice. Fry thanks him like she means it."]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the Hunt's Stand, now it rests",
+          "if": [["flag", "kw_hollow_rested"]],
+          "once": true,
+          "say": "I said a verse for it myself, out at the gate, the day the horn carried whole. I don't know if the saint heard. I said it anyway.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the Hunt's Stand, now it's bargained",
+          "if": [["flag", "kw_hollow_bargained"]],
+          "once": true,
+          "say": "A bargain isn't a rite. It's something, and the Church has always taught that something beats nothing, whatever the mother-house might prefer to hear.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunt's Stand, now it's burned",
+          "if": [["flag", "kw_hollow_burned"]],
+          "once": true,
+          "say": "No rite, no bargain, just fire. I have not been able to sweep this floor without thinking of it since.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_kw_burn_ask",
+          "label": "ask what becomes of the burned ground",
+          "if": [["flag", "kw_hollow_burned"], ["flag", "sv_kw_back"], ["!flag", "sv_kw_after_done"]],
+          "once": true,
+          "say": "Marrick already has his eye on the cleared clearing for a second coppice-ring. I'd rather Hornhallow decided what stands there before his ledger does. Your word will carry further than mine.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_kw_burn_marked",
+          "label": "urge a plain marker over the ash",
+          "if": [["flag", "said_kw_priest_sv_kw_burn_ask"], ["!flag", "sv_kw_after_done"]],
+          "once": true,
+          "say": "He has one cut within the week, plain stone, no saint's name on it, no ledger-column of blame either. \"That much I can still give them,\" he says, and means the hunt, not the wood.",
+          "fx": [
+            ["set", "sv_kw_burned_marked"],
+            ["set", "sv_kw_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_church", 1]
+          ]
+        },
+        {
+          "id": "sv_kw_burn_claimed",
+          "label": "let Marrick coppice the clearing",
+          "if": [["flag", "said_kw_priest_sv_kw_burn_ask"], ["!flag", "sv_kw_after_done"]],
+          "once": true,
+          "say": "He doesn't argue, exactly, but he doesn't come to watch the coppice-stakes go in, either. \"Practical,\" he calls it, the way people name a thing they've decided not to fight.",
+          "fx": [
+            ["set", "sv_kw_burned_claimed"],
+            ["set", "sv_kw_after_done"],
+            ["score", 2],
+            ["xp", 1],
+            ["addvar", "rep_iron", 1],
+            ["addvar", "appr_osk", -1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his floor",
+          "say": "Go carefully out there. And come back, if the wood ever gives you cause to say a verse of your own.",
+          "end": true
+        }
+      ]
+    },
+    "kw_descendant": {
+      "name": "Sabel",
+      "room": "kw_kennel_hearth",
+      "dialogue": true,
+      "desc": "The huntsman's own descendant, keeping the hearth that used to be a kennel, a tarnished old horn hung above the mantel she never quite looks at straight on.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Sabel. Huntsman's line, however many generations removed by now. I keep this hearth, and that horn over the mantel, and I've never once managed to sound it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why she can't sound the horn",
+          "if": [["flag", "said_kw_descendant_greet"]],
+          "once": true,
+          "say": "Every one of my line has tried, myself included, the day I was old enough to reach the mantel. It gives nothing back — not a note, not a breath of sound. As if it's already spoken for.",
+          "fx": [["set", "kw_descendant_bg"], ["xp", 2]]
+        },
+        {
+          "id": "kw_horn_give",
+          "label": "ask her for the horn plainly",
+          "if": [["flag", "kw_descendant_bg"], ["!flag", "kw_horn_known"]],
+          "say": "...You mean to sound it? Properly, out at the Stand?",
+          "fx": [
+            ["set", "kw_horn_given"],
+            ["set", "kw_horn_known"],
+            ["move", "kw_horn", "inv"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_lys", 1],
+            ["say", "She takes it down off the mantel with both hands, careful as a relic, and presses it into yours before she can think better of it. \"Then it should go to someone who can. Bring it home properly, if you manage it.\""]
+          ]
+        },
+        {
+          "id": "kw_horn_take",
+          "label": "take the horn by force (might)",
+          "if": [["flag", "kw_descendant_bg"], ["!flag", "kw_horn_known"]],
+          "say": "That's my family's horn. Think carefully before you finish that sentence.",
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "kw_horn_taken"],
+                ["set", "kw_horn_known"],
+                ["move", "kw_horn", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "appr_lys", -1],
+                ["say", "You take it down off the mantel over her protest, and she doesn't fight you for it — just watches, white-lipped, as four hundred years of her family's keeping walks out her own door in a stranger's hands."]
+              ],
+              [
+                ["say", "She plants herself bodily between you and the mantel, and doesn't move. \"Not like this. Not ever like this.\" It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the recall, now it's sounded",
+          "if": [["flag", "kw_hollow_rested"]],
+          "once": true,
+          "say": "My whole line's failing, and a stranger managed it in an afternoon. I've decided to be grateful rather than bitter about that. Mostly.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the Hunt's Stand, now it's bargained",
+          "if": [["flag", "kw_hollow_bargained"]],
+          "once": true,
+          "say": "Not silenced, not sounded — bought a stay, instead. I can live with a stay. It's more than my family ever managed alone.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunt's Stand, now it's burned",
+          "if": [["flag", "kw_hollow_burned"]],
+          "once": true,
+          "say": "Whatever the horn over my mantel was waiting for, it isn't waiting anymore. I don't know if that's grief or relief. Maybe there isn't a difference, some days.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_kw_rested_ask",
+          "label": "ask what becomes of the horn now",
+          "if": [["flag", "kw_hollow_rested"], ["flag", "sv_kw_back"], ["!flag", "sv_kw_after_done"]],
+          "once": true,
+          "say": "It's done what it was for. I'm not sure it belongs back over my mantel, gathering dust on a job that's finished. What would you do with it?",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_kw_rested_keep",
+          "label": "tell her to hang it at the post",
+          "if": [["flag", "said_kw_descendant_sv_kw_rested_ask"], ["!flag", "sv_kw_after_done"]],
+          "once": true,
+          "say": "She carries it out to the Stand herself and hangs it whole on the iron ring it was always meant for. \"There. Let anyone who doubts the recall go and see it.\"",
+          "fx": [
+            ["set", "sv_kw_rested_kept"],
+            ["set", "sv_kw_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_lys", 1]
+          ]
+        },
+        {
+          "id": "sv_kw_rested_send",
+          "label": "tell her to send it to the Keepers' Hall",
+          "if": [["flag", "said_kw_descendant_sv_kw_rested_ask"], ["!flag", "sv_kw_after_done"]],
+          "once": true,
+          "say": "\"The Keepers' Hall at Barrowmere, then,\" she says, already wrapping it for the road, \"so it isn't only Hornhallow that remembers how the hunt finally came home.\"",
+          "fx": [
+            ["set", "sv_kw_rested_sent"],
+            ["set", "sv_kw_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_vell", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the hearth",
+          "say": "Go carefully. Come back and tell me, if the wood ever answers you the way it never answered us.",
+          "end": true
+        }
+      ]
+    },
+    "kw_child": {
+      "name": "Fry",
+      "room": "kw_ride_gate",
+      "dialogue": true,
+      "desc": "A girl of nine or ten, sitting cross-legged on the gate's own threshold like she's daring herself to stay put, watching the tree-line the way other children watch a door.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Fry. I sit here most evenings. My gran says I shouldn't, this close to dark. I do it anyway.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why she sits so close to the gate",
+          "if": [["flag", "said_kw_child_greet"]],
+          "once": true,
+          "say": "I heard the three notes once, out past the gate, and I answered them — hummed them right back, same as you'd answer a hail. I don't think I was supposed to. I don't think it's forgotten that I did.",
+          "fx": [["set", "kw_child_worried"], ["xp", 2]]
+        },
+        {
+          "id": "kw_note_rhyme",
+          "label": "ask for the burners' rhyme",
+          "if": [["flag", "kw_child_worried"], ["!flag", "kw_note_rhyme"]],
+          "say": "Every child in Hornhallow learns it before they can walk far — so we know the notes to never answer. Funny, I suppose, that I answered them anyway.",
+          "fx": [
+            ["set", "kw_note_rhyme"],
+            ["addvar", "kw_notes_known", 1],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "She sings it through in one breath, sing-song and word-perfect, the kind of rhyme that's survived four hundred years by being simple enough for a child to keep: two notes rising, and a third that drops away."]
+          ]
+        },
+        {
+          "id": "kw_child_dismiss",
+          "label": "tell her it's nothing to fear",
+          "if": [
+            ["flag", "kw_child_worried"],
+            ["!flag", "kw_child_warded"],
+            ["!flag", "kw_child_answered_back"],
+            ["!flag", "kw_child_dismissed"]
+          ],
+          "once": true,
+          "say": "She looks at you like you've said something a grown-up says because it's easier than being honest. \"...All right,\" she says, and doesn't sound like she believes either of you.",
+          "fx": [["set", "kw_child_dismissed"], ["addvar", "appr_lys", -1]]
+        },
+        {
+          "id": "react_warded",
+          "label": "ask how she's sleeping, since the ward",
+          "if": [["flag", "kw_child_warded"]],
+          "once": true,
+          "say": "Better. Father Twyne's ward doesn't feel like much, honestly — just words, and a bit of ash on my doorstep. But I sleep through the night now, so I suppose it worked.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_answered_back",
+          "label": "ask if the stair's answer helped",
+          "if": [["flag", "kw_child_answered_back"]],
+          "once": true,
+          "say": "I don't hear the notes anymore, not since you went up that stair. I think you answered for me, somehow. I don't know how to thank you for that properly, so: thank you.",
+          "fx": [["xp", 1], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the notes, now the recall's sounded",
+          "if": [["flag", "kw_hollow_rested"]],
+          "once": true,
+          "say": "I heard it carry all the way to the gate. Two rising notes and the drop, whole, the way I always half-knew it should sound. I don't think I'll answer anything out past that gate again.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the Hunt's Stand, now it's bargained",
+          "if": [["flag", "kw_hollow_bargained"]],
+          "once": true,
+          "say": "One night a year, my gran says, and the rest stay quiet. I still won't answer the notes again. But I don't have to be as afraid of them either.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Hunt's Stand, now it's burned",
+          "if": [["flag", "kw_hollow_burned"]],
+          "once": true,
+          "say": "Gran says the notes won't come again, not ever. I ought to be glad. Mostly I just feel like something's gone quiet that used to at least ask.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her watching the tree-line",
+          "say": "Mind the gate after dark yourself, then. Someone in this village ought to take my gran's advice.",
+          "end": true
+        }
+      ]
+    },
+    "kw_trader": {
+      "name": "Hask",
+      "room": "kw_trade_counter",
+      "desc": "The counter's own keeper, patient with charcoal-burners' credit and quick to shortchange anyone in a Crown coat.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Hask. I sell what the wood and the road both need — rope, pitch, a decent blade — and I don't ask what you mean to do with any of it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "trading this deep in the wood",
+          "if": [["flag", "said_kw_trader_greet"]],
+          "once": true,
+          "say": "Burners, verderer's men, the odd Ironbound rider — everyone passes this counter sooner or later. I've learned to weigh my opinions the same as my goods: carefully, and mostly to myself.",
+          "fx": [["xp", 2]]
+        }
+      ]
+    }
+  }
+}

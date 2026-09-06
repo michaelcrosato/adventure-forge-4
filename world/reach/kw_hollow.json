@@ -1,0 +1,598 @@
+{
+  "rooms": {
+    "kw_muster_court": {
+      "name": "The Hunt's Stand — Muster Court",
+      "desc": "A wide clearing walled in by oak, cobbles still laid true under moss where a hunt was meant to muster and never did. A weathered horn-post stands at its center, iron ring empty, waiting on a horn nobody has hung there in four hundred years.",
+      "brief": "The muster court, an empty horn-post at its center.",
+      "region": "kw",
+      "landmark": "the Hunt's Stand",
+      "exits": {
+        "north": { "to": "kw_kennels", "landmark": "the kennels" },
+        "east": { "to": "kw_lodge_hall", "landmark": "the lodge hall" },
+        "up": { "to": "kw_boys_stair", "landmark": "the boy's stair" }
+      },
+      "onEnterOnce": [
+        ["set", "kw_hollow_grievance"],
+        ["score", 2],
+        ["xp", 3],
+        ["say", "This is the Hunt's Stand: the king's hunt mustered here the morning the crown was stolen and waited on a horn that never sounded. They are riding still, and nobody has ever spoken their recall."],
+        [
+          "if",
+          [["inParty", "lys"]],
+          [
+            ["say", "Lys: \"No dogs. I can feel where they'd be, same as I feel a treeline at night, and there's nothing there. That's worse than baying, somehow.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "vell"]],
+          [
+            ["say", "Vell: \"He was here. My own first ancestor, the morning he took the crown — the hunt mustered in this court and waited on a horn that never came. I have wanted to stand here for a long time.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "tamsin"]],
+          [
+            ["say", "Tamsin: \"Even the Ironbound leave this clearing be. Four hundred years of good timber, and no cart-wheel has ever crossed this court. That tells you something.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Brother Osk: \"No rite was ever said over this. Not once, in four centuries. I don't think anyone even knew there was a grief here to answer.\""]
+          ],
+          []
+        ]
+      ],
+      "variants": [
+        {
+          "if": [["flag", "kw_hollow_rested"]],
+          "desc": "A wide clearing walled in by oak, cobbles laid true under moss. A horn hangs whole on the horn-post now, and the court holds the particular quiet of a thing finished rather than a thing waiting.",
+          "brief": "The court, a horn hung whole at its post."
+        },
+        {
+          "if": [["flag", "kw_hollow_bargained"]],
+          "desc": "A wide clearing walled in by oak. The horn-post stands empty still, but a watch-fire's ash is banked fresh at its foot, laid for the one night a year the wood is owed.",
+          "brief": "The court, fresh ash banked at the post."
+        },
+        {
+          "if": [["flag", "kw_hollow_burned"]],
+          "desc": "Black timber and cold ash where the muster court stood, the horn-post itself burned to a stump. Nothing here waits on anything anymore.",
+          "brief": "Black timber, the horn-post burned to a stump."
+        }
+      ],
+      "actions": [
+        {
+          "id": "kw_rest_hollow",
+          "label": "sound the recall whole at the horn-post",
+          "if": [["var", "kw_notes_known", ">=", 3], ["flag", "kw_horn_known"], ["!flag", "kw_hollow_done"]],
+          "fx": [
+            ["set", "kw_hollow_rested"],
+            ["set", "kw_hollow_done"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "appr_lys", 1],
+            ["addvar", "appr_vell", 1],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You set the horn to your lips and sound the three notes whole. It carries a long way, and for the first time in four hundred years, nothing rides out to meet it."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"My own line's hunt, recalled at last. I did not know what I expected to feel, standing here for it. Something like relief. I did not expect that.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [
+                ["say", "Lys: \"That's a rest-call, not a hunting-call. Whoever wrote it knew exactly what they were asking the horn to say. Well done.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "kw_burn_hollow",
+          "label": "burn the Stand (might, 1hp on fail)",
+          "if": [["has", "kw_cinder_oil"], ["!flag", "kw_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              9,
+              [
+                ["move", "kw_cinder_oil", "nowhere"],
+                ["set", "kw_hollow_burned"],
+                ["set", "kw_hollow_done"],
+                ["addvar", "hollows_burned", 1],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_church", -2],
+                ["addvar", "appr_tamsin", 1],
+                ["addvar", "appr_osk", -1],
+                ["score", 15],
+                ["xp", 8],
+                ["say", "The oil takes fast along four centuries of dry timber. The Hunt's Stand burns through the night, horn-post and lodge and all, and by morning there is nothing left in this clearing to answer any horn, ever again."]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The oil flares back short of the beam, wrong on the damp old wood. You're driven off a step, singed, the Stand untouched."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "kw_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "kw_hollow_done"]],
+          "fx": [
+            ["say", "The recall wants three notes and the horn itself, sounded together here at the post."],
+            [
+              "if",
+              [["var", "kw_notes_known", ">=", 3]],
+              [["say", "All three notes are known: the woodward's call, the hunt's own roll, and the burners' rhyme."]],
+              []
+            ],
+            [
+              "if",
+              [["!flag", "kw_note_woodward"]],
+              [["say", "One note is missing still: coax the old call from Hollis, at the woodward's cot in Hornhallow."]],
+              []
+            ],
+            [
+              "if",
+              [["!flag", "kw_note_roll"]],
+              [["say", "One note is missing still: read the cadence from the hunt's roll, here in the lodge hall."]],
+              []
+            ],
+            [
+              "if",
+              [["!flag", "kw_note_rhyme"]],
+              [["say", "One note is missing still: ask Fry, the child at Hornhallow's ride-gate, for the burners' rhyme."]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "kw_horn_known"]],
+              [["say", "The horn itself is yours."]],
+              [
+                ["say", "The horn is still wanted: Sabel may give it, at the Kennel Hearth in Hornhallow — or it may be taken from her, or found here, in the kennels."]
+              ]
+            ],
+            [
+              "if",
+              [["var", "kw_notes_known", ">=", 3], ["flag", "kw_horn_known"]],
+              [["say", "Both ready together: sound the recall here, at the horn-post."]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "kw_verderer_refused"], ["flag", "kw_factor_refused"]],
+              [
+                ["say", "The bargain stands ready: tell Garrow, at the charcoal-master's yard, the wood is bought for a night a year."]
+              ],
+              [
+                ["say", "The bargain wants both refused, in Hornhallow: the verderer's warrant (at his post) and the factor's coppice (at the weigh-house)."]
+              ]
+            ],
+            [
+              "if",
+              [["has", "kw_cinder_oil"]],
+              [
+                ["say", "The burn stands ready: Ironbound cinder-oil is yours — burn it here (might; a failed try costs 1 hp)."]
+              ],
+              [
+                ["say", "The burn wants Ironbound cinder-oil — Marrick, at the weigh-house in Hornhallow, gives it for the asking."]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "kw_kennels": {
+      "name": "The Hunt's Stand — Kennels",
+      "desc": "Rows of stone kennel-runs, gates hanging open on nothing, straw gone to dust in every stall. The court outside is quiet, but this room is quieter still, in the particular way of a place built for noise that never comes.",
+      "brief": "The kennels, empty runs, unnatural quiet.",
+      "region": "kw",
+      "exits": { "south": { "to": "kw_muster_court" } },
+      "variants": [
+        {
+          "if": [["flag", "kw_horn_found"]],
+          "desc": "Rows of stone kennel-runs, gates hanging open. The straw in the end stall is turned over and settled again, whatever it was hiding already gone.",
+          "brief": "The kennels, one stall already searched."
+        }
+      ],
+      "actions": [
+        {
+          "id": "kw_search_kennels",
+          "label": "search the straw for the horn (grace)",
+          "if": [["!flag", "kw_horn_known"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              10,
+              [
+                ["set", "kw_horn_found"],
+                ["set", "kw_horn_known"],
+                ["move", "kw_horn", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "Deep in the end stall's straw, wedged where a hound might have dragged it to gnaw the mouthpiece: the huntsman's own horn, tarnished but whole."]
+              ],
+              [
+                ["say", "The straw gives up nothing but dust and the ghost of a smell that might once have been dog. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "kw_search_kennels_scout",
+          "label": "read the stalls for the horn's place",
+          "free": true,
+          "if": [["class", "scout"], ["!flag", "kw_horn_known"], ["!flag", "or_scout_kw_kennels"]],
+          "fx": [
+            ["set", "or_scout_kw_kennels"],
+            ["addvar", "or_scout_marks", 1],
+            ["set", "kw_horn_found"],
+            ["set", "kw_horn_known"],
+            ["move", "kw_horn", "inv"],
+            ["score", 4],
+            ["xp", 3],
+            ["say", "A whipper-in keeps his gear at hand, not underfoot — you go straight to the end stall's high shelf and find the huntsman's own horn, tarnished but whole, exactly where habit would leave it."]
+          ]
+        }
+      ]
+    },
+    "kw_lodge_hall": {
+      "name": "The Hunt's Stand — Lodge Hall",
+      "desc": "A long hall under a sagging roof, trestle tables still set as if the hunt might yet sit down to it. A roll of names is nailed above the cold hearth, ink faded but the hand still legible, if you have the patience for it.",
+      "brief": "The lodge hall, the hunt's roll on the wall.",
+      "region": "kw",
+      "exits": { "west": { "to": "kw_muster_court" } },
+      "actions": [
+        {
+          "id": "kw_read_roll",
+          "label": "read the roll's cadence (wits)",
+          "if": [["!flag", "kw_note_roll"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "kw_note_roll"],
+                ["addvar", "kw_notes_known", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "The names are read out in a fixed order, master of hounds first to the horn-boy last, and the order itself has a rhythm to it — three notes, rising, the shape of a call rather than a list."]
+              ],
+              [["say", "The ink has run too far to read whole on a glance. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "kw_read_roll_scholar",
+          "label": "read the hunt's roll outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "kw_note_roll"], ["!flag", "or_scholar_kw_roll"]],
+          "fx": [
+            ["set", "or_scholar_kw_roll"],
+            ["addvar", "or_scholar_read", 1],
+            ["set", "kw_note_roll"],
+            ["addvar", "kw_notes_known", 1],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "You have the roll's order before the dust settles from touching it: master of hounds first to horn-boy last, and the naming-order is itself a call, three notes rising, cut into the reading like a verse."]
+          ]
+        },
+        {
+          "id": "kw_read_kennel_roll",
+          "label": "read the old kings' kennel-roll outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "or_scholar_kw_kennel"]],
+          "fx": [
+            ["set", "or_scholar_kw_kennel"],
+            ["set", "kw_kennel_roll_read"],
+            ["addvar", "or_scholar_read", 1],
+            ["xp", 2],
+            ["say", "A second roll, older than the huntsmen's own, names every hound the old kings ever kenneled by name and sire, down to where each was finally laid — a mound east in the wood, deep in the ridings."]
+          ]
+        }
+      ]
+    },
+    "kw_boys_stair": {
+      "name": "The Hunt's Stand — the Boy's Stair",
+      "desc": "A narrow stair climbs to what was once a bell-cote, open to the weather now, the boards worn soft at their centers by a boy's feet climbing them in a hurry, morning after morning, for four hundred years.",
+      "brief": "The narrow stair, worn soft by a boy's feet.",
+      "region": "kw",
+      "exits": { "down": { "to": "kw_muster_court" } },
+      "actions": [
+        {
+          "id": "kw_hear_notes",
+          "label": "listen for the three notes",
+          "free": true,
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "Two notes, clear and quick, and then a silence where the third should land — over and over, faint, like something practiced too many times to stop practicing. You could almost hum the missing note yourself."]
+          ]
+        },
+        {
+          "id": "kw_call_notes_back",
+          "label": "call the three notes back (wits)",
+          "if": [
+            ["flag", "kw_child_worried"],
+            ["!flag", "kw_child_answered_back"],
+            ["!flag", "kw_child_warded"],
+            ["!flag", "kw_child_dismissed"]
+          ],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "kw_child_answered_back"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "appr_lys", 1],
+                ["say", "You hum the two notes true and guess low at the third, the way you'd answer a hail rather than a hunting-call. Something in the stair's quiet changes, like a held breath let out."]
+              ],
+              [
+                ["say", "The two notes come easy enough; the third slips away from you every time, thin and wrong. Whatever answered Fry once isn't answering you tonight. It can be tried again."]
+              ]
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "kw_hound_shade": {
+      "name": "the master of hounds' shade",
+      "room": "kw_lodge_hall",
+      "dialogue": true,
+      "desc": "A gray shape at the head of the trestle table, still upright, still waiting on a signal the rest of the hunt gave up expecting centuries ago.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Master of hounds, to whoever asks. I mustered this hunt the morning the old king's crown went missing from the barrow, and I have been mustering it ever since.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_wait",
+          "label": "why you're still waiting",
+          "if": [["flag", "said_kw_hound_shade_greet"]],
+          "once": true,
+          "say": "A horn calls a hunt out. Only a horn can call it home. Nobody living taught the boy the notes properly before he rode, and nobody has sounded them since. So: we wait.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_boy",
+          "label": "the boy with the horn",
+          "if": [["flag", "said_kw_hound_shade_bg_wait"]],
+          "once": true,
+          "say": "Youngest of us, and proudest of the horn for it. He sounded two notes clear as a bell that morning and lost the third to nerves. We have all been listening for it since.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the recall, now it's sounded",
+          "if": [["flag", "kw_hollow_rested"]],
+          "once": true,
+          "say": "All three notes, whole, at last. The boy's third note in there somewhere, however you came by it. Tell him, if you ever meet him properly, that nobody blamed him. We just couldn't say so until now.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the bargain, now it's struck",
+          "if": [["flag", "kw_hollow_bargained"]],
+          "once": true,
+          "say": "A night a year is not home. It is closer to home than four hundred years of this court has managed. I will take it, and I expect the rest of the hunt will too, whether they say so or not.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the Stand, now it's burned",
+          "if": [["flag", "kw_hollow_burned"]],
+          "once": true,
+          "say": "No horn will call any of us anywhere now. I find I mind that less than I expected to. There is a mercy in an ending nobody has to keep listening for.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him at the table's head",
+          "say": "Mind the roll on your way past. Every name on it is still owed an answer.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "items": {
+    "kw_cinder_oil": {
+      "name": "a cask of Ironbound cinder-oil",
+      "loc": "nowhere",
+      "hint": "burns however wet the ground gets — Marrick, at the weigh-house, gives it for the asking"
+    },
+    "kw_horn": {
+      "name": "the huntsman's horn",
+      "loc": "nowhere",
+      "hint": "sound it whole at the Hunt's Stand's horn-post, once all three notes are known"
+    }
+  },
+  "quests": {
+    "kw_q_wood": {
+      "name": "The Wood Question",
+      "start": [["any", [["flag", "kw_verderer_bg"], ["flag", "kw_factor_bg"], ["flag", "kw_woodward_bg"]]]],
+      "done": [["any", [["flag", "kw_wood_crown"], ["flag", "kw_wood_iron"], ["flag", "kw_wood_wild"]]]],
+      "stages": [
+        {
+          "if": [["flag", "kw_wood_crown"]],
+          "text": "The Crown's warrant stood. Marrowgate gets its timber, oak by marked oak."
+        },
+        {
+          "if": [["flag", "kw_wood_iron"]],
+          "text": "The Ironbound's coppice stood. Cinderhall's forges eat the Kingswood in slow rings."
+        },
+        {
+          "if": [["flag", "kw_wood_wild"]],
+          "text": "The rides stay as they've always been, answerable to nobody's warrant."
+        },
+        {
+          "if": [],
+          "text": "Three claims stand on the wood: the verderer's warrant, the factor's coppice, or the rides as they are. Back one."
+        }
+      ]
+    },
+    "kw_q_child": {
+      "name": "The Boy's Answer",
+      "start": [["flag", "kw_child_worried"]],
+      "done": [["any", [["flag", "kw_child_warded"], ["flag", "kw_child_answered_back"], ["flag", "kw_child_dismissed"]]]],
+      "stages": [
+        {
+          "if": [],
+          "text": "Fry answered the boy's three notes once. Ward her (the chapel), answer for her (the stair), or dismiss it."
+        }
+      ]
+    },
+    "kw_q_notes": {
+      "name": "The Recall's Three Notes",
+      "start": [["flag", "kw_hollow_grievance"]],
+      "done": [["var", "kw_notes_known", ">=", 3]],
+      "stages": [
+        {
+          "if": [["var", "kw_notes_known", ">=", 2]],
+          "text": "Two notes are known. The last waits with Hollis, the lodge hall's roll, or Fry — whichever you haven't tried."
+        },
+        {
+          "if": [["var", "kw_notes_known", ">=", 1]],
+          "text": "One note is known. Two remain: the woodward's call, the hunt's roll, and the burners' rhyme a child keeps."
+        },
+        {
+          "if": [],
+          "text": "The recall wants three notes: the woodward's call, the hunt's roll in the lodge hall, and the burners' rhyme."
+        }
+      ]
+    },
+    "kw_q_horn": {
+      "name": "The Huntsman's Horn",
+      "start": [["flag", "kw_hollow_grievance"]],
+      "done": [["flag", "kw_horn_known"]],
+      "stages": [
+        {
+          "if": [],
+          "text": "The recall wants the huntsman's horn: Sabel may give it (Kennel Hearth), or it may be taken, or found in the kennels."
+        }
+      ]
+    },
+    "kw_q_after": {
+      "name": "The Kingswood, After",
+      "start": [["flag", "sv_kw_back"]],
+      "done": [["flag", "sv_kw_after_done"]],
+      "stages": [
+        {
+          "if": [["flag", "kw_hollow_bargained"], ["!flag", "said_kw_charcoal_master_sv_kw_bargain_ask"]],
+          "text": "The bargained night is due. Garrow, at the charcoal-master's yard, would rather not answer for it alone."
+        },
+        {
+          "if": [["flag", "kw_hollow_rested"], ["!flag", "said_kw_descendant_sv_kw_rested_ask"]],
+          "text": "The recall rests. Sabel, at the Kennel Hearth, wonders what becomes of the horn now."
+        },
+        {
+          "if": [["flag", "kw_hollow_burned"], ["!flag", "said_kw_priest_sv_kw_burned_ask"]],
+          "text": "The Stand is ash. Father Twyne, at the hunt's chapel, wonders what becomes of the cleared ground."
+        },
+        { "if": [], "text": "Hornhallow settles back into itself, whatever the Hunt's Stand's fate cost it." }
+      ]
+    }
+  },
+  "statusTracks": [
+    {
+      "var": "kw_notes_known",
+      "label": "The Kingswood's recall-notes",
+      "max": 3,
+      "remaining": [
+        { "flag": "kw_note_woodward", "label": "the woodward's half-remembered call" },
+        { "flag": "kw_note_roll", "label": "the hunt's roll in the lodge hall" },
+        { "flag": "kw_note_rhyme", "label": "the burners' children's rhyme" }
+      ],
+      "if": [["flag", "kw_hollow_grievance"]]
+    }
+  ],
+  "epilogue": [
+    {
+      "if": [["flag", "kw_hollow_rested"]],
+      "text": "The Hunt's Stand rests at last: three notes sounded whole, and nothing has ridden out of the Kingswood since.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "kw_hollow_bargained"]],
+      "text": "The Kingswood keeps its hunt a while longer, bought with a night's fear once a year instead of a rite.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "kw_hollow_burned"]],
+      "text": "Ironbound oil cleared the Hunt's Stand in a night. No horn will ever call that hunt home now.",
+      "weight": 2
+    },
+    {
+      "if": [["!flag", "kw_hollow_done"], ["flag", "kw_entered"]],
+      "text": "The Hunt's Stand still musters in the Kingswood, waiting on a horn nobody has sounded whole in four hundred years."
+    },
+    {
+      "if": [["flag", "kw_wood_crown"]],
+      "text": "The Crown's warrant stood: the Kingswood's oldest oaks came down for Marrowgate's timber, one felling-season at a time.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "kw_wood_iron"]],
+      "text": "The Ironbound coppiced the Kingswood ring by ring, and Cinderhall's forges never once asked where the charcoal came from.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "kw_wood_wild"]],
+      "text": "The Kingswood's rides stayed exactly what they'd always been: cut, kept, and answerable to nobody's warrant.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "kw_bargain_broken"]],
+      "text": "Hornhallow's bargain with its own hunt did not hold. Nobody there says out loud what they're afraid rides now."
+    },
+    {
+      "if": [["flag", "sv_kw_bargained_paid"]],
+      "text": "The Kingswood's bargain holds a while longer on borrowed coin. Someone will have to keep paying it, eventually."
+    },
+    {
+      "if": [["flag", "sv_kw_bargained_honored"]],
+      "text": "Hornhallow keeps its own bargain at its own cost, and told Marrowgate so plainly."
+    },
+    {
+      "if": [["flag", "sv_kw_rested_kept"]],
+      "text": "The huntsman's horn hangs whole at the horn-post still, for anyone who wants proof the recall was real."
+    },
+    {
+      "if": [["flag", "sv_kw_rested_sent"]],
+      "text": "The huntsman's horn went to the Keepers' Hall at Barrowmere, so more than Hornhallow remembers how the hunt came home."
+    },
+    {
+      "if": [["flag", "sv_kw_burned_marked"]],
+      "text": "A plain marker stands over the Hunt's Stand's ash now, Father Twyne's doing."
+    },
+    {
+      "if": [["flag", "sv_kw_burned_claimed"]],
+      "text": "The Ironbound coppice the Hunt's Stand's cleared ground now, the grief that used to stand there already forgotten."
+    }
+  ]
+}

@@ -1,0 +1,1510 @@
+{
+  "rooms": {
+    "sk_north_track": {
+      "name": "Saltkerns North Track",
+      "desc": "A rutted track climbs out of the salt flats into Thornwold's tree line. Gulls give way to crows here, and the air loses its salt by degrees. Gullhaven's roofs huddle south.",
+      "brief": "The track climbs north into Thornwold's trees.",
+      "region": "sk",
+      "landmark": "Saltkerns north track",
+      "exits": { "north": { "to": "th_south_track" }, "in": { "to": "sk_settlement" } },
+      "onEnterOnce": [["set", "sk_entered"], ["xp", 2]]
+    },
+    "sk_coast_road": {
+      "name": "Saltkerns Coast Road",
+      "desc": "A packed-shell road runs the cliff line east, the sea a long drop to one side. Fenmarch's fens show as a smudge of green-gray where the coast finally bends inland. A tithe-lane climbs north into the Hearthlands.",
+      "brief": "The shell road runs east along the cliff.",
+      "region": "sk",
+      "landmark": "Saltkerns coast road",
+      "exits": {
+        "east": { "to": "fd_coast_road" },
+        "in": { "to": "sk_settlement" },
+        "north": { "to": "hl_south_lane", "landmark": "the Hearthlands" }
+      },
+      "onEnterOnce": [["set", "sk_entered"], ["xp", 2]]
+    },
+    "sk_smugglers_stair": {
+      "name": "The Smugglers' Stair",
+      "desc": "A stair cut into the cliff face drops from a false cellar and climbs again through a crack in the rock, worn smooth by boots that were never meant to be counted. Cold air breathes down from above.",
+      "brief": "A hidden stair, cut into the cliff.",
+      "region": "sk",
+      "landmark": "the smugglers' stair",
+      "exits": {
+        "up": {
+          "to": "cp_smugglers_cave",
+          "if": [["flag", "free_passage"]],
+          "lockedMsg": "The stair is watched. Without the Free Companies' word, whoever's up there will put a knife in you before a lantern.",
+          "hint": "earn the Free Companies' trust in Gullhaven first"
+        },
+        "in": { "to": "sk_settlement" },
+        "down": { "to": "sk_lookout_nook", "sideTrip": true, "landmark": "a lookout's nook" }
+      },
+      "onEnterOnce": [
+        ["set", "sk_entered"],
+        ["xp", 2],
+        ["say", "This stair goes under the pass to Coldpass, past every hold between. Nothing closes behind you, but a companion's grief left in those holds stays unfinished unless you walk back for it."]
+      ]
+    },
+    "sk_settlement": {
+      "name": "The Quay, Gullhaven",
+      "desc": "Boats ride at anchor over their own wrecked kin, stove in on the bar and never cleared. A track climbs north, the coast road bends east, the shore path runs west, a hatch drops to the old stair; the high street climbs above, the Drowned Bell south.",
+      "brief": "Boats over their wrecked kin, on the tide.",
+      "region": "sk",
+      "landmark": "Gullhaven",
+      "exits": {
+        "north": { "to": "sk_north_track", "landmark": "the north track" },
+        "east": { "to": "sk_coast_road", "landmark": "the coast road" },
+        "down": { "to": "sk_smugglers_stair", "landmark": "the smugglers' stair" },
+        "up": { "to": "sk_high_street", "landmark": "the high street" },
+        "south": { "to": "sk_drowned_bell", "landmark": "the Drowned Bell" }
+      },
+      "onEnterOnce": [
+        ["xp", 2],
+        ["say", "Half the hulls on this bay never sailed again after the fleet broke on the reef. Nobody in Gullhaven talks about which fleet."]
+      ],
+      "variants": [
+        {
+          "if": [["flag", "sk_hollow_rested"], ["flag", "sv_sk_back"], ["!flag", "sv_sk_after_done"]],
+          "brief": "Boats on the tide. The widow's asking a harder question now."
+        },
+        {
+          "if": [["flag", "sk_hollow_bargained"], ["flag", "sv_sk_back"], ["!flag", "sv_sk_after_done"]],
+          "brief": "Boats on the tide. Spring's tithe is due, and not everyone agrees."
+        },
+        {
+          "if": [["flag", "sk_hollow_burned"], ["flag", "sv_sk_back"], ["!flag", "sv_sk_after_done"]],
+          "brief": "Smoke past the point. Wreckers and the Watch both want the Pride."
+        },
+        { "if": [["flag", "sk_hollow_rested"]], "brief": "Boats on the tide. The fog off the point has thinned." },
+        {
+          "if": [["flag", "sk_hollow_burned"]],
+          "brief": "Boats on the tide. Smoke still ghosts the horizon some mornings."
+        },
+        {
+          "if": [["flag", "sk_hollow_bargained"]],
+          "brief": "Boats on the tide. Coin went out to the water; quiet came back."
+        },
+        {
+          "if": [["any", [["flag", "rb_ir_sk_home"], ["flag", "rb_ir_sk_stayed"], ["flag", "rb_ir_sk_guilted"]]]],
+          "brief": "Boats over their wrecked kin. One Downs debt, settled."
+        },
+        { "if": [["flag", "sk_passage_smuggled"]], "brief": "Boats on the tide. Rennick's stair runs quiet still." },
+        {
+          "if": [["flag", "sk_passage_informed"]],
+          "brief": "Boats on the tide. Brann shut Rennick's stair for good."
+        }
+      ],
+      "actions": [
+        {
+          "id": "sk_quay_tally",
+          "label": "read the harbour tally board",
+          "once": true,
+          "fx": [
+            ["xp", 2],
+            ["say", "Wrecks logged by name, going back longer than anyone alive. The oldest page names a fleet, not a ship — the Reeve's own, broken on the reef in one night. No cause given."]
+          ]
+        }
+      ],
+      "onEnter": [["if", [["flag", "sk_hollow_resolved"], ["!flag", "sv_sk_back"]], [["set", "sv_sk_back"]], []]]
+    },
+    "sk_high_street": {
+      "name": "Gullhaven High Street",
+      "desc": "The street climbs above the harbor, salt-stained shopfronts on both sides. The harbourmaster's flag snaps north; the Watch's lamp burns south; the chandlery's nets hang east; a narrow house with shuttered windows sits west.",
+      "brief": "Shopfronts above the harbor.",
+      "region": "sk",
+      "exits": {
+        "down": { "to": "sk_settlement" },
+        "north": { "to": "sk_harbourmaster_house", "landmark": "the harbourmaster's house" },
+        "south": { "to": "sk_customs_post", "landmark": "the customs post" },
+        "east": { "to": "sk_chandlery", "landmark": "the chandlery" },
+        "west": { "to": "sk_widows_house", "landmark": "Widow Kestrel's house" }
+      },
+      "actions": [
+        {
+          "id": "sk_scout_mark",
+          "label": "spot the smuggler's chalk-mark",
+          "if": [["class", "scout"], ["!flag", "or_scout_sk_mark"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_scout_sk_mark"],
+            ["score", 2],
+            ["xp", 2],
+            ["addvar", "gold", 3],
+            ["say", "Half these shutters carry a chalk mark only the trade would notice — Rennick's crews marking which doors deal quiet. One mark is fresher than the rest, and a loose step beneath it hides a coin or two."]
+          ]
+        }
+      ]
+    },
+    "sk_drowned_bell": {
+      "name": "The Drowned Bell",
+      "desc": "A low tavern built from a ship's own bones — ribs for rafters, a mast for the bar's spine. A ship's bell, green with age, hangs silent over the hearth. The quay lies north.",
+      "brief": "A tavern built from a ship's bones.",
+      "region": "sk",
+      "exits": { "north": { "to": "sk_settlement" } },
+      "actions": [
+        {
+          "id": "sk_rest",
+          "label": "rest by the hearth",
+          "fx": [
+            ["hp", 10],
+            ["say", "The green bell doesn't ring, but the fire's honest enough. You sleep sound and wake steadier."]
+          ]
+        }
+      ]
+    },
+    "sk_chandlery": {
+      "name": "The Chandlery",
+      "desc": "Coiled rope, tar, and hung nets crowd every wall. Marta Coyle keeps the accounts in her head and the goods in careful order. The high street lies west.",
+      "brief": "Rope, tar, and hung nets.",
+      "region": "sk",
+      "exits": { "west": { "to": "sk_high_street" } },
+      "actions": [
+        {
+          "id": "sk_buy_axe",
+          "label": "buy a wreck-axe (6 gold)",
+          "if": [["!has", "sk_wreck_axe"], ["var", "gold", ">=", 6]],
+          "fx": [
+            ["addvar", "gold", -6],
+            ["move", "sk_wreck_axe", "inv"],
+            ["say", "Marta hands it over haft-first. 'Salvaged off a wreck, not the bay floor. Good steel still, under the rust.'"]
+          ]
+        },
+        {
+          "id": "sk_buy_coat",
+          "label": "buy a tarred oilskin coat (5 gold)",
+          "if": [["!has", "sk_oilskin_coat"], ["var", "gold", ">=", 5]],
+          "fx": [
+            ["addvar", "gold", -5],
+            ["move", "sk_oilskin_coat", "inv"],
+            ["say", "Stiff with tar and salt, and it turns a blade better than it looks like it should."]
+          ]
+        },
+        {
+          "id": "sk_buy_oil",
+          "label": "buy a flask of lamp oil (4 gold)",
+          "if": [["!has", "sk_lamp_oil"], ["var", "gold", ">=", 4], ["!flag", "stole_sk_chandler_compass"]],
+          "fx": [
+            ["addvar", "gold", -4],
+            ["move", "sk_lamp_oil", "inv"],
+            ["say", "'For the Farlight, I'd guess,' Marta says, not really asking. 'Nobody's bought lamp oil in years.'"]
+          ]
+        },
+        {
+          "id": "sk_buy_torch",
+          "label": "buy a pitch-soaked torch (5 gold)",
+          "if": [["!has", "sk_pitch_torch"], ["var", "gold", ">=", 5]],
+          "fx": [
+            ["addvar", "gold", -5],
+            ["move", "sk_pitch_torch", "inv"],
+            ["say", "She wraps it without a word, then adds one anyway: 'Whatever you're burning, I hope it's owed.'"]
+          ]
+        }
+      ]
+    },
+    "sk_harbourmaster_house": {
+      "name": "The Harbourmaster's House",
+      "desc": "Charts of the bay and the reef beyond cover every wall, wrecks marked in a hand going back generations. Harbourmaster Joss Rennick works a ledger by the window, watching the stair more than the door.",
+      "brief": "Charts of every wreck in the bay.",
+      "region": "sk",
+      "exits": { "south": { "to": "sk_high_street" } },
+      "actions": [
+        {
+          "id": "sk_bribe_wits",
+          "label": "read the wreck-charts for truth (wits)",
+          "if": [["flag", "sk_heard_harbourmaster"], ["!flag", "sk_bribe_admitted"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "sk_bribe_admitted"],
+                ["addvar", "rep_free", -1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "One wreck on the wall charts is marked wrong, on purpose, in a hand too careful to be a mistake: the reef, the year the free-towns paid to look away. The chart says what Rennick won't."]
+              ],
+              [
+                ["say", "Generations of wrecks, all marked the same careful hand. Whatever's wrong with this one, it isn't obvious yet."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sk_scholar_charts",
+          "label": "read the wreck-charts outright",
+          "if": [["class", "scholar"], ["flag", "sk_heard_harbourmaster"], ["!flag", "sk_bribe_admitted"]],
+          "once": true,
+          "fx": [
+            ["set", "sk_bribe_admitted"],
+            ["set", "or_scholar_sk_charts"],
+            ["addvar", "rep_free", -1],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "One wreck on the wall charts is marked wrong, on purpose, in a hand too careful to be a mistake: the reef, the year the free-towns paid to look away. A scholar's eye finds it without needing Rennick to slip."]
+          ]
+        }
+      ]
+    },
+    "sk_customs_post": {
+      "name": "The Watch Customs Post",
+      "desc": "A narrow office smelling of tallow and old paper. Sergeant Ilsa Brann counts a manifest twice before she trusts it, and trusts fewer things than that. The high street lies north.",
+      "brief": "Tallow, paper, and a careful sergeant.",
+      "region": "sk",
+      "exits": { "north": { "to": "sk_high_street" } }
+    },
+    "sk_widows_house": {
+      "name": "Widow Kestrel's House",
+      "desc": "A narrow house with the shutters always half-closed. Widow Kestrel keeps it swept bare — no charts, no nets, nothing that says harbor at all, save the model ship on the sill, its rigging gone to dust.",
+      "brief": "A bare house, and a dusty model ship.",
+      "region": "sk",
+      "exits": { "east": { "to": "sk_high_street" } },
+      "actions": [
+        {
+          "id": "sk_osk_verse",
+          "label": "let Brother Osk try the old verse",
+          "if": [["inParty", "osk"], ["var", "appr_osk", ">=", 1], ["!flag", "sk_verse_known"]],
+          "fx": [
+            ["set", "sk_verse_known"],
+            ["xp", 3],
+            ["addvar", "appr_osk", 1],
+            ["say", "Osk hums the first line, hesitant, and the widow's eyes go wide. 'That's it,' she says. 'That's the old verse, near enough.' Between them, word by word, it comes whole."]
+          ]
+        },
+        {
+          "id": "sk_verse_might",
+          "label": "break into his old sea-chest (might)",
+          "if": [["flag", "sk_widow_confided"], ["!flag", "sk_verse_known"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "sk_verse_known"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "The lock gives before she can stop you, and his letters are right where grief left them. The verse is written out in full, in a dead man's hand, at the bottom of the last one."]
+              ],
+              [
+                ["say", "The old chest is stouter than it looks, and she's already crossing the room toward you. It can be tried again, if she'll still let you."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sk_verse_wits",
+          "label": "reason out where he'd keep it (wits)",
+          "if": [["flag", "sk_widow_confided"], ["!flag", "sk_verse_known"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "sk_verse_known"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "A harbourmaster keeps his charts close and his conscience closer. You find the letters tucked behind the one thing she never moved: his old chart of the reef. The verse is written out whole."]
+              ],
+              [["say", "Nothing in the room gives itself up to a careful eye tonight. It can be tried again."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "sk_lookout_nook": {
+      "name": "The Lookout's Nook",
+      "desc": "A hollow in the cliff face below the stair's foot, screened by gorse-scrub. Someone's laid a bedroll and a spyglass here, watching the steps from where the steps can't watch back.",
+      "brief": "A hidden nook, a spyglass on the steps.",
+      "region": "sk",
+      "exits": { "up": { "to": "sk_smugglers_stair" } },
+      "onEnterOnce": [["xp", 1]],
+      "actions": [
+        {
+          "id": "sk_lookout_free",
+          "label": "ask the lookout for word of the road",
+          "if": [["flag", "sk_helped_free"], ["!flag", "sk_lookout_resolved"]],
+          "fx": [
+            ["set", "sk_lookout_resolved"],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "\"Rennick's word reached me before you did,\" the lookout says, not glancing up from the spyglass. \"Friends of his stair don't pay for talk.\" He tells you plenty anyway."]
+          ]
+        },
+        {
+          "id": "sk_lookout_paid",
+          "label": "buy word of the road (3 gold)",
+          "if": [["var", "gold", ">=", 3], ["!flag", "sk_helped_free"], ["!flag", "sk_lookout_resolved"]],
+          "fx": [
+            ["addvar", "gold", -3],
+            ["set", "sk_lookout_resolved"],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "He pockets the coin before naming a price for the rest. \"Customs post naps some nights more than others,\" he says. \"That's the whole of what three gold buys you.\""]
+          ]
+        },
+        {
+          "id": "sk_scout_lookout",
+          "label": "trade a quiet hand-sign for it",
+          "if": [
+            ["class", "scout"],
+            ["!flag", "sk_helped_free"],
+            ["!flag", "sk_lookout_resolved"],
+            ["!flag", "or_scout_sk_lookout"]
+          ],
+          "once": true,
+          "fx": [
+            ["set", "or_scout_sk_lookout"],
+            ["set", "sk_lookout_resolved"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "You give the hand-sign scouts trade, not the Companies'. The lookout eases anyway. 'Didn't figure you for one of Rennick's,' he says. 'Different trade, same manners.' He tells you plenty, no coin owed."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "sk_wreck_axe": {
+      "name": "wreck-axe",
+      "loc": "nowhere",
+      "hit": 1,
+      "dmg": 4,
+      "hint": "salvage steel, better balanced than it looks"
+    },
+    "sk_oilskin_coat": { "name": "tarred oilskin coat", "loc": "nowhere", "armor": 2, "hint": "stiff with tar; turns a blade well" },
+    "sk_lamp_oil": {
+      "name": "flask of lamp oil",
+      "loc": "nowhere",
+      "hint": "the Farlight on the point still has a wick worth lighting",
+      "variants": [{ "if": [["flag", "sk_lighthouse_lit"]], "hint": "the Farlight burns already" }]
+    },
+    "sk_pitch_torch": {
+      "name": "pitch-soaked torch",
+      "loc": "nowhere",
+      "hint": "burns hot and long — good for a wreck, if you mean it"
+    },
+    "sk_stolen_nets": { "name": "haul of stolen nets", "loc": "nowhere", "hint": "Marta at the chandlery would know these" },
+    "sk_drowned_ship_bell": {
+      "name": "the Drowned Bell's old ship's-bell",
+      "loc": "nowhere",
+      "hint": "owed as tithe to Hollowbrook's Keepers' Hall"
+    },
+    "sk_chandler_compass": {
+      "name": "a spare brass compass",
+      "loc": "sk_chandlery",
+      "takeable": true,
+      "owner": "sk_chandler",
+      "hint": "points true north, more or less"
+    },
+    "sk_tavern_flask": {
+      "name": "a stoppered flask of grog",
+      "loc": "sk_drowned_bell",
+      "takeable": true,
+      "owner": "sk_tavernkeep",
+      "hint": "house stock, not a round on the house"
+    },
+    "sk_harbour_glass": {
+      "name": "a brass spyglass",
+      "loc": "sk_harbourmaster_house",
+      "takeable": true,
+      "owner": "sk_harbourmaster",
+      "hint": "the lens is good; the charts under it are better"
+    }
+  },
+  "npcs": {
+    "sk_harbourmaster": {
+      "name": "Harbourmaster Joss Rennick",
+      "room": "sk_harbourmaster_house",
+      "dialogue": true,
+      "desc": "Weathered past guessing, a Free Company badge worn plain under his collar.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who runs this harbor",
+          "once": true,
+          "say": "Rennick. I keep the tally and the peace, such as it is. The Free Companies hold this coast — Gullhaven pays no crown its due and hasn't in my father's memory.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_town",
+          "label": "Gullhaven and the Companies",
+          "if": [["flag", "said_sk_harbourmaster_greet"]],
+          "once": true,
+          "say": "We fish, we salvage, we move what the Watch would rather we didn't. Nobody starves here. Nobody answers to Marrowgate either, and I mean to keep it that way.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_hollow",
+          "label": "the fog off the point",
+          "if": [["flag", "said_sk_harbourmaster_bg_town"]],
+          "once": true,
+          "say": "The Lost Fleet, folk call it. A king's ships broke on the reef, oh, generations back. Bad luck, officially. I'd leave it at that, if I were you.",
+          "fx": [["xp", 2], ["set", "sk_heard_harbourmaster"]]
+        },
+        {
+          "id": "passage",
+          "label": "the smugglers' stair",
+          "if": [["flag", "sk_heard_harbourmaster"], ["!flag", "sk_heard_passage"]],
+          "once": true,
+          "say": "That stair's ours, and it'll take you clean under the pass to Coldpass — if the Companies trust you. Brann's customs post watches the cellar hatch too closely for my liking. Help me past her, and the stair's yours.",
+          "fx": [["set", "sk_heard_passage"], ["xp", 2]]
+        },
+        {
+          "id": "help_smuggle",
+          "label": "run his goods past customs (will)",
+          "if": [["flag", "sk_heard_passage"], ["!flag", "sk_passage_done"]],
+          "say": "Bold of you. Fine — talk your way past Brann with a full cart and I'll owe you the stair.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "sk_passage_done"],
+                ["set", "sk_passage_smuggled"],
+                ["set", "sk_helped_free"],
+                ["addvar", "rep_free", 2],
+                ["addvar", "rep_watch", -1],
+                ["set", "free_passage"],
+                ["score", 8],
+                ["xp", 4],
+                ["say", "Brann eyes the cart, eyes you, and waves it through with a look that says she's counting this against you later. Rennick claps you once on the shoulder. 'The stair's yours. Use it well.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "sk_harbourmaster_help_smuggle_missed"]],
+                  [
+                    ["set", "sk_harbourmaster_help_smuggle_missed"],
+                    ["addvar", "rep_watch", -1],
+                    ["say", "Brann's not fooled and unpacks the whole cart herself. Nothing's found, but she marks you now as one of Rennick's, watching closer for it."]
+                  ],
+                  [
+                    ["say", "Brann's not fooled and makes you unpack the whole cart on the spot. Nothing's found — this time — but she's watching closer now."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "bribe_press",
+          "label": "press him about the old bribe (will)",
+          "if": [["flag", "sk_heard_harbourmaster"], ["!flag", "sk_bribe_admitted"]],
+          "say": "You'd have me say it plain? Fine words for a man with charts of every wreck but that one.",
+          "fx": [
+            [
+              "check",
+              "will",
+              12,
+              [
+                ["set", "sk_bribe_admitted"],
+                ["addvar", "rep_free", -1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "His jaw works a moment. 'The old free-towns paid the keeper to let the fleet break rather than land. Saved this coast its freedom. I've never once called it a good trade.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "sk_harbourmaster_bribe_press_missed"]],
+                  [
+                    ["set", "sk_harbourmaster_bribe_press_missed"],
+                    ["addvar", "rep_free", -1],
+                    ["say", "He goes back to his ledger like you hadn't spoken — and word gets round the docks that a stranger came at Rennick's own old business."]
+                  ],
+                  [
+                    ["say", "He goes back to his ledger like you hadn't spoken. Whatever he knows, he isn't giving it up that easily."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sell_nets",
+          "label": "sell him Marta's stolen nets",
+          "if": [["has", "sk_stolen_nets"], ["!flag", "sk_nets_returned"], ["!flag", "sk_nets_sold"]],
+          "once": true,
+          "say": "He weighs the haul, names a price well above what Marta could match, and doesn't ask where it came from. That's the whole of his business sense in one gesture.",
+          "fx": [
+            ["set", "sk_nets_sold"],
+            ["move", "sk_stolen_nets", "nowhere"],
+            ["addvar", "gold", 9],
+            ["score", 4],
+            ["xp", 2],
+            ["addvar", "rep_free", 1]
+          ]
+        },
+        {
+          "id": "after_betrayal",
+          "label": "about Sergeant Brann",
+          "if": [["flag", "sk_sided_watch"]],
+          "once": true,
+          "say": "You told her. I won't pretend that doesn't sting, but I'll grant you were honest about it. The stair's shut to you. That's just business.",
+          "fx": [["addvar", "appr_tamsin", 1]]
+        },
+        {
+          "id": "after_king",
+          "label": "news from the Vale",
+          "if": [["flag", "va_king_resolved"]],
+          "once": true,
+          "say": "Word of the Vale's reached even here. However it went, I hope you got something for your trouble besides a story.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "after_hollow_rested",
+          "label": "the fog has thinned",
+          "if": [["flag", "sk_hollow_rested"]],
+          "once": true,
+          "say": "Folk are saying the reef's quiet at night now. I'll not ask what you did up there. I'll just say the boats are glad of it.",
+          "fx": [["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "after_hollow_burned",
+          "label": "the smoke off the point",
+          "if": [["flag", "sk_hollow_burned"]],
+          "once": true,
+          "say": "Whatever you burned took the old story with it. Can't say I mind. Some debts are better ash than owed.",
+          "fx": [["addvar", "rep_free", 1]]
+        },
+        {
+          "id": "after_hollow_bargained",
+          "label": "the wreck-right paid",
+          "if": [["flag", "sk_hollow_bargained"]],
+          "once": true,
+          "say": "You made the coast own its own old bribe. Cost the Companies something, saying that aloud. I won't pretend I'm glad of it, but it's paid now, and paid is paid.",
+          "fx": [["addvar", "appr_vell", 1]]
+        },
+        {
+          "id": "sk_bribe_might",
+          "label": "corner him and demand it (might)",
+          "if": [["flag", "sk_heard_harbourmaster"], ["!flag", "sk_bribe_admitted"]],
+          "say": "You mean to have it out of me plainly.",
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "sk_bribe_admitted"],
+                ["addvar", "rep_free", -1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "You don't give him room to reach for the ledger this time. 'The old free-towns paid the keeper to let the fleet break rather than land,' he says, fast, like it's easier out than in."]
+              ],
+              [["say", "He doesn't scare easy, not in his own house. You've only made an enemy of the morning."]]
+            ]
+          ]
+        },
+        {
+          "id": "sk_passage_paid",
+          "label": "your cut of the stair's trade",
+          "if": [["flag", "sk_passage_smuggled"]],
+          "once": true,
+          "say": "\"That cart of yours has paid for itself three times over since,\" Rennick says. \"Here — your share, same as any Company hand gets.\"",
+          "fx": [["addvar", "gold", 5], ["xp", 1]]
+        },
+        {
+          "id": "sv_sk_bargained_ask",
+          "label": "the spring tithe, coming due",
+          "if": [["flag", "sk_hollow_bargained"], ["!flag", "sv_sk_bargained_asked"]],
+          "once": true,
+          "say": "Spring's wreck-right payment comes due again, six gold into the water same as you paid it. Half the town calls it dead superstition now the fog's thinned. The other half won't hear of skipping it.",
+          "fx": [["set", "sv_sk_bargained_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_sk_bargained_break",
+          "label": "tell him to skip it — it's old enough",
+          "if": [["flag", "sv_sk_bargained_asked"], ["!flag", "sv_sk_bargained_done"]],
+          "once": true,
+          "say": "You tell him old debts wear thin eventually, this one included. He lets the spring pass without a coin going in. That night, oars sound off the point again, once, and then not again.",
+          "fx": [
+            ["set", "sk_bargain_broken"],
+            ["set", "sv_sk_bargained_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_church", -1],
+            ["addvar", "rep_keepers", -1],
+            ["score", 2],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_sk_bargained_honor",
+          "label": "tell him to pay it, same as always",
+          "if": [["flag", "sv_sk_bargained_asked"], ["!flag", "sv_sk_bargained_done"]],
+          "once": true,
+          "say": "You tell him a debt paid on faith doesn't get to lapse just because it's inconvenient. He throws the coin in himself, same words as the year before, and the town grumbles its usual amount.",
+          "fx": [
+            ["set", "sv_sk_bargained_honored"],
+            ["set", "sv_sk_bargained_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_watch", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_sk_bargained_pay",
+          "label": "endow the tithe outright (12 gold)",
+          "if": [["flag", "sv_sk_bargained_asked"], ["!flag", "sv_sk_bargained_done"], ["var", "gold", ">=", 12]],
+          "once": true,
+          "say": "You count out enough to cover years of spring tithes at once. Rennick pockets it, faintly surprised, and Gullhaven's purse stops arguing with itself every spring from now on.",
+          "fx": [
+            ["addvar", "gold", -12],
+            ["set", "sv_sk_bargained_paid"],
+            ["set", "sv_sk_bargained_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_free", 1],
+            ["addvar", "rep_watch", 1],
+            ["score", 4],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "warden_rennick_cold",
+          "label": "state your business plainly",
+          "if": [["class", "warden"], ["flag", "said_sk_harbourmaster_greet"], ["!flag", "or_warden_sk_cold"]],
+          "once": true,
+          "say": "You don't dress it up. Rennick's smile thins by exactly the amount old Watch bearing costs on this coast. 'Company water,' he says. 'We remember which side soldiers stood on.' He answers anyway, just colder.",
+          "fx": [["set", "or_warden_sk_cold"], ["xp", 1], ["addvar", "rep_free", -1]]
+        },
+        {
+          "id": "envoy_broker_passage",
+          "label": "broker a toll between them both",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "sk_heard_passage"],
+            ["!flag", "sk_passage_done"],
+            ["!flag", "or_envoy_sk_broker"]
+          ],
+          "once": true,
+          "say": "A cut to Brann's post, logged as toll, not seized as contraband — everyone keeps their pride and their cut. Rennick likes the arithmetic more than the principle. 'Don't tell the Companies I liked it,' he says.",
+          "fx": [
+            ["set", "or_envoy_sk_broker"],
+            ["set", "sk_passage_done"],
+            ["set", "free_passage"],
+            ["addvar", "rep_free", 1],
+            ["addvar", "rep_watch", 1],
+            ["score", 8],
+            ["xp", 4]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his charts",
+          "say": "Mind the tide going out. It doesn't wait on strangers.",
+          "end": true
+        },
+        {
+          "id": "sk_harbourmaster_theft",
+          "label": "about the spyglass, since",
+          "if": [["flag", "stole_sk_harbour_glass"]],
+          "once": true,
+          "say": "Rennick counts his instruments now before he counts the tide. \"A harbor runs on trust as much as rope,\" he says. \"You've spent yours here.\"",
+          "fx": [["addvar", "rep_free", -1], ["xp", 1]]
+        }
+      ]
+    },
+    "sk_customs_officer": {
+      "name": "Sergeant Ilsa Brann",
+      "room": "sk_customs_post",
+      "dialogue": true,
+      "desc": "The Watch's mark on a coat two sizes too practical for the coast.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who keeps this post",
+          "once": true,
+          "say": "Sergeant Brann, the Watch. I count what comes through Gullhaven's cellars and stairs, and I count it twice. Rennick doesn't care for that.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_duty",
+          "label": "the harbourmaster's stair",
+          "if": [["flag", "said_sk_customs_officer_greet"]],
+          "once": true,
+          "say": "Every crate that goes up that stair skips a toll the crown never sees. I can't stop it. I can make it cost him.",
+          "fx": [["xp", 2], ["set", "sk_heard_customs"]]
+        },
+        {
+          "id": "sided_watch",
+          "label": "tell her of Rennick's smuggling",
+          "if": [["flag", "sk_heard_customs"], ["!flag", "sk_passage_done"]],
+          "say": "Now that's worth something. I'll see it stopped, and see you paid for the telling.",
+          "fx": [
+            ["set", "sk_passage_done"],
+            ["set", "sk_passage_informed"],
+            ["set", "sk_sided_watch"],
+            ["addvar", "rep_watch", 2],
+            ["addvar", "rep_free", -1],
+            ["addvar", "gold", 4],
+            ["score", 6],
+            ["xp", 4],
+            ["say", "She's out the door before you finish, four coins pressed into your hand on the way. Rennick will hear of this by nightfall, one way or another."]
+          ]
+        },
+        {
+          "id": "after_helped",
+          "label": "the missing manifest",
+          "if": [["flag", "sk_helped_free"]],
+          "once": true,
+          "say": "That cart of Rennick's — I know it went through wrong, whatever it looked like. I don't forget an honest face lying to mine.",
+          "fx": [["addvar", "appr_tamsin", -1]]
+        },
+        {
+          "id": "after_hollow_rested",
+          "label": "the reef's gone quiet",
+          "if": [["flag", "sk_hollow_rested"]],
+          "once": true,
+          "say": "Safer water, fewer wrecks to log. That's order, however you came by it. The Watch notices.",
+          "fx": [["addvar", "rep_watch", 1]]
+        },
+        {
+          "id": "after_hollow_burned",
+          "label": "the smoke off the point",
+          "if": [["flag", "sk_hollow_burned"]],
+          "once": true,
+          "say": "Final, at least. I've read enough reports about that reef to last a lifetime. Now I won't have to write another.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "after_hollow_bargained",
+          "label": "the wreck-right paid",
+          "if": [["flag", "sk_hollow_bargained"]],
+          "once": true,
+          "say": "A debt admitted and paid, proper and on the record. That's closer to justice than this coast usually manages. Well done.",
+          "fx": [["addvar", "rep_watch", 1]]
+        },
+        {
+          "id": "sk_news_wm",
+          "label": "word of Highward's record",
+          "if": [["any", [["flag", "wm_record_unsealed"], ["flag", "wm_record_stolen"]]]],
+          "once": true,
+          "say": "Word off the north track reaches the customs post before the ink's even dry elsewhere.",
+          "fx": [
+            [
+              "if",
+              [["flag", "wm_record_unsealed"]],
+              [
+                ["say", "\"Highward opened a sealed record instead of guarding it forever. Properly asked, properly given.\" Brann nods. \"That's how it's done.\""],
+                ["addvar", "rep_watch", 1]
+              ],
+              [
+                ["say", "\"Something walked out of Highward's record-house that nobody signed for.\" Brann's mouth thins. \"Watch that stair now, whoever's watching it.\""],
+                ["addvar", "rep_watch", -1]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sk_passage_thanked",
+          "label": "since you told her of Rennick",
+          "if": [["flag", "sk_passage_informed"]],
+          "once": true,
+          "say": "\"That tip of yours held up under a second look,\" Brann says. \"Rennick's crew hasn't tried that cellar hatch again. I don't forget who made my job easier.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_sk_burned_ask",
+          "label": "the wreck, now she's divable",
+          "if": [["flag", "sk_hollow_burned"], ["!flag", "sv_sk_burned_asked"]],
+          "once": true,
+          "say": "Burned to the waterline means divable at last. Wreckers are already eyeing the Pride's iron and whatever coin went down with her officers. I want it logged and taxed before they strip her bare.",
+          "fx": [["set", "sv_sk_burned_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_sk_burned_wreckers",
+          "label": "let the wreckers have first pull",
+          "if": [["flag", "sv_sk_burned_asked"], ["!flag", "sv_sk_burned_done"]],
+          "once": true,
+          "say": "You tell her salvage belongs to whoever's fast enough to take it. Wreckers strip the Pride within the week and don't share the count with her office.",
+          "fx": [
+            ["set", "sv_sk_burned_wreckers"],
+            ["set", "sv_sk_burned_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_free", 2],
+            ["addvar", "rep_watch", -1],
+            ["addvar", "gold", 3],
+            ["score", 2],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_sk_burned_taxed",
+          "label": "back her — log it and tax it",
+          "if": [["flag", "sv_sk_burned_asked"], ["!flag", "sv_sk_burned_done"]],
+          "once": true,
+          "say": "You back the Watch's claim plain. Brann posts a customs watch on the reef within the day, and every ounce that comes up gets weighed and taxed before it reaches a buyer.",
+          "fx": [
+            ["set", "sv_sk_burned_taxed"],
+            ["set", "sv_sk_burned_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_watch", 2],
+            ["addvar", "rep_free", -1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_sk_burned_held",
+          "label": "hold the wreck for the drowned first",
+          "if": [["flag", "sv_sk_burned_asked"], ["!flag", "sv_sk_burned_done"]],
+          "once": true,
+          "say": "You tell her nobody dives the Pride until her dead are properly done with, whatever 'done with' means after a burning. She doesn't love the delay, but holds the reef closed regardless.",
+          "fx": [
+            ["set", "sv_sk_burned_held"],
+            ["set", "sv_sk_burned_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_church", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "warden_stand_watch",
+          "label": "ask to stand the stair with her",
+          "if": [
+            ["class", "warden"],
+            ["flag", "sk_heard_customs"],
+            ["!flag", "sk_passage_done"],
+            ["!flag", "or_warden_sk_watch"]
+          ],
+          "once": true,
+          "say": "She looks you over, soldier's ease she knows on sight. 'Stand the stair with me tonight,' she says. 'Not by the book. By the watch.' Rennick's cargo goes through unremarked, and you've done her a favor she won't forget.",
+          "fx": [
+            ["set", "or_warden_sk_watch"],
+            ["set", "sk_passage_done"],
+            ["set", "free_passage"],
+            ["addvar", "rep_watch", -1],
+            ["addvar", "rep_free", 1],
+            ["score", 6],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "brann_toll_told",
+          "label": "the toll you brokered",
+          "if": [["flag", "or_envoy_sk_broker"]],
+          "once": true,
+          "say": "'Logged and legal,' Brann says. 'I can live with a cut I can see.' It's the closest thing to a compliment she's paid Rennick in years, and she says it to you instead.",
+          "fx": [["xp", 1], ["addvar", "rep_watch", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave the post to its ledgers",
+          "say": "Straight roads, stranger. Fewer questions that way.",
+          "end": true
+        },
+        {
+          "id": "sk_watch_thefts",
+          "label": "word of light-fingered travelers",
+          "if": [["var", "thefts", ">=", 2]],
+          "once": true,
+          "say": "\"More than one hold's written the customs post about goods gone missing,\" Brann says. \"I read every one. Yours keeps coming up.\"",
+          "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
+        }
+      ]
+    },
+    "sk_chandler": {
+      "name": "Marta Coyle",
+      "room": "sk_chandlery",
+      "dialogue": true,
+      "desc": "Quick hands, quicker sums, and a memory for every debt owed her.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "the chandlery's trade",
+          "once": true,
+          "say": "Rope, tar, oil, whatever a boat or a fool needs. I keep fair prices and I remember who doesn't pay them.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "nets",
+          "label": "her missing nets",
+          "if": [["flag", "said_sk_chandler_greet"], ["!flag", "sk_nets_returned"], ["!flag", "sk_nets_sold"]],
+          "once": true,
+          "say": "Wreckers took a whole season's nets off my racks — walked right up from the marsh and took them. I'd know that haul anywhere if it turned up.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "nets_return",
+          "label": "return the stolen nets",
+          "if": [["has", "sk_stolen_nets"], ["!flag", "sk_nets_returned"], ["!flag", "sk_nets_sold"]],
+          "once": true,
+          "say": "Marta counts every net twice, then presses coin into your hand before you can refuse it. 'Honest coast is a rare thing. I don't forget it either.'",
+          "fx": [
+            ["set", "sk_nets_returned"],
+            ["move", "sk_stolen_nets", "nowhere"],
+            ["addvar", "gold", 6],
+            ["score", 5],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "nets_sold_reaction",
+          "label": "about the nets",
+          "if": [["flag", "sk_nets_sold"]],
+          "once": true,
+          "say": "Rennick's crew is fishing with my own nets now, near as I can tell. I know exactly whose doing that was.",
+          "fx": [["addvar", "appr_tamsin", -1]]
+        },
+        {
+          "id": "nets_amends",
+          "label": "pay Marta back for the nets (9 gold)",
+          "if": [["flag", "sk_nets_sold"], ["!flag", "sk_nets_amends"], ["var", "gold", ">=", 9]],
+          "once": true,
+          "say": "Marta weighs the coin twice, like she's checking it isn't more of Rennick's. \"Won't buy back trust. But it's more than he ever offered me himself.\"",
+          "fx": [["set", "sk_nets_amends"], ["addvar", "gold", -9], ["addvar", "appr_tamsin", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "nets_amends_reaction",
+          "label": "since the nets were paid for",
+          "if": [["flag", "sk_nets_amends"]],
+          "once": true,
+          "say": "\"Paid honest, after the fact, is still paid honest,\" Marta says, not quite smiling. \"I'll not forget you made it right, at least.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sk_news_th_toll",
+          "label": "word of a toll settled",
+          "if": [["any", [["flag", "th_rook_paid"], ["flag", "th_rook_swayed"], ["flag", "th_rook_beaten"]]]],
+          "once": true,
+          "say": "A carter off the north track brings talk of Camp Gallows' own toll trouble.",
+          "fx": [
+            [
+              "if",
+              [["any", [["flag", "th_rook_paid"], ["flag", "th_rook_swayed"]]]],
+              [
+                ["say", "\"Paid off or talked down, either way nobody bled for it,\" Marta says, counting her own till. \"That's how you keep a road open.\""],
+                ["addvar", "rep_free", 1]
+              ],
+              [
+                ["say", "\"Settled with a blade, in the end,\" Marta says, and doesn't look pleased. \"Coin spends better than a grudge does.\""],
+                ["addvar", "rep_free", -1]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sk_envoy_haggle_coat",
+          "label": "haggle the coat's price",
+          "if": [["class", "envoy"], ["!has", "sk_oilskin_coat"], ["var", "gold", ">=", 3], ["!flag", "or_envoy_sk_haggle"]],
+          "once": true,
+          "say": "'Five,' Marta says, out of habit. It's three by the time you're done talking, and she throws in the story of the wreck it came off, free.",
+          "fx": [["addvar", "gold", -3], ["move", "sk_oilskin_coat", "inv"], ["set", "or_envoy_sk_haggle"]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to her accounts",
+          "say": "Mind you settle up before you leave the coast.",
+          "end": true
+        },
+        {
+          "id": "sk_chandler_theft",
+          "label": "about the compass, since",
+          "if": [["flag", "stole_sk_chandler_compass"]],
+          "once": true,
+          "say": "Marta's gone quiet in a way that isn't good. \"I know exactly what it's like to have something taken off a counter,\" she says. \"Didn't expect to learn it twice.\"",
+          "fx": [["xp", 1]]
+        }
+      ]
+    },
+    "sk_widow": {
+      "name": "Widow Kestrel",
+      "room": "sk_widows_house",
+      "dialogue": true,
+      "desc": "Straight-backed, gray-haired, and entirely too calm about a house with no harbor in it.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who lives so bare of the sea",
+          "once": true,
+          "say": "Prue Kestrel. My husband was harbourmaster here, once, and I've had no use for charts since he died. I keep other things instead.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_husband",
+          "label": "her husband",
+          "if": [["flag", "said_sk_widow_greet"]],
+          "once": true,
+          "say": "Harbourmaster the night the fleet broke. He never once said what he knew about it. I only learned after, going through his letters.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_wreck",
+          "label": "what she knows of the wreck",
+          "if": [["flag", "said_sk_widow_bg_husband"]],
+          "once": true,
+          "say": "The old free-towns bought the keeper's silence and let the fleet break rather than land. My husband carried that knowing to his grave. I've sung the sailors' old verse over it every year since, alone.",
+          "fx": [["xp", 2], ["set", "sk_widow_confided"]]
+        },
+        {
+          "id": "verse_ask",
+          "label": "ask for the sailors' verse (will)",
+          "if": [["flag", "sk_widow_confided"], ["!flag", "sk_verse_known"]],
+          "say": "You'd have me hand it to a stranger, after all these years of singing it alone?",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "sk_verse_known"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "Something in your asking convinces her it's finally time. She teaches it to you low and plain, word for word, until you have it whole."]
+              ],
+              [["say", "She shakes her head, not unkindly. 'Not yet. Ask me again when you mean it more.'"]]
+            ]
+          ]
+        },
+        {
+          "id": "bribe_ask",
+          "label": "ask what she knows of the bribe",
+          "if": [["flag", "sk_widow_confided"], ["!flag", "sk_bribe_admitted"]],
+          "say": "You already half know, or you wouldn't ask so plainly.",
+          "fx": [
+            [
+              "check",
+              "will",
+              9,
+              [
+                ["set", "sk_bribe_admitted"],
+                ["addvar", "rep_church", 1],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "'The keeper took the free-towns' coin and let the light stay dark,' she says, steady as reading it off a page she's read a thousand times. 'There. Said aloud, at last, by someone who isn't me.'"]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "sk_widow_bribe_ask_missed"]],
+                  [
+                    ["set", "sk_widow_bribe_ask_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "She looks away, out the shuttered window, and says nothing more. Whatever chance there was to speak the truth aloud today, it's gone begging."]
+                  ],
+                  [["say", "She looks away, out the shuttered window, and says nothing more today."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "after_rest",
+          "label": "the fog off the point",
+          "if": [["flag", "sk_hollow_rested"]],
+          "once": true,
+          "say": "I heard the verse carry, that night, clear across the water. First time in longer than I'll say. Thank you for that.",
+          "fx": [["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "after_bargain",
+          "label": "the fog off the point",
+          "if": [["flag", "sk_hollow_bargained"]],
+          "once": true,
+          "say": "Paid, at last. It isn't the same as sung to rest, but it's more than my husband ever managed. I'll take it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "after_burn",
+          "label": "the fog off the point",
+          "if": [["flag", "sk_hollow_burned"]],
+          "once": true,
+          "say": "Burned. Well. It's an ending, and I've had none for forty years. I find I don't grieve it as much as I thought I would.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sk_tell_widow_admiral",
+          "label": "tell her what the Admiral confessed",
+          "if": [["flag", "sk_heard_admiral"], ["flag", "sk_widow_confided"]],
+          "once": true,
+          "say": "You carry it to her plain: the Admiral doesn't blame the living, only the coin that kept the light dark. She's quiet a long while. \"He always did try to be fair, even drowned. More than I manage, some days.\"",
+          "fx": [["xp", 2], ["score", 2], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "sv_sk_rested_ask",
+          "label": "does he rest too?",
+          "if": [["flag", "sk_hollow_rested"], ["!flag", "sv_sk_rested_asked"]],
+          "once": true,
+          "say": "The verse rested the fleet, sailors and all — bought and sold men who never chose the reef. My husband chose to keep that light dark. I don't know if he's owed the same peace, or if I even want him to have it.",
+          "fx": [["set", "sv_sk_rested_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_sk_rested_mercy",
+          "label": "say a rite for him too",
+          "if": [["flag", "sv_sk_rested_asked"], ["!flag", "sv_sk_rested_done"]],
+          "once": true,
+          "say": "You tell her guilt doesn't cancel grief, and say a quiet word for him yourself, at her own hearth. She doesn't thank you for it. She doesn't ask you to stop, either.",
+          "fx": [
+            ["set", "sv_sk_rested_mercy"],
+            ["set", "sv_sk_rested_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_sk_rested_denied",
+          "label": "tell her his rest wasn't earned",
+          "if": [["flag", "sv_sk_rested_asked"], ["!flag", "sv_sk_rested_done"]],
+          "once": true,
+          "say": "You tell her some rest has to be earned, and he spent his life making sure it wouldn't be his. She nods slowly, like she'd already half-decided the same and only needed it said aloud.",
+          "fx": [
+            ["set", "sv_sk_rested_denied"],
+            ["set", "sv_sk_rested_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_iron", 1],
+            ["score", 2],
+            ["xp", 1]
+          ]
+        },
+        {
+          "id": "sv_sk_rested_included",
+          "label": "tell her the verse took him too",
+          "if": [["flag", "sv_sk_rested_asked"], ["!flag", "sv_sk_rested_done"]],
+          "once": true,
+          "say": "You tell her the verse rested everyone the reef holds, whether it earned the peace or not, him included. She isn't sure that comforts her. She decides to let it, anyway.",
+          "fx": [
+            ["set", "sv_sk_rested_included"],
+            ["set", "sv_sk_rested_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_watch", 1],
+            ["score", 2],
+            ["xp", 1]
+          ]
+        },
+        {
+          "id": "widow_plate_told",
+          "label": "tell her what the plate said",
+          "if": [["flag", "or_scholar_sk_plate"], ["flag", "sk_widow_confided"]],
+          "once": true,
+          "say": "She goes very still. 'A marriage envoy. Not a war fleet at all.' She looks at the dusty model ship a long moment. 'He never told me that part. Maybe he never read it either.'",
+          "fx": [["xp", 1], ["score", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to her bare house",
+          "say": "Go on, then. I'll be here. Say his name out at the wreck for me, if you go to it. Tam. Nobody's said it out there yet.",
+          "end": true
+        }
+      ]
+    },
+    "sk_tavernkeep": {
+      "name": "Bram Otts",
+      "room": "sk_drowned_bell",
+      "desc": "Built like a mooring post, and about as talkative.",
+      "topics": [
+        {
+          "id": "rumors",
+          "label": "the talk in the Bell",
+          "once": true,
+          "say": "Wreckers working the point again. A hermit out past the salt pans who trades in secrets. And that fog off the reef — some nights the oars carry all the way to the bar. Weeping caves past the point hold worse than tears.",
+          "fx": [["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "lys_brother",
+          "label": "other travelers through here",
+          "if": [["inParty", "lys"]],
+          "once": true,
+          "say": "A young man matching that build came through on a Free Company boat, a season or two back. Didn't stay the night. Didn't say where he was bound, either.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "hollow_rested",
+          "label": "the fog off the point",
+          "if": [["flag", "sk_hollow_rested"]],
+          "once": true,
+          "say": "First quiet fog we've had in living memory. Nobody in here's said so out loud, but the whole room's easier for it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sk_news_th",
+          "label": "talk out of Thornwold",
+          "if": [["flag", "th_fenn_freed"]],
+          "once": true,
+          "say": "\"Heard a Free Company man walked out of a cage at Camp Gallows, forty years late but out.\" Otts sets down a glass. \"Good story, that one.\"",
+          "fx": [["addvar", "rep_free", 1]]
+        },
+        {
+          "id": "otts_bell",
+          "label": "ask about the old ship's bell",
+          "if": [["flag", "said_sk_tavernkeep_rumors"]],
+          "once": true,
+          "say": "Green with age and silent as the grave — hauled off a wreck two generations back. Custom says it's owed to the nearest Keepers' hall as tithe. Take it, if Barrowmere's your road.",
+          "fx": [["move", "sk_drowned_ship_bell", "inv"], ["set", "sk_gave_bell"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "otts_bell_done",
+          "label": "tell Otts what became of the bell",
+          "if": [
+            ["flag", "sk_gave_bell"],
+            ["any", [["flag", "rb_sk_hb_wren"], ["flag", "rb_sk_hb_sold"], ["flag", "rb_sk_hb_mound"]]]
+          ],
+          "once": true,
+          "say": "Otts sets down the glass he's polishing and actually looks at you.",
+          "fx": [
+            ["score", 6],
+            ["xp", 3],
+            [
+              "if",
+              [["flag", "rb_sk_hb_wren"]],
+              [
+                ["say", "\"Tithe's paid at last, generations late.\" He almost smiles. \"Bar's quieter without it, not that it ever made a sound.\""],
+                ["addvar", "appr_vell", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_sk_hb_sold"]],
+              [
+                ["say", "\"Sold it, did you. Fair enough — it never rang for me either.\" He goes back to his polishing, unbothered."]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "rb_sk_hb_mound"]],
+              [
+                ["say", "\"Hung it on a barrow door, of all things.\" He shakes his head, more curious than disapproving. \"Reach is full of strangers like you.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "otts_bell_pending",
+          "label": "tell Otts there's no word on the bell",
+          "if": [
+            ["flag", "sk_gave_bell"],
+            ["!flag", "rb_sk_hb_wren"],
+            ["!flag", "rb_sk_hb_sold"],
+            ["!flag", "rb_sk_hb_mound"]
+          ],
+          "say": "He shrugs, wiping down the bar. \"Wasn't ringing here. Wasn't ringing anywhere, far as I could tell.\""
+        },
+        {
+          "id": "sk_tavern_theft",
+          "label": "about the flask, since",
+          "if": [["flag", "stole_sk_tavern_flask"]],
+          "once": true,
+          "say": "Otts doesn't say much, but he marks your face against the door now, same as he does for men who've run a tab and skipped it.",
+          "fx": [["xp", 1]]
+        }
+      ]
+    },
+    "sk_berin": {
+      "name": "Berin",
+      "room": "sk_settlement",
+      "dialogue": true,
+      "desc": "Rope-scarred hands too young for them, watching the boats more than the quay.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Berin. I crew Rennick's boats now — coin road out of Cinderhall, same as half the Downs before me.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "debt",
+          "label": "ask how he's getting on",
+          "if": [["flag", "said_sk_berin_greet"]],
+          "once": true,
+          "say": "Owe the harbourmaster for gear I lost off the point last storm. Six gold, near enough. Can't go home even if I wanted to, not owing that.",
+          "fx": [["set", "sk_berin_debt"], ["xp", 2]]
+        },
+        {
+          "id": "route_home",
+          "label": "pay his debt (6 gold), send him home",
+          "if": [["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"], ["var", "gold", ">=", 6]],
+          "once": true,
+          "say": "You square it with Rennick before Berin can argue. He stares at his own hands a moment, like he's not sure they're free.",
+          "fx": [["addvar", "gold", -6], ["set", "rb_ir_sk_home"], ["set", "rb_ir_sk_done"], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "route_stay",
+          "label": "tell him to make his own way here",
+          "if": [["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"]],
+          "once": true,
+          "say": "You tell him the debt's his to carry and the choice under it is too. Something in his shoulders sets, like a decision finally made on purpose.",
+          "fx": [["set", "rb_ir_sk_stayed"], ["set", "rb_ir_sk_done"], ["addvar", "appr_lys", 1], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "route_guilt",
+          "label": "tell him his grandfather needs him",
+          "if": [["flag", "sk_berin_debt"], ["!flag", "rb_ir_sk_done"]],
+          "once": true,
+          "say": "You lay Crick's thirty years of grief on the counter between you. It works. Berin books passage home, and doesn't look like a man who chose to.",
+          "fx": [["set", "rb_ir_sk_guilted"], ["set", "rb_ir_sk_done"], ["addvar", "rep_free", -1], ["score", 3], ["xp", 2]]
+        },
+        { "id": "bye", "label": "leave him to the boats", "say": "Mind the reef past the point.", "end": true }
+      ]
+    }
+  },
+  "epilogue": [
+    {
+      "if": [["any", [["flag", "sk_helped_free"], ["flag", "sk_sided_watch"]]]],
+      "text": "Gullhaven's taverns argue for years after whether the Free Companies or the Watch came out ahead across the Reach; nobody settles it."
+    },
+    {
+      "if": [["flag", "rb_ir_sk_home"]],
+      "text": "Berin went home to Cinderhall debt-free, and last word had him back at his father's old bench, not the pick.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_ir_sk_stayed"]],
+      "text": "Berin stayed on Rennick's boats, his own man at last, and sends word to his grandfather when he remembers to.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "rb_ir_sk_guilted"]],
+      "text": "Berin went home to Cinderhall for his grandfather's sake, and not, by his own account, for any sake of his own.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_rested_mercy"]],
+      "text": "Widow Kestrel lets a stranger's rite stand for her husband too, guilt and all, at her own hearth.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_rested_denied"]],
+      "text": "Widow Kestrel decided her husband's rest wasn't his to have. She still sings the sailors' verse alone.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_rested_included"]],
+      "text": "Widow Kestrel accepted that the fleet's rest took her husband too, whether it comforts her or not.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sk_bargain_broken"]],
+      "text": "Gullhaven skipped the spring wreck-right once. Oars sounded off the point that same night, once, and then not again.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_bargained_honored"]],
+      "text": "Gullhaven still throws six gold into the water every spring, same words, same grumbling, every year.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_bargained_paid"]],
+      "text": "A stranger's coin ended Gullhaven's spring argument over the wreck-right, years of it, in one payment.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_burned_wreckers"]],
+      "text": "Wreckers stripped the Reeve's Pride bare within the week, and never once shared the count with the Watch.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_burned_taxed"]],
+      "text": "The Reeve's Pride gets salvaged under a Watch customs seal now, every ounce weighed before it's sold.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_burned_held"]],
+      "text": "Gullhaven left the Reeve's officers to their wreck a while longer before anyone dove for salvage.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_sk_watch"]],
+      "text": "A Warden stood the smugglers' stair with Sergeant Brann herself, off the record and off the books.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_sk_mark"]],
+      "text": "A Scout read Gullhaven's chalk-marks like a second language, and the high street kept its secrets anyway.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scholar_sk_charts"]],
+      "text": "A Scholar read Rennick's own wreck-charts outright and needed no confession to know the old bribe.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_sk_cold"]],
+      "text": "Harbourmaster Rennick still answers a certain Warden's questions, just never warmly.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scout_sk_lookout"]],
+      "text": "The lookout below the smugglers' stair still calls a Scout 'different trade, same manners.'",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_envoy_sk_broker"]],
+      "text": "An Envoy brokered a toll between the harbourmaster and the Watch that left both of them paid.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_sk_haggle"]],
+      "text": "Marta Coyle still tells the story of the coat she let go for three gold and a good tale.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scholar_sk_plate"]],
+      "text": "A Scholar read the Reeve's Pride's own dedication plate: a marriage envoy, not a war fleet, sent to buy peace.",
+      "weight": 0
+    }
+  ],
+  "quests": {
+    "sk_q_bell": {
+      "name": "The Unrung Tithe",
+      "start": [["flag", "sk_gave_bell"]],
+      "done": [["any", [["flag", "rb_sk_hb_wren"], ["flag", "rb_sk_hb_sold"], ["flag", "rb_sk_hb_mound"]]]],
+      "stages": [
+        {
+          "if": [["flag", "hb_entered"]],
+          "text": "You're in Hollowbrook. The bell's owed to the Keepers' Hall, or sold, or hung where you see fit."
+        },
+        {
+          "if": [],
+          "text": "The Drowned Bell's old ship's-bell is owed, by custom, to Hollowbrook's Keepers' Hall. Carry it north."
+        }
+      ]
+    },
+    "sk_q_after": {
+      "name": "Gullhaven, After",
+      "start": [["flag", "sv_sk_back"]],
+      "done": [["flag", "sv_sk_after_done"]],
+      "stages": [
+        {
+          "if": [["flag", "sv_sk_after_done"]],
+          "text": "Settled. Gullhaven's second reckoning with the wreck got its answer."
+        },
+        {
+          "if": [["flag", "sv_sk_rested_asked"], ["!flag", "sv_sk_rested_done"]],
+          "text": "Widow Kestrel is waiting on your word, at her house on the high street."
+        },
+        {
+          "if": [["flag", "sv_sk_bargained_asked"], ["!flag", "sv_sk_bargained_done"]],
+          "text": "Rennick is waiting on your word about the tithe."
+        },
+        {
+          "if": [["flag", "sv_sk_burned_asked"], ["!flag", "sv_sk_burned_done"]],
+          "text": "Brann is waiting on your word about the wreck."
+        },
+        {
+          "if": [["flag", "sk_hollow_rested"]],
+          "text": "Widow Kestrel has a harder question now. Find her, high street, Gullhaven."
+        },
+        {
+          "if": [["flag", "sk_hollow_bargained"]],
+          "text": "The spring tithe troubles Rennick. Find him at the harbourmaster's house."
+        },
+        {
+          "if": [["flag", "sk_hollow_burned"]],
+          "text": "Salvage rights to the Pride trouble Brann. Find her at the customs post."
+        },
+        { "if": [], "text": "Gullhaven isn't done with the wreck yet." }
+      ]
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 3,
+  "turns": 569,
+  "receipt": "receipt:reach.293.569.366.reach_at_rest.612a6228",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "After I explicitly sealed the Vale of Ash barrow doors ('You draw the great doors shut from within the passage and hear the seal-stone drop... True to your word', and Barrow Field itself later read 'The doors are sealed, as you left them'), the smith at The Forge said on my return: 'Word beat you back to the square — the barrow stands open.' Direct factual contradiction of a choice the game itself had just confirmed twice.",
+      "where": "The Forge / talk to smith -> 'the open barrow doors'"
+    },
+    {
+      "sev": "P1",
+      "what": "The reeve at Last Light Square told me 'The priest opened it for you, I hear, blessing and all,' but the priest had explicitly refused a blessing earlier ('I'll not open a door for a man who means to shut it on grief... Force it, or find another way') and I opened the barrow myself with 'put your shoulder to the doors (warden)'. The game misattributes my own action to an NPC who refused to help.",
+      "where": "Last Light Square / talk to reeve -> 'the priest opened the barrow'"
+    },
+    {
+      "sev": "P1",
+      "what": "The final status epilogue states 'Tamsin never got to Cinderhall with you. The mine keeps its answer, and she keeps swinging at whatever is nearest' — but Tamsin was physically present when I resolved 'The Hundred' at The Hundred Gallery — Deep ('Tamsin stops just inside the door... This is it, she says'), the quest is logged as Done, and she gave me a permanent perk (Re-tempered Edge) specifically because of that resolution ('You told me to make them answer for it. I did. This edge remembers that too.'). The epilogue directly contradicts a major, correctly-logged story beat.",
+      "where": "final status / epilogue line about Tamsin and Cinderhall"
+    },
+    {
+      "sev": "P1",
+      "what": "The Regent's Writ has inconsistent stated requirements from two different NPCs. Preceptor Aldous at Cinderhall's Ironbound chapterhouse says 'Burn two hollows clean, and it's yours. One doesn't count for much,' and the Iron Downs quest log read 'The Ironbound will write the writ once two have burned' while I had only burned one (Thornwold). But the Marrowgate envoy at Highward's Captain-General's Hall granted the same writ immediately after asking 'Have you done either yet?' with only that one burned hollow to my name ('A hollow put to the fire is proof enough for the Regent. The writ is yours.').",
+      "where": "Cinderhall chapterhouse (Preceptor Aldous) vs. Captain-General's Hall (Marrowgate envoy) — Regent's Writ"
+    },
+    {
+      "sev": "P1",
+      "what": "Companions have no visible HP, wound state, or 'downed' condition anywhere in the UI (not in combat logs, not in status). Across roughly a dozen fights spanning the whole run, only the player character's hp ever changes; companions only ever land hits or miss, never take or show damage, and the promised 'who gets hit, who goes down, whether they get back up' dynamic never has any mechanical hook to observe. Companion jeopardy in this run only ever manifested through dialogue/approval consequences (Lys leaving), never through combat.",
+      "where": "all combat encounters / status command — companion HP is absent"
+    },
+    {
+      "sev": "P2",
+      "what": "The status/progress tracker only exposes 'Hollows rested: X/7' and 'Hollows burned: X/7' — there is no 'bargained' counter, even though the game's own narration draws a sharp, explicit line between the two ('Bargained, they are saying, not rested proper. It is something.' — Brother Osk at Fenmarch). A bargained hold (Fenmarch, resolved by promising the water a tithe) is silently folded into the 'rested' tally, which is misleading if you're tracking outcomes the way the game's own text distinguishes them.",
+      "where": "status command / 'Hollows rested' counter after resolving Fenmarch by bargain"
+    },
+    {
+      "sev": "P2",
+      "what": "Fenn, the stockade prisoner at Camp Gallows whose dug-up muster rolls led me to the true, unsent pardon exonerating the Hanged Company, has zero reaction dialogue after I chose to burn the Gallows Glade instead of reading that pardon. He has no new topic and no acknowledgment that the exoneration he risked his neck to uncover was destroyed. Captain Vane and even Sergeant Coe (dicing stopped) reacted; the character most invested in the outcome did not.",
+      "where": "The Stockade (Fenn) after burning The Gallows Glade"
+    },
+    {
+      "sev": "P2",
+      "what": "At Fenmarch, only Prior Halm acknowledges the tithe bargain I struck with the drowned congregation ('Quieter, they tell me, not gone... I can live with quieter'). The eel-trader and the netkeep — the people literally paying 'a tenth of every catch, every year' — have no dialogue referencing it at all when re-visited.",
+      "where": "The Eel-Market / The Net-Hall, Fenmarch, after 'promise the water a tithe'"
+    },
+    {
+      "sev": "P2",
+      "what": "The elder at the Vale of Ash, who gave me the crown and set up the whole 'return the king's crown' resolution, has no reaction dialogue at all when I return to her after resting the Hollow King — contrasted with the reeve and priest, who both have specific new lines acknowledging the outcome.",
+      "where": "Elder's House, Vale of Ash, after settling the Hollow King"
+    },
+    {
+      "sev": "P2",
+      "what": "Lys's final line on leaving the party ('You had your chance to get him clear, and Thornwold burned with him still inside it') reads as if her brother Cal was still in Thornwold when I burned the Gallows Glade, but I had already freed Cal and sent him home turns earlier ('Quest done: Cal's Reckoning' / 'He is really coming home'). The pronoun 'him' is ambiguous/misleading right after a scene about her actual brother.",
+      "where": "The Burned Glade / talk to Lys after burning The Gallows Glade"
+    },
+    {
+      "sev": "P2",
+      "what": "Enemies tagged 'armor useless' (barrow-wight, gray sergeant, Lost Sentry, honour guard) never warn you before the fight starts that your armor investment (Shield Wall, Iron Skin, Unbowed, mail shirt) will do nothing — you only learn it from the combat log after taking the first hit, and by then you've already committed to the encounter.",
+      "where": "Barrow Crypt / The Waiting Bough / The Moor Road / The Old Crypts — first hit of each 'armor useless' fight"
+    },
+    {
+      "sev": "P2",
+      "what": "Act 2's status header text says 'Seven holds, seven unrested griefs' and lists seven (including Emberfall, 'the hold that was burned once'), but the very next line, 'The road: The Gray', says 'Six holds, six unrested griefs. Rest three... any opens Coldpass.' Nothing explains which of the seven is the odd one out or why the counts differ, which reads as a discrepancy on a first pass.",
+      "where": "status command, Act 2 header vs. 'The road: The Gray' line"
+    },
+    {
+      "sev": "P2",
+      "what": "The priest at the Vale of Ash chapel says 'There are five more hollows in the Reach' right after Herald Corvane had explicitly listed six ('Fenmarch's drowned nave. Thornwold's hanged company. The Iron Downs' collapsed mine. Wardmoor's own founding. The Saltkerns' lost fleet. Hollowbrook's barrow-fields. Six.'). Minor but noticeable numeric mismatch between two NPCs describing the same world state moments apart.",
+      "where": "Gray Chapel (gray priest) vs. Last Light Square (Herald Corvane), same play session"
+    },
+    {
+      "sev": "P2",
+      "what": "The true pardon item ('signed at Marrowgate, forty years late — read it where the Company can hear it') stays in inventory with that same instruction text even after the only place it could ever be read (the Gallows Glade) is permanently destroyed by fire. The item never updates to reflect that its stated purpose is now impossible, which could make a player think they still have an outstanding way to use it.",
+      "where": "inventory item 'the true pardon, unsent' after burning The Gallows Glade"
+    }
+  ],
+  "confusions": [
+    "Two consecutive identical will-check rolls at the Cinderhall chapterhouse ('press him on the Hundred') both came back exactly d20:7+2=9 before a third attempt finally succeeded — not necessarily a bug, but the repeat-on-fail loop with no cost shown made it unclear whether retrying was 'free' or whether the earlier failed attempt's Ironbound reputation loss was being re-applied each time.",
+    "Wardmoor's map (moor cairns, oath-ground) and the Iron Downs' spoil-heap maze both have many samey-described rooms (Spoil Terrace/Boneyard Spoil/Ashway Rise, Wet Hollow/Sedge Flat/Boot-Track Hollow) with directions that loop back on themselves; finding the one 'past the fall'/'oath-stone' room among them took several dead-end guesses with no in-fiction compass beyond the initial hub description.",
+    "The Regent's writ and the 'three hollows rested' Keepers' stair are both available at the Pass Gate with no indication of any difference in what happens afterward if you hold both — I had both qualifications simultaneously and the game never explained whether picking one over the other mattered beyond flavor.",
+    "It is never explained anywhere why some undead (barrow-wight, gray sergeant, Lost Sentry, honour guard) ignore armor entirely while others (lean wolf, gray husk, bog-thing, slag-hound) do not; the pattern (Founding-era undead vs. everything else) is guessable in hindsight but not stated.",
+    "Perrin's mother in Reedholm never got a specific line acknowledging that I helped her son desert home rather than merely bringing her 'word' as she originally asked for — the quest just silently completed."
+  ],
+  "suggestions": [
+    "Make the barrow-doors seal/open state (and any other binary world-state flag like it) drive NPC dialogue by a shared variable, so the smith and reeve can't describe opposite states of the same door in the same visit to town.",
+    "Add a distinct 'hollows bargained' counter alongside rested/burned in status, since the game's own writing treats bargain as a clearly separate third outcome.",
+    "Give Fenn (Thornwold) and the elder (Vale of Ash) a reaction line for the hold-ending choice they were most central to, matching the coverage already given to Prior Halm, the reeve, and the Captain-General.",
+    "Surface a companion HP/condition indicator (even a simple 'shaken'/'steady' tag) somewhere in status or the combat log, so party jeopardy in a fight is something the player can actually see and not only infer after the fact from dialogue.",
+    "Flag 'ignores armor' enemies in their room description before combat starts (e.g. 'mail won't help here'), not only after the first exchanged blow, so armor-focused builds aren't blindsided.",
+    "Reconcile the 'seven holds' vs 'six holds' counts in the Act 2 status text, or add a one-line explanation of why Emberfall doesn't count toward the six.",
+    "When an item's stated use-location becomes permanently unreachable (the pardon after the glade burns), update its inventory description to say so rather than leaving the original 'go read this at X' instruction standing."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T02-00-32-495Z",
+  "seed": 293,
+  "build": {
+    "rev": "8b6cfab",
+    "world": "83d82a03"
+  },
+  "cost_usd": null,
+  "verified": false
+}

@@ -1,0 +1,95 @@
+{
+  "verdict": "stuck",
+  "fun": 4,
+  "clarity": 3,
+  "turns": 600,
+  "receipt": "",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Hollis (Woodward's Cot) successfully teaches the missing third recall-note ('you catch what he never could... it drops, low and short') and the huntsman's horn's item text immediately updates to 'sound it whole at the Hunt's Stand's horn-post, with all three notes known' — yet the Hunt's Stand's free 'weigh what this grief asks' still reports 'One note is missing still: read the cadence from the hunt's roll,' and the 'sound the recall whole' action does not appear until the separate 'read the roll's cadence' check in the Lodge Hall is also passed. The quest text ('the last waits with Hollis, the lodge hall's roll, or Fry — whichever you haven't tried') implies any one source suffices; only the roll actually flips the completion flag.",
+      "where": "Kingswood / The Woodward's Cot (talk to Hollis) and The Hunt's Stand — Muster Court (weigh what this grief asks)"
+    },
+    {
+      "sev": "P1",
+      "what": "After 'The Wood Question' shows 'Quest done' (settled at the Woodward's Cot: 'keep the rides exactly as they are,' with Hollis marking it on his map that same afternoon), the verderer Colm still offers 'argue him out of the warrant' / 'make the cost of refusal plain,' both costing Crown reputation, with no acknowledgment the matter is settled. A retry failed and still cost Crown standing on what the status screen already listed as a closed quest.",
+      "where": "Kingswood / The Verderer's Post (talk to Colm)"
+    },
+    {
+      "sev": "P1",
+      "what": "Same stale-contest pattern as Colm: after the Wood Question was resolved, Marrick at the weigh-house still offered 'argue him off the coppice' / 'pay him to drop the plan,' costing Ironbound reputation, with no line recognizing the dispute was already decided elsewhere in the village.",
+      "where": "Kingswood / The Ironbound Weigh-House (talk to Marrick)"
+    },
+    {
+      "sev": "P1",
+      "what": "Vell's 'Exile's Ledger' quest (picked up in the Vale, and echoed by Keeper Rowan in Thornwold: 'Find whoever's left there and tell them the Understory still stands') names 'the Keepers' Hall in Hollowbrook' as the destination, but giving the huntsman's horn to Sabel at the Kennel Hearth for safekeeping resolves as her sending it 'to Barrowmere' instead, a different named place with no line clarifying the relationship between Hollowbrook and Barrowmere.",
+      "where": "Kingswood / The Kennel Hearth (talk to Sabel, 'send it to the Keepers' Hall')"
+    },
+    {
+      "sev": "P1",
+      "what": "Both Wolf Scrape (gaunt wolf) and Twin Stones (ash wolf) describe the creature as one that 'will let you pass if you let it be,' and Lys says outright 'We can go around' — but the only listed menu action is to attack it; there is no explicit 'leave it be' / 'go around' option, so avoiding the fight requires the player to intuit that quietly walking to another exit (rather than attacking) is the 'go around.' Attacking anyway (required to complete the hunter's own 'Hunter's Sortie' quest) costs Lys regard both times, escalating to 'one more thing and I'm done following you.'",
+      "where": "Vale of Ash / Wolf Scrape and Twin Stones (attack gaunt wolf / attack ash wolf)"
+    },
+    {
+      "sev": "P1",
+      "what": "The reeve offers 'promise to seal the barrow once the king rests' before the game has told the player that the priest's blessing (the alternate way to open the barrow doors) requires being unpromised first; that tradeoff is spoken by the reeve himself only after the promise is already locked in ('The priest won't bless a door sworn shut, mind — ask him first if you want both'), and the innkeep's matching warning sits on a separate dialogue branch a player may visit afterward.",
+      "where": "Vale of Ash / Last Light Square (talk to reeve, 'seal or open?')"
+    },
+    {
+      "sev": "P2",
+      "what": "Finding, freeing (via a wits check on the quartermaster's ledger, at no gold cost), and safely returning Lys's brother Cal produced warm closing narration ('She is really coming home... I keep checking over my shoulder like he might vanish') but no regard change for Lys at that moment — companion personal-quest payoffs don't consistently move the regard number the way ordinary dialogue choices do.",
+      "where": "Thornwold / The Quartermaster's Wagon (find the error in his tally) and Hunter's Camp (Lys, after)"
+    },
+    {
+      "sev": "P2",
+      "what": "Three separate holds each contain a hermit NPC with near word-for-word identical dialogue and interaction structure — same opening ('doesn't look up first. Looks up eventually, and takes your measure quick'), same line ('Everyone wants something, coming this far out. What's yours?'), same three skill-check options, same 'parting gift by the door' closer — differing only in name (Maud / Fenwick / Hesk) and the flavor of the reward item.",
+      "where": "Thornwold's Black Thorn Stand (old Maud), Kingswood's Fenwick's Clamp (old Fenwick), Wardmoor's Peat-Cutter's Hut (old Hesk)"
+    },
+    {
+      "sev": "P2",
+      "what": "Unlike the Vale and Kingswood, none of the dozen-plus open-moor tiles between the Kingswood's East Track and Highward offer a 'get your bearings' action at all, and elsewhere bearings only ever report distance to already-discovered landmarks, never to a hold's own exits/tracks — this made Wardmoor considerably harder to navigate blind and consumed a large share of the turn budget hunting for the town.",
+      "where": "Wardmoor (general — Cairnwatch through Watch Cairn)"
+    },
+    {
+      "sev": "P2",
+      "what": "Entering the Kingswood from its south track a second time (after backtracking) produced a room named 'the South Track' (lowercase 'the'), distinct in the log from the earlier-visited 'The South Track' (capitalized) at the same border crossing — reads as a duplicate/typo rather than an intentionally distinct location.",
+      "where": "Kingswood / South Track (entry from the Iron Downs)"
+    },
+    {
+      "sev": "P2",
+      "what": "The Ironbound Preceptor Aldous confession scene at Cinderhall gates several escalation options ('make the truth public' / 'corner him' / 'denounce him publicly') behind further Ironbound-reputation loss even though the truth had already been extracted peacefully moments before via a Warden-only dialogue option; there is no lower-cost way to simply close the matter without either taking a further reputation hit or leaving the escalation options sitting unused in the menu indefinitely.",
+      "where": "Iron Downs / The Ironbound Chapterhouse (talk to Preceptor Aldous)"
+    }
+  ],
+  "confusions": [
+    "Wardmoor has no 'get your bearings' action anywhere I found, unlike every other region, which made it the one place I got genuinely lost and burned turns wandering before finding Highward.",
+    "Creatures marked 'holds its ground' that companions describe as avoidable ('we can go around') give no explicit non-combat menu option — the player must guess that not attacking and simply leaving is the peaceful path.",
+    "The Recall's Three Notes quest names three interchangeable-sounding sources (Hollis, the roll, Fry) but only one of them actually satisfies completion, despite item text claiming the horn was already fully 'known' after only two sources were tried.",
+    "Faction reputation (Watch, Crown, Ironbound, etc.) drifts across dozens of small choices with no per-faction 'last change' shown in status — only the single turn that caused it explains why, easy to lose track of over a long session.",
+    "It's unclear whether resolving a companion's personal questline is expected to move their regard number — it visibly didn't for Lys's brother, even though the surrounding text was as emotionally weighted as moments that did move regard.",
+    "'The Wood Question' and similar hold-level disputes read as settled once one stakeholder is convinced, but the losing stakeholders' dialogue keeps offering to re-litigate indefinitely with real reputation stakes, so a 'Quest done' tag doesn't reliably mean the topic stops costing you standing."
+  ],
+  "suggestions": [
+    "Once a hold-level question (Wood Question and similar) is settled, remove or reword the other stakeholders' 'contest it' options, or have them acknowledge the matter is decided.",
+    "Make every stated alternate source for a multi-source unlock actually satisfy the 'done' flag, matching text like 'whichever you haven't tried' — or reword the text to name the one source that counts.",
+    "Give 'holds its ground / will let you pass' creatures an explicit 'leave it be' menu entry instead of relying on the player to infer that not attacking equals walking away.",
+    "Add a 'get your bearings' option to Wardmoor's open-moor tiles, or at least at its hub approaches, matching the Vale and Kingswood.",
+    "Move the priest-vs-reeve blessing tradeoff into the reeve's own promise prompt before it's locked in, not after.",
+    "Give the three 'old hermit' NPCs distinct dialogue lines, or lean into the repetition on purpose with a line acknowledging it.",
+    "Show a one-line 'last changed by' note next to each faction reputation number in status for traceability over a long run.",
+    "Have companion personal-quest completions explicitly move that companion's regard to match the weight of their closing dialogue.",
+    "Fix the stray lowercase/capitalized duplicate room name at the Kingswood's south border crossing.",
+    "Reconcile Vell's 'Keepers' Hall in Hollowbrook' quest text with Sabel's 'Barrowmere' destination, or clarify they are the same institution."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T21-19-12-747Z",
+  "seed": 397,
+  "build": {
+    "rev": "02d3dc9",
+    "world": "26e35269"
+  },
+  "cost_usd": null,
+  "verified": false
+}

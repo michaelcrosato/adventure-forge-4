@@ -1,0 +1,79 @@
+{
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 3,
+  "turns": 578,
+  "receipt": "reach.313.578.366.regent_deposed.74b8d9c6",
+  "bugs": [
+    {
+      "sev": "P0",
+      "what": "The final ending screen states two directly contradictory outcomes for the same bargain back to back: 'Reedholm never paid the water's tithe. The Priory doesn't say aloud what it thinks that silence is costing them.' immediately followed by 'Reedholm pays its yearly tithe without complaint. The singing is quieter, not gone, and nobody minds much either way.' I explicitly refused the tithe ('tell Halm the water can whistle for it'), so only the first line should appear.",
+      "where": "final status screen / *** WIN ending, 'How the realm remembers you'"
+    },
+    {
+      "sev": "P1",
+      "what": "'Hollows rested' is the only counter besides 'Hollows burned' even though the game's own framing says every grief can be 'rested, bargained with, or burned.' Both bargains I struck (Thornwold's Hanged Company, Fenmarch's Drowned Congregation) were explicitly narrated by companions as 'Bargained, not burned, not rested outright' / 'Bargained, they are saying, not rested proper,' yet each incremented 'Hollows rested' by one in status.",
+      "where": "status screen, Hollows rested tally (after Gallows Glade and Drowned Nave resolutions)"
+    },
+    {
+      "sev": "P1",
+      "what": "Selecting 'ask Mirren: take the company's gold to keep it quiet' at the company store gave no warning it would do anything beyond a bribe, but it permanently and irreversibly removed Tamsin from the party ('Tamsin leaves your company') and closed her personal quest as failed. Other risky choices in the game are explicitly flagged ('a miss costs standing'); this one wasn't flagged at all.",
+      "where": "Cinderhall / The Company Store, action 'ask Mirren: take the company's gold to keep it quiet'"
+    },
+    {
+      "sev": "P1",
+      "what": "The Fallows' actual central grief (named 'the Long Furrow' in the epilogue) was never reachable through any room or NPC found around Wickstead/Barrowmere, despite the region overview promising every hold's grief can be rested/bargained/burned and an active 'Names for the Rite' quest pointing at 'the headland's markers.' The ending itself confirms it: 'The Long Furrow still lies open south of Wickstead, unrested, unbargained, unburned, exactly as the winter left it.'",
+      "where": "The Fallows / Wickstead (grief location never found)"
+    },
+    {
+      "sev": "P2",
+      "what": "The ending's oath-tracking line says 'You swore to burn the hollows for the Regent, then rested one instead' — but I never chose a pure 'rest' resolution anywhere (I bargained twice, burned once). This is the same rest/bargain conflation bug bleeding into the ending's own summary text.",
+      "where": "final status screen, oath-consequence line"
+    },
+    {
+      "sev": "P2",
+      "what": "Three separate epilogue lines about Tamsin and the mine read as mutually inconsistent when placed together: one says she 'sounds tired more than angry,' another says she 'has not spoken about the mine, or the miners, or much else, since Cinderhall sold them out,' a third says she 'made them answer for it, and never asked if you approved' — these read like alternate branch-outcomes all being narrated as simultaneously true.",
+      "where": "final status screen, Tamsin-related lines"
+    },
+    {
+      "sev": "P2",
+      "what": "The ending states 'The reeve of Last Light never got his watch shield back, nor a word of why' as a consequence, but the watch shield remained in my inventory for the entire game — no dialogue option or prompt to return it was ever offered, so the game narrates a 'failure' for an action I was never given a chance to take.",
+      "where": "final status screen vs. carried-items list (watch shield)"
+    },
+    {
+      "sev": "P2",
+      "what": "Class-marked charm/Envoy options sometimes do nothing mechanically: 'turn your best charm on him (as an Envoy)' on the hunter and 'turn on the charm (Envoy)' on Old Crick both cost a turn and are explicitly rebuffed by the NPC ('Whatever that charm buys, it isn't his patience'), yielding only 1xp, with no way to know beforehand it would whiff — unlike most other Envoy options (e.g. haggling Cal's debt, Maud's hut, negotiating with the Regent) which are reliably strong.",
+      "where": "Hunter's Camp (talk to hunter) and Cinderhall Miners' Hall (talk to Old Crick)"
+    }
+  ],
+  "confusions": [
+    "Locating a hold's central grief-room required long undirected wandering through large branching outdoor mazes with only a single vague compass phrase to go on — Thornwold's 'west past the Waiting Bough' took roughly 25 blind room-to-room steps through the forest maze around Camp Gallows before I found it.",
+    "Grief-resolution menus never label which option corresponds to rest, bargain, or burn — at Thornwold's Gallows Glade the four options were 'speak the Keeper's verse,' 'read the names cut into the tree,' 'speak the rest-oath from memory,' and 'swear the Company's oath'; only after picking the last one did a companion line reveal it was the 'bargain.' Deliberately choosing 'bargain' every time (as instructed) meant guessing from flavor text, not menu labels.",
+    "The Iron Downs' central grief (the Hundred Gallery) offered only a single action, 'bring the gallery down for good (might),' which turned out to be the burn resolution — no rest or bargain option ever appeared there, contradicting the region overview's promise that every hold's grief can be rested, bargained with, or burned.",
+    "Only one of the two bargains I struck (Fenmarch's water tithe) produced a later 'the price is due' callback ('After the Nave' at the Priory); the other (Thornwold's Company oath at the Gallows Glade) never resurfaced despite multiple later visits to Camp Gallows, so the 'walk back into town and someone raises the price' pattern wasn't consistently implemented.",
+    "The 'Whose Ground' land-ownership decision (the Fallows) closed permanently on the very first backing choice I made in dialogue, with no side-by-side view of what each of the four claimants (Crown surveyor, Free Companies recruiter, Keeper, or the returners) was actually offering — there was no way to see who 'paid best' before committing, only after.",
+    "Score is shown as 'X/366' from turn 1, and I reached the literal cap of 366/366 while three of the eight holds (Wardmoor, the Saltkerns, Emberfall) were never visited and several open quests (Perrin's Mother, The Slag-Hound, Berin's Coin Road, The Oath That Never Ended, The Surveyor's Stakes, The Muster in the Barn) were left undone — unclear whether 366 is a true full-completion denominator or a per-route ceiling.",
+    "Class-restricted option tags are inconsistently formatted: some read '(as an Envoy)' and others just '(Envoy)' for what appears to be the same kind of gated content."
+  ],
+  "suggestions": [
+    "Add a genuine 'Hollows bargained' counter (or relabel the pair to something like 'settled/burned' with a rest-vs-bargain breakdown) so the status screen's tally matches the rest/bargain/burn framing used in the region overview and companion dialogue.",
+    "Reconcile the two contradictory Reedholm-tithe lines in the ending so only the outcome the player actually chose (paid or refused) is narrated.",
+    "Label each grief-resolution option inline with its category, e.g. 'swear the Company's oath (bargain)', so a player trying to play a consistent rest/bargain/burn strategy doesn't have to guess and confirm after the fact.",
+    "Flag any choice that can permanently remove a companion the same way skill-check risk is already flagged ('a miss costs standing') — a bribe option that ends a companion's arc deserves at least as much warning as a failed dice roll.",
+    "Give every hold's central grief a real three-way choice, or adjust the overview text so it stops promising a bargain/rest option where only a burn/collapse action exists (Iron Downs).",
+    "For multi-claimant land or resource disputes, show each claimant's offer (coin, favor, or nothing) up front before the decision locks in, so a mercenary playthrough can deliberately pick the highest payer.",
+    "Give every bargain a matching 'the price comes due' return visit, not just some, so refuse-or-honor choices are consistently testable across all hollows.",
+    "Add a short in-room directional hint (not just a landmark name) once a 'find X grief location' quest is active, to cut down on blind trial-and-error in the larger outdoor mazes."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T04-30-15-091Z",
+  "seed": 313,
+  "build": {
+    "rev": "e32ce36",
+    "world": "a9b7fb9a"
+  },
+  "cost_usd": null,
+  "verified": true
+}

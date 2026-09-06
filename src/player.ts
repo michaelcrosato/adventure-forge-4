@@ -19,16 +19,20 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { inClassPhase, inPerkPickPhase, newState, receipt as receiptOf, step } from "./engine.ts";
+import { inClassPhase, inPerkPickPhase, inTalkMode, newState, receipt as receiptOf, step } from "./engine.ts";
 import { matchesMenuLabel, render, renderIntro } from "./format.ts";
 import { replayTrace } from "./crawl.ts";
-import { loadWorld } from "./validate.ts";
+import { loadWorld, worldFiles } from "./validate.ts";
 import { triage } from "./triage.ts";
 import type { Action, State, World } from "./types.ts";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-/** Build identity a report is bound to: git rev + content hash of the world file. */
+/**
+ * Build identity a report is bound to: git rev + content hash of the world —
+ * every file it is made of (root, then included parts in load order), so a
+ * change to any region file changes the hash. loop/report-check.mjs mirrors it.
+ */
 export function buildId(worldPath: string): { rev: string; world: string } {
   let rev = "nogit";
   try {
@@ -36,7 +40,9 @@ export function buildId(worldPath: string): { rev: string; world: string } {
   } catch {
     /* not a repo yet */
   }
-  const world = createHash("sha256").update(readFileSync(worldPath)).digest("hex").slice(0, 8);
+  const h = createHash("sha256");
+  for (const f of worldFiles(worldPath)) h.update(readFileSync(f));
+  const world = h.digest("hex").slice(0, 8);
   return { rev, world };
 }
 
@@ -197,7 +203,7 @@ export async function playOne(
   world: World,
   seed: number,
   provider: Provider,
-  maxGameTurns = 80,
+  maxGameTurns = 300,
 ): Promise<SessionResult> {
   const usage: Usage = { in: 0, out: 0, cacheRead: 0, cacheWrite: 0 };
   let apiCalls = 0;
@@ -242,7 +248,7 @@ export async function playOne(
     state = res.state;
     const first = !seen.has(state.room);
     if (first || state.score > beforeScore) lastProgress = state.turn;
-    if (!inClassPhase(world, state) && !inPerkPickPhase(world, state)) seen.add(state.room);
+    if (!inClassPhase(world, state) && !inPerkPickPhase(world, state) && !inTalkMode(world, state)) seen.add(state.room);
     const scene = render(world, state, res.events, { full: first }).text;
     msgs.push({ role: "user", content: scene + turnWarning(state.turn, maxGameTurns) });
   }
@@ -338,10 +344,10 @@ if (process.argv[1]?.endsWith("player.ts")) {
   const count = Number(opt("--count", "1"));
   const seedBase = Number(opt("--seed-base", String(Math.floor(Date.now() / 1000) % 100000)));
   const parallel = Number(opt("--parallel", "4"));
-  const maxGameTurns = Number(opt("--max-game-turns", "80"));
+  const maxGameTurns = Number(opt("--max-game-turns", "300"));
   const model = opt("--model", process.env.TF_PLAYER_MODEL ?? "claude-haiku-4-5");
   const mock = args.includes("--mock");
-  const worldPath = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
+  const worldPath = process.env.TF_WORLD ?? join(ROOT, "world", "reach.json");
   const world = loadWorld(worldPath);
 
   const run = async () => {

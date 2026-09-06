@@ -1,0 +1,92 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 598,
+  "receipt": "reach.353.598.366.reach_at_rest.354206f7",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Lys's disapproval line for the second peaceful-wolf kill ('Both of them, now. Two things that would have let you walk on by, and you didn't let either.') did not fire when the kill happened; it fired one full turn later, attached to an unrelated 'take wild herbs' pickup, making an innocuous action look like the cause of her anger.",
+      "where": "Herb Hollow / take wild herbs"
+    },
+    {
+      "sev": "P1",
+      "what": "The hunter's own quest ('The Hunter's Sortie') requires killing all three wolves, but two of them (Twin Stones' ash wolf, Wolf Scrape's gaunt wolf) are explicitly non-aggressive ('holds its ground') and his daughter/companion Lys says of both 'we can go around' before I attacked. Killing them per the quest's letter costs her regard twice and she quits the party ('near leaving' then gone); the hunter then praises those exact kills ('Smarter than the rest,' 'Good you ended it clean') with no acknowledgment of the conflict, and no path was found to satisfy both the quest-giver and his own daughter.",
+      "where": "Hunter's Camp / take the wolf pack on yourself; Twin Stones and Wolf Scrape / attack [ash/gaunt] wolf"
+    },
+    {
+      "sev": "P1",
+      "what": "status's 'Hollows rested: 3/9' tracker (and the milestone line 'Three hollows rested: the pilgrim stair at Coldpass opens for you') counts the Meres, which I resolved via the explicitly-labeled 'swear to carry the covenant (settles this hold's grief: a bargain: quieter, not rested)' option, as one of the three 'rested' holds -- contradicting the separate 'Hollows bargained: 1/9' tracker that correctly logs it as a bargain, not a rest.",
+      "where": "status / Hollows rested tracker, after The Drowned Hall"
+    },
+    {
+      "sev": "P1",
+      "what": "The free 'weigh what this grief asks' preview at the Kings' Rest hearth-stone named only the Keeper's Key ('the Keeper's Key is yours -- lay it on the hearth-stone') as the way to rest the old court outright, but omitted the equally valid 'speak the three verses over the court' option that was on the very same action menu -- a player trusting the weigh preview alone would not know verses could rest it without spending the Key (which the item's own flavor text says is also needed later at Coldpass).",
+      "where": "The Kings' Rest -- the Old Court / weigh what this grief asks"
+    },
+    {
+      "sev": "P2",
+      "what": "A quest-linked dialogue option ('tell Halm what the Ironbound mean to do') stayed selectable on Prior Halm's menu across at least two separate visits after that exact questline (The Mission's Order) was already completed through a different NPC (Warder Iss at the Ironbound Mission), and even after Halm had independently thanked me for the drowned nave resting.",
+      "where": "The Priory of the Gray Church / talk to Prior Halm"
+    },
+    {
+      "sev": "P2",
+      "what": "The elder's line about the locked coffer ('Go hear what the dead king grieves over, up in the barrow. Then come back') repeated verbatim, word for word, on a second visit made after I had already fully heard the Hollow King's grief out in conversation at the throne; only later acquiring the unrelated king's seal item actually unlocked her real dialogue branch, with no signal that the seal (not the earlier conversation) was the real gate.",
+      "where": "Elder's House / talk to elder -- the sealed coffer"
+    },
+    {
+      "sev": "P2",
+      "what": "Room flavor text pointing to a compass direction ('East the ground softens and water glints' -- describing water/a shrine) did not match what that room's actual east exit led to (a return to the already-visited Twin Stones landmark, no water in sight).",
+      "where": "The Ashfall Clearing / go east"
+    },
+    {
+      "sev": "P2",
+      "what": "Paying Sael 5 gold to dive for a covenant-word stone narrated 'a weed-clogged stone in hand' as obtained, but the item never appeared in the carrying list on the very next status check, unlike every other item picked up in the run.",
+      "where": "The Divers' Platform / pay Sael to bring one up"
+    },
+    {
+      "sev": "P2",
+      "what": "A companion 'both look at you' quarrel (Vell vs Tamsin over the chandler selling a dead queen's ring) surfaced as flavor text inside the 'travel to a known place' submenu rather than as its own scene, making it easy to miss entirely if a player just clicks through travel options.",
+      "where": "The Old Court, at Rest / travel to a known place"
+    },
+    {
+      "sev": "P2",
+      "what": "'Something in the Reed-Cuts' paid out and marked done for killing a fen-eel in its den, even though the eel-trader herself said afterward the fen-eel 'wasn't what's tearing my traps -- different bite, different drag,' leaving it unclear whether the actual culprit was ever addressed.",
+      "where": "The Eel-Market / ask eel-trader: the eel-trap charm, for the bounty"
+    },
+    {
+      "sev": "P2",
+      "what": "The three companion-vs-companion 'draw' checks (barrow doors, drowned font buckle, chandler's ring) all use nearly identical framing and all three times resolved cleanly with no regard cost on a success, but nothing in the room text warns whether a miss would have cost both companions equally or unequally, so the stakes of attempting the draw were never made concrete before rolling.",
+      "where": "The Empty Seat / talking with Brother Osk -- call the door's fate a draw; The Drowned Font / talking with Vell -- tell them it's not yours to grade; The Old Court, at Rest / talking with Tamsin -- tell them it's not yours to price"
+    }
+  ],
+  "confusions": [
+    "Whether a free 'weigh' preview lists every action that shares an outcome, or only the most prominent one -- at the Kings' Rest it silently dropped the verses-based route to the same 'rests it' result that the Key gave.",
+    "Whether an 'obtained' item message always means the item lands in your pack -- the paid-for covenant-word stone from Sael never showed up in carrying, with nothing distinguishing it from every other pickup that did.",
+    "Which single action in a busy stretch actually moved a companion's regard, when the disapproval text can lag a full turn behind the real trigger and land on an unrelated later action instead.",
+    "Whether 'Hollows rested' in status means 'settled by any means' or specifically 'rested, as opposed to bargained or burned' -- the tracker and the Coldpass unlock text both use 'rested' to include a hold I explicitly bargained.",
+    "Why a resolved quest's dialogue branch can still sit on an NPC's menu (Prior Halm/Ironbound) with no visual difference from a live, unresolved option."
+  ],
+  "suggestions": [
+    "Fire companion approval/disapproval lines on the exact turn and action that caused them, never a later unrelated one.",
+    "Make 'weigh' previews enumerate every action on the current menu that shares an outcome (e.g. both the Key and the verses at Kings' Rest), not just one.",
+    "Retire an NPC dialogue option the moment its quest resolves through any path, not only its own conversation thread.",
+    "Rename or split the 'Hollows rested' tally so a hold resolved by bargain isn't silently counted as rested in both the counter and the Coldpass unlock text.",
+    "Give companion quarrels that fire during a travel-menu render their own standalone beat instead of folding them into the submenu's flavor line.",
+    "Confirm every 'obtained' pickup lands in the carried-items list, or say plainly when a find is abstract/flavor-only and won't appear in inventory.",
+    "Let a repeatable NPC line (the elder's 'go hear the king first') update once the real unlock condition is met, rather than repeating verbatim until an unrelated item shows up.",
+    "Give the hunter's wolf-cull quest some acknowledgment or an alternate resolution for the two wolves his own daughter flags as harmless, so following his letter-of-the-quest doesn't silently and permanently cost her regard until she leaves."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T08-21-08-219Z",
+  "seed": 353,
+  "build": {
+    "rev": "32c3a4b",
+    "world": "0920b5d0"
+  },
+  "cost_usd": null,
+  "verified": true
+}

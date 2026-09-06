@@ -1,0 +1,475 @@
+{
+  "npcs": {
+    "fl_merrow": {
+      "name": "Sister Merrow",
+      "room": "fl_chapel",
+      "dialogue": true,
+      "desc": "A Gray Church sister sweeping a nave built for a hundred more people than ever kneel in it now.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Sister Merrow. No mother-house sent me here — I came uninvited, some years back, and simply never left. Somebody had to keep this door open.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_fever",
+          "label": "the Church's fever story",
+          "if": [["flag", "said_fl_merrow_greet"]],
+          "once": true,
+          "say": "A fever, the record says. I've read the record. I've also stood in that field. Whatever took this hold in a single winter, I have never once smelled fever in the way people here still talk about it.",
+          "fx": [["set", "fl_merrow_doubts"], ["xp", 2], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "bg_returners",
+          "label": "the returners she serves",
+          "if": [["flag", "fl_merrow_doubts"]],
+          "once": true,
+          "say": "Grandchildren, mostly, come back for ground their own blood is buried under. I baptize their babies in a font that survived the winter better than most of the people did.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "fl_ask_roll",
+          "label": "ask to see the parish roll",
+          "if": [["flag", "fl_merrow_doubts"], ["!flag", "fl_names_roll"]],
+          "say": "She fetches it without argument — a burial roll the Priory never asked to see, every name she could confirm entered in her own careful hand.",
+          "fx": [["set", "fl_names_roll"], ["addvar", "fl_names_known", 1], ["score", 2], ["xp", 3]]
+        },
+        {
+          "id": "fl_ask_rite",
+          "label": "ask her for the Church's rite (will)",
+          "if": [["flag", "fl_merrow_doubts"], ["!flag", "fl_church_rite_known"]],
+          "say": "You're asking me to give a mass rite for grief the Church officially says was only a fever. That's not a small thing to ask a Gray sister to sign her name to.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "fl_church_rite_known"],
+                ["score", 3],
+                ["xp", 3],
+                ["addvar", "rep_church", 1],
+                ["say", "She looks at you a long moment, then goes to the sacristy herself. \"If anyone from the mother-house asks,\" she says, \"tell them a stranger insisted and I could not, in conscience, refuse a stranger.\""]
+              ],
+              [
+                ["say", "\"Not yet,\" she says. \"Not on your word alone. Bring me a reason the mother-house couldn't argue with, and ask me again.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_land_returners_self",
+          "label": "about backing your own claim",
+          "if": [["flag", "fl_land_returners"]],
+          "once": true,
+          "say": "I asked for the returners because they're the ones actually here, planting things, raising children. Everyone else wanted the ground. They wanted a home.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the furrow, now it rests",
+          "if": [["flag", "fl_hollow_rested"]],
+          "once": true,
+          "say": "The Church will have to answer, eventually, for a fever that turned out to need a proper rite. I intend to be the one who makes them answer for it.",
+          "fx": [["xp", 1], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the furrow, now it's burned",
+          "if": [["flag", "fl_hollow_burned"]],
+          "once": true,
+          "say": "Fire where a rite should have gone forty years sooner. I won't pretend that isn't partly this Church's own doing, however far back the failing started.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "fl_declare_returners",
+          "label": "back the returners' claim on the hold",
+          "if": [
+            ["flag", "fl_merrow_doubts"],
+            ["!flag", "fl_land_crown"],
+            ["!flag", "fl_land_free"],
+            ["!flag", "fl_land_returners"],
+            ["!flag", "fl_land_fallow"]
+          ],
+          "say": "You tell her the ground belongs to whoever came back to live on it. She doesn't thank you in words — she rings the chapel bell herself, an hour early, and lets the whole crossroads wonder why.",
+          "fx": [
+            ["set", "fl_land_returners"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_church", 2],
+            ["addvar", "rep_free", -2],
+            ["addvar", "appr_osk", 1],
+            ["addvar", "appr_lys", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the sweeping",
+          "say": "Go carefully. And come back, if you ever want an honest answer instead of a comfortable one.",
+          "end": true
+        }
+      ]
+    },
+    "fl_frey": {
+      "name": "Frey",
+      "room": "fl_wickstead_cross",
+      "dialogue": true,
+      "desc": "A quiet traveler who has been in Wickstead longer than anyone quite remembers arriving, herbs drying from every rafter she can reach.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Frey. I keep to herbs and old cures, mostly. People ask fewer questions of someone who's useful for a cough.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_press",
+          "label": "how an herbalist knows barrow-custom",
+          "if": [["flag", "said_fl_frey_greet"]],
+          "once": true,
+          "say": "You'd be surprised what an herbalist picks up, going hold to hold. Or you're not surprised at all, and you're asking anyway. Either way, I'd rather talk about the cough.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "fl_reveal_press",
+          "label": "press her on what she really is (wits)",
+          "if": [["flag", "said_fl_frey_bg_press"], ["!flag", "fl_keeper_revealed"]],
+          "say": "Go on, then. Say the word you're circling. See if it changes anything.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "fl_keeper_revealed"],
+                ["score", 3],
+                ["xp", 3],
+                ["addvar", "rep_keepers", 1],
+                ["say", "\"Keeper,\" she says, before you can. \"Or near enough — apprenticed, never finished, sent here forty years too late by an order that forgot this hold existed. I've been quietly fixing that ever since.\""]
+              ],
+              [
+                ["say", "She only smiles, thin and unhelpful. \"It changes nothing you can prove. Ask me again when you've got more than a guess.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fl_ask_verse",
+          "label": "ask her for the old rest-verse",
+          "if": [["flag", "fl_keeper_revealed"], ["flag", "fl_heard_winter"], ["!flag", "fl_keeper_verse_known"]],
+          "say": "\"I should have said this the day I arrived,\" she says, and teaches it to you plainly, start to end, the way it should have been taught to this hold four decades ago.",
+          "fx": [
+            ["set", "fl_keeper_verse_known"],
+            ["score", 3],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_vell", 1]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the furrow, now it rests",
+          "if": [["flag", "fl_hollow_rested"]],
+          "once": true,
+          "say": "Forty years late is still not never. I mean to write to the Hall at Barrowmere and tell them so, whether they want to hear it or not.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the furrow, now it's burned",
+          "if": [["flag", "fl_hollow_burned"]],
+          "once": true,
+          "say": "The verse dies with me now, unused, same as it nearly did for forty years already. I don't know which failure that makes this — mine, or the order's that sent me too late to matter.",
+          "fx": [["xp", 1], ["addvar", "appr_vell", -1]]
+        },
+        {
+          "id": "fl_declare_fallow",
+          "label": "back the Keeper's claim: leave it fallow",
+          "if": [
+            ["flag", "fl_keeper_revealed"],
+            ["!flag", "fl_land_crown"],
+            ["!flag", "fl_land_free"],
+            ["!flag", "fl_land_returners"],
+            ["!flag", "fl_land_fallow"]
+          ],
+          "say": "You tell her the old covenant should decide it: let the ground lie fallow, and let the dead keep it. She sets down the herbs she's sorting and, for the first time, looks entirely like a Keeper.",
+          "fx": [
+            ["set", "fl_land_fallow"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "appr_vell", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the drying herbs",
+          "say": "Mind the marshy stretches after dark. Cures don't help much once you're already down.",
+          "end": true
+        }
+      ]
+    },
+    "fl_cobb": {
+      "name": "Lay-brother Cobb",
+      "room": "fl_cart_lot",
+      "dialogue": true,
+      "desc": "An Ironbound lay-brother, cheerful in the way of someone who has already made his peace with fire being the answer to most things.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Lay-brother, Ironbound. I keep a cart of good cinder-oil and a great deal of patience for a hold that hasn't yet asked me to use either.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_iron",
+          "label": "why the Ironbound came here",
+          "if": [["flag", "said_fl_cobb_greet"]],
+          "once": true,
+          "say": "Forty years of a hold too grief-sick to stand is proof enough for my order: rites lapse, bargains lapse, but fire never once forgets to finish a job. I'm patient. I can wait for Wickstead to agree.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "fl_take_oil",
+          "label": "ask him for a cask of cinder-oil",
+          "if": [["!has", "fl_cinder_oil"]],
+          "say": "He hands it over without hesitation, like he's been waiting the whole time for someone to finally ask. \"Use it well,\" he says. \"Or don't. Either way, I'll know by the smoke.\"",
+          "fx": [["move", "fl_cinder_oil", "inv"], ["xp", 1]]
+        },
+        {
+          "id": "react_burned",
+          "label": "the furrow, now it's burned",
+          "if": [["flag", "fl_hollow_burned"]],
+          "once": true,
+          "say": "There. Forty years of nobody having the nerve, and one traveler with a cask finally ended it. My order will hear of this before the smoke clears.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_rested",
+          "label": "the furrow, now it rests",
+          "if": [["flag", "fl_hollow_rested"]],
+          "once": true,
+          "say": "A rite worked, then. Fine. I'll grant it worked. I still don't trust it to hold the way a fire holds.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his cart",
+          "say": "Careful with that cask on the road. It burns however wet the ground gets — that's rather the point of it.",
+          "end": true
+        }
+      ]
+    },
+    "fl_rue": {
+      "name": "Rue Aldern",
+      "room": "fl_trade_counter",
+      "desc": "A returner, sun-browned and brisk, keeping the counter's chalk tally with one eye on every hand near it.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Rue Aldern. My grandmother worked this ground before the winter took her. I came back for it, and I'm not leaving twice.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_returner",
+          "label": "coming back to a hold like this one",
+          "if": [["flag", "said_fl_rue_greet"]],
+          "once": true,
+          "say": "Everyone asks why. It's simpler than they want it to be: it's mine, or it was, and empty ground doesn't stay empty forever if you're not the one filling it.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "react_theft",
+          "label": "about the missing seed-corn, since",
+          "if": [["flag", "stole_fl_seed_sacks"]],
+          "once": true,
+          "say": "\"I count twice a day for a reason,\" she says, not quite looking at you. \"Now I'll count three times, and remember why.\"",
+          "fx": [["addvar", "rep_watch", -1]]
+        }
+      ]
+    },
+    "fl_dain": {
+      "name": "Dain",
+      "room": "fl_camp_row",
+      "dialogue": true,
+      "desc": "A refugee boy of nine or ten, sitting a little apart from the other children, watching the drilling through a gap in the barn wall.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Dain. We came from a hold east of here, when the gray got too bad to stay. My mother says this one's safer. I don't see how, yet.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_father",
+          "label": "ask about his father",
+          "if": [["flag", "said_fl_dain_greet"]],
+          "once": true,
+          "say": "He walked the whole way here and then just — stopped. Lay down in a field one morning and didn't get up. They said there wasn't anywhere else to put him but the long furrow.",
+          "fx": [["set", "fl_dain_father_seeking"], ["xp", 2]]
+        },
+        {
+          "id": "fl_dain_learn_name",
+          "label": "ask for his father's name, gently",
+          "if": [
+            ["flag", "fl_dain_father_seeking"],
+            ["!flag", "fl_dain_named"],
+            ["!flag", "fl_dain_token"],
+            ["!flag", "fl_dain_turned_away"]
+          ],
+          "say": "He tells you, careful, like it might break if said wrong. \"If it's said right, somewhere, does that help him?\" You tell him you mean to find out.",
+          "fx": [["set", "fl_dain_named"], ["score", 3], ["xp", 2], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "fl_dain_give_token",
+          "label": "give him a keepsake, instead of promises",
+          "if": [
+            ["flag", "fl_dain_father_seeking"],
+            ["!flag", "fl_dain_named"],
+            ["!flag", "fl_dain_token"],
+            ["!flag", "fl_dain_turned_away"]
+          ],
+          "say": "You give him something small to hold instead of an answer you can't yet promise. He turns it over in his hands for a long time before he says thank you.",
+          "fx": [["set", "fl_dain_token"], ["score", 2], ["xp", 2], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "fl_dain_dismiss",
+          "label": "tell him plainly nothing can be done",
+          "if": [
+            ["flag", "fl_dain_father_seeking"],
+            ["!flag", "fl_dain_named"],
+            ["!flag", "fl_dain_token"],
+            ["!flag", "fl_dain_turned_away"]
+          ],
+          "say": "He nods like he expected exactly that answer, and goes back to watching the drilling through the gap in the wall, careful not to let you see his face.",
+          "fx": [["set", "fl_dain_turned_away"], ["xp", 1], ["addvar", "appr_lys", -1]]
+        },
+        {
+          "id": "react_named",
+          "label": "ask if it helped, in the end",
+          "if": [["flag", "fl_dain_father_named"]],
+          "once": true,
+          "say": "He's quiet a moment, then says his father's name back to you, unprompted, like he's checking it still sounds right out loud. It does.",
+          "fx": [["xp", 2], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "react_token",
+          "label": "see how he's keeping the keepsake",
+          "if": [["flag", "fl_dain_token"]],
+          "once": true,
+          "say": "He still has it, worn smooth already from handling. \"It's not his name,\" he says, \"but it's something.\" He doesn't ask you for more than that.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_turned",
+          "label": "see how he's getting on",
+          "if": [["flag", "fl_dain_turned_away"]],
+          "once": true,
+          "say": "He answers you shorter than he did before, and goes back to watching the gap in the barn wall. Some things, once said, don't get unsaid by asking again.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the furrow, now it rests",
+          "if": [["flag", "fl_dain_father_seeking"], ["flag", "fl_hollow_rested"]],
+          "once": true,
+          "say": "He looks up when you tell him. \"Is he in it,\" he says, \"whatever got said?\" It isn't really a question you answer no to.",
+          "fx": [
+            [
+              "if",
+              [["flag", "fl_dain_father_named"]],
+              [
+                ["xp", 2],
+                ["say", "\"He is,\" you tell him, and mean it. He nods, once, like something finally sits right."]
+              ],
+              [["xp", 1], ["say", "You tell him you don't know yet. He nods anyway, like he expected that answer."]]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the furrow, now it's bargained",
+          "if": [["flag", "fl_dain_father_seeking"], ["flag", "fl_hollow_bargained"]],
+          "once": true,
+          "say": "\"A promise instead of a rite,\" he repeats, turning it over. \"Does that hold, you think? For someone already in the ground?\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the furrow, now it's burned",
+          "if": [["flag", "fl_dain_father_seeking"], ["flag", "fl_hollow_burned"]],
+          "once": true,
+          "say": "He's quiet a long moment. \"Guess that's an answer too,\" he says, and goes back to watching the gap in the wall.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the drilling",
+          "say": "All right. I'll be here. I'm always here.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "quests": {
+    "fl_q_ede": {
+      "name": "The Woman Who Won't Leave",
+      "start": [["flag", "fl_heard_winter"]],
+      "done": [["any", [["flag", "fl_ede_protected"], ["flag", "fl_ede_left"], ["flag", "fl_ede_stayed_alone"]]]],
+      "stages": [
+        {
+          "if": [
+            ["flag", "fl_hollow_done"],
+            ["!flag", "fl_ede_protected"],
+            ["!flag", "fl_ede_left"],
+            ["!flag", "fl_ede_stayed_alone"]
+          ],
+          "text": "The furrow's settled. Ede might finally consider leaving, if you press her on it, at her house."
+        },
+        {
+          "if": [],
+          "text": "Old Ede won't leave the Fallows, though nothing there is safe. See to her, or let her be, at her wicker house."
+        }
+      ]
+    },
+    "fl_q_dain": {
+      "name": "The Boy at the Row",
+      "start": [["flag", "fl_dain_father_seeking"]],
+      "done": [["any", [["flag", "fl_dain_named"], ["flag", "fl_dain_token"], ["flag", "fl_dain_turned_away"]]]],
+      "stages": [
+        {
+          "if": [],
+          "text": "A refugee boy watches his father lie in the furrow. Learn his name, comfort him, or turn him away, at the row."
+        }
+      ]
+    },
+    "fl_q_after": {
+      "name": "The Fallows, After",
+      "start": [["flag", "sv_fl_back"]],
+      "done": [["flag", "sv_fl_after_done"]],
+      "stages": [
+        {
+          "if": [["flag", "fl_hollow_rested"], ["!flag", "fl_dain_father_named"]],
+          "text": "The furrow rests. Ede says there's room for one more name, if you ask her."
+        },
+        {
+          "if": [["flag", "fl_hollow_bargained"]],
+          "text": "The bargain holds for now — no stakes, no muster. Something will test that promise before long."
+        },
+        {
+          "if": [["flag", "fl_hollow_burned"]],
+          "text": "The furrow's burned clear. The surveyor already sees farmland where it stood."
+        },
+        { "if": [], "text": "Wickstead settles back into itself, whatever the furrow's fate cost it." }
+      ]
+    }
+  }
+}

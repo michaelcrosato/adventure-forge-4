@@ -1,0 +1,342 @@
+{
+  "regions": { "em": { "name": "Emberfall" } },
+  "gen": [
+    {
+      "id": "em_ash",
+      "name": "the ash flats",
+      "seed": 53,
+      "w": 5,
+      "h": 5,
+      "region": "em",
+      "walls": [[0, 0], [4, 4]],
+      "pools": {
+        "descs": ["Ash and black glass, gray on gray, and the smell of old smoke that never quite airs out."],
+        "briefs": ["Ash and black glass."],
+        "scenes": []
+      },
+      "links": [
+        { "cell": [4, 2], "dir": "east", "to": "em_settlement", "back": "out", "landmark": "Glasswick" },
+        { "cell": [2, 2], "dir": "up", "to": "em_choir_approach", "back": "down", "landmark": "the Ash Ridge path" }
+      ],
+      "spots": [
+        {
+          "cell": [1, 0],
+          "name": "Ash Furrows",
+          "desc": "Wind has combed the drifted ash into long parallel furrows, though no wind blows here now to have done it. Old footprints, not recent, cross them at every angle.",
+          "brief": "Wind-combed ash furrows.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 0],
+          "name": "The Cinder Watch Rise",
+          "desc": "The ground climbs toward a broken tower, its crown just visible over the rise. North, a stair spirals up into what's left of it.",
+          "brief": "Rising ground. North: a broken tower.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 0],
+          "name": "Glassmelt Flats",
+          "desc": "The ground itself went to glass here, smooth and black and faintly warm underfoot, centuries on. Your own reflection looks back at you, wrong side up.",
+          "brief": "Ground gone to black glass.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 0],
+          "name": "The Charcoal Run Verge",
+          "desc": "Cart-ruts run north toward a stockade of stacked cordwood and old rope. Someone up there is running charcoal past a levy that was never meant to reach this far out.",
+          "brief": "Cart-ruts. North: a stockade.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 1],
+          "name": "The Sunken Kiln",
+          "desc": "A collapsed glass-kiln, older than any furnace Glasswick runs today, swallowed by ash to its rim. Something dried and leafy grows stubbornly in the one warm crack still breathing heat.",
+          "brief": "An old kiln, swallowed by ash.",
+          "items": ["em_ashbalm"],
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 1],
+          "name": "Bottle Row",
+          "desc": "Hundreds of blown bottles lie half-buried, warped and fused by heat into shapes no glassworker ever intended, glinting whenever the light finds them.",
+          "brief": "Warped bottles, half-buried.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 1],
+          "name": "The Singed Orchard",
+          "desc": "Dead fruit trees stand in rows, trunks glassed black at the base, upper branches gray and bare. They have kept their shape out of habit longer than any tree ought to.",
+          "brief": "Dead trees, glassed at the root.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 1],
+          "name": "Cracked Flat",
+          "desc": "A wide pan of black glass, sheet-cracked into a thousand plates that shift and grind underfoot like river ice about to give.",
+          "brief": "Cracked glass, shifting underfoot.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 1],
+          "name": "The Levy Cairns",
+          "desc": "Stone cairns mark where the Ironbound weighs charcoal carts before Glasswick ever sees a coin for them. Chalk tallies, rained half away, still cling to the nearest stone.",
+          "brief": "Cairns, chalk tallies.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 2],
+          "name": "The Sand Mine Verge",
+          "desc": "The ground opens west into an old mine-mouth, timbers sagging, dug once for the pale sand Glasswick's furnaces still crave.",
+          "brief": "Ground opens. West: a mine-mouth.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 2],
+          "name": "The Glass Orchard",
+          "desc": "More dead trees, fused mid-fall as if the heat caught them still standing. A scrap of scorched cloth flutters from one low branch, snagged there and never freed.",
+          "brief": "Fused trees, a scrap of cloth.",
+          "items": ["em_lost_token"],
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 2],
+          "name": "The Ridge Foot",
+          "desc": "The ground rises north toward a ridge that glitters wrong in any light. Singing carries down from it, faint, unhurried, and never quite stops.",
+          "brief": "Rising ground. Singing, faint, from above.",
+          "onEnterOnce": [["xp", 2]],
+          "variants": [
+            {
+              "if": [["flag", "em_hollow_rested"]],
+              "desc": "The ground rises north toward a ridge that glitters wrong in any light. No singing carries down from it now. The quiet is stranger than the sound ever was.",
+              "brief": "Rising ground. Silent, now."
+            },
+            {
+              "if": [["flag", "em_hollow_bargained"]],
+              "desc": "The ground rises north toward a ridge that glitters wrong in any light. Singing still carries down from it, softer than it was, easier to walk under.",
+              "brief": "Rising ground. Singing, quieter for now."
+            },
+            {
+              "if": [["flag", "em_hollow_burned"]],
+              "desc": "The ground rises north toward a ridge that glitters wrong in any light. Singing carries down from it louder than it ever did before the fifth fire.",
+              "brief": "Rising ground. Singing, louder than before."
+            }
+          ]
+        },
+        {
+          "cell": [3, 2],
+          "name": "The Bell-Shard Flat",
+          "desc": "Shards of glass lie scattered in the rough curve of a bell, as if the shape itself had shattered and fallen from a great height. One piece, small and whole, has caught a child's eye before yours.",
+          "brief": "Bell-shaped glass shards.",
+          "items": ["em_pip_keepsake"],
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 2],
+          "name": "Glasswick's Edge",
+          "desc": "Furnace-smoke shows east through the haze, and Glasswick's rooftops crowd the ash-line where the flats give out into a living town.",
+          "brief": "Furnace-smoke, east. The town's edge.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 3],
+          "name": "The Slag Heaps",
+          "desc": "Centuries of glasswork have piled slag into low black hills, some of it still faintly warm to a bare hand, none of it worth a furnace's trouble anymore.",
+          "brief": "Slag heaps, faintly warm.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 3],
+          "name": "Trapper's Ash",
+          "desc": "A hunter's blind, collapsed at one corner, aimed out over ground where nothing has moved in longer than anyone in Glasswick can say.",
+          "brief": "A collapsed hunter's blind.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 3],
+          "name": "The Long Melt",
+          "desc": "A river of glass runs down a shallow grade, frozen mid-flow, caught the instant it stopped running and never once since.",
+          "brief": "A frozen river of glass.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 3],
+          "name": "Cinder Roost",
+          "desc": "Carrion-birds have taken a glass-cased dead tree for a roost, screaming at nothing in particular. Their droppings are the only white thing in sight.",
+          "brief": "Screaming birds, a glassed tree.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 3],
+          "name": "The Last Furrow",
+          "desc": "The ash gives out at last into ordinary scrub, close enough to the town that a bell rung in Glasswick carries here clean, on a still evening.",
+          "brief": "Ash gives way to scrub.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 4],
+          "name": "The Milestone",
+          "desc": "A stone marker leans in the drift, its carved word burned past reading. Whatever it once pointed toward, the fire took the name along with the road.",
+          "brief": "A burned, leaning marker.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 4],
+          "name": "The Glazed Cairn Rise",
+          "desc": "A low mound breaks the flat, glass-slicked along one flank. South, a barrow-mouth shows dark in the slick, doorstone standing open.",
+          "brief": "A mound. South: a barrow-mouth.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 4],
+          "name": "The Watching Stone",
+          "desc": "A flat standing stone, ash-scoured smooth, faces back toward the ridge as if someone set it there on purpose, to have something to watch from.",
+          "brief": "A stone, facing the ridge.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 4],
+          "name": "Furnace Bones",
+          "desc": "The iron bones of a much older furnace lie half-sunk, bigger than anything Glasswick runs today and cold for longer than anyone remembers lighting it.",
+          "brief": "An old furnace's iron bones.",
+          "onEnterOnce": [["xp", 1]]
+        }
+      ],
+      "cellFx": {
+        "onEnter": [
+          [
+            "chance",
+            8,
+            [
+              [
+                "if",
+                [["!npcDead", "em_wraith"]],
+                [
+                  ["npcgo", "em_wraith", "here"],
+                  ["say", "Ash gathers itself into a shape too deliberate for wind, glass for teeth, and a smell like scorched sugar-sand a breath before it moves."]
+                ],
+                []
+              ]
+            ],
+            []
+          ]
+        ]
+      }
+    }
+  ],
+  "stamps": [
+    {
+      "template": "barrow",
+      "id": "em_cairn",
+      "at": "em_ash_1_4",
+      "dir": "south",
+      "back": "north",
+      "sideTrip": true,
+      "landmark": "the Glazed Cairn",
+      "vars": {
+        "NAME": "the Glazed Cairn",
+        "WIGHT": "a glass-cased wight",
+        "SIGN": "Glass has run into every seam of the doorstone, as if the mound itself half-melted and set again.",
+        "LOOT": "a fire-blackened prayer medal"
+      }
+    },
+    {
+      "template": "tower",
+      "id": "em_watch",
+      "at": "em_ash_2_0",
+      "dir": "north",
+      "back": "south",
+      "sideTrip": true,
+      "landmark": "the Cinder Watch",
+      "vars": {
+        "NAME": "the Cinder Watch",
+        "WATCHER": "a bell-ringer's shade",
+        "VIEW": "the whole ash valley spreads below, Glasswick's furnace-smoke rising south and the roofless chapel white with old ash on the ridge north",
+        "SIGN": "An empty bell-frame still stands at the parapet, rung for the last time long ago.",
+        "LOOT": "a warped bronze bell-clapper"
+      }
+    },
+    {
+      "template": "mine",
+      "id": "em_sandmine",
+      "at": "em_ash_0_2",
+      "dir": "west",
+      "back": "east",
+      "sideTrip": true,
+      "landmark": "the Sand Mine",
+      "vars": {
+        "NAME": "the Sand Mine",
+        "FOREMAN": "a sand-digger's ghost",
+        "SIGN": "Sand gone to sheet glass fills the lower cuts, as if the fire found this deep before the diggers ever did.",
+        "LOOT": "a fused pocket-ledger"
+      }
+    },
+    {
+      "template": "camp",
+      "id": "em_cinderrun",
+      "at": "em_ash_4_0",
+      "dir": "north",
+      "back": "south",
+      "sideTrip": true,
+      "landmark": "the Charcoal Run",
+      "vars": {
+        "NAME": "the Charcoal Run",
+        "CAPTAIN": "Runner-captain Dray",
+        "SIGN": "Charcoal sacks are stacked and rope-lashed for a run past the levy road before dawn.",
+        "LOOT": "a runner's tally-chit"
+      }
+    }
+  ],
+  "items": {
+    "em_ashbalm": {
+      "name": "a fistful of ashbalm leaves",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "eat it to ease a wound",
+      "use": [
+        {
+          "fx": [
+            ["hp", 3],
+            ["move", "em_ashbalm", "nowhere"],
+            ["say", "Bitter and warm going down, like swallowed embers. It eases the ache all the same."]
+          ]
+        }
+      ]
+    },
+    "em_lost_token": {
+      "name": "a scorched cloth token",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "Neave, at Ash Row in Glasswick, would want to know this was found"
+    },
+    "em_pip_keepsake": {
+      "name": "a whole bell-shaped glass shard",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "Pip, at Ash Row, dared you to bring one back unbroken"
+    },
+    "em_wraith_glass": {
+      "name": "a shard of warm black glass",
+      "loc": "nowhere",
+      "hint": "still faintly warm, however long it's been"
+    }
+  },
+  "npcs": {
+    "em_wraith": {
+      "name": "glass-ash wraith",
+      "room": null,
+      "hostile": true,
+      "aggressive": true,
+      "pierce": true,
+      "hp": 10,
+      "atk": 3,
+      "df": 11,
+      "desc": "Ash held together in roughly a man's shape, glass shards for teeth and fingers, moving like something still deciding how joints work.",
+      "onDeath": [
+        ["score", 4],
+        ["xp", 5],
+        ["move", "em_wraith_glass", "inv"],
+        ["say", "It comes apart into ash and loose glass before it finishes falling, no body left to speak of. One shard keeps enough shape to pocket."]
+      ]
+    }
+  }
+}

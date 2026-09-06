@@ -90,7 +90,9 @@ if (process.argv[1]?.endsWith("crawl.ts")) {
   if (args.includes("--replay")) {
     const tracePath = args[args.indexOf("--replay") + 1]!;
     const trace = JSON.parse(readFileSync(tracePath, "utf8")) as Trace;
-    const world = loadWorld(`world/${trace.world}.json`);
+    // the same world selection every entry point uses; a trace names its world
+    // id, which is the default file name under world/
+    const world = loadWorld(process.env.TF_WORLD ?? `world/${trace.world}.json`);
     console.log(replayTrace(world, trace));
     process.exit(0);
   }

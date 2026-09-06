@@ -16,6 +16,7 @@ import type {
   State,
   StepOut,
   TopicDef,
+  NpcDef,
   UseDef,
   World,
 } from "./types.ts";
@@ -42,6 +43,13 @@ function d20(s: State): number {
   return 1 + Math.floor(r * 20);
 }
 
+/** d100, advancing the state's PRNG cursor — for the "chance" effect. */
+function d100(s: State): number {
+  const { a, r } = nextRng(s.rngA);
+  s.rngA = a;
+  return 1 + Math.floor(r * 100);
+}
+
 // ---------- canonical hash ----------
 function canon(v: unknown): string {
   if (v === null || typeof v !== "object") return JSON.stringify(v);
@@ -50,6 +58,15 @@ function canon(v: unknown): string {
   const keys = Object.keys(o).sort();
   return `{${keys.map((k) => `${JSON.stringify(k)}:${canon(o[k])}`).join(",")}}`;
 }
+
+/** Actions that turn a menu page rather than the world: free, and no time for anyone to speak. */
+const MENU_KINDS = new Set(["travel", "travelregion", "travelmore", "traveldone", "company", "companydone", "talkmore"]);
+
+/** Flags a quarrel sets that are outcomes, not the quarrel itself. */
+const QUARREL_TAILS = new Set(["done", "peace", "sour", "lys", "osk", "tamsin", "vell"]);
+
+/** A fail within two of the DC says so — in one of a few voices, chosen by the roll, so the line doesn't wear out. */
+export const NEAR_MISS_CUES = ["So close — that one nearly landed.", "A hair short. It nearly went.", "Nearly; the margin was a breath."] as const;
 
 export function hashState(s: State): string {
   return createHash("sha256").update(canon(s)).digest("hex").slice(0, 8);
@@ -63,6 +80,14 @@ export function receipt(world: World, s: State): string {
 // ---------- helpers ----------
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 const article = (name: string) => (/^[aeiou]/i.test(name) ? "an" : "a");
+/**
+ * "the wight" — unless the name already carries its own article ("the Wyrm")
+ * or is a proper name ("Lys", "Regent Ysolde": authored with a capital).
+ * Common nouns are authored lowercase by convention (docs/authoring.md §7).
+ */
+const theName = (name: string) => (/^(the|a|an)\s/i.test(name) || /^[A-Z]/.test(name) ? name : `the ${name}`);
+/** Sentence-initial form of theName. */
+const TheName = (name: string) => { const t = theName(name); return t.charAt(0).toUpperCase() + t.slice(1); };
 
 export function hasLight(world: World, s: State): boolean {
   return s.inv.some((id) => world.items[id]?.light && s.flags[`${id}_lit`]);
@@ -94,7 +119,7 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return !npcDead(world, s, c[1]);
     case "var": {
       const v = s.vars[c[1]] ?? 0;
-      return c[2] === "<" ? v < c[3] : c[2] === ">" ? v > c[3] : c[2] === ">=" ? v >= c[3] : v === c[3];
+      return c[2] === "<" ? v < c[3] : c[2] === ">" ? v > c[3] : c[2] === ">=" ? v >= c[3] : c[2] === "<=" ? v <= c[3] : v === c[3];
     }
     case "class":
       return s.classId === c[1];
@@ -104,6 +129,16 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return s.perks.includes(c[1]);
     case "!perk":
       return !s.perks.includes(c[1]);
+    case "npcHere":
+      return s.npcRoom[c[1]] === s.room && !npcDead(world, s, c[1]);
+    case "!npcHere":
+      return !(s.npcRoom[c[1]] === s.room && !npcDead(world, s, c[1]));
+    case "inParty":
+      return s.party.includes(c[1]);
+    case "!inParty":
+      return !s.party.includes(c[1]);
+    case "any":
+      return c[1].some((x) => condOk(world, s, x));
   }
 }
 
@@ -146,11 +181,19 @@ export function checkModParts(world: World, s: State, name: string): { label: st
   return parts;
 }
 
+/** The one carried armor item that counts (the best; they do not stack). */
+function bestArmor(world: World, s: State): { armor: number; item: string | null } {
+  let best: { armor: number; item: string | null } = { armor: 0, item: null };
+  for (const id of s.inv) {
+    const a = world.items[id]?.armor ?? 0;
+    if (a > best.armor) best = { armor: a, item: id };
+  }
+  return best;
+}
+
 /** Damage reduction: best carried armor item + perk armor. */
 export function armorOf(world: World, s: State): number {
-  let best = 0;
-  for (const id of s.inv) best = Math.max(best, world.items[id]?.armor ?? 0);
-  return best + perkBonus(world, s, "armor");
+  return bestArmor(world, s).armor + perkBonus(world, s, "armor");
 }
 
 /** Attack-roll bonus: best weapon's hit + might + perk hit bonuses. The one place this sum is defined. */
@@ -159,12 +202,17 @@ function attackBonus(world: World, s: State, w = bestWeapon(world, s)): number {
 }
 
 /** Attack-roll and damage totals an `attack` action would actually use, for the free `status` check. */
-export function combatMods(world: World, s: State): { hit: number; dmg: number; armor: number } {
+export function combatMods(
+  world: World,
+  s: State,
+): { hit: number; dmg: number; armor: number; weapon: string | null; armorItem: string | null } {
   const w = bestWeapon(world, s);
   return {
     hit: attackBonus(world, s, w),
     dmg: w.dmg + perkBonus(world, s, "dmg"),
     armor: armorOf(world, s),
+    weapon: w.item, // the weapon and armor that count: the best carried, not the sum
+    armorItem: bestArmor(world, s).item,
   };
 }
 
@@ -221,6 +269,141 @@ function grantXp(world: World, s: State, n: number, events: string[]): void {
 export const inClassPhase = (world: World, s: State): boolean =>
   s.classId === null && !!world.classes && Object.keys(world.classes).length > 0;
 
+// ---------- rooms that change ----------
+/** The room as it currently looks: base fields, overridden by the first matching variant. */
+export function roomView(world: World, s: State, roomId = s.room): { name: string; desc: string; brief?: string } {
+  const room = world.rooms[roomId];
+  if (!room) return { name: roomId, desc: "" };
+  const v = room.variants?.find((x) => condsOk(world, s, x.if));
+  const brief = v?.brief ?? room.brief;
+  return { name: v?.name ?? room.name, desc: v?.desc ?? room.desc, ...(brief !== undefined ? { brief } : {}) };
+}
+
+// ---------- journal ----------
+export type QuestLine = { id: string; name: string; status: "active" | "done" | "failed"; text: string };
+
+/** Every quest that has started, with the line the player should read for it right now. */
+export function journal(world: World, s: State): QuestLine[] {
+  const out: QuestLine[] = [];
+  for (const [id, q] of Object.entries(world.quests ?? {})) {
+    if (!condsOk(world, s, q.start)) continue;
+    // a quest once done stays done: its asker's wish was met, whatever came after
+    if (q.done && condsOk(world, s, q.done)) { out.push({ id, name: q.name, status: "done", text: "" }); continue; }
+    if (q.failed && condsOk(world, s, q.failed)) { out.push({ id, name: q.name, status: "failed", text: "" }); continue; }
+    const stage = q.stages.find((st) => condsOk(world, s, st.if));
+    out.push({ id, name: q.name, status: "active", text: stage?.text ?? "" });
+  }
+  return out;
+}
+
+/** One event per quest whose journal line changed this turn — the player sees the journal move without asking. */
+function journalEvents(world: World, before: State, after: State, events: string[]): void {
+  if (!world.quests) return;
+  const prev = new Map(journal(world, before).map((q) => [q.id, q]));
+  const now = journal(world, after);
+  // entering a hold can begin several quests at once; one line names them all
+  // and the journal (status) carries their text, so the screen stays readable
+  const begun = now.filter((q) => !prev.has(q.id) && q.status !== "done" && q.status !== "failed" && q.text);
+  const collapse = begun.length >= 2;
+  if (collapse) events.push(`Journal: ${begun.map((q) => q.name).join("; ")} — see status.`);
+  for (const q of now) {
+    const p = prev.get(q.id);
+    if (p && p.status === q.status && p.text === q.text) continue;
+    if (collapse && !p && q.status !== "done" && q.status !== "failed") continue;
+    // a quest that first appears already closed (its start and its end came
+    // together, or its end came first) was never the player's to finish: no announcement
+    if (!p && (q.status === "done" || q.status === "failed")) continue;
+    if (q.status === "done") events.push(`Quest done: ${q.name}.`);
+    else if (q.status === "failed") events.push(`Quest closed: ${q.name} — its asker's wish is past meeting.`);
+    else if (q.text) events.push(`Quest — ${q.name}: ${q.text}`);
+  }
+}
+
+// ---------- fast travel ----------
+/** Landmark rooms the player has stood in, other than the one they stand in now. */
+export function knownLandmarks(world: World, s: State): string[] {
+  return s.visited.filter((id) => id !== s.room && !!world.rooms[id]?.landmark);
+}
+
+/**
+ * Travel is offered from any room with somewhere known to go and no hostile at
+ * hand — a player lost in a wilderness grid can always walk back the way they
+ * came to a place they know; only the destinations are landmarks, and nobody
+ * strolls away from a confrontation.
+ */
+/** Hostile as things stand: a `hostile` or `aggressive` def that content has not calmed (`["calm", id]`). */
+export const hostileNow = (world: World, s: State, id: string): boolean =>
+  !!(world.npcs[id]?.hostile || world.npcs[id]?.aggressive) && !s.flags[`calm_${id}`];
+export const aggressiveNow = (world: World, s: State, id: string): boolean =>
+  !!world.npcs[id]?.aggressive && !s.flags[`calm_${id}`];
+
+export function travelAvailable(world: World, s: State): boolean {
+  if (world.rooms[s.room]?.noTravel) return false;
+  if (!knownLandmarks(world, s).length) return false;
+  for (const id of Object.keys(world.npcs)) {
+    if (hostileNow(world, s, id) && s.npcRoom[id] === s.room && !npcDead(world, s, id) && !s.party.includes(id) && !s.flags[`left_${id}`]) return false;
+  }
+  return true;
+}
+
+export const inTravelMode = (world: World, s: State): boolean => s.travelMenu !== null && travelAvailable(world, s);
+
+/**
+ * Companions standing here who could be spoken with: alive, `dialogue`, with
+ * something to say. Two or more fold into one "speak with the company" entry
+ * that opens a list of them — browsing, like the travel menu — so a full party
+ * never crowds a room's menu past the cap. One alone keeps its own entry, so
+ * walkthroughs and proofs that travel with a single companion replay unchanged.
+ */
+export function companyHere(world: World, s: State): string[] {
+  return s.party.filter((id) => {
+    const def = world.npcs[id];
+    return !!def?.dialogue && s.npcRoom[id] === s.room && !npcDead(world, s, id) && visibleTopics(world, s, id).length > 0;
+  });
+}
+export const inCompanyMode = (world: World, s: State): boolean => s.companyMenu && companyHere(world, s).length >= 2;
+
+/** Regions with at least one known landmark, in world order — the grouping used when the flat list would overflow the menu. */
+function travelRegions(world: World, s: State): string[] {
+  const seen = new Set<string>();
+  for (const id of knownLandmarks(world, s)) seen.add(world.rooms[id]?.region ?? "");
+  return Object.keys(world.regions ?? {}).filter((r) => seen.has(r)).concat(seen.has("") ? [""] : []);
+}
+
+/** The travel menu: flat destinations when they fit, else regions first, then one region's destinations. */
+function travelActions(world: World, s: State): Action[] {
+  const known = knownLandmarks(world, s);
+  let list: Action[];
+  if (s.travelMenu === "") {
+    list =
+      known.length <= MENU_CAP - 1
+        ? known.map((id): Action => ({ kind: "travelto", room: id }))
+        : travelRegions(world, s).map((r): Action => ({ kind: "travelregion", region: r }));
+  } else {
+    list = known.filter((id) => (world.rooms[id]?.region ?? "") === s.travelMenu).map((id): Action => ({ kind: "travelto", room: id }));
+  }
+  // a list that has grown past the cap turns pages, like a long conversation:
+  // "more places" (free, wrapping) and the way out stay on every page
+  const paging = list.length + 1 > MENU_CAP;
+  const pageSize = MENU_CAP - 2;
+  const pages = paging ? Math.ceil(list.length / pageSize) : 1;
+  const page = paging ? s.travelPage % pages : 0;
+  const out = paging ? list.slice(page * pageSize, (page + 1) * pageSize) : list;
+  if (paging) out.push({ kind: "travelmore" });
+  out.push({ kind: "traveldone" });
+  return out;
+}
+
+/** How many travel entries wait on the other pages of the current list. */
+function travelMore(world: World, s: State): number {
+  const known = knownLandmarks(world, s);
+  const total = s.travelMenu === ""
+    ? (known.length <= MENU_CAP - 1 ? known.length : travelRegions(world, s).length)
+    : known.filter((id) => (world.rooms[id]?.region ?? "") === s.travelMenu).length;
+  const shown = travelActions(world, s).filter((a) => a.kind === "travelto" || a.kind === "travelregion").length;
+  return total - shown;
+}
+
 // true while a level-up perk pick is blocking the menu — the room's own
 // desc/exits don't render during this screen (see format.ts render()), so
 // callers deciding whether a room's full description has been "seen" must
@@ -262,7 +445,8 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         break;
       }
       case "move": {
-        const [, item, loc] = fx;
+        const [, item, where] = fx;
+        const loc = where === "here" ? s.room : where;
         if (loc === "inv") {
           if (!s.inv.includes(item)) {
             s.inv.push(item);
@@ -279,14 +463,57 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         enterRoom(world, s, fx[1], events);
         break;
       case "npcgo":
-        s.npcRoom[fx[1]] = fx[2];
+        s.npcRoom[fx[1]] = fx[2] === "here" ? s.room : fx[2];
+        break;
+      case "if":
+        applyFx(world, s, condsOk(world, s, fx[1]) ? fx[2] : fx[3], events);
+        break;
+      case "calm": {
+        // a words route that ends a standoff: the npc stands down for the rest of the game
+        if (!s.flags[`calm_${fx[1]}`]) {
+          s.flags[`calm_${fx[1]}`] = true;
+          const who = world.npcs[fx[1]];
+          if (who && s.npcRoom[fx[1]] === s.room && !npcDead(world, s, fx[1])) events.push(`${TheName(who.name)} stands down.`);
+        }
+        break;
+      }
+      case "slay":
+        // a scripted end, not a fight: the room reads "(at rest)", not "(dead)"
+        s.npcHp[fx[1]] = 0;
+        s.flags[`laid_${fx[1]}`] = true;
         break;
       case "setvar":
         s.vars[fx[1]] = fx[2];
         break;
-      case "addvar":
+      case "addvar": {
         s.vars[fx[1]] = (s.vars[fx[1]] ?? 0) + fx[2];
+        const d = fx[2];
+        if (d) {
+          // coin moves are tagged like score and xp, so a stash found or a price paid is never silent
+          if (fx[1] === "gold") events.push(`(${d > 0 ? "+" : ""}${d} gold)`);
+          // choices that matter must be legible: a companion at hand says so,
+          // and a named faction's standing prints its move
+          if (fx[1].startsWith("appr_")) {
+            const id = fx[1].slice(5);
+            const npc = world.npcs[id];
+            if (npc && (s.party.includes(id) || s.npcRoom[id] === s.room) && !npcDead(world, s, id)) {
+              events.push(`${npc.name} ${Math.abs(d) > 1 ? "strongly " : ""}${d > 0 ? "approves" : "disapproves"} (${d > 0 ? "+" : ""}${d}).`);
+              if (!s.flags["_seenApproval"]) {
+                s.flags["_seenApproval"] = true;
+                events.push("(Companions judge what you do: their regard opens some doors and closes others, and one pushed too far walks out.)");
+              }
+            } else if (npc && !npcDead(world, s, id) && (s.visited.includes(npc.room ?? "") || s.flags[`${id}_left`])) {
+              // regard moved for someone not here to see it: a player found Osk at -1 with no idea why.
+              // Only once they have been met (their home visited, or they walked out) — a name the
+              // player has never heard is not news, it is a spoiler that "Lys" exists somewhere
+              events.push(`(${npc.name} ${d > 0 ? "+" : ""}${d}, when word reaches them)`);
+            }
+          } else if (world.factions?.[fx[1]]) {
+            events.push(`(${world.factions[fx[1]]} ${d > 0 ? "+" : ""}${d})`);
+          }
+        }
         break;
+      }
       case "check": {
         const [, skill, dc, okFx, failFx] = fx;
         const mod = checkMod(world, s, skill);
@@ -323,7 +550,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         // a fail within 2 of the DC — close enough that a player weighing
         // "try again?" benefits from knowing the attempt nearly landed,
         // distinct from a wide miss that says nothing more.
-        if (!ok && dc - total <= 2) events.push("So close — that one nearly landed.");
+        if (!ok && dc - total <= 2) events.push(NEAR_MISS_CUES[(roll + s.turn) % NEAR_MISS_CUES.length]!);
         applyFx(world, s, ok ? okFx : failFx, events);
         break;
       }
@@ -333,6 +560,29 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
       case "perk":
         grantPerk(world, s, fx[1], events);
         break;
+      case "chance": {
+        // Silent by itself: the branches carry whatever the player should see.
+        // The roll comes from the state's cursor, so a trace replays it exactly.
+        const [, pct, okFx, failFx] = fx;
+        const roll = d100(s);
+        applyFx(world, s, roll <= pct ? okFx : failFx, events);
+        break;
+      }
+      case "party": {
+        const [, npc, how] = fx;
+        const name = world.npcs[npc]?.name ?? npc;
+        if (how === "join") {
+          if (!s.party.includes(npc)) {
+            s.party.push(npc);
+            events.push(`${name} joins you.`);
+          }
+          s.npcRoom[npc] = s.room;
+        } else if (s.party.includes(npc)) {
+          s.party = s.party.filter((id) => id !== npc);
+          events.push(`${name} leaves your company.`);
+        }
+        break;
+      }
       case "end":
         s.ended = { kind: fx[1], id: fx[2], text: fx[3] };
         break;
@@ -342,12 +592,146 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
 
 function enterRoom(world: World, s: State, roomId: string, events: string[]): void {
   s.room = roomId;
+  // the party keeps pace: every living companion arrives with the player
+  for (const id of s.party) if (!npcDead(world, s, id)) s.npcRoom[id] = roomId;
   const room = world.rooms[roomId];
   if (!room) return;
   const first = !s.visited.includes(roomId);
   if (first) s.visited.push(roomId);
   if (first && room.onEnterOnce) applyFx(world, s, room.onEnterOnce, events);
   if (room.onEnter) applyFx(world, s, room.onEnter, events);
+}
+
+/**
+ * One companion remark per party member per turn: the first remark whose
+ * conditions pass and that hasn't been spoken yet. Runs after the turn's own
+ * effects, so a remark can react to the very choice just made.
+ */
+function partyRemarks(world: World, s: State, events: string[]): void {
+  for (const id of [...s.party]) {
+    if (s.ended) return;
+    const def = world.npcs[id];
+    if (!def || npcDead(world, s, id)) continue;
+    // a companion who has had enough walks out before saying anything else
+    const gone = def.companion?.leaves?.find((l) => condsOk(world, s, l.if));
+    if (gone) {
+      events.push(`${def.name}: "${gone.say}"`);
+      s.party = s.party.filter((x) => x !== id);
+      s.flags[`${id}_left`] = true;
+      events.push(`${def.name} leaves your company.`);
+      continue;
+    }
+    // one remark a turn — but a remark that moves regard (or anything else)
+    // is never held back behind a plain one, so a cost lands the turn it is earned
+    const ready = (def.companion?.remarks ?? []).filter((r) => !s.flags[`remarked_${id}_${r.id}`] && condsOk(world, s, r.if));
+    const ordered = [...ready.filter((r) => r.fx?.length), ...ready.filter((r) => !r.fx?.length)];
+    for (const r of ordered) {
+      const flag = `remarked_${id}_${r.id}`;
+      s.flags[flag] = true;
+      events.push(`${def.name}: "${r.say}"`);
+      if (r.fx) applyFx(world, s, r.fx, events);
+      // a remark that opens a quarrel between two companions says where the
+      // answer is: the sides and the settling live in their conversations
+      for (const fx of r.fx ?? []) {
+        const m = fx[0] === "set" ? /^quarrel_([a-z]+)_([a-z]+)(?:_([a-z]+))?$/.exec(fx[1]) : null;
+        if (!m || QUARREL_TAILS.has(m[3] ?? "")) continue;
+        const a = world.npcs[m[1]!]?.name, b = world.npcs[m[2]!]?.name;
+        if (a && b) events.push(`(Speak with ${a} or ${b} to take a side, or to tell them to settle it.)`);
+      }
+      break;
+    }
+  }
+}
+
+/** An npc hits the player once: armor soaks what it can, at least 1 gets through. */
+/** Party members who can still take a blow: alive, here, and not already down. */
+function standingCompanions(world: World, s: State): string[] {
+  return s.party.filter(
+    (id) => world.npcs[id]?.companion && !npcDead(world, s, id) && s.npcRoom[id] === s.room && !s.flags[`down_${id}`],
+  );
+}
+
+/**
+ * A blow lands on a companion instead of the player. Companions have no armor;
+ * one who would drop to nothing falls back out of the fight (flag `down_<id>`,
+ * hp held at 1) and gets up again, shaken, once no aggressive thing is left in
+ * the room. Nobody dies of it: a companion's death is content's to write.
+ */
+function companionStruck(world: World, s: State, def: NpcDef, id: string, events: string[], verb: string): void {
+  const c = world.npcs[id]!;
+  const max = c.hp ?? 1;
+  const hp = (s.npcHp[id] ?? max) - (def.atk ?? 1);
+  if (hp <= 0) {
+    s.npcHp[id] = 1;
+    s.flags[`down_${id}`] = true;
+    s.flags[`fell_${id}`] = true; // stays set: a remark or an epilogue line can recall the day they went down
+    events.push(`${TheName(def.name)} ${verb} at ${c.name} — ${c.name} goes down, and crawls clear of the fight.`);
+    return;
+  }
+  s.npcHp[id] = hp;
+  events.push(
+    hp <= 2
+      ? `${TheName(def.name)} ${verb} at ${c.name} (-${def.atk}hp) — ${c.name} staggers, ${hp}/${max} left.`
+      : `${TheName(def.name)} ${verb} at ${c.name} (-${def.atk}hp, ${hp}/${max} left).`,
+  );
+}
+
+/** Downed companions get up once the room holds nothing aggressive and alive, at half their strength. */
+function recoverDowned(world: World, s: State, events: string[], attacked: string | null): void {
+  // the fight is still on while something aggressive stands here, or while the player is trading blows
+  const hostile = Object.keys(world.npcs).some(
+    (id) => aggressiveNow(world, s, id) && !s.party.includes(id) && s.npcRoom[id] === s.room && !npcDead(world, s, id),
+  );
+  if (hostile || attacked) return;
+  for (const id of s.party) {
+    if (!s.flags[`down_${id}`]) continue;
+    const c = world.npcs[id]!;
+    delete s.flags[`down_${id}`];
+    s.npcHp[id] = Math.max(s.npcHp[id] ?? 1, Math.ceil((c.hp ?? 1) / 2));
+    events.push(`${c.name} is back on their feet, shaken.`);
+  }
+}
+
+function npcStrike(world: World, s: State, npcId: string, events: string[], verb: string): void {
+  const def = world.npcs[npcId];
+  if (!def?.atk) return;
+  // blows rotate between the player and the companions standing with them, in
+  // order, with no die involved: the same fight replays the same way
+  const standing = standingCompanions(world, s);
+  const nth = s.vars["_strikes"] ?? 0;
+  s.vars["_strikes"] = nth + 1;
+  const pick = nth % (1 + standing.length);
+  if (pick > 0) {
+    companionStruck(world, s, def, standing[pick - 1]!, events, verb);
+    return;
+  }
+  const armor = def.pierce ? 0 : armorOf(world, s);
+  const taken = Math.max(1, def.atk - armor);
+  const absorbed = def.atk - taken;
+  events.push(
+    absorbed > 0
+      ? `${TheName(def.name)} ${verb} — your armor takes ${absorbed} of it.`
+      : def.pierce && armorOf(world, s) > 0
+        ? `${TheName(def.name)} ${verb} — your armor means nothing to it.`
+        : `${TheName(def.name)} ${verb}.`,
+  );
+  applyFx(world, s, [["hp", -taken]], events);
+}
+
+/**
+ * Aggressive npcs get their turn: everything alive, aggressive, and in the
+ * player's room strikes once the player's action has resolved — except the
+ * one the player just attacked, which already struck back. Companions never
+ * count, and a dead player ends it.
+ */
+function aggressivePass(world: World, s: State, events: string[], except: string | null): void {
+  for (const id of Object.keys(world.npcs)) {
+    if (s.ended) return;
+    const def = world.npcs[id]!;
+    if (!aggressiveNow(world, s, id) || id === except || s.party.includes(id)) continue;
+    if (s.npcRoom[id] !== s.room || npcDead(world, s, id)) continue;
+    npcStrike(world, s, id, events, "attacks");
+  }
 }
 
 // ---------- initial state ----------
@@ -373,6 +757,12 @@ export function newState(world: World, seed: number): StepOut {
     npcHp: Object.fromEntries(Object.entries(world.npcs).map(([id, d]) => [id, d.hp ?? 1])),
     npcRoom: Object.fromEntries(Object.entries(world.npcs).map(([id, d]) => [id, d.room])),
     visited: [],
+    party: [],
+    talking: null,
+    travelMenu: null,
+    companyMenu: false,
+    talkPage: 0,
+    travelPage: 0,
     ended: null,
   };
   for (const id of Object.keys(world.items)) if (s.itemLoc[id] === "inv") s.inv.push(id);
@@ -403,6 +793,114 @@ function topicVisible(world: World, s: State, npc: string, t: TopicDef): boolean
   return condsOk(world, s, t.if);
 }
 
+function visibleTopics(world: World, s: State, npc: string): TopicDef[] {
+  return (world.npcs[npc]?.topics ?? []).filter((t) => topicVisible(world, s, npc, t));
+}
+
+/**
+ * True while a conversation is open with an npc who is still here, alive, and
+ * has something left to say. The menu is then that npc's topics plus "end
+ * conversation" — the room's own menu waits (see format.ts render()).
+ */
+export const inTalkMode = (world: World, s: State): boolean =>
+  s.talking !== null &&
+  s.npcRoom[s.talking] === s.room &&
+  !npcDead(world, s, s.talking) &&
+  visibleTopics(world, s, s.talking).length > 0;
+
+/** The owner of an item, if they stand alive in the player's room to see it go. */
+function ownerWatching(world: World, s: State, owner: string): NpcDef | null {
+  const def = world.npcs[owner];
+  if (!def || s.npcRoom[owner] !== s.room || npcDead(world, s, owner) || s.party.includes(owner)) return null;
+  return def;
+}
+
+/** True when an effect list counts a hollow rested or burned somewhere inside it. */
+function fxSettlesHollow(fxs: Fx[] | undefined): boolean {
+  return hollowRoute(fxs) !== null;
+}
+
+/**
+ * Which way an effect list settles a hold's grief — "rests it", "a bargain"
+ * or "burns it" — read from the `<code>_hollow_rested|bargained|burned` flag
+ * it sets, else from the tally it feeds; null when it settles nothing. Said in
+ * the menu, so a player keeping to one road can tell the three apart.
+ */
+function hollowRoute(fxs: Fx[] | undefined): string | null {
+  let tally: string | null = null;
+  for (const fx of fxs ?? []) {
+    if (fx[0] === "set") {
+      const m = /_hollow_(rested|bargained|burned)$/.exec(fx[1]);
+      if (m) return m[1] === "rested" ? "rests it" : m[1] === "bargained" ? "a bargain: quieter, not rested" : "burns it";
+    }
+    if (fx[0] === "addvar" && fx[1] === "hollows_burned") tally = "burns it";
+    if (fx[0] === "addvar" && fx[1] === "hollows_rested" && !tally) tally = "rests it";
+    const inner =
+      fx[0] === "if" ? hollowRoute(fx[2]) ?? hollowRoute(fx[3])
+      : fx[0] === "check" ? hollowRoute(fx[3]) ?? hollowRoute(fx[4])
+      : fx[0] === "chance" ? hollowRoute(fx[2]) ?? hollowRoute(fx[3])
+      : null;
+    if (inner) return inner;
+  }
+  return tally;
+}
+
+/** True when an effect list lowers a faction's standing or a companion's regard somewhere inside it. */
+function fxCostsStanding(fxs: Fx[] | undefined): boolean {
+  return standingAtRisk(fxs).length > 0;
+}
+
+/** The standing vars (`rep_*`, `appr_*`) an effect list can lower, in order of appearance. */
+function standingAtRisk(fxs: Fx[] | undefined): string[] {
+  const out: string[] = [];
+  for (const fx of fxs ?? []) {
+    if (fx[0] === "addvar" && fx[2] < 0 && (fx[1].startsWith("rep_") || fx[1].startsWith("appr_"))) out.push(fx[1]);
+    if (fx[0] === "if") out.push(...standingAtRisk(fx[2]), ...standingAtRisk(fx[3]));
+    if (fx[0] === "check") out.push(...standingAtRisk(fx[3]), ...standingAtRisk(fx[4]));
+    if (fx[0] === "chance") out.push(...standingAtRisk(fx[2]), ...standingAtRisk(fx[3]));
+  }
+  return [...new Set(out)];
+}
+
+/** "a miss costs standing with the Gray Church" — names what a check's miss would cost, and what its hit would, when the world names it. */
+function costsStandingHint(world: World, missFx: Fx[] | undefined, hitFx?: Fx[] | undefined): string | null {
+  const name = (v: string) => (v.startsWith("rep_") ? world.factions?.[v] : world.npcs[v.slice(5)]?.name);
+  const withList = (vars: string[]): string => {
+    const names = vars.map(name).filter((n): n is string => !!n);
+    if (!names.length) return "";
+    return ` with ${names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0]!}`;
+  };
+  const miss = standingAtRisk(missFx), hit = standingAtRisk(hitFx);
+  const both = miss.filter((v) => hit.includes(v));
+  const missOnly = miss.filter((v) => !both.includes(v)), hitOnly = hit.filter((v) => !both.includes(v));
+  const parts: string[] = [];
+  if (both.length) parts.push(`costs standing${withList(both)}, hit or miss`);
+  if (missOnly.length) parts.push(`a miss costs standing${withList(missOnly)}`);
+  if (hitOnly.length) parts.push(`a hit costs standing${withList(hitOnly)}`);
+  return parts.length ? parts.join("; ") : null;
+}
+
+/** True when an effect list can end the game somewhere inside it. */
+function fxEnds(fxs: Fx[] | undefined): boolean {
+  for (const fx of fxs ?? []) {
+    if (fx[0] === "end") return true;
+    if (fx[0] === "if" && (fxEnds(fx[2]) || fxEnds(fx[3]))) return true;
+    if (fx[0] === "check" && (fxEnds(fx[3]) || fxEnds(fx[4]))) return true;
+    if (fx[0] === "chance" && (fxEnds(fx[2]) || fxEnds(fx[3]))) return true;
+  }
+  return false;
+}
+
+/** A topic whose effects send someone out of the party. */
+const partsWays = (t: TopicDef): boolean => (t.fx ?? []).some((f) => f[0] === "party" && f[2] === "leave");
+
+/** Has any topic of this npc's been said? (the "said_<npc>_<topic>" flags) */
+function spokenWith(s: State, npc: string): boolean {
+  const prefix = `said_${npc}_`;
+  for (const f of Object.keys(s.flags)) if (f.startsWith(prefix)) return true;
+  return false;
+}
+
 export function legalActions(world: World, s: State): Action[] {
   if (s.ended) return [];
   // class first: nothing else is legal until the player picks who they are
@@ -413,20 +911,74 @@ export function legalActions(world: World, s: State): Action[] {
     const picks = eligiblePerks(world, s).sort();
     if (picks.length) return picks.slice(0, MENU_CAP).map((id) => ({ kind: "perkpick", id }));
   }
+  // an open conversation: only its topics, and the way out of it
+  if (inTalkMode(world, s)) {
+    const npc = s.talking!;
+    // a line that sends a companion away goes last, never in the slot the
+    // player has been pressing to carry the conversation on
+    // ... and so does a line that commits you to something (`commits: true`), so
+    // a menu that shrinks as questions are answered never slides a betrayal into
+    // the number the player has been pressing
+    const late = (t: TopicDef) => Number(partsWays(t) || !!t.commits);
+    const topics = visibleTopics(world, s, npc).sort((a, b) => late(a) - late(b));
+    // a farewell line (a topic with `end`) is the way out; the plain "end
+    // conversation" only appears when the npc offers none
+    const ends = topics.filter((t) => t.end);
+    const rest = topics.filter((t) => !t.end);
+    const outro: Action[] = ends.length ? ends.map((t): Action => ({ kind: "talk", npc, topic: t.id })) : [{ kind: "endtalk" }];
+    // a conversation that has grown past the cap turns pages: the farewell stays
+    // on every page, and "more to ask" (free) turns to the next
+    const paging = rest.length + outro.length > MENU_CAP;
+    const pageSize = Math.max(1, MENU_CAP - outro.length - 1);
+    const pages = paging ? Math.ceil(rest.length / pageSize) : 1;
+    const page = paging ? s.talkPage % pages : 0;
+    const shown = paging ? rest.slice(page * pageSize, (page + 1) * pageSize) : rest;
+    const out: Action[] = shown.map((t): Action => ({ kind: "talk", npc, topic: t.id }));
+    if (paging) out.push({ kind: "talkmore" });
+    return [...out, ...outro];
+  }
+  // the travel menu: destinations (or regions), and the way out of it
+  if (inTravelMode(world, s)) return travelActions(world, s);
+  // the company list: the companions to speak with, and the way out of it
+  if (inCompanyMode(world, s)) return [...companyHere(world, s).map((npc): Action => ({ kind: "talkto", npc })), { kind: "companydone" }];
   const out: Action[] = [];
   const room = world.rooms[s.room];
   if (!room) return out;
+  // two or more companions to speak with fold into one entry, listed where the first of them would have been
+  const company = companyHere(world, s);
+  const folded = new Set(company.length >= 2 ? company : []);
+  let companyListed = false;
+  const late: Action[] = []; // attacks on the peaceable, listed after everything else
   for (const dir of Object.keys(room.exits ?? {})) out.push({ kind: "go", dir });
   if (roomIsDark(world, s)) return out; // in the dark you can only feel for exits
+  if (travelAvailable(world, s)) out.push({ kind: "travel" });
   for (const a of room.actions ?? [])
     if (customVisible(world, s, a)) out.push({ kind: "custom", room: s.room, id: a.id });
   for (const id of itemsHere(world, s))
     if (world.items[id]?.takeable) out.push({ kind: "take", item: id });
   for (const npc of npcsHere(world, s)) {
     const def = world.npcs[npc]!;
-    for (const t of def.topics ?? [])
-      if (topicVisible(world, s, npc, t)) out.push({ kind: "talk", npc, topic: t.id });
-    if (def.hp !== undefined) out.push({ kind: "attack", npc });
+    if (folded.has(npc)) {
+      if (!companyListed) out.push({ kind: "company" });
+      companyListed = true;
+      continue;
+    }
+    const topics = visibleTopics(world, s, npc);
+    if (def.dialogue) {
+      if (topics.length) out.push({ kind: "talkto", npc });
+    } else {
+      for (const t of topics) out.push({ kind: "talk", npc, topic: t.id });
+    }
+    // companions are not targets; a stranger who has drawn no blade is one, but
+    // the option waits at the foot of the menu, after everything else here —
+    // and someone you could talk to is not one until you have talked
+    if (def.hp !== undefined && !s.party.includes(npc)) {
+      if (hostileNow(world, s, npc)) out.push({ kind: "attack", npc });
+      else if (!def.dialogue || spokenWith(s, npc)) late.push({ kind: "attack", npc });
+    }
+    // a hostile that holds its ground can be left alone in so many words: free,
+    // so the peaceable road past it is a choice on the menu, not a guess
+    if (def.hp !== undefined && hostileNow(world, s, npc) && !aggressiveNow(world, s, npc) && !s.flags[`left_${npc}`]) out.push({ kind: "leave", npc });
   }
   for (const id of s.inv) {
     for (const u of world.items[id]?.use ?? []) {
@@ -440,6 +992,7 @@ export function legalActions(world: World, s: State): Action[] {
       }
     }
   }
+  out.push(...late);
   return out;
 }
 
@@ -459,8 +1012,32 @@ export function actionLabel(world: World, a: Action, s?: State): string {
     case "talk": {
       const npc = world.npcs[a.npc];
       const t = npc?.topics?.find((x) => x.id === a.topic);
+      // inside a conversation the npc is already named, so the label stands alone
+      if (s?.talking === a.npc && npc?.dialogue) return t?.label ?? a.topic;
       return `ask ${npc?.name ?? a.npc}: ${t?.label ?? a.topic}`;
     }
+    case "talkto":
+      return `talk to ${world.npcs[a.npc]?.name ?? a.npc}`;
+    case "leave":
+      return `leave ${world.npcs[a.npc]?.name ?? a.npc} be`;
+    case "endtalk":
+      return "end conversation";
+    case "travel":
+      return "travel to a known place";
+    case "travelregion":
+      return a.region ? `toward ${world.regions?.[a.region]?.name ?? a.region}` : "toward places elsewhere";
+    case "travelto":
+      return `to ${world.rooms[a.room]?.landmark ?? a.room}`;
+    case "traveldone":
+      return s?.travelMenu ? "back" : "stay here";
+    case "company":
+      return "speak with the company";
+    case "companydone":
+      return "back";
+    case "talkmore":
+      return "more to ask";
+    case "travelmore":
+      return "more places";
     case "attack": {
       const npcName = world.npcs[a.npc]?.name ?? a.npc;
       const weapon = s ? bestWeapon(world, s).item : null;
@@ -535,7 +1112,56 @@ function fxFor(world: World, s: State, a: Action): Fx[] | undefined {
  * which match on the canonical label — are unaffected by odds text or by
  * attribute/perk changes.
  */
-export function oddsHint(world: World, s: State, a: Action): string {
+/** An item's hint as it stands now: the first variant whose conditions hold, else the base hint; "" means none. */
+export function itemHint(world: World, s: State, id: string): string | undefined {
+  const def = world.items[id];
+  if (!def) return undefined;
+  const v = def.variants?.find((x) => condsOk(world, s, x.if));
+  const hint = v ? v.hint : def.hint;
+  return hint ? hint : undefined;
+}
+
+/**
+ * "as a Scholar" for a room action or topic the player's class opened: a
+ * top-level `["class", c]` condition on the def, so a player can see which of
+ * their choices are theirs alone. Silent when the label already names the class.
+ */
+function classTag(world: World, s: State, a: Action): string {
+  if (!s.classId) return "";
+  const def =
+    a.kind === "custom"
+      ? world.rooms[a.room]?.actions?.find((x) => x.id === a.id)
+      : a.kind === "talk"
+        ? world.npcs[a.npc]?.topics?.find((x) => x.id === a.topic)
+        : undefined;
+  if (!def?.if?.some((c) => c[0] === "class" && c[1] === s.classId)) return "";
+  const name = world.classes?.[s.classId]?.name;
+  if (!name || def.label.toLowerCase().includes(name.toLowerCase())) return "";
+  return `as ${article(name)} ${name}`;
+}
+
+export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: boolean } = {}): string {
+  const who = classTag(world, s, a);
+  if (a.kind === "custom" && world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.free) return who ? ` (free; ${who})` : " (free)";
+  if (a.kind === "leave") return " (free)";
+  if (a.kind === "take") {
+    const owner = world.items[a.item]?.owner;
+    const w = owner ? ownerWatching(world, s, owner) : null;
+    return w ? ` (${w.name} is watching: taking it is theft)` : "";
+  }
+  if (a.kind === "company") return ` (${companyHere(world, s).map((id) => world.npcs[id]?.name ?? id).join(", ")})`;
+  if (a.kind === "travelmore") return ` (${travelMore(world, s)} more)`;
+  if (a.kind === "talkmore" && s.talking) {
+    // how many topics wait on the other pages
+    const rest = visibleTopics(world, s, s.talking).filter((t) => !t.end).length;
+    const here = legalActions(world, s).filter((x) => x.kind === "talk").length - visibleTopics(world, s, s.talking).filter((t) => t.end).length;
+    return ` (${rest - here} more)`;
+  }
+  if (a.kind === "travelregion" && a.region) {
+    // a region entry opens a second menu; say how many known places wait behind it
+    const n = knownLandmarks(world, s).filter((id) => (world.rooms[id]?.region ?? "") === a.region).length;
+    return ` (${n} known ${n === 1 ? "place" : "places"})`;
+  }
   if (a.kind === "attack") {
     const def = world.npcs[a.npc];
     if (!def) return "";
@@ -548,18 +1174,39 @@ export function oddsHint(world: World, s: State, a: Action): string {
     const exit = world.rooms[s.room]?.exits?.[a.dir];
     if (exit?.if && !condsOk(world, s, exit.if))
       return exit.hint ? ` (locked: ${exit.hint})` : " (locked)";
-    return exit?.landmark ? ` (toward ${exit.landmark})` : "";
+    // an unlabelled exit into a landmark room borrows the landmark's name, so a
+    // gateway's "go in" says where it goes like every authored exit around it
+    const toward = exit?.landmark ?? (exit ? world.rooms[exit.to]?.landmark : undefined);
+    return toward ? ` (toward ${toward})` : "";
   }
   const fx = fxFor(world, s, a);
   const chk = fx?.[0];
+  const parts: string[] = [];
   if (chk && chk[0] === "check") {
+    // all three numbers, so neither frame can be misread: the DC the total must
+    // reach, the modifier, and the die roll that gets there
     const mod = checkMod(world, s, chk[1]);
     const need = Math.max(1, chk[2] - mod);
-    if (!mod) return ` (roll ${need}+ on the die; ${chk[1]})`;
-    return ` (roll ${need}+ on the die; ${mod > 0 ? "+" : ""}${mod} ${chk[1]})`;
+    parts.push(mod ? `DC ${chk[2]}, ${mod > 0 ? "+" : ""}${mod} ${chk[1]}: roll ${need}+ on the die` : `DC ${chk[2]}, ${chk[1]}: roll ${need}+ on the die`);
+    // a miss that costs standing or regard is said before the die is thrown, like "fail costs 1hp" — and with whom;
+    // so is a hit that costs it, so the warning never reads as "only a miss"
+    const cost = costsStandingHint(world, chk[4], chk[3]);
+    if (cost) parts.push(cost);
   }
-  if (a.kind === "use") {
-    const hint = world.items[a.item]?.hint;
+  // an action that settles a hold's grief is the one-shot the hold is built around; say so before it is taken, and which way
+  const route = fx ? hollowRoute(fx) : null;
+  if (route) parts.push(`settles this hold's grief: ${route}`);
+  // regard an action moves outright (a side taken in a quarrel, an oath sworn to a companion) is said by name and number
+  const moves = (fx ?? [])
+    .filter((f): f is ["addvar", string, number] => f[0] === "addvar" && f[1].startsWith("appr_") && f[2] !== 0)
+    .map((f) => `${world.npcs[f[1].slice(5)]?.name ?? f[1].slice(5)} ${f[2] > 0 ? "+" : "-"}${Math.abs(f[2])}`);
+  if (moves.length) parts.push(moves.join(", "));
+  if (who) parts.unshift(who);
+  if (parts.length) return ` (${parts.join("; ")})`;
+  if (a.kind === "use" && opts.itemHints !== false) {
+    // an item's use can sit in the menu for the rest of the game, so its hint
+    // is shown where a place is first shown (and in status), not on every screen
+    const hint = itemHint(world, s, a.item);
     return hint ? ` (${hint})` : "";
   }
   return "";
@@ -573,7 +1220,12 @@ export function step(world: World, prev: State, action: Action): StepOut {
   }
   const s: State = structuredClone(prev);
   const events: string[] = [];
-  s.turn += 1;
+  // opening the travel menu, picking a region, or backing out is browsing, not a turn;
+  // only the journey itself (travelto) and everything else costs one
+  const freeCustom =
+    action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free;
+  if (!freeCustom && action.kind !== "leave" && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore" && action.kind !== "travelmore") s.turn += 1;
+  let attacked: string | null = null; // the npc that already struck back this turn
 
   switch (action.kind) {
     case "go": {
@@ -587,11 +1239,25 @@ export function step(world: World, prev: State, action: Action): StepOut {
       break;
     }
     case "take": {
+      const wieldedBefore = bestWeapon(world, s).item, wornBefore = bestArmor(world, s).item;
       s.itemLoc[action.item] = "inv";
       s.inv.push(action.item);
       const def = world.items[action.item];
       const label = def?.name ?? action.item;
-      events.push(def?.hint ? `${label}: taken. (${def.hint})` : `${label}: taken.`);
+      const hint = itemHint(world, s, action.item);
+      events.push(hint ? `${label}: taken. (${hint})` : `${label}: taken.`);
+      // the best carried weapon and armor are the ones that count, silently — so say when a pickup changes which
+      if (bestWeapon(world, s).item === action.item && wieldedBefore !== action.item) events.push(`(You will fight with it now.)`);
+      if (bestArmor(world, s).item === action.item && wornBefore !== action.item) events.push(`(You will wear it now.)`);
+      // an owned thing taken under its owner's eyes is a theft the world can remember
+      const owner = def?.owner ? ownerWatching(world, s, def.owner) : null;
+      if (owner) {
+        s.flags[`stole_${action.item}`] = true;
+        s.vars["thefts"] = (s.vars["thefts"] ?? 0) + 1;
+        // and a count per companion who was there for it, so nobody judges a theft they never saw
+        for (const id of s.party) s.vars[`thefts_with_${id}`] = (s.vars[`thefts_with_${id}`] ?? 0) + 1;
+        events.push(`${TheName(owner.name)} sees you take it.`);
+      }
       break;
     }
     case "use": {
@@ -606,6 +1272,54 @@ export function step(world: World, prev: State, action: Action): StepOut {
       if (t.once) s.flags[`said_${action.npc}_${t.id}`] = true;
       events.push(`${world.npcs[action.npc]?.name}: "${t.say}"`);
       if (t.fx) applyFx(world, s, t.fx, events);
+      // a conversation closes on its own when the line says so, or when the
+      // npc has nothing left to say / is no longer here (inTalkMode covers
+      // the latter two — clearing here just keeps the state tidy)
+      if (s.talking === action.npc && (t.end || !inTalkMode(world, s))) {
+        s.talking = null;
+        s.talkPage = 0;
+      }
+      break;
+    }
+    case "talkto":
+      s.talking = action.npc;
+      s.talkPage = 0;
+      s.companyMenu = false; // picked from the company list: the conversation replaces it
+      break;
+    case "endtalk":
+      s.talking = null;
+      s.talkPage = 0;
+      break;
+    case "talkmore":
+      s.talkPage += 1;
+      break;
+    case "company":
+      s.companyMenu = true;
+      break;
+    case "companydone":
+      s.companyMenu = false;
+      break;
+    case "travel":
+      s.travelMenu = "";
+      s.travelPage = 0;
+      break;
+    case "travelregion":
+      s.travelMenu = action.region;
+      s.travelPage = 0;
+      break;
+    case "travelmore":
+      s.travelPage += 1;
+      break;
+    case "traveldone":
+      // from inside a region list, step back to the region list; else close
+      s.travelMenu = s.travelMenu && knownLandmarks(world, s).length > MENU_CAP - 1 ? "" : null;
+      s.travelPage = 0;
+      break;
+    case "travelto": {
+      s.travelPage = 0;
+      s.travelMenu = null;
+      events.push(`You travel to ${world.rooms[action.room]?.landmark ?? action.room}.`);
+      enterRoom(world, s, action.room, events);
       break;
     }
     case "attack": {
@@ -620,23 +1334,35 @@ export function step(world: World, prev: State, action: Action): StepOut {
         s.npcHp[action.npc] = (s.npcHp[action.npc] ?? 1) - dmg;
         const left = s.npcHp[action.npc]!;
         const leftText = left > 0 ? `, ${left}/${def.hp ?? 1}hp left` : "";
-        events.push(`You hit the ${def.name} (d20:${roll}+${hit}=${total} vs DF ${df}, -${dmg}hp${leftText}).`);
+        events.push(`You hit ${theName(def.name)} (d20:${roll}+${hit}=${total} vs DF ${df}, -${dmg}hp${leftText}).`);
       } else {
-        events.push(`You miss the ${def.name} (d20:${roll}+${hit}=${total} vs DF ${df}).`);
+        events.push(`You miss ${theName(def.name)} (d20:${roll}+${hit}=${total} vs DF ${df}).`);
+      }
+      // companions fight beside the player: one roll each, in join order,
+      // until the target drops
+      for (const id of s.party) {
+        if ((s.npcHp[action.npc] ?? 0) <= 0) break;
+        const c = world.npcs[id];
+        if (!c?.companion || npcDead(world, s, id) || s.npcRoom[id] !== s.room || s.flags[`down_${id}`]) continue;
+        const cHit = c.companion.hit ?? 0;
+        const cRoll = d20(s);
+        const cTotal = cRoll + cHit;
+        if (cTotal >= df) {
+          const cDmg = c.companion.dmg ?? 1;
+          s.npcHp[action.npc] = (s.npcHp[action.npc] ?? 1) - cDmg;
+          const left = s.npcHp[action.npc]!;
+          const leftText = left > 0 ? `, ${left}/${def.hp ?? 1}hp left` : "";
+          events.push(`${c.name} hits ${theName(def.name)} (d20:${cRoll}+${cHit}=${cTotal} vs DF ${df}, -${cDmg}hp${leftText}).`);
+        } else {
+          events.push(`${c.name} misses (d20:${cRoll}+${cHit}=${cTotal} vs DF ${df}).`);
+        }
       }
       if ((s.npcHp[action.npc] ?? 0) <= 0) {
-        events.push(`The ${def.name} is destroyed.`);
+        events.push(`${TheName(def.name)} is destroyed.`);
         if (def.onDeath) applyFx(world, s, def.onDeath, events);
       } else if (def.atk) {
-        const armor = armorOf(world, s);
-        const taken = Math.max(1, def.atk - armor);
-        const absorbed = def.atk - taken;
-        events.push(
-          absorbed > 0
-            ? `The ${def.name} strikes back — your armor takes ${absorbed} of it.`
-            : `The ${def.name} strikes back.`,
-        );
-        applyFx(world, s, [["hp", -taken]], events);
+        npcStrike(world, s, action.npc, events, "strikes back");
+        attacked = action.npc;
       }
       break;
     }
@@ -645,6 +1371,23 @@ export function step(world: World, prev: State, action: Action): StepOut {
       if (!a) break;
       if (a.once) s.flags[`did_${a.id}`] = true;
       applyFx(world, s, a.fx, events);
+      // a rest is the company's, not the player's alone: a room action that
+      // heals (a hearth, a bunk) heals the companions standing here by the same
+      // measure — an item's use heals only whoever takes it
+      const rest = a.fx?.find((f) => f[0] === "hp" && f[1] > 0);
+      if (rest && !s.ended) {
+        for (const id of s.party) {
+          const def = world.npcs[id];
+          if (!def?.companion || npcDead(world, s, id) || s.npcRoom[id] !== s.room) continue;
+          const max = def.hp ?? 1;
+          const before = s.npcHp[id] ?? max;
+          const after = Math.min(max, before + (rest[1] as number));
+          if (after > before) {
+            s.npcHp[id] = after;
+            events.push(`(${def.name} hp+${after - before}, ${after}/${max})`);
+          }
+        }
+      }
       break;
     }
     case "classpick": {
@@ -663,11 +1406,65 @@ export function step(world: World, prev: State, action: Action): StepOut {
       enterRoom(world, s, world.start, events);
       break;
     }
+    case "leave": {
+      const def = world.npcs[action.npc];
+      s.flags[`left_${action.npc}`] = true;
+      events.push(`You give ${def?.name ?? action.npc} a wide berth. It holds its ground and lets you.`);
+      break;
+    }
     case "perkpick": {
       if (s.perkPicks <= 0) break;
       s.perkPicks -= 1;
       grantPerk(world, s, action.id, events, true);
       break;
+    }
+  }
+  // the world gets its turn: aggressive npcs in the room strike, then the
+  // company has its say — neither runs during a level-up pick or class pick,
+  // which are menu time, not world time
+  if (!s.ended && action.kind !== "perkpick" && action.kind !== "classpick") {
+    aggressivePass(world, s, events, attacked);
+    recoverDowned(world, s, events, attacked);
+    // the company speaks on a turn of the world, not while a menu is being turned
+    if (!MENU_KINDS.has(action.kind)) partyRemarks(world, s, events);
+  }
+  journalEvents(world, prev, s, events);
+  // Once, the first time fast travel is on the menu: a playtester walked the
+  // whole map on foot for ninety turns before noticing the entry.
+  if (!s.ended && !s.flags["_seenTravel"] && travelAvailable(world, s)) {
+    s.flags["_seenTravel"] = true;
+    events.push("(You know more than one place now: 'travel to a known place' moves you between the named places you have seen — landmarks, not every room — in one turn.)");
+  }
+  // Once per room that holds an ending: a player three hollows in walked to the
+  // seat and ended the tale on the next action with four threads still open.
+  const endKey = `_warnedEnd_${s.room}`;
+  if (!s.ended && !s.flags[endKey] && (world.rooms[s.room]?.actions ?? []).some((a) => fxEnds(a.fx))) {
+    s.flags[endKey] = true;
+    events.push("(An ending waits in this room. What you have left undone elsewhere stays undone.)");
+  }
+  // Once per region, the first time the exits line there would carry a * (an
+  // unexplored side trip): locked exits explain themselves inline, this marker
+  // did not, and a player who met it in the Vale had forgotten it by Thornwold.
+  const seenKey = `_seenSideTrip_${world.rooms[s.room]?.region ?? ""}`;
+  if (!s.ended && !s.flags[seenKey]) {
+    const exits = world.rooms[s.room]?.exits ?? {};
+    if (Object.values(exits).some((ex) => ex.sideTrip && !s.visited.includes(ex.to))) {
+      s.flags[seenKey] = true;
+      events.push("(* marks an optional side path not yet visited.)");
+    }
+  }
+  // Once, the first time something that strikes through armor stands in the
+  // room: the "armor useless" tag was read by armored players as an afterthought
+  // to the first blow, not the warning before it that it is.
+  if (!s.ended && !s.flags["_seenPierce"]) {
+    const piercer = Object.keys(world.npcs).find(
+      (id) => world.npcs[id]!.pierce && s.npcRoom[id] === s.room && !s.party.includes(id) && !npcDead(world, s, id),
+    );
+    if (piercer) {
+      s.flags["_seenPierce"] = true;
+      events.push(
+        `(${TheName(world.npcs[piercer]!.name)} strikes through armor: mail and shield count for nothing against it. Anything marked 'armor useless' in a room is such a thing — weigh it before you fight.)`,
+      );
     }
   }
   return { state: s, events };

@@ -1,0 +1,693 @@
+{
+  "gen": [
+    {
+      "id": "hb_wild",
+      "name": "the barrow downs",
+      "seed": 47,
+      "w": 5,
+      "h": 5,
+      "region": "hb",
+      "walls": [[4, 3], [3, 4], [4, 4]],
+      "pools": {
+        "descs": ["Mounds in every direction, gray turf over gray dead, and no path that stays straight for long."],
+        "briefs": ["Mounds on every side."],
+        "scenes": []
+      },
+      "links": [
+        { "cell": [2, 4], "dir": "south", "to": "hb_mere_shore", "back": "north", "landmark": "Barrowmere" },
+        { "cell": [2, 1], "dir": "in", "to": "hb_kingsrest_mouth", "back": "out", "landmark": "the Kings' Rest" },
+        { "cell": [2, 0], "dir": "north", "to": "me_south_shore", "back": "south", "landmark": "the Meres" }
+      ],
+      "spots": [
+        {
+          "cell": [0, 0],
+          "name": "Weeping Cairn",
+          "desc": "A lesser mound, its capstone cracked and weeping rust down the turf. Whatever lies under it has waited a long time for company. The downs open east and south.",
+          "brief": "The weeping cairn.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 0],
+          "name": "Nine Stones",
+          "desc": "Nine standing stones lean in a rough ring, worn past any pattern. The grass grows taller between them, as if something still keeps this court even without a roof.",
+          "brief": "Nine leaning stones.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 0],
+          "name": "The King's Causeway",
+          "desc": "A paved way, stones sunk and canted, runs south toward a great turf-grown mound. Half-buried in one worn slab, an old verse is cut for whichever king still walks this road.",
+          "brief": "The causeway. The great mound south.",
+          "landmark": "the king's causeway",
+          "onEnterOnce": [["xp", 1]],
+          "variants": [{ "if": [["flag", "hb_verse_causeway"]], "brief": "The causeway south. This verse is yours." }],
+          "actions": [
+            {
+              "id": "hb_causeway_read",
+              "label": "read the causeway verse",
+              "if": [["class", "scholar"], ["!flag", "hb_verse_causeway"]],
+              "fx": [
+                ["set", "hb_verse_causeway"],
+                ["addvar", "hb_verses_known", 1],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "'Let the road remember the feet that wore it; lay down, and rest.' It comes back whole, a scholar's ease. Causeway verse: known."]
+              ]
+            },
+            {
+              "id": "hb_causeway_trace",
+              "label": "trace the worn slab (grace)",
+              "if": [["!class", "scholar"], ["!flag", "hb_verse_causeway"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["set", "hb_verse_causeway"],
+                    ["addvar", "hb_verses_known", 1],
+                    ["score", 3],
+                    ["xp", 2],
+                    ["say", "Your fingers find the worn cuts and follow them true. 'Let the road remember the feet that wore it; lay down, and rest.' Causeway verse: known."]
+                  ],
+                  [["say", "The stone has worn past where touch alone can follow. It can be tried again."]]
+                ]
+              ]
+            },
+            {
+              "id": "hb_causeway_might",
+              "label": "dig the buried slab-end free (might)",
+              "if": [["!class", "scholar"], ["!flag", "hb_verse_causeway"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  10,
+                  [
+                    ["set", "hb_verse_causeway"],
+                    ["addvar", "hb_verses_known", 1],
+                    ["score", 3],
+                    ["xp", 2],
+                    ["say", "You clear the buried half of the slab by main effort, turf and all. 'Let the road remember the feet that wore it; lay down, and rest.' Causeway verse: known."]
+                  ],
+                  [["say", "The turf won't give, and the slab stays half-buried. It can be tried again."]]
+                ]
+              ]
+            },
+            {
+              "id": "hb_causeway_will",
+              "label": "trust the shape, speak the guess (will)",
+              "if": [["!class", "scholar"], ["!flag", "hb_verse_causeway"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "hb_verse_causeway"],
+                    ["addvar", "hb_verses_known", 1],
+                    ["score", 3],
+                    ["xp", 2],
+                    ["say", "You don't wait to be sure of every cut. You speak the shape of it aloud, and the verse comes true as you say it: 'Let the road remember the feet that wore it; lay down, and rest.' Causeway verse: known."]
+                  ],
+                  [["say", "The guess comes out wrong, a stranger's words in a stranger's mouth. It can be tried again."]]
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [3, 0],
+          "name": "Rooksettle",
+          "desc": "A dead oak stands alone, black with rooks that do not scatter when you pass under. They watch the mounds more than they watch you. The causeway shows west.",
+          "brief": "The rook-tree.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 0],
+          "name": "Hollow Eaves",
+          "desc": "A turf hut backs into the last rise before the downs run out. Smoke leaks from a vent that is not quite a chimney. West, the mounds go on; nothing lies east but bare hill.",
+          "brief": "The hermit's turf hut.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 1],
+          "name": "Mound-Cluster",
+          "desc": "Four small mounds crowd together like a family that never got separate graves. Two have already caved in on themselves, dark and empty. The cairn stands north.",
+          "brief": "Four crowded mounds.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 1],
+          "name": "Bone Track",
+          "desc": "A footpath worn bone-white by generations of feet that all had the same destination. It runs straight for the great mound east, past a toll of stacked stones south.",
+          "brief": "The bone-white path.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 1],
+          "name": "The Great Mound",
+          "desc": "The mound above every other mound: broad as a hill, a stone-slab doorway sunk into its northern face, half swallowed by turf. This is the Kings' Rest, and the old court is close enough to feel.",
+          "brief": "The great mound. The old kings' door.",
+          "landmark": "the Kings' Rest",
+          "onEnterOnce": [["xp", 2], ["score", 2], ["set", "hb_found_kingsrest"]]
+        },
+        {
+          "cell": [3, 1],
+          "name": "Wind-Ditch",
+          "desc": "A ring-ditch half filled with wind-blown chaff, dug around nothing anyone can now name. It hums faintly when the wind picks up, a note with no obvious source. The great mound stands west.",
+          "brief": "The humming ditch.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 1],
+          "name": "Crow's Warning",
+          "desc": "A single fence-post, carved crow-shape at its top, stands watch over nothing in particular. Old habit, maybe, or an old warning nobody living remembers the reason for.",
+          "brief": "The crow-post.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 2],
+          "name": "The Robbed Mounds",
+          "landmark": "the robbed mounds",
+          "desc": "Three mounds stand open to the sky here, spoil-heaps fresh beside each pit. A man crouches at the newest, working a spade like someone who has done this before and expects to again.",
+          "brief": "Fresh-dug mounds. Someone is still at it.",
+          "npcs": ["hb_mound_robber"],
+          "onEnterOnce": [["xp", 1]],
+          "variants": [
+            { "if": [["flag", "hb_robber_stopped"]], "brief": "The robbed mounds. Quiet, for now." },
+            { "if": [["flag", "hb_robber_bribed"]], "brief": "The robbed mounds. Freshly turned again." }
+          ],
+          "actions": [
+            {
+              "id": "hb_robber_talk",
+              "label": "talk him into leaving (will)",
+              "if": [["!flag", "hb_robber_stopped"], ["!flag", "hb_robber_bribed"], ["!npcDead", "hb_mound_robber"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "hb_robber_stopped"],
+                    ["npcgo", "hb_mound_robber", null],
+                    ["score", 3],
+                    ["xp", 2],
+                    ["addvar", "rep_keepers", 1],
+                    ["say", "He hears you out, weighs the spade, and decides it isn't worth the argument. He is gone before the warden could ever have caught him."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["!flag", "hb_robber_talk_missed"]],
+                      [
+                        ["set", "hb_robber_talk_missed"],
+                        ["addvar", "rep_keepers", -1],
+                        ["say", "He shrugs and keeps digging. Word gets back to the Keepers that a stranger's talk didn't hold, and the mounds stay open a while longer."]
+                      ],
+                      [["say", "He shrugs and keeps digging. Words alone aren't moving him tonight."]]
+                    ]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "hb_robber_bribe",
+              "label": "take a cut and look away",
+              "if": [["!flag", "hb_robber_stopped"], ["!flag", "hb_robber_bribed"], ["!npcDead", "hb_mound_robber"]],
+              "fx": [
+                ["set", "hb_robber_bribed"],
+                ["npcgo", "hb_mound_robber", null],
+                ["addvar", "gold", 4],
+                ["addvar", "rep_keepers", -1],
+                ["xp", 1],
+                ["say", "He presses four coins into your hand without being asked twice, and is gone before you can change your mind."]
+              ]
+            },
+            {
+              "id": "hb_robber_disarm",
+              "label": "snatch his spade away (grace)",
+              "if": [["!flag", "hb_robber_stopped"], ["!flag", "hb_robber_bribed"], ["!npcDead", "hb_mound_robber"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  10,
+                  [
+                    ["set", "hb_robber_stopped"],
+                    ["npcgo", "hb_mound_robber", null],
+                    ["score", 3],
+                    ["xp", 2],
+                    ["addvar", "rep_keepers", 1],
+                    ["say", "The spade is out of his hands before he's finished turning around. He weighs his odds without it and decides they aren't worth arguing. He's gone before he thinks to ask for it back."]
+                  ],
+                  [
+                    ["say", "He keeps his grip on the spade, and gives you a look that says he's noticed you now. Try again when he isn't watching so closely."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "hb_warden_arrest",
+              "label": "arrest him on a deputy's word",
+              "if": [
+                ["class", "warden"],
+                ["flag", "or_warden_hb_deputized"],
+                ["!flag", "hb_robber_stopped"],
+                ["!flag", "hb_robber_bribed"],
+                ["!npcDead", "hb_mound_robber"]
+              ],
+              "once": true,
+              "fx": [
+                ["set", "hb_robber_stopped"],
+                ["npcgo", "hb_mound_robber", null],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "rep_keepers", 1],
+                ["set", "or_warden_hb_arrest"],
+                ["say", "You don't argue. You say the warden's name and let your own bearing do the rest — he's packing his spade before you finish the sentence."]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [1, 2],
+          "name": "The Toll Stones",
+          "desc": "Two standing stones flank the path like a gate that was never finished. Cookfire smoke rises just past them — whoever keeps that fire has made this crossing theirs to charge for.",
+          "brief": "The toll-stones.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 2],
+          "name": "The Surveyor's Stakes",
+          "desc": "Marker-stakes run in a neat line across three mounds, each flagged with Marrowgate cord. A man in a clean coat sights along them with an instrument that has no business out here.",
+          "brief": "Survey stakes across the mounds.",
+          "npcs": ["hb_surveyor"],
+          "onEnterOnce": [["xp", 1]],
+          "variants": [
+            { "if": [["flag", "hb_mounds_sold"]], "brief": "The survey stakes. His map is finished now." },
+            { "if": [["flag", "hb_mounds_protected"]], "brief": "The survey stakes. His map stayed empty here." }
+          ]
+        },
+        {
+          "cell": [3, 2],
+          "name": "Damp Hollow",
+          "desc": "The ground turns soft and cold, water standing in every low place. South, reed and still water show through a gap in the mounds — the mere is close now.",
+          "brief": "Soft, cold ground.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 2],
+          "name": "Reed Line",
+          "desc": "Reeds crowd the last rise before the ground gives out into water. From here the mere is a gray sheet, unbroken but for one dark stone standing out of it to the south.",
+          "brief": "Reeds at the water's edge.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 3],
+          "name": "Sunken Track",
+          "desc": "The path sinks below the level of the downs here, walled in on both sides by turf and old root. It feels less like a road than a place built to be walked unseen.",
+          "brief": "The sunken track.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 3],
+          "name": "The Ring-Ditch",
+          "desc": "A perfect ring cut into the chalk, deep enough that your head does not clear the rim while you stand in it. Along the inner wall, worn but unmistakably deliberate, lines of old script circle the whole ditch.",
+          "brief": "The ring-ditch, cut with script.",
+          "landmark": "the ring-ditch",
+          "onEnterOnce": [["xp", 1]],
+          "variants": [{ "if": [["flag", "hb_verse_ringditch"]], "brief": "The ring-ditch. This verse is yours." }],
+          "actions": [
+            {
+              "id": "hb_ring_read",
+              "label": "read the ring-ditch script",
+              "if": [["class", "scholar"], ["!flag", "hb_verse_ringditch"]],
+              "fx": [
+                ["set", "hb_verse_ringditch"],
+                ["addvar", "hb_verses_known", 1],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "'Let the circle remember what the line forgets; lay down, and rest.' It reads plainly, a scholar's ease. Ring-ditch verse: known."]
+              ]
+            },
+            {
+              "id": "hb_ring_puzzle",
+              "label": "puzzle out the script (wits)",
+              "if": [["!class", "scholar"], ["!flag", "hb_verse_ringditch"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "hb_verse_ringditch"],
+                    ["addvar", "hb_verses_known", 1],
+                    ["score", 3],
+                    ["xp", 2],
+                    ["say", "The circling lines give up their sense at last. 'Let the circle remember what the line forgets; lay down, and rest.' Ring-ditch verse: known."]
+                  ],
+                  [["say", "The script runs in on itself and loses you halfway round. It can be tried again."]]
+                ]
+              ]
+            },
+            {
+              "id": "hb_ring_might",
+              "label": "clear the choked script by hand (might)",
+              "if": [["!class", "scholar"], ["!flag", "hb_verse_ringditch"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  10,
+                  [
+                    ["set", "hb_verse_ringditch"],
+                    ["addvar", "hb_verses_known", 1],
+                    ["score", 3],
+                    ["xp", 2],
+                    ["say", "You scrape a season's growth of turf and chalk-silt out of the cut by hand until the lines run clear. 'Let the circle remember what the line forgets; lay down, and rest.' Ring-ditch verse: known."]
+                  ],
+                  [["say", "You clear one stretch and the wind fills the next. It can be tried again."]]
+                ]
+              ]
+            },
+            {
+              "id": "hb_ring_will",
+              "label": "walk the circle and speak it (will)",
+              "if": [["!class", "scholar"], ["!flag", "hb_verse_ringditch"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "hb_verse_ringditch"],
+                    ["addvar", "hb_verses_known", 1],
+                    ["score", 3],
+                    ["xp", 2],
+                    ["say", "You walk the ring once, slow, and let the rhythm of your own feet carry the words up before your eyes are sure of them. 'Let the circle remember what the line forgets; lay down, and rest.' Ring-ditch verse: known."]
+                  ],
+                  [["say", "You lose the rhythm halfway round and the words won't come. It can be tried again."]]
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [2, 3],
+          "name": "Old Ditch",
+          "desc": "A dry ditch, older than the ring to the west, choked with bramble nobody has cleared in years. Something about the silence here carries further than it should.",
+          "brief": "The bramble-choked ditch.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 3],
+          "name": "The Mere-Stone",
+          "desc": "A single standing stone rises out of shallow water at the mere's northern edge, carved smooth by weather. Old custom says it listens, if you give it something worth the hearing.",
+          "brief": "The stone in the shallows.",
+          "landmark": "the mere-stone",
+          "onEnterOnce": [["xp", 1]],
+          "variants": [{ "if": [["flag", "hb_verse_merestone"]], "brief": "The mere-stone. This verse is yours." }],
+          "actions": [
+            {
+              "id": "hb_merestone_offer",
+              "label": "offer the mere three gold for its verse",
+              "if": [["!flag", "hb_verse_merestone"], ["var", "gold", ">=", 3]],
+              "fx": [
+                ["addvar", "gold", -3],
+                ["set", "hb_verse_merestone"],
+                ["addvar", "hb_verses_known", 1],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "The coins go under without a ripple. What comes back is not a voice, exactly — more a certainty, settling into words: 'Let the water remember what the ground gives up; lay down, and rest.' Mere-stone verse: known."]
+              ]
+            },
+            {
+              "id": "hb_merestone_might",
+              "label": "wade in and outlast the cold (might)",
+              "if": [["!flag", "hb_verse_merestone"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  10,
+                  [
+                    ["set", "hb_verse_merestone"],
+                    ["addvar", "hb_verses_known", 1],
+                    ["score", 3],
+                    ["xp", 2],
+                    ["say", "You wade out and stay past when the cold should have driven you back. What answers isn't a voice, exactly: 'Let the water remember what the ground gives up; lay down, and rest.' Mere-stone verse: known."]
+                  ],
+                  [["say", "The cold wins first. You're back on the bank, teeth chattering, no wiser for it."]]
+                ]
+              ]
+            },
+            {
+              "id": "hb_merestone_wits",
+              "label": "puzzle out the old custom (wits)",
+              "if": [["!flag", "hb_verse_merestone"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "hb_verse_merestone"],
+                    ["addvar", "hb_verses_known", 1],
+                    ["score", 3],
+                    ["xp", 2],
+                    ["say", "Gold was never the point, only the giving. You set a stone of your own in its place, and the water answers just the same: 'Let the water remember what the ground gives up; lay down, and rest.' Mere-stone verse: known."]
+                  ],
+                  [["say", "Whatever the old custom actually wants, you haven't puzzled it out yet."]]
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [0, 4],
+          "name": "Mere Path",
+          "desc": "The path curves along the mere's edge, mud sucking at every step. Barrowmere's roofs show plainly across the water now.",
+          "brief": "The muddy mere-path.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 4],
+          "name": "Barrow Shadow",
+          "desc": "A single mound throws its shadow clean across the path here, longer than the hour should allow. The village lies east; the ring-ditch north.",
+          "brief": "The mound's long shadow.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 4],
+          "name": "The Processional Gate",
+          "desc": "Two leaning stones mark where the old processional way met the world of the living. South, Barrowmere's roofs and the mere; north, the downs climb away from everything the village still uses.",
+          "brief": "The processional way's gate.",
+          "onEnterOnce": [["xp", 1]]
+        }
+      ],
+      "cellFx": {
+        "onEnter": [
+          [
+            "chance",
+            8,
+            [
+              [
+                "if",
+                [["!npcDead", "hb_wandering_wight"]],
+                [
+                  ["npcgo", "hb_wandering_wight", "here"],
+                  ["say", "Something rises out of a nearby mound and starts toward you, gray and unhurried, in no doubt at all that it will reach you."]
+                ],
+                []
+              ]
+            ],
+            []
+          ]
+        ]
+      }
+    }
+  ],
+  "stamps": [
+    {
+      "template": "barrow",
+      "id": "hb_cairn",
+      "at": "hb_wild_0_0",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "inside the weeping cairn",
+      "vars": {
+        "NAME": "the Weeping Cairn",
+        "WIGHT": "a stooped grave-warden",
+        "SIGN": "Water beads down the lintel in an unbroken line, as if the stone itself grieves.",
+        "LOOT": "a tarnished mourning-brooch"
+      }
+    },
+    {
+      "template": "hut",
+      "id": "hb_eaves",
+      "at": "hb_wild_4_0",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the hermit's hut",
+      "vars": {
+        "NAME": "the Hollow Eaves",
+        "HERMIT": "Wynn, a bone-carver",
+        "SIGN": "Bone off-cuts are swept into a tidy pile by the door, sorted by what they'll become.",
+        "LOOT": "a carved bone needle-case",
+        "VOICE": "Bone's honest. It shows what it was. People, less so."
+      }
+    },
+    {
+      "template": "camp",
+      "id": "hb_toll",
+      "at": "hb_wild_1_2",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the toll camp",
+      "vars": {
+        "NAME": "the Toll Stones",
+        "CAPTAIN": "Grae, a broken-nosed tollkeeper",
+        "SIGN": "A tally-board by the gate lists tolls owed in barley, never in coin — Grae's own hand, block-lettered.",
+        "LOOT": "a notched cudgel, one groove for every toll refused"
+      }
+    },
+    {
+      "template": "chapel",
+      "id": "hb_chantry",
+      "at": "hb_wild_3_2",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the fallen chantry",
+      "vars": {
+        "NAME": "the Fallen Chantry",
+        "SAINT": "the unsung sexton",
+        "SIGN": "A drowned bell-rope hangs just inside the door, its bell long since sunk in the mere.",
+        "LOOT": "a corroded bell-tongue"
+      }
+    }
+  ],
+  "npcs": {
+    "hb_wandering_wight": {
+      "name": "barrow-wight",
+      "room": null,
+      "hostile": true,
+      "aggressive": true,
+      "hp": 12,
+      "atk": 3,
+      "df": 9,
+      "desc": "Gray and stooped, moving like the ground itself decided to stand up. Its touch is winter, and mail does nothing against it.",
+      "onDeath": [
+        ["score", 3],
+        ["xp", 3],
+        ["say", "The wight comes apart into rag and old dust. Whichever mound it rose from, it does not rise from again."]
+      ],
+      "pierce": true
+    },
+    "hb_mound_robber": {
+      "name": "a mound-digger",
+      "room": null,
+      "hostile": true,
+      "hp": 5,
+      "atk": 1,
+      "df": 8,
+      "desc": "Rough hands, a spade over one shoulder, and no apology ready.",
+      "onDeath": [
+        [
+          "if",
+          [["!flag", "hb_robber_stopped"], ["!flag", "hb_robber_bribed"]],
+          [
+            ["set", "hb_robber_stopped"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "gold", 2],
+            ["say", "He goes down still holding the spade. Whatever he had already dug up, you take. The mounds here get to stay closed a while longer."]
+          ],
+          [["say", "He was already gone from this ground."]]
+        ]
+      ],
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "He does not stop digging. 'Nobody you'll remember,' he says, 'and nobody who'll remember stopping for asking nicely.'",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "why",
+          "label": "why you're digging up the dead",
+          "if": [["flag", "said_hb_mound_robber_greet"]],
+          "once": true,
+          "say": "'Same reason anyone does anything out here. It doesn't pay itself, and the dead have stopped needing what's in the ground with them.'",
+          "fx": [["xp", 1]]
+        }
+      ]
+    },
+    "hb_surveyor": {
+      "name": "the Crown surveyor",
+      "room": null,
+      "dialogue": true,
+      "desc": "A clean coat, a surveying rod, and the unhurried manner of a man who is paid whether or not you like his work.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Crown surveyor, on the Regent's coin. I'm cataloguing every mound in these downs — depth, contents, likely worth. Paperwork, mostly.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "about",
+          "label": "what the Crown wants with mounds",
+          "if": [["flag", "said_hb_surveyor_greet"]],
+          "once": true,
+          "say": "Marrowgate wants to know what's under this ground before it decides what's owed for digging it up. I don't set the policy. I only make the map.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sell_map",
+          "label": "tell him which mounds are richest",
+          "if": [["flag", "said_hb_surveyor_greet"], ["!flag", "hb_mounds_sold"], ["!flag", "hb_mounds_protected"]],
+          "once": true,
+          "say": "He counts eight gold into your palm without haggling. 'Marrowgate thanks you,' he says, already marking his map.",
+          "fx": [
+            ["set", "hb_mounds_sold"],
+            ["addvar", "gold", 8],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_keepers", -2],
+            ["addvar", "appr_tamsin", -1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "refuse to help him map the dead",
+          "if": [["flag", "said_hb_surveyor_greet"], ["!flag", "hb_mounds_sold"], ["!flag", "hb_mounds_protected"]],
+          "once": true,
+          "say": "You tell him nothing, and watch him mark the refusal down as carefully as he'd have marked a mound. 'Your prerogative,' he says, already moving on.",
+          "fx": [
+            ["set", "hb_mounds_protected"],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -1],
+            ["addvar", "appr_tamsin", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his stakes",
+          "say": "The Regent's business waits for no one, present company included.",
+          "end": true
+        }
+      ]
+    }
+  }
+}

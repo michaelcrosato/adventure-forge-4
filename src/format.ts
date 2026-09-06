@@ -9,16 +9,20 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inPerkPickPhase, legalActions, oddsHint, receipt, roomIsDark } from "./engine.ts";
-import { ATTRS } from "./types.ts";
-import type { Action, State, World } from "./types.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomView } from "./engine.ts";
+import { ATTRS, EPILOGUE_CAP, EPILOGUE_CHARS } from "./types.ts";
+import type { Action, Cond, State, World } from "./types.ts";
 
 const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 
-export function renderMenu(world: World, s: State): { text: string; actions: Action[] } {
+/** status lists every visited place by name up to this many; beyond it, a count and the latest few. */
+export const VISITED_FULL = 12;
+export const VISITED_RECENT = 5;
+
+export function renderMenu(world: World, s: State, opts: { itemHints?: boolean } = {}): { text: string; actions: Action[] } {
   const actions = legalActions(world, s);
   const text = actions
-    .map((a, i) => `${i + 1} ${actionLabel(world, a, s)}${oddsHint(world, s, a)}`)
+    .map((a, i) => `${i + 1} ${actionLabel(world, a, s)}${oddsHint(world, s, a, opts)}`)
     .join("\n");
   return { text, actions };
 }
@@ -65,12 +69,30 @@ export function render(
 ): { text: string; actions: Action[] } {
   if (s.ended) {
     const e = s.ended;
+    // how the world remembers what you did: every epilogue line whose
+    // conditions hold competes for EPILOGUE_CAP places — heavier lines first
+    // (weight, default 0), then file order — and the survivors print in file
+    // order, so a realm's telling still runs first act, holds, capital
+    const matching = (world.epilogue ?? [])
+      .map((ep, i) => ({ ep, i }))
+      .filter(({ ep }) => ep.if.every((c) => condOk(world, s, c)))
+      .sort((a, b) => (b.ep.weight ?? 0) - (a.ep.weight ?? 0) || a.i - b.i);
+    const chosen: typeof matching = [];
+    let chars = 0;
+    for (const m of matching) {
+      if (chosen.length >= EPILOGUE_CAP) break;
+      if (chars + m.ep.text.length + 1 > EPILOGUE_CHARS) continue; // a shorter line further down may still fit
+      chosen.push(m);
+      chars += m.ep.text.length + 1;
+    }
+    const epilogue = chosen.sort((a, b) => a.i - b.i).map(({ ep }) => ep.text);
     const lines = [
       ...events.map((x) => `[${x}]`),
       `*** ${e.kind.toUpperCase()}: ${e.id} ***`,
       e.text,
+      ...epilogue,
       `score:${s.score}/${world.maxScore} turns:${s.turn} seed:${s.seed}`,
-      `(score tallies discoveries and choices along the way — a bonus, not required)`,
+      `(score is a bonus tally of discoveries and choices; status tells the rest of the tale)`,
       `receipt:${receipt(world, s)}`,
     ];
     return { text: lines.join("\n"), actions: [] };
@@ -85,31 +107,58 @@ export function render(
       const v = s.vars[world.progress.var] ?? 0;
       lines.push(`${world.progress.label}: ${v}/${world.progress.max}`);
     }
-    const menu = renderMenu(world, s);
+    const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push(menu.text);
     return { text: lines.join("\n"), actions: menu.actions };
   }
 
   const room = world.rooms[s.room];
+  const view = roomView(world, s);
   const dark = roomIsDark(world, s);
   const lines: string[] = [];
   const lvl = world.classes ? ` L${s.level}` : "";
+  const hud = (world.hud ?? []).map((h) => ` ${h.label}${s.vars[h.var] ?? 0}`).join("");
   lines.push(
-    `=${room?.name ?? s.room} | hp${s.hp}/${s.maxHp}${lvl} score${s.score}/${world.maxScore} t${s.turn}`,
+    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} score${s.score} t${s.turn}${hud}`,
   );
   if (events.length) lines.push(`[${events.join(" ")}]`);
   if (world.progress) {
     const v = s.vars[world.progress.var] ?? 0;
     lines.push(`${world.progress.label}: ${v}/${world.progress.max}`);
   }
-  if (s.inv.length) {
+  if (s.inv.length && opts.full) {
+    // the pack is listed where a place is first shown and in status; a brief
+    // view spends its characters on what changed
     const carried = s.inv.map((id) => world.items[id]?.name ?? id);
     lines.push(`carrying: ${carried.join(", ")}`);
   }
 
   if (inPerkPickPhase(world, s)) {
-    const menu = renderMenu(world, s);
+    const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push("Level up. Pick 1 perk/lvl for fights & checks (perm).");
+    lines.push(menu.text);
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+  }
+
+  // an open conversation: the npc's line is in the events; the room waits
+  if (inTalkMode(world, s)) {
+    const menu = renderMenu(world, s, { itemHints: !!opts.full });
+    lines.push(`talking with ${world.npcs[s.talking!]?.name ?? s.talking}`);
+    lines.push(menu.text);
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+  }
+
+  // the travel menu: known places, nothing else
+  if (inTravelMode(world, s)) {
+    const menu = renderMenu(world, s, { itemHints: !!opts.full });
+    lines.push("Travel — places you know:");
+    lines.push(menu.text);
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+  }
+  // the company list: who is with you, nothing else
+  if (inCompanyMode(world, s)) {
+    const menu = renderMenu(world, s, { itemHints: !!opts.full });
+    lines.push("Your company:");
     lines.push(menu.text);
     return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
   }
@@ -117,20 +166,34 @@ export function render(
   if (dark) {
     lines.push("Pitch dark. You can only feel for the exits.");
   } else {
-    if (opts.full) lines.push(room?.desc ?? "");
-    else if (room?.brief) lines.push(room.brief);
+    if (opts.full) lines.push(view.desc);
+    else if (view.brief) lines.push(view.brief);
     const here = Object.keys(world.items)
       .filter((id) => s.itemLoc[id] === s.room)
       .map((id) => world.items[id]?.name ?? id);
     if (here.length) lines.push(`you notice ${here.join(", ")} here`);
+    // a hostile who will still talk is told from one who only fights
+    const talks = new Set(
+      legalActions(world, s).flatMap((a) => (a.kind === "talk" || a.kind === "talkto" ? [a.npc] : [])),
+    );
     const npcs = Object.entries(world.npcs)
-      .filter(([id]) => s.npcRoom[id] === s.room)
+      .filter(([id]) => s.npcRoom[id] === s.room && !s.party.includes(id))
       .map(([id, d]) => {
         const hp = s.npcHp[id] ?? d.hp ?? 1;
-        if (hp <= 0) return `${d.name} (dead)`;
-        return d.hostile ? `${d.name} (hostile, hp${hp}/${d.hp ?? 1})` : `${d.name} is here`;
+        // an npc's one-line desc shows on the full view (first sight, look), not on revisits
+        const tail = opts.full && d.desc ? ` — ${d.desc}` : "";
+        if (hp <= 0) return `${d.name} (${s.flags[`laid_${id}`] ? "at rest" : "dead"})`;
+        const pierce = d.pierce ? ", armor useless" : "";
+        // a standoff content has ended (`calm`) reads as the peace it is
+        if ((d.aggressive || d.hostile) && s.flags[`calm_${id}`]) return `${d.name} is here (stood down)${tail}`;
+        if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1}${pierce})${tail}`;
+        // a hostile that is not aggressive never strikes first: say so, so walking past reads as the choice it is
+        if (d.hostile) return `${d.name} (hostile, holds its ground, hp${hp}/${d.hp ?? 1}${pierce}${talks.has(id) ? ", will hear you out" : ""})${tail}`;
+        return `${d.name} is here${tail}`;
       });
     if (npcs.length) lines.push(npcs.join("; "));
+    const party = s.party.map((id) => world.npcs[id]?.name ?? id);
+    if (party.length) lines.push(`with you: ${party.join(", ")}`);
   }
 
   const exitDirs = Object.keys(room?.exits ?? {});
@@ -143,7 +206,7 @@ export function render(
     lines.push(`exits: ${marked.join(" ")}`);
   }
 
-  const menu = renderMenu(world, s);
+  const menu = renderMenu(world, s, { itemHints: !!opts.full });
   lines.push(menu.text);
   return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
 }
@@ -158,29 +221,92 @@ export function render(
  */
 export function renderStatus(world: World, s: State): string {
   const lines: string[] = [];
-  const recap = world.objectives ?? world.intro;
-  if (recap) lines.push(recap);
-  type Track = { var: string; label: string; max: number; remaining?: { flag: string; label: string }[] };
+  // the recap follows the story: a staged objectives list shows its first entry whose conditions hold
+  const obj = world.objectives;
+  const recap = Array.isArray(obj) ? obj.find((o) => o.if.every((c) => condOk(world, s, c)))?.text : (obj ?? world.intro);
+  // after the end, the recap would point forward; say instead that the tale is told
+  if (s.ended) lines.push("The tale is told. What follows is how things stood at the end; the quests listed are the ones left undone.");
+  else if (recap) lines.push(recap);
+  // the score's ceiling lives here, not in every turn's header, where it read as a progress bar
+  // the turn, so a player counting a budget need not cross-reference the last screen's header
+  if (s.turn > 0) lines.push(`Turn ${s.turn}.`);
+  if (world.maxScore !== undefined)
+    lines.push(`Score: ${s.score}/${world.maxScore} (a bonus tally of discoveries and choices; it can fill long before the tale ends)`);
+  if (s.ended) {
+    // the ending screen fits six lines; here the whole telling is free
+    const told = (world.epilogue ?? []).filter((ep) => ep.if.every((c) => condOk(world, s, c))).map((ep) => `- ${ep.text}`);
+    if (told.length) lines.push(`How the realm remembers you:\n${told.join("\n")}`);
+  }
+  type Track = { var: string; label: string; max: number; remaining?: { flag: string; label: string }[]; if?: Cond[] };
   const tracks: Track[] = world.statusTracks ?? (world.progress ? [world.progress] : []);
   for (const t of tracks) {
+    if (t.if && !t.if.every((c) => condOk(world, s, c))) continue;
     let line = `${t.label}: ${s.vars[t.var] ?? 0}/${t.max}`;
     const remaining = t.remaining?.filter((r) => !s.flags[r.flag]);
     if (remaining?.length) line += ` (unexplored: ${remaining.map((r) => r.label).join(", ")})`;
     lines.push(line);
   }
   for (const p of world.statusPaths ?? []) {
+    if (p.if && !p.if.every((c) => condOk(world, s, c))) continue;
     const hit = p.states.find((st) => st.if.every((c) => condOk(world, s, c)));
     const text = hit?.text ?? p.fallback;
-    if (text) lines.push(`${p.label}: ${text}`);
+    // a path that names its var shows the number too, so a "+1" that has not moved the label still reads as something
+    const v = p.var ? (s.vars?.[p.var] ?? 0) : undefined;
+    const num = v === undefined ? "" : ` (${v > 0 ? "+" : ""}${v})`;
+    if (text) lines.push(`${p.label}: ${text}${num}`);
   }
+  // the journal: every active quest with its current line, then the closed ones by name
+  if (world.quests) {
+    const q = journal(world, s);
+    const active = q.filter((x) => x.status === "active");
+    // the road (quests marked main) reads first, apart from the side threads
+    const road = active.filter((x) => world.quests?.[x.id]?.main);
+    const side = active.filter((x) => !world.quests?.[x.id]?.main);
+    if (road.length) lines.push(`${s.ended ? "The road, as it ended" : "The road"}:\n${road.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
+    // a hold's grief — the quest that settles its hollow — is named as such, so
+    // a town's side threads never read as the thing the hold is waiting on
+    const grief = (id: string) => /_hollow_|hollows_|hollow_(resolved|done|good)/.test(JSON.stringify(world.quests?.[id]?.done ?? []));
+    if (side.length) lines.push(`${s.ended ? "Left undone" : "Quests"}:\n${side.map((x) => `- ${x.name}${grief(x.id) ? " (this hold's grief)" : ""}: ${x.text}`).join("\n")}`);
+    const done = q.filter((x) => x.status === "done").map((x) => x.name);
+    if (done.length) lines.push(`Done: ${done.join(", ")}`);
+    const failed = q.filter((x) => x.status === "failed").map((x) => x.name);
+    // a quest whose asker's wish is past meeting reads as closed, the word the journal event used
+    if (failed.length) lines.push(`Closed: ${failed.join(", ")}`);
+  }
+  for (const h of world.hud ?? []) lines.push(`${h.label}: ${s.vars[h.var] ?? 0}`);
+  // The visited list is a memory aid, not a map: past a dozen places it
+  // becomes a wall of names that costs tokens every time status is called,
+  // so a big world shows the count and the most recent few instead.
   const visited = s.visited ?? [];
   if (visited.length) {
     const names = visited.map((id) => world.rooms?.[id]?.name ?? id);
-    lines.push(`Visited: ${names.join(", ")}`);
+    if (names.length <= VISITED_FULL) lines.push(`Visited: ${names.join(", ")}`);
+    else lines.push(`Visited: ${names.length} places (lately: ${names.slice(-VISITED_RECENT).join(", ")})`);
   }
   if (s.inv.length) {
-    const carried = s.inv.map((id) => world.items[id]?.name ?? id);
+    // status is the one place every carried item's hint is always listed
+    const carried = s.inv.map((id) => {
+      const it = world.items[id];
+      const hint = itemHint(world, s, id);
+      return it ? (hint ? `${it.name} (${hint})` : it.name) : id;
+    });
     lines.push(`carrying: ${carried.join(", ")}`);
+  }
+  if (s.party?.length) {
+    // regard in numbers, the same ones the "(Lys -1)" events move, so how near a companion is to walking is never a guess
+    const party = s.party.map((id) => {
+      const def = world.npcs[id];
+      const name = def?.name ?? id;
+      const a = s.vars?.[`appr_${id}`] ?? 0;
+      const bits: string[] = [];
+      // regard is always shown, from the day they join; at -2 the next thing they mind is the last
+      bits.push(`regard ${a > 0 ? "+" : ""}${a}${a <= -2 ? ", near leaving" : ""}`);
+      if (def?.hp !== undefined) bits.push(`hp ${s.npcHp?.[id] ?? def.hp}/${def.hp}${s.flags?.[`down_${id}`] ? ", down" : ""}`);
+      return bits.length ? `${name} (${bits.join(", ")})` : name;
+    });
+    // a companion at half strength or less: say where healing is, since no carried item reaches them
+    const hurt = s.party.some((id) => { const def = world.npcs[id]; return def?.hp !== undefined && (s.npcHp?.[id] ?? def.hp) * 2 <= def.hp; });
+    lines.push(`Party: ${party.join(", ")}${hurt ? " — a rest at any hearth heals them" : ""}`);
   }
   if (s.perks?.length) {
     const perks = s.perks.map((id) => {
@@ -204,7 +330,9 @@ export function renderStatus(world: World, s: State): string {
     }).join(" ");
     lines.push(`Checks: ${checks}`);
     const cm = combatMods(world, s);
-    lines.push(`Combat: hit${signed(cm.hit)} dmg${signed(cm.dmg)} armor${signed(cm.armor)}`);
+    // name the weapon and armor that count, so a second piece is known not to stack
+    const by = (id: string | null) => (id ? ` (${world.items[id]?.name ?? id})` : "");
+    lines.push(`Combat: hit${signed(cm.hit)} dmg${signed(cm.dmg)}${by(cm.weapon)} armor${signed(cm.armor)}${by(cm.armorItem)}`);
   }
   return lines.length ? lines.join("\n") : "No progress to report.";
 }

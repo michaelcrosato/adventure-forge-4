@@ -1,0 +1,260 @@
+{
+  "rooms": {
+    "me_south_shore": {
+      "name": "The South Shore",
+      "desc": "Reed and mud where a causeway from the barrow downs meets open water, marker-posts sunk at the waterline to show where dry ground gives out. Lantern-glow shows faint through the fog to the north; every other way is water.",
+      "brief": "The south shore. Fog, reed, and mud.",
+      "region": "me",
+      "onEnterOnce": [
+        ["set", "me_entered"],
+        ["xp", 2],
+        ["say", "This is the Meres: reed-lakes north of Barrowmere, where the Keepers' first Hall stood on an island until the first Reeve's men came for the covenant, and the Keepers drowned it, and themselves, rather than give it up."],
+        [
+          "if",
+          [["inParty", "vell"]],
+          [
+            ["say", "Vell: \"The Keepers' first Hall, and the first Reeve's men who drowned it. I have heard this story only ever half-told, and always by someone with a reason to leave the other half out.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Brother Osk: \"Saint Ashwyn, born on these stilts — that's the Church's own claim, and Coldpass tells it otherwise. I would like to know, for once, which of us is wrong.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "tamsin"]],
+          [
+            ["say", "Tamsin: \"Somebody built dams strong enough to drown a whole Hall on purpose, and they've held four hundred years. I'd like to see that work before anyone talks about blowing it.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "lys"]],
+          [
+            ["say", "Lys: \"Fog like this carries sound wrong — too far, or not at all. If something out there is singing, I'd rather know before dark finds us on open water.\""]
+          ],
+          []
+        ]
+      ],
+      "actions": [
+        {
+          "id": "me_shore_bearings",
+          "label": "get your bearings at the shore",
+          "free": true,
+          "fx": [
+            ["say", "North, the fog thins toward Lantern Holm's lantern-glow. Southeast, the causeway climbs back into the barrow downs and Barrowmere beyond them. Everywhere else, the Meres run on into reed and open water."]
+          ]
+        }
+      ],
+      "landmark": "the south shore"
+    },
+    "me_holm_landing": {
+      "name": "Lantern Holm Landing",
+      "desc": "A raised stilt-platform where every walkway in Lantern Holm meets, mooring-rings worn smooth by generations of rope. Lantern-poles ring the platform, unlit by day, and the hamlet's stilt-houses crowd close on every side.",
+      "brief": "The landing, walkways meeting.",
+      "region": "me",
+      "exits": {
+        "south": { "to": "me_south_shore" },
+        "north": { "to": "me_lantern_tower" },
+        "east": { "to": "me_hearth_hall" },
+        "west": { "to": "me_eel_chapel" },
+        "up": { "to": "me_divers_platform" },
+        "down": { "to": "me_trade_counter" },
+        "in": { "to": "me_boathouse" }
+      },
+      "variants": [
+        { "if": [["flag", "me_hollow_burned"]], "brief": "The landing. The water's dropping, day by day." },
+        { "if": [["flag", "me_hollow_rested"]], "brief": "The landing. The lanterns burn steadier at dusk now." },
+        {
+          "if": [["flag", "me_hollow_bargained"]],
+          "brief": "The landing. Quieter water, and a promise riding on it."
+        }
+      ],
+      "actions": [
+        {
+          "id": "me_landing_bearings",
+          "label": "get your bearings at the landing",
+          "free": true,
+          "fx": [
+            ["say", "South, the causeway runs back to the south shore and the barrow downs beyond it. Every other walkway leads into Lantern Holm itself; the open channels of the Meres wait out past the last stilt-house."]
+          ]
+        }
+      ],
+      "landmark": "Lantern Holm"
+    },
+    "me_lantern_tower": {
+      "name": "The Lantern Tower",
+      "desc": "The tallest stilt in Lantern Holm, a lensed lantern at its crown kept lit against the fog every night without fail. A ladder climbs the inside; someone is always up there, watching the channels for a boat that hasn't come home yet.",
+      "brief": "The lantern-tower, always lit.",
+      "region": "me",
+      "exits": { "south": { "to": "me_holm_landing" } },
+      "landmark": "the lantern tower"
+    },
+    "me_hearth_hall": {
+      "name": "The Hearth-Hall",
+      "desc": "Lantern Holm's one common room, a long hearth at its center and benches worn soft by everyone who has ever needed a dry place to sit. A pot on the fire is never quite empty, and never quite explained either.",
+      "brief": "The hearth-hall, benches and a pot.",
+      "region": "me",
+      "exits": { "west": { "to": "me_holm_landing" } },
+      "onEnter": [["if", [["flag", "me_hollow_done"], ["!flag", "sv_me_back"]], [["set", "sv_me_back"]], []]],
+      "actions": [
+        {
+          "id": "me_rest",
+          "label": "rest by the hearth",
+          "fx": [
+            ["hp", 10],
+            ["say", "You sleep to the sound of water working under the floorboards, which after a while stops sounding like a threat and starts sounding like company."]
+          ]
+        }
+      ]
+    },
+    "me_eel_chapel": {
+      "name": "The Eel-Priest's Chapel",
+      "desc": "A narrow chapel built out over the water on its own pilings, an eel-weir woven into the porch rail as if it were part of the architecture. A shrine at the back is dressed in dried reed and a saint's worn image.",
+      "brief": "The chapel, a shrine dressed in reed.",
+      "region": "me",
+      "exits": { "east": { "to": "me_holm_landing" } },
+      "actions": [
+        {
+          "id": "me_read_shrine_scholar",
+          "label": "read the birth-plaque outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "me_word_saint"]],
+          "fx": [
+            ["set", "me_word_saint"],
+            ["addvar", "me_covenant_words", 1],
+            ["score", 3],
+            ["xp", 3],
+            ["addvar", "rep_church", 1],
+            ["say", "The old hand gives itself up almost as fast as you can read it: the covenant's second word, worn into a saint's own plaque long before anyone thought to hide it there on purpose."]
+          ]
+        }
+      ],
+      "landmark": "the eel-priest's chapel"
+    },
+    "me_divers_platform": {
+      "name": "The Divers' Platform",
+      "desc": "A broad, low platform built almost level with the water, coils of weighted line stacked by a hatch that drops straight down into black. Everything here smells of tar and cold water and effort.",
+      "brief": "The divers' platform, line and tar.",
+      "region": "me",
+      "exits": { "down": { "to": "me_holm_landing" } },
+      "landmark": "the divers' platform"
+    },
+    "me_trade_counter": {
+      "name": "The Trade Counter",
+      "desc": "A plank counter across the front of a floating storehouse, hung with smoked eel, coiled rope, and tarred cloth. A returner-run trade runs here for whoever has coin, or something worth trading instead.",
+      "brief": "The trade counter, smoked eel and rope.",
+      "region": "me",
+      "exits": { "up": { "to": "me_holm_landing" }, "out": { "to": "me_assessor_boat" } },
+      "actions": [
+        {
+          "id": "me_buy_eels",
+          "label": "buy a string of smoked eel (3 gold)",
+          "if": [["!has", "me_smoked_eel"], ["var", "gold", ">=", 3]],
+          "fx": [
+            ["addvar", "gold", -3],
+            ["move", "me_smoked_eel", "inv"],
+            ["say", "Beda wraps the string in oiled paper without looking up. 'Keeps for weeks,' she says. 'Same as everything worth keeping out here.'"]
+          ]
+        },
+        {
+          "id": "me_pay_rope",
+          "label": "pay Beda for the tarred rope (2 gold)",
+          "if": [
+            ["has", "me_tarred_rope"],
+            ["flag", "stole_me_tarred_rope"],
+            ["!flag", "me_rope_paid"],
+            ["var", "gold", ">=", 2]
+          ],
+          "fx": [
+            ["addvar", "gold", -2],
+            ["set", "me_rope_paid"],
+            ["addvar", "rep_watch", 1],
+            ["say", "You set the coin down without being asked. Beda looks at it, then at you, and sweeps it into the tally box without comment — which is its own kind of thanks out here."]
+          ]
+        }
+      ]
+    },
+    "me_assessor_boat": {
+      "name": "The Assessor's Boat",
+      "desc": "A flat-bottomed barge moored past the trade counter, its cabin stacked with rolled charts and a Crown ledger chained to the writing-desk like it might otherwise swim off on its own.",
+      "brief": "The assessor's barge, charts and a ledger.",
+      "region": "me",
+      "exits": { "in": { "to": "me_trade_counter" } },
+      "actions": [
+        {
+          "id": "me_read_ledger_scholar",
+          "label": "read the ledger's fine print outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "me_ledger_read"]],
+          "fx": [
+            ["set", "me_ledger_read"],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "The fine print tells a different story than the totals: these fields were pledged to the Keepers' covenant generations before any escheat clause existed, a debt the Crown's own ledger never formally cleared."]
+          ]
+        }
+      ]
+    },
+    "me_boathouse": {
+      "name": "The Companies' Boathouse",
+      "desc": "A long boathouse leased to the Free Companies, skiffs racked to the rafters and a chalk tally of runs kept on the wall by whoever last bothered. Fog seems to gather here thicker than anywhere else in the Holm.",
+      "brief": "The boathouse, skiffs and chalk tallies.",
+      "region": "me",
+      "exits": { "out": { "to": "me_holm_landing" }, "down": { "to": "me_charge_barge" } },
+      "actions": [
+        {
+          "id": "me_scout_marks",
+          "label": "read the chalked channel-marks",
+          "free": true,
+          "if": [["class", "scout"], ["!flag", "or_scout_me_marks"]],
+          "fx": [
+            ["set", "or_scout_me_marks"],
+            ["addvar", "or_scout_marks", 1],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "The tally board is a code once you know to look past the numbers: which channel ran clean, fog-blind, or cost a skiff. You have the safe line to Marrowgate before anyone thinks to ask why you're reading it so closely."]
+          ]
+        }
+      ],
+      "landmark": "the Companies' boathouse"
+    },
+    "me_charge_barge": {
+      "name": "The Charge Barge",
+      "desc": "A squat, iron-strapped barge moored apart from the others, casks stacked and roped down under waxed canvas. Nobody moors close to it without being asked first, and nobody has to be told twice why.",
+      "brief": "The charge barge, casks under canvas.",
+      "region": "me",
+      "exits": { "up": { "to": "me_boathouse" } }
+    }
+  },
+  "items": {
+    "me_smoked_eel": {
+      "name": "a string of smoked eel",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "keeps for weeks — eat it to ease a wound",
+      "use": [
+        {
+          "fx": [
+            ["hp", 3],
+            ["move", "me_smoked_eel", "nowhere"],
+            ["say", "Oily, smoky, and better than it has any right to be this far from a proper kitchen."]
+          ]
+        }
+      ]
+    },
+    "me_tarred_rope": {
+      "name": "a coil of tarred rope",
+      "loc": "me_trade_counter",
+      "takeable": true,
+      "owner": "me_beda",
+      "hint": "Beda counts her stock; she'd notice this gone"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "rooms": {
+    "field": { "name": "Field", "desc": "A field.", "region": "core", "exits": { "west": { "to": "home" }, "east": { "to": "wood_0_0" } } }
+  },
+  "items": { "stone": { "name": "stone", "loc": "field", "takeable": true } },
+  "gen": [
+    {
+      "id": "wood",
+      "name": "Wood",
+      "seed": 3,
+      "w": 2,
+      "h": 1,
+      "region": "core",
+      "pools": { "descs": ["Trees."] },
+      "links": [{ "cell": [0, 0], "dir": "west", "to": "field" }]
+    }
+  ],
+  "epilogue": [{ "if": [["has", "stone"]], "text": "You kept the stone." }]
+}

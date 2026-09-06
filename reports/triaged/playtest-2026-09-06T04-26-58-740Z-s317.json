@@ -1,0 +1,73 @@
+{
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 4,
+  "turns": 597,
+  "receipt": "reach.317.597.366.reach_at_rest.c440fad4",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The same companion quest shows three contradictory completion states: 'Quest done: The Exile's Ledger' (Keeper Wren's Trust dialogue, The Keepers' Hall, Barrowmere), then later 'Quest closed: The Exile's Ledger — its asker's wish is past meeting' (finding the founding ledger, Hall of Ledgers, Marrowgate), and finally the end-game status screen lists it under 'Failed: The Exile's Ledger' — even though the underlying content (Vell's exiled royal blood) was fully and successfully resolved on-screen.",
+      "where": "The Keepers' Hall (Barrowmere) / Hall of Ledgers (Marrowgate) / final status screen"
+    },
+    {
+      "sev": "P1",
+      "what": "Multi-source collection quests re-list a source you just completed as still outstanding. After reading the headland markers outright, 'Names for the Rite' said 'One source found. Two remain: Ede's memory, the parish roll, the headland's markers' (re-listing the headland markers you just read). After the ring-ditch verse, 'Three Old Verses' said 'One verse known. Two more wait: the ring-ditch, the king's causeway, the mere-stone' (re-listing the ring-ditch you just read).",
+      "where": "The Furrow's Headland (Fallows) 'read the markers outright' / The Ring-Ditch (Hollowbrook) 'read the ring-ditch script'"
+    },
+    {
+      "sev": "P1",
+      "what": "Companion Lys is teased across multiple holds via bracketed asides ('Lys +1, when word reaches them') starting in Act 1, but per the end-game epilogue was waiting the entire game at the Vale's hunter's camp (west of Split Oak) — a location no dialogue or notice board ever names outright. A whole companion can be permanently and silently missed.",
+      "where": "Last Light Square (talking to reeve) / end-game status epilogue"
+    },
+    {
+      "sev": "P1",
+      "what": "Dain, the refugee boy at Wickstead, is told 'you mean to find out' his dead father's name and say it properly. After that exact rite is performed at the Long Furrow's cairn, re-visiting Dain gives no acknowledgment at all — same 'leave him to the drilling' prompt as before, which by then was also stale because the drilling itself had already been stopped via Recruiter Dace.",
+      "where": "The Refugee Row (Fallows), talk to Dain, after The Long Furrow is resolved"
+    },
+    {
+      "sev": "P2",
+      "what": "Named, characterized NPCs sometimes have no dialogue option at all: 'a barrow-widow' at The Tithe Barn (Barrowmere) gets a full descriptive line ('Sits by the tithe barn's stove like she's waiting for someone who isn't coming, and knows it') but no 'talk to' entry; 'gate captain' at The Palace Gate (Marrowgate) is likewise described but not talkable.",
+      "where": "The Tithe Barn (Barrowmere) / The Palace Gate (Marrowgate)"
+    },
+    {
+      "sev": "P2",
+      "what": "'Whose Ground' at the Fallows completes the instant you press Frey (the Keeper) on her identity, before ever meeting the surveyor, recruiter, or Sister Merrow, even though its own description promises 'A surveyor, a recruiter, a sister, and a stranger all want a say.' The choice's consequences do land correctly afterward in the separate Surveyor's Stakes, Muster in the Barn, and Long Furrow quests, so it's a sequencing/framing mismatch rather than a broken choice.",
+      "where": "Wickstead Crossroads (Fallows), talk to Frey, 'the barrow-keepers, in the old tongue' branch"
+    },
+    {
+      "sev": "P2",
+      "what": "The mere-fisher hints the mere-stone verse is 'worth talking to, if you don't mind wading,' but the stone is reached dry-shod by a normal overland path (Processional Gate -> Old Ditch -> east); no wading action or water hazard is ever offered there.",
+      "where": "Barrowmere, the Mere-Shore (talk to mere-fisher) / The Mere-Stone"
+    }
+  ],
+  "confusions": [
+    "Reaching a named-but-unvisited quest destination (the mere-stone, the king's causeway, Longacre Chapel, the Sump Camp) requires walking a real path through many small, similarly-worded filler rooms — 'travel to a known place' only lists rooms already visited, so the first trip into a new hold is pure trial-and-error backtracking rather than following the direction a hint gave.",
+    "The score readout hits its own stated ceiling ('Score: 366/366') around turn 517, roughly 80 turns and 5 of 8 holds before the actual ending (turn 597) — after that the number stops telling the player anything about how much realm or story is left, even though status keeps saying 'it can fill long before the tale ends.'",
+    "Companion recruitment is not consistently signposted: Vell, Tamsin, and Osk are each found just by walking into Last Light's obvious buildings, but Lys (hunter's camp) has no comparable on-the-nose prompt anywhere in the text a normal player reads, so a thorough-feeling playthrough can still miss an entire companion without ever being told one was available.",
+    "It's not clear in advance whether a hold's small barrow/cairn side-dungeon (the Forebarrow, the Weeping Cairn, Longacre Chapel, the Pilgrims' Shrine) ends in a lootable 'search the alcove' or a narrative-only rite with no item, so there's no way to know if you've 'finished' one until after you've already committed the turns to clear it.",
+    "Attribute-check failures on major one-time emotional beats carry no narrated cost and can be retried immediately (e.g. the first attempt at 'swear the land stays theirs' over the Fallows' two-hundred-body Long Furrow failed with no stated penalty, then succeeded on the very next try), which undercuts the weight the scene is clearly going for.",
+    "The reeve's 'promise to seal the barrow' versus the priest's willingness to bless the doors open are framed early as a simple either/or, but nothing in that moment signals how much later content (the Barrow Doors ending text, ongoing Gray Church reputation) actually rides on that one early choice."
+  ],
+  "suggestions": [
+    "Filter already-completed items out of 'sources remaining' lists in multi-part collection quests (Names for the Rite, Three Verses, Three Old Verses).",
+    "Make completing 'The Founding Ledger' update the earlier 'Exile's Ledger' record instead of overwriting it to a contradictory 'Failed' state.",
+    "Give every named, described NPC at least a one-line 'talk to' option, even a brush-off, so presence in a room always implies availability.",
+    "Add a short follow-up line for NPCs promised a specific future fact (like Dain) once that fact becomes true elsewhere in the story.",
+    "Signpost less-obvious companions (like Lys) with a concrete location mention somewhere a normal playthrough will read it, not only a bracketed reputation aside.",
+    "Either give the mere-stone an actual wade/cold-water beat, or change the fisher's hint to match the dry overland route that actually reaches it.",
+    "Consider rescaling the score ceiling (or its per-hold distribution) so the number stays informative through the whole game instead of capping mid-playthrough for a thorough player.",
+    "Let a failed one-time oath/rite at a hold's central grief-site cost something narratively (a line of consequence, a small reputation dip) rather than being freely retriable, to preserve the gravity of the scene."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T04-26-58-740Z",
+  "seed": 317,
+  "build": {
+    "rev": "e32ce36",
+    "world": "a9b7fb9a"
+  },
+  "cost_usd": null,
+  "verified": true
+}

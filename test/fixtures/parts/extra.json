@@ -1,0 +1,16 @@
+{
+  "templates": {
+    "den": {
+      "entrance": "$mouth",
+      "vars": ["BEAST"],
+      "rooms": {
+        "$mouth": { "name": "{{BEAST}} den mouth", "desc": "Bones at the mouth of a {{BEAST}} den.", "exits": { "down": { "to": "$deep" } } },
+        "$deep": { "name": "{{BEAST}} den", "desc": "The {{BEAST}} sleeps here.", "exits": { "up": { "to": "$mouth" } }, "actions": [{ "id": "$poke", "label": "poke the {{BEAST}}", "once": true, "fx": [["set", "$poked"], ["xp", 1]] }] }
+      },
+      "npcs": { "$beast": { "name": "{{BEAST}}", "room": "$deep", "hp": 3, "atk": 1, "df": 8, "hostile": true } }
+    }
+  },
+  "stamps": [
+    { "template": "den", "id": "den1", "at": "wood_1_0", "dir": "north", "back": "south", "vars": { "BEAST": "wolf" } }
+  ]
+}

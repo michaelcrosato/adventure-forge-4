@@ -1,0 +1,616 @@
+{
+  "rooms": {
+    "hb_kingsrest_mouth": {
+      "name": "The Kings' Rest — Mouth",
+      "desc": "A slab door, sunk deep into the mound's northern face, sealed with age rather than any lock a smith would recognize. Cold air breathes out around its edges, carrying iron and older dust.",
+      "brief": "The sealed slab door.",
+      "region": "hb",
+      "exits": {
+        "in": {
+          "to": "hb_kingsrest_hall",
+          "if": [["flag", "hb_kingsrest_open"]],
+          "lockedMsg": "The slab door will not give.",
+          "hint": "force it (might), find its catch (wits), or use the Keeper's Key"
+        }
+      },
+      "onEnterOnce": [
+        ["xp", 2],
+        [
+          "if",
+          [["inParty", "vell"]],
+          [
+            ["say", "Vell: \"A dynasty predating the Hollow King's own line? Marrowgate's histories barely mention it. I have questions, and no one left alive to answer them.\""]
+          ],
+          []
+        ]
+      ],
+      "variants": [{ "if": [["flag", "hb_kingsrest_open"]], "brief": "The slab door, open now." }],
+      "actions": [
+        {
+          "id": "hb_force_door",
+          "label": "force the slab door (might)",
+          "if": [["!flag", "hb_kingsrest_open"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "hb_kingsrest_open"],
+                ["xp", 2],
+                ["say", "You put your whole weight into it. Centuries of settled earth break loose around the frame, and the slab grinds inward."]
+              ],
+              [["say", "The slab does not move. Whatever seals it, strength alone is not enough."]]
+            ]
+          ]
+        },
+        {
+          "id": "hb_wits_door",
+          "label": "find the old release catch (wits)",
+          "if": [["!flag", "hb_kingsrest_open"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "hb_kingsrest_open"],
+                ["xp", 2],
+                ["say", "A catch-stone, worn smooth but still proud of the frame, gives under the right pressure in the right place. The slab swings in."]
+              ],
+              [["say", "If there is a catch here, your fingers have not found it yet."]]
+            ]
+          ]
+        },
+        {
+          "id": "hb_key_door",
+          "label": "open the door with the Keeper's Key",
+          "if": [["has", "hb_keepers_key"], ["!flag", "hb_kingsrest_open"]],
+          "fx": [
+            ["set", "hb_kingsrest_open"],
+            ["xp", 1],
+            ["say", "The Keeper's Key turns something you cannot see. The slab door opens like it was only ever waiting to be asked properly."]
+          ]
+        },
+        {
+          "id": "hb_words_door",
+          "label": "speak the old rest-formula (will)",
+          "if": [["!flag", "hb_kingsrest_open"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "hb_kingsrest_open"],
+                ["xp", 2],
+                ["say", "You don't ask it kindly. You speak the words a door like this was carved to hear regardless — let the road remember, let the door remember, and rest — and old dust sifts loose from the seal."]
+              ],
+              [["say", "The words you have aren't the words it wants. The slab does not so much as shift."]]
+            ]
+          ]
+        },
+        {
+          "id": "hb_bell_mound",
+          "label": "hang the bell at the mound's door",
+          "if": [["has", "sk_drowned_ship_bell"]],
+          "once": true,
+          "fx": [
+            ["move", "sk_drowned_ship_bell", "nowhere"],
+            ["set", "rb_sk_hb_mound"],
+            ["addvar", "appr_osk", 1],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "You wire the bell above the slab door, unasked and unsanctioned. No Keeper blessed it. The wind finds it anyway, some nights, and it rings."]
+          ]
+        }
+      ]
+    },
+    "hb_kingsrest_hall": {
+      "name": "The Kings' Rest — Hall",
+      "desc": "A long hall, cold enough to see your own breath. Old shields hang from the walls, rusted to lace. A grave-wight stands square in the passage deeper in, exactly where a guard would stand if a guard could not die.",
+      "brief": "The cold hall. A grave-wight bars the way.",
+      "region": "hb",
+      "exits": {
+        "out": { "to": "hb_kingsrest_mouth" },
+        "in": {
+          "to": "hb_kingsrest_throne",
+          "if": [["flag", "hb_wights_passed"]],
+          "lockedMsg": "The grave-wight bars the passage, patient as stone.",
+          "hint": "defeat it, slip past it (grace), or face it down (will)"
+        }
+      },
+      "variants": [{ "if": [["flag", "hb_wights_passed"]], "brief": "The cold hall. The passage stands open now." }],
+      "actions": [
+        {
+          "id": "hb_slip_wight",
+          "label": "slip past it — a fail costs 1hp (grace)",
+          "if": [["!flag", "hb_wights_passed"], ["!npcDead", "hb_grave_wight"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              12,
+              [
+                ["set", "hb_wights_passed"],
+                ["xp", 2],
+                ["say", "You keep to the wall's shadow and slip by while it is still turning. The passage in stands open."]
+              ],
+              [["hp", -1], ["say", "It catches your sleeve on the way past. You wrench free, but not cleanly."]]
+            ]
+          ]
+        },
+        {
+          "id": "hb_face_wight",
+          "label": "stand fast and face it down (will)",
+          "if": [["!flag", "hb_wights_passed"], ["!npcDead", "hb_grave_wight"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "hb_wights_passed"],
+                ["xp", 2],
+                ["say", "You do not step back. Whatever it was waiting four hundred years to see, your standing fast is apparently it — it steps aside."]
+              ],
+              [["say", "It does not move, and neither, this time, does your nerve hold long enough to matter."]]
+            ]
+          ]
+        }
+      ]
+    },
+    "hb_kingsrest_throne": {
+      "name": "The Kings' Rest — the Old Court",
+      "desc": "The mound's heart: a ring of stone seats around a cold hearth-stone, and in the largest seat, the eldest of a dynasty older than the Hollow King's own line. He does not rise. He has had four hundred years to decide it is not worth it.",
+      "brief": "The old court, and its eldest king.",
+      "region": "hb",
+      "exits": { "out": { "to": "hb_kingsrest_hall" } },
+      "onEnterOnce": [
+        ["xp", 3],
+        ["score", 3],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Brother Osk: \"Another grief nobody wrote a rite for in time. I keep finding these. I would like, someday, to stop finding these.\""]
+          ],
+          []
+        ]
+      ],
+      "variants": [
+        {
+          "if": [["flag", "hb_hollow_rested"]],
+          "name": "The Old Court, at Rest",
+          "desc": "The stone seats stand empty now, the hearth-stone cold but no longer grieving. Whatever sat here has finally lain back down, and taken its silence with it.",
+          "brief": "The court, empty and quiet."
+        },
+        {
+          "if": [["flag", "hb_hollow_bargained"]],
+          "desc": "The old court sits as it always has, but something in the room has eased — a debt paid, not forgiven. The eldest king inclines his head, once, and says nothing further.",
+          "brief": "The court. Quieter, not gone."
+        },
+        {
+          "if": [["flag", "hb_hollow_burned"]],
+          "name": "The Burned Court",
+          "desc": "Ash and collapsed stone where the ring of seats stood. Whatever kept this court sitting has been burned past rising again — past everything, if the old rites are believed.",
+          "brief": "Ash where the court sat."
+        }
+      ],
+      "actions": [
+        {
+          "id": "hb_speak_verses",
+          "label": "speak the three verses over the court",
+          "if": [["flag", "hb_heard_grievance"], ["var", "hb_verses_known", ">=", 3], ["!flag", "hb_kingsrest_resolved"]],
+          "fx": [
+            ["set", "hb_hollow_rested"],
+            ["set", "hb_kingsrest_resolved"],
+            ["addvar", "hollows_rested", 1],
+            ["score", 25],
+            ["xp", 8],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "appr_vell", 1],
+            ["addvar", "appr_osk", 1],
+            ["npcgo", "hb_eldest_king", null],
+            ["say", "You speak the three verses whole, in the order the downs gave them up. The eldest king closes his eyes like a man finally allowed to. One by one, the old court lies back down."]
+          ]
+        },
+        {
+          "id": "hb_use_key",
+          "label": "lay the Keeper's Key on the hearth-stone",
+          "if": [["flag", "hb_heard_grievance"], ["has", "hb_keepers_key"], ["!flag", "hb_kingsrest_resolved"]],
+          "fx": [
+            ["set", "hb_hollow_rested"],
+            ["set", "hb_kingsrest_resolved"],
+            ["addvar", "hollows_rested", 1],
+            ["score", 25],
+            ["xp", 8],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "appr_vell", 1],
+            ["addvar", "appr_osk", 1],
+            ["npcgo", "hb_eldest_king", null],
+            ["say", "You set the Key on the cold hearth-stone. It turns no lock here — it does not need to. The eldest king recognizes it, and that recognition is enough. The old court lies down."]
+          ]
+        },
+        {
+          "id": "hb_return_good",
+          "label": "return the queen's ring to the court",
+          "if": [["flag", "hb_heard_grievance"], ["has", "hb_grave_good"], ["!flag", "hb_kingsrest_resolved"]],
+          "fx": [
+            ["set", "hb_hollow_bargained"],
+            ["addvar", "hollows_bargained", 1],
+            ["set", "hb_kingsrest_resolved"],
+            ["addvar", "hollows_rested", 1],
+            ["move", "hb_grave_good", "nowhere"],
+            ["score", 20],
+            ["xp", 8],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_iron", -2],
+            ["addvar", "appr_lys", 1],
+            ["say", "You set the ring back where it came from. The eldest king takes it without a word, turns it once in fingers gone to bone, and inclines his head. Not forgiveness. It will do."],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [["say", "Lys: \"A debt paid instead of a grave burned. That's a kind of ending I can live with.\""]],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "hb_burn_court",
+          "label": "break the pitch-jar and fire the court",
+          "if": [["flag", "hb_heard_grievance"], ["has", "hb_pitch_jar"], ["!flag", "hb_kingsrest_resolved"]],
+          "fx": [
+            ["set", "hb_hollow_burned"],
+            ["addvar", "appr_osk", -1],
+            ["set", "hb_kingsrest_resolved"],
+            ["addvar", "hollows_burned", 1],
+            ["move", "hb_pitch_jar", "nowhere"],
+            ["score", 15],
+            ["xp", 8],
+            ["addvar", "rep_iron", 2],
+            ["addvar", "rep_keepers", -2],
+            ["addvar", "appr_tamsin", 1],
+            ["addvar", "appr_vell", -1],
+            ["npcgo", "hb_eldest_king", null],
+            ["say", "The pitch catches fast, faster than pitch should. By the time you reach the mouth the ground itself is groaning. Behind you, the hearth-stone cracks clean in half."],
+            [
+              "if",
+              [["inParty", "tamsin"]],
+              [["say", "Tamsin: \"Quick. Ugly. Done. I won't pretend I mind an ending that doesn't argue with you.\""]],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "hb_break_court",
+          "label": "shatter the hearth-stone (might)",
+          "if": [["flag", "hb_heard_grievance"], ["!flag", "hb_kingsrest_resolved"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "hb_hollow_burned"],
+                ["addvar", "appr_osk", -1],
+                ["set", "hb_kingsrest_resolved"],
+                ["addvar", "hollows_burned", 1],
+                ["score", 15],
+                ["xp", 8],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_keepers", -2],
+                ["addvar", "appr_tamsin", 1],
+                ["addvar", "appr_vell", -1],
+                ["npcgo", "hb_eldest_king", null],
+                ["say", "You don't wait on pitch. You put your full weight into the cold hearth-stone until it cracks clean in half, and whatever was sitting this court out finally has nowhere left to sit."]
+              ],
+              [["say", "The hearth-stone is older and harder than you are tonight. It doesn't so much as chip."]]
+            ]
+          ]
+        },
+        {
+          "id": "hb_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "hb_kingsrest_resolved"]],
+          "fx": [
+            [
+              "if",
+              [["!flag", "hb_heard_grievance"]],
+              [
+                ["say", "Nothing here can be settled until the old court's grievance is heard — ask the eldest king what he wants."]
+              ],
+              [
+                [
+                  "if",
+                  [["has", "hb_keepers_key"]],
+                  [["say", "The rest can be done outright: the Keeper's Key is yours — lay it on the hearth-stone."]],
+                  []
+                ],
+                [
+                  "if",
+                  [["var", "hb_verses_known", ">=", 3]],
+                  [["say", "The rest can be done outright: all three verses are yours — speak them over the court."]],
+                  []
+                ],
+                [
+                  "if",
+                  [["!has", "hb_keepers_key"], ["var", "hb_verses_known", "<", 3]],
+                  [
+                    ["say", "The rest wants the Keeper's Key, forced or picked from the chest in the Keepers' Hall, or all three old verses from the downs."]
+                  ],
+                  []
+                ],
+                [
+                  "if",
+                  [["has", "hb_grave_good"]],
+                  [["say", "The bargain stands ready: the queen's ring is yours — return it to the court."]],
+                  [["say", "The bargain wants the queen's ring — buy it, lift it, or labor for it, at the chandler's shop."]]
+                ],
+                [
+                  "if",
+                  [["has", "hb_pitch_jar"]],
+                  [["say", "The burn stands ready: a jar of pitch is yours — break it here."]],
+                  [
+                    ["say", "The burn wants a jar of pitch from the chandler's shop — or shatter the hearth-stone yourself (might), pitch or none."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "hb_grave_wight": {
+      "name": "grave-wight",
+      "room": "hb_kingsrest_hall",
+      "hostile": true,
+      "hp": 15,
+      "atk": 3,
+      "df": 8,
+      "desc": "Old mail gone to rust over bone, standing an old post with nothing left to guard but habit. What's left of its grip does not care what you're wearing.",
+      "onDeath": [
+        [
+          "if",
+          [["!flag", "hb_wights_passed"]],
+          [
+            ["set", "hb_wights_passed"],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "The wight comes apart into rag and rust. The passage in stands open, whatever it cost you to open it."]
+          ],
+          [["say", "It was already still, whatever kept it upright already settled."]]
+        ]
+      ],
+      "pierce": true
+    },
+    "hb_eldest_king": {
+      "name": "the eldest king",
+      "room": "hb_kingsrest_throne",
+      "dialogue": true,
+      "desc": "A king the shape of patience worn thin, sitting very still in the largest of the stone seats.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "The eldest of the old court speaks first, in a voice like settling stone. 'Another one, come to gawk at kings the world forgot to finish burying.'",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "grievance",
+          "label": "what you want",
+          "if": [["flag", "said_hb_eldest_king_greet"]],
+          "once": true,
+          "say": "We ruled before the Hollow King's blood was crowned; his own line's founder robbed us too. Rest us, buy back what was taken, or burn us — we are done being merely remembered.",
+          "fx": [["set", "hb_heard_grievance"], ["score", 3], ["xp", 3]]
+        },
+        {
+          "id": "about_key",
+          "label": "the Keeper's Key",
+          "if": [["flag", "hb_heard_grievance"], ["has", "hb_keepers_key"]],
+          "once": true,
+          "say": "That key was cut for this door before your grandmother's grandmother learned to walk. Use it here, at the hearth-stone, and be done with it properly.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "about_verses",
+          "label": "the verses in the downs",
+          "if": [["flag", "hb_heard_grievance"], ["var", "hb_verses_known", ">=", 1]],
+          "once": true,
+          "say": "Word of mouth, cut in stone and water. Slower than the Key, but it will serve, once you have all three.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "step back from the hearth-stone",
+          "say": "We are not going anywhere. That has rather been the problem.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "quests": {
+    "hb_q_kingsrest": {
+      "name": "The Kings' Rest",
+      "start": [["flag", "hb_found_kingsrest"]],
+      "done": [["flag", "hb_kingsrest_resolved"]],
+      "stages": [
+        {
+          "if": [["flag", "hb_heard_grievance"], ["has", "hb_keepers_key"]],
+          "text": "You hold the Keeper's Key. Use it at the hearth-stone to rest the old court outright."
+        },
+        {
+          "if": [["flag", "hb_heard_grievance"], ["var", "hb_verses_known", ">=", 3]],
+          "text": "All three verses are yours. Speak them over the court at the great mound's heart."
+        },
+        {
+          "if": [["flag", "hb_heard_grievance"], ["has", "hb_grave_good"]],
+          "text": "You have a grave-good to return. Bring it to the hearth-stone to bargain the old court's rest."
+        },
+        {
+          "if": [["flag", "hb_heard_grievance"], ["has", "hb_pitch_jar"]],
+          "text": "You have pitch enough to burn the old court out for good, if that is the road you choose."
+        },
+        {
+          "if": [["flag", "hb_heard_grievance"]],
+          "text": "The old court's grievance is heard. Find verses, the Keeper's Key, a grave-good, or pitch, then return to the mound."
+        },
+        {
+          "if": [["flag", "hb_found_kingsrest"]],
+          "text": "The great mound stands before you. Go in and hear the old court before deciding anything."
+        },
+        {
+          "if": [],
+          "text": "A hundred mounds ring Barrowmere, and one great mound above them all holds a court that will not lie down."
+        }
+      ]
+    },
+    "hb_q_verses": {
+      "name": "Three Old Verses",
+      "start": [["flag", "hb_heard_warden_lore"]],
+      "done": [["var", "hb_verses_known", ">=", 3]],
+      "stages": [
+        {
+          "if": [["flag", "hb_verse_causeway"], ["flag", "hb_verse_merestone"], ["!flag", "hb_verse_ringditch"]],
+          "text": "Two of three verses known. The last waits at the ring-ditch."
+        },
+        {
+          "if": [["flag", "hb_verse_ringditch"], ["flag", "hb_verse_merestone"], ["!flag", "hb_verse_causeway"]],
+          "text": "Two of three verses known. The last waits at the king's causeway."
+        },
+        {
+          "if": [["flag", "hb_verse_ringditch"], ["flag", "hb_verse_causeway"], ["!flag", "hb_verse_merestone"]],
+          "text": "Two of three verses known. The last waits at the mere-stone."
+        },
+        {
+          "if": [["flag", "hb_verse_ringditch"], ["!flag", "hb_verse_causeway"], ["!flag", "hb_verse_merestone"]],
+          "text": "One verse known, the ring-ditch's. Two more wait: the king's causeway, the mere-stone."
+        },
+        {
+          "if": [["flag", "hb_verse_causeway"], ["!flag", "hb_verse_ringditch"], ["!flag", "hb_verse_merestone"]],
+          "text": "One verse known, the king's causeway's. Two more wait: the ring-ditch, the mere-stone."
+        },
+        {
+          "if": [["flag", "hb_verse_merestone"], ["!flag", "hb_verse_ringditch"], ["!flag", "hb_verse_causeway"]],
+          "text": "One verse known, the mere-stone's. Two more wait: the ring-ditch, the king's causeway."
+        },
+        {
+          "if": [],
+          "text": "Three verses were cut for the old court: the ring-ditch, the king's causeway, and the mere-stone."
+        }
+      ]
+    },
+    "hb_q_ledger": {
+      "name": "Keeper Wren's Trust",
+      "start": [["flag", "said_hb_keeper_wren_greet"]],
+      "done": [["flag", "hb_keepers_key_found"]],
+      "stages": [
+        {
+          "if": [["flag", "said_hb_keeper_wren_order"]],
+          "text": "Force the Hall's old chest, pick its lock, or earn enough of Keeper Wren's trust to ask her outright."
+        },
+        {
+          "if": [],
+          "text": "Keeper Wren tends the ruined Hall alone. Hear what she has to say before asking for what she guards."
+        }
+      ]
+    },
+    "hb_q_surveyor": {
+      "name": "The Surveyor's Map",
+      "start": [["flag", "said_hb_surveyor_greet"]],
+      "done": [["flag", "hb_mounds_protected"]],
+      "failed": [["flag", "hb_mounds_sold"]],
+      "stages": [
+        {
+          "if": [],
+          "text": "The Crown surveyor wants to know which mounds are worth digging. Tell him, or send him off with nothing."
+        }
+      ]
+    },
+    "hb_q_mound_robber": {
+      "name": "The Robbed Mounds",
+      "start": [["flag", "said_hb_mound_robber_greet"]],
+      "done": [["flag", "hb_robber_stopped"]],
+      "failed": [["flag", "hb_robber_bribed"]],
+      "stages": [
+        {
+          "if": [],
+          "text": "A digger works the robbed mounds, north-west of Barrowmere, past the toll-stones. Stop him or take your cut."
+        }
+      ]
+    }
+  },
+  "statusTracks": [
+    {
+      "var": "hb_verses_known",
+      "label": "Old Court Verses",
+      "max": 3,
+      "remaining": [
+        { "flag": "hb_verse_ringditch", "label": "the ring-ditch" },
+        { "flag": "hb_verse_causeway", "label": "the king's causeway" },
+        { "flag": "hb_verse_merestone", "label": "the mere-stone" }
+      ],
+      "if": [["flag", "hb_entered"]]
+    }
+  ],
+  "epilogue": [
+    {
+      "if": [["flag", "hb_hollow_rested"]],
+      "text": "The old court under the great mound lies down at last. Barrowmere sleeps through the night for the first time anyone there can remember.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "hb_hollow_bargained"]],
+      "text": "The barrow-queen's ring went back into the ground. The old court is not rested, but it is quiet, and Barrowmere calls that enough.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "hb_hollow_burned"]],
+      "text": "Three mounds fell in the night the fire took the old court. Nothing under that ground grieves anymore. Nothing rests there either.",
+      "weight": 2
+    },
+    {
+      "if": [["!flag", "hb_kingsrest_resolved"], ["flag", "hb_entered"]],
+      "text": "The great mound's door still stands at Barrowmere's edge, and the old court still sits up some nights, waiting on someone else."
+    },
+    {
+      "if": [["flag", "hb_mounds_sold"]],
+      "text": "The Crown's surveyor left Barrowmere with a full map and a light conscience. Diggers followed inside the season."
+    },
+    {
+      "if": [["flag", "hb_mounds_protected"]],
+      "text": "The Crown's surveyor left Barrowmere with an empty map. The warden still keeps the count Marrowgate never gets to see."
+    },
+    {
+      "if": [["flag", "vell_ledger_found"]],
+      "text": "The Keepers' Hall gave up its ledger at last. What it says of a Marrowgate exile is not this telling's secret to keep."
+    },
+    {
+      "if": [["flag", "hb_keepers_key_found"]],
+      "text": "The Keeper's Key left Barrowmere in a pocket, bound for a pilgrim stair at Coldpass that has not opened in a hundred years."
+    }
+  ],
+  "items": {
+    "hb_warden_flask": {
+      "name": "a warden's flask",
+      "loc": "hb_kingsrest_mouth",
+      "takeable": true,
+      "hint": "left for whoever goes in past the door, by old custom",
+      "use": [
+        {
+          "fx": [
+            ["hp", 4],
+            ["move", "hb_warden_flask", "nowhere"],
+            ["say", "Barrow-mead, bitter with the iron shavings the old custom calls for. It steadies you more than the taste suggests."]
+          ]
+        }
+      ]
+    }
+  }
+}

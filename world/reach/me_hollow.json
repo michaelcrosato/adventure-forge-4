@@ -1,0 +1,545 @@
+{
+  "rooms": {
+    "me_hollow_causeway": {
+      "name": "The Drowned Hall — the Causeway at Low Water",
+      "desc": "At low water the old causeway breaks the surface stone by stone, slick and green, leading out toward a roofline that never fully goes under. Every step here is a choice between the stone and the black water on either side of it.",
+      "brief": "The low-water causeway, slick stone.",
+      "region": "me",
+      "exits": { "north": { "to": "me_hollow_nave" } },
+      "onEnterOnce": [
+        ["set", "me_hollow_found"],
+        ["xp", 2],
+        ["say", "This causeway once ran dry to an island in the mere. The Keepers' first Hall stood there, until the first Reeve's men came for the covenant stone, and the Keepers opened the dams rather than hand it over."],
+        [
+          "if",
+          [["inParty", "vell"]],
+          [
+            ["say", "Vell: \"Every history I have ever read calls this an accident of the dams failing. Standing here, I do not believe a word of that anymore.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Brother Osk: \"Four hundred years, and no Church rite ever reached this far out. That failing is older than mine.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "tamsin"]],
+          [
+            ["say", "Tamsin: \"They drowned themselves to keep a stone from a king's men. I want to understand that before I judge it either way.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "lys"]],
+          [
+            ["say", "Lys: \"Quiet out here. Too quiet for water this open. If Wick's right about the singing, this is where it comes from.\""]
+          ],
+          []
+        ]
+      ],
+      "landmark": "the Drowned Hall's causeway"
+    },
+    "me_hollow_nave": {
+      "name": "The Drowned Hall — the Flooded Nave",
+      "desc": "Water stands knee-deep across a nave built for a congregation that never comes, benches gone to black rot, roof-beams furred with river-moss. At the far end, unmoving in water to the waist, a shape that was once a woman keeps a watch nobody ever relieved.",
+      "brief": "The flooded nave. A shape keeps watch.",
+      "region": "me",
+      "exits": { "south": { "to": "me_hollow_causeway" }, "in": { "to": "me_hollow_chamber" } }
+    },
+    "me_hollow_chamber": {
+      "name": "The Drowned Hall — the Covenant Chamber",
+      "desc": "The water shallows to a black sheet across the chamber floor, and at its center a stone table holds a covenant cut long before anyone alive could read it easily. This is what four hundred years underwater was spent keeping whole.",
+      "brief": "The covenant chamber, the stone table.",
+      "region": "me",
+      "exits": { "out": { "to": "me_hollow_nave" } },
+      "variants": [
+        {
+          "if": [["flag", "me_hollow_rested"]],
+          "desc": "The stone table stands bare now, the covenant carried out of the water at last. The chamber holds nothing but stillness, and stillness suits it.",
+          "brief": "The chamber, bare and still."
+        },
+        {
+          "if": [["flag", "me_hollow_bargained"]],
+          "desc": "The stone table stands empty, the covenant gone out on an oath instead of a rite. Maren still keeps the chamber, waiting on whether the oath was kept.",
+          "brief": "The chamber. Maren still waits here."
+        },
+        {
+          "if": [["flag", "me_hollow_burned"]],
+          "desc": "Ash and cracked stone where the table stood. Whatever the covenant said, most of it went up with the charges and the water that used to hide it.",
+          "brief": "Ash where the table stood."
+        }
+      ],
+      "actions": [
+        {
+          "id": "me_scholar_script",
+          "label": "read the covenant stone's older script",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "or_scholar_me_script"], ["!flag", "me_hollow_done"]],
+          "fx": [
+            ["set", "or_scholar_me_script"],
+            ["addvar", "or_scholar_read", 1],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "The cutting is older than any hand you've read before, but it gives up its shape: this compact names the dead's due and the living's debt both, witnessed by a Reeve's own mark, cut before Marrowgate was a town at all."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"His own mark, on the thing his line later broke. I want to see that with my own eyes before I believe you.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "me_rest_hollow",
+          "label": "speak the covenant's three words whole",
+          "if": [["var", "me_covenant_words", ">=", 3], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"]],
+          "fx": [
+            ["set", "me_hollow_rested"],
+            ["set", "me_hollow_done"],
+            ["set", "me_covenant_carried"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "appr_vell", 1],
+            ["addvar", "appr_osk", 1],
+            ["move", "me_covenant_stone", "inv"],
+            ["npcgo", "me_maren", null],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the divers' word, the shrine's word, and the warden's song together over the stone. Maren closes her eyes like someone finally allowed to. The water in the chamber does not rise again."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"Spoken back to them at last. I did not expect to feel anything about a stone. I was wrong.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "me_bargain_hollow",
+          "label": "swear to carry the covenant (will)",
+          "if": [["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "me_hollow_bargained"],
+                ["set", "me_hollow_done"],
+                ["set", "me_covenant_sworn"],
+                ["set", "me_covenant_carried"],
+                ["addvar", "hollows_rested", 1],
+                ["addvar", "hollows_bargained", 1],
+                ["addvar", "rep_church", 2],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "appr_vell", 1],
+                ["addvar", "appr_lys", 1],
+                ["move", "me_covenant_stone", "inv"],
+                ["score", 20],
+                ["xp", 8],
+                ["say", "You swear it plain over the stone table: the covenant reaches Marrowgate, read before the throne, whatever it costs you. Maren sets the stone in your hands. She does not lie back down. She is waiting on you now."],
+                [
+                  "if",
+                  [["inParty", "lys"]],
+                  [
+                    ["say", "Lys: \"A promise instead of a rest. I know which of those I trust more from a stranger. Mind you're worth the trust.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["say", "The oath comes out uncertain, a stranger's word in a stranger's mouth, and the water does not settle for uncertain. It can be sworn again, once you mean every part of it."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "me_burn_hollow",
+          "label": "break the charges here (1hp on fail)",
+          "if": [["has", "me_dam_charges"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              9,
+              [
+                ["move", "me_dam_charges", "nowhere"],
+                ["set", "me_hollow_burned"],
+                ["addvar", "appr_osk", -1],
+                ["set", "me_hollow_done"],
+                ["set", "me_covenant_cracked"],
+                ["set", "me_dams_blown"],
+                ["addvar", "hollows_burned", 1],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_church", -2],
+                ["addvar", "appr_tamsin", 1],
+                ["addvar", "appr_vell", -1],
+                ["move", "me_covenant_stone_cracked", "inv"],
+                ["npcgo", "me_maren", null],
+                ["score", 15],
+                ["xp", 8],
+                ["say", "The charges go off under the old table, and what four hundred years of water couldn't take, a night of Ironbound charge does. The stone comes up cracked in three pieces. Nothing in the chamber answers you after."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["say", "Vell: \"The oldest record of my own line's theft, and you cracked it for kindling. I need a moment before I speak to you again.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The charge catches wrong in the wet stone and flares back short of the table. You're driven back a step, singed, the covenant untouched."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "me_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "me_hollow_done"]],
+          "fx": [
+            [
+              "if",
+              [["!flag", "me_hollow_grievance"]],
+              [["say", "Nothing here can be settled until the Hall's grievance is heard — ask Maren what happened here."]],
+              [
+                [
+                  "if",
+                  [["var", "me_covenant_words", ">=", 3]],
+                  [["say", "The rest stands ready: all three covenant words are yours — speak them whole, over the stone."]],
+                  [
+                    [
+                      "if",
+                      [["flag", "me_word_divers"], ["flag", "me_word_saint"]],
+                      [
+                        ["say", "The divers' word and the shrine's word are yours. The last is Yarrow's old song, at the lantern-tower."]
+                      ],
+                      [
+                        [
+                          "if",
+                          [["flag", "me_word_divers"], ["flag", "me_word_song"]],
+                          [
+                            ["say", "The divers' word and the warden's song are yours. The last waits at the shrine, in the eel-priest's chapel."]
+                          ],
+                          [
+                            [
+                              "if",
+                              [["flag", "me_word_saint"], ["flag", "me_word_song"]],
+                              [["say", "The shrine's word and the warden's song are yours. The last is Sael's, at the divers' platform."]],
+                              [
+                                [
+                                  "if",
+                                  [["flag", "me_word_divers"]],
+                                  [["say", "The divers' word is yours. Two remain: the shrine at the chapel, and Yarrow's song at the tower."]],
+                                  [
+                                    [
+                                      "if",
+                                      [["flag", "me_word_saint"]],
+                                      [["say", "The shrine's word is yours. Two remain: Sael's at the platform, and Yarrow's song at the tower."]],
+                                      [
+                                        [
+                                          "if",
+                                          [["flag", "me_word_song"]],
+                                          [["say", "The warden's song is yours. Two remain: Sael's at the platform, and the shrine at the chapel."]],
+                                          [
+                                            ["say", "The rest wants three words: the divers' stones, the saint's shrine, and the lantern-warden's old song."]
+                                          ]
+                                        ]
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                ["say", "The bargain stands ready regardless: swear to carry the covenant to Marrowgate yourself (will)."],
+                [
+                  "if",
+                  [["has", "me_dam_charges"]],
+                  [
+                    ["say", "The burn stands ready: Hodd's charges are yours — break them here (might; a failed try costs 1 hp)."]
+                  ],
+                  [["say", "The burn wants Ironbound charges — Hodd, the dam-wright, gives you a keg for the asking."]]
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "me_covenant_stone": {
+      "name": "the covenant stone",
+      "loc": "nowhere",
+      "hint": "the written compact between the living and the dead, whole"
+    },
+    "me_covenant_stone_cracked": {
+      "name": "the cracked covenant stone",
+      "loc": "nowhere",
+      "hint": "the same compact, taken in three pieces from the ash"
+    }
+  },
+  "npcs": {
+    "me_maren": {
+      "name": "Maren",
+      "room": "me_hollow_nave",
+      "dialogue": true,
+      "desc": "Robes gone to river-weed, standing chest-deep in water that never seems to trouble her the way it would the living.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Maren. I kept the covenant's chamber the day the Reeve's men came for it, and I have kept it since, however long since has been.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "grievance",
+          "label": "what happened here",
+          "if": [["flag", "said_me_maren_greet"]],
+          "once": true,
+          "say": "We opened the dams ourselves, sooner than hand the covenant to a king's men. We died keeping it. Nobody has spoken it back to us since. Rest us, bargain with us, or burn us — we are done only being remembered.",
+          "fx": [["set", "me_hollow_grievance"], ["score", 3], ["xp", 3]]
+        },
+        {
+          "id": "about_words",
+          "label": "what the covenant needs",
+          "if": [["flag", "me_hollow_grievance"], ["var", "me_covenant_words", "<", 3]],
+          "once": true,
+          "say": "Three words, cut apart on purpose so no one hand could carry the whole of it: one from what the divers bring up, one from the saint's own shrine, one from the warden's old song. Find all three, and speak them here.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "about_charges",
+          "label": "what the charges would do",
+          "if": [["flag", "me_hollow_grievance"], ["has", "me_dam_charges"]],
+          "once": true,
+          "say": "Fire finishes faster than four hundred years of water ever did. It also finishes it wrong. You'd take a cracked stone instead of a whole one, and us with it. Your choice, not mine to make for you.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_me_ask_read",
+          "label": "ask if the covenant reached Marrowgate",
+          "if": [["flag", "me_hollow_bargained"], ["flag", "sv_me_back"], ["!flag", "sv_me_after_done"]],
+          "once": true,
+          "say": "You swore it before this table. I have not lain back down since, because a sworn thing isn't kept until it's kept. Was it read before the throne, or wasn't it?",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_me_kept",
+          "label": "tell her it was read before the throne",
+          "if": [["flag", "said_me_maren_sv_me_ask_read"], ["!flag", "sv_me_after_done"], ["flag", "me_covenant_read"]],
+          "once": true,
+          "say": "Maren is quiet long enough that the water itself seems to wait with her. \"Then it's kept,\" she says at last, and finally, gladly, lies back down into the black water and does not rise again.",
+          "fx": [
+            ["set", "sv_me_bargained_kept"],
+            ["set", "sv_me_after_done"],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_vell", 1],
+            ["score", 4],
+            ["xp", 3],
+            ["npcgo", "me_maren", null]
+          ]
+        },
+        {
+          "id": "sv_me_lapsed",
+          "label": "admit it hasn't been read, or won't be",
+          "if": [["flag", "said_me_maren_sv_me_ask_read"], ["!flag", "sv_me_after_done"], ["!flag", "me_covenant_read"]],
+          "once": true,
+          "say": "\"Then the covenant lied for you, once,\" she says, \"and I will stand this water a while longer, same as before.\" She does not accuse you further than that. She doesn't need to.",
+          "fx": [
+            ["set", "sv_me_bargained_lapsed"],
+            ["set", "sv_me_after_done"],
+            ["addvar", "rep_church", -1],
+            ["addvar", "appr_vell", -1],
+            ["xp", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "step back from the water",
+          "say": "Go carefully on the causeway. The stone remembers where it's slick, even if you don't.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "quests": {
+    "me_q_words": {
+      "name": "The Covenant's Three Words",
+      "start": [["flag", "me_hollow_grievance"]],
+      "done": [["var", "me_covenant_words", ">=", 3]],
+      "stages": [
+        {
+          "if": [["flag", "me_word_divers"], ["flag", "me_word_saint"], ["!flag", "me_word_song"]],
+          "text": "The divers' word and the shrine's word are yours. The last is Yarrow's old song, at the lantern-tower."
+        },
+        {
+          "if": [["flag", "me_word_divers"], ["flag", "me_word_song"], ["!flag", "me_word_saint"]],
+          "text": "The divers' word and the warden's song are yours. The last waits at the shrine in the eel-priest's chapel."
+        },
+        {
+          "if": [["flag", "me_word_saint"], ["flag", "me_word_song"], ["!flag", "me_word_divers"]],
+          "text": "The shrine's word and the warden's song are yours. The last is Sael's, at the divers' platform."
+        },
+        {
+          "if": [["flag", "me_word_divers"], ["!flag", "me_word_saint"], ["!flag", "me_word_song"]],
+          "text": "The divers' word is yours. Two remain: the shrine at the chapel, and Yarrow's song at the tower."
+        },
+        {
+          "if": [["flag", "me_word_saint"], ["!flag", "me_word_divers"], ["!flag", "me_word_song"]],
+          "text": "The shrine's word is yours. Two remain: Sael's at the divers' platform, and Yarrow's song at the tower."
+        },
+        {
+          "if": [["flag", "me_word_song"], ["!flag", "me_word_divers"], ["!flag", "me_word_saint"]],
+          "text": "The warden's song is yours. Two remain: Sael's at the divers' platform, and the shrine at the chapel."
+        },
+        {
+          "if": [],
+          "text": "The covenant needs three words: the divers' stones, the saint's shrine, and the lantern-warden's old song."
+        }
+      ]
+    },
+    "me_q_hollow": {
+      "name": "The Drowned Hall",
+      "start": [["flag", "me_hollow_found"]],
+      "done": [["flag", "me_hollow_done"]],
+      "stages": [
+        {
+          "if": [["has", "me_dam_charges"], ["flag", "me_hollow_grievance"]],
+          "text": "You hold Ironbound charges. Break them over the covenant table to burn the Hall, if that's an answer you'll live with."
+        },
+        {
+          "if": [["var", "me_covenant_words", ">=", 3], ["flag", "me_hollow_grievance"]],
+          "text": "The three words are whole. Speak the covenant over the stone table in the covenant chamber to rest the Hall outright."
+        },
+        {
+          "if": [["flag", "me_hollow_grievance"]],
+          "text": "Rest it (three words spoken), bargain it (an oath to Marrowgate), or burn it — all at the stone table."
+        },
+        {
+          "if": [["flag", "me_hollow_found"]],
+          "text": "The Hall's dead keep the flooded nave. Hear Maren out before you decide anything at the stone table."
+        },
+        {
+          "if": [],
+          "text": "A drowned causeway breaks the surface north of Lantern Holm at low water. Something waits at the end of it."
+        }
+      ]
+    },
+    "me_q_after": {
+      "name": "The Meres, After",
+      "start": [["flag", "sv_me_back"]],
+      "done": [["flag", "sv_me_after_done"]],
+      "stages": [
+        {
+          "if": [["flag", "me_hollow_rested"]],
+          "text": "The Hall rests. Yarrow, at the lantern-tower, wants to know what becomes of the covenant stone now."
+        },
+        {
+          "if": [["flag", "me_hollow_bargained"]],
+          "text": "Maren still waits in the covenant chamber. She wants to know whether the covenant was read at Marrowgate."
+        },
+        {
+          "if": [["flag", "me_hollow_burned"]],
+          "text": "The mere is thinning. Someone at Lantern Holm will decide what the drained ground becomes."
+        },
+        { "if": [], "text": "Lantern Holm settles back into itself, whatever the Drowned Hall's fate cost it." }
+      ]
+    }
+  },
+  "statusTracks": [
+    {
+      "var": "me_covenant_words",
+      "label": "The Covenant's Three Words",
+      "max": 3,
+      "remaining": [
+        { "flag": "me_word_divers", "label": "the divers' stones" },
+        { "flag": "me_word_saint", "label": "the saint's shrine" },
+        { "flag": "me_word_song", "label": "the lantern-warden's song" }
+      ],
+      "if": [["flag", "me_hollow_grievance"]]
+    }
+  ],
+  "epilogue": [
+    {
+      "if": [["flag", "me_hollow_rested"]],
+      "text": "The Drowned Hall rests at last, its covenant carried whole into daylight after four hundred years underwater.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "me_hollow_bargained"]],
+      "text": "The Drowned Hall keeps its dead a while longer, paid in a sworn oath instead of a finished rite.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "me_hollow_burned"]],
+      "text": "Ironbound charges cracked the old dams in a night. The Drowned Hall stands bare to the sky, and to the crows.",
+      "weight": 2
+    },
+    {
+      "if": [["!flag", "me_hollow_done"], ["flag", "me_entered"]],
+      "text": "The Drowned Hall still waits under the Meres, its causeway breaking the surface only at low water."
+    },
+    {
+      "if": [["flag", "me_dams_crown"]],
+      "text": "The mere-dams stand repaired. The Regent's drowned fields drink deep again, whoever they used to belong to."
+    },
+    {
+      "if": [["flag", "me_dams_folk"]],
+      "text": "The old dams stand as they always have. Lantern Holm keeps its own water, and its own say in it."
+    },
+    {
+      "if": [["flag", "me_dams_blown"]],
+      "text": "The old dams are rubble now. The mere is thinning field by field, and nobody has moved to stop it."
+    },
+    {
+      "if": [["flag", "sv_me_bargained_kept"]],
+      "text": "Word came back from Marrowgate: the covenant was read before the throne, as sworn. Maren finally lay down."
+    },
+    {
+      "if": [["flag", "sv_me_bargained_lapsed"]],
+      "text": "The covenant was never read at Marrowgate. Maren keeps the flooded nave still, and is not surprised by it."
+    },
+    {
+      "if": [["flag", "sv_me_rested_carried"]],
+      "text": "The covenant stone left the Meres in a stranger's pack, carried on wherever the roads led next."
+    },
+    {
+      "if": [["flag", "sv_me_rested_kept_holm"]],
+      "text": "The covenant stone stays at Lantern Holm's lantern-tower now, under Yarrow's own watch."
+    },
+    {
+      "if": [["flag", "sv_me_burned_claimed"]],
+      "text": "The drained mere-bed is Crown ground now, staked and counted like it was never anyone's grief."
+    },
+    {
+      "if": [["flag", "sv_me_burned_folk"]],
+      "text": "The drained mere-bed stayed the Holm's own, unstaked and unfarmed a while yet."
+    },
+    {
+      "if": [["flag", "me_saint_church"]],
+      "text": "The eel-priest's shrine stands proof enough at Lantern Holm: Ashwyn was born on these stilts, whatever Coldpass says."
+    }
+  ]
+}

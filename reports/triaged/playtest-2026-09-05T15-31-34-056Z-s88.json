@@ -1,0 +1,53 @@
+{
+  "verdict": "lost",
+  "fun": 4,
+  "clarity": 4,
+  "turns": 443,
+  "receipt": "reach.88.443.353.hollow_reach.79b8582a",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "One-time-use key items keep their original 'how to use' flavor text in the carry list forever after being spent, reading as if the action is still pending or repeatable. Examples: 'king's seal (read the scrap wrapped around it)' stayed listed with that hint after I'd already read it at the Elder's coffer; 'the true founding record (read it aloud at the oath-stone out on the moor)' stayed listed with that exact hint after I'd already read it aloud there; 'coil of tarred rope (good for hauling something heavy up out of black water)' and 'the saint's bell (ring it where the grief is loudest)' likewise persisted post-use.",
+      "where": "inventory/status screen, throughout"
+    },
+    {
+      "sev": "P1",
+      "what": "At the Hollow Throne (the game's actual climax) the four 'real' endings are gated behind requirements ('three holds rested', 'Ironbound oil', 'the Vale's crown', or Watch/Church/Companies trust plus the Founding Ledger) that are never disclosed until you are standing in the room itself, hundreds of turns and half a continent away from where they'd need to be arranged. Worse, the Act 1 resolution the game itself scores highest and has every companion approve of ('give back the crown and speak the verses') permanently consumes the exact 'Vale's crown' item that the 'sit in it' ending later requires, with zero warning at the time that it would matter again at the very end of the game.",
+      "where": "The Hollow Throne, Marrowgate"
+    },
+    {
+      "sev": "P2",
+      "what": "The 'Old Court Verses' progress tracker (ring-ditch / king's causeway / mere-stone) appears in the status screen from turn 1 onward but never once appears under 'Quests', and only one NPC (a mere-fisher at Barrowmere) even gestures at it in passing ('a stone out there worth talking to'). Its purpose and payoff are never made discoverable through normal play.",
+      "where": "status screen (world/quest tracking)"
+    },
+    {
+      "sev": "P2",
+      "what": "'travel to a known place' is inconsistent: at some hubs it lists every specific room visited in the region (e.g. 10 named rooms from the Oath-Ground), at others it collapses to broad region names only ('toward Wardmoor', 'toward Hollowbrook') even after visiting many specific rooms there, making fast-travel unpredictable. Separately, opening that submenu and then backing out with 'stay here' still consumes a full game turn, same as an actual move.",
+      "where": "travel menu, various hubs"
+    }
+  ],
+  "confusions": [
+    "Standing at the Hollow Throne, 'weigh the doors of the seat' was the only way to learn what each of the four real endings actually required — and by then it was already too late in the run to qualify for any of them. Nothing earlier (journal entry, NPC dialogue) flagged that these specific things would be needed.",
+    "Abbot Corvin warns at Coldpass that the Regent's writ 'costs you something you won't see the bill for', but I crossed via the Keepers' pilgrim stair instead, so I never learned what that cost actually is — left unclear whether it's a real mechanic or a red herring.",
+    "At the Barrow Field, flavor text points at an ivy-choked stone ('a hunter of this hill would know how it moves') with no menu action ever offered for it — reads as content gated behind a class/companion (a hunter) I didn't have, with no alternate way in.",
+    "The two verse-location lists shown in the very first status check ('Old Court Verses' vs 'Verses') look like duplicates of the same content at a glance; only one of them ever resolves, and it's never explained why the other exists."
+  ],
+  "suggestions": [
+    "Surface the Hollow Throne's four ending requirements much earlier (e.g. in the journal note when 'The Hollow Throne' quest first appears, or via hints scattered across the six holds) so a player can plan the whole run instead of discovering the gates only after it's too late.",
+    "Warn the player explicitly when a resolution choice will consume an item another late-game ending needs (or better, don't let the Vale of Ash's best-scoring resolution quietly foreclose one of Marrowgate's four endings).",
+    "Strip a consumed key item's 'how to use' hint (or move it out of the carry list) once it's been spent, so the inventory reflects what's actually still actionable.",
+    "Give 'Old Court Verses' either a real Quests-list entry once discovered or drop it from the status screen if it isn't meant to be pursued this early — right now it's tracked but untethered to anything actionable.",
+    "Make 'travel to a known place' consistently list specific rooms rather than sometimes collapsing to region names, and don't charge a turn just for opening and canceling that menu."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T15-31-34-056Z",
+  "seed": 88,
+  "build": {
+    "rev": "57b31ce",
+    "world": "c12aee1c"
+  },
+  "cost_usd": null,
+  "verified": true
+}

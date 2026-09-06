@@ -1,0 +1,1255 @@
+{
+  "templates": {
+    "barrow": {
+      "entrance": "$mouth",
+      "vars": ["NAME", "WIGHT", "SIGN", "LOOT"],
+      "rooms": {
+        "$mouth": {
+          "name": "{{NAME}} — mouth",
+          "desc": "Turf has grown thick over the mound, but the doorstone stands open. Cold air breathes out of the dark, carrying old iron and older dust. {{SIGN}}",
+          "brief": "The barrow-mouth, open to the dark.",
+          "exits": { "in": { "to": "$passage" } },
+          "actions": [
+            {
+              "id": "$lintel",
+              "label": "read the lintel's old tongue",
+              "free": true,
+              "if": [["class", "scholar"], ["!flag", "$lintel_read"]],
+              "fx": [
+                ["set", "$lintel_read"],
+                ["addvar", "or_scholar_read", 1],
+                ["xp", 1],
+                ["say", "The lintel is cut in the old tongue, worn but whole: the name the mound was raised over, and the first line of the verse the stone inside will want. You have it before you are through the door."]
+              ]
+            }
+          ]
+        },
+        "$passage": {
+          "name": "{{NAME}} — passage",
+          "desc": "A low passage, close enough to touch both walls at once. A beam props the roof, set there long before you, and it has held.",
+          "brief": "The low passage, propped by an old beam.",
+          "exits": { "out": { "to": "$mouth" }, "in": { "to": "$chamber" } }
+        },
+        "$chamber": {
+          "name": "{{NAME}} — chamber",
+          "desc": "The burial chamber. A verse is cut into the stone at its center, worn thin by grief, and {{WIGHT}} crouches before it, still as the stone itself.",
+          "brief": "The chamber: the verse-stone, and {{WIGHT}} before it.",
+          "exits": {
+            "out": { "to": "$passage" },
+            "in": {
+              "to": "$rest",
+              "if": [["flag", "$done"]],
+              "lockedMsg": "{{WIGHT}} bars the way, unmoving but not gone.",
+              "hint": "deal with {{WIGHT}} first"
+            }
+          },
+          "variants": [
+            {
+              "if": [["flag", "$done"]],
+              "desc": "The burial chamber. The verse-stone stands bare now, and the dust where {{WIGHT}} kept its watch has begun to settle.",
+              "brief": "The chamber, quiet now."
+            }
+          ],
+          "actions": [
+            {
+              "id": "$read",
+              "label": "read the verse-stone (wits)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["slay", "$wight"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_keepers", 1],
+                    ["say", "The verse gives itself up, line by line. {{WIGHT}} does not stir — these words were never meant for it."]
+                  ],
+                  [["say", "The cuts blur, worn past easy reading. {{WIGHT}} has not moved."]]
+                ]
+              ]
+            },
+            {
+              "id": "$oath",
+              "label": "swear the rest-oath (will)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["slay", "$wight"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_keepers", 1],
+                    ["say", "You swear the old rest-oath over the stone, word for word as it's cut. {{WIGHT}} settles like a held breath let out, and does not rise again."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["!flag", "$oath_missed"]],
+                      [
+                        ["set", "$oath_missed"],
+                        ["addvar", "rep_keepers", -1],
+                        ["say", "The oath comes out wrong, a stranger's words in a stranger's mouth. {{WIGHT}} has not moved, and the old covenant marks a rest-oath tried and lost here."]
+                      ],
+                      [["say", "The oath comes out wrong, a stranger's words in a stranger's mouth. {{WIGHT}} has not moved."]]
+                    ]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "$verse_after",
+              "label": "read the verse-stone over the still dead",
+              "if": [["npcDead", "$wight"]],
+              "once": true,
+              "fx": [
+                ["xp", 2],
+                ["say", "With nothing left to keep it, the verse-stone reads plain: a rest-verse for whoever lies here, older than the doors. You say it anyway, for what it is worth to the dead."]
+              ]
+            },
+            {
+              "id": "$verse_lintel",
+              "label": "speak the verse from the lintel",
+              "if": [["class", "scholar"], ["flag", "$lintel_read"], ["!flag", "$done"]],
+              "fx": [
+                ["set", "$done"],
+                ["slay", "$wight"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_keepers", 1],
+                ["say", "You begin where the lintel left off, and the stone's own lines follow as if they had been waiting for a reader. {{WIGHT}} eases down against the stone, and does not rise."]
+              ]
+            }
+          ]
+        },
+        "$rest": {
+          "name": "{{NAME}} — rest",
+          "desc": "A narrow alcove past the chamber, walled in dry stone. Whoever was laid here went with what mattered to them, not what was owed to a king.",
+          "brief": "The alcove past the chamber.",
+          "exits": { "out": { "to": "$chamber" } },
+          "actions": [
+            {
+              "id": "$take",
+              "label": "search the alcove",
+              "once": true,
+              "if": [["flag", "$done"]],
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 5],
+                ["say", "Tucked into a fold of cloth gone to dust: {{LOOT}}, worn smooth by a thumb that isn't yours."]
+              ]
+            }
+          ]
+        }
+      },
+      "items": { "$loot": { "name": "{{LOOT}}", "hint": "a grave-good; nothing more is owed for it", "loc": "nowhere" } },
+      "npcs": {
+        "$wight": {
+          "name": "{{WIGHT}}",
+          "room": "$chamber",
+          "hostile": true,
+          "hp": 7,
+          "atk": 2,
+          "df": 9,
+          "desc": "Old leather gone to dust over bone, one hand still flat on the stone.",
+          "onDeath": [
+            [
+              "if",
+              [["!flag", "$done"]],
+              [
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_keepers", 1],
+                ["say", "{{WIGHT}} comes apart into rag and old bone. The verse-stone stands clear behind it, its grief finally witnessed."]
+              ],
+              [["say", "{{WIGHT}} was already still, whatever kept it standing already settled."]]
+            ]
+          ]
+        }
+      }
+    },
+    "cave": {
+      "entrance": "$mouth",
+      "vars": ["NAME", "BEAST", "SIGN", "LOOT"],
+      "rooms": {
+        "$mouth": {
+          "name": "{{NAME}} — mouth",
+          "desc": "Scree fans out from a crack in the rock, hardly wide enough to call a cave. Fresh scat marks the threshold — something uses this, and often. {{SIGN}}",
+          "brief": "A narrow crack in the rock, scored with scat.",
+          "exits": { "in": { "to": "$throat" } }
+        },
+        "$throat": {
+          "name": "{{NAME}} — throat",
+          "desc": "The crack narrows, then opens. Claw-marks score both walls at shoulder height, deep enough to catch a fingernail. Ahead, the dark breathes out warm.",
+          "brief": "The narrow throat, clawed at shoulder height.",
+          "exits": { "out": { "to": "$mouth" }, "in": { "to": "$den" } },
+          "actions": [
+            {
+              "id": "$spoor",
+              "label": "read the spoor",
+              "free": true,
+              "if": [["class", "scout"], ["!flag", "$spoor_read"]],
+              "fx": [
+                ["set", "$spoor_read"],
+                ["addvar", "or_scout_marks", 1],
+                ["xp", 1],
+                ["say", "Claw-marks at one height, a drag-line in the dust, the carcass hauled in from the left: {{BEAST}} keeps to the right of its den and comes at sound, not sight. You know where to put your feet."]
+              ]
+            }
+          ]
+        },
+        "$den": {
+          "name": "{{NAME}} — den",
+          "desc": "A wide hollow floored in old bone. {{BEAST}} is already on its feet, testing the air — it has heard you, and it will not wait long.",
+          "brief": "The den, and {{BEAST}} already testing the air.",
+          "exits": { "out": { "to": "$throat" } },
+          "variants": [
+            {
+              "if": [["flag", "$done"]],
+              "desc": "A wide hollow floored in old bone, {{BEAST}} gone from it now. The air has already begun to lose its warmth.",
+              "brief": "The den, empty now."
+            }
+          ],
+          "actions": [
+            {
+              "id": "$sneak",
+              "label": "slip past it for the loot (grace)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$beast", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "You go still, and it loses you against the rock — the scrape of claws fades deeper in, hunting something that isn't there."]
+                  ],
+                  [["say", "It's already turned. Too late to be quiet now."]]
+                ]
+              ]
+            },
+            {
+              "id": "$search",
+              "label": "search the bone-litter",
+              "once": true,
+              "if": [["flag", "$done"]],
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 4],
+                ["say", "Among the bone-litter: {{LOOT}}, its owner long past needing it."]
+              ]
+            },
+            {
+              "id": "$sneak_spoor",
+              "label": "slip past on the spoor's line",
+              "if": [["class", "scout"], ["flag", "$spoor_read"], ["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  6,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$beast", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "You go where the spoor says it never goes, and it loses you against the rock — the scrape of claws fades deeper in, hunting nothing."]
+                  ],
+                  [["say", "It's already turned. Too late to be quiet now."]]
+                ]
+              ]
+            }
+          ]
+        }
+      },
+      "items": {
+        "$carcass": {
+          "name": "a half-eaten carcass",
+          "loc": "$throat",
+          "takeable": true,
+          "hint": "worth more to something hungry than to you",
+          "use": [
+            {
+              "target": "$beast",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                ["set", "$done"],
+                ["npcgo", "$beast", null],
+                ["score", 6],
+                ["xp", 5],
+                ["say", "You toss it the carcass. {{BEAST}} is on it before it hits the ground, and doesn't look up again as you go."]
+              ]
+            }
+          ]
+        },
+        "$loot": { "name": "{{LOOT}}", "hint": "past its owner's needing; nothing is owed on it", "loc": "nowhere" }
+      },
+      "npcs": {
+        "$beast": {
+          "name": "{{BEAST}}",
+          "room": "$den",
+          "aggressive": true,
+          "hp": 7,
+          "atk": 2,
+          "df": 9,
+          "desc": "Lean and quick, more hunger than shape in this light.",
+          "onDeath": [
+            [
+              "if",
+              [["!flag", "$done"]],
+              [
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["say", "{{BEAST}} goes still. Whatever den-right it was guarding passes to you, for what that's worth to a dead thing."]
+              ],
+              [["say", "{{BEAST}} was already gone from here."]]
+            ]
+          ]
+        }
+      }
+    },
+    "tower": {
+      "entrance": "$base",
+      "vars": ["NAME", "WATCHER", "VIEW", "SIGN", "LOOT"],
+      "rooms": {
+        "$base": {
+          "name": "{{NAME}} — base",
+          "desc": "The tower's foot, half-collapsed, its old door long gone to rot. Steps spiral up into the dark, worn to a shine at their centers by feet none of them remember. {{SIGN}}",
+          "brief": "The tower's foot, steps spiralling up.",
+          "exits": { "up": { "to": "$stair" } }
+        },
+        "$stair": {
+          "name": "{{NAME}} — stair",
+          "desc": "The stair climbs tight and close. Partway up, {{WATCHER}} stands across the steps, and asks its question before you've caught the breath to answer.",
+          "brief": "The stair, and {{WATCHER}} blocking it.",
+          "exits": {
+            "down": { "to": "$base" },
+            "up": {
+              "to": "$top",
+              "if": [["flag", "$done"]],
+              "lockedMsg": "{{WATCHER}} will not let you by.",
+              "hint": "answer, bluff, or force past {{WATCHER}}"
+            }
+          },
+          "variants": [
+            {
+              "if": [["flag", "$done"]],
+              "desc": "The stair climbs tight and close, empty now but for wind finding its way through the cracks.",
+              "brief": "The stair, empty now."
+            }
+          ],
+          "actions": [
+            {
+              "id": "$force_past",
+              "label": "shoulder past it (might)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$watcher", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_watch", 1],
+                    ["say", "You put a shoulder into the gap and climb through before it can answer for itself. {{WATCHER}} does not follow."]
+                  ],
+                  [["say", "It gives no ground. You're back on the steps, {{WATCHER}} unmoved."]]
+                ]
+              ]
+            },
+            {
+              "id": "$climb_past",
+              "label": "climb past it outside (grace)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$watcher", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_watch", 1],
+                    ["say", "You find a handhold past the rail and swing around it entirely. {{WATCHER}} turns to follow the sound, too late."]
+                  ],
+                  [["say", "The stone gives you nothing to hold. You're back on the steps, {{WATCHER}} still there."]]
+                ]
+              ]
+            }
+          ]
+        },
+        "$top": {
+          "name": "{{NAME}} — top",
+          "desc": "The tower's top, roof long gone to weather. From here {{VIEW}}. The wind up here doesn't pause for anyone, least of all you.",
+          "brief": "The tower's top, wind and a long view.",
+          "exits": { "down": { "to": "$stair" } },
+          "actions": [
+            {
+              "id": "$scan",
+              "label": "scan the horizon",
+              "once": true,
+              "if": [["flag", "$done"]],
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 5],
+                ["say", "Wedged in the parapet stones, {{LOOT}} — worth the climb, whatever it once cost to carry up here."]
+              ]
+            }
+          ]
+        }
+      },
+      "items": { "$loot": { "name": "{{LOOT}}", "hint": "worth the climb; nothing more is owed on it", "loc": "nowhere" } },
+      "npcs": {
+        "$watcher": {
+          "name": "{{WATCHER}}",
+          "room": "$stair",
+          "desc": "A shape more suggested than seen, holding the step like it still has orders to.",
+          "topics": [
+            {
+              "id": "$answer",
+              "label": "answer its question (wits)",
+              "if": [["!flag", "$done"]],
+              "say": "What is it you carry up my stair?",
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$watcher", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_watch", 1],
+                    ["say", "Your answer lands true, and {{WATCHER}} steps aside, its question finally spent."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["!flag", "$watcher_missed"]],
+                      [
+                        ["set", "$watcher_missed"],
+                        ["addvar", "rep_watch", -1],
+                        ["say", "{{WATCHER}} is not satisfied, and does not move — and something in the old watch marks a stranger's answer tried, and refused, here."]
+                      ],
+                      [["say", "{{WATCHER}} is not satisfied, and does not move."]]
+                    ]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "$bluff",
+              "label": "bluff an answer (will)",
+              "if": [["!flag", "$done"]],
+              "say": "What is it you carry up my stair?",
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$watcher", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_watch", 1],
+                    ["say", "You answer like you've always known it. {{WATCHER}} can't tell the lie from the truth, and lets you by."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["!flag", "$watcher_missed"]],
+                      [
+                        ["set", "$watcher_missed"],
+                        ["addvar", "rep_watch", -1],
+                        ["say", "{{WATCHER}} sees through it plainly, and does not move — the old watch remembers a stranger's bluff, and is not fooled twice."]
+                      ],
+                      [["say", "{{WATCHER}} sees through it plainly, and does not move."]]
+                    ]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "$rank",
+              "label": "answer as a soldier of the old watch",
+              "if": [["class", "warden"], ["!flag", "$done"]],
+              "say": "What is it you carry up my stair?",
+              "fx": [
+                ["set", "$done"],
+                ["npcgo", "$watcher", null],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_watch", 1],
+                ["addvar", "or_warden_word", 1],
+                ["say", "You give it the old watch's answer, the one every recruit learns and most forget: your name, your post, and the watch you stand. {{WATCHER}} straightens, and steps aside for one of its own."]
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "mine": {
+      "entrance": "$adit",
+      "vars": ["NAME", "FOREMAN", "SIGN", "LOOT"],
+      "rooms": {
+        "$adit": {
+          "name": "{{NAME}} — adit",
+          "desc": "The mine's mouth, timbered and sagging, propped by hands long gone. Somewhere below, water drips onto stone in a rhythm nobody set right. {{SIGN}}",
+          "brief": "The mine-mouth, its timbers sagging.",
+          "exits": { "in": { "to": "$gallery" } }
+        },
+        "$gallery": {
+          "name": "{{NAME}} — gallery",
+          "desc": "A cut gallery, roof-props leaning at angles none of them were cut for. The gray pools in the low spots like standing water, and doesn't stir as you pass.",
+          "brief": "The gallery, its props leaning wrong.",
+          "exits": { "out": { "to": "$adit" }, "in": { "to": "$face" } },
+          "actions": [
+            {
+              "id": "$shore",
+              "label": "shore up the props (might)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$foreman", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_iron", 1],
+                    ["say", "You wedge the new prop home and the roof settles, groaning once, then quiet. This gallery will hold, whatever else is wrong down here."]
+                  ],
+                  [["say", "The prop slips before it bites. You're no closer to trusting this roof."]]
+                ]
+              ]
+            }
+          ]
+        },
+        "$face": {
+          "name": "{{NAME}} — face",
+          "desc": "The working face, pick-marks frozen mid-swing in the last vein anyone cut. A ledger lies open on an upturned crate, its ink long since run.",
+          "brief": "The working face, a ledger left open.",
+          "exits": { "out": { "to": "$gallery" }, "in": { "to": "$deep" } },
+          "actions": [
+            {
+              "id": "$ledger",
+              "label": "puzzle out the ledger (wits)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$foreman", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_iron", 1],
+                    ["say", "The tallies make an ugly sense once followed: corners cut, timber skipped, signed off anyway. Worth knowing, whatever else waits down here."]
+                  ],
+                  [["say", "The figures swim, half of them water-stained past reading."]]
+                ]
+              ]
+            }
+          ]
+        },
+        "$deep": {
+          "name": "{{NAME}} — deep",
+          "desc": "The gray pools thicker here than anywhere else in the mine, ankle-deep and still. {{FOREMAN}} stands in the middle of it, waiting on an answer nobody's given him.",
+          "brief": "The deep, and {{FOREMAN}} waiting in the gray.",
+          "exits": { "out": { "to": "$face" } },
+          "variants": [
+            {
+              "if": [["flag", "$done"]],
+              "desc": "The gray has thinned here, though it hasn't left. {{FOREMAN}} is gone from the deep, whatever he waited for finally said.",
+              "brief": "The deep, quieter now."
+            }
+          ],
+          "actions": [
+            {
+              "id": "$search",
+              "label": "search the flooded cut",
+              "once": true,
+              "if": [["flag", "$done"]],
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 5],
+                ["say", "Where the water's shallowest: {{LOOT}}, small mercy, but yours now."]
+              ]
+            }
+          ]
+        }
+      },
+      "items": {
+        "$loot": { "name": "{{LOOT}}", "hint": "small mercy, and yours now; nothing is owed on it", "loc": "nowhere" }
+      },
+      "npcs": {
+        "$foreman": {
+          "name": "{{FOREMAN}}",
+          "room": "$deep",
+          "desc": "Chalk-dust pale, turning a dead lamp over and over in his hands.",
+          "topics": [
+            {
+              "id": "$grief",
+              "label": "why does the gray pool here",
+              "once": true,
+              "say": "Grief finds the low places, same as water. Mine's got plenty of both, and no drain for either.",
+              "fx": [["xp", 1]]
+            },
+            {
+              "id": "$promise",
+              "label": "promise to finish it (will)",
+              "if": [["!flag", "$done"]],
+              "say": "Say it plain, then. Say you'll see it done.",
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$foreman", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_iron", 1],
+                    ["say", "You give him the words he's waited on. Something in {{FOREMAN}} finally settles, the lamp gone still in his hands."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["!flag", "$promise_missed"]],
+                      [
+                        ["set", "$promise_missed"],
+                        ["addvar", "rep_iron", -1],
+                        ["say", "The words come out thin. {{FOREMAN}} looks through you like you hadn't spoken — and the company hears a promise made, and broken, here."]
+                      ],
+                      [["say", "The words come out thin. {{FOREMAN}} looks through you like you hadn't spoken at all."]]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "camp": {
+      "entrance": "$palisade",
+      "vars": ["NAME", "CAPTAIN", "SIGN", "LOOT"],
+      "rooms": {
+        "$palisade": {
+          "name": "{{NAME}} — palisade",
+          "desc": "A ring of sharpened stakes and old rope, more scarecrow than wall, but it's kept someone out before. A watch-fire glows just inside. {{SIGN}}",
+          "brief": "A stake-and-rope palisade, a watch-fire glowing within.",
+          "exits": { "in": { "to": "$fire" } },
+          "actions": [
+            {
+              "id": "$rounds",
+              "label": "mark the sentries' rounds",
+              "free": true,
+              "if": [["class", "scout"], ["!flag", "$rounds_marked"]],
+              "fx": [
+                ["set", "$rounds_marked"],
+                ["addvar", "or_scout_marks", 1],
+                ["xp", 1],
+                ["say", "Two on the palisade, one asleep on his feet, and a gap in the stakes on the fire's blind side nobody has mended. You count the turn of the watch, and have it."]
+              ]
+            }
+          ]
+        },
+        "$fire": {
+          "name": "{{NAME}} — fire",
+          "desc": "Bedrolls and a cookpot ring the fire. {{CAPTAIN}} stands to meet you before anyone else moves, hand loose on a belt-knife, already naming what {{NAME}} charges to pass.",
+          "brief": "The fire-ring, and {{CAPTAIN}} naming a price.",
+          "exits": {
+            "out": { "to": "$palisade" },
+            "in": {
+              "to": "$tent",
+              "if": [["flag", "$done"]],
+              "lockedMsg": "{{CAPTAIN}} isn't done with you yet.",
+              "hint": "pay, fight, talk, or slip past {{CAPTAIN}} first"
+            }
+          },
+          "variants": [
+            {
+              "if": [["flag", "$done"]],
+              "desc": "Bedrolls and a cookpot ring the fire, banked low for the night. {{CAPTAIN}} waves you through without looking up this time.",
+              "brief": "The fire-ring, banked low now."
+            }
+          ],
+          "actions": [
+            {
+              "id": "$pay",
+              "label": "pay the toll (gold)",
+              "if": [["!flag", "$done"], ["var", "gold", ">=", 6]],
+              "fx": [
+                ["addvar", "gold", -6],
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_free", 1],
+                ["say", "{{CAPTAIN}} weighs the coin in one hand, then waves you toward the fire like you were always welcome there."]
+              ]
+            },
+            {
+              "id": "$slip",
+              "label": "slip through unseen (grace)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_free", 1],
+                    ["say", "You wait for the watch to turn and thread the gap between bedrolls before anyone thinks to look twice."]
+                  ],
+                  [["say", "Someone looks up right as you move. {{CAPTAIN}} hasn't missed it."]]
+                ]
+              ]
+            },
+            {
+              "id": "$slip_rounds",
+              "label": "slip through on the watch's blind turn",
+              "if": [["class", "scout"], ["flag", "$rounds_marked"], ["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  7,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_free", 1],
+                    ["say", "You wait for the turn you counted and are through the gap in the stakes before anyone's head comes round."]
+                  ],
+                  [["say", "Someone looks up right as you move. {{CAPTAIN}} hasn't missed it."]]
+                ]
+              ]
+            }
+          ]
+        },
+        "$tent": {
+          "name": "{{NAME}} — tent",
+          "desc": "{{CAPTAIN}}'s own tent, patched canvas over a strongbox that's seen rougher roads than this one. Whatever the company hasn't spent yet is in here.",
+          "brief": "{{CAPTAIN}}'s tent, a strongbox inside.",
+          "exits": { "out": { "to": "$fire" } },
+          "actions": [
+            {
+              "id": "$take",
+              "label": "take a share from the box",
+              "once": true,
+              "if": [["flag", "$done"]],
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 6],
+                ["say", "A share left plain on top, like {{CAPTAIN}} expected someone to come looking. You take it and nothing more."]
+              ]
+            }
+          ]
+        }
+      },
+      "items": {
+        "$loot": { "name": "{{LOOT}}", "hint": "a share of the take; nothing more is owed on it", "loc": "nowhere" }
+      },
+      "npcs": {
+        "$captain": {
+          "name": "{{CAPTAIN}}",
+          "room": "$fire",
+          "hostile": true,
+          "hp": 8,
+          "atk": 2,
+          "df": 10,
+          "desc": "Watches you add up the way anyone who runs {{NAME}} learns to — quick, and without apology.",
+          "topics": [
+            {
+              "id": "$demand",
+              "label": "what's the toll",
+              "once": true,
+              "say": "Everyone pays something to use this road. Coin's simplest, if you've got it. Otherwise we'll find out what else you're carrying.",
+              "fx": [["xp", 1]]
+            },
+            {
+              "id": "$talk",
+              "label": "talk the toll down (will)",
+              "if": [["!flag", "$done"]],
+              "say": "Go on, then. Make your case.",
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_free", 1],
+                    ["say", "You make a case {{CAPTAIN}} can't quite argue with, and they wave you past, calling it fair enough."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["!flag", "$talk_missed"]],
+                      [
+                        ["set", "$talk_missed"],
+                        ["addvar", "rep_free", -1],
+                        ["say", "{{CAPTAIN}} hears you out, unmoved, and says as much — and the company remembers a stranger's plea that didn't land."]
+                      ],
+                      [["say", "{{CAPTAIN}} hears you out, unmoved, and says as much without much interest."]]
+                    ]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "$old_watch",
+              "label": "name your old regiment",
+              "if": [["class", "warden"], ["!flag", "$done"], ["!flag", "$regiment_named"]],
+              "say": "Go on. Everyone at this fire served somewhere, once.",
+              "fx": [
+                ["set", "$regiment_named"],
+                ["addvar", "or_warden_word", 1],
+                [
+                  "if",
+                  [["var", "rep_free", ">=", 1]],
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "{{CAPTAIN}} has taken Companies' coin beside watchmen before, and says so, and waves you to the fire. \"Soldiers don't charge soldiers. Not tonight.\""]
+                  ],
+                  [
+                    ["addvar", "rep_free", -1],
+                    ["say", "\"Old watch,\" {{CAPTAIN}} says, like something stepped in. \"Then you pay like the rest, and a little more for the coat.\" Nobody at the fire is smiling now, and the Companies will hear of it."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "$terms",
+              "label": "offer terms instead of coin",
+              "if": [["class", "envoy"], ["!flag", "$done"]],
+              "say": "Terms? Go on. Everyone's got terms.",
+              "fx": [
+                ["set", "$done"],
+                ["set", "$terms_owed"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_free", 1],
+                ["addvar", "or_envoy_words", 1],
+                ["say", "You offer what coin can't: a word in the right ear at Marrowgate, when the Companies next need one. {{CAPTAIN}} weighs it longer than gold, then nods. \"I'll hold you to that.\""]
+              ]
+            }
+          ],
+          "onDeath": [
+            [
+              "if",
+              [["!flag", "$done"]],
+              [
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_free", 1],
+                ["say", "{{CAPTAIN}} goes down still reaching for the knife. The rest of the camp doesn't move to avenge it — a toll's a toll, not a cause."]
+              ],
+              [["say", "{{CAPTAIN}} was already square with you."]]
+            ]
+          ]
+        }
+      }
+    },
+    "chapel": {
+      "entrance": "$porch",
+      "vars": ["NAME", "SAINT", "SIGN", "LOOT"],
+      "rooms": {
+        "$porch": {
+          "name": "{{NAME}} — porch",
+          "desc": "Rain has had its way with the porch roof, but the door beneath it still hangs true. Old wax has pooled and hardened on the sill, layer over layer. {{SIGN}}",
+          "brief": "The chapel porch, wax pooled on the sill.",
+          "exits": { "in": { "to": "$nave" } },
+          "actions": [
+            {
+              "id": "$sill",
+              "label": "read the sill's votive marks",
+              "free": true,
+              "if": [["class", "scholar"], ["!flag", "$saint_named"]],
+              "fx": [
+                ["set", "$saint_named"],
+                ["addvar", "or_scholar_read", 1],
+                ["xp", 1],
+                ["say", "Under the wax, scratched votive marks in the old tongue: the saint's name, and the vigil it was set to keep, which is the line a rite for it would have to end on. You have it by heart before the door."]
+              ]
+            }
+          ]
+        },
+        "$nave": {
+          "name": "{{NAME}} — nave",
+          "desc": "Pews gone to moss, and at the altar {{SAINT}} kneels still, unrested, keeping a vigil nobody relieved. It looks up at your step on the flagstones.",
+          "brief": "The nave, and {{SAINT}} still kneeling at the altar.",
+          "exits": {
+            "out": { "to": "$porch" },
+            "in": {
+              "to": "$crypt",
+              "if": [["flag", "$done"]],
+              "lockedMsg": "{{SAINT}} kneels across the crypt stair, and will not be stepped around.",
+              "hint": "rite, reading, or force past {{SAINT}} first"
+            }
+          },
+          "variants": [
+            {
+              "if": [["flag", "$done"]],
+              "desc": "Pews gone to moss. The altar stands empty now, and the flagstones hold a little less cold than they did.",
+              "brief": "The nave, the altar empty now."
+            }
+          ],
+          "actions": [
+            {
+              "id": "$rite",
+              "label": "speak the rite for it (will)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["slay", "$saint_shade"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_church", 1],
+                    ["say", "You speak the rite whole, start to finish, meaning enough of it that {{SAINT}} finally hears the end of its own vigil."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["!flag", "$rite_missed"]],
+                      [
+                        ["set", "$rite_missed"],
+                        ["addvar", "rep_church", -1],
+                        ["say", "The words come out hollow, half-remembered. {{SAINT}} does not stir — and the Church hears a rite tried here, and lost."]
+                      ],
+                      [["say", "The words come out hollow, half-remembered. {{SAINT}} does not stir."]]
+                    ]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "$read",
+              "label": "read the vigil-plaque (wits)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["slay", "$saint_shade"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_church", 1],
+                    ["say", "The plaque names the vigil's proper end, word for word. {{SAINT}} rises, and does not kneel again."]
+                  ],
+                  [["say", "The plaque's cut too shallow to read by feel alone, and you're guessing more than reading."]]
+                ]
+              ]
+            },
+            {
+              "id": "$rite_named",
+              "label": "end the vigil by its true name",
+              "if": [["class", "scholar"], ["flag", "$saint_named"], ["!flag", "$done"]],
+              "fx": [
+                ["set", "$done"],
+                ["slay", "$saint_shade"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_church", 1],
+                ["say", "You give the vigil its ending in the saint's own name, the line the sill kept for whoever could read it. {{SAINT}} hears it, rises, and does not kneel again."]
+              ]
+            }
+          ]
+        },
+        "$crypt": {
+          "name": "{{NAME}} — crypt",
+          "desc": "The crypt below, close-walled and dry, holds the congregation the nave forgot, and on the one dry shelf sits {{LOOT}}, waiting on someone to claim it.",
+          "brief": "The crypt, {{LOOT}} on its shelf.",
+          "exits": { "out": { "to": "$nave" } },
+          "actions": [
+            {
+              "id": "$rest_them",
+              "label": "lay them to rest",
+              "once": true,
+              "if": [["flag", "$done"], ["!flag", "$crypt_done"]],
+              "fx": [
+                ["set", "$crypt_done"],
+                ["set", "$crypt_laid"],
+                ["addvar", "crypts_laid", 1],
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "rep_church", 1],
+                ["say", "You say what's owed to the ones the nave forgot, plain and unhurried, and {{LOOT}} comes free after, like it was only waiting to be asked."]
+              ]
+            },
+            {
+              "id": "$theft",
+              "label": "take {{LOOT}} and go",
+              "once": true,
+              "if": [["flag", "$done"], ["!flag", "$crypt_done"]],
+              "fx": [
+                ["set", "$crypt_done"],
+                ["set", "$crypt_robbed"],
+                ["addvar", "crypts_robbed", 1],
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "rep_church", -1],
+                ["say", "You pry {{LOOT}} loose and pocket it. The congregation's rest is no better and no worse for your being quick about it."]
+              ]
+            }
+          ],
+          "variants": [
+            {
+              "if": [["flag", "$crypt_laid"]],
+              "desc": "The crypt lies quiet now, the congregation settled at last; the shelf that held {{LOOT}} stands bare.",
+              "brief": "The crypt, quiet, the shelf bare."
+            },
+            {
+              "if": [["flag", "$crypt_robbed"]],
+              "desc": "The crypt stands picked over, {{LOOT}} long gone from its shelf; the congregation's bones lie exactly as they were left.",
+              "brief": "The crypt, picked over, the dead untouched."
+            }
+          ]
+        }
+      },
+      "items": {
+        "$loot": { "name": "{{LOOT}}", "hint": "a keepsake now, however it came; nothing is owed on it", "loc": "nowhere" }
+      },
+      "npcs": {
+        "$saint_shade": {
+          "name": "{{SAINT}}",
+          "room": "$nave",
+          "hostile": true,
+          "hp": 6,
+          "atk": 1,
+          "df": 8,
+          "desc": "Robes gone to cobweb, hands still folded as if the prayer never ended.",
+          "onDeath": [
+            [
+              "if",
+              [["!flag", "$done"]],
+              [
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_church", 1],
+                ["say", "{{SAINT}} comes apart into dust and old cloth, its vigil finally ended, however roughly."]
+              ],
+              [["say", "{{SAINT}} was already at rest."]]
+            ]
+          ]
+        }
+      }
+    },
+    "hut": {
+      "entrance": "$hut",
+      "vars": ["NAME", "HERMIT", "SIGN", "LOOT", "VOICE"],
+      "rooms": {
+        "$hut": {
+          "name": "{{NAME}}",
+          "desc": "One room: a hearth, a cot, and {{HERMIT}} mid-task at a bench, in no hurry to notice you. Everything here has been mended, more than once, and holds. {{SIGN}}",
+          "brief": "{{HERMIT}}'s one room, everything mended more than once.",
+          "variants": [
+            {
+              "if": [["flag", "$done"]],
+              "desc": "One room: a hearth, a cot, {{HERMIT}} back at the bench like nothing was asked. The mended things still hold.",
+              "brief": "{{HERMIT}}'s one room, quiet now."
+            }
+          ],
+          "actions": [
+            {
+              "id": "$press",
+              "label": "press for it plainly (might)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "You make it plain you're not leaving without an answer. {{HERMIT}} decides you mean it, and talks."]
+                  ],
+                  [["say", "{{HERMIT}} waits you out, unbothered. You gave in first."]]
+                ]
+              ]
+            },
+            {
+              "id": "$notice",
+              "label": "read the signs yourself (wits)",
+              "if": [["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "It's all there if you look: what's worn, what's new, what's kept close. You piece it together without a word asked."]
+                  ],
+                  [["say", "Whatever's here to read, it doesn't give itself up on a glance."]]
+                ]
+              ]
+            },
+            {
+              "id": "$gift",
+              "label": "take the parting gift",
+              "once": true,
+              "if": [["flag", "$done"]],
+              "fx": [
+                ["move", "$loot", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "gold", 3],
+                ["say", "{{HERMIT}} presses it into your hands before you can think to refuse, already turning back to the bench."]
+              ]
+            }
+          ]
+        }
+      },
+      "items": { "$loot": { "name": "{{LOOT}}", "hint": "a parting gift; nothing is owed on it", "loc": "nowhere" } },
+      "npcs": {
+        "$hermit": {
+          "name": "{{HERMIT}}",
+          "room": "$hut",
+          "desc": "{{HERMIT}}: doesn't look up first. Looks up eventually, and takes your measure quick.",
+          "topics": [
+            {
+              "id": "$needs",
+              "label": "ask what {{HERMIT}} needs",
+              "once": true,
+              "say": "{{VOICE}} Everyone wants something, coming this far out. What's yours?",
+              "fx": [["xp", 1]]
+            },
+            {
+              "id": "$persuade",
+              "label": "offer to help, in trade (will)",
+              "if": [["!flag", "$done"]],
+              "say": "Fair enough. Talk, then, and we'll see.",
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "You strike a plain bargain, and {{HERMIT}} keeps to it: what's kept here and where, told without further prompting, and the parting gift by the door is yours."]
+                  ],
+                  [["say", "{{HERMIT}} hears you out and shakes their head. Not enough, not yet."]]
+                ]
+              ]
+            },
+            {
+              "id": "$hear",
+              "label": "hear the whole of it, unasked",
+              "if": [["class", "envoy"], ["!flag", "$done"]],
+              "say": "Nobody asks for that. Sit, then.",
+              "fx": [
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "or_envoy_words", 1],
+                ["say", "You let {{HERMIT}} talk until the talking runs out, and somewhere in it is everything you came for, given freely because you never once asked."]
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "statusTracks": [
+    { "var": "crypts_robbed", "label": "Crypts robbed", "max": 4, "if": [["var", "crypts_robbed", ">=", 1]] },
+    {
+      "var": "crypts_laid",
+      "label": "Crypts of the dead laid to rest",
+      "max": 4,
+      "if": [["var", "crypts_laid", ">=", 1]]
+    }
+  ],
+  "epilogue": [
+    {
+      "if": [["var", "crypts_robbed", ">=", 1]],
+      "text": "Chapel crypts keep coming up looted across the Reach, no rite spoken, no name left for the taking.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "crypts_laid", ">=", 3]],
+      "text": "Three chapels or more, they say, where a stranger spoke the proper rite before taking what the dead no longer needed.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "or_scholar_read", ">=", 2]],
+      "text": "A Scholar who read the old tongue off lintels and sills, and walked into barrows and chapels already knowing the words.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "or_scout_marks", ">=", 2]],
+      "text": "A Scout who read spoor and counted sentries, and went through dens and camps on lines nobody else could see.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "or_warden_word", ">=", 2]],
+      "text": "A Warden who gave the old watch's answer on the stairs and at the fires of the Reach, and was let by, or made to pay, as one of its own.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "or_envoy_words", ">=", 2]],
+      "text": "An Envoy who paid the road's tolls in promises and got hermits talking by listening. Some captains are still waiting on the promises.",
+      "weight": 1
+    }
+  ]
+}

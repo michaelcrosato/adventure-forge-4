@@ -1,0 +1,770 @@
+{
+  "regions": { "kw": { "name": "the Kingswood" } },
+  "gen": [
+    {
+      "id": "kw_ridings",
+      "name": "the Kingswood's ridings",
+      "seed": 113,
+      "w": 6,
+      "h": 6,
+      "region": "kw",
+      "walls": [[2, 2], [3, 2], [2, 3], [3, 3], [2, 4], [3, 4]],
+      "pools": {
+        "descs": ["Oak and holly close in on every side, ridings cut long ago and kept open since by nobody's order in particular."],
+        "briefs": ["Oak, holly, an old cut riding."],
+        "scenes": []
+      },
+      "links": [
+        { "cell": [1, 1], "dir": "in", "to": "kw_ride_gate", "back": "north", "landmark": "Hornhallow" },
+        { "cell": [5, 2], "dir": "east", "to": "kw_east_track", "back": "west", "landmark": "the east track" },
+        { "cell": [4, 4], "dir": "in", "to": "kw_muster_court", "back": "out", "landmark": "the Hunt's Stand" },
+        { "cell": [2, 5], "dir": "south", "to": "kw_south_track", "back": "north", "landmark": "the south track" }
+      ],
+      "spots": [
+        {
+          "cell": [0, 0],
+          "name": "Spine-Shadow Corner",
+          "desc": "The wood stands closest here to the Spine's own shadow, oak and holly grown so thick the light never quite finds the ground. Even birdsong sounds like it's asking permission.",
+          "brief": "Dense shade, close under the Spine.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_0_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 south and 1 east. The Hunt's Stand: 4 south and 4 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 0],
+          "name": "The First Riding",
+          "desc": "A riding runs die-straight here, cut four hundred years gone for a hunt that only ever used it once. The cut has been kept clear since by nobody in particular and everybody a little.",
+          "brief": "A straight old riding, kept clear.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_1_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 south. The Hunt's Stand: 4 south and 3 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 0],
+          "name": "Boundary Holly",
+          "desc": "A holly holt marks the old forest bound, leaves dark and sharp enough to have discouraged four centuries of shortcuts. Something about a holly holt keeps its own kind of quiet.",
+          "brief": "A holly holt, marking the old bound.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_2_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 south and 1 west. The Hunt's Stand: 4 south and 2 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 0],
+          "name": "the Antler Stand",
+          "desc": "A ruined hunting-platform rises above the canopy here, lashings long rotted, ladder-rungs gone soft. Up its broken stair, whatever watched from it might be watching still.",
+          "brief": "A ruined stand rises. Up: broken steps.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "kw_bearings_3_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 south and 2 west. The Hunt's Stand: 4 south and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 0],
+          "name": "Mast-Year Oaks",
+          "desc": "Old oaks stand heavy with mast even this late in the year, ground thick with acorns nothing has come to eat. The verderer's red chalk has marked three of them for felling.",
+          "brief": "Mast-heavy oaks, red chalk on three.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_4_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 south and 3 west. The Hunt's Stand: 4 south."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 0],
+          "name": "Windbreak Thicket",
+          "desc": "Thorn and holly grow knotted together at the wood's northeast corner, dense enough to break the wind off the Spine before it reaches the ridings proper.",
+          "brief": "A dense thorn thicket, breaking the wind.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_5_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 south and 4 west. The Hunt's Stand: 4 south and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 1],
+          "name": "The Charcoal Ride",
+          "desc": "A cart-track runs west into deeper wood, ruts pressed by burners' carts going back longer than the guild has kept count. Cordwood offcuts litter the verges.",
+          "brief": "A cart-track, deep into the wood.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_0_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 east. The Hunt's Stand: 3 south and 4 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 1],
+          "name": "The Sooty Ride",
+          "desc": "Smoke from Hornhallow's clamps hangs low here where the ridings gather before the gate, staining the lowest branches a permanent gray. In, the last gate before the village proper.",
+          "brief": "Ridings gather. In: Hornhallow's gate.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_1_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is here. The Hunt's Stand: 3 south and 3 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 1],
+          "name": "A Riding Cut Straight",
+          "desc": "The riding runs straight as a spear here, cut for a hunt to gallop full tilt without once checking its horse. Nothing has galloped it in four hundred years.",
+          "brief": "A riding, straight as a spear.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_2_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 west. The Hunt's Stand: 3 south and 2 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 1],
+          "name": "The Marked Oak",
+          "desc": "A single vast oak stands apart from its neighbors, the verderer's red chalk fresh on its bark: a felling mark, dated this very season. Older, fainter marks show under it, decades of them, never yet acted on.",
+          "brief": "A vast oak, chalked for felling — again.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "kw_bearings_3_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 2 west. The Hunt's Stand: 3 south and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 1],
+          "name": "The Hound-Pit",
+          "desc": "A shallow pit, turf-grown but still plainly dug, where the old hunt's hounds were once funneled to bay a boar against the bank. The tooth-marks on the bank timbers have long since gone to moss.",
+          "brief": "An old hound-pit, turf-grown now.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "kw_bearings_4_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 3 west. The Hunt's Stand: 3 south."]]
+            },
+            {
+              "id": "kw_scout_houndpit",
+              "label": "read what's left of the pit's old signs",
+              "free": true,
+              "if": [["class", "scout"], ["!flag", "or_scout_kw_houndpit"]],
+              "fx": [
+                ["set", "or_scout_kw_houndpit"],
+                ["addvar", "or_scout_marks", 1],
+                ["xp", 1],
+                ["say", "Funnel-fences rotted to stumps, a bank cut to give the hounds no footing back out, timber notched for a gate that swung one way only. Whoever dug this knew exactly how to end a chase."]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [5, 1],
+          "name": "The Moor-Bound Ride",
+          "desc": "The wood loosens here, oaks spacing wider apart, the ground already dropping toward heather a little further on. The air smells less of leaf-mould, more of open weather.",
+          "brief": "The wood loosens, heather not far off.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_5_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 4 west. The Hunt's Stand: 3 south and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 2],
+          "name": "The Trap-Line",
+          "desc": "A line of snares runs along a low bank here, checked and reset with a poacher's care rather than a keeper's. Fresh boot-marks favor the near side, coming and going both.",
+          "brief": "A checked snare-line, boot-marks fresh.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "kw_bearings_0_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 north and 1 east. The Hunt's Stand: 2 south and 4 east."]]
+            },
+            {
+              "id": "kw_scout_trapline",
+              "label": "read the trap-line's marks",
+              "free": true,
+              "if": [["class", "scout"], ["flag", "kw_fletcher_asked"], ["!flag", "kw_trapline_checked"]],
+              "fx": [
+                ["set", "or_scout_kw_trapline"],
+                ["addvar", "or_scout_marks", 1],
+                ["set", "kw_trapline_checked"],
+                ["set", "kw_trapline_clean"],
+                ["xp", 2],
+                ["score", 2],
+                ["say", "Every snare sits exactly where its owner left it, none sprung, none disturbed but by rabbits. A verderer's boot passed within ten strides and never once turned this way. Tansy will want to hear that."]
+              ]
+            },
+            {
+              "id": "kw_check_trapline",
+              "label": "check the trap-line for yourself (wits)",
+              "if": [["flag", "kw_fletcher_asked"], ["!flag", "kw_trapline_checked"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "kw_trapline_checked"],
+                    ["set", "kw_trapline_clean"],
+                    ["xp", 2],
+                    ["score", 2],
+                    ["say", "You read the line the way a hunter would: every snare sits exactly where its owner left it, undisturbed. A verderer's boot passed close and never once turned this way. Tansy will want to hear that."]
+                  ],
+                  [
+                    ["set", "kw_trapline_checked"],
+                    ["set", "kw_trapline_found"],
+                    ["xp", 1],
+                    ["say", "It takes a second look to see it: one snare re-tied clumsy, by a hand that isn't Tansy's. Someone's found this line and left it running — watching to see who comes to check it. Worth telling her."]
+                  ]
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [1, 2],
+          "name": "Fern Brake",
+          "desc": "Bracken grows chest-high and undisturbed, the only sound the small business of things moving through it that would rather not be seen. The riding here is more suggestion than path.",
+          "brief": "Chest-high bracken, a riding half-lost in it.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_1_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 north. The Hunt's Stand: 2 south and 3 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 2],
+          "name": "Spring-Head",
+          "desc": "A spring rises clean and cold from between two roots, a stone trough worn smooth beside it where something — horses, hounds, hunters — drank often enough to wear the stone down.",
+          "brief": "A cold spring, an old worn trough.",
+          "onEnterOnce": [["score", 2], ["xp", 2], ["hp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_4_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 north and 3 west. The Hunt's Stand: 2 south."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 2],
+          "name": "the East Track",
+          "desc": "The trees thin fast here, oak giving over to birch and then to nothing much at all. East, past a last line of birches, the wood simply stops.",
+          "brief": "The trees thin. East: the wood's own edge.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_5_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 1 north and 4 west. The Hunt's Stand: 2 south and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 3],
+          "name": "Saint's Approach",
+          "desc": "A path of flattened stones leads to a low doorway sunk half into a bank, moss thick on a lintel carved with a running hound. In, whatever's kept there waits in the dark.",
+          "brief": "A sunk doorway, a hound carved on the lintel.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "kw_bearings_0_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 2 north and 1 east. The Hunt's Stand: 1 south and 4 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 3],
+          "name": "The Bridle Crossing",
+          "desc": "Two ridings cross here at an old bridle-post, iron ring still bolted fast though no bridle has hung from it in longer than Hornhallow has kept count.",
+          "brief": "A crossing, an old iron bridle-ring.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_1_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 2 north. The Hunt's Stand: 1 south and 3 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 3],
+          "name": "Old Ford",
+          "desc": "A shallow stream crosses the riding here over a bed of flat stones, worn into a ford by centuries of hooves that no longer come. Something glints faintly in the shallows.",
+          "brief": "A shallow ford, flat stones underfoot.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "kw_bearings_4_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 2 north and 3 west. The Hunt's Stand: 1 south."]]
+            },
+            {
+              "id": "kw_search_ford",
+              "label": "search the shallows",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 3],
+                ["score", 1],
+                ["say", "Coin, scattered and green with years in the water — a purse some rider dropped fording in a hurry, and never once came back for."]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [5, 3],
+          "name": "Bramble Marches",
+          "desc": "Bramble has taken the ground here in dense, thorned drifts, the riding reduced to a single boot-wide track through the worst of it.",
+          "brief": "Dense bramble, a boot-wide track through it.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_5_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 2 north and 4 west. The Hunt's Stand: 1 south and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 4],
+          "name": "The Outlaw's Blind",
+          "desc": "A low blind of woven brush and old canvas sits back from the riding, all but invisible until you're on top of it. A cook-fire burns small and smokeless, banked to nothing.",
+          "brief": "A hidden blind, a small smokeless fire.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "kw_bearings_0_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 3 north and 1 east. The Hunt's Stand: 4 east."]]
+            }
+          ],
+          "npcs": ["kw_fletcher"]
+        },
+        {
+          "cell": [1, 4],
+          "name": "Fenwick's Clamp",
+          "desc": "A charcoal-burner's hut stands apart from Hornhallow's own clamps, close enough to the smoke-smell of home and far enough to keep to itself. A single clamp smokes steady out front.",
+          "brief": "A hermit's hut, one clamp smoking.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "kw_bearings_1_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 3 north. The Hunt's Stand: 3 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 4],
+          "name": "the Deep Cross",
+          "desc": "Every riding in this part of the wood bends here, sooner or later, toward one clearing. The quiet is the kind that asks you to keep it. In, the trees give way at last.",
+          "brief": "Ridings converge here. In: a clearing.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_4_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 3 north and 3 west. The Hunt's Stand: here."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 4],
+          "name": "the Hound-Graves",
+          "desc": "A long, low mound runs parallel to the riding, too regular to be a natural rise, turf grown thick and old over it. In, a stone-cut mouth stands open in its flank.",
+          "brief": "A long low mound. In: a stone mouth.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "kw_bearings_5_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 3 north and 4 west. The Hunt's Stand: 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 5],
+          "name": "Southwest Thicket",
+          "desc": "Blackthorn crowds the wood's southwest corner, dense enough that the riding skirts wide around rather than through it. Nothing about the thicket invites a closer look.",
+          "brief": "Dense blackthorn, the riding skirts it.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_0_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 4 north and 1 east. The Hunt's Stand: 1 north and 4 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 5],
+          "name": "Coppice Row",
+          "desc": "Hazel stands cut in neat rotation here, each stool a different age, the guild's oldest working coppice. Even this deep in, someone keeps a careful count.",
+          "brief": "Neat hazel coppice, carefully kept.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_1_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 4 north. The Hunt's Stand: 1 north and 3 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 5],
+          "name": "the South Track",
+          "desc": "The riding straightens and drops here, bare downs already visible through the last of the trees, a smudge of forge-smoke on the wind from further south still.",
+          "brief": "The riding drops south, downs ahead.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_2_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 4 north and 1 west. The Hunt's Stand: 1 north and 2 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 5],
+          "name": "Whipper-in's Cairn",
+          "desc": "A small cairn stands at the riding's edge, stones added one at a time by hands that never explained why. Half-buried at its foot: a horn-call's worn mouthpiece, brass gone green.",
+          "brief": "A small cairn, an old horn-mouthpiece at its foot.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "kw_bearings_3_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 4 north and 2 west. The Hunt's Stand: 1 north and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 5],
+          "name": "The Smoking Clamp",
+          "desc": "A charcoal clamp smokes steady under its dome of turf, tended by nobody visible just now, the guild's mark burned into a post beside it.",
+          "brief": "A charcoal clamp, smoking under turf.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_4_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 4 north and 3 west. The Hunt's Stand: 1 north."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 5],
+          "name": "Southeast Deadfall",
+          "desc": "A stand of old oaks has come down together here, whether to storm or age nobody in Hornhallow agrees, their deadfall grown over with a season's bramble.",
+          "brief": "A tangle of storm-fallen oaks.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "kw_bearings_5_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the rides run, Hornhallow is 4 north and 4 west. The Hunt's Stand: 1 north and 1 west."]]
+            }
+          ]
+        }
+      ],
+      "cellFx": {
+        "onEnter": [
+          [
+            "chance",
+            8,
+            [
+              [
+                "if",
+                [["!npcDead", "kw_gray_hound"]],
+                [
+                  ["npcgo", "kw_gray_hound", "here"],
+                  ["say", "Something gray moves between the trees, keeping pace with you a beat too long to be a trick of the light."]
+                ],
+                []
+              ]
+            ],
+            []
+          ]
+        ]
+      }
+    }
+  ],
+  "stamps": [
+    {
+      "template": "chapel",
+      "id": "kw_saint_chapel",
+      "at": "kw_ridings_0_3",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the Horn-Saint's Chapel",
+      "vars": {
+        "NAME": "the Horn-Saint's Chapel",
+        "SAINT": "a huntsman-saint's shade",
+        "SIGN": "A hunting-horn, corroded solid, hangs from a nail by the door — someone left it as an offering, or a warning.",
+        "LOOT": "a saint's hound-medal"
+      }
+    },
+    {
+      "template": "tower",
+      "id": "kw_antler_tower",
+      "at": "kw_ridings_3_0",
+      "dir": "up",
+      "back": "down",
+      "sideTrip": true,
+      "landmark": "the Antler Stand",
+      "vars": {
+        "NAME": "the Antler Stand",
+        "WATCHER": "a whipper-in's shade",
+        "VIEW": "the Kingswood's ridings fan out below like spokes from a wheel's hub, Hornhallow's smoke gray to the south",
+        "SIGN": "Antlers are nailed in rows up the ladder, each pair smaller and older than the last.",
+        "LOOT": "a whipper-in's brass tally-whistle"
+      }
+    },
+    {
+      "template": "hut",
+      "id": "kw_fenwick_hut",
+      "at": "kw_ridings_1_4",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "Fenwick's Clamp",
+      "vars": {
+        "NAME": "Fenwick's Clamp",
+        "HERMIT": "old Fenwick",
+        "SIGN": "A stool by the clamp is worn to one shape: one man, thirty years.",
+        "LOOT": "a burner's iron rake, still true",
+        "VOICE": "Watches the clamp's smoke before he watches you. Answers slow, like he's timing a burn."
+      }
+    },
+    {
+      "template": "barrow",
+      "id": "kw_hound_barrow",
+      "at": "kw_ridings_5_4",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the Hound-Graves",
+      "vars": {
+        "NAME": "the Hound-Graves",
+        "WIGHT": "a gray hound-wight",
+        "SIGN": "Small stone markers ring the mound's foot, each one shaped, unmistakably, like a curled dog.",
+        "LOOT": "a king's hound-collar, silver studs gone black"
+      }
+    }
+  ],
+  "npcs": {
+    "kw_gray_hound": {
+      "name": "hound of the hunt",
+      "room": null,
+      "hostile": true,
+      "aggressive": true,
+      "pierce": true,
+      "hp": 9,
+      "atk": 3,
+      "df": 9,
+      "desc": "Gray as smoke and just as hard to hold, it runs a scent no living nose could follow, jaws closing on nothing you can armor against.",
+      "onDeath": [
+        ["score", 3],
+        ["xp", 4],
+        ["say", "It comes apart mid-stride into gray mist and old leaf-mould, whatever scent it was running finally lost for good."]
+      ]
+    },
+    "kw_fletcher": {
+      "name": "Tansy",
+      "room": null,
+      "dialogue": true,
+      "desc": "A Free Companies fletcher gone to ground past the law, bowstring looped at her wrist even sitting still, watching the tree-line more than you.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Tansy. I fletch arrows for the Companies and live where the verderer's writ doesn't reach — which is most of this wood, if you know where to stand.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why live out here past the law",
+          "if": [["flag", "said_kw_fletcher_greet"]],
+          "once": true,
+          "say": "A verderer's warrant doesn't care whether you're poaching for coin or for supper. Out here I answer to the Companies and the wood, and only one of those has ever lied to me.",
+          "fx": [["set", "kw_fletcher_bg"], ["xp", 2]]
+        },
+        {
+          "id": "ask_trapline",
+          "label": "ask what she needs",
+          "if": [["flag", "kw_fletcher_bg"], ["!flag", "kw_fletcher_asked"]],
+          "say": "My north trap-line, along the low bank west of here. A verderer's man has been circling closer than I like. Go see whether it's still clean, or whether I need to move it.",
+          "fx": [["set", "kw_fletcher_asked"], ["xp", 1]]
+        },
+        {
+          "id": "report_clean",
+          "label": "tell her the trap-line is clean",
+          "if": [["flag", "kw_trapline_clean"], ["!flag", "kw_fletcher_errand_done"]],
+          "once": true,
+          "say": "She lets a breath out slow. \"Clean. Good. I'll sleep tonight, then.\" She presses coin into your hand without counting it.",
+          "fx": [
+            ["set", "kw_fletcher_errand_done"],
+            ["score", 6],
+            ["xp", 4],
+            ["addvar", "rep_free", 2],
+            ["addvar", "gold", 5]
+          ]
+        },
+        {
+          "id": "report_found",
+          "label": "tell her the trap-line was found",
+          "if": [["flag", "kw_trapline_found"], ["!flag", "kw_fletcher_errand_done"]],
+          "once": true,
+          "say": "Her jaw tightens. \"Found and left running — someone wants to see who comes back for it. That's me warned, and that's worth something.\" She moves the line that same night.",
+          "fx": [
+            ["set", "kw_fletcher_errand_done"],
+            ["score", 6],
+            ["xp", 4],
+            ["addvar", "rep_free", 1],
+            ["addvar", "gold", 2]
+          ]
+        },
+        {
+          "id": "ask_passage",
+          "label": "ask about a road under the pass",
+          "if": [["flag", "kw_fletcher_errand_done"], ["var", "rep_free", ">=", 2], ["!flag", "free_passage"]],
+          "once": true,
+          "say": "You want under the Spine without the Watch counting you through? Fair enough — you earned that much. Give my name at the Saltkerns' smugglers' stair, or Camp Gallows. Either will know it now.",
+          "fx": [["set", "free_passage"], ["xp", 2]]
+        },
+        {
+          "id": "warden_cold",
+          "label": "press her on Companies business",
+          "if": [["class", "warden"], ["flag", "kw_fletcher_bg"], ["!flag", "or_warden_kw_fletcher"]],
+          "once": true,
+          "say": "She doesn't warm to the coat, whatever's under it. \"Watch-trained is Watch-trained, whatever you call yourself now. I'll deal. I won't relax.\"",
+          "fx": [["set", "or_warden_kw_fletcher"], ["xp", 1]]
+        },
+        {
+          "id": "react_wood_iron",
+          "label": "about the coppice, now it's marked",
+          "if": [["flag", "kw_wood_iron"]],
+          "once": true,
+          "say": "Coppiced ground is open ground, and open ground is no ground at all for someone who lives on not being seen. I'll find another blind. I always have.",
+          "fx": [["xp", 1], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "about the recall, now it's sounded",
+          "if": [["flag", "kw_hollow_rested"]],
+          "once": true,
+          "say": "A horn on a still night doesn't scare me half so much as it used to. Small mercy, but I'll take it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the tree-line",
+          "say": "Mind where you tell people you found me.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "quests": {
+    "kw_q_fletcher": {
+      "name": "The Outlaw's Trap-Line",
+      "start": [["flag", "kw_fletcher_asked"]],
+      "done": [["flag", "kw_fletcher_errand_done"]],
+      "stages": [
+        {
+          "if": [["flag", "kw_trapline_checked"]],
+          "text": "The trap-line's read. Bring word back to Tansy, at her blind west of the Sooty Ride."
+        },
+        {
+          "if": [],
+          "text": "Tansy's north trap-line, along a low bank west in the wood, needs checking before the verderer's man finds it first."
+        }
+      ]
+    },
+    "kw_q_hounds": {
+      "name": "The Old Kings' Hounds",
+      "start": [["flag", "kw_entered"]],
+      "done": [["any", [["flag", "kw_hound_barrow_done"], ["npcDead", "kw_hound_barrow_wight"]]]],
+      "stages": [
+        {
+          "if": [["flag", "kw_kennel_roll_read"]],
+          "text": "The lodge's kennel-roll names the hounds by name. The Hound-Graves, deep in the wood, keep what's left of them."
+        },
+        {
+          "if": [],
+          "text": "The old kings' hounds lie in the Hound-Graves, deep in the ridings: four east and three south of the ride-gate."
+        }
+      ]
+    }
+  }
+}
