@@ -8,7 +8,21 @@
           "name": "{{NAME}} — mouth",
           "desc": "Turf has grown thick over the mound, but the doorstone stands open. Cold air breathes out of the dark, carrying old iron and older dust. {{SIGN}}",
           "brief": "The barrow-mouth, open to the dark.",
-          "exits": { "in": { "to": "$passage" } }
+          "exits": { "in": { "to": "$passage" } },
+          "actions": [
+            {
+              "id": "$lintel",
+              "label": "read the lintel's old tongue",
+              "free": true,
+              "if": [["class", "scholar"], ["!flag", "$lintel_read"]],
+              "fx": [
+                ["set", "$lintel_read"],
+                ["addvar", "or_scholar_read", 1],
+                ["xp", 1],
+                ["say", "The lintel is cut in the old tongue, worn but whole: the name the mound was raised over, and the first line of the verse the stone inside will want. You have it before you are through the door."]
+              ]
+            }
+          ]
         },
         "$passage": {
           "name": "{{NAME}} — passage",
@@ -99,6 +113,19 @@
                 ["xp", 2],
                 ["say", "With nothing left to keep it, the verse-stone reads plain: a rest-verse for whoever lies here, older than the doors. You say it anyway, for what it is worth to the dead."]
               ]
+            },
+            {
+              "id": "$verse_lintel",
+              "label": "speak the verse from the lintel",
+              "if": [["class", "scholar"], ["flag", "$lintel_read"], ["!flag", "$done"]],
+              "fx": [
+                ["set", "$done"],
+                ["slay", "$wight"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_keepers", 1],
+                ["say", "You begin where the lintel left off, and the stone's own lines follow as if they had been waiting for a reader. {{WIGHT}} eases down against the stone, and does not rise."]
+              ]
             }
           ]
         },
@@ -165,7 +192,21 @@
           "name": "{{NAME}} — throat",
           "desc": "The crack narrows, then opens. Claw-marks score both walls at shoulder height, deep enough to catch a fingernail. Ahead, the dark breathes out warm.",
           "brief": "The narrow throat, clawed at shoulder height.",
-          "exits": { "out": { "to": "$mouth" }, "in": { "to": "$den" } }
+          "exits": { "out": { "to": "$mouth" }, "in": { "to": "$den" } },
+          "actions": [
+            {
+              "id": "$spoor",
+              "label": "read the spoor",
+              "free": true,
+              "if": [["class", "scout"], ["!flag", "$spoor_read"]],
+              "fx": [
+                ["set", "$spoor_read"],
+                ["addvar", "or_scout_marks", 1],
+                ["xp", 1],
+                ["say", "Claw-marks at one height, a drag-line in the dust, the carcass hauled in from the left: {{BEAST}} keeps to the right of its den and comes at sound, not sight. You know where to put your feet."]
+              ]
+            }
+          ]
         },
         "$den": {
           "name": "{{NAME}} — den",
@@ -211,6 +252,26 @@
                 ["xp", 2],
                 ["addvar", "gold", 4],
                 ["say", "Among the bone-litter: {{LOOT}}, its owner long past needing it."]
+              ]
+            },
+            {
+              "id": "$sneak_spoor",
+              "label": "slip past on the spoor's line",
+              "if": [["class", "scout"], ["flag", "$spoor_read"], ["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  6,
+                  [
+                    ["set", "$done"],
+                    ["npcgo", "$beast", null],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "You go where the spoor says it never goes, and it loses you against the rock — the scrape of claws fades deeper in, hunting nothing."]
+                  ],
+                  [["say", "It's already turned. Too late to be quiet now."]]
+                ]
               ]
             }
           ]
@@ -432,6 +493,21 @@
                   ]
                 ]
               ]
+            },
+            {
+              "id": "$rank",
+              "label": "answer as a soldier of the old watch",
+              "if": [["class", "warden"], ["!flag", "$done"]],
+              "say": "What is it you carry up my stair?",
+              "fx": [
+                ["set", "$done"],
+                ["npcgo", "$watcher", null],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_watch", 1],
+                ["addvar", "or_warden_word", 1],
+                ["say", "You give it the old watch's answer, the one every recruit learns and most forget: your name, your post, and the watch you stand. {{WATCHER}} straightens, and steps aside for one of its own."]
+              ]
             }
           ]
         }
@@ -595,7 +671,21 @@
           "name": "{{NAME}} — palisade",
           "desc": "A ring of sharpened stakes and old rope, more scarecrow than wall, but it's kept someone out before. A watch-fire glows just inside. {{SIGN}}",
           "brief": "A stake-and-rope palisade, a watch-fire glowing within.",
-          "exits": { "in": { "to": "$fire" } }
+          "exits": { "in": { "to": "$fire" } },
+          "actions": [
+            {
+              "id": "$rounds",
+              "label": "mark the sentries' rounds",
+              "free": true,
+              "if": [["class", "scout"], ["!flag", "$rounds_marked"]],
+              "fx": [
+                ["set", "$rounds_marked"],
+                ["addvar", "or_scout_marks", 1],
+                ["xp", 1],
+                ["say", "Two on the palisade, one asleep on his feet, and a gap in the stakes on the fire's blind side nobody has mended. You count the turn of the watch, and have it."]
+              ]
+            }
+          ]
         },
         "$fire": {
           "name": "{{NAME}} — fire",
@@ -646,6 +736,26 @@
                     ["xp", 5],
                     ["addvar", "rep_free", 1],
                     ["say", "You wait for the watch to turn and thread the gap between bedrolls before anyone thinks to look twice."]
+                  ],
+                  [["say", "Someone looks up right as you move. {{CAPTAIN}} hasn't missed it."]]
+                ]
+              ]
+            },
+            {
+              "id": "$slip_rounds",
+              "label": "slip through on the watch's blind turn",
+              "if": [["class", "scout"], ["flag", "$rounds_marked"], ["!flag", "$done"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  7,
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["addvar", "rep_free", 1],
+                    ["say", "You wait for the turn you counted and are through the gap in the stakes before anyone's head comes round."]
                   ],
                   [["say", "Someone looks up right as you move. {{CAPTAIN}} hasn't missed it."]]
                 ]
@@ -726,6 +836,45 @@
                   ]
                 ]
               ]
+            },
+            {
+              "id": "$old_watch",
+              "label": "name your old regiment",
+              "if": [["class", "warden"], ["!flag", "$done"], ["!flag", "$regiment_named"]],
+              "say": "Go on. Everyone at this fire served somewhere, once.",
+              "fx": [
+                ["set", "$regiment_named"],
+                ["addvar", "or_warden_word", 1],
+                [
+                  "if",
+                  [["var", "rep_free", ">=", 1]],
+                  [
+                    ["set", "$done"],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "{{CAPTAIN}} has taken Companies' coin beside watchmen before, and says so, and waves you to the fire. \"Soldiers don't charge soldiers. Not tonight.\""]
+                  ],
+                  [
+                    ["addvar", "rep_free", -1],
+                    ["say", "\"Old watch,\" {{CAPTAIN}} says, like something stepped in. \"Then you pay like the rest, and a little more for the coat.\" Nobody at the fire is smiling now, and the Companies will hear of it."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "$terms",
+              "label": "offer terms instead of coin",
+              "if": [["class", "envoy"], ["!flag", "$done"]],
+              "say": "Terms? Go on. Everyone's got terms.",
+              "fx": [
+                ["set", "$done"],
+                ["set", "$terms_owed"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_free", 1],
+                ["addvar", "or_envoy_words", 1],
+                ["say", "You offer what coin can't: a word in the right ear at Marrowgate, when the Companies next need one. {{CAPTAIN}} weighs it longer than gold, then nods. \"I'll hold you to that.\""]
+              ]
             }
           ],
           "onDeath": [
@@ -753,7 +902,21 @@
           "name": "{{NAME}} — porch",
           "desc": "Rain has had its way with the porch roof, but the door beneath it still hangs true. Old wax has pooled and hardened on the sill, layer over layer. {{SIGN}}",
           "brief": "The chapel porch, wax pooled on the sill.",
-          "exits": { "in": { "to": "$nave" } }
+          "exits": { "in": { "to": "$nave" } },
+          "actions": [
+            {
+              "id": "$sill",
+              "label": "read the sill's votive marks",
+              "free": true,
+              "if": [["class", "scholar"], ["!flag", "$saint_named"]],
+              "fx": [
+                ["set", "$saint_named"],
+                ["addvar", "or_scholar_read", 1],
+                ["xp", 1],
+                ["say", "Under the wax, scratched votive marks in the old tongue: the saint's name, and the vigil it was set to keep, which is the line a rite for it would have to end on. You have it by heart before the door."]
+              ]
+            }
+          ]
         },
         "$nave": {
           "name": "{{NAME}} — nave",
@@ -827,6 +990,19 @@
                   ],
                   [["say", "The plaque's cut too shallow to read by feel alone, and you're guessing more than reading."]]
                 ]
+              ]
+            },
+            {
+              "id": "$rite_named",
+              "label": "end the vigil by its true name",
+              "if": [["class", "scholar"], ["flag", "$saint_named"], ["!flag", "$done"]],
+              "fx": [
+                ["set", "$done"],
+                ["slay", "$saint_shade"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_church", 1],
+                ["say", "You give the vigil its ending in the saint's own name, the line the sill kept for whoever could read it. {{SAINT}} hears it, rises, and does not kneel again."]
               ]
             }
           ]
@@ -1016,6 +1192,19 @@
                   [["say", "{{HERMIT}} hears you out and shakes their head. Not enough, not yet."]]
                 ]
               ]
+            },
+            {
+              "id": "$hear",
+              "label": "hear the whole of it, unasked",
+              "if": [["class", "envoy"], ["!flag", "$done"]],
+              "say": "Nobody asks for that. Sit, then.",
+              "fx": [
+                ["set", "$done"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "or_envoy_words", 1],
+                ["say", "You let {{HERMIT}} talk until the talking runs out, and somewhere in it is everything you came for, given freely because you never once asked."]
+              ]
             }
           ]
         }
@@ -1040,6 +1229,26 @@
     {
       "if": [["var", "crypts_laid", ">=", 3]],
       "text": "Three chapels or more, they say, where a stranger spoke the proper rite before taking what the dead no longer needed.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "or_scholar_read", ">=", 2]],
+      "text": "A Scholar who read the old tongue off lintels and sills, and walked into barrows and chapels already knowing the words.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "or_scout_marks", ">=", 2]],
+      "text": "A Scout who read spoor and counted sentries, and went through dens and camps on lines nobody else could see.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "or_warden_word", ">=", 2]],
+      "text": "A Warden who gave the old watch's answer on the stairs and at the fires of the Reach, and was let by, or made to pay, as one of its own.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "or_envoy_words", ">=", 2]],
+      "text": "An Envoy who paid the road's tolls in promises and got hermits talking by listening. Some captains are still waiting on the promises.",
       "weight": 1
     }
   ]
