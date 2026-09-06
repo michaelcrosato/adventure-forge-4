@@ -73,7 +73,7 @@
         },
         {
           "id": "ir_scholar_tally",
-          "label": "read the tally dates (Scholar)",
+          "label": "read the tally dates",
           "if": [["class", "scholar"], ["!flag", "ir_suspects_aldous"]],
           "once": true,
           "fx": [
@@ -102,7 +102,7 @@
       "actions": [
         {
           "id": "ir_scout_cache",
-          "label": "spot the loose slag-brick (Scout)",
+          "label": "spot the loose slag-brick",
           "if": [["class", "scout"], ["!flag", "or_scout_ir_cache"]],
           "once": true,
           "free": true,
@@ -316,7 +316,7 @@
           "id": "ir_bearings",
           "label": "get your bearings from the head-frame",
           "fx": [
-            ["say", "North from Tally Rise past the Marker Stone and the Long Spoil to the Cracked Adit; the Hundred's Mouth lies east of it. Quarry north-east; Old Cairn west edge; Gibbet Tower far north-east; scrappers' camp east."]
+            ["say", "North two, then west three: the Old Cairn. North three, then east three: the flooded quarry and the slag-hound's den. North four, then east one: the Hundred Gallery."]
           ],
           "free": true
         }
@@ -984,7 +984,7 @@
         },
         {
           "id": "ir_warden_frank",
-          "label": "trade talk, soldier to soldier (Warden)",
+          "label": "trade talk, soldier to soldier",
           "if": [["class", "warden"], ["flag", "said_ir_aldous_greet"], ["!flag", "or_warden_ir_bearing"]],
           "once": true,
           "say": "He drops the recruiter's voice the moment you square your shoulders at him. 'You've held a line before,' he says. 'Fire's certain. Certain isn't the same as right. I don't sleep easy on that either.'",
@@ -992,7 +992,7 @@
         },
         {
           "id": "ir_warden_confront_frank",
-          "label": "ask him plainly (Warden)",
+          "label": "ask him plainly",
           "if": [
             ["class", "warden"],
             ["flag", "ir_suspects_aldous"],
@@ -1012,7 +1012,7 @@
         },
         {
           "id": "envoy_broker_ir",
-          "label": "broker the hall a truce (Envoy)",
+          "label": "broker the hall a truce",
           "if": [
             ["class", "envoy"],
             ["flag", "tamsin_mine_truth"],
@@ -1263,7 +1263,7 @@
         },
         {
           "id": "envoy_smooth_crick",
-          "label": "turn on the charm (Envoy)",
+          "label": "turn on the charm",
           "if": [["class", "envoy"], ["flag", "said_ir_crick_greet"], ["!flag", "or_envoy_ir_smooth"]],
           "once": true,
           "say": "You lay it on warm, an easy smile. Crick just looks at you until you stop. 'Save it for someone who wasn't already digging in the dark before you were born,' he says. Whatever that charm buys, it isn't his patience.",
@@ -1303,7 +1303,7 @@
           "label": "the trouble on the downs",
           "if": [["flag", "said_ir_ness_bg_hall"]],
           "once": true,
-          "say": "There's a slag-hound working the downs north of here, bold enough to come right up to the track after dark. Deal with it and the hall won't forget the favor.",
+          "say": "There's a slag-hound working the downs — three north of the head-frame, then three east, where the ground opens into the flooded quarry. Deal with it and the hall won't forget the favor.",
           "fx": [["xp", 2]]
         },
         {
@@ -1419,7 +1419,7 @@
         },
         {
           "id": "ness_scout_trade",
-          "label": "offer a quieter tally-trick (Scout)",
+          "label": "offer a quieter tally-trick",
           "if": [["class", "scout"], ["flag", "said_ir_ness_bg_hall"], ["!flag", "or_scout_ir_ness"]],
           "once": true,
           "say": "\"You've the hands for it,\" she says, appraising you plainly. \"A way to shave the company's count, no mark left.\" You show her anyway, one professional to another, and she slips you a coin for it, unlogged.",
@@ -1658,42 +1658,92 @@
           "name": "Windbreak Ridge",
           "desc": "Spoil banked into a second hill, wind-scoured to a hard gray crust. Nothing has rooted here in living memory.",
           "brief": "Wind-scoured spoil.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_1_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is one east and five south. The Chapel of Iron: one south, two west."]]
+            }
+          ]
         },
         {
           "cell": [2, 0],
           "name": "The High Cut",
           "desc": "An old surface working, shale stepped in benches too regular to be natural. Cart-rails, rusted to lace, still mark the grade downward.",
           "brief": "Benched shale, rusted rails.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_2_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is five south. The Hundred Gallery: one south, one east, then in."]]
+            }
+          ]
         },
         {
           "cell": [3, 0],
           "name": "Ashway Rise",
           "desc": "Cinder track underfoot, packed hard by cart-wheels that stopped running before you were born. The forge-smell of Cinderhall carries on the wind, from somewhere behind you.",
           "brief": "Cinder track, forge-smell on the wind.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_3_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is one west and five south. The Hundred Gallery: one south, then in."]]
+            }
+          ]
         },
         {
           "cell": [4, 0],
           "name": "Boneyard Spoil",
           "desc": "Pit-pony bones, tipped out with the tailings and bleached white against the gray. Whoever kept the tally here stopped caring which pile was which.",
           "brief": "Bones in the tailings.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_4_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [
+                ["say", "From here, the head-frame is two west and five south. The Hundred Gallery: one south, one west, then in."]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 1],
           "name": "Cinder Shrine Approach",
           "desc": "A path of fused clinker runs west to a squat chapel built entirely of scrap iron, its narrow windows rust-red in the low light.",
           "brief": "Clinker path. The iron chapel west.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_0_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is two east and four south. The Chapel of Iron: one west."]]
+            }
+          ]
         },
         {
           "cell": [1, 1],
           "name": "The Tailings Flat",
           "desc": "Crushed ore-waste underfoot, packed hard and gray as a road going nowhere anyone chose to go.",
           "brief": "Packed ore-waste.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_1_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is one east and four south. The Chapel of Iron: two west."]]
+            }
+          ]
         },
         {
           "cell": [2, 1],
@@ -1760,6 +1810,12 @@
                   ]
                 ]
               ]
+            },
+            {
+              "id": "ir_bearings_2_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is four south. The Hundred Gallery: one east, then in."]]
             }
           ],
           "variants": [
@@ -1775,56 +1831,120 @@
           "name": "The Hundred's Mouth",
           "desc": "The old workings show plainest here: rail, prop-timber, and a gallery mouth shored with iron, standing open. Cold air breathes out of it, and does not smell of ash.",
           "brief": "The old gallery mouth, open.",
-          "onEnterOnce": [["xp", 2]]
+          "onEnterOnce": [["xp", 2]],
+          "actions": [
+            {
+              "id": "ir_bearings_3_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is one west and four south. The Hundred Gallery: right in."]]
+            }
+          ]
         },
         {
           "cell": [4, 1],
           "name": "Spoil Terrace",
           "desc": "Waste rock terraced in shallow steps, each one a season's dumping. A fox's prints cross it, the only living thing that's bothered.",
           "brief": "Terraced spoil, fox-tracks.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_4_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is two west and four south. The Hundred Gallery: one west, then in."]]
+            }
+          ]
         },
         {
           "cell": [5, 1],
           "name": "Gallows Cut",
           "desc": "The ground drops away east into a narrow cut, and at its head a gibbet-frame leans black against the sky, chain still hanging, empty.",
           "brief": "A gibbet-frame, east, chain empty.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_5_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is three west and four south. The Gibbet Tower: one east."]]
+            }
+          ]
         },
         {
           "cell": [1, 2],
           "name": "Cinder Hollow",
           "desc": "A shallow bowl scoured clean by wind, ash drifted into its lee like old snow that never melts.",
           "brief": "Ash drifted in a hollow.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_1_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is one east and three south. The Old Cairn: one south, two west."]]
+            }
+          ]
         },
         {
           "cell": [2, 2],
           "name": "The Long Spoil",
           "desc": "Tailings bank in a ridge running further than the eye wants to follow it, gray shading to black where the older dumping is.",
           "brief": "A long ridge of tailings.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_2_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is three south. The Hundred Gallery: one north, one east, then in."]]
+            }
+          ]
         },
         {
           "cell": [3, 2],
           "name": "Rope Yard",
           "desc": "Coiled winding-rope, rotted through, stacked where a cart last left it. Rust has fused the coils into one shape.",
           "brief": "Rotted, fused rope-coils.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_3_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is one west and three south. The Hundred Gallery: one north, then in."]]
+            }
+          ]
         },
         {
           "cell": [4, 2],
           "name": "Quarry Rim",
           "desc": "The ground opens east into a flooded cut, water black as the stone around it. Something has worn a path down to the waterline, and back up again, more than once.",
           "brief": "The flooded quarry's rim, east.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_4_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is two west and three south. The Flooded Quarry: one east."]]
+            }
+          ]
         },
         {
           "cell": [0, 3],
           "name": "Cairn Path",
           "desc": "A track older than any mine climbs west between two lines of standing stones, half-swallowed by spoil from a working that never knew they were there.",
           "brief": "Standing stones, west.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_0_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is two east and two south. The Old Cairn: one west."]]
+            }
+          ]
         },
         {
           "cell": [1, 3],
@@ -1842,6 +1962,12 @@
                 ["xp", 1],
                 ["say", "The cart's box has rotted through, but a tin cup and a few coins have sat undisturbed since it went over."]
               ]
+            },
+            {
+              "id": "ir_bearings_1_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is one east and two south. The Old Cairn: two west."]]
             }
           ]
         },
@@ -1863,7 +1989,7 @@
             },
             {
               "id": "ir_scholar_marker",
-              "label": "read the old mark below it (Scholar)",
+              "label": "read the old mark below it",
               "if": [["class", "scholar"], ["!flag", "or_scholar_ir_marker"]],
               "once": true,
               "fx": [
@@ -1873,6 +1999,12 @@
                 ["addvar", "rep_keepers", 1],
                 ["say", "Beneath the company's confident lettering, worn near to nothing: a Barrow-Keeper's raised hand, cut long before any company claimed this ground. Cinderhall's boundary stone was somebody's shrine first."]
               ]
+            },
+            {
+              "id": "ir_bearings_2_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is two south. The Old Cairn: three west."]]
             }
           ]
         },
@@ -1881,42 +2013,90 @@
           "name": "Cinder Flat",
           "desc": "Flat, black ground, packed by feet that came this way in numbers once and haven't since.",
           "brief": "Packed black ground.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_3_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is one west and two south. The Hundred Gallery: two north, then in."]]
+            }
+          ]
         },
         {
           "cell": [4, 3],
           "name": "Spoil Gap",
           "desc": "A gap between two heaps just wide enough to walk, walled in gray on both sides like a passage that was never meant to be one.",
           "brief": "A gap between spoil-heaps.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_4_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is two west and two south. The Scrappers' Camp: two east."]]
+            }
+          ]
         },
         {
           "cell": [5, 3],
           "name": "Scrapper's Trail",
           "desc": "Boot-worn ground leads east toward a thread of woodsmoke and the clank of someone sorting scrap by hand.",
           "brief": "Woodsmoke and scrap-sorting, east.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_5_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is three west and two south. The Scrappers' Camp: one east."]]
+            }
+          ]
         },
         {
           "cell": [1, 4],
           "name": "Slag Shoulder",
           "desc": "The last rise before the flat, slag fused to glass in patches that catch what little light there is.",
           "brief": "Glass-fused slag.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_1_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is one east and one south. The Old Cairn: one north, two west."]]
+            }
+          ]
         },
         {
           "cell": [2, 4],
           "name": "Tally Rise",
           "desc": "The downs give way south to Cinderhall's slag hill and the smoke above it. A cairn of broken pick-heads marks where the track becomes a road again.",
           "brief": "The downs' edge. Cinderhall south.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_2_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is one south. The Old Cairn: one north, three west."]]
+            }
+          ]
         },
         {
           "cell": [3, 4],
           "name": "Cart Ruts",
           "desc": "Deep-cut ruts, dry and hard, from carts that ran this ground longer than the company has kept count.",
           "brief": "Deep, dry cart-ruts.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_3_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is one west and one south. The Hundred Gallery: three north, then in."]]
+            }
+          ]
         },
         {
           "cell": [4, 4],
@@ -1924,7 +2104,15 @@
           "desc": "A flat stone, worn smooth in one seat-shaped patch, facing back toward the slag hill. Someone still comes to sit here.",
           "brief": "A worn stone seat, facing the hill.",
           "items": ["ir_faded_ribbon"],
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "ir_bearings_4_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "From here, the head-frame is two west and one south. The Scrappers' Camp: one north, two east."]]
+            }
+          ]
         }
       ],
       "cellFx": {
@@ -2042,6 +2230,10 @@
           "text": "The miners' hall is ready to claim the gallery from the company. Declare it at the Hundred Gallery, north of Cinderhall."
         },
         {
+          "if": [["flag", "ir_hundred_passed"]],
+          "text": "Past the fall: read the true ledger at the working face, or win the miners' hall's backing in Cinderhall."
+        },
+        {
           "if": [],
           "text": "A hundred miners died when the Hundred Gallery fell. Its adit: north from Tally Rise to the Cracked Adit, then east."
         }
@@ -2091,8 +2283,8 @@
       "done": [["any", [["npcDead", "ir_slaghound"], ["npcDead", "ir_cave1_beast"]]]],
       "stages": [
         {
-          "if": [["flag", "ir_hound_bounty"]],
-          "text": "A slag-hound is prowling the bare downs at night. Ness, at Cinderhall's head-frame, would be glad to see it dealt with."
+          "if": [["flag", "said_ir_ness_bounty"]],
+          "text": "A slag-hound dens three north of the head-frame, then three east, where the downs open into the flooded quarry."
         },
         { "if": [], "text": "Miners at the head-frame complain of something prowling the downs after dark." }
       ]

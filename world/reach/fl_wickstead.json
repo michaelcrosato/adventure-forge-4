@@ -101,6 +101,14 @@
           "fx": [
             ["say", "Older than the emptying, older maybe than the hold's name. Someone has scratched a tally into its base since: short lines in bundles of five, none of them explained, all of them recent."]
           ]
+        },
+        {
+          "id": "fl_cross_bearings",
+          "label": "get your bearings at the crossroads",
+          "free": true,
+          "fx": [
+            ["say", "South leads into the fallow fields proper. Keep bearing south, jogging around what won't let you pass straight, and the ground opens on the Bone Road and the Long Furrow's headland."]
+          ]
         }
       ]
     },
@@ -630,6 +638,38 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "react_land_crown",
+          "label": "the land, now it's the Crown's",
+          "if": [["flag", "fl_land_crown"]],
+          "once": true,
+          "say": "\"The Crown's, then. Properly, this time.\" He's already sketching a second boundary marker before you finish saying it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_land_free",
+          "label": "the land, now it's the Companies'",
+          "if": [["flag", "fl_land_free"]],
+          "once": true,
+          "say": "\"The Companies.\" He closes his ledger slower than usual. \"My orders said find what's worth mapping. Apparently that's them now.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_land_returners",
+          "label": "the land, now it's the returners'",
+          "if": [["flag", "fl_land_returners"]],
+          "once": true,
+          "say": "\"Grandchildren with a claim older than my chain.\" He doesn't sound surprised. \"I'll note it settled. Properly settled, for once.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_land_fallow",
+          "label": "the land, left fallow",
+          "if": [["flag", "fl_land_fallow"]],
+          "once": true,
+          "say": "\"Land that's nobody's to survey.\" He turns that over like a puzzle with a piece missing. \"No mark for that on any map I own.\"",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "sv_fl_bargained_ask",
           "label": "ask if the bargain is holding",
           "if": [["flag", "sv_fl_back"], ["flag", "fl_hollow_bargained"]],
@@ -855,6 +895,38 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "react_land_free",
+          "label": "the land, now it's the Companies'",
+          "if": [["flag", "fl_land_free"]],
+          "once": true,
+          "say": "\"Mine, then. Permanent roof, permanent muster.\" He says it like a man who expected nothing less and got it anyway.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_land_crown",
+          "label": "the land, now it's the Crown's",
+          "if": [["flag", "fl_land_crown"]],
+          "once": true,
+          "say": "\"The Crown wants it mapped and taxed, not mustered.\" He shrugs. \"Plenty of other empty barns in the Reach.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_land_returners",
+          "label": "the land, now it's the returners'",
+          "if": [["flag", "fl_land_returners"]],
+          "once": true,
+          "say": "\"Grandchildren came back for it.\" He doesn't argue the point. \"Can't recruit a man who's already got a reason to stay.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_land_fallow",
+          "label": "the land, left fallow",
+          "if": [["flag", "fl_land_fallow"]],
+          "once": true,
+          "say": "\"Nobody's, then. Fine by me — a fallow field holds a tent as well as a farmed one ever did.\"",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "fl_declare_free",
           "label": "back the Companies' claim on the hold",
           "if": [
@@ -926,7 +998,17 @@
           "text": "The Fallows lie fallow, by the old covenant. Frey finally looked the part."
         },
         {
-          "if": [["flag", "fl_merrow_doubts"], ["flag", "fl_keeper_revealed"]],
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "said_fl_pell_bg_escheat"],
+                ["flag", "said_fl_dace_bg_desperate"],
+                ["flag", "fl_merrow_doubts"],
+                ["flag", "fl_keeper_revealed"]
+              ]
+            ]
+          ],
           "text": "Four claims stand on this ground: the surveyor's, the recruiter's, the sister's, and a Keeper's. Back one, at Wickstead."
         },
         {

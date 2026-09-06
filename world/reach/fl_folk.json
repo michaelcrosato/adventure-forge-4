@@ -377,6 +377,40 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "react_hollow_rested",
+          "label": "the furrow, now it rests",
+          "if": [["flag", "fl_dain_father_seeking"], ["flag", "fl_hollow_rested"]],
+          "once": true,
+          "say": "He looks up when you tell him. \"Is he in it,\" he says, \"whatever got said?\" It isn't really a question you answer no to.",
+          "fx": [
+            [
+              "if",
+              [["flag", "fl_dain_father_named"]],
+              [
+                ["xp", 2],
+                ["say", "\"He is,\" you tell him, and mean it. He nods, once, like something finally sits right."]
+              ],
+              [["xp", 1], ["say", "You tell him you don't know yet. He nods anyway, like he expected that answer."]]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the furrow, now it's bargained",
+          "if": [["flag", "fl_dain_father_seeking"], ["flag", "fl_hollow_bargained"]],
+          "once": true,
+          "say": "\"A promise instead of a rite,\" he repeats, turning it over. \"Does that hold, you think? For someone already in the ground?\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the furrow, now it's burned",
+          "if": [["flag", "fl_dain_father_seeking"], ["flag", "fl_hollow_burned"]],
+          "once": true,
+          "say": "He's quiet a long moment. \"Guess that's an answer too,\" he says, and goes back to watching the gap in the wall.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave him to the drilling",
           "say": "All right. I'll be here. I'm always here.",

@@ -64,7 +64,7 @@
       "actions": [
         {
           "id": "hb_scout_skiff",
-          "label": "check the skiffs, false bottoms (Scout)",
+          "label": "check the skiffs, false bottoms",
           "if": [["class", "scout"], ["!flag", "or_scout_hb_skiff"]],
           "once": true,
           "free": true,
@@ -510,7 +510,7 @@
         },
         {
           "id": "warden_deputize_hb",
-          "label": "offer to stand watch (Warden)",
+          "label": "offer to stand watch",
           "if": [["class", "warden"], ["flag", "said_hb_warden_digger"], ["!flag", "or_warden_hb_deputized"]],
           "once": true,
           "say": "'A soldier's offer,' he says, and doesn't refuse it. 'Watch the downs a night, and the digger's yours to handle as you judge — not the Watch's, not mine.'",
@@ -768,7 +768,7 @@
         },
         {
           "id": "chandler_fence_scout",
-          "label": "ask him for a fence's rate (Scout)",
+          "label": "ask him for a fence's rate",
           "if": [["class", "scout"], ["flag", "said_hb_chandler_npc_trade"], ["!flag", "or_scout_hb_fence"]],
           "once": true,
           "say": "He looks you over the way you'd look over a lock. 'You've the hands for this trade,' he says, and slides a few coins across, professional to professional. 'Anything else you lift, I'll always give you a fair cut.'",
@@ -776,7 +776,7 @@
         },
         {
           "id": "chandler_broker_envoy",
-          "label": "broker a middle way (Envoy)",
+          "label": "broker a middle way",
           "if": [
             ["class", "envoy"],
             ["flag", "said_hb_warden_digger"],
@@ -797,7 +797,7 @@
         },
         {
           "id": "hb_envoy_haggle_ring",
-          "label": "haggle the ring's price (Envoy)",
+          "label": "haggle the ring's price",
           "if": [
             ["class", "envoy"],
             ["!has", "hb_grave_good"],
@@ -1067,7 +1067,7 @@
         },
         {
           "id": "wren_scholar_peer",
-          "label": "argue the covenant's terms (Scholar)",
+          "label": "argue the covenant's terms",
           "if": [
             ["class", "scholar"],
             ["flag", "said_hb_keeper_wren_order"],
@@ -1086,7 +1086,7 @@
         },
         {
           "id": "hb_scholar_chest",
-          "label": "read the ward-words outright (Scholar)",
+          "label": "read the ward-words outright",
           "if": [["class", "scholar"], ["!flag", "hb_keepers_key_found"]],
           "once": true,
           "say": "You don't ask her for the key. You read the ward cut into the bronze, meant to answer a reader before it answers a lock, and speak it back correctly. The chest opens itself. Wren watches and says nothing.",
@@ -1123,7 +1123,7 @@
           "id": "mere",
           "label": "the mere itself",
           "once": true,
-          "say": "Deep enough in the middle that nobody's found the bottom. There's a stone out there worth talking to, if you don't mind wading. Old custom says it listens.",
+          "say": "Deep enough in the middle that nobody's found the bottom. There's a stone north past the Old Ditch worth talking to — old custom says it listens, if you give it something worth the hearing.",
           "fx": [["xp", 1]]
         },
         {
@@ -1148,6 +1148,12 @@
       "dialogue": true,
       "desc": "Sits by the tithe barn's stove like she's waiting for someone who isn't coming, and knows it.",
       "topics": [
+        {
+          "id": "brush_off",
+          "label": "who are you",
+          "if": [["!flag", "hb_hollow_rested"]],
+          "say": "She doesn't look up from the stove. \"Nothing to say to strangers. The fire's free, if that's what you're after.\""
+        },
         {
           "id": "greet",
           "label": "who are you",
