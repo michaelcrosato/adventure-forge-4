@@ -7,7 +7,7 @@ import test from "node:test";
 import { actionByLabel, actionLabel, inTalkMode, journal, legalActions, newState, step } from "../src/engine.ts";
 import { render, renderMenu, renderStatus } from "../src/format.ts";
 import { validateWorld } from "../src/validate.ts";
-import type { Action, State, World } from "../src/types.ts";
+import type { Action, Fx, State, World } from "../src/types.ts";
 
 const mini = (over: Partial<World> = {}): World => ({
   id: "mini",
@@ -823,13 +823,64 @@ test("leave: a hostile given a wide berth no longer blocks travel and is not off
   assert.ok(menu.includes("leave gaunt wolf be"), menu.join(" | "));
   const turn = state.turn;
   const out = step(world, state, actionByLabel(world, state, "leave gaunt wolf be")!);
-  assert.ok(out.events.some((e) => /You give gaunt wolf a wide berth\. It holds its ground and lets you\./.test(e)), out.events.join(" | "));
+  assert.ok(out.events.some((e) => /You give gaunt wolf a wide berth\. It holds its ground and lets you pass\./.test(e)), out.events.join(" | "));
   state = out.state;
   assert.equal(state.turn, turn, "leaving it be is free");
   menu = labels(world, state);
   assert.ok(menu.includes("travel to a known place"), "given a wide berth, it no longer bars the road");
   assert.ok(!menu.includes("leave gaunt wolf be"), "offered once");
   assert.ok(menu.includes("attack gaunt wolf with bare hands"), "it can still be fought");
+});
+
+test("a free action spends no turn and draws no strike from an aggressive npc", () => {
+  const world = mini({
+    rooms: { a: { name: "A", desc: "Room A.", actions: [{ id: "peek", label: "get your bearings", free: true, fx: [["say", "North is north."]] }] } },
+    npcs: { wolf: { name: "wolf", room: "a", hostile: true, aggressive: true, hp: 100, atk: 1, df: 1 } },
+  });
+  const { state } = newState(world, 1);
+  const out = step(world, state, actionByLabel(world, state, "get your bearings")!);
+  assert.equal(out.state.turn, state.turn, "free is free");
+  assert.equal(out.state.hp, state.hp, out.events.join(" | "));
+  assert.ok(!out.events.some((e) => /attacks/.test(e)), "no turn passed, so nothing got its strike");
+});
+
+test("leave: a wide berth names the way that stays locked instead of promising passage, and says they of a company", () => {
+  const world = mini({
+    rooms: {
+      a: { name: "A", desc: "Room A.", exits: { north: { to: "b", if: [["flag", "passed"]], hint: "slip past it (grace)" } } },
+      b: { name: "B", desc: "Room B." },
+    },
+    npcs: { wight: { name: "barrow-wight", room: "a", hostile: true, hp: 8, atk: 2, df: 9 }, men: { name: "toll-men", room: "a", hostile: true, hp: 8, atk: 2, df: 9 } },
+  });
+  const { state } = newState(world, 1);
+  const out = step(world, state, actionByLabel(world, state, "leave barrow-wight be")!);
+  assert.ok(out.events.includes("You give barrow-wight a wide berth. It holds its ground; the way north stays locked (slip past it (grace))."), out.events.join(" | "));
+  const out2 = step(world, out.state, actionByLabel(world, out.state, "leave toll-men be")!);
+  assert.ok(out2.events.some((e) => /^You give toll-men a wide berth\. They hold their ground; the way north stays locked/.test(e)), out2.events.join(" | "));
+});
+
+test("an attack says what the kill would cost a companion the player has met, and names nobody unmet", () => {
+  const wolf = { name: "ash wolf", room: "a", hostile: true, hp: 6, atk: 2, df: 10, onDeath: [["addvar", "appr_lys", -1]] as Fx[] };
+  const met = mini({ rooms: { a: { name: "A", desc: "Room A." } }, npcs: { wolf, lys: { name: "Lys", room: "a", companion: { hit: 1, dmg: 1 } } } });
+  assert.match(render(met, newState(met, 1).state, []).text, /attack ash wolf with bare hands \(roll \d+\+ on the die; a kill: Lys -1\)/);
+  const unmet = mini({
+    rooms: { a: { name: "A", desc: "Room A." }, b: { name: "B", desc: "Room B." } },
+    npcs: { wolf, lys: { name: "Lys", room: "b", companion: { hit: 1, dmg: 1 } } },
+  });
+  const text = render(unmet, newState(unmet, 1).state, []).text;
+  assert.match(text, /attack ash wolf with bare hands \(roll \d+\+ on the die\)/);
+  assert.ok(!/Lys/.test(text), "a name never heard is not a warning");
+});
+
+test("a weapon handed over by an effect says it will be fought with", () => {
+  const world = mini({
+    rooms: { a: { name: "A", desc: "Room A.", actions: [{ id: "gift", label: "read where the drift's thinnest", fx: [["move", "axe", "inv"]] }] } },
+    items: { axe: { name: "ice axe", loc: "nowhere", hit: 1, dmg: 2 } },
+  });
+  const { state } = newState(world, 1);
+  const out = step(world, state, actionByLabel(world, state, "read where the drift's thinnest")!);
+  assert.ok(out.events.includes("ice axe: obtained."), out.events.join(" | "));
+  assert.ok(out.events.includes("(You will fight with it now.)"), out.events.join(" | "));
 });
 
 test("a remark that opens a quarrel says where the sides are", () => {

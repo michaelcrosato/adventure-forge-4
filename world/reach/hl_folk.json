@@ -756,6 +756,14 @@
           "id": "bye",
           "label": "leave him to his cart",
           "say": "Careful with that cask on the road. It burns however wet the ground gets — that's rather the point of it.",
+          "end": true,
+          "if": [["has", "hl_cinder_oil"]]
+        },
+        {
+          "id": "bye_plain",
+          "label": "leave him to his cart",
+          "if": [["!has", "hl_cinder_oil"]],
+          "say": "Mind the lane. The carts don't stop for anyone, and neither does the tithe.",
           "end": true
         }
       ]

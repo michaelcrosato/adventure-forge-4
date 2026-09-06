@@ -626,7 +626,8 @@
           "id": "return_barred",
           "label": "ask her to come back",
           "if": [["flag", "lys_left"], ["flag", "th_hollow_burned"]],
-          "say": "No. You had your chance to get him clear, and Thornwold burned with him still inside it. I'll walk this wood alone before I walk beside that again."
+          "say": "No. His debt, his choice — and then you put the torch to the ground he chose, with him standing on it. I'll walk this wood alone before I walk beside that again. Don't ask me twice.",
+          "once": true
         },
         {
           "id": "return_yes",
@@ -675,7 +676,12 @@
         {
           "id": "quest_home",
           "label": "ask after her brother",
-          "if": [["flag", "lys_brother_home"], ["flag", "th_cal_gone"]],
+          "if": [
+            ["flag", "lys_brother_home"],
+            ["flag", "th_cal_gone"],
+            ["!flag", "lys_brother_lost"],
+            ["!flag", "lys_brother_buried"]
+          ],
           "once": true,
           "say": "He's home. She doesn't say much about it, just stands in the doorway a while, watching him sleep like he might vanish if she looks away.",
           "fx": [["xp", 2], ["addvar", "appr_lys", 2]]
@@ -693,13 +699,18 @@
           "label": "ask after her brother",
           "if": [["flag", "lys_brother_lost"]],
           "once": true,
-          "say": "No grave, no word, nothing. She's stopped asking after him out loud. You catch her some nights, still watching the eastern road anyway.",
+          "say": "Ash, and no grave to mark. She's stopped saying his name out loud. You catch her some nights watching the glade's smoke-line anyway.",
           "fx": [["xp", 1], ["addvar", "appr_lys", -1]]
         },
         {
           "id": "quest_cleared",
           "label": "ask after her brother",
-          "if": [["flag", "lys_brother_cleared"]],
+          "if": [
+            ["flag", "lys_brother_cleared"],
+            ["!flag", "lys_brother_lost"],
+            ["!flag", "lys_brother_buried"],
+            ["!flag", "th_cal_gone"]
+          ],
           "once": true,
           "say": "He's clear of his debt, and staying with the Company anyway, by his own choice. She's quiet, then: \"Then that's what he wants. I don't have to like it to respect it.\"",
           "fx": [["xp", 2], ["addvar", "appr_lys", 1]]
@@ -1650,7 +1661,7 @@
           "label": "ask what he really remembers of that day",
           "if": [["var", "appr_osk", ">=", 4], ["flag", "said_osk_confide"]],
           "once": true,
-          "say": "I wasn't there. Sent off for dry wood on some errand nobody even remembers giving me now. I have never told a living soul I sometimes wonder if that's the only reason I'm still here.",
+          "say": "I wasn't there when the water took them. Sent off for dry wood on some errand nobody even remembers giving me now. I have never told a living soul I sometimes wonder if that's the only reason I'm still here.",
           "fx": [["xp", 2]]
         },
         {

@@ -227,7 +227,10 @@ nobody's business but the player's.
 - Fighting: `hp`, `atk` (damage per strike), `df` (the d20 + weapon hit +
   might total needed), `onDeath` effects. `hostile: true` only changes the
   room line (`(hostile, hp3/3)`); a non-aggressive hostile waits to be
-  attacked. A peaceable npc with `dialogue` is not listed as a target until
+  attacked. An attack entry's hint names what the kill would cost when
+  `onDeath` lowers a met companion's regard or a faction's standing
+  ("roll 6+ on the die; a kill: Lys -1"), so the first lesson in a
+  companion's judgment is not a surprise. A peaceable npc with `dialogue` is not listed as a target until
   you have spoken with them (any topic said); the option then waits at the
   foot of the menu. **`aggressive: true`** (needs hp and atk) strikes every turn the
   player stays in its room — walking through costs hp, and leaving is the
@@ -235,7 +238,10 @@ nobody's business but the player's.
   linger in.
   A hostile that holds its ground also puts `leave <name> be` on the menu —
   free, sets `left_<npc>`, and lifts the standoff's hold on fast travel — so
-  walking past it is a choice in so many words.
+  walking past it is a choice in so many words. The line says "they" of a
+  company or a named person, and names any exit still locked in the room
+  instead of promising the way past. A free action spends no turn, so an
+  aggressive npc gets no strike for it.
 - A remark may carry `fx`, run when it is spoken — a companion who says what
   they think of a theft can also think less of you (`["addvar", "appr_lys", -1]`).
   One remark a companion a turn, but a remark carrying `fx` is never held
@@ -246,8 +252,8 @@ nobody's business but the player's.
   A remark whose `fx` sets a quarrel flag (`quarrel_<a>_<b>` or
   `quarrel_<a>_<b>_<tag>`, `<a>`/`<b>` companion ids) is followed by a pointer
   naming the two, since the sides and the settling live in their conversations.
-  Taking an item that becomes the best weapon or armor carried says so
-  ("You will fight with it now.").
+  Taking an item — or being handed one by an effect's `["move", item, "inv"]` —
+  that becomes the best weapon or armor carried says so ("You will fight with it now.").
 - Companions: a `companion` block (`hit`, `dmg`, `remarks`) lets `["party",
   id, "join"]` recruit them. See the design doc for who the companions are;
   their definitions live in `companions.json`. In your region, react to them

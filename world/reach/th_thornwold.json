@@ -111,7 +111,7 @@
           "label": "get your bearings",
           "fx": [
             ["say", "West gate, into the wood. From the wood's edge: the gallows road four stands west; the Rope Larder (Rook) one west, one north; the Cutter's Barrow one west, two north."],
-            ["say", "The Long Watch one west, two south; the Denhollow four west, one south; Maud's hut and the black thorn's Understory four west, one north."]
+            ["say", "The Long Watch one west, two south; the Denhollow four west, one south; Hesper's hut and the black thorn's Understory four west, one north."]
           ],
           "free": true
         }
@@ -802,8 +802,18 @@
                     [
                       "if",
                       [["inParty", "lys"]],
-                      [["set", "lys_brother_lost"], ["set", "th_cal_dead"]],
-                      [["set", "lys_brother_buried"], ["set", "th_cal_dead"]]
+                      [
+                        ["set", "lys_brother_lost"],
+                        ["set", "th_cal_dead"],
+                        ["npcgo", "th_cal", null],
+                        ["say", "Cal is at the tree before the flames are, a Company man to the last, dragging at the ropes. The fire takes him with it, and Lys sees it take him."]
+                      ],
+                      [
+                        ["set", "lys_brother_buried"],
+                        ["set", "th_cal_dead"],
+                        ["npcgo", "th_cal", null],
+                        ["say", "Cal is at the tree before the flames are, a Company man to the last, dragging at the ropes. The fire takes him with it. Nobody sends word to the Vale."]
+                      ]
                     ]
                   ],
                   []
@@ -827,10 +837,10 @@
               "if",
               [["any", [["has", "th_pardon"], ["flag", "th_verse_known"]]]],
               [
-                ["say", "The rest stands ready: the true pardon is yours, or Keeper Rowan's verse — read one, or speak the other, and the turning stops."]
+                ["say", "The rest stands ready: the true pardon is yours, or Keeper Rowan's verse — read one, or speak the other, and the turning stops. The names cut into the tree can be read too (wits)."]
               ],
               [
-                ["say", "The rest still wants the true pardon — search Quartermaster Bray's dead-letter box (wits) — or Keeper Rowan's verse, taught in the Understory."]
+                ["say", "The rest stands open by wits alone: read the names cut into the tree (wits; a wrong name costs the Keepers' regard). Surer: the true pardon in Bray's dead-letter box (wits), or Keeper Rowan's verse in the Understory."]
               ]
             ],
             [
@@ -2497,8 +2507,8 @@
       "sideTrip": true,
       "landmark": "a thread of smoke",
       "vars": {
-        "NAME": "Maud's Smoke-Hut",
-        "HERMIT": "old Maud",
+        "NAME": "Hesper's Smoke-Hut",
+        "HERMIT": "old Hesper",
         "SIGN": "Smoke curls from the chimney in a color no ordinary fire burns.",
         "LOOT": "a twist of dried smoke-herb",
         "VOICE": "Smoke tells me most of what I need. Yours smells of the road."

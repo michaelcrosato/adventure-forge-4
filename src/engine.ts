@@ -314,7 +314,7 @@ function journalEvents(world: World, before: State, after: State, events: string
     // together, or its end came first) was never the player's to finish: no announcement
     if (!p && (q.status === "done" || q.status === "failed")) continue;
     if (q.status === "done") events.push(`Quest done: ${q.name}.`);
-    else if (q.status === "failed") events.push(`Quest closed: ${q.name} — its asker's wish is past meeting.`);
+    else if (q.status === "failed") events.push(`Quest closed: ${q.name} — its asker's wish can no longer be met.`);
     else if (q.text) events.push(`Quest — ${q.name}: ${q.text}`);
   }
 }
@@ -449,8 +449,13 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         const loc = where === "here" ? s.room : where;
         if (loc === "inv") {
           if (!s.inv.includes(item)) {
+            const wieldedBefore = bestWeapon(world, s).item, wornBefore = bestArmor(world, s).item;
             s.inv.push(item);
+            s.itemLoc[item] = "inv";
             events.push(`${world.items[item]?.name ?? item}: obtained.`);
+            // a reward or a found thing that becomes the best weapon or armor carried says so, as a pickup does
+            if (bestWeapon(world, s).item === item && wieldedBefore !== item) events.push(`(You will fight with it now.)`);
+            if (bestArmor(world, s).item === item && wornBefore !== item) events.push(`(You will wear it now.)`);
           }
           s.itemLoc[item] = "inv";
         } else {
@@ -862,6 +867,37 @@ function standingAtRisk(fxs: Fx[] | undefined): string[] {
   return [...new Set(out)];
 }
 
+/** A companion the player has met: in the party, their home visited, or walked out on the player. A name never heard is a spoiler, not news. */
+function companionMet(world: World, s: State, id: string): boolean {
+  const npc = world.npcs[id];
+  return !!npc && !npcDead(world, s, id) && (s.party.includes(id) || s.visited.includes(npc.room ?? "") || !!s.flags[`${id}_left`]);
+}
+
+/** "a kill: Lys -1; a kill costs standing with the Watch" — what an npc's death would cost in regard (companions met) and standing. */
+function killCostHint(world: World, s: State, fxs: Fx[] | undefined): string | null {
+  const regard: string[] = [];
+  const standing: string[] = [];
+  const visit = (list: Fx[] | undefined) => {
+    for (const fx of list ?? []) {
+      if (fx[0] === "addvar" && fx[2] < 0) {
+        if (fx[1].startsWith("appr_")) {
+          const id = fx[1].slice(5);
+          if (companionMet(world, s, id)) regard.push(`${world.npcs[id]!.name} ${fx[2]}`);
+        } else if (fx[1].startsWith("rep_") && world.factions?.[fx[1]]) standing.push(world.factions[fx[1]]!);
+      }
+      if (fx[0] === "if") {
+        visit(fx[2]);
+        visit(fx[3]);
+      }
+    }
+  };
+  visit(fxs);
+  const parts: string[] = [];
+  if (regard.length) parts.push(`a kill: ${[...new Set(regard)].join(", ")}`);
+  if (standing.length) parts.push(`a kill costs standing with ${[...new Set(standing)].join(" and ")}`);
+  return parts.length ? parts.join("; ") : null;
+}
+
 /** "a miss costs standing with the Gray Church" — names what a check's miss would cost, and what its hit would, when the world names it. */
 function costsStandingHint(world: World, missFx: Fx[] | undefined, hitFx?: Fx[] | undefined): string | null {
   const name = (v: string) => (v.startsWith("rep_") ? world.factions?.[v] : world.npcs[v.slice(5)]?.name);
@@ -1166,7 +1202,10 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     const def = world.npcs[a.npc];
     if (!def) return "";
     const need = Math.max(1, (def.df ?? 10) - attackBonus(world, s));
-    return ` (roll ${need}+ on the die)`;
+    // a kill that costs regard or standing is said before the blow, like a check's miss — a player
+    // who lost Lys's regard over two wolves the menu called fair game had no way to know
+    const kill = killCostHint(world, s, def.onDeath);
+    return kill ? ` (roll ${need}+ on the die; ${kill})` : ` (roll ${need}+ on the die)`;
   }
   if (a.kind === "go") {
     // legalActions lists every exit regardless of its gate, so a locked one
@@ -1197,9 +1236,10 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   const route = fx ? hollowRoute(fx) : null;
   if (route) parts.push(`settles this hold's grief: ${route}`);
   // regard an action moves outright (a side taken in a quarrel, an oath sworn to a companion) is said by name and number
+  // (only companions already met are named — the reeve's "Tamsin +1" read as the reeve's own name to a player who had not crossed the square yet)
   const moves = (fx ?? [])
-    .filter((f): f is ["addvar", string, number] => f[0] === "addvar" && f[1].startsWith("appr_") && f[2] !== 0)
-    .map((f) => `${world.npcs[f[1].slice(5)]?.name ?? f[1].slice(5)} ${f[2] > 0 ? "+" : "-"}${Math.abs(f[2])}`);
+    .filter((f): f is ["addvar", string, number] => f[0] === "addvar" && f[1].startsWith("appr_") && f[2] !== 0 && companionMet(world, s, f[1].slice(5)))
+    .map((f) => `${world.npcs[f[1].slice(5)]!.name} ${f[2] > 0 ? "+" : "-"}${Math.abs(f[2])}`);
   if (moves.length) parts.push(moves.join(", "));
   if (who) parts.unshift(who);
   if (parts.length) return ` (${parts.join("; ")})`;
@@ -1224,7 +1264,9 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // only the journey itself (travelto) and everything else costs one
   const freeCustom =
     action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free;
-  if (!freeCustom && action.kind !== "leave" && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore" && action.kind !== "travelmore") s.turn += 1;
+  const spentTurn =
+    !freeCustom && action.kind !== "leave" && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore" && action.kind !== "travelmore";
+  if (spentTurn) s.turn += 1;
   let attacked: string | null = null; // the npc that already struck back this turn
 
   switch (action.kind) {
@@ -1409,7 +1451,16 @@ export function step(world: World, prev: State, action: Action): StepOut {
     case "leave": {
       const def = world.npcs[action.npc];
       s.flags[`left_${action.npc}`] = true;
-      events.push(`You give ${def?.name ?? action.npc} a wide berth. It holds its ground and lets you.`);
+      const name = def?.name ?? action.npc;
+      // a company of men or a named person is "they"; a beast or a shade is "it"
+      const plural = /^[A-Z]/.test(name) || (/(men|folk|s)$/.test(name) && !/ss$/.test(name));
+      const holds = plural ? "They hold their ground" : "It holds its ground";
+      // a wide berth is not a key: an exit still locked here is named, so the line never promises the way past
+      const locked = Object.entries(world.rooms[s.room]?.exits ?? {}).filter(([, e]) => e.if && !condsOk(world, s, e.if));
+      if (locked.length) {
+        const ways = locked.map(([dir, e]) => `the way ${dir} stays locked${e.hint ? ` (${e.hint})` : ""}`).join(", and ");
+        events.push(`You give ${name} a wide berth. ${holds}; ${ways}.`);
+      } else events.push(`You give ${name} a wide berth. ${holds} and ${plural ? "let" : "lets"} you pass.`);
       break;
     }
     case "perkpick": {
@@ -1423,7 +1474,8 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // company has its say — neither runs during a level-up pick or class pick,
   // which are menu time, not world time
   if (!s.ended && action.kind !== "perkpick" && action.kind !== "classpick") {
-    aggressivePass(world, s, events, attacked);
+    // a free look, a menu turned, a wide berth given: no turn passes, so nothing gets its strike
+    if (spentTurn) aggressivePass(world, s, events, attacked);
     recoverDowned(world, s, events, attacked);
     // the company speaks on a turn of the world, not while a menu is being turned
     if (!MENU_KINDS.has(action.kind)) partyRemarks(world, s, events);
