@@ -308,6 +308,70 @@
             "if": [["var", "thefts", ">=", 2]],
             "say": "Twice now. That's not hunger talking. That's a habit.",
             "fx": [["addvar", "appr_lys", -1]]
+          },
+          {
+            "id": "r_quarrel_lys_osk_open",
+            "if": [["inParty", "lys"], ["inParty", "osk"], ["flag", "sv_fd_rested_refused"], ["!flag", "quarrel_lys_osk"]],
+            "say": "A boy drowned at their door and you let the roll-book decide if he counts. That's cruelty with a ledger. — Osk: \"It's Priory doctrine. I've knelt under it my whole life and have no answer for her.\" They both look at you.",
+            "fx": [["set", "quarrel_lys_osk"]]
+          },
+          {
+            "id": "r_quarrel_lys_osk_grateful_lys",
+            "if": [["flag", "quarrel_lys_osk_lys"]],
+            "say": "Still glad I said that about the roll-book, out loud, once. Costs nothing to remember there was a name."
+          },
+          {
+            "id": "r_quarrel_lys_osk_sour_lys",
+            "if": [["flag", "quarrel_lys_osk_osk"]],
+            "say": "I still think of that boy some nights, doctrine or not. Some things shouldn't need a roll-book's leave to matter."
+          },
+          {
+            "id": "r_quarrel_lys_tamsin_open",
+            "if": [["inParty", "lys"], ["inParty", "tamsin"], ["flag", "sv_th_burned_harsh"], ["!flag", "quarrel_lys_tamsin"]],
+            "say": "A new rope on that tree, and my brother sleeps in that camp. You just called a noose discipline again. — Tamsin: \"A camp with no teeth gets its throat cut first. That's arithmetic, not cruelty.\" They both look at you.",
+            "fx": [["set", "quarrel_lys_tamsin"]]
+          },
+          {
+            "id": "r_quarrel_lys_tamsin_grateful_lys",
+            "if": [["flag", "quarrel_lys_tamsin_lys"]],
+            "say": "Thank you, still. One less rope between here and my brother's door."
+          },
+          {
+            "id": "r_quarrel_lys_tamsin_sour_lys",
+            "if": [["flag", "quarrel_lys_tamsin_tamsin"]],
+            "say": "Arithmetic. Right. Ask me again when it's someone you love doing the dying."
+          },
+          {
+            "id": "r_quarrel_lys_vell_open",
+            "if": [
+              ["inParty", "lys"],
+              ["inParty", "vell"],
+              [
+                "any",
+                [
+                  ["flag", "hb_bargain_broken"],
+                  ["flag", "ir_bargain_broken"],
+                  ["flag", "th_bargain_broken"],
+                  ["flag", "wm_bargain_broken"],
+                  ["flag", "fd_bargain_broken"],
+                  ["flag", "sk_bargain_broken"],
+                  ["flag", "em_bargain_broken"]
+                ]
+              ],
+              ["!flag", "quarrel_lys_vell"]
+            ],
+            "say": "A bargain with the dead, and we let it break anyway. That's a promise same as any other. — Vell: \"It was a promise made to something that could never hold anyone to it. Not quite the same weight.\" They both look at you.",
+            "fx": [["set", "quarrel_lys_vell"]]
+          },
+          {
+            "id": "r_quarrel_lys_vell_grateful_lys",
+            "if": [["flag", "quarrel_lys_vell_lys"]],
+            "say": "Still glad you called it a promise. Somebody should keep score, even for the dead."
+          },
+          {
+            "id": "r_quarrel_lys_vell_sour_lys",
+            "if": [["flag", "quarrel_lys_vell_vell"]],
+            "say": "A promise doesn't stop being one just because you can prove it was never going to work."
           }
         ],
         "leaves": [
@@ -318,6 +382,18 @@
           {
             "if": [["var", "appr_lys", "<=", -3]],
             "say": "I've watched you long enough to know what you are. I won't watch anymore."
+          },
+          {
+            "if": [["flag", "quarrel_lys_osk_osk"], ["var", "appr_lys", "<=", -2]],
+            "say": "You sided with the roll-book over a drowned boy's name. I've walked with worse. I'm done walking with that."
+          },
+          {
+            "if": [["flag", "quarrel_lys_tamsin_tamsin"], ["var", "appr_lys", "<=", -2]],
+            "say": "You put teeth back in that camp's mouth with my brother still between them. I can't watch that road anymore. I'm sorry."
+          },
+          {
+            "if": [["flag", "quarrel_lys_vell_vell"], ["var", "appr_lys", "<=", -2]],
+            "say": "You'd let precision bury a promise every time. I don't have room left for someone who counts it that way. I'm done counting with you."
           }
         ]
       },
@@ -487,6 +563,71 @@
           "once": true,
           "say": "That's real coin, not a promise. Riders will carry Cal's name down every road between here and Thornwold faster than either of us could walk it. I didn't expect this from you. Thank you.",
           "fx": [["addvar", "gold", -10], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "quarrel_lys_osk_side_lys",
+          "label": "side with her against the roll-book",
+          "if": [["flag", "quarrel_lys_osk"], ["!flag", "quarrel_lys_osk_done"]],
+          "once": true,
+          "say": "Good. Someone should say it plain. — Osk, after a moment: \"Plain isn't always kind. But I take the meaning.\"",
+          "fx": [
+            ["addvar", "appr_lys", 2],
+            ["addvar", "appr_osk", -2],
+            ["set", "quarrel_lys_osk_lys"],
+            ["set", "quarrel_lys_osk_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_tamsin_side_lys",
+          "label": "back her — the glade's hanged enough",
+          "if": [["flag", "quarrel_lys_tamsin"], ["!flag", "quarrel_lys_tamsin_done"]],
+          "once": true,
+          "say": "Thank you. That's one less thing to carry, with him still there. — Tamsin only shakes her head, unconvinced.",
+          "fx": [
+            ["addvar", "appr_lys", 2],
+            ["addvar", "appr_tamsin", -2],
+            ["set", "quarrel_lys_tamsin_lys"],
+            ["set", "quarrel_lys_tamsin_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_tamsin_settle",
+          "label": "tell her it's not yours to judge (will)",
+          "if": [["flag", "quarrel_lys_tamsin"], ["!flag", "quarrel_lys_tamsin_done"]],
+          "once": true,
+          "say": "You tell them plainly the glade's rope isn't a fight for you to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_tamsin_peace"],
+                ["set", "quarrel_lys_tamsin_done"],
+                ["say", "\"...Fair. It was Vane's camp before it was my brother's problem.\" — Tamsin grunts something that might be agreement."]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["set", "quarrel_lys_tamsin_sour"],
+                ["set", "quarrel_lys_tamsin_done"],
+                ["say", "You'd let the wolves vote on the sheep pen too, near as Lys is concerned. — Tamsin just goes back to her whetstone, done with the talk."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_lys_vell_side_lys",
+          "label": "back her — a promise is a promise",
+          "if": [["flag", "quarrel_lys_vell"], ["!flag", "quarrel_lys_vell_done"]],
+          "once": true,
+          "say": "Thank you. Somebody should still mean it, even with nothing left to enforce it. — Vell makes a note, unconvinced but careful about it.",
+          "fx": [
+            ["addvar", "appr_lys", 2],
+            ["addvar", "appr_vell", -2],
+            ["set", "quarrel_lys_vell_lys"],
+            ["set", "quarrel_lys_vell_done"]
+          ]
         },
         {
           "id": "bye",
@@ -775,6 +916,47 @@
             "id": "r_sv_fd_burned_spared",
             "if": [["flag", "sv_fd_burned_spared"]],
             "say": "Some water stays a grave. Thank you for saying it to her, so I didn't have to. I'm not sure I could have kept my voice level."
+          },
+          {
+            "id": "r_quarrel_lys_osk_sour_osk",
+            "if": [["flag", "quarrel_lys_osk_lys"], ["flag", "mg_entered"]],
+            "say": "You still think it was only cruelty. Maybe. It was also the only order I had left, the day the water took everyone's names."
+          },
+          {
+            "id": "r_quarrel_lys_osk_grateful_osk",
+            "if": [["flag", "quarrel_lys_osk_osk"]],
+            "say": "Thank you, again, for not making me relitigate the Priory every mile since Fenmarch."
+          },
+          {
+            "id": "r_quarrel_osk_tamsin_open",
+            "if": [
+              ["inParty", "osk"],
+              ["inParty", "tamsin"],
+              ["any", [["var", "hollows_burned", ">=", 2], ["flag", "em_hollow_burned"]]],
+              ["!flag", "quarrel_osk_tamsin"]
+            ],
+            "say": "Twice now the fire's decided what should have been a rite. I can't keep calling that mercy. — Tamsin: \"Nobody's asking you to call it anything. It worked. Twice.\" They both look at you.",
+            "fx": [["set", "quarrel_osk_tamsin"]]
+          },
+          {
+            "id": "r_quarrel_osk_tamsin_grateful_osk",
+            "if": [["flag", "quarrel_osk_tamsin_osk"], ["var", "hollows_burned", ">=", 3]],
+            "say": "Another one. I said I wouldn't stand at a third fire and call it a rite. I meant it, not just said it."
+          },
+          {
+            "id": "r_quarrel_osk_tamsin_sour_osk",
+            "if": [["flag", "quarrel_osk_tamsin_tamsin"]],
+            "say": "I still say a verse for every fire we didn't stop. Even the ones you'd call sense."
+          },
+          {
+            "id": "r_quarrel_osk_vell_grateful_osk",
+            "if": [["flag", "quarrel_osk_vell_osk"]],
+            "say": "Thank you. Some things a man should get to keep between himself and his god."
+          },
+          {
+            "id": "r_quarrel_osk_vell_sour_osk",
+            "if": [["flag", "quarrel_osk_vell_vell"], ["flag", "mg_entered"]],
+            "say": "Every city since Emberfall, I think of that confession sitting in someone's ledger, out of his hands for good now."
           }
         ],
         "leaves": [
@@ -785,6 +967,18 @@
           {
             "if": [["var", "appr_osk", "<=", -3]],
             "say": "I came to this Church to be better than my worst assumptions about people. Standing next to you keeps proving them right. I'm done."
+          },
+          {
+            "if": [["flag", "quarrel_lys_osk_lys"], ["var", "appr_osk", "<=", -2]],
+            "say": "You keep choosing the boy who isn't there over the men who still are. I need distance from that kind of certainty. I'm sorry."
+          },
+          {
+            "if": [["flag", "quarrel_osk_tamsin_tamsin"], ["var", "appr_osk", "<=", -2]],
+            "say": "Every fire since, you've stood on her side of it. I can't keep calling this company mine and mean it. I'm sorry."
+          },
+          {
+            "if": [["flag", "quarrel_osk_vell_vell"], ["var", "appr_osk", "<=", -2]],
+            "say": "You handed a dying man's confession to history before he was even cold about giving it himself. I can't square that with anything I still believe."
           }
         ]
       },
@@ -948,6 +1142,97 @@
           "once": true,
           "say": "I didn't ask you to cross the Priory for me. You did it anyway, plain and public, and they'll remember whose voice said it. That costs you something I can't give back to you.",
           "fx": [["addvar", "rep_church", -1], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "quarrel_lys_osk_side_osk",
+          "label": "side with him — it's not his roll-book",
+          "if": [["flag", "quarrel_lys_osk"], ["!flag", "quarrel_lys_osk_done"]],
+          "once": true,
+          "say": "Thank you. I can't undo four hundred years of that roll alone. — Lys, not looking at either of you: \"No. Just the one boy. That would have done.\"",
+          "fx": [
+            ["addvar", "appr_osk", 2],
+            ["addvar", "appr_lys", -2],
+            ["set", "quarrel_lys_osk_osk"],
+            ["set", "quarrel_lys_osk_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_osk_settle",
+          "label": "tell him it's not yours to judge (will)",
+          "if": [["flag", "quarrel_lys_osk"], ["!flag", "quarrel_lys_osk_done"]],
+          "once": true,
+          "say": "You tell them plainly the sexton's roll isn't a fight for you to referee.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_osk_peace"],
+                ["set", "quarrel_lys_osk_done"],
+                ["say", "\"...Fair. It was between me and the Priory before she ever heard the boy's name.\" — Lys just shrugs, already watching the road again."]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_osk", -1],
+                ["set", "quarrel_lys_osk_sour"],
+                ["set", "quarrel_lys_osk_done"],
+                ["say", "Neither wanted that answer. — Lys mutters something about people who won't pick a side; you get only silence back from him, which is worse."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_osk_tamsin_side_osk",
+          "label": "back Osk — the rite still matters",
+          "if": [["flag", "quarrel_osk_tamsin"], ["!flag", "quarrel_osk_tamsin_done"]],
+          "once": true,
+          "say": "Thank you. It matters more, hearing someone else say so. — Tamsin just shrugs and goes back to her whetstone.",
+          "fx": [
+            ["addvar", "appr_osk", 2],
+            ["addvar", "appr_tamsin", -2],
+            ["set", "quarrel_osk_tamsin_osk"],
+            ["set", "quarrel_osk_tamsin_done"]
+          ]
+        },
+        {
+          "id": "quarrel_osk_vell_side_osk",
+          "label": "back Osk — a confession isn't a chapter",
+          "if": [["flag", "quarrel_osk_vell"], ["!flag", "quarrel_osk_vell_done"]],
+          "once": true,
+          "say": "Thank you. He gave that to his god, not to history. — Vell says nothing, already composing the sentence anyway.",
+          "fx": [
+            ["addvar", "appr_osk", 2],
+            ["addvar", "appr_vell", -2],
+            ["set", "quarrel_osk_vell_osk"],
+            ["set", "quarrel_osk_vell_done"]
+          ]
+        },
+        {
+          "id": "quarrel_osk_vell_settle",
+          "label": "tell him it's not yours to grade (will)",
+          "if": [["flag", "quarrel_osk_vell"], ["!flag", "quarrel_osk_vell_done"]],
+          "once": true,
+          "say": "You tell them plainly the prior's confession isn't a fight for you to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_osk_vell_peace"],
+                ["set", "quarrel_osk_vell_done"],
+                ["say", "\"...That's fair. It should have been his choice from the start.\" — Vell, after a moment: \"Fair. Noted. Not forgotten.\""]
+              ],
+              [
+                ["addvar", "appr_osk", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_osk_vell_sour"],
+                ["set", "quarrel_osk_vell_done"],
+                ["say", "You go quiet in the way that means you mind. — Vell writes something down without saying what."]
+              ]
+            ]
+          ]
         },
         {
           "id": "bye",
@@ -1235,6 +1520,36 @@
             "id": "r_sv_wm_bargained_paid",
             "if": [["flag", "sv_wm_bargained_paid"]],
             "say": "You paid the Watch's shortfall out of your own purse. The quartermaster will never trust it. I do. Don't make a habit of carrying us, though."
+          },
+          {
+            "id": "r_quarrel_osk_tamsin_sour_tamsin",
+            "if": [["flag", "quarrel_osk_tamsin_osk"]],
+            "say": "Rites are for people with time to spare. I still don't have any."
+          },
+          {
+            "id": "r_quarrel_osk_tamsin_grateful_tamsin",
+            "if": [["flag", "quarrel_osk_tamsin_tamsin"]],
+            "say": "Didn't need the vote of confidence. I'll take it anyway."
+          },
+          {
+            "id": "r_quarrel_lys_tamsin_sour_tamsin",
+            "if": [["flag", "quarrel_lys_tamsin_lys"]],
+            "say": "Soft is how camps rot. I'll say it as many times as it takes to be wrong about it."
+          },
+          {
+            "id": "r_quarrel_lys_tamsin_grateful_tamsin",
+            "if": [["flag", "quarrel_lys_tamsin_tamsin"], ["flag", "th_cal_staying"]],
+            "say": "Camp's harder now, and your brother's still in it. If that rope's ever pointed his way, you'll find me standing in front of it."
+          },
+          {
+            "id": "r_quarrel_tamsin_vell_grateful_tamsin",
+            "if": [["flag", "quarrel_tamsin_vell_tamsin"]],
+            "say": "Watch still stands the wall the same, lie or no lie. Good. That's what matters to the men on it."
+          },
+          {
+            "id": "r_quarrel_tamsin_vell_sour_tamsin",
+            "if": [["flag", "quarrel_tamsin_vell_vell"]],
+            "say": "Hope your true history's worth what it costs the next recruit who believed in that wall."
           }
         ],
         "leaves": [
@@ -1245,6 +1560,18 @@
           {
             "if": [["var", "appr_tamsin", "<=", -3]],
             "say": "I don't fight beside people I can't trust at my back. That's you now. Find someone else."
+          },
+          {
+            "if": [["flag", "quarrel_osk_tamsin_osk"], ["var", "appr_tamsin", "<=", -2]],
+            "say": "You'd rather a verse than a done thing, every time it costs something. I don't have patience left for that arithmetic."
+          },
+          {
+            "if": [["flag", "quarrel_lys_tamsin_lys"], ["var", "appr_tamsin", "<=", -2]],
+            "say": "You'll keep that glade soft until it costs someone living. I've buried enough people who trusted soft. Find another hammer."
+          },
+          {
+            "if": [["flag", "quarrel_tamsin_vell_vell"], ["var", "appr_tamsin", "<=", -2]],
+            "say": "You handed the Watch's own lie to whoever asks now, recruits included. I've seen what losing faith in the wall does to a garrison. I want no part of causing it."
           }
         ]
       },
@@ -1406,6 +1733,97 @@
           "once": true,
           "say": "You put the question to the Ironbound chapter yourself, plain and public, and didn't back down when they didn't like it. They'll mark your name for it. I'm not going to say thank you. I don't have to.",
           "fx": [["addvar", "rep_iron", -1], ["addvar", "appr_tamsin", 1]]
+        },
+        {
+          "id": "quarrel_osk_tamsin_side_tamsin",
+          "label": "back Tamsin — burn it and be done",
+          "if": [["flag", "quarrel_osk_tamsin"], ["!flag", "quarrel_osk_tamsin_done"]],
+          "once": true,
+          "say": "Good. Someone with sense. — Osk doesn't argue, just goes quiet in the way that means he's still arguing, inside.",
+          "fx": [
+            ["addvar", "appr_tamsin", 2],
+            ["addvar", "appr_osk", -2],
+            ["set", "quarrel_osk_tamsin_tamsin"],
+            ["set", "quarrel_osk_tamsin_done"]
+          ]
+        },
+        {
+          "id": "quarrel_osk_tamsin_settle",
+          "label": "tell her to leave this one to him (will)",
+          "if": [["flag", "quarrel_osk_tamsin"], ["!flag", "quarrel_osk_tamsin_done"]],
+          "once": true,
+          "say": "You tell them plainly this fire isn't yours to referee.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_osk_tamsin_peace"],
+                ["set", "quarrel_osk_tamsin_done"],
+                ["say", "\"Fine. Wasn't going to stop swinging a hammer over a novice's feelings anyway.\" — Osk, dry for once: \"Noted, with love.\""]
+              ],
+              [
+                ["addvar", "appr_osk", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["set", "quarrel_osk_tamsin_sour"],
+                ["set", "quarrel_osk_tamsin_done"],
+                ["say", "You're as bad as the rest of the ditherers, near as Tamsin's concerned. — Osk just looks at the ground and doesn't argue the word."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_lys_tamsin_side_tamsin",
+          "label": "back her — the camp needs its teeth",
+          "if": [["flag", "quarrel_lys_tamsin"], ["!flag", "quarrel_lys_tamsin_done"]],
+          "once": true,
+          "say": "Good. Soft camps bury more men than hard ones do. — Lys says nothing, just watches the west road longer than usual.",
+          "fx": [
+            ["addvar", "appr_tamsin", 2],
+            ["addvar", "appr_lys", -2],
+            ["set", "quarrel_lys_tamsin_tamsin"],
+            ["set", "quarrel_lys_tamsin_done"]
+          ]
+        },
+        {
+          "id": "quarrel_tamsin_vell_side_tamsin",
+          "label": "back Tamsin — the Watch keeps its honor",
+          "if": [["flag", "quarrel_tamsin_vell"], ["!flag", "quarrel_tamsin_vell_done"]],
+          "once": true,
+          "say": "Good. Those men on the wall never lied to anyone. Let them keep believing in something. — Vell looks like they've lost an argument they didn't know was still running.",
+          "fx": [
+            ["addvar", "appr_tamsin", 2],
+            ["addvar", "appr_vell", -2],
+            ["set", "quarrel_tamsin_vell_tamsin"],
+            ["set", "quarrel_tamsin_vell_done"]
+          ]
+        },
+        {
+          "id": "quarrel_tamsin_vell_settle",
+          "label": "tell her it's not yours to settle (will)",
+          "if": [["flag", "quarrel_tamsin_vell"], ["!flag", "quarrel_tamsin_vell_done"]],
+          "once": true,
+          "say": "You tell them plainly the fort's founding isn't a fight for you to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_tamsin_vell_peace"],
+                ["set", "quarrel_tamsin_vell_done"],
+                ["say", "\"...Fine. Wasn't my lie to begin with.\" — Vell, almost gracious: \"Nor mine to force on people still standing that wall.\""]
+              ],
+              [
+                ["addvar", "appr_tamsin", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_tamsin_vell_sour"],
+                ["set", "quarrel_tamsin_vell_done"],
+                ["say", "You're as bad as a politician, near as Tamsin's concerned. — Vell says nothing, which from Vell is its own verdict."]
+              ]
+            ]
+          ]
         },
         {
           "id": "bye",
@@ -1679,6 +2097,48 @@
             "id": "r_sv_wm_burned_spared",
             "if": [["flag", "sv_wm_burned_spared"]],
             "say": "The ash stays untouched. The Watch will call it reverence; I'd call it evidence. Either way, someone a century on will be glad it's still there to read."
+          },
+          {
+            "id": "r_quarrel_osk_vell_open",
+            "if": [["inParty", "osk"], ["inParty", "vell"], ["flag", "em_prior_confessed"], ["!flag", "quarrel_osk_vell"]],
+            "say": "The prior confessed his own Church ordered that fire. That belongs in a record, not only a rite. — Osk: \"He confessed it to make his peace, Vell. Not to be a chapter in your book.\" They both look at you.",
+            "fx": [["set", "quarrel_osk_vell"]]
+          },
+          {
+            "id": "r_quarrel_osk_vell_sour_vell",
+            "if": [["flag", "quarrel_osk_vell_osk"]],
+            "say": "A confession nobody may read is a confession that never quite happened. I still believe that."
+          },
+          {
+            "id": "r_quarrel_osk_vell_grateful_vell",
+            "if": [["flag", "quarrel_osk_vell_vell"]],
+            "say": "The record stands because you let it. History thanks you. I'll settle for saying it myself."
+          },
+          {
+            "id": "r_quarrel_tamsin_vell_open",
+            "if": [["inParty", "tamsin"], ["inParty", "vell"], ["flag", "wm_founding_known"], ["!flag", "quarrel_tamsin_vell"]],
+            "say": "Four hundred years, and the Watch has guarded a lie about its own crown. That deserves knowing. — Tamsin: \"It deserves men who still show up tomorrow. Mind whose faith you're spending.\" They both look at you.",
+            "fx": [["set", "quarrel_tamsin_vell"]]
+          },
+          {
+            "id": "r_quarrel_tamsin_vell_sour_vell",
+            "if": [["flag", "quarrel_tamsin_vell_tamsin"], ["flag", "mg_at_throne"]],
+            "say": "We're standing where that lie was born, and the Watch still doesn't know the whole of it. Some silences outlive their reasons."
+          },
+          {
+            "id": "r_quarrel_tamsin_vell_grateful_vell",
+            "if": [["flag", "quarrel_tamsin_vell_vell"]],
+            "say": "Thank you. I intend to write this one down properly, as promised."
+          },
+          {
+            "id": "r_quarrel_lys_vell_sour_vell",
+            "if": [["flag", "quarrel_lys_vell_lys"], ["flag", "mg_at_throne"]],
+            "say": "Standing here, I still think you sentimentalize bargains no one could have kept. I've mostly stopped saying so."
+          },
+          {
+            "id": "r_quarrel_lys_vell_grateful_vell",
+            "if": [["flag", "quarrel_lys_vell_vell"]],
+            "say": "Thank you for not romanticizing an arrangement that was never going to hold."
           }
         ],
         "leaves": [
@@ -1693,6 +2153,18 @@
           {
             "if": [["var", "appr_vell", "<=", -3]],
             "say": "I've reconsidered the wisdom of this arrangement entirely. Goodbye."
+          },
+          {
+            "if": [["flag", "quarrel_osk_vell_osk"], ["var", "appr_vell", "<=", -2]],
+            "say": "You buried a truth to spare a Church its discomfort. I've spent my whole life on the wrong end of exactly that habit. I'm done watching it happen."
+          },
+          {
+            "if": [["flag", "quarrel_tamsin_vell_tamsin"], ["var", "appr_vell", "<=", -2]],
+            "say": "You chose the Watch's comfort over four hundred years of an honest record. I have spent my whole life paying for exactly that choice, made by someone else. I won't watch you make it again."
+          },
+          {
+            "if": [["flag", "quarrel_lys_vell_lys"], ["var", "appr_vell", "<=", -2]],
+            "say": "You keep grading bargains by whether the dead can enforce them. Mine never could either, and I'm tired of that being the measure. I'm gone."
           }
         ]
       },
@@ -1840,6 +2312,71 @@
           "once": true,
           "say": "You gave your word, plainly, that whatever that ledger says stays between the two of us unless I choose otherwise. I don't extend trust for free, remember. Consider this noted. And remembered.",
           "fx": [["set", "vell_kept_secret"], ["addvar", "appr_vell", 1]]
+        },
+        {
+          "id": "quarrel_osk_vell_side_vell",
+          "label": "back Vell — it belongs in the record",
+          "if": [["flag", "quarrel_osk_vell"], ["!flag", "quarrel_osk_vell_done"]],
+          "once": true,
+          "say": "Thank you. Truth shouldn't need my begging to survive. — Osk looks like something in him has quietly closed.",
+          "fx": [
+            ["addvar", "appr_vell", 2],
+            ["addvar", "appr_osk", -2],
+            ["set", "quarrel_osk_vell_vell"],
+            ["set", "quarrel_osk_vell_done"]
+          ]
+        },
+        {
+          "id": "quarrel_tamsin_vell_side_vell",
+          "label": "back Vell — the truth outranks comfort",
+          "if": [["flag", "quarrel_tamsin_vell"], ["!flag", "quarrel_tamsin_vell_done"]],
+          "once": true,
+          "say": "Thank you. The Watch will survive knowing what it actually guarded. — Tamsin doesn't answer, just checks her gear like she's leaving early.",
+          "fx": [
+            ["addvar", "appr_vell", 2],
+            ["addvar", "appr_tamsin", -2],
+            ["set", "quarrel_tamsin_vell_vell"],
+            ["set", "quarrel_tamsin_vell_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_vell_side_vell",
+          "label": "back Vell — the dead never held the pen",
+          "if": [["flag", "quarrel_lys_vell"], ["!flag", "quarrel_lys_vell_done"]],
+          "once": true,
+          "say": "Thank you. Precision matters, even in grief. — Lys looks at you like you've failed a much simpler test.",
+          "fx": [
+            ["addvar", "appr_vell", 2],
+            ["addvar", "appr_lys", -2],
+            ["set", "quarrel_lys_vell_vell"],
+            ["set", "quarrel_lys_vell_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_vell_settle",
+          "label": "tell them it's not yours to grade (will)",
+          "if": [["flag", "quarrel_lys_vell"], ["!flag", "quarrel_lys_vell_done"]],
+          "once": true,
+          "say": "You tell them plainly the broken bargain isn't a fight for you to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_vell_peace"],
+                ["set", "quarrel_lys_vell_done"],
+                ["say", "\"...An acceptable abstention.\" — Lys just nods once, already watching the road instead."]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_lys_vell_sour"],
+                ["set", "quarrel_lys_vell_done"],
+                ["say", "You'd let a debt collector off easy too, near as Lys is concerned. — Vell mutters something about the impossibility of pleasing hunters."]
+              ]
+            ]
+          ]
         },
         {
           "id": "bye",
@@ -2280,6 +2817,126 @@
     {
       "if": [["inParty", "tamsin"], ["inParty", "vell"], ["var", "appr_tamsin", ">=", 2], ["var", "appr_vell", "<=", -1]],
       "text": "Tamsin never asked Vell to justify their caution about you. She just started standing a little closer, just in case.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_osk_lys"]],
+      "text": "You told Osk the roll-book doesn't drown a boy twice. He never fully argued the point again, or forgave it either.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_osk_osk"]],
+      "text": "You backed Osk's Priory over Lys's anger at the sexton's roll. She still thinks of that boy, some nights.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_osk_peace"], ["flag", "quarrel_lys_osk_done"]],
+      "text": "You told Lys and Osk the sexton's roll wasn't yours to fight over. They let it go between them, mostly.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_osk_sour"]],
+      "text": "Lys and Osk never settled it, over one drowned boy's name. It sits between them still, unspoken.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_tamsin_osk"]],
+      "text": "You told Tamsin the rite still mattered, fire or no fire. Osk kept his verses. Tamsin kept her opinion of them.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_tamsin_tamsin"]],
+      "text": "You told Osk to let the fire decide, twice over. He still says a verse for every one he couldn't stop.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_tamsin_peace"], ["flag", "quarrel_osk_tamsin_done"]],
+      "text": "You told Osk and Tamsin the fire wasn't theirs to fight over between them. Neither much liked the answer, and both kept it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_tamsin_sour"]],
+      "text": "Osk and Tamsin never settled it, rite against fire. They still work the same road, and still don't talk about it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_tamsin_lys"]],
+      "text": "You told Tamsin the glade had hanged enough. The tree stayed bare, and Lys stopped watching the west road quite so hard.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_tamsin_tamsin"]],
+      "text": "You backed Tamsin's hard line at the glade. The rope went back up, and Lys never quite forgave the arithmetic of it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_tamsin_peace"], ["flag", "quarrel_lys_tamsin_done"]],
+      "text": "You told Lys and Tamsin the glade's rope wasn't yours to settle between them. They dropped it, mostly, and moved on.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_tamsin_sour"]],
+      "text": "Lys and Tamsin never settled it, mercy against discipline. Neither brings up the glade anymore, which is its own kind of answer.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_vell_osk"]],
+      "text": "You told Osk the confession belonged to history. Vell wrote it down properly. Osk still winces at the word 'chapter.'",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_vell_vell"]],
+      "text": "You told Vell a confession isn't a chapter. The record stayed unwritten, and Vell has not quite let the point go.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_vell_peace"], ["flag", "quarrel_osk_vell_done"]],
+      "text": "You told Osk and Vell the prior's confession wasn't theirs to fight over. They left it there, mostly settled.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_vell_sour"]],
+      "text": "Osk and Vell never settled it, a hidden Church against a costly truth. Vell still takes notes Osk pretends not to notice.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_tamsin_vell_tamsin"]],
+      "text": "You told Tamsin the truth outranked the Watch's comfort. Vell wrote the founding lie down properly. Wardmoor has not yet read it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_tamsin_vell_vell"]],
+      "text": "You told Vell the Watch keeps its honor either way. The founding record stayed a scholar's secret, and Vell still minds that.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_tamsin_vell_peace"], ["flag", "quarrel_tamsin_vell_done"]],
+      "text": "You told Tamsin and Vell the fort's lie wasn't theirs to fight over. They dropped it, and the wall stands the same as before.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_tamsin_vell_sour"]],
+      "text": "Tamsin and Vell never settled it, the Watch's honor against the truth of it. They still work the same roads, carefully apart.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_vell_lys"]],
+      "text": "You told Vell a promise is a promise, dead or living. Lys still keeps that particular score, quietly, on your behalf.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_vell_vell"]],
+      "text": "You told Lys the dead never held the pen. Vell noted it gratefully. Lys has not entirely let the phrase go.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_vell_peace"], ["flag", "quarrel_lys_vell_done"]],
+      "text": "You told Lys and Vell the broken bargain wasn't theirs to grade between them. Both let it stand, more or less at peace with it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_vell_sour"]],
+      "text": "Lys and Vell never settled it, a promise to the dead against a promise that was never real. They still travel the same road, carefully.",
       "weight": 1
     }
   ],
