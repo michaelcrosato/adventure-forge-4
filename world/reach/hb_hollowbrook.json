@@ -59,7 +59,23 @@
           "brief": "Skiffs on the mud. A coastal bell found its way here."
         }
       ],
-      "onEnter": [["if", [["flag", "hb_kingsrest_resolved"], ["!flag", "sv_hb_back"]], [["set", "sv_hb_back"]], []]]
+      "onEnter": [["if", [["flag", "hb_kingsrest_resolved"], ["!flag", "sv_hb_back"]], [["set", "sv_hb_back"]], []]],
+      "actions": [
+        {
+          "id": "hb_scout_skiff",
+          "label": "check the skiffs, false bottoms (Scout)",
+          "if": [["class", "scout"], ["!flag", "or_scout_hb_skiff"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_scout_hb_skiff"],
+            ["score", 2],
+            ["xp", 2],
+            ["addvar", "gold", 3],
+            ["say", "One skiff rides higher than the mud should let it. A false bottom, and someone's been running curios past the chandler's own cut without telling him. You take a small share and leave the rest exactly as found."]
+          ]
+        }
+      ]
     },
     "hb_tithe_barn": {
       "name": "The Tithe Barn",
@@ -104,7 +120,12 @@
           "brief": "Wax and iron. The old shelf stands bare."
         },
         { "if": [["flag", "hb_robber_stopped"]], "brief": "Wax, and fewer curios than there were." },
-        { "if": [["flag", "hb_robber_bribed"]], "brief": "Wax, and a fresh crate of curios, unexplained." }
+        { "if": [["flag", "hb_robber_bribed"]], "brief": "Wax, and a fresh crate of curios, unexplained." },
+        {
+          "if": [["flag", "or_envoy_hb_haggle"]],
+          "desc": "Candle-wax and old iron, and shelves of things dug from mounds and sold as curios. He still mutters about that ring sometimes. The shore lies out.",
+          "brief": "Wax, and things dug from mounds. He still mutters about that ring."
+        }
       ],
       "actions": [
         {
@@ -487,6 +508,38 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "warden_deputize_hb",
+          "label": "offer to stand watch (Warden)",
+          "if": [["class", "warden"], ["flag", "said_hb_warden_digger"], ["!flag", "or_warden_hb_deputized"]],
+          "once": true,
+          "say": "'A soldier's offer,' he says, and doesn't refuse it. 'Watch the downs a night, and the digger's yours to handle as you judge — not the Watch's, not mine.'",
+          "fx": [["set", "or_warden_hb_deputized"], ["score", 2], ["xp", 2], ["addvar", "rep_keepers", 1]]
+        },
+        {
+          "id": "warden_arrest_thanks",
+          "label": "the watch you stood",
+          "if": [["flag", "or_warden_hb_arrest"]],
+          "once": true,
+          "say": "'Heard he didn't even argue,' the warden says. 'A soldier's word carries further out here than the Watch's ever did.'",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "warden_wary_scout",
+          "label": "the skiffs, since",
+          "if": [["flag", "or_scout_hb_skiff"]],
+          "once": true,
+          "say": "The warden's eyes track your hands more than your face now. 'Light fingers on the mud,' he says. 'The mounds notice light fingers, eventually.' He doesn't accuse you outright. He doesn't need to.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "warden_react_brokered",
+          "label": "the chandler's new terms",
+          "if": [["flag", "hb_chandler_brokered"]],
+          "once": true,
+          "say": "'Word says you talked him into a code instead of a fight.' The warden allows himself something close to approval. 'Half a solution's still more than most manage out here.'",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "let him get back to his maps",
           "say": "Mind the ditches after dark. And give the Weeping Cairn east a wide berth after.",
@@ -710,6 +763,54 @@
             ["addvar", "rep_free", -1],
             ["score", 3],
             ["xp", 2]
+          ]
+        },
+        {
+          "id": "chandler_fence_scout",
+          "label": "ask him for a fence's rate (Scout)",
+          "if": [["class", "scout"], ["flag", "said_hb_chandler_npc_trade"], ["!flag", "or_scout_hb_fence"]],
+          "once": true,
+          "say": "He looks you over the way you'd look over a lock. 'You've the hands for this trade,' he says, and slides a few coins across, professional to professional. 'Anything else you lift, I'll always give you a fair cut.'",
+          "fx": [["set", "or_scout_hb_fence"], ["addvar", "gold", 4], ["score", 2], ["xp", 1]]
+        },
+        {
+          "id": "chandler_broker_envoy",
+          "label": "broker a middle way (Envoy)",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "said_hb_warden_digger"],
+            ["!flag", "hb_chandler_deal"],
+            ["!flag", "hb_chandler_shamed"],
+            ["!flag", "or_envoy_hb_broker"]
+          ],
+          "once": true,
+          "say": "You put it plainly: he keeps trading what the ground's already given up, and stops paying for fresh digging. He weighs his margins and takes it. 'Better than losing the shelf,' he mutters, and means it as thanks.",
+          "fx": [
+            ["set", "or_envoy_hb_broker"],
+            ["set", "hb_chandler_brokered"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "rep_free", 1]
+          ]
+        },
+        {
+          "id": "hb_envoy_haggle_ring",
+          "label": "haggle the ring's price (Envoy)",
+          "if": [
+            ["class", "envoy"],
+            ["!has", "hb_grave_good"],
+            ["!flag", "hb_grave_good_gone"],
+            ["var", "gold", ">=", 3],
+            ["!flag", "or_envoy_hb_haggle"]
+          ],
+          "once": true,
+          "say": "'Six is the price,' he says. Somehow, by the time you're done talking, three is the price. He still won't meet your eye handing it over.",
+          "fx": [
+            ["addvar", "gold", -3],
+            ["set", "hb_grave_good_gone"],
+            ["set", "or_envoy_hb_haggle"],
+            ["move", "hb_grave_good", "inv"]
           ]
         },
         { "id": "bye", "label": "leave him to his wax", "say": "Mind what you carry out of here.", "end": true },
@@ -964,6 +1065,40 @@
           ]
         },
         {
+          "id": "wren_scholar_peer",
+          "label": "argue the covenant's terms (Scholar)",
+          "if": [
+            ["class", "scholar"],
+            ["flag", "said_hb_keeper_wren_order"],
+            ["!flag", "vell_ledger_found"],
+            ["!flag", "or_scholar_hb_peer"]
+          ],
+          "once": true,
+          "say": "You don't ask her to trust you. You cite the covenant's old terms until she stops testing you, talking like the last keeper she expected. She finds the ledger herself: an exile's name, struck from a Marrowgate line.",
+          "fx": [
+            ["set", "vell_ledger_found"],
+            ["set", "or_scholar_hb_peer"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
+          "id": "hb_scholar_chest",
+          "label": "read the ward-words outright (Scholar)",
+          "if": [["class", "scholar"], ["!flag", "hb_keepers_key_found"]],
+          "once": true,
+          "say": "You don't ask her for the key. You read the ward cut into the bronze, meant to answer a reader before it answers a lock, and speak it back correctly. The chest opens itself. Wren watches and says nothing.",
+          "fx": [
+            ["set", "hb_keepers_key_found"],
+            ["move", "hb_keepers_key", "inv"],
+            ["set", "or_scholar_hb_chest"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave her to the ledgers",
           "say": "Go carefully among the mounds. They notice who does.",
@@ -1199,6 +1334,41 @@
       "if": [["flag", "sv_hb_burned_paid_families"]],
       "text": "Barrowmere's fire-freed grave-goods get sold now, but the families see the coin first, every time.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_hb_arrest"]],
+      "text": "A Warden stood a night's watch over Barrowmere's mounds, and the digger never came back to test it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_hb_skiff"]],
+      "text": "A Scout found the false bottom in one of Barrowmere's skiffs, and the mud kept the rest of the secret.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scholar_hb_chest"]],
+      "text": "A Scholar read the Keepers' bronze chest by its own ward-words, and the lock never once resisted.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_hb_broker"]],
+      "text": "An Envoy talked the chandler into trading only what the ground gives up on its own, digging or not.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_hb_fence"]],
+      "text": "Barrowmere's chandler still calls a certain Scout a fair hand, and means it as trade-talk, not insult.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scholar_hb_peer"]],
+      "text": "Keeper Wren argued covenant law with a Scholar as a peer, and found she liked having one at last.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_envoy_hb_haggle"]],
+      "text": "Barrowmere's chandler still tells the story of the one ring he let go for half its asking price.",
+      "weight": 0
     }
   ],
   "perks": {

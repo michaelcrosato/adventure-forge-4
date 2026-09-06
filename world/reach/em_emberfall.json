@@ -80,6 +80,20 @@
           "fx": [
             ["say", "Chalked orders for window-glass and bottle-work, half of them marked PAID IN CHARCOAL. Underneath, in a different hand: someone still hasn't come back from the mine road, and someone else is asking after the ridge again."]
           ]
+        },
+        {
+          "id": "em_scout_cellar_sign",
+          "label": "spot Ash Row's cellar sign (Scout)",
+          "if": [["class", "scout"], ["!flag", "em_cellar_found"], ["!flag", "or_scout_em_sign"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_scout_em_sign"],
+            ["set", "em_cellar_found"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "A scuff on one Ash Row doorstep, deliberate, the kind smugglers and thieves both leave for their own kind. You know exactly which house it marks, and what's likely kept beneath it, before anyone tells you."]
+          ]
         }
       ],
       "onEnter": [["if", [["flag", "em_hollow_done"], ["!flag", "sv_em_back"]], [["set", "sv_em_back"]], []]]
@@ -121,6 +135,24 @@
             ["move", "em_quench_flask", "inv"],
             ["say", "Furnace-workers drink this between gathers to keep from cooking where they stand. She fills a flask for you without asking why you'd want one too."]
           ]
+        },
+        {
+          "id": "em_envoy_haggle_jerkin",
+          "label": "haggle the jerkin's price (Envoy)",
+          "if": [["class", "envoy"], ["var", "gold", ">=", 4], ["!has", "em_ash_jerkin"], ["!flag", "or_envoy_em_haggle"]],
+          "once": true,
+          "fx": [
+            ["addvar", "gold", -4],
+            ["move", "em_ash_jerkin", "inv"],
+            ["set", "or_envoy_em_haggle"],
+            ["say", "'Seven,' Sorra says, not looking up from the gather. It's four by the time she does. 'Don't tell the others what I let you talk me into.'"]
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "if": [["flag", "or_envoy_em_haggle"]],
+          "brief": "Furnace-heat. Sorra won't say what she let that jerkin go for."
         }
       ]
     },
@@ -671,6 +703,26 @@
           ]
         },
         {
+          "id": "scholar_press_doctrine",
+          "label": "read doctrine back to him (Scholar)",
+          "if": [
+            ["class", "scholar"],
+            ["flag", "em_priory_clue"],
+            ["!flag", "em_prior_confessed"],
+            ["!flag", "or_scholar_em_doctrine"]
+          ],
+          "once": true,
+          "say": "You don't press him. You lay the Church's own doctrine on grief-fires beside his silence and let it condemn itself. 'You already knew,' he says. 'The order came from Canoness Fane herself. Now you know her name too.'",
+          "fx": [
+            ["set", "or_scholar_em_doctrine"],
+            ["set", "em_prior_confessed"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_church", -1],
+            ["addvar", "appr_osk", 1]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to his candles",
           "say": "Go carefully on the ridge path. It has taken more than it's given back, that ground.",
@@ -748,6 +800,22 @@
           "once": true,
           "say": "Furnace's still lit, last I heard. Corrin's scale reads heavier than it used to, mind. He's not stupid. Just slow to prove it.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "warden_pike_cold",
+          "label": "press him on the levy-running (Warden)",
+          "if": [["class", "warden"], ["flag", "said_em_pike_greet"], ["!flag", "or_warden_em_cold"]],
+          "once": true,
+          "say": "Pike goes quiet the way Free Company men go quiet around old Watch bearing. 'Ask someone who isn't standing like you are,' he says, and doesn't say another word about the runs.",
+          "fx": [["set", "or_warden_em_cold"], ["xp", 1], ["addvar", "rep_free", -1]]
+        },
+        {
+          "id": "scout_pike_trade",
+          "label": "trade Company signs with him (Scout)",
+          "if": [["class", "scout"], ["flag", "said_em_pike_greet"], ["!flag", "or_scout_em_pike"]],
+          "once": true,
+          "say": "'Different trade, same instincts,' he says, and slips you a cut like you're already one of his runners. He doesn't ask what you'd carry past a levy. He already knows the answer.",
+          "fx": [["set", "or_scout_em_pike"], ["addvar", "gold", 3], ["score", 1], ["xp", 1]]
         }
       ]
     },
@@ -803,6 +871,29 @@
           "once": true,
           "say": "Rested, or near enough. The chapterhouse won't care to hear fire wasn't the answer here twice in one generation. I might like hearing it. Keep that between us.",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "warden_frank_em",
+          "label": "trade plain talk (Warden)",
+          "if": [["class", "warden"], ["flag", "said_em_corrin_greet"], ["!flag", "or_warden_em_frank"]],
+          "once": true,
+          "say": "He drops the factor's patter the moment he reads your bearing. 'Four Preceptors before me believed the doctrine harder than I do,' he says. 'I've buried all four. Don't repeat that past this scale-house.'",
+          "fx": [["set", "or_warden_em_frank"], ["score", 2], ["xp", 2], ["addvar", "rep_iron", 1]]
+        },
+        {
+          "id": "envoy_broker_debt",
+          "label": "broker a payment plan (Envoy)",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "em_knows_debt"],
+            ["!flag", "em_debt_paid"],
+            ["!flag", "em_debt_exposed"],
+            ["!flag", "em_debt_smuggled"],
+            ["!flag", "or_envoy_em_broker"]
+          ],
+          "once": true,
+          "say": "You broker installments instead of a lump sum — Corrin gets his due over the season, Sorra keeps her furnace lit today. Neither loves the arrangement. Both sign it anyway.",
+          "fx": [["set", "or_envoy_em_broker"], ["set", "em_debt_paid"], ["score", 4], ["xp", 3], ["addvar", "rep_iron", 1]]
         },
         {
           "id": "bye",
@@ -1358,6 +1449,41 @@
       "if": [["flag", "sv_em_burned_own"]],
       "text": "Neave decided for herself, after the fifth fire, whether to stay in Glasswick, and never said which way.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_em_frank"]],
+      "text": "A Warden traded plain talk with Factor Corrin, chapterhouse to chapterhouse, and got an honest doubt for it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_em_sign"]],
+      "text": "A Scout spotted Ash Row's hidden stair from across Glasswick, without ever touching a flagstone.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_em_doctrine"]],
+      "text": "A Scholar read the mother-house's own doctrine back to Prior Wenlock, and it convicted itself.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_em_broker"]],
+      "text": "An Envoy brokered Sorra's debt into a payment plan, and Corrin's ledger balanced without a fight.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_em_cold"]],
+      "text": "Pike still won't talk levy-running around a certain Warden, old bearing or new.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scout_em_pike"]],
+      "text": "Pike still calls a certain Scout 'different trade, same instincts,' and means it as trust.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scholar_em_mason"]],
+      "text": "A Scholar traced Emberfall's cornerstone back to the priory's own porch stone, one mason, two ruins.",
+      "weight": 0
     }
   ]
 }

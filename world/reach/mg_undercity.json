@@ -621,6 +621,29 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "envoy_ballot_broker",
+          "label": "broker the guilds a better cut (Envoy)",
+          "if": [
+            ["class", "envoy"],
+            ["has", "mg_free_coin"],
+            ["!flag", "mg_ballot_resolved"],
+            ["!flag", "or_envoy_mg_ballot"]
+          ],
+          "once": true,
+          "say": "You don't just hand the purse over. You talk her into a bigger public word for the Companies, and a private cut for yourself. 'Smoothest robbery I've ever thanked someone for,' she says, and means it kindly.",
+          "fx": [
+            ["move", "mg_free_coin", "nowhere"],
+            ["set", "mg_ballot_delivered"],
+            ["set", "mg_ballot_resolved"],
+            ["set", "or_envoy_mg_ballot"],
+            ["score", 6],
+            ["xp", 3],
+            ["addvar", "gold", 4],
+            ["addvar", "rep_free", 1],
+            ["addvar", "appr_lys", 1]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave her to the beam",
           "say": "Mind the coin doesn't talk you into anything the rope wouldn't.",
@@ -837,6 +860,11 @@
     {
       "if": [["flag", "mg_ballot_kept_coin"]],
       "text": "A purse of the Companies' coin never reached the guilds it was meant for. Quill has a long memory for that kind of arithmetic."
+    },
+    {
+      "if": [["flag", "or_envoy_mg_ballot"]],
+      "text": "An Envoy talked Sarah Wick into a bigger word for the Companies, and quietly kept a cut for the walking.",
+      "weight": 0
     }
   ],
   "stamps": [

@@ -183,6 +183,14 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "scholar_dedication",
+          "label": "read the dedication plate (Scholar)",
+          "if": [["class", "scholar"], ["flag", "said_sk_admiral_greet"], ["!flag", "or_scholar_sk_plate"]],
+          "once": true,
+          "say": "Under the salt-crust, the flagship's dedication plate: not a war fleet, a marriage envoy, sent to buy the free-towns' peace. Voss reads it on your face. 'Now you know what we died for. Nobody else has asked the plate.'",
+          "fx": [["set", "or_scholar_sk_plate"], ["score", 2], ["xp", 2]]
+        },
+        {
           "id": "bye",
           "label": "step back from the helm",
           "say": "Take your time. I have had four hundred years of it, and I can spare you a little more.",
@@ -222,7 +230,17 @@
     "sk_q_passage": {
       "name": "Passage Under the Pass",
       "start": [["any", [["flag", "sk_heard_passage"], ["flag", "sk_heard_customs"]]]],
-      "done": [["any", [["flag", "sk_helped_free"], ["flag", "sk_sided_watch"]]]],
+      "done": [
+        [
+          "any",
+          [
+            ["flag", "sk_helped_free"],
+            ["flag", "sk_sided_watch"],
+            ["flag", "or_warden_sk_watch"],
+            ["flag", "or_envoy_sk_broker"]
+          ]
+        ]
+      ],
       "stages": [
         {
           "if": [["flag", "sk_heard_passage"]],

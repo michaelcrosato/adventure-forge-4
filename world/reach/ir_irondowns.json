@@ -70,6 +70,19 @@
             ["xp", 1],
             ["say", "Names in chalk, crossed through as shifts end safe. One line, older than the rest, was never crossed through at all — a full hundred names, still owed a mark."]
           ]
+        },
+        {
+          "id": "ir_scholar_tally",
+          "label": "read the tally dates (Scholar)",
+          "if": [["class", "scholar"], ["!flag", "ir_suspects_aldous"]],
+          "once": true,
+          "fx": [
+            ["set", "ir_suspects_aldous"],
+            ["set", "or_scholar_ir_tally_dates"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "The chalk isn't only names. Shift-dates, set against the company's own timber orders, and one season's numbers don't match Cinderhall's story about the Hundred. A scholar reads that plainly, no one's word required."]
+          ]
         }
       ],
       "onEnter": [["if", [["flag", "ir_hollow_resolved"], ["!flag", "sv_ir_back"]], [["set", "sv_ir_back"]], []]]
@@ -85,7 +98,23 @@
         "south": { "to": "ir_company_store", "landmark": "the company store" },
         "west": { "to": "ir_chapterhouse", "landmark": "the chapterhouse" },
         "down": { "to": "ir_headframe", "landmark": "the head-frame" }
-      }
+      },
+      "actions": [
+        {
+          "id": "ir_scout_cache",
+          "label": "spot the loose slag-brick (Scout)",
+          "if": [["class", "scout"], ["!flag", "or_scout_ir_cache"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_scout_ir_cache"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "gold", 4],
+            ["say", "One slag-brick in a shopfront's facing sits loose under a thumb's pressure — a runner's cache, the kind only someone who's used one themselves would think to check. Coin, mostly, unmissed in a while."]
+          ]
+        }
+      ]
     },
     "ir_miners_hall": {
       "name": "The Miners' Hall",
@@ -247,7 +276,11 @@
           "if": [["flag", "ir_aldous_ruined"], ["!npcDead", "ir_aldous"]],
           "brief": "Banked forges. A junior officer minds Aldous's old desk now."
         },
-        { "if": [["npcDead", "ir_aldous"]], "brief": "Banked forges. The Preceptor's desk stands empty." }
+        { "if": [["npcDead", "ir_aldous"]], "brief": "Banked forges. The Preceptor's desk stands empty." },
+        {
+          "if": [["flag", "or_warden_ir_frank_truth"]],
+          "brief": "Banked forges. Aldous still meets a soldier's eye without flinching."
+        }
       ],
       "actions": [
         {
@@ -948,6 +981,57 @@
           "say": "\"Word came down the road that a stranger put a name on the Thornwold wayfire,\" Aldous says. \"That's the whole of the rite, done right — a name, a fire, nothing left to fester.\"",
           "fx": [["addvar", "rep_iron", 1], ["xp", 1]]
         },
+        {
+          "id": "ir_warden_frank",
+          "label": "trade talk, soldier to soldier (Warden)",
+          "if": [["class", "warden"], ["flag", "said_ir_aldous_greet"], ["!flag", "or_warden_ir_bearing"]],
+          "once": true,
+          "say": "He drops the recruiter's voice the moment you square your shoulders at him. 'You've held a line before,' he says. 'Fire's certain. Certain isn't the same as right. I don't sleep easy on that either.'",
+          "fx": [["set", "or_warden_ir_bearing"], ["score", 2], ["xp", 2], ["addvar", "rep_iron", 1]]
+        },
+        {
+          "id": "ir_warden_confront_frank",
+          "label": "ask him plainly (Warden)",
+          "if": [
+            ["class", "warden"],
+            ["flag", "ir_suspects_aldous"],
+            ["!flag", "tamsin_mine_truth"],
+            ["!flag", "ir_hollow_burned"],
+            ["!flag", "or_warden_ir_frank_truth"]
+          ],
+          "once": true,
+          "say": "You don't threaten and you don't corner him. You just ask, soldier to soldier. He doesn't make you push twice. 'I signed the order,' he says. 'Rotten timber, and I signed it anyway. You just had to ask right.'",
+          "fx": [
+            ["set", "tamsin_mine_truth"],
+            ["set", "or_warden_ir_frank_truth"],
+            ["score", 5],
+            ["xp", 3],
+            ["addvar", "rep_iron", -1]
+          ]
+        },
+        {
+          "id": "envoy_broker_ir",
+          "label": "broker the hall a truce (Envoy)",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "tamsin_mine_truth"],
+            ["!flag", "ir_aldous_ruined"],
+            ["!npcDead", "ir_aldous"],
+            ["!flag", "tamsin_mine_avenged"],
+            ["!flag", "tamsin_mine_forgiven"],
+            ["!flag", "or_envoy_ir_broker"]
+          ],
+          "once": true,
+          "say": "You don't ask him to confess, or the hall to forgive quietly. A third way: he keeps his post; the hall gets a season's wages, unannounced, for the lost. He signs it. Cinderhall hears only the truce.",
+          "fx": [
+            ["set", "or_envoy_ir_broker"],
+            ["set", "tamsin_mine_forgiven"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "rep_iron", 1]
+          ]
+        },
         { "id": "bye", "label": "leave the chapterhouse", "say": "Mind the fires on your way out.", "end": true },
         {
           "id": "ir_aldous_theft",
@@ -1177,6 +1261,14 @@
           ]
         },
         {
+          "id": "envoy_smooth_crick",
+          "label": "turn on the charm (Envoy)",
+          "if": [["class", "envoy"], ["flag", "said_ir_crick_greet"], ["!flag", "or_envoy_ir_smooth"]],
+          "once": true,
+          "say": "You lay it on warm, an easy smile. Crick just looks at you until you stop. 'Save it for someone who wasn't already digging in the dark before you were born,' he says. Whatever that charm buys, it isn't his patience.",
+          "fx": [["set", "or_envoy_ir_smooth"], ["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave him to his fire",
           "say": "Mind the gallery, if you go up there. It doesn't forget easy.",
@@ -1315,6 +1407,22 @@
               []
             ]
           ]
+        },
+        {
+          "id": "ness_cache_scout",
+          "label": "the loose brick on the high street",
+          "if": [["flag", "or_scout_ir_cache"]],
+          "once": true,
+          "say": "\"Denny's old brick, is it. Thought that stash walked off years before he did.\" Ness almost smiles. \"Keep it. He's past minding.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ness_scout_trade",
+          "label": "offer a quieter tally-trick (Scout)",
+          "if": [["class", "scout"], ["flag", "said_ir_ness_bg_hall"], ["!flag", "or_scout_ir_ness"]],
+          "once": true,
+          "say": "\"You've the hands for it,\" she says, appraising you plainly. \"A way to shave the company's count, no mark left.\" You show her anyway, one professional to another, and she slips you a coin for it, unlogged.",
+          "fx": [["set", "or_scout_ir_ness"], ["score", 2], ["xp", 2], ["addvar", "gold", 3]]
         },
         {
           "id": "bye",
@@ -1491,6 +1599,14 @@
           "once": true,
           "say": "You leave the chapterhouse its plaque and Sella her grief, and referee neither. Cinderhall gets both stories, uphill from each other, same as most things here.",
           "fx": [["set", "sv_ir_burned_quiet"], ["set", "sv_ir_burned_done"], ["set", "sv_ir_after_done"], ["xp", 1]]
+        },
+        {
+          "id": "sella_marker_scholar",
+          "label": "the older mark on the boundary stone",
+          "if": [["flag", "or_scholar_ir_marker"]],
+          "once": true,
+          "say": "\"A raised hand, under the company's own letters.\" Sella stops sweeping, for once. \"My grandmother used to make that sign over a sick child. Didn't know it was old enough to be cut in stone.\"",
+          "fx": [["xp", 1]]
         },
         {
           "id": "bye",
@@ -1742,6 +1858,19 @@
               "fx": [
                 ["xp", 2],
                 ["say", "Names, dozens of them, scratched by hands that weren't company clerks. Whoever kept this count did it because the company's own count stopped mattering to them."]
+              ]
+            },
+            {
+              "id": "ir_scholar_marker",
+              "label": "read the old mark below it (Scholar)",
+              "if": [["class", "scholar"], ["!flag", "or_scholar_ir_marker"]],
+              "once": true,
+              "fx": [
+                ["set", "or_scholar_ir_marker"],
+                ["score", 2],
+                ["xp", 2],
+                ["addvar", "rep_keepers", 1],
+                ["say", "Beneath the company's confident lettering, worn near to nothing: a Barrow-Keeper's raised hand, cut long before any company claimed this ground. Cinderhall's boundary stone was somebody's shrine first."]
               ]
             }
           ]
@@ -2147,6 +2276,36 @@
       "if": [["flag", "sv_ir_burned_quiet"]],
       "text": "Cinderhall tells two stories about the fifth grief now, uphill from each other, and settles neither.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_ir_frank_truth"]],
+      "text": "A Warden got Cinderhall's truth from Aldous plainly, soldier to soldier, no threats spent on it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_ir_cache"]],
+      "text": "A Scout found Denny's old stash-brick on Cinderhall's high street, and Ness let it go unmentioned.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scholar_ir_tally_dates"]],
+      "text": "A Scholar read Cinderhall's own tally-dates and knew Aldous's guilt before anyone said it plain.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_ir_broker"]],
+      "text": "An Envoy talked the hall and the chapterhouse into a quiet truce neither side ever announced.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_ir_smooth"]],
+      "text": "Old Crick still isn't buying whatever an Envoy tried to sell him, and says so to anyone who asks.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scout_ir_ness"]],
+      "text": "A Scout showed Ness a quieter way to shave the company tally, and neither of them logged it.",
+      "weight": 0
     }
   ]
 }

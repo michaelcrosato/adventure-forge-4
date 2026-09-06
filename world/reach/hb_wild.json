@@ -245,6 +245,27 @@
                   ]
                 ]
               ]
+            },
+            {
+              "id": "hb_warden_arrest",
+              "label": "arrest him on the warden's word (Warden)",
+              "if": [
+                ["class", "warden"],
+                ["flag", "or_warden_hb_deputized"],
+                ["!flag", "hb_robber_stopped"],
+                ["!flag", "hb_robber_bribed"],
+                ["!npcDead", "hb_mound_robber"]
+              ],
+              "once": true,
+              "fx": [
+                ["set", "hb_robber_stopped"],
+                ["npcgo", "hb_mound_robber", null],
+                ["score", 3],
+                ["xp", 2],
+                ["addvar", "rep_keepers", 1],
+                ["set", "or_warden_hb_arrest"],
+                ["say", "You don't argue. You say the warden's name and let your own bearing do the rest — he's packing his spade before you finish the sentence."]
+              ]
             }
           ]
         },

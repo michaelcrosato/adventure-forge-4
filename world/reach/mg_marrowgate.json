@@ -115,6 +115,20 @@
             ["move", "mg_herbs", "inv"],
             ["say", "The herb-wife ties the bundle with gray thread. 'Everything's gray thread now,' she says."]
           ]
+        },
+        {
+          "id": "scout_notice_grate",
+          "label": "spot the gap between two stalls (Scout)",
+          "if": [["class", "scout"], ["!flag", "or_scout_mg_grate"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_scout_mg_grate"],
+            ["score", 2],
+            ["xp", 2],
+            ["addvar", "gold", 3],
+            ["say", "A gap between the cutler's stall and the herb-wife's has a board loose at the back, the kind a hand slips through when nobody's watching the awning. Whatever's usually cached there is gone, but a coin rolled behind it."]
+          ]
         }
       ]
     },
@@ -1345,6 +1359,30 @@
           ]
         },
         {
+          "id": "envoy_bargain_terms",
+          "label": "negotiate the terms first (Envoy)",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "mg_heard_regent"],
+            ["!flag", "mg_has_oil"],
+            ["!flag", "mg_refused_regent"],
+            ["!flag", "mg_regent_bargain"],
+            ["!flag", "or_envoy_mg_terms"]
+          ],
+          "once": true,
+          "say": "You don't take her offer as given. You talk her down from a title to a quieter favor, up from her price to a fairer one -- oil, her thanks, none announced. She almost smiles. 'A courtier's instinct. Wasted on errantry.'",
+          "fx": [
+            ["set", "mg_has_oil"],
+            ["set", "mg_regent_bargain"],
+            ["set", "or_envoy_mg_terms"],
+            ["move", "mg_ironbound_oil", "inv"],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_iron", 1],
+            ["score", 4],
+            ["xp", 3]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave the Regent to her window",
           "say": "Mind the stair. Everyone who goes down it comes up changed, or does not come up.",
@@ -1510,6 +1548,27 @@
               ],
               []
             ]
+          ]
+        },
+        {
+          "id": "warden_escort",
+          "label": "ask for the token plainly (Warden)",
+          "if": [
+            ["class", "warden"],
+            ["flag", "said_mg_marshal_watch"],
+            ["!flag", "mg_marshal_token"],
+            ["!flag", "mg_admitted"],
+            ["var", "rep_watch", "<", 2],
+            ["!flag", "or_warden_mg_escort"]
+          ],
+          "once": true,
+          "say": "Tarn looks you over the way he'd look over a recruit, not a report. 'You've the bearing for it, whatever your name's worth to me yet,' he says, and hands his token over anyway. 'Don't make me regret reading you right.'",
+          "fx": [
+            ["set", "mg_marshal_token"],
+            ["set", "or_warden_mg_escort"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_watch", 1]
           ]
         },
         { "id": "bye", "label": "leave the Marshal to his map", "say": "Keep to the Way after dark.", "end": true },
@@ -1733,6 +1792,28 @@
           ]
         },
         {
+          "id": "warden_oil_ask",
+          "label": "ask for it plainly (Warden)",
+          "if": [
+            ["class", "warden"],
+            ["!flag", "mg_has_oil"],
+            ["!flag", "mg_regent_bargain"],
+            ["!flag", "regent_writ"],
+            ["var", "rep_iron", "<", 2],
+            ["!flag", "or_warden_mg_oil"]
+          ],
+          "once": true,
+          "say": "'You didn't come to talk doctrine,' he says, reading your stance sooner than your reputation. 'Fine. A soldier's want, a soldier's answer.' He rolls the cask over himself, and doesn't ask what you mean to do with it.",
+          "fx": [
+            ["set", "mg_has_oil"],
+            ["move", "mg_ironbound_oil", "inv"],
+            ["set", "or_warden_mg_oil"],
+            ["addvar", "rep_iron", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to the roll",
           "say": "Every name gets read. Even yours, in the end.",
@@ -1940,6 +2021,14 @@
               []
             ]
           ]
+        },
+        {
+          "id": "mother_fane_scholar",
+          "label": "name Canoness Fane to her",
+          "if": [["class", "scholar"], ["flag", "or_scholar_em_doctrine"], ["!flag", "or_scholar_mg_fane"]],
+          "once": true,
+          "say": "Mother Ysme goes very still. 'Fane sat where I sit now, a hundred years gone.' A long pause. 'I did not know her name still meant anything outside our own rolls. Thank you for telling me it does.'",
+          "fx": [["set", "or_scholar_mg_fane"], ["score", 3], ["xp", 2], ["addvar", "rep_church", 1]]
         },
         {
           "id": "bye",
@@ -2202,6 +2291,14 @@
           "fx": [["xp", 2], ["addvar", "rep_free", 1]]
         },
         {
+          "id": "scout_cut_free",
+          "label": "trade a scout's sign for it (Scout)",
+          "if": [["class", "scout"], ["!flag", "mg_knows_cut"], ["!flag", "or_scout_mg_cut"]],
+          "once": true,
+          "say": "You don't flash coin or a Company name. You give the sign scouts trade on any road worth watching. Quill's smile changes register. 'Different guild. Same trade.' Three knocks and a pause, under the Gray Steps.",
+          "fx": [["set", "mg_knows_cut"], ["set", "or_scout_mg_cut"], ["score", 3], ["xp", 2]]
+        },
+        {
           "id": "bye",
           "label": "leave Quill to the cards",
           "say": "Three knocks and a pause. Everything is three knocks and a pause.",
@@ -2435,6 +2532,22 @@
                 ]
               ]
             ]
+          ]
+        },
+        {
+          "id": "scholar_penn_peer",
+          "label": "speak to him as a peer (Scholar)",
+          "if": [["class", "scholar"], ["!flag", "mg_ledger_found"], ["!flag", "or_scholar_mg_penn"]],
+          "once": true,
+          "say": "You don't ask him to trust you. You ask a question only someone who has read old Reach law would think to ask. Penn's manner changes. 'You know how to hold a ledger properly,' he says, and takes the key from his neck.",
+          "fx": [
+            ["set", "mg_ledger_found"],
+            ["move", "mg_founding_ledger", "inv"],
+            ["set", "or_scholar_mg_penn"],
+            ["score", 12],
+            ["xp", 4],
+            ["addvar", "rep_keepers", 1],
+            ["if", [["inParty", "vell"]], [["set", "vell_exposed"]], []]
           ]
         },
         {
@@ -2853,6 +2966,41 @@
       "if": [["flag", "mg_reeve_confessed"], ["flag", "mg_burned_throne"]],
       "text": "He confessed, four hundred years late — and the throne burned anyway. Some call that the cruelest mercy of all.",
       "weight": 3
+    },
+    {
+      "if": [["flag", "or_warden_mg_escort"]],
+      "text": "A Warden asked Marrowgate's own Marshal for a token, soldier to soldier, and was handed one.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_mg_cut"]],
+      "text": "A Scout traded a road-sign for Quill's smugglers' cut, and the Companies never saw a coin for it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scholar_mg_penn"]],
+      "text": "A Scholar spoke to Archivist Penn as a fellow reader of old law, and the chained shelf opened for it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_mg_terms"]],
+      "text": "An Envoy talked the Regent down from a title to a quieter favor, and most of the way off her price.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_mg_oil"]],
+      "text": "Preceptor-General Hald armed a Warden on bearing alone, no writ, no burned hollow to show for it.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scout_mg_grate"]],
+      "text": "A Scout found a hand-worked grate in the Lower Town and left whatever used it undisturbed.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scholar_mg_fane"]],
+      "text": "Mother Ysme learned a hundred-year-old name from a Scholar, and lit a candle she hadn't meant to.",
+      "weight": 0
     }
   ],
   "stamps": [

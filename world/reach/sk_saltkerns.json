@@ -109,7 +109,23 @@
         "south": { "to": "sk_customs_post", "landmark": "the customs post" },
         "east": { "to": "sk_chandlery", "landmark": "the chandlery" },
         "west": { "to": "sk_widows_house", "landmark": "Widow Kestrel's house" }
-      }
+      },
+      "actions": [
+        {
+          "id": "sk_scout_mark",
+          "label": "spot the smuggler's chalk-mark (Scout)",
+          "if": [["class", "scout"], ["!flag", "or_scout_sk_mark"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_scout_sk_mark"],
+            ["score", 2],
+            ["xp", 2],
+            ["addvar", "gold", 3],
+            ["say", "Half these shutters carry a chalk mark only the trade would notice — Rennick's crews marking which doors deal quiet. One mark is fresher than the rest, and a loose step beneath it hides a coin or two."]
+          ]
+        }
+      ]
     },
     "sk_drowned_bell": {
       "name": "The Drowned Bell",
@@ -204,6 +220,20 @@
                 ["say", "Generations of wrecks, all marked the same careful hand. Whatever's wrong with this one, it isn't obvious yet."]
               ]
             ]
+          ]
+        },
+        {
+          "id": "sk_scholar_charts",
+          "label": "read the wreck-charts outright (Scholar)",
+          "if": [["class", "scholar"], ["flag", "sk_heard_harbourmaster"], ["!flag", "sk_bribe_admitted"]],
+          "once": true,
+          "fx": [
+            ["set", "sk_bribe_admitted"],
+            ["set", "or_scholar_sk_charts"],
+            ["addvar", "rep_free", -1],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "One wreck on the wall charts is marked wrong, on purpose, in a hand too careful to be a mistake: the reef, the year the free-towns paid to look away. A scholar's eye finds it without needing Rennick to slip."]
           ]
         }
       ]
@@ -304,6 +334,24 @@
             ["score", 2],
             ["xp", 1],
             ["say", "He pockets the coin before naming a price for the rest. \"Customs post naps some nights more than others,\" he says. \"That's the whole of what three gold buys you.\""]
+          ]
+        },
+        {
+          "id": "sk_scout_lookout",
+          "label": "trade a scout's sign for it (Scout)",
+          "if": [
+            ["class", "scout"],
+            ["!flag", "sk_helped_free"],
+            ["!flag", "sk_lookout_resolved"],
+            ["!flag", "or_scout_sk_lookout"]
+          ],
+          "once": true,
+          "fx": [
+            ["set", "or_scout_sk_lookout"],
+            ["set", "sk_lookout_resolved"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "You give the hand-sign scouts trade, not the Companies'. The lookout eases anyway. 'Didn't figure you for one of Rennick's,' he says. 'Different trade, same manners.' He tells you plenty, no coin owed."]
           ]
         }
       ]
@@ -608,6 +656,35 @@
           ]
         },
         {
+          "id": "warden_rennick_cold",
+          "label": "state your business plainly (Warden)",
+          "if": [["class", "warden"], ["flag", "said_sk_harbourmaster_greet"], ["!flag", "or_warden_sk_cold"]],
+          "once": true,
+          "say": "You don't dress it up. Rennick's smile thins by exactly the amount old Watch bearing costs on this coast. 'Company water,' he says. 'We remember which side soldiers stood on.' He answers anyway, just colder.",
+          "fx": [["set", "or_warden_sk_cold"], ["xp", 1], ["addvar", "rep_free", -1]]
+        },
+        {
+          "id": "envoy_broker_passage",
+          "label": "broker a toll between them both (Envoy)",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "sk_heard_passage"],
+            ["!flag", "sk_passage_done"],
+            ["!flag", "or_envoy_sk_broker"]
+          ],
+          "once": true,
+          "say": "A cut to Brann's post, logged as toll, not seized as contraband — everyone keeps their pride and their cut. Rennick likes the arithmetic more than the principle. 'Don't tell the Companies I liked it,' he says.",
+          "fx": [
+            ["set", "or_envoy_sk_broker"],
+            ["set", "sk_passage_done"],
+            ["set", "free_passage"],
+            ["addvar", "rep_free", 1],
+            ["addvar", "rep_watch", 1],
+            ["score", 8],
+            ["xp", 4]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to his charts",
           "say": "Mind the tide going out. It doesn't wait on strangers.",
@@ -779,6 +856,35 @@
           ]
         },
         {
+          "id": "warden_stand_watch",
+          "label": "ask to stand the stair with her (Warden)",
+          "if": [
+            ["class", "warden"],
+            ["flag", "sk_heard_customs"],
+            ["!flag", "sk_passage_done"],
+            ["!flag", "or_warden_sk_watch"]
+          ],
+          "once": true,
+          "say": "She looks you over, soldier's ease she knows on sight. 'Stand the stair with me tonight,' she says. 'Not by the book. By the watch.' Rennick's cargo goes through unremarked, and you've done her a favor she won't forget.",
+          "fx": [
+            ["set", "or_warden_sk_watch"],
+            ["set", "sk_passage_done"],
+            ["set", "free_passage"],
+            ["addvar", "rep_watch", -1],
+            ["addvar", "rep_free", 1],
+            ["score", 6],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "brann_toll_told",
+          "label": "the toll you brokered",
+          "if": [["flag", "or_envoy_sk_broker"]],
+          "once": true,
+          "say": "'Logged and legal,' Brann says. 'I can live with a cut I can see.' It's the closest thing to a compliment she's paid Rennick in years, and she says it to you instead.",
+          "fx": [["xp", 1], ["addvar", "rep_watch", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave the post to its ledgers",
           "say": "Straight roads, stranger. Fewer questions that way.",
@@ -873,6 +979,14 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "sk_envoy_haggle_coat",
+          "label": "haggle the coat's price (Envoy)",
+          "if": [["class", "envoy"], ["!has", "sk_oilskin_coat"], ["var", "gold", ">=", 3], ["!flag", "or_envoy_sk_haggle"]],
+          "once": true,
+          "say": "'Five,' Marta says, out of habit. It's three by the time you're done talking, and she throws in the story of the wreck it came off, free.",
+          "fx": [["addvar", "gold", -3], ["move", "sk_oilskin_coat", "inv"], ["set", "or_envoy_sk_haggle"]]
         },
         {
           "id": "bye",
@@ -1056,6 +1170,14 @@
             ["score", 2],
             ["xp", 1]
           ]
+        },
+        {
+          "id": "widow_plate_told",
+          "label": "tell her what the plate said",
+          "if": [["flag", "or_scholar_sk_plate"], ["flag", "sk_widow_confided"]],
+          "once": true,
+          "say": "She goes very still. 'A marriage envoy. Not a war fleet at all.' She looks at the dusty model ship a long moment. 'He never told me that part. Maybe he never read it either.'",
+          "fx": [["xp", 1], ["score", 1]]
         },
         {
           "id": "bye",
@@ -1282,6 +1404,46 @@
       "if": [["flag", "sv_sk_burned_held"]],
       "text": "Gullhaven left the Reeve's officers to their wreck a while longer before anyone dove for salvage.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_sk_watch"]],
+      "text": "A Warden stood the smugglers' stair with Sergeant Brann herself, off the record and off the books.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_sk_mark"]],
+      "text": "A Scout read Gullhaven's chalk-marks like a second language, and the high street kept its secrets anyway.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scholar_sk_charts"]],
+      "text": "A Scholar read Rennick's own wreck-charts outright and needed no confession to know the old bribe.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_sk_cold"]],
+      "text": "Harbourmaster Rennick still answers a certain Warden's questions, just never warmly.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scout_sk_lookout"]],
+      "text": "The lookout below the smugglers' stair still calls a Scout 'different trade, same manners.'",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_envoy_sk_broker"]],
+      "text": "An Envoy brokered a toll between the harbourmaster and the Watch that left both of them paid.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_envoy_sk_haggle"]],
+      "text": "Marta Coyle still tells the story of the coat she let go for three gold and a good tale.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scholar_sk_plate"]],
+      "text": "A Scholar read the Reeve's Pride's own dedication plate: a marriage envoy, not a war fleet, sent to buy peace.",
+      "weight": 0
     }
   ],
   "quests": {

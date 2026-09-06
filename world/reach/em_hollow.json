@@ -208,6 +208,18 @@
             ["set", "em_cornerstone_read"],
             ["say", "A founding date, cut deep and sure — a decade earlier than the one on Glasswick's own plaque. Somebody moved the chapel's birth forward in the telling, to crowd the fire nearer an accident and further from a decision."]
           ]
+        },
+        {
+          "id": "em_scholar_cornerstone",
+          "label": "cross-reference the mason-mark (Scholar)",
+          "if": [["class", "scholar"], ["flag", "em_cornerstone_read"], ["!flag", "or_scholar_em_mason"]],
+          "once": true,
+          "fx": [
+            ["set", "or_scholar_em_mason"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "The mason's mark matches one you've seen before, cut into the priory's own porch stone. Whoever built this chapel built the priory too, generations before either one burned — the same hands, hand in hand with the fire."]
+          ]
         }
       ]
     }
