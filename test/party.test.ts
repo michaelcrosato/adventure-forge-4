@@ -808,6 +808,30 @@ test("calm: a hostile who stands down no longer blocks travel, reads as at peace
   assert.match(render(world, state, []).text, /Rook is here \(stood down\)/);
 });
 
+test("leave: a hostile given a wide berth no longer blocks travel and is not offered again", () => {
+  const world = mini({
+    rooms: {
+      a: { name: "A", desc: "Room A.", landmark: "the square", exits: { east: { to: "b" } } },
+      b: { name: "B", desc: "Room B.", landmark: "the larder", exits: { west: { to: "a" } } },
+    },
+    npcs: { wolf: { name: "gaunt wolf", room: "b", hp: 8, atk: 2, df: 9, hostile: true } },
+  });
+  let { state } = newState(world, 1);
+  state = doLabel(world, state, "go east");
+  let menu = labels(world, state);
+  assert.ok(!menu.includes("travel to a known place"), "a standoff blocks travel");
+  assert.ok(menu.includes("leave gaunt wolf be"), menu.join(" | "));
+  const turn = state.turn;
+  const out = step(world, state, actionByLabel(world, state, "leave gaunt wolf be")!);
+  assert.ok(out.events.some((e) => /You give gaunt wolf a wide berth\. It holds its ground and lets you\./.test(e)), out.events.join(" | "));
+  state = out.state;
+  assert.equal(state.turn, turn, "leaving it be is free");
+  menu = labels(world, state);
+  assert.ok(menu.includes("travel to a known place"), "given a wide berth, it no longer bars the road");
+  assert.ok(!menu.includes("leave gaunt wolf be"), "offered once");
+  assert.ok(menu.includes("attack gaunt wolf with bare hands"), "it can still be fought");
+});
+
 test("a remark that opens a quarrel says where the sides are", () => {
   const world = mini({
     npcs: {

@@ -341,7 +341,7 @@ export function travelAvailable(world: World, s: State): boolean {
   if (world.rooms[s.room]?.noTravel) return false;
   if (!knownLandmarks(world, s).length) return false;
   for (const id of Object.keys(world.npcs)) {
-    if (hostileNow(world, s, id) && s.npcRoom[id] === s.room && !npcDead(world, s, id) && !s.party.includes(id)) return false;
+    if (hostileNow(world, s, id) && s.npcRoom[id] === s.room && !npcDead(world, s, id) && !s.party.includes(id) && !s.flags[`left_${id}`]) return false;
   }
   return true;
 }
