@@ -103,7 +103,24 @@
           "name": "The Ridge Foot",
           "desc": "The ground rises north toward a ridge that glitters wrong in any light. Singing carries down from it, faint, unhurried, and never quite stops.",
           "brief": "Rising ground. Singing, faint, from above.",
-          "onEnterOnce": [["xp", 2]]
+          "onEnterOnce": [["xp", 2]],
+          "variants": [
+            {
+              "if": [["flag", "em_hollow_rested"]],
+              "desc": "The ground rises north toward a ridge that glitters wrong in any light. No singing carries down from it now. The quiet is stranger than the sound ever was.",
+              "brief": "Rising ground. Silent, now."
+            },
+            {
+              "if": [["flag", "em_hollow_bargained"]],
+              "desc": "The ground rises north toward a ridge that glitters wrong in any light. Singing still carries down from it, softer than it was, easier to walk under.",
+              "brief": "Rising ground. Singing, quieter for now."
+            },
+            {
+              "if": [["flag", "em_hollow_burned"]],
+              "desc": "The ground rises north toward a ridge that glitters wrong in any light. Singing carries down from it louder than it ever did before the fifth fire.",
+              "brief": "Rising ground. Singing, louder than before."
+            }
+          ]
         },
         {
           "cell": [3, 2],

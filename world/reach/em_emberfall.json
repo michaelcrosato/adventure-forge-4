@@ -43,6 +43,18 @@
       ],
       "variants": [
         {
+          "if": [["flag", "em_hollow_rested"], ["flag", "sv_em_back"]],
+          "brief": "Glasswick, hushed. Pip's asking what quiet is supposed to mean."
+        },
+        {
+          "if": [["flag", "em_hollow_bargained"], ["flag", "sv_em_back"]],
+          "brief": "Glass underfoot. Word from the mother-house reached the priory."
+        },
+        {
+          "if": [["flag", "em_hollow_burned"], ["flag", "sv_em_back"]],
+          "brief": "Fresh ash from the ridge. A cart's loaded for the coast road."
+        },
+        {
           "if": [["flag", "em_hollow_burned"]],
           "desc": "A town built on and out of its own ruin, and now a second ruin sits fresh over the first: ash from the ridge still drifts down some mornings, settling on glass that was already black. Nobody sweeps it before noon.",
           "brief": "Glass underfoot. Fresh ash from the ridge."
@@ -69,7 +81,8 @@
             ["say", "Chalked orders for window-glass and bottle-work, half of them marked PAID IN CHARCOAL. Underneath, in a different hand: someone still hasn't come back from the mine road, and someone else is asking after the ridge again."]
           ]
         }
-      ]
+      ],
+      "onEnter": [["if", [["flag", "em_hollow_done"], ["!flag", "sv_em_back"]], [["set", "sv_em_back"]], []]]
     },
     "em_glassworks": {
       "name": "The Glassworks",
@@ -554,7 +567,7 @@
           "label": "your gray-robed companion",
           "if": [["inParty", "osk"]],
           "once": true,
-          "say": "A novice of the gray, this far east. Whatever grief you've carried him through already, don't let him carry this one alone. Some of us don't come back whole from a second fire.",
+          "say": "A novice of the gray, this far west. Whatever grief you've carried him through already, don't let him carry this one alone. Some of us don't come back whole from a second fire.",
           "fx": [["xp", 2]]
         },
         {
@@ -580,6 +593,82 @@
           "once": true,
           "say": "You burned it again, my own Church's sin still sitting under that ash. I have no confession left that would matter now. Only the same fire, doing what it has always done here.",
           "fx": [["xp", 1], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "sv_em_bargained_ask",
+          "label": "word from the mother-house",
+          "if": [["flag", "em_hollow_bargained"], ["!flag", "sv_em_bargained_asked"]],
+          "once": true,
+          "say": "The mother-house has heard what I said, or heard the bell, and sent word: I'm to answer for one or the other. I could recant it all as grief talking loose, and keep my collar. I find I don't want to lie a second time.",
+          "fx": [["set", "sv_em_bargained_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_em_bargained_break",
+          "label": "tell him to recant and keep his post",
+          "if": [["flag", "sv_em_bargained_asked"], ["!flag", "sv_em_bargained_done"]],
+          "once": true,
+          "say": "You tell him his collar's worth more than one more true word. He writes the mother-house exactly what it wants to hear. Something in how he thanks you after makes plain he doesn't call it a mercy.",
+          "fx": [
+            ["set", "em_bargain_broken"],
+            ["set", "sv_em_bargained_done"],
+            ["set", "sv_em_after_done"],
+            ["addvar", "rep_church", -2],
+            ["addvar", "appr_osk", -1],
+            ["score", 2],
+            ["xp", 2],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [["say", "Osk: \"He took it back. I don't — I don't have anything to say to that.\""]],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "sv_em_bargained_honor",
+          "label": "tell him to stand by what he said",
+          "if": [["flag", "sv_em_bargained_asked"], ["!flag", "sv_em_bargained_done"]],
+          "once": true,
+          "say": "He nods like he'd already decided and only needed someone else to say it first. The mother-house strips his parish inside the season. He keeps the confession, and seems, oddly, lighter for the trade.",
+          "fx": [
+            ["set", "sv_em_bargained_honored"],
+            ["set", "sv_em_bargained_done"],
+            ["set", "sv_em_after_done"],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 2],
+            ["score", 4],
+            ["xp", 2],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [["say", "Osk: \"He kept the truth over his collar. That's what the Church is supposed to be.\""]],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "sv_em_bargained_pay",
+          "label": "vouch for him yourself (will)",
+          "if": [["flag", "sv_em_bargained_asked"], ["!flag", "sv_em_bargained_done"]],
+          "say": "You offer to write the mother-house yourself, and put your own word behind his.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "sv_em_bargained_paid"],
+                ["set", "sv_em_bargained_done"],
+                ["set", "sv_em_after_done"],
+                ["addvar", "rep_church", 2],
+                ["addvar", "appr_osk", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "The letter lands harder coming from a stranger with no stake in Glasswick's own quiet. Wenlock keeps both his collar and his confession, an arrangement the mother-house plainly dislikes."]
+              ],
+              [["say", "The mother-house isn't moved by a stranger's word today. It can be tried again."]]
+            ]
+          ]
         },
         {
           "id": "bye",
@@ -696,7 +785,7 @@
           "label": "cinder-oil, for the chapel",
           "if": [["flag", "em_corrin_doubt"], ["!has", "em_cinder_oil"]],
           "once": true,
-          "say": "Fifth time in chapterhouse memory someone's asked me for fire to carry up that ridge. Four before you already tried it. I'll sell it to you anyway — doctrine leaves no room for doubt, whatever I privately think.",
+          "say": "Fifth time in chapterhouse memory someone's asked me for fire to carry up that ridge. Four before you already tried it. The Ironbound don't sell fire for the Choir. Doctrine has us give it, whatever I privately think.",
           "fx": [["move", "em_cinder_oil", "inv"], ["xp", 1]]
         },
         {
@@ -874,6 +963,61 @@
           "fx": [["xp", 1], ["addvar", "appr_osk", -1]]
         },
         {
+          "id": "sv_em_rested_ask",
+          "label": "what quiet is supposed to mean",
+          "if": [["flag", "em_hollow_rested"], ["!flag", "sv_em_rested_asked"]],
+          "once": true,
+          "say": "It's quiet up there now. Truly quiet — I went and listened myself. Sorra wants the good black glass out of that chapel before anyone else claims it. Wenlock wants it left as a shrine. Nobody's asked what quiet means.",
+          "fx": [["set", "sv_em_rested_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_em_rested_gone",
+          "label": "tell him quiet means they're gone",
+          "if": [["flag", "sv_em_rested_asked"], ["!flag", "sv_em_rested_done"]],
+          "once": true,
+          "say": "You tell him gone is gone, plain as that, and let Wenlock have his shrine over empty ground. Pip turns the answer over like a piece of glass, looking for the catch, and doesn't find one he can name.",
+          "fx": [
+            ["set", "sv_em_rested_gone"],
+            ["set", "sv_em_rested_done"],
+            ["set", "sv_em_after_done"],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_em_rested_uncertain",
+          "label": "tell him quiet doesn't mean certain",
+          "if": [["flag", "sv_em_rested_asked"], ["!flag", "sv_em_rested_done"]],
+          "once": true,
+          "say": "You won't promise him more certainty than you have. He doesn't love the answer, but trusts it more for not being tidy. Sorra gets her glass; Wenlock gets a silence he can finally be honest about.",
+          "fx": [
+            ["set", "sv_em_rested_uncertain"],
+            ["set", "sv_em_rested_done"],
+            ["set", "sv_em_after_done"],
+            ["addvar", "rep_keepers", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_em_rested_practical",
+          "label": "let Sorra have the chapel's glass",
+          "if": [["flag", "sv_em_rested_asked"], ["!flag", "sv_em_rested_done"]],
+          "once": true,
+          "say": "You side with the furnace over the question. The chapel's black glass goes into Glasswick's next season of bottles and panes. Pip stops asking anyone what quiet is supposed to mean.",
+          "fx": [
+            ["set", "sv_em_rested_practical"],
+            ["set", "sv_em_rested_done"],
+            ["set", "sv_em_after_done"],
+            ["addvar", "rep_iron", 1],
+            ["addvar", "appr_osk", -1],
+            ["score", 2],
+            ["xp", 1]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to the sorting",
           "say": "Watch the ash flats. I do, mostly from right here.",
@@ -937,6 +1081,61 @@
           "once": true,
           "say": "Better, some days. The road's quieter without the wondering in it. Thank you, whichever way you managed it.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_em_burned_ask",
+          "label": "done watching this road",
+          "if": [["flag", "em_hollow_burned"], ["!flag", "sv_em_burned_asked"]],
+          "once": true,
+          "say": "Five fires now, and the singing came back louder before the ash even cooled. I'm done watching this road for anyone. Pike says his Company wagons could get me clear of the valley by week's end, if I had the fare.",
+          "fx": [["set", "sv_em_burned_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_em_burned_leave",
+          "label": "help her leave (7 gold)",
+          "if": [["flag", "sv_em_burned_asked"], ["!flag", "sv_em_burned_done"], ["var", "gold", ">=", 7]],
+          "once": true,
+          "say": "You cover her fare without making her ask twice. Pike's wagon takes her east before the week's out, past Thornwold and further than the ash has ever let her go.",
+          "fx": [
+            ["addvar", "gold", -7],
+            ["set", "sv_em_burned_left"],
+            ["set", "sv_em_burned_done"],
+            ["set", "sv_em_after_done"],
+            ["addvar", "rep_free", 1],
+            ["addvar", "rep_church", -1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_em_burned_stay",
+          "label": "tell her to stay — back Sorra",
+          "if": [["flag", "sv_em_burned_asked"], ["!flag", "sv_em_burned_done"]],
+          "once": true,
+          "say": "You tell her Sorra's right — running just leaves the ridge more room to feel proven. Neave doesn't look convinced, exactly, but she takes her name off Pike's wagon list all the same.",
+          "fx": [
+            ["set", "sv_em_burned_stayed"],
+            ["set", "sv_em_burned_done"],
+            ["set", "sv_em_after_done"],
+            ["addvar", "rep_church", 1],
+            ["addvar", "rep_free", -1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_em_burned_own",
+          "label": "tell her it's hers to decide",
+          "if": [["flag", "sv_em_burned_asked"], ["!flag", "sv_em_burned_done"]],
+          "once": true,
+          "say": "You won't weigh in on a choice that isn't yours to carry. She looks almost disappointed you didn't, and then makes it herself, quietly, without telling you which way.",
+          "fx": [
+            ["set", "sv_em_burned_own"],
+            ["set", "sv_em_burned_done"],
+            ["set", "sv_em_after_done"],
+            ["score", 1],
+            ["xp", 1]
+          ]
         },
         {
           "id": "bye",
@@ -1003,7 +1202,7 @@
         },
         {
           "if": [["flag", "em_neave_asked"]],
-          "text": "Neave's brother never came down from the ridge. If the ash flats hold anything of his, she wants to know."
+          "text": "Try the Glass Orchard, in the ash flats — a scrap of scorched cloth still hangs there, snagged on a low branch."
         },
         { "if": [], "text": "A woman on Ash Row still watches the mine road." }
       ]
@@ -1046,6 +1245,42 @@
         },
         { "if": [], "text": "A child on Ash Row sorts glass by color, looking for something in particular." }
       ]
+    },
+    "em_q_after": {
+      "name": "Glasswick, After",
+      "start": [["flag", "sv_em_back"]],
+      "done": [["flag", "sv_em_after_done"]],
+      "stages": [
+        {
+          "if": [["flag", "sv_em_after_done"]],
+          "text": "Settled. Glasswick's second reckoning with the ridge got its answer."
+        },
+        {
+          "if": [["flag", "sv_em_rested_asked"], ["!flag", "sv_em_rested_done"]],
+          "text": "Pip is waiting on your word, on Ash Row."
+        },
+        {
+          "if": [["flag", "sv_em_bargained_asked"], ["!flag", "sv_em_bargained_done"]],
+          "text": "Wenlock is waiting on your word, at the priory."
+        },
+        {
+          "if": [["flag", "sv_em_burned_asked"], ["!flag", "sv_em_burned_done"]],
+          "text": "Neave is waiting on your word, on Ash Row."
+        },
+        {
+          "if": [["flag", "em_hollow_rested"]],
+          "text": "Pip wonders what quiet is supposed to mean. Find him, Ash Row, Glasswick."
+        },
+        {
+          "if": [["flag", "em_hollow_bargained"]],
+          "text": "Word from the mother-house troubles Wenlock. Find him at the priory."
+        },
+        {
+          "if": [["flag", "em_hollow_burned"]],
+          "text": "Neave's done watching the mine road. Find her, Ash Row, Glasswick."
+        },
+        { "if": [], "text": "Glasswick isn't done with the ridge yet." }
+      ]
     }
   },
   "epilogue": [
@@ -1077,6 +1312,51 @@
     {
       "if": [["flag", "em_pip_resolved"]],
       "text": "Pip keeps a whole bell-shaped shard on the windowsill, the one piece of the ash he calls only good news.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_em_rested_gone"]],
+      "text": "Pip decided quiet means gone, and let Wenlock keep his shrine over empty, silent ground.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_em_rested_uncertain"]],
+      "text": "Nobody in Glasswick will say for certain what the Choir's silence means. Pip finds that answer more honest.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_em_rested_practical"]],
+      "text": "The roofless chapel's black glass went into Glasswick's furnaces. Pip stopped asking what quiet meant.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "em_bargain_broken"]],
+      "text": "Prior Wenlock recanted his own confession to keep his collar. He has never once looked easy about it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_em_bargained_honored"]],
+      "text": "The mother-house stripped Wenlock's parish over a confession he wouldn't take back. He calls it a fair trade.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_em_bargained_paid"]],
+      "text": "A stranger's letter to the mother-house kept Wenlock in his collar and his confession both, against its liking.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_em_burned_left"]],
+      "text": "Neave left Glasswick on a Company wagon after the fifth fire, further east than the ash ever let her go.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_em_burned_stayed"]],
+      "text": "Neave stayed in Glasswick after the fifth fire, unconvinced but unwilling to let the ridge win that easily.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_em_burned_own"]],
+      "text": "Neave decided for herself, after the fifth fire, whether to stay in Glasswick, and never said which way.",
       "weight": 1
     }
   ]

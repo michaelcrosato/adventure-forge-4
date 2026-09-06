@@ -54,6 +54,18 @@
         ["say", "Half the hulls on this bay never sailed again after the fleet broke on the reef. Nobody in Gullhaven talks about which fleet."]
       ],
       "variants": [
+        {
+          "if": [["flag", "sk_hollow_rested"], ["flag", "sv_sk_back"]],
+          "brief": "Boats on the tide. The widow's asking a harder question now."
+        },
+        {
+          "if": [["flag", "sk_hollow_bargained"], ["flag", "sv_sk_back"]],
+          "brief": "Boats on the tide. Spring's tithe is due, and not everyone agrees."
+        },
+        {
+          "if": [["flag", "sk_hollow_burned"], ["flag", "sv_sk_back"]],
+          "brief": "Smoke past the point. Wreckers and the Watch both want the Pride."
+        },
         { "if": [["flag", "sk_hollow_rested"]], "brief": "Boats on the tide. The fog off the point has thinned." },
         {
           "if": [["flag", "sk_hollow_burned"]],
@@ -83,7 +95,8 @@
             ["say", "Wrecks logged by name, going back longer than anyone alive. The oldest page names a fleet, not a ship — the Reeve's own, broken on the reef in one night. No cause given."]
           ]
         }
-      ]
+      ],
+      "onEnter": [["if", [["flag", "sk_hollow_resolved"], ["!flag", "sv_sk_back"]], [["set", "sv_sk_back"]], []]]
     },
     "sk_high_street": {
       "name": "Gullhaven High Street",
@@ -539,6 +552,62 @@
           "fx": [["addvar", "gold", 5], ["xp", 1]]
         },
         {
+          "id": "sv_sk_bargained_ask",
+          "label": "the spring tithe, coming due",
+          "if": [["flag", "sk_hollow_bargained"], ["!flag", "sv_sk_bargained_asked"]],
+          "once": true,
+          "say": "Spring's wreck-right payment comes due again, six gold into the water same as you paid it. Half the town calls it dead superstition now the fog's thinned. The other half won't hear of skipping it.",
+          "fx": [["set", "sv_sk_bargained_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_sk_bargained_break",
+          "label": "tell him to skip it — it's old enough",
+          "if": [["flag", "sv_sk_bargained_asked"], ["!flag", "sv_sk_bargained_done"]],
+          "once": true,
+          "say": "You tell him old debts wear thin eventually, this one included. He lets the spring pass without a coin going in. That night, oars sound off the point again, once, and then not again.",
+          "fx": [
+            ["set", "sk_bargain_broken"],
+            ["set", "sv_sk_bargained_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_church", -1],
+            ["addvar", "rep_keepers", -1],
+            ["score", 2],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_sk_bargained_honor",
+          "label": "tell him to pay it, same as always",
+          "if": [["flag", "sv_sk_bargained_asked"], ["!flag", "sv_sk_bargained_done"]],
+          "once": true,
+          "say": "You tell him a debt paid on faith doesn't get to lapse just because it's inconvenient. He throws the coin in himself, same words as the year before, and the town grumbles its usual amount.",
+          "fx": [
+            ["set", "sv_sk_bargained_honored"],
+            ["set", "sv_sk_bargained_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_watch", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_sk_bargained_pay",
+          "label": "endow the tithe outright (12 gold)",
+          "if": [["flag", "sv_sk_bargained_asked"], ["!flag", "sv_sk_bargained_done"], ["var", "gold", ">=", 12]],
+          "once": true,
+          "say": "You count out enough to cover years of spring tithes at once. Rennick pockets it, faintly surprised, and Gullhaven's purse stops arguing with itself every spring from now on.",
+          "fx": [
+            ["addvar", "gold", -12],
+            ["set", "sv_sk_bargained_paid"],
+            ["set", "sv_sk_bargained_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_free", 1],
+            ["addvar", "rep_watch", 1],
+            ["score", 4],
+            ["xp", 2]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to his charts",
           "say": "Mind the tide going out. It doesn't wait on strangers.",
@@ -652,6 +721,62 @@
           "once": true,
           "say": "\"That tip of yours held up under a second look,\" Brann says. \"Rennick's crew hasn't tried that cellar hatch again. I don't forget who made my job easier.\"",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_sk_burned_ask",
+          "label": "the wreck, now she's divable",
+          "if": [["flag", "sk_hollow_burned"], ["!flag", "sv_sk_burned_asked"]],
+          "once": true,
+          "say": "Burned to the waterline means divable at last. Wreckers are already eyeing the Pride's iron and whatever coin went down with her officers. I want it logged and taxed before they strip her bare.",
+          "fx": [["set", "sv_sk_burned_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_sk_burned_wreckers",
+          "label": "let the wreckers have first pull",
+          "if": [["flag", "sv_sk_burned_asked"], ["!flag", "sv_sk_burned_done"]],
+          "once": true,
+          "say": "You tell her salvage belongs to whoever's fast enough to take it. Wreckers strip the Pride within the week and don't share the count with her office.",
+          "fx": [
+            ["set", "sv_sk_burned_wreckers"],
+            ["set", "sv_sk_burned_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_free", 2],
+            ["addvar", "rep_watch", -1],
+            ["addvar", "gold", 3],
+            ["score", 2],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_sk_burned_taxed",
+          "label": "back her — log it and tax it",
+          "if": [["flag", "sv_sk_burned_asked"], ["!flag", "sv_sk_burned_done"]],
+          "once": true,
+          "say": "You back the Watch's claim plain. Brann posts a customs watch on the reef within the day, and every ounce that comes up gets weighed and taxed before it reaches a buyer.",
+          "fx": [
+            ["set", "sv_sk_burned_taxed"],
+            ["set", "sv_sk_burned_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_watch", 2],
+            ["addvar", "rep_free", -1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_sk_burned_held",
+          "label": "hold the wreck for the drowned first",
+          "if": [["flag", "sv_sk_burned_asked"], ["!flag", "sv_sk_burned_done"]],
+          "once": true,
+          "say": "You tell her nobody dives the Pride until her dead are properly done with, whatever 'done with' means after a burning. She doesn't love the delay, but holds the reef closed regardless.",
+          "fx": [
+            ["set", "sv_sk_burned_held"],
+            ["set", "sv_sk_burned_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_church", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
         },
         {
           "id": "bye",
@@ -879,6 +1004,60 @@
           "fx": [["xp", 2], ["score", 2], ["addvar", "appr_osk", 1]]
         },
         {
+          "id": "sv_sk_rested_ask",
+          "label": "does he rest too?",
+          "if": [["flag", "sk_hollow_rested"], ["!flag", "sv_sk_rested_asked"]],
+          "once": true,
+          "say": "The verse rested the fleet, sailors and all — bought and sold men who never chose the reef. My husband chose to keep that light dark. I don't know if he's owed the same peace, or if I even want him to have it.",
+          "fx": [["set", "sv_sk_rested_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_sk_rested_mercy",
+          "label": "say a rite for him too",
+          "if": [["flag", "sv_sk_rested_asked"], ["!flag", "sv_sk_rested_done"]],
+          "once": true,
+          "say": "You tell her guilt doesn't cancel grief, and say a quiet word for him yourself, at her own hearth. She doesn't thank you for it. She doesn't ask you to stop, either.",
+          "fx": [
+            ["set", "sv_sk_rested_mercy"],
+            ["set", "sv_sk_rested_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_sk_rested_denied",
+          "label": "tell her his rest wasn't earned",
+          "if": [["flag", "sv_sk_rested_asked"], ["!flag", "sv_sk_rested_done"]],
+          "once": true,
+          "say": "You tell her some rest has to be earned, and he spent his life making sure it wouldn't be his. She nods slowly, like she'd already half-decided the same and only needed it said aloud.",
+          "fx": [
+            ["set", "sv_sk_rested_denied"],
+            ["set", "sv_sk_rested_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_iron", 1],
+            ["score", 2],
+            ["xp", 1]
+          ]
+        },
+        {
+          "id": "sv_sk_rested_included",
+          "label": "tell her the verse took him too",
+          "if": [["flag", "sv_sk_rested_asked"], ["!flag", "sv_sk_rested_done"]],
+          "once": true,
+          "say": "You tell her the verse rested everyone the reef holds, whether it earned the peace or not, him included. She isn't sure that comforts her. She decides to let it, anyway.",
+          "fx": [
+            ["set", "sv_sk_rested_included"],
+            ["set", "sv_sk_rested_done"],
+            ["set", "sv_sk_after_done"],
+            ["addvar", "rep_watch", 1],
+            ["score", 2],
+            ["xp", 1]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave her to her bare house",
           "say": "Go on, then. I'll be here. Light a candle at St. Mara's shrine for me, if you pass it.",
@@ -1058,6 +1237,51 @@
       "if": [["flag", "rb_ir_sk_guilted"]],
       "text": "Berin went home to Cinderhall for his grandfather's sake, and not, by his own account, for any sake of his own.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_rested_mercy"]],
+      "text": "Widow Kestrel lets a stranger's rite stand for her husband too, guilt and all, at her own hearth.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_rested_denied"]],
+      "text": "Widow Kestrel decided her husband's rest wasn't his to have. She still sings the sailors' verse alone.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_rested_included"]],
+      "text": "Widow Kestrel accepted that the fleet's rest took her husband too, whether it comforts her or not.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sk_bargain_broken"]],
+      "text": "Gullhaven skipped the spring wreck-right once. Oars sounded off the point that same night, once, and then not again.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_bargained_honored"]],
+      "text": "Gullhaven still throws six gold into the water every spring, same words, same grumbling, every year.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_bargained_paid"]],
+      "text": "A stranger's coin ended Gullhaven's spring argument over the wreck-right, years of it, in one payment.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_burned_wreckers"]],
+      "text": "Wreckers stripped the Reeve's Pride bare within the week, and never once shared the count with the Watch.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_burned_taxed"]],
+      "text": "The Reeve's Pride gets salvaged under a Watch customs seal now, every ounce weighed before it's sold.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_sk_burned_held"]],
+      "text": "Gullhaven left the Reeve's officers to their wreck a while longer before anyone dove for salvage.",
+      "weight": 1
     }
   ],
   "quests": {
@@ -1074,6 +1298,42 @@
           "if": [],
           "text": "The Drowned Bell's old ship's-bell is owed, by custom, to Hollowbrook's Keepers' Hall. Carry it north."
         }
+      ]
+    },
+    "sk_q_after": {
+      "name": "Gullhaven, After",
+      "start": [["flag", "sv_sk_back"]],
+      "done": [["flag", "sv_sk_after_done"]],
+      "stages": [
+        {
+          "if": [["flag", "sv_sk_after_done"]],
+          "text": "Settled. Gullhaven's second reckoning with the wreck got its answer."
+        },
+        {
+          "if": [["flag", "sv_sk_rested_asked"], ["!flag", "sv_sk_rested_done"]],
+          "text": "Widow Kestrel is waiting on your word, at her house on the high street."
+        },
+        {
+          "if": [["flag", "sv_sk_bargained_asked"], ["!flag", "sv_sk_bargained_done"]],
+          "text": "Rennick is waiting on your word about the tithe."
+        },
+        {
+          "if": [["flag", "sv_sk_burned_asked"], ["!flag", "sv_sk_burned_done"]],
+          "text": "Brann is waiting on your word about the wreck."
+        },
+        {
+          "if": [["flag", "sk_hollow_rested"]],
+          "text": "Widow Kestrel has a harder question now. Find her, high street, Gullhaven."
+        },
+        {
+          "if": [["flag", "sk_hollow_bargained"]],
+          "text": "The spring tithe troubles Rennick. Find him at the harbourmaster's house."
+        },
+        {
+          "if": [["flag", "sk_hollow_burned"]],
+          "text": "Salvage rights to the Pride trouble Brann. Find her at the customs post."
+        },
+        { "if": [], "text": "Gullhaven isn't done with the wreck yet." }
       ]
     }
   }

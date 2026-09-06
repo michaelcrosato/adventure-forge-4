@@ -37,6 +37,18 @@
       },
       "variants": [
         {
+          "if": [["flag", "ir_hollow_rested"], ["flag", "sv_ir_back"]],
+          "brief": "The tally board, crossed through. Talk of a stone for the Hundred."
+        },
+        {
+          "if": [["flag", "ir_hollow_bargained"], ["flag", "sv_ir_back"]],
+          "brief": "The tally board, hall-kept now. Someone keeps a vigil in the Deep."
+        },
+        {
+          "if": [["flag", "ir_hollow_burned"], ["flag", "sv_ir_back"]],
+          "brief": "Tally board still smells of smoke. Talk of a chapterhouse plaque."
+        },
+        {
           "if": [["flag", "ir_hollow_burned"]],
           "brief": "The chalked tally board. The hill still smells of the fire."
         },
@@ -59,7 +71,8 @@
             ["say", "Names in chalk, crossed through as shifts end safe. One line, older than the rest, was never crossed through at all — a full hundred names, still owed a mark."]
           ]
         }
-      ]
+      ],
+      "onEnter": [["if", [["flag", "ir_hollow_resolved"], ["!flag", "sv_ir_back"]], [["set", "sv_ir_back"]], []]]
     },
     "ir_high_street": {
       "name": "Cinderhall High Street",
@@ -572,7 +585,12 @@
   },
   "items": {
     "ir_downs_pick": { "name": "a reforged pick", "loc": "nowhere", "hit": 1, "dmg": 4 },
-    "ir_ironbound_hauberk": { "name": "an Ironbound hauberk", "loc": "nowhere", "armor": 2 },
+    "ir_ironbound_hauberk": {
+      "name": "an Ironbound hauberk",
+      "loc": "nowhere",
+      "armor": 3,
+      "hint": "heavier than any mail worn before it — the best iron this side of Marrowgate"
+    },
     "ir_miners_salve": {
       "name": "a tin of miner's salve",
       "loc": "nowhere",
@@ -713,7 +731,7 @@
         {
           "id": "confront",
           "label": "press him on the Hundred (will)",
-          "if": [["flag", "ir_suspects_aldous"], ["!flag", "tamsin_mine_truth"]],
+          "if": [["flag", "ir_suspects_aldous"], ["!flag", "tamsin_mine_truth"], ["!flag", "ir_hollow_burned"]],
           "say": "You've been asking about the Hundred. Ask me straight, then, if you've got the nerve for the answer.",
           "fx": [
             [
@@ -745,6 +763,28 @@
           ]
         },
         {
+          "id": "confront_ash",
+          "label": "press him, though the mine's ash now",
+          "if": [["flag", "ir_suspects_aldous"], ["!flag", "tamsin_mine_truth"], ["flag", "ir_hollow_burned"]],
+          "say": "Whatever proof that gallery held is smoke now. You press him on it anyway.",
+          "fx": [
+            [
+              "check",
+              "will",
+              13,
+              [
+                ["set", "ir_aldous_ash_confession"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "He doesn't deny it outright, not to your face — but with the gallery gone, it's his word answering yours, and no ledger left to settle which of you the Watch would believe."]
+              ],
+              [
+                ["say", "Without the ledger to back you, he just waits you out. Whatever leverage the truth might have given you, the fire took it first."]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "expose",
           "label": "make the truth public (wits)",
           "if": [
@@ -763,6 +803,7 @@
                 ["set", "tamsin_mine_avenged"],
                 ["set", "ir_aldous_ruined"],
                 ["set", "ir_aldous_gone"],
+                ["npcgo", "ir_aldous", null],
                 ["score", 5],
                 ["xp", 3],
                 ["addvar", "rep_iron", -2],
@@ -824,6 +865,7 @@
                 ["set", "tamsin_mine_avenged"],
                 ["set", "ir_aldous_ruined"],
                 ["set", "ir_aldous_gone"],
+                ["npcgo", "ir_aldous", null],
                 ["score", 5],
                 ["xp", 3],
                 ["addvar", "rep_iron", -2],
@@ -853,6 +895,7 @@
                 ["set", "tamsin_mine_avenged"],
                 ["set", "ir_aldous_ruined"],
                 ["set", "ir_aldous_gone"],
+                ["npcgo", "ir_aldous", null],
                 ["score", 5],
                 ["xp", 3],
                 ["addvar", "rep_iron", -2],
@@ -1069,6 +1112,71 @@
           "say": "He just goes back to the fire. \"No news is a kind of news, out here,\" he says, not sounding convinced of it."
         },
         {
+          "id": "sv_ir_rested_ask",
+          "label": "the hall's talk of a stone",
+          "if": [["flag", "ir_hollow_rested"], ["!flag", "sv_ir_rested_asked"]],
+          "once": true,
+          "say": "The hall wants the Hundred's names cut proper into the Marker Stone, not scratched by grieving hands after dark. Mirren says company ground doesn't get a miners' monument without the company's leave.",
+          "fx": [["set", "sv_ir_rested_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_ir_rested_hall",
+          "label": "back the hall — cut the names in",
+          "if": [["flag", "sv_ir_rested_asked"], ["!flag", "sv_ir_rested_done"]],
+          "once": true,
+          "say": "You tell Crick to cut the names in and let the company complain to Marrowgate about it. The hall does it that week, chisel-work rough but honest. Mirren stops speaking to you on your way out.",
+          "fx": [
+            ["set", "sv_ir_rested_stone_hall"],
+            ["set", "sv_ir_rested_done"],
+            ["set", "sv_ir_after_done"],
+            ["addvar", "rep_iron", -1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 4],
+            ["xp", 2],
+            ["if", [["inParty", "tamsin"]], [["say", "Tamsin: \"Cut it deep. Let them see it from the road.\""]], []]
+          ]
+        },
+        {
+          "id": "sv_ir_rested_broker",
+          "label": "broker it — company pays (will)",
+          "if": [["flag", "sv_ir_rested_asked"], ["!flag", "sv_ir_rested_done"]],
+          "say": "You put it to Mirren plain: a company-paid stone costs her less than a company-shamed one.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "sv_ir_rested_stone_broker"],
+                ["set", "sv_ir_rested_done"],
+                ["set", "sv_ir_after_done"],
+                ["addvar", "rep_watch", 1],
+                ["addvar", "rep_iron", 1],
+                ["addvar", "rep_keepers", 1],
+                ["score", 4],
+                ["xp", 2],
+                ["say", "She signs off through gritted teeth. Names go up shared, hall and company both listed as payers."]
+              ],
+              [["say", "She won't be moved today. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "sv_ir_rested_unmarked",
+          "label": "tell him to let the scratches stand",
+          "if": [["flag", "sv_ir_rested_asked"], ["!flag", "sv_ir_rested_done"]],
+          "once": true,
+          "say": "You tell him a stone changes nothing the truth hasn't already done. Crick doesn't argue, but he doesn't quite agree either. The scratches stay, uncut, under the company's own boundary sign.",
+          "fx": [
+            ["set", "sv_ir_rested_unmarked"],
+            ["set", "sv_ir_rested_done"],
+            ["set", "sv_ir_after_done"],
+            ["addvar", "rep_keepers", -1],
+            ["score", 2],
+            ["xp", 1]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to his fire",
           "say": "Mind the gallery, if you go up there. It doesn't forget easy.",
@@ -1146,6 +1254,67 @@
           "once": true,
           "say": "The claim held. The hall runs the gallery now. It doesn't undo what happened there, but it's ours to answer for now, not the company's.",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_ir_bargained_ask",
+          "label": "the promised vigil, come due",
+          "if": [["flag", "ir_hollow_bargained"], ["!flag", "sv_ir_bargained_asked"]],
+          "once": true,
+          "say": "Watched over, we promised the Hundred, not abandoned. Someone has to mean that in shifts, not just words. The lad who drew this month's vigil says the gray down there doesn't feel like it's thinning at all.",
+          "fx": [["set", "sv_ir_bargained_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_ir_bargained_break",
+          "label": "tell the hall the vigil's not worth it",
+          "if": [["flag", "sv_ir_bargained_asked"], ["!flag", "sv_ir_bargained_done"]],
+          "once": true,
+          "say": "You tell Ness the dead don't need a babysitter, promise or not. She doesn't argue, and pulls the lad off the rota that same shift. Word gets around that Cinderhall's bargain was cheaper talk than kept.",
+          "fx": [
+            ["set", "ir_bargain_broken"],
+            ["set", "sv_ir_bargained_done"],
+            ["set", "sv_ir_after_done"],
+            ["addvar", "rep_keepers", -2],
+            ["score", 2],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_ir_bargained_honor",
+          "label": "the hall keeps its word regardless",
+          "if": [["flag", "sv_ir_bargained_asked"], ["!flag", "sv_ir_bargained_done"]],
+          "once": true,
+          "say": "Ness nods like she expected nothing less and posts the rota for another season. It costs the hall a wage nobody can spare. Nobody on shift down there complains where she can hear it.",
+          "fx": [
+            ["set", "sv_ir_bargained_honored"],
+            ["set", "sv_ir_bargained_done"],
+            ["set", "sv_ir_after_done"],
+            ["addvar", "rep_keepers", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_ir_bargained_pay",
+          "label": "pay for a night-warden (8 gold)",
+          "if": [["flag", "sv_ir_bargained_asked"], ["!flag", "sv_ir_bargained_done"], ["var", "gold", ">=", 8]],
+          "once": true,
+          "say": "You put down coin enough for a proper warden's wage, no miner's shift wasted on it. Ness counts it twice, surprised, then hires an old hand who doesn't mind the quiet. The lad goes back to daylight.",
+          "fx": [
+            ["addvar", "gold", -8],
+            ["set", "sv_ir_bargained_paid"],
+            ["set", "sv_ir_bargained_done"],
+            ["set", "sv_ir_after_done"],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_tamsin", 1],
+            ["score", 4],
+            ["xp", 2],
+            [
+              "if",
+              [["inParty", "tamsin"]],
+              [["say", "Tamsin: \"That's the first thing anyone's paid for straight since I got here.\""]],
+              []
+            ]
+          ]
         },
         {
           "id": "bye",
@@ -1274,6 +1443,54 @@
             ["say", "\"Somebody's grief got carried, same as mine did.\" She doesn't look up. \"That's worth something, wherever it happens.\""],
             ["addvar", "rep_keepers", 1]
           ]
+        },
+        {
+          "id": "sv_ir_burned_ask",
+          "label": "the chapterhouse's plaque",
+          "if": [["flag", "ir_hollow_burned"], ["!flag", "sv_ir_burned_asked"]],
+          "once": true,
+          "say": "The chapterhouse wants a plaque up for Aldous now — 'cleansed the Hundred clean,' they're calling it. Never mind whose bad timber put them there. I'd have their names said somewhere that isn't ash.",
+          "fx": [["set", "sv_ir_burned_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_ir_burned_honor",
+          "label": "let the chapterhouse have its plaque",
+          "if": [["flag", "sv_ir_burned_asked"], ["!flag", "sv_ir_burned_done"]],
+          "once": true,
+          "say": "You don't fight it. The chapterhouse hangs its plaque within the week, Aldous's name cut deep and generous. Sella doesn't come to the unveiling.",
+          "fx": [
+            ["set", "sv_ir_burned_honored"],
+            ["set", "sv_ir_burned_done"],
+            ["set", "sv_ir_after_done"],
+            ["addvar", "rep_iron", 2],
+            ["addvar", "rep_keepers", -1],
+            ["score", 2],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_ir_burned_names",
+          "label": "say the Hundred's names yourself",
+          "if": [["flag", "sv_ir_burned_asked"], ["!flag", "sv_ir_burned_done"]],
+          "once": true,
+          "say": "You stand where the gallery mouth used to be and say what names Sella can still remember, plain, into ash that doesn't answer. It isn't a rite. She says it's close enough.",
+          "fx": [
+            ["set", "sv_ir_burned_names"],
+            ["set", "sv_ir_burned_done"],
+            ["set", "sv_ir_after_done"],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_iron", -1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_ir_burned_quiet",
+          "label": "tell her it's not yours to referee",
+          "if": [["flag", "sv_ir_burned_asked"], ["!flag", "sv_ir_burned_done"]],
+          "once": true,
+          "say": "You leave the chapterhouse its plaque and Sella her grief, and referee neither. Cinderhall gets both stories, uphill from each other, same as most things here.",
+          "fx": [["set", "sv_ir_burned_quiet"], ["set", "sv_ir_burned_done"], ["set", "sv_ir_after_done"], ["xp", 1]]
         },
         {
           "id": "bye",
@@ -1784,9 +2001,49 @@
           "text": "Old Crick's grandson Berin took the coin road to Gullhaven, in the Saltkerns, past Thornwold."
         }
       ]
+    },
+    "ir_q_after": {
+      "name": "The Hundred, After",
+      "start": [["flag", "sv_ir_back"]],
+      "done": [["flag", "sv_ir_after_done"]],
+      "stages": [
+        {
+          "if": [["flag", "sv_ir_after_done"]],
+          "text": "Settled. Cinderhall's second reckoning with the Hundred got its answer."
+        },
+        {
+          "if": [["flag", "sv_ir_rested_asked"], ["!flag", "sv_ir_rested_done"]],
+          "text": "Old Crick is waiting on your word about the stone."
+        },
+        {
+          "if": [["flag", "sv_ir_bargained_asked"], ["!flag", "sv_ir_bargained_done"]],
+          "text": "Ness is waiting on your word about the vigil."
+        },
+        {
+          "if": [["flag", "sv_ir_burned_asked"], ["!flag", "sv_ir_burned_done"]],
+          "text": "Sella is waiting on your word about the plaque."
+        },
+        {
+          "if": [["flag", "ir_hollow_rested"]],
+          "text": "The hall wants your word on a stone for the Hundred. Find Old Crick, at the miners' hall."
+        },
+        {
+          "if": [["flag", "ir_hollow_burned"]],
+          "text": "Word of a chapterhouse plaque troubles Sella. Find her on shanty row."
+        },
+        {
+          "if": [["flag", "ir_hollow_bargained"]],
+          "text": "The claim's vigil weighs on the hall. Find Ness, at the head-frame."
+        },
+        { "if": [], "text": "Cinderhall isn't done with the Hundred yet." }
+      ]
     }
   },
   "epilogue": [
+    {
+      "if": [["flag", "ir_aldous_ash_confession"]],
+      "text": "Aldous half-admitted the Hundred once, mine burned and ledger gone, in a room with nobody official enough to make it stick."
+    },
     {
       "if": [["flag", "ir_hollow_rested"]],
       "text": "The Hundred are named and rested. Cinderhall reads the true tally now, chalked plain, not the company's version of it.",
@@ -1844,6 +2101,51 @@
     {
       "if": [["flag", "th_wayfire_named"]],
       "text": "Cinderhall's Ironbound still tell of the stranger who named the dead at Thornwold's wayfire, proper and unflinching.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_ir_rested_stone_hall"]],
+      "text": "The Hundred's names went up on Cinderhall's Marker Stone, hall-cut, company be damned about it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_ir_rested_stone_broker"]],
+      "text": "The Marker Stone lists the Hundred's names now, company coin behind half the lettering.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_ir_rested_unmarked"]],
+      "text": "Cinderhall's Marker Stone still carries only the scratches grieving hands left it, uncut, unofficial.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "ir_bargain_broken"]],
+      "text": "Cinderhall's promised vigil over the Hundred lasted about as long as saying it did.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_ir_bargained_honored"]],
+      "text": "The hall still rotates a miner through the Hundred's vigil every season, wage and all.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_ir_bargained_paid"]],
+      "text": "A stranger's coin bought the Hundred a proper night-warden, and Cinderhall's miners their daylight back.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_ir_burned_honored"]],
+      "text": "The Ironbound chapterhouse hung a plaque for Aldous. Sella didn't come to the unveiling.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_ir_burned_names"]],
+      "text": "Someone said the Hundred's names into the ash where the gallery mouth used to be. Sella called it close enough.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_ir_burned_quiet"]],
+      "text": "Cinderhall tells two stories about the fifth grief now, uphill from each other, and settles neither.",
       "weight": 1
     }
   ]

@@ -39,6 +39,18 @@
         "in": { "to": "hb_chandler" }
       },
       "variants": [
+        {
+          "if": [["flag", "hb_hollow_rested"], ["flag", "sv_hb_back"]],
+          "brief": "Skiffs on the mud. A widow asks if the quiet reaches her mound too."
+        },
+        {
+          "if": [["flag", "hb_hollow_bargained"], ["flag", "sv_hb_back"]],
+          "brief": "Skiffs on the mud. Buyers are asking the chandler which mound."
+        },
+        {
+          "if": [["flag", "hb_hollow_burned"], ["flag", "sv_hb_back"]],
+          "brief": "Smoke over the downs. Grave-goods cross the chandler's counter now."
+        },
         { "if": [["flag", "hb_hollow_burned"]], "brief": "Skiffs on the mud. Smoke stands over the downs." },
         { "if": [["flag", "hb_hollow_rested"]], "brief": "Skiffs on the mud. The mounds are only mounds now." },
         { "if": [["flag", "hb_hollow_bargained"]], "brief": "Skiffs on the mud. The downs have gone quiet, mostly." },
@@ -46,7 +58,8 @@
           "if": [["any", [["flag", "rb_sk_hb_wren"], ["flag", "rb_sk_hb_sold"], ["flag", "rb_sk_hb_mound"]]]],
           "brief": "Skiffs on the mud. A coastal bell found its way here."
         }
-      ]
+      ],
+      "onEnter": [["if", [["flag", "hb_kingsrest_resolved"], ["!flag", "sv_hb_back"]], [["set", "sv_hb_back"]], []]]
     },
     "hb_tithe_barn": {
       "name": "The Tithe Barn",
@@ -587,6 +600,118 @@
             ]
           ]
         },
+        {
+          "id": "sv_hb_bargained_ask",
+          "label": "buyers asking after the ring",
+          "if": [["flag", "hb_hollow_bargained"], ["!flag", "sv_hb_bargained_asked"]],
+          "once": true,
+          "say": "Word's out that a barrow-queen's ring went back into her ground instead of onto my shelf. Two buyers already offered good coin just to know which mound. The old court's quiet depends on nobody digging it back up.",
+          "fx": [["set", "sv_hb_bargained_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_hb_bargained_break",
+          "label": "let him point them to the mound",
+          "if": [["flag", "sv_hb_bargained_asked"], ["!flag", "sv_hb_bargained_done"]],
+          "once": true,
+          "say": "You tell him coin's coin, and his conscience was never your business to mind. He pockets a cut and sells the mound's name before the week is out.",
+          "fx": [
+            ["set", "hb_bargain_broken"],
+            ["set", "sv_hb_bargained_done"],
+            ["set", "sv_hb_after_done"],
+            ["addvar", "rep_keepers", -2],
+            ["addvar", "gold", 3],
+            ["score", 2],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_hb_bargained_honor",
+          "label": "make him swear to keep it quiet",
+          "if": [["flag", "sv_hb_bargained_asked"], ["!flag", "sv_hb_bargained_done"]],
+          "once": true,
+          "say": "You make him swear it plain, no coin worth the old court's quiet. He grumbles about the lost sale, and turns the next buyer away empty-handed.",
+          "fx": [
+            ["set", "sv_hb_bargained_honored"],
+            ["set", "sv_hb_bargained_done"],
+            ["set", "sv_hb_after_done"],
+            ["addvar", "rep_keepers", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_hb_bargained_pay",
+          "label": "buy his silence yourself (5 gold)",
+          "if": [["flag", "sv_hb_bargained_asked"], ["!flag", "sv_hb_bargained_done"], ["var", "gold", ">=", 5]],
+          "once": true,
+          "say": "You pay him what a buyer would have, just to not sell it. He takes your coin over theirs without a flicker of guilt, and the mound stays exactly as unfound as it was.",
+          "fx": [
+            ["addvar", "gold", -5],
+            ["set", "sv_hb_bargained_paid"],
+            ["set", "sv_hb_bargained_done"],
+            ["set", "sv_hb_after_done"],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_lys", 1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_hb_burned_ask",
+          "label": "the fire-freed curios",
+          "if": [["flag", "hb_hollow_burned"], ["!flag", "sv_hb_burned_asked"]],
+          "once": true,
+          "say": "Two ordinary mounds came down with the kings' in that fire, and what the ground gave up is already crossing my counter. Families want it left with their dead. My other buyers want it priced first.",
+          "fx": [["set", "sv_hb_burned_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_hb_burned_sell",
+          "label": "tell him to buy and sell what's exposed",
+          "if": [["flag", "sv_hb_burned_asked"], ["!flag", "sv_hb_burned_done"]],
+          "once": true,
+          "say": "You tell him coin doesn't care whose grief it came from. He takes the first haul in that afternoon and doesn't ask the families first.",
+          "fx": [
+            ["set", "sv_hb_burned_sold"],
+            ["set", "sv_hb_burned_done"],
+            ["set", "sv_hb_after_done"],
+            ["addvar", "rep_keepers", -2],
+            ["addvar", "rep_free", 1],
+            ["addvar", "gold", 4],
+            ["score", 2],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_hb_burned_refuse",
+          "label": "make him refuse the whole trade",
+          "if": [["flag", "sv_hb_burned_asked"], ["!flag", "sv_hb_burned_done"]],
+          "once": true,
+          "say": "You tell him his shelves stay empty of it, however good the offer. He grumbles, and helps a family re-cover a mound himself before the week is out.",
+          "fx": [
+            ["set", "sv_hb_burned_refused"],
+            ["set", "sv_hb_burned_done"],
+            ["set", "sv_hb_after_done"],
+            ["addvar", "rep_keepers", 2],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_hb_burned_buyback",
+          "label": "have him pay the families first, direct",
+          "if": [["flag", "sv_hb_burned_asked"], ["!flag", "sv_hb_burned_done"]],
+          "once": true,
+          "say": "You broker it plain: whatever he sells, the families get paid first and fair, before it ever reaches a shelf. He doesn't love the cut it takes from his margin, but he keeps to it.",
+          "fx": [
+            ["set", "sv_hb_burned_paid_families"],
+            ["set", "sv_hb_burned_done"],
+            ["set", "sv_hb_after_done"],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "rep_free", -1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
         { "id": "bye", "label": "leave him to his wax", "say": "Mind what you carry out of here.", "end": true },
         {
           "id": "hb_chandler_theft",
@@ -880,6 +1005,76 @@
           "fx": [["xp", 1]]
         }
       ]
+    },
+    "hb_widow": {
+      "name": "a barrow-widow",
+      "room": "hb_tithe_barn",
+      "dialogue": true,
+      "desc": "Sits by the tithe barn's stove like she's waiting for someone who isn't coming, and knows it.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "if": [["flag", "hb_hollow_rested"]],
+          "once": true,
+          "say": "Widow of a man who's no kin to any king. I heard the old court went quiet and came to ask if that quiet stretches as far as my husband's mound.",
+          "fx": [["set", "sv_hb_rested_asked"], ["xp", 2]]
+        },
+        {
+          "id": "sv_hb_rested_share",
+          "label": "tell her the words aren't kings-only",
+          "if": [["flag", "sv_hb_rested_asked"], ["!flag", "sv_hb_rested_done"]],
+          "once": true,
+          "say": "You tell her the causeway verse was never written only for kings, and teach her what you remember of it. She says it over her husband's mound herself, badly, and doesn't mind that it's badly.",
+          "fx": [
+            ["set", "sv_hb_rested_shared"],
+            ["set", "sv_hb_rested_done"],
+            ["set", "sv_hb_after_done"],
+            ["addvar", "rep_church", 1],
+            ["addvar", "rep_keepers", -1],
+            ["score", 3],
+            ["xp", 2]
+          ]
+        },
+        {
+          "id": "sv_hb_rested_refuse",
+          "label": "tell her the rite stays kings-only",
+          "if": [["flag", "sv_hb_rested_asked"], ["!flag", "sv_hb_rested_done"]],
+          "once": true,
+          "say": "You tell her custom is custom, cut for kings and nobody else, and watch that land on her exactly as hard as you expected. She doesn't argue. She doesn't thank you either.",
+          "fx": [
+            ["set", "sv_hb_rested_refused"],
+            ["set", "sv_hb_rested_done"],
+            ["set", "sv_hb_after_done"],
+            ["addvar", "rep_keepers", 1],
+            ["score", 2],
+            ["xp", 1]
+          ]
+        },
+        {
+          "id": "sv_hb_rested_defer",
+          "label": "send her to Keeper Wren instead",
+          "if": [["flag", "sv_hb_rested_asked"], ["!flag", "sv_hb_rested_done"]],
+          "once": true,
+          "say": "You tell her it isn't your custom to bend, and point her down to the Keepers' Hall. Wren hears her out and, whatever she decides, decides it with the weight her Hall is owed.",
+          "fx": [
+            ["set", "sv_hb_rested_deferred"],
+            ["set", "sv_hb_rested_done"],
+            ["set", "sv_hb_after_done"],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_vell", 1],
+            ["score", 2],
+            ["xp", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to her grief",
+          "if": [["flag", "hb_hollow_rested"]],
+          "say": "Go on. I'll sit a while longer.",
+          "end": true
+        }
+      ]
     }
   },
   "quests": {
@@ -896,6 +1091,42 @@
           "if": [],
           "text": "Keeper Wren wonders if Keeper Rowan still keeps the Understory, in Thornwold, past the Vale."
         }
+      ]
+    },
+    "hb_q_after": {
+      "name": "The Old Court, After",
+      "start": [["flag", "sv_hb_back"]],
+      "done": [["flag", "sv_hb_after_done"]],
+      "stages": [
+        {
+          "if": [["flag", "sv_hb_after_done"]],
+          "text": "Settled. Barrowmere's second reckoning with the old court got its answer."
+        },
+        {
+          "if": [["flag", "sv_hb_rested_asked"], ["!flag", "sv_hb_rested_done"]],
+          "text": "The barrow-widow is waiting on your word, at the tithe barn."
+        },
+        {
+          "if": [["flag", "sv_hb_bargained_asked"], ["!flag", "sv_hb_bargained_done"]],
+          "text": "The chandler is waiting on your word about the ring."
+        },
+        {
+          "if": [["flag", "sv_hb_burned_asked"], ["!flag", "sv_hb_burned_done"]],
+          "text": "The chandler is waiting on your word about the curios."
+        },
+        {
+          "if": [["flag", "hb_hollow_rested"]],
+          "text": "A widow wants to know if the quiet reaches her own dead. Find her at the tithe barn."
+        },
+        {
+          "if": [["flag", "hb_hollow_bargained"]],
+          "text": "Word of the ring troubles the chandler's shop. Hear him out, at Barrowmere."
+        },
+        {
+          "if": [["flag", "hb_hollow_burned"]],
+          "text": "Fire-freed grave-goods are reaching the chandler's shelves. Hear him out."
+        },
+        { "if": [], "text": "Barrowmere isn't done with the old court yet." }
       ]
     }
   },
@@ -923,6 +1154,51 @@
     {
       "if": [["flag", "hb_ring_lifted"]],
       "text": "The chandler at Barrowmere still swears his queen's ring walked off the shelf on its own, and doesn't quite believe it either."
+    },
+    {
+      "if": [["flag", "sv_hb_rested_shared"]],
+      "text": "A widow at Barrowmere sings the causeway verse over her husband's mound now, badly, and doesn't stop for that.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_hb_rested_refused"]],
+      "text": "Barrowmere keeps the causeway verse for kings alone. One widow's mound stays exactly as unquiet as it was.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_hb_rested_deferred"]],
+      "text": "Keeper Wren took in one grieving household the old court's rest never reached.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "hb_bargain_broken"]],
+      "text": "The chandler sold the queen's mound's location within the week. Nobody's checked what's left of it since.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_hb_bargained_honored"]],
+      "text": "The chandler at Barrowmere turns away every buyer asking after a barrow-queen's ring now, on principle.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_hb_bargained_paid"]],
+      "text": "A stranger's coin bought the chandler's silence on the queen's ring, and it held.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_hb_burned_sold"]],
+      "text": "Fire-freed grave-goods moved through Barrowmere's chandler within days, no family asked first.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_hb_burned_refused"]],
+      "text": "Barrowmere's chandler keeps his shelves empty of the fire-freed dead, and helped re-cover a mound himself.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_hb_burned_paid_families"]],
+      "text": "Barrowmere's fire-freed grave-goods get sold now, but the families see the coin first, every time.",
+      "weight": 1
     }
   ],
   "perks": {

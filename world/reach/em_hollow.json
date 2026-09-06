@@ -101,7 +101,17 @@
             ["addvar", "appr_lys", 1],
             ["score", 20],
             ["xp", 8],
-            ["say", "The bell's note goes out cracked and uneven, and the singing eases to meet it, ragged, like a choir following a conductor who's forgotten half the tune. Not rest. Company. Glasswick owes the ridge a bell-tending now."]
+            [
+              "if",
+              [["flag", "em_bell_whole"]],
+              [
+                ["addvar", "rep_church", 1],
+                ["say", "The Cinder Watch's clapper still hangs true inside it. The note goes out whole and clean, not cracked — the first sound this bell has made complete since the fire took it."]
+              ],
+              [
+                ["say", "The bell's note goes out cracked and uneven, and the singing eases to meet it, ragged, like a choir following a conductor who's forgotten half the tune. Not rest. Company. Glasswick owes the ridge a bell-tending now."]
+              ]
+            ]
           ]
         },
         {
@@ -114,6 +124,7 @@
               "might",
               9,
               [
+                ["move", "em_cinder_oil", "nowhere"],
                 ["set", "em_hollow_burned"],
                 ["set", "em_hollow_done"],
                 ["addvar", "hollows_burned", 1],
@@ -124,7 +135,7 @@
                 ["addvar", "appr_tamsin", -1],
                 ["score", 15],
                 ["xp", 8],
-                ["say", "Cinder-oil spreads black over glass, the fifth fire this ridge has carried. It burns fast and hot, same as the four before. By the time you're back down the path, the singing's already started again, louder than before."]
+                ["say", "Cinder-oil spreads black over glass, the cask empty and left in the ash. The fifth fire burns fast and hot, same as the four before. By the time you're back down the path, the singing's started again, louder."]
               ],
               [
                 ["hp", -1],
@@ -206,7 +217,17 @@
       "name": "the chapel's recovered bell",
       "loc": "nowhere",
       "hint": "cracked, but it might still ring where the singing is loudest",
-      "variants": [{ "if": [["flag", "em_hollow_done"]], "hint": "" }]
+      "variants": [{ "if": [["flag", "em_hollow_done"]], "hint": "" }],
+      "use": [
+        {
+          "target": "em_watch_loot",
+          "if": [["!flag", "em_bell_whole"]],
+          "fx": [
+            ["set", "em_bell_whole"],
+            ["say", "You fit the Cinder Watch's warped clapper back into the bell's cracked mouth. It won't ring true again, but for the first time since the fire, it rings whole."]
+          ]
+        }
+      ]
     }
   },
   "quests": {
@@ -269,6 +290,11 @@
     {
       "if": [["flag", "em_cornerstone_read"]],
       "text": "Someone finally noticed Glasswick's plaque and its chapel's cornerstone disagree on a date. Nobody has fixed either one.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "em_bell_whole"]],
+      "text": "The Cinder Watch's lost clapper found its way home to the chapel bell, and the two ring true together now.",
       "weight": 1
     }
   ]
