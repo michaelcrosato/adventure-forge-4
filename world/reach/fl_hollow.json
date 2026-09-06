@@ -103,6 +103,7 @@
               11,
               [
                 ["set", "fl_hollow_bargained"],
+                ["addvar", "hollows_bargained", 1],
                 ["set", "fl_hollow_done"],
                 ["addvar", "hollows_rested", 1],
                 ["addvar", "rep_crown", -2],
@@ -111,7 +112,28 @@
                 ["addvar", "appr_tamsin", 1],
                 ["score", 20],
                 ["xp", 8],
-                ["say", "You swear it plain over the cairn: this ground stays the Fallows' own, no stakes, no muster, for as long as the promise holds. Something in the air over the furrow settles, and does not test you twice."]
+                ["say", "You swear it plain over the cairn: this ground stays the Fallows' own, no stakes, no muster, for as long as the promise holds. Something in the air over the furrow settles, and does not test you twice."],
+                [
+                  "if",
+                  [["flag", "fl_land_crown"]],
+                  [
+                    ["set", "fl_bargain_broken"],
+                    ["addvar", "rep_keepers", -1],
+                    ["say", "Surveyor Pell's stakes already stand across this ground, though — the promise is strained the moment it's spoken, not after."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["flag", "fl_land_free"]],
+                      [
+                        ["set", "fl_bargain_broken"],
+                        ["addvar", "rep_church", -1],
+                        ["say", "Dace's muster barn already stands on this ground, though — the promise is strained the moment it's spoken, not after."]
+                      ],
+                      []
+                    ]
+                  ]
+                ]
               ],
               [
                 ["say", "The words come out uncertain, and whatever was listening does not settle for uncertain. It can be tried again, once you're sure you mean every part of it."]
@@ -130,6 +152,7 @@
               11,
               [
                 ["set", "fl_hollow_bargained"],
+                ["addvar", "hollows_bargained", 1],
                 ["set", "fl_hollow_done"],
                 ["addvar", "hollows_rested", 1],
                 ["addvar", "rep_crown", -2],
@@ -138,7 +161,28 @@
                 ["addvar", "appr_tamsin", 1],
                 ["score", 20],
                 ["xp", 8],
-                ["say", "You spend a day setting a stone over every unmarked stretch, until the whole length is tended, not only the cairn. It isn't a rite. It's care, plainly given, and the furrow takes it as close enough."]
+                ["say", "You spend a day setting a stone over every unmarked stretch, until the whole length is tended, not only the cairn. It isn't a rite. It's care, plainly given, and the furrow takes it as close enough."],
+                [
+                  "if",
+                  [["flag", "fl_land_crown"]],
+                  [
+                    ["set", "fl_bargain_broken"],
+                    ["addvar", "rep_keepers", -1],
+                    ["say", "Surveyor Pell's stakes already stand across this ground, though — the promise is strained the moment it's spoken, not after."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["flag", "fl_land_free"]],
+                      [
+                        ["set", "fl_bargain_broken"],
+                        ["addvar", "rep_church", -1],
+                        ["say", "Dace's muster barn already stands on this ground, though — the promise is strained the moment it's spoken, not after."]
+                      ],
+                      []
+                    ]
+                  ]
+                ]
               ],
               [
                 ["say", "The stones you set are heavier than the ground wants to hold, and half of them settle crooked before nightfall. It can be tried again, with steadier hands or better luck."]
@@ -253,7 +297,7 @@
       "weight": 2
     },
     {
-      "if": [["!flag", "fl_hollow_done"]],
+      "if": [["!flag", "fl_hollow_done"], ["flag", "fl_entered"]],
       "text": "The Long Furrow still lies open south of Wickstead, unrested, unbargained, unburned, exactly as the winter left it."
     },
     {

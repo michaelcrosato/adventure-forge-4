@@ -91,6 +91,7 @@
           "fx": [
             ["addvar", "gold", -6],
             ["set", "sk_hollow_bargained"],
+            ["addvar", "hollows_bargained", 1],
             ["set", "sk_hollow_good"],
             ["set", "sk_hollow_resolved"],
             ["addvar", "hollows_rested", 1],
@@ -308,7 +309,7 @@
       "weight": 2
     },
     {
-      "if": [["!flag", "sk_hollow_resolved"]],
+      "if": [["!flag", "sk_hollow_resolved"], ["flag", "sk_entered"]],
       "text": "The drowned fleet still rows the fog off Gullhaven's point, and the Farlight stands dark, waiting on someone else."
     },
     {

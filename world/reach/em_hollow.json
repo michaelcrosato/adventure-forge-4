@@ -79,6 +79,7 @@
           "if": [["flag", "em_prior_confessed"], ["!flag", "em_verse_known"], ["!flag", "em_hollow_done"]],
           "fx": [
             ["set", "em_hollow_bargained"],
+            ["addvar", "hollows_bargained", 1],
             ["set", "em_hollow_done"],
             ["addvar", "hollows_rested", 1],
             ["addvar", "rep_church", -1],
@@ -95,6 +96,7 @@
           "if": [["has", "em_chapel_bell"], ["!flag", "em_hollow_done"]],
           "fx": [
             ["set", "em_hollow_bargained"],
+            ["addvar", "hollows_bargained", 1],
             ["set", "em_hollow_done"],
             ["addvar", "hollows_rested", 1],
             ["addvar", "rep_church", 1],
@@ -295,7 +297,12 @@
       "weight": 2
     },
     {
-      "if": [["!flag", "em_hollow_rested"], ["!flag", "em_hollow_bargained"], ["!flag", "em_hollow_burned"]],
+      "if": [
+        ["!flag", "em_hollow_rested"],
+        ["!flag", "em_hollow_bargained"],
+        ["!flag", "em_hollow_burned"],
+        ["flag", "em_entered"]
+      ],
       "text": "The Choir of Ash was never answered. It sings above Glasswick still, and the glass-blowers still don't look up when it does.",
       "weight": 1
     },

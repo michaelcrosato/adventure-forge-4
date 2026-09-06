@@ -468,6 +468,22 @@
           ]
         },
         {
+          "id": "keeper_secret",
+          "label": "what the old keeper told you",
+          "if": [["flag", "mg_hut1_done"]],
+          "once": true,
+          "say": "\"This cistern's older than the palace on top of it,\" the keeper told you. \"It's barrow-cut — the Hollow King's own — and the House built a cellar over the mouth of it, and called it done.\"",
+          "fx": [["set", "mg_keeper_secret"], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "keeper_secret_echo",
+          "label": "the cistern's age, since",
+          "if": [["flag", "mg_keeper_secret"], ["flag", "mg_third_bell_resolved"]],
+          "once": true,
+          "say": "\"A barrow-mouth,\" Nyle says, when you tell her. \"That would explain why the water never really stopped, whatever we did to the gathering. Some graves don't stay covered for the asking.\"",
+          "fx": [["xp", 2]]
+        },
+        {
           "id": "bye",
           "label": "leave her to the candles",
           "say": "Go carefully. Say a word for us, if you think of it.",
@@ -864,6 +880,11 @@
     {
       "if": [["flag", "or_envoy_mg_ballot"]],
       "text": "An Envoy talked Sarah Wick into a bigger word for the Companies, and quietly kept a cut for the walking.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "mg_keeper_secret"]],
+      "text": "Someone told Nyle what the cistern really was, once. She hasn't decided yet who else deserves to hear it.",
       "weight": 0
     }
   ],

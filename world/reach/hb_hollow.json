@@ -240,6 +240,7 @@
           "if": [["flag", "hb_heard_grievance"], ["has", "hb_grave_good"], ["!flag", "hb_kingsrest_resolved"]],
           "fx": [
             ["set", "hb_hollow_bargained"],
+            ["addvar", "hollows_bargained", 1],
             ["set", "hb_kingsrest_resolved"],
             ["addvar", "hollows_rested", 1],
             ["move", "hb_grave_good", "nowhere"],
@@ -506,7 +507,7 @@
       "weight": 2
     },
     {
-      "if": [["!flag", "hb_kingsrest_resolved"]],
+      "if": [["!flag", "hb_kingsrest_resolved"], ["flag", "hb_entered"]],
       "text": "The great mound's door still stands at Barrowmere's edge, and the old court still sits up some nights, waiting on someone else."
     },
     {
