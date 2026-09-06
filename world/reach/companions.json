@@ -398,9 +398,45 @@
             "id": "r_or_hb_sk_fence_dry",
             "if": [["any", [["flag", "or_scout_hb_fence"], ["flag", "or_scout_sk_lookout"]]]],
             "say": "Professional courtesy with smugglers is not the same as trust. Noted, and left there."
+          },
+          {
+            "id": "r_beast_second",
+            "if": [["npcDead", "va_ash_wolf"], ["npcDead", "va_gaunt_wolf"]],
+            "say": "Both of them, now. Two things that would have let you walk on by, and you didn't let either. I told you I only say a thing once.",
+            "fx": [["addvar", "appr_lys", -1]]
+          },
+          {
+            "id": "r_cp_unresolved",
+            "if": [
+              ["flag", "cp_entered"],
+              ["!flag", "lys_brother_home"],
+              ["!flag", "lys_brother_buried"],
+              ["!flag", "lys_brother_cleared"],
+              ["!flag", "lys_brother_lost"]
+            ],
+            "say": "Coldpass, and Thornwold's behind us. I never went to him myself, in the end. That's my road left unwalked, not yours."
+          },
+          {
+            "id": "r_fl_bargain_broken",
+            "if": [["flag", "fl_bargain_broken"]],
+            "say": "The Fallows' bargain was a vow to the dead, and it's broken now. I keep a private ledger of promises like that. This one's marked.",
+            "fx": [["addvar", "appr_lys", -1]]
+          },
+          {
+            "id": "r_pair_lys_tamsin_fl_rest",
+            "if": [["inParty", "tamsin"], ["flag", "fl_hollow_rested"]],
+            "say": "Every name of the dead, spoken until none were left unsaid. That's a kind of rest I understand. — Tamsin: \"Rest doesn't feed anyone standing at that crossroads tomorrow. Both can be true. Usually are.\""
           }
         ],
         "leaves": [
+          {
+            "if": [["flag", "th_hollow_burned"], ["flag", "lys_brother_cleared"], ["flag", "th_cal_staying"]],
+            "say": "His debt was clear, and he chose to stay on his own — that was never yours to fix. Then you burned the ground he chose. I'm done."
+          },
+          {
+            "if": [["flag", "th_hollow_burned"], ["flag", "lys_brother_buried"]],
+            "say": "I already buried him. Whatever that fire was for this time, it wasn't for my brother — and I still watched you set it. I won't watch another."
+          },
           {
             "if": [["flag", "th_hollow_burned"], ["!flag", "lys_brother_home"]],
             "say": "He was still in there, and you knew it, and you did it anyway. I watched Thornwold burn from the ridge. I'm done."
@@ -656,10 +692,32 @@
           ]
         },
         {
+          "id": "bye_trust",
+          "label": "leave it there — she trusts you now",
+          "if": [["var", "appr_lys", ">=", 2]],
+          "say": "Go on. I've stopped expecting you to slip. Coming from me, that's rarer trust than it sounds.",
+          "end": true
+        },
+        {
+          "id": "bye_wary",
+          "label": "leave it there, watching your back",
+          "if": [["var", "appr_lys", "<=", -2]],
+          "say": "Go on, then. I'll watch the road the way I watch everything else these days — closely, and without much comment.",
+          "end": true
+        },
+        {
+          "id": "bye_mg",
+          "label": "leave it there — too many walls here",
+          "if": [["flag", "mg_entered"], ["var", "appr_lys", "<", 2], ["var", "appr_lys", ">", -2]],
+          "say": "Go on. Give me open ground and a treeline over these halls any day. I'll be glad to see sky again.",
+          "end": true
+        },
+        {
           "id": "bye",
           "label": "leave it there",
           "say": "Mind your footing. This wood doesn't forgive twice.",
-          "end": true
+          "end": true,
+          "if": [["var", "appr_lys", "<", 2], ["var", "appr_lys", ">", -2], ["!flag", "mg_entered"]]
         }
       ]
     },
@@ -1004,6 +1062,16 @@
             "if": [["var", "thefts", ">=", 4]],
             "say": "Four times now. I stopped finding verses for it at two. I'm running out of silences too.",
             "fx": [["addvar", "appr_osk", -1]]
+          },
+          {
+            "id": "r_cp_unresolved",
+            "if": [["flag", "cp_entered"], ["!flag", "osk_family_rested"], ["!flag", "osk_family_burned"]],
+            "say": "Coldpass already, and I never said the rite over my own family. Fenmarch's behind us now. That door's mine, left shut."
+          },
+          {
+            "id": "r_pair_osk_lys_fl",
+            "if": [["inParty", "lys"], ["flag", "fl_entered"]],
+            "say": "Forty years unburied and unremarked. I don't know which was the worse sin — letting them die, or forgetting after. — Lys: \"Forgetting's easier to fix. Go on, then. Nobody's stopping you.\""
           }
         ],
         "leaves": [
@@ -1282,10 +1350,32 @@
           ]
         },
         {
+          "id": "bye_trust",
+          "label": "that's enough — go in peace",
+          "if": [["var", "appr_osk", ">=", 2]],
+          "say": "Go in peace, truly. I don't say that lightly, and I have not said it to just anyone.",
+          "end": true
+        },
+        {
+          "id": "bye_wary",
+          "label": "that's enough — go carefully",
+          "if": [["var", "appr_osk", "<=", -2]],
+          "say": "Go carefully. I'll say a verse regardless of how this ends between the two of us.",
+          "end": true
+        },
+        {
+          "id": "bye_mg",
+          "label": "that's enough — this city is heavy",
+          "if": [["flag", "mg_entered"], ["var", "appr_osk", "<", 2], ["var", "appr_osk", ">", -2]],
+          "say": "Go gently. Four hundred years of grief under these streets, and I'm trying not to feel all of it at once.",
+          "end": true
+        },
+        {
           "id": "bye",
           "label": "that's enough for now",
           "say": "Go gently. The gray doesn't need help from us to be cruel.",
-          "end": true
+          "end": true,
+          "if": [["var", "appr_osk", "<", 2], ["var", "appr_osk", ">", -2], ["!flag", "mg_entered"]]
         }
       ]
     },
@@ -1632,6 +1722,21 @@
             "if": [["var", "thefts", ">=", 6]],
             "say": "I've stopped counting. That should worry you more than the counting did.",
             "fx": [["addvar", "appr_tamsin", -1]]
+          },
+          {
+            "id": "r_cp_unresolved",
+            "if": [
+              ["flag", "cp_entered"],
+              ["!flag", "tamsin_mine_avenged"],
+              ["!flag", "tamsin_mine_forgiven"],
+              ["!flag", "ir_miners_sold"]
+            ],
+            "say": "Cinderhall's behind us, and I still don't know who lied about that collapse. That's mine to finish. Not yours to carry."
+          },
+          {
+            "id": "r_pair_tamsin_vell_fl",
+            "if": [["inParty", "vell"], ["flag", "fl_entered"]],
+            "say": "Forty years empty, and the Crown still calls it property instead of a grave. — Vell: \"Escheat is exactly that, dressed in law. I've made a study of that particular dressing.\""
           }
         ],
         "leaves": [
@@ -1908,10 +2013,32 @@
           ]
         },
         {
+          "id": "bye_trust",
+          "label": "that's enough — square between us",
+          "if": [["var", "appr_tamsin", ">=", 2]],
+          "say": "Watch your footing anyway. Habit now, not doubt — you've earned better than doubt from me.",
+          "end": true
+        },
+        {
+          "id": "bye_wary",
+          "label": "that's enough for now, plainly",
+          "if": [["var", "appr_tamsin", "<=", -2]],
+          "say": "Watch your footing. That part doesn't change regardless of what I currently think of you.",
+          "end": true
+        },
+        {
+          "id": "bye_mg",
+          "label": "that's enough — soft floors here",
+          "if": [["flag", "mg_entered"], ["var", "appr_tamsin", "<", 2], ["var", "appr_tamsin", ">", -2]],
+          "say": "Watch your footing. Different ground in this city — the kind that gives out quiet, not loud.",
+          "end": true
+        },
+        {
           "id": "bye",
           "label": "that's enough for now",
           "say": "Watch your footing. I'm not carrying you back.",
-          "end": true
+          "end": true,
+          "if": [["var", "appr_tamsin", "<", 2], ["var", "appr_tamsin", ">", -2], ["!flag", "mg_entered"]]
         }
       ]
     },
@@ -2248,6 +2375,22 @@
             "if": [["var", "thefts", ">=", 5]],
             "say": "Five things taken that were watched. I catalogue habits for a living; I know what this one is called.",
             "fx": [["addvar", "appr_vell", -1]]
+          },
+          {
+            "id": "r_cp_unresolved",
+            "if": [["flag", "cp_entered"], ["!flag", "vell_ledger_found"], ["!flag", "vell_exposed"]],
+            "say": "Hollowbrook's behind us, and that ledger's still chained wherever it is. My own name, still unread. I can live with that a little longer."
+          },
+          {
+            "id": "r_fl_bargain_broken",
+            "if": [["flag", "fl_bargain_broken"]],
+            "say": "A vow to leave the dead their fields, made and then not kept. I collect broken promises for a living. This one still costs something.",
+            "fx": [["addvar", "appr_vell", -1]]
+          },
+          {
+            "id": "r_pair_vell_osk_fl_burn",
+            "if": [["inParty", "osk"], ["flag", "fl_hollow_burned"]],
+            "say": "Forty years of names, gone in one more fire. Whatever the surveyor calls that ash, it won't be farmland to anyone who remembers. — Osk: \"I'll say the names I recall. Not much of a rite. It's what's left to give.\""
           }
         ],
         "leaves": [
@@ -2488,10 +2631,56 @@
           ]
         },
         {
+          "id": "bye_trust",
+          "label": "that's enough — noted, and kept",
+          "if": [["var", "appr_vell", ">=", 2]],
+          "say": "Do try not to lose anything important. I say that with more confidence in you than I expected to have.",
+          "end": true
+        },
+        {
+          "id": "bye_wary",
+          "label": "that's enough for now, carefully",
+          "if": [["var", "appr_vell", "<=", -2]],
+          "say": "Do try not to lose anything important. I am keeping a closer count of you than I used to bother with.",
+          "end": true
+        },
+        {
+          "id": "bye_mg",
+          "label": "that's enough — this city keeps records",
+          "if": [["flag", "mg_entered"], ["var", "appr_vell", "<", 2], ["var", "appr_vell", ">", -2]],
+          "say": "Do try not to lose anything important here of all places. This city keeps better records than either of us.",
+          "end": true
+        },
+        {
+          "id": "throne_secret",
+          "label": "about what you just said",
+          "if": [["flag", "remarked_vell_r_pair_vell_osk_throne"], ["flag", "mg_at_throne"]],
+          "once": true,
+          "say": "\"Mine,\" Vell says, not looking up from the hollow seat. \"The first Reeve's line, exiled once it was inconvenient. I'm what's left of the quiet part.\" They wait on you to answer.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "throne_press",
+          "label": "press them on it",
+          "if": [["flag", "said_vell_throne_secret"], ["!flag", "vell_throne_resolved"]],
+          "once": true,
+          "say": "You don't let them leave it there. \"...I told myself the ledger was research,\" Vell says. \"It wasn't. I needed to know if I came from a thief or from whoever he robbed. Both, it turns out.\"",
+          "fx": [["addvar", "appr_vell", -1], ["set", "vell_throne_pressed"], ["set", "vell_throne_resolved"], ["xp", 2]]
+        },
+        {
+          "id": "throne_steady",
+          "label": "tell them it changes nothing between you",
+          "if": [["flag", "said_vell_throne_secret"], ["!flag", "vell_throne_resolved"]],
+          "once": true,
+          "say": "\"Blood or not,\" you say, \"you're the same person you were an hour ago.\" Something in Vell's shoulders drops half an inch. \"...Thank you,\" they say, like the word costs real effort.",
+          "fx": [["addvar", "appr_vell", 1], ["set", "vell_throne_steady"], ["set", "vell_throne_resolved"], ["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "that's enough for now",
           "say": "Do try not to lose anything important while I'm not looking.",
-          "end": true
+          "end": true,
+          "if": [["var", "appr_vell", "<", 2], ["var", "appr_vell", ">", -2], ["!flag", "mg_entered"]]
         }
       ]
     }
@@ -2539,7 +2728,7 @@
         },
         {
           "if": [["flag", "th_entered"]],
-          "text": "You're in Thornwold. Find Camp Gallows and ask after him by name."
+          "text": "You're at Camp Gallows. In to the muster ground, west to the cook-fire, then south to the scout line."
         },
         { "if": [], "text": "Ask after Lys's brother at Camp Gallows, in Thornwold west of the Vale." }
       ]
@@ -3059,6 +3248,11 @@
     {
       "if": [["flag", "quarrel_lys_vell_sour"]],
       "text": "Lys and Vell never settled it, a promise to the dead against a promise that was never real. They still travel the same road, carefully.",
+      "weight": 1
+    },
+    {
+      "if": [["any", [["flag", "vell_throne_pressed"], ["flag", "vell_throne_steady"]]]],
+      "text": "In the Hollow Throne you asked Vell what the silence meant. They said it aloud at last, to someone besides themselves.",
       "weight": 1
     }
   ],

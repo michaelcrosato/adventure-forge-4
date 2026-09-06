@@ -1063,7 +1063,7 @@
             ["set", "mg_read_ledger"],
             ["xp", 3],
             ["score", 3],
-            ["say", "'I took it from his brow while he slept his last sleep, and I called it inheritance, and the vale ate that winter. Let whoever reads this judge me. I could not.' Signed with the stag, and a bar through it."]
+            ["say", "'3rd of Frostfall. Item: one crown, taken off the king's brow while he slept, entered this day as inheritance. Grain stores: none, by spring. Let the account stand as written.' Initialed with the stag, barred."]
           ]
         }
       ]
@@ -1380,6 +1380,63 @@
             ["addvar", "rep_iron", 1],
             ["score", 4],
             ["xp", 3]
+          ]
+        },
+        {
+          "id": "fl_land_word",
+          "label": "the Fallows' empty land",
+          "if": [
+            ["flag", "mg_heard_regent"],
+            [
+              "any",
+              [
+                ["flag", "fl_land_crown"],
+                ["flag", "fl_land_free"],
+                ["flag", "fl_land_returners"],
+                ["flag", "fl_land_fallow"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "The Fallows was escheat — mine by right, no heir left to contest it. Word reached me of what became of my own claim.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "fl_land_crown"]],
+              [
+                ["addvar", "rep_crown", 1],
+                ["say", "'Staked properly, then,' she says. 'That is at least the law working as it was written.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "fl_land_free"]],
+              [
+                ["addvar", "rep_crown", -1],
+                ["addvar", "rep_free", 1],
+                ["say", "'The Companies drill recruits on my own escheat and call the barn theirs.' Her mouth thins. 'Noted.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "fl_land_returners"]],
+              [
+                ["addvar", "rep_crown", -1],
+                ["say", "'Blood before paper. I have seen that argument fail everywhere the Crown was watching closely enough.' She does not sound as certain as she means to."]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "fl_land_fallow"]],
+              [
+                ["say", "'Land held for the dead pays no toll and grows no grain,' she says. 'I dislike it. I cannot say it is wrong.'"]
+              ],
+              []
+            ]
           ]
         },
         {
@@ -2395,6 +2452,41 @@
           "once": true,
           "say": "You don't flash coin or a Company name. You give the sign scouts trade on any road worth watching. Quill's smile changes register. 'Different guild. Same trade.' Three knocks and a pause, under the Gray Steps.",
           "fx": [["set", "mg_knows_cut"], ["set", "or_scout_mg_cut"], ["score", 3], ["xp", 2]]
+        },
+        {
+          "id": "fl_furrow_word",
+          "label": "the Long Furrow, word of it",
+          "if": [["any", [["flag", "fl_hollow_rested"], ["flag", "fl_hollow_bargained"], ["flag", "fl_hollow_burned"]]]],
+          "once": true,
+          "say": "Traders off the Hollowbrook road all have an opinion on the Fallows now.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "fl_hollow_burned"]],
+              [
+                ["addvar", "rep_free", -1],
+                ["say", "\"Another hollow-fire, only they're calling it clearing,\" he says. \"The dead don't read deeds. Bad luck, naming that ash farmland.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "fl_hollow_rested"]],
+              [
+                ["say", "\"Quiet out there now, they tell me,\" he says. \"First time in forty years nobody's had to route around the Fallows' grief.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "fl_hollow_bargained"]],
+              [
+                ["say", "\"A vow instead of a fire, this once,\" he says. \"I'll take good odds on how long that lasts, if you're selling any.\""]
+              ],
+              []
+            ]
+          ]
         },
         {
           "id": "bye",
