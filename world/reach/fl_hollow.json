@@ -269,12 +269,28 @@
       "done": [["var", "fl_names_known", ">=", 3]],
       "stages": [
         {
-          "if": [["var", "fl_names_known", "=", 2]],
-          "text": "Two of three found. The last waits in Ede's memory, the parish roll, or the headland's markers."
+          "if": [["flag", "fl_names_ede"], ["flag", "fl_names_roll"], ["!flag", "fl_names_markers"]],
+          "text": "Ede's names and the parish roll are yours. The last are cut on the headland's markers, south by the Bone Road."
         },
         {
-          "if": [["var", "fl_names_known", "=", 1]],
-          "text": "One source found. Two remain: Ede's memory, the parish roll, the headland's markers."
+          "if": [["flag", "fl_names_ede"], ["flag", "fl_names_markers"], ["!flag", "fl_names_roll"]],
+          "text": "Ede's names and the markers are yours. The rest are in the parish roll — Sister Merrow's chapel, or a Scout's own look."
+        },
+        {
+          "if": [["flag", "fl_names_roll"], ["flag", "fl_names_markers"], ["!flag", "fl_names_ede"]],
+          "text": "The roll and the markers are yours. The rest live only in Old Ede's memory; ask her to name the dead, for a rite."
+        },
+        {
+          "if": [["flag", "fl_names_ede"], ["!flag", "fl_names_roll"], ["!flag", "fl_names_markers"]],
+          "text": "Ede's names are yours. Two sources left: the parish roll at the chapel, and the headland's markers by the Bone Road."
+        },
+        {
+          "if": [["flag", "fl_names_roll"], ["!flag", "fl_names_ede"], ["!flag", "fl_names_markers"]],
+          "text": "The parish roll is yours. Two sources left: Old Ede's memory, and the headland's markers by the Bone Road."
+        },
+        {
+          "if": [["flag", "fl_names_markers"], ["!flag", "fl_names_ede"], ["!flag", "fl_names_roll"]],
+          "text": "The markers are yours. Two sources left: Old Ede's memory, and the parish roll at Sister Merrow's chapel."
         },
         {
           "if": [],

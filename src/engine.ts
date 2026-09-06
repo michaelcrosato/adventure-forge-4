@@ -278,8 +278,9 @@ export function journal(world: World, s: State): QuestLine[] {
   const out: QuestLine[] = [];
   for (const [id, q] of Object.entries(world.quests ?? {})) {
     if (!condsOk(world, s, q.start)) continue;
-    if (q.failed && condsOk(world, s, q.failed)) { out.push({ id, name: q.name, status: "failed", text: "" }); continue; }
+    // a quest once done stays done: its asker's wish was met, whatever came after
     if (q.done && condsOk(world, s, q.done)) { out.push({ id, name: q.name, status: "done", text: "" }); continue; }
+    if (q.failed && condsOk(world, s, q.failed)) { out.push({ id, name: q.name, status: "failed", text: "" }); continue; }
     const stage = q.stages.find((st) => condsOk(world, s, st.if));
     out.push({ id, name: q.name, status: "active", text: stage?.text ?? "" });
   }
@@ -458,8 +459,10 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
                 s.flags["_seenApproval"] = true;
                 events.push("(Companions judge what you do: their regard opens some doors and closes others, and one pushed too far walks out.)");
               }
-            } else if (npc && !npcDead(world, s, id)) {
-              // regard moved for someone not here to see it: a player found Osk at -1 with no idea why
+            } else if (npc && !npcDead(world, s, id) && (s.visited.includes(npc.room ?? "") || s.flags[`${id}_left`])) {
+              // regard moved for someone not here to see it: a player found Osk at -1 with no idea why.
+              // Only once they have been met (their home visited, or they walked out) — a name the
+              // player has never heard is not news, it is a spoiler that "Lys" exists somewhere
               events.push(`(${npc.name} ${d > 0 ? "+" : ""}${d}, when word reaches them)`);
             }
           } else if (world.factions?.[fx[1]]) {

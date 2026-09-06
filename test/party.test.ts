@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByLabel, actionLabel, inTalkMode, legalActions, newState, step } from "../src/engine.ts";
+import { actionByLabel, actionLabel, inTalkMode, journal, legalActions, newState, step } from "../src/engine.ts";
 import { render, renderMenu, renderStatus } from "../src/format.ts";
 import { validateWorld } from "../src/validate.ts";
 import type { Action, State, World } from "../src/types.ts";
@@ -355,8 +355,24 @@ test("the menu says when an action settles a hold's grief or a miss costs standi
   const menu = renderMenu(world, state).text;
   assert.match(menu, /speak the rite \(settles this hold's grief\)/);
   assert.match(menu, /press the prior \(will\) \(DC 10, will: roll 10\+ on the die; a miss costs standing\)/);
+  const unmet = step(world, state, actionByLabel(world, state, "snub the hunter")!);
+  assert.doesNotMatch(unmet.events.join(" "), /Lys/, "a companion never met is not named: her existence is not news yet");
+  state.visited.push("b"); // met her at her camp
   const out = step(world, state, actionByLabel(world, state, "snub the hunter")!);
   assert.match(out.events.join(" "), /\(Lys -1, when word reaches them\)/, "she is a room away, and still the move is told");
+});
+
+test("a quest once done stays done in the journal, even if its failed condition later comes true", () => {
+  const world = mini({
+    quests: { ledger: { name: "The Ledger", start: [], stages: [{ if: [], text: "Find it." }], done: [["flag", "found"]], failed: [["flag", "exposed"]] } },
+  });
+  const { state } = newState(world, 1);
+  state.flags["found"] = true;
+  state.flags["exposed"] = true;
+  assert.equal(journal(world, state).find((q) => q.id === "ledger")?.status, "done");
+  const s2 = newState(world, 1).state;
+  s2.flags["exposed"] = true;
+  assert.equal(journal(world, s2).find((q) => q.id === "ledger")?.status, "failed");
 });
 
 test("blows rotate onto standing companions; one struck to nothing falls back, sits out the fight, and gets up after it", () => {
