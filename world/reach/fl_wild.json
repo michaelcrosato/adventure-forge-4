@@ -1,0 +1,393 @@
+{
+  "regions": { "fl": { "name": "the Fallows" } },
+  "gen": [
+    {
+      "id": "fl_fallow",
+      "name": "the fallow fields",
+      "seed": 61,
+      "w": 6,
+      "h": 6,
+      "region": "fl",
+      "walls": [[0, 0], [5, 0], [0, 5], [5, 5], [2, 2], [3, 3], [1, 4]],
+      "pools": {
+        "descs": ["Fallow ground, gone to reed and rush, forty years untended."],
+        "briefs": ["Fallow, untended ground."],
+        "scenes": []
+      },
+      "links": [
+        { "cell": [2, 0], "dir": "north", "to": "fl_wickstead_cross", "back": "south", "landmark": "Wickstead" },
+        { "cell": [2, 5], "dir": "south", "to": "fl_furrow_end", "back": "north", "landmark": "the Long Furrow" }
+      ],
+      "spots": [
+        {
+          "cell": [1, 0],
+          "name": "Cold Hearth Row",
+          "desc": "A row of cottages, doors long fallen in, hearths cold enough that moss has taken every one of them. A dike-worker's billhook leans forgotten against the last threshold, its edge kept sharp by rust rather than care.",
+          "brief": "Cold cottages, a billhook left leaning.",
+          "items": ["fl_billhook"],
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 0],
+          "name": "The Fallow Verge",
+          "desc": "The ground rises north toward a crossroads and its stone cross, the nearest thing to a living place this field has. South and every other way, fallow ground runs on past easy counting.",
+          "brief": "Rising ground. North: the crossroads.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 0],
+          "name": "The Sheep Walk",
+          "desc": "A worn path shows where sheep once went to water and back, twice a day, for longer than anyone living remembers. Nothing walks it now but whatever the wind moves.",
+          "brief": "A worn, empty sheep-path.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 0],
+          "name": "Beggar's Stile",
+          "desc": "A stone stile marks an old boundary that means nothing to anyone left to cross it. Someone has propped a second, smaller stone beside it, unexplained.",
+          "brief": "An old boundary stile.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 1],
+          "name": "The Drowned Lane",
+          "desc": "A sunken cart-lane, ankle-deep in standing water even in dry weather. Marsh-mallow grows thick along both verges, and someone has pinched a few stalks recently, carefully, leaving the rest to seed.",
+          "brief": "A sunken, waterlogged lane.",
+          "items": ["fl_marsh_salve"],
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 1],
+          "name": "Nettle Court",
+          "desc": "A hamlet of six houses, all standing, all empty, all thick with nettle to the sill. Whoever left last shut every door behind them, out of habit more than hope.",
+          "brief": "An emptied hamlet, doors shut.",
+          "onEnterOnce": [["xp", 2]]
+        },
+        {
+          "cell": [2, 1],
+          "name": "The Market Cross",
+          "desc": "A market cross stands at the meeting of four cart-tracks, its steps swept bare by wind rather than trade. West, Nettle Court's chimneys show through the damp; east, a barn has folded in on itself entirely.",
+          "brief": "A market cross. No market left to hold.",
+          "onEnterOnce": [["score", 1], ["xp", 2]]
+        },
+        {
+          "cell": [3, 1],
+          "name": "Hollow Barn Field",
+          "desc": "A barn has folded in on its own roof-beam, timbers stacked like a cairn nobody meant to build. Rope still hangs from what was a hay-loft, frayed to a thread at its end.",
+          "brief": "A collapsed barn, rope still hanging.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 1],
+          "name": "The Mill Race",
+          "desc": "A dry mill-race runs east, weed-choked, toward the low grind of a wheel that shouldn't still be turning and isn't quite still either. The sound carries further than it has any right to.",
+          "brief": "A dry race. East: a mill's low sound.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [5, 1],
+          "name": "Longacre Rise",
+          "desc": "The ground climbs slightly toward a stand of yew. East, past the field's true edge, a smaller chapel roof shows whole against the sky — whole, and entirely unattended.",
+          "brief": "Rising ground. East: a second chapel.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 2],
+          "name": "The Barrow Marches",
+          "desc": "The fallow ground gives way west to older, harder land that was never farmed at all. A single standing stone marks the border, and past it, low against the horizon, a mound predates every furrow in sight.",
+          "brief": "Old ground. West: a barrow-mound.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 2],
+          "name": "Sump's Edge",
+          "desc": "The ground goes soft and dark east of here, swallowed by a sunken patch nothing solid crosses. A roofline shows past it regardless, a hut standing on whatever firm ground the sump left alone.",
+          "brief": "Sunk ground. East: a hut beyond it.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 2],
+          "name": "The Drill Ground Verge",
+          "desc": "The ground softens and sinks just south, too wet to trust a boot on. Past it, out of sight, a raised voice keeps count of something — a drill, or a toll, or both.",
+          "brief": "Sunk ground. South: a raised voice.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 2],
+          "name": "Aldergate Mill",
+          "desc": "A mill with its wheel still: not stopped, not silent — still there, turning slow and sure on water that should have long since silted its race shut. Nobody has ground grain here in forty years. Something keeps it moving anyway.",
+          "brief": "A mill, its wheel still turning.",
+          "onEnterOnce": [["score", 1], ["xp", 2]]
+        },
+        {
+          "cell": [5, 2],
+          "name": "The East Bank",
+          "desc": "A shallow dike-bank marks the fallow ground's true edge, water on the far side of it dark and unhurried. Nothing moves out there worth naming, most days.",
+          "brief": "A dike-bank, dark water beyond.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 3],
+          "name": "Sunken Croft",
+          "desc": "A second emptied hamlet, smaller than Nettle Court, its well capped with a flat stone someone troubled to fit exactly. Whoever did it meant the water kept clean for a return that never came.",
+          "brief": "A second emptied hamlet.",
+          "onEnterOnce": [["xp", 2]]
+        },
+        {
+          "cell": [1, 3],
+          "name": "The Long Hedgerow",
+          "desc": "A hedgerow gone wild and tall enough to lose a person, threading the field in a line that once marked somebody's careful boundary. Blackthorn has claimed most of it for itself.",
+          "brief": "A wild, overgrown hedgerow.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 3],
+          "name": "Widow's Acre",
+          "desc": "A single homestead, roof mostly sound, garden gone to riot. Something in the tangle is still unmistakably corn, self-seeded and stubborn, forty years past anyone planting it on purpose.",
+          "brief": "One homestead. Wild corn in the garden.",
+          "items": ["fl_seedcorn_sample"],
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 3],
+          "name": "The Toll Stone",
+          "desc": "An old boundary stone, its carved toll-rates long since meaningless, one line freshly re-cut over the weathered original: a Crown mark, recent, and not yet answered by anyone else's mark beside it.",
+          "brief": "A boundary stone, freshly re-marked.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [5, 3],
+          "name": "Reed Corner",
+          "desc": "Reed has crept in from whatever fen lies beyond the region's edge, closing over what was cropland one patient season at a time. It will have the whole field back, eventually, if nobody stops it.",
+          "brief": "Reed, creeping in from the fen.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 4],
+          "name": "The Scarecrow Line",
+          "desc": "A row of scarecrows stands at drunken angles, straw long since spilled from most of them, one still upright enough to hold its shape against the sky at dusk.",
+          "brief": "A row of leaning scarecrows.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 4],
+          "name": "Dovecote Fallen",
+          "desc": "A dovecote lies on its side, its hundred nesting-holes empty and dark, whatever birds once kept it long since gone to wilder roosts. Nobody has righted it, though it would not take much.",
+          "brief": "A toppled, empty dovecote.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [3, 4],
+          "name": "The Chalk Pit",
+          "desc": "An old chalk quarry, walls gone soft and green, floor pooled with water the color of milk. Tool-marks still show near the top, abandoned mid-cut like the diggers meant to come back the following week.",
+          "brief": "A quarry, walls gone soft.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [4, 4],
+          "name": "The Lightning Oak",
+          "desc": "A single oak, split clean down its trunk by some old strike, has kept growing anyway, half of it green and half of it bare bone-white wood. People used to leave small things wedged in the split. Some still do.",
+          "brief": "A split, half-living oak.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [5, 4],
+          "name": "The Last Dike",
+          "desc": "A second dike, lower and older than the one at Hollowbrook, marks the fallow ground's furthest reach before the land gives way properly to fen. Whatever built it is long past caring whether it holds.",
+          "brief": "A low, ancient dike.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [1, 5],
+          "name": "The Bone Road",
+          "desc": "A straight track runs south, worn by forty years of the same short, grim errand. Nobody in Wickstead calls it by a kinder name than the one it earned the first winter.",
+          "brief": "A straight, grim track south.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 5],
+          "name": "The Furrow's Headland",
+          "desc": "The Bone Road ends at a headland of raised earth, longer than any grave has a right to be, marked end to end with weathered stakes and stone — some carved, most only scratched, all of them leaning. South, the ground drops toward the furrow itself.",
+          "brief": "The headland. South: the long furrow.",
+          "landmark": "the Long Furrow",
+          "onEnterOnce": [["set", "fl_found_furrow"], ["score", 3], ["xp", 3]],
+          "actions": [
+            {
+              "id": "fl_read_markers",
+              "label": "read the furrow markers (wits)",
+              "if": [["!flag", "fl_names_markers"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  10,
+                  [
+                    ["set", "fl_names_markers"],
+                    ["addvar", "fl_names_known", 1],
+                    ["score", 2],
+                    ["xp", 3],
+                    ["say", "Most of the marks have weathered to guesswork, but enough hold: a name here, a trade there, a child's height scratched beside a parent's. You piece together what the roll and Ede's memory cannot cover."]
+                  ],
+                  [
+                    ["say", "The weathering has beaten most of these past reading. It can be tried again, in better light or with better eyes."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "fl_read_markers_scholar",
+              "label": "read the markers outright",
+              "free": true,
+              "if": [["class", "scholar"], ["!flag", "fl_names_markers"]],
+              "fx": [
+                ["set", "fl_names_markers"],
+                ["addvar", "fl_names_known", 1],
+                ["score", 2],
+                ["xp", 3],
+                ["say", "Weathered cuts are still cuts, and you have read worse. The names come up out of the stone almost as fast as you can find them, a whole headland's worth of grief made legible again."]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [3, 5],
+          "name": "Marker Field",
+          "desc": "Smaller cairns scatter the ground east of the headland proper, each too small to hold what the long furrow holds, each still someone's. Some are recent enough that the stones haven't settled yet.",
+          "brief": "Smaller cairns, some recent.",
+          "onEnterOnce": [["xp", 2]]
+        },
+        {
+          "cell": [4, 5],
+          "name": "The Southern Dikes",
+          "desc": "Low earthworks run on toward country the fallow fields don't claim, fen showing pale through the last of the reed. Whichever hold lies past it is somebody else's grief to carry.",
+          "brief": "Low dikes, fen beyond.",
+          "onEnterOnce": [["xp", 1]]
+        }
+      ],
+      "cellFx": {
+        "onEnter": [
+          [
+            "chance",
+            8,
+            [
+              [
+                "if",
+                [["!npcDead", "fl_walker"]],
+                [
+                  ["npcgo", "fl_walker", "here"],
+                  ["say", "Something rises out of the reed where nothing was standing a moment ago — upright, unhurried, and not remotely alive."]
+                ],
+                []
+              ]
+            ],
+            []
+          ]
+        ]
+      }
+    }
+  ],
+  "stamps": [
+    {
+      "template": "chapel",
+      "id": "fl_chapel_stamp",
+      "at": "fl_fallow_5_1",
+      "dir": "east",
+      "back": "west",
+      "sideTrip": true,
+      "landmark": "Longacre Chapel",
+      "vars": {
+        "NAME": "Longacre Chapel",
+        "SAINT": "a fever-priest's shade",
+        "SIGN": "The porch bell still hangs, its rope rotted to nothing.",
+        "LOOT": "a tin unction-vial, empty"
+      }
+    },
+    {
+      "template": "barrow",
+      "id": "fl_forebarrow",
+      "at": "fl_fallow_0_2",
+      "dir": "west",
+      "back": "east",
+      "sideTrip": true,
+      "landmark": "the Forebarrow",
+      "vars": {
+        "NAME": "the Forebarrow",
+        "WIGHT": "a nameless wight",
+        "SIGN": "The turf here has never once been broken by a plow — this mound is older than the hold that grew up around it.",
+        "LOOT": "a green-bronze torc"
+      }
+    },
+    {
+      "template": "hut",
+      "id": "fl_hut",
+      "at": "fl_fallow_1_2",
+      "dir": "east",
+      "back": "west",
+      "sideTrip": true,
+      "landmark": "the Picker's Hut",
+      "vars": {
+        "NAME": "the Picker's Hut",
+        "HERMIT": "a bone-picker",
+        "SIGN": "Sacks by the door are stacked with things nobody living remembers owning.",
+        "LOOT": "a handful of scavenged grave-tokens"
+      }
+    },
+    {
+      "template": "camp",
+      "id": "fl_sump_camp",
+      "at": "fl_fallow_3_2",
+      "dir": "south",
+      "back": "north",
+      "sideTrip": true,
+      "landmark": "the Sump Camp",
+      "vars": {
+        "NAME": "the Sump Camp",
+        "CAPTAIN": "Sergeant Coel",
+        "SIGN": "Tents are pitched in a neat ring, well clear of the soft ground.",
+        "LOOT": "a recruiting officer's tally-stick"
+      }
+    }
+  ],
+  "items": {
+    "fl_billhook": {
+      "name": "a dike-worker's billhook",
+      "loc": "nowhere",
+      "takeable": true,
+      "hit": 1,
+      "dmg": 2,
+      "hint": "heavy, hooked, kept sharp by rust more than care"
+    },
+    "fl_marsh_salve": {
+      "name": "a tin of marsh-mallow salve",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "eases a wound, root and all",
+      "use": [
+        {
+          "fx": [
+            ["hp", 3],
+            ["move", "fl_marsh_salve", "nowhere"],
+            ["say", "Cool going on, and the ache underneath it eases before the tin's half empty."]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "fl_walker": {
+      "name": "fallow-walker",
+      "room": null,
+      "hostile": true,
+      "aggressive": true,
+      "hp": 9,
+      "atk": 2,
+      "df": 10,
+      "desc": "Upright the way nothing lying down that long should still manage, moving with the same patient wrongness as everything else this ground grew.",
+      "onDeath": [
+        ["score", 3],
+        ["xp", 4],
+        ["say", "It goes down and stays down, folding back into the reed like it was never anything more than ground pretending otherwise."]
+      ]
+    }
+  }
+}

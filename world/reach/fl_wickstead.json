@@ -1,0 +1,971 @@
+{
+  "rooms": {
+    "fl_west_dike": {
+      "name": "The West Dike",
+      "desc": "A raised dike holds Hollowbrook's mere back from lower ground. East, the earthwork drops into fields gone to reed, chimney-smoke rising from only a handful of roofs in a hold built for hundreds. A crossroads waits below.",
+      "brief": "The dike, and fields gone quiet beyond it.",
+      "region": "fl",
+      "landmark": "the west dike",
+      "exits": {
+        "west": { "to": "hb_south_dike", "landmark": "Hollowbrook" },
+        "east": { "to": "fl_wickstead_cross", "landmark": "Wickstead" }
+      },
+      "onEnterOnce": [
+        ["set", "fl_entered"],
+        ["xp", 2],
+        ["say", "This is the Fallows: a hold that emptied in one winter forty years gone, when its people lost the will to stand and lay down in their own fields. A few dozen live here again now, at a crossroads called Wickstead."],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Osk: \"No Keeper came. The Church wrote it off as a fever and never sent a second man to check. I have started keeping a list of what we got wrong out here.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "vell"]],
+          [
+            ["say", "Vell: \"Escheat — no heirs, so the Crown claims it outright. That is the Reeve's law dressed up as an accident. I know that particular theft rather well.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "lys"]],
+          [
+            ["say", "Lys: \"I can already hear drilling from here. Someone's teaching desperate people to hold a spear for coin. I've seen that trade before.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "tamsin"]],
+          [
+            ["say", "Tamsin: \"Forty years is a long grief to leave unburied. Whatever's owed the dead here, the living standing in that crossroads come first.\""]
+          ],
+          []
+        ]
+      ]
+    },
+    "fl_wickstead_cross": {
+      "name": "Wickstead Crossroads",
+      "desc": "Four rutted roads meet at a stone cross older than the empty years. A chapel bell marks noon somewhere east. West, the dike and Hollowbrook; south, fallow ground runs on past counting; the rest of Wickstead — what there is of it — stands close around you.",
+      "brief": "The crossroads, and the old stone cross.",
+      "region": "fl",
+      "landmark": "Wickstead",
+      "exits": {
+        "west": { "to": "fl_west_dike" },
+        "north": { "to": "fl_common", "landmark": "the staked common" },
+        "east": { "to": "fl_chapel", "landmark": "the chapel" },
+        "out": { "to": "fl_muster_barn", "landmark": "the muster barn" },
+        "in": { "to": "fl_hearth" },
+        "up": { "to": "fl_wicker_house", "landmark": "Ede's house" },
+        "down": { "to": "fl_trade_counter" }
+      },
+      "variants": [
+        {
+          "if": [["flag", "fl_land_crown"]],
+          "brief": "The crossroads. Fresh Crown stakes stand pale in every field."
+        },
+        {
+          "if": [["flag", "fl_land_free"]],
+          "brief": "The crossroads. A Company pennant hangs over the barn for good."
+        },
+        {
+          "if": [["flag", "fl_land_returners"]],
+          "brief": "The crossroads. Returners' carts line the verge, unhurried."
+        },
+        {
+          "if": [["flag", "fl_land_fallow"]],
+          "brief": "The crossroads. Nobody stakes the ground. Nobody plants it either."
+        },
+        {
+          "if": [["flag", "fl_hollow_burned"]],
+          "brief": "The crossroads. Smoke still finds you from the south, some evenings."
+        },
+        {
+          "if": [["flag", "fl_hollow_rested"]],
+          "brief": "The crossroads. Wickstead sleeps easier than it has in forty years."
+        },
+        {
+          "if": [["flag", "fl_hollow_bargained"]],
+          "brief": "The crossroads. Quieter fields, and a promise nobody has tested yet."
+        }
+      ],
+      "actions": [
+        {
+          "id": "fl_read_cross",
+          "label": "read the stone cross",
+          "free": true,
+          "fx": [
+            ["say", "Older than the emptying, older maybe than the hold's name. Someone has scratched a tally into its base since: short lines in bundles of five, none of them explained, all of them recent."]
+          ]
+        }
+      ]
+    },
+    "fl_common": {
+      "name": "The Staked Common",
+      "desc": "Open pasture, once the hold's shared ground, now walked end to end by a Crown surveyor with a bundle of pale stakes. Past him, at the field's far edge, a line of recruits drills raggedly under Company shouting. The common lies south, back to the crossroads.",
+      "brief": "The common, staked and drilled both.",
+      "region": "fl",
+      "landmark": "the staked common",
+      "exits": { "south": { "to": "fl_wickstead_cross" } },
+      "variants": [
+        {
+          "if": [["flag", "fl_stakes_pulled"]],
+          "desc": "Open pasture. The stakes are gone — pulled, scattered, or never driven — and the grass has already started closing over where they stood. Recruits still drill at the field's far edge.",
+          "brief": "The common, unstaked."
+        },
+        {
+          "if": [["flag", "fl_stakes_brokered"]],
+          "desc": "Open pasture, staked along one honest boundary line instead of end to end. Whatever drilling still happens here happens somewhere the whole hold agreed to.",
+          "brief": "The common, staked to a bargain."
+        },
+        {
+          "if": [["any", [["flag", "fl_muster_broken"], ["flag", "fl_muster_off_common"], ["flag", "fl_muster_brokered"]]]],
+          "desc": "Open pasture, the surveyor's business here his own now. No drilling carries across it any longer.",
+          "brief": "The common. No drilling carries here now."
+        }
+      ],
+      "actions": [
+        {
+          "id": "fl_order_muster_off",
+          "label": "order the muster off the common",
+          "free": true,
+          "if": [
+            ["class", "warden"],
+            ["!flag", "fl_muster_broken"],
+            ["!flag", "fl_muster_joined"],
+            ["!flag", "fl_muster_ignored"],
+            ["!flag", "fl_muster_brokered"]
+          ],
+          "fx": [
+            ["set", "fl_muster_broken"],
+            ["set", "fl_muster_off_common"],
+            ["score", 5],
+            ["xp", 3],
+            ["addvar", "rep_watch", 1],
+            ["addvar", "rep_free", -1],
+            ["addvar", "appr_lys", 1],
+            ["say", "You give the order the way the old watch gave orders: plain, once, and with your whole bearing behind it. Recruits look to Dace; Dace looks at you, and calls the drill off the common without arguing the point."]
+          ]
+        },
+        {
+          "id": "fl_broker_both",
+          "label": "broker the stakes and the muster both",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "said_fl_pell_bg_escheat"],
+            ["flag", "said_fl_dace_bg_desperate"],
+            ["!flag", "fl_stakes_held"],
+            ["!flag", "fl_stakes_pulled"],
+            ["!flag", "fl_stakes_brokered"],
+            ["!flag", "fl_muster_broken"],
+            ["!flag", "fl_muster_joined"],
+            ["!flag", "fl_muster_ignored"],
+            ["!flag", "fl_muster_brokered"]
+          ],
+          "fx": [
+            ["set", "fl_stakes_brokered"],
+            ["set", "fl_muster_brokered"],
+            ["score", 10],
+            ["xp", 6],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_free", 1],
+            ["addvar", "appr_vell", 1],
+            ["say", "You put Pell and Dace in one room and give each what they need, not what they asked for: Pell gets one honest boundary; Dace gets recruits who chose it, drilled in the open. Neither loves it. Both sign."]
+          ]
+        }
+      ]
+    },
+    "fl_chapel": {
+      "name": "The Last Chapel",
+      "desc": "The one chapel roof in the Fallows that never came down. Whitewash peels from walls thin as a drum; a Gray Church sister keeps it swept for a congregation of a dozen. North, a lay-brother has parked a cart nobody in Wickstead quite wants parked so close.",
+      "brief": "The last standing chapel.",
+      "region": "fl",
+      "landmark": "the chapel",
+      "exits": { "west": { "to": "fl_wickstead_cross" }, "north": { "to": "fl_cart_lot" } },
+      "actions": [
+        {
+          "id": "fl_scout_shelf",
+          "label": "search the sexton's forgotten shelf",
+          "free": true,
+          "if": [["class", "scout"], ["!flag", "fl_names_roll"]],
+          "fx": [
+            ["set", "fl_names_roll"],
+            ["addvar", "fl_names_known", 1],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "You know where a room keeps what it wants forgotten. Behind a warped board, a sexton's box: a burial roll nobody's opened since it stopped being updated. You have it before Merrow even knows you looked."]
+          ]
+        }
+      ]
+    },
+    "fl_cart_lot": {
+      "name": "The Cart Lot",
+      "desc": "A cart with iron-bound casks stands hitched and ready, close enough to the chapel that the sister has to see it every time she opens her own door. Whoever parked it here meant it as an argument.",
+      "brief": "An oil-cart, parked pointedly.",
+      "region": "fl",
+      "exits": { "south": { "to": "fl_chapel" } }
+    },
+    "fl_muster_barn": {
+      "name": "The Muster Barn",
+      "desc": "An empty tithe-barn, its owners forty years dead, now serves the Free Companies as a muster yard. A recruiter drills a ragged line of the desperate between the old stalls, counting cadence like it costs him nothing. A row of tents shows through the far doors.",
+      "brief": "The empty barn, drilled into a muster yard.",
+      "region": "fl",
+      "landmark": "the muster barn",
+      "exits": { "out": { "to": "fl_wickstead_cross" }, "in": { "to": "fl_camp_row" } },
+      "variants": [
+        {
+          "if": [["flag", "fl_muster_broken"]],
+          "desc": "An empty tithe-barn, empty again. No line drills here now, whatever it cost to see to that.",
+          "brief": "The barn, empty of drilling now."
+        },
+        {
+          "if": [["flag", "fl_muster_joined"]],
+          "desc": "An empty tithe-barn, its stalls full of a line that drills sharper than it did, you among them some mornings. Dace has stopped counting cadence like it costs him nothing.",
+          "brief": "The barn. The drill is sharper now."
+        },
+        {
+          "if": [["flag", "fl_muster_brokered"]],
+          "desc": "An empty tithe-barn. Recruits still drill here, but nobody is pressed to it — Dace reads names off a list they signed themselves, in daylight, where the whole crossroads can watch.",
+          "brief": "The barn. The drilling is honest now."
+        }
+      ]
+    },
+    "fl_camp_row": {
+      "name": "The Refugee Row",
+      "desc": "Lean-tos and borrowed canvas behind the barn, home to whoever the gray pushed out of some other hold. Children thread between the guy-ropes; a boy sits apart from the rest, watching the drilling through a gap in the barn wall.",
+      "brief": "Lean-tos behind the barn.",
+      "region": "fl",
+      "exits": { "out": { "to": "fl_muster_barn" } }
+    },
+    "fl_hearth": {
+      "name": "The Cross House",
+      "desc": "The one house in Wickstead big enough to call communal: a long hearth, benches worn by more people than currently live here, and a pot that is never quite empty because nobody will let it be. Returners, refugees, and the merely lost all sleep here some nights.",
+      "brief": "The Cross House, hearth and long benches.",
+      "region": "fl",
+      "exits": { "out": { "to": "fl_wickstead_cross" } },
+      "onEnter": [["if", [["flag", "fl_hollow_done"], ["!flag", "sv_fl_back"]], [["set", "sv_fl_back"]], []]],
+      "actions": [
+        {
+          "id": "fl_rest",
+          "label": "rest by the hearth",
+          "fx": [
+            ["hp", 10],
+            ["say", "You sleep to the sound of other people breathing, which after the wilderness is its own kind of comfort. You wake stiff, and whole."]
+          ]
+        }
+      ]
+    },
+    "fl_wicker_house": {
+      "name": "Ede's Wicker House",
+      "desc": "A round house of woven withies and clay, older by its build than anything else standing in Wickstead. Names are scratched into the door-frame at knee height and higher, more than any family could account for. An old woman keeps it, and them.",
+      "brief": "Ede's round wicker house.",
+      "region": "fl",
+      "landmark": "Ede's house",
+      "exits": { "down": { "to": "fl_wickstead_cross" } }
+    },
+    "fl_trade_counter": {
+      "name": "The Trade Counter",
+      "desc": "A plank counter across an old cattle-byre, stacked with what a returner can spare and a refugee can use: seed, tools, a little cloth. A returner keeps the count in chalk and does not pretend it always comes out fair.",
+      "brief": "A plank counter, chalk tallies.",
+      "region": "fl",
+      "exits": { "up": { "to": "fl_wickstead_cross" } },
+      "actions": [
+        {
+          "id": "fl_buy_bread",
+          "label": "buy travel bread (3 gold)",
+          "if": [["!has", "fl_travel_bread"], ["var", "gold", ">=", 3]],
+          "fx": [
+            ["addvar", "gold", -3],
+            ["move", "fl_travel_bread", "inv"],
+            ["say", "Rue wraps a heel of dense, dark bread without comment. 'Keeps,' she says. 'Same as the rest of us.'"]
+          ]
+        },
+        {
+          "id": "fl_give_seedcorn",
+          "label": "hand over the wild seed-corn",
+          "if": [["has", "fl_seedcorn_sample"]],
+          "once": true,
+          "fx": [
+            ["move", "fl_seedcorn_sample", "nowhere"],
+            ["addvar", "gold", 3],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "Rue turns the dry husk over once, then again, and her whole face changes. 'This still grows out there. Whatever else that ground is, it isn't finished yet.'"]
+          ]
+        },
+        {
+          "id": "fl_buy_seedcorn",
+          "label": "buy a sack of seed-corn (4 gold)",
+          "if": [["!has", "fl_seed_sacks"], ["var", "gold", ">=", 4]],
+          "fx": [
+            ["addvar", "gold", -4],
+            ["move", "fl_seed_sacks", "inv"],
+            ["say", "Rue counts the coin twice, same as she counts everything, and slides the sack across without a word wasted."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "fl_travel_bread": {
+      "name": "a heel of travel bread",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "dense, dark, keeps for weeks — eat it to ease a wound",
+      "use": [
+        {
+          "fx": [
+            ["hp", 3],
+            ["move", "fl_travel_bread", "nowhere"],
+            ["say", "Dense and a little bitter, and it steadies you all the same."]
+          ]
+        }
+      ]
+    },
+    "fl_seed_sacks": {
+      "name": "a sack of good seed-corn",
+      "loc": "fl_trade_counter",
+      "takeable": true,
+      "owner": "fl_rue",
+      "hint": "counted twice a day; Rue would notice it gone"
+    },
+    "fl_seedcorn_sample": {
+      "name": "a dry husk of wild seed-corn",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "Rue, at the trade counter, would want to know this still grows out there"
+    },
+    "fl_cinder_oil": {
+      "name": "a cask of Ironbound cinder-oil",
+      "loc": "nowhere",
+      "hint": "burns however wet the ground is — Cobb, at the cart lot, keeps it"
+    },
+    "fl_watch_cloak": {
+      "name": "a warden's old watch-cloak",
+      "loc": "nowhere",
+      "armor": 1,
+      "hint": "her husband's, kept forty years for someone to grow into"
+    }
+  },
+  "npcs": {
+    "fl_ede": {
+      "name": "Old Ede",
+      "room": "fl_wicker_house",
+      "dialogue": true,
+      "desc": "Small, straight-backed, and entirely unhurried, working a withy into the frame of something that will outlast her.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Ede. I was nine years old the winter this hold lay down. I never saw a reason to leave ground I already knew the worst of.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_winter",
+          "label": "the Winter of Lying Down",
+          "if": [["flag", "said_fl_ede_greet"]],
+          "once": true,
+          "say": "They stopped getting up, is all. Not sick, not hurt that anyone could name. Just done. We buried what we could in one long cut, because there weren't hands left standing to dig two hundred graves proper.",
+          "fx": [["set", "fl_heard_winter"], ["xp", 2]]
+        },
+        {
+          "id": "bg_stay",
+          "label": "why you never left",
+          "if": [["flag", "fl_heard_winter"]],
+          "once": true,
+          "say": "Somebody had to keep the names. If I go, they go with me, and then it was only ever an empty field with a story nobody could prove.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "names_ask",
+          "label": "ask her to name the dead, for a rite",
+          "if": [["flag", "said_fl_ede_bg_stay"], ["!flag", "fl_names_ede"]],
+          "say": "She's quiet a long moment, then starts, plain as a tally: name after name after name, in the order the rows went down, until her voice gives out well before the count does.",
+          "fx": [["set", "fl_names_ede"], ["addvar", "fl_names_known", 1], ["score", 2], ["xp", 3]]
+        },
+        {
+          "id": "land_view",
+          "label": "what she thinks the hold's fate",
+          "if": [["flag", "fl_heard_winter"]],
+          "once": true,
+          "say": "Leave it be, if you're asking me. Ground that ate two hundred people in a winter has earned the right to grow nothing but grass for a while yet.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_land_crown",
+          "label": "about the surveyor's stakes, since",
+          "if": [["flag", "fl_land_crown"]],
+          "once": true,
+          "say": "Stakes in the ground where the rows went down. I've seen worse. I've also seen better.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_land_free",
+          "label": "about the Company's claim, since",
+          "if": [["flag", "fl_land_free"]],
+          "once": true,
+          "say": "A camp instead of a home. Well. At least a camp doesn't pretend to be more than it is.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_land_returners",
+          "label": "about the returners' claim, since",
+          "if": [["flag", "fl_land_returners"]],
+          "once": true,
+          "say": "Somebody's grandchildren, working ground their grandmother named for them. That's as close to right as this hold gets.",
+          "fx": [["xp", 1], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "react_land_fallow",
+          "label": "about leaving it fallow, since",
+          "if": [["flag", "fl_land_fallow"]],
+          "once": true,
+          "say": "Nobody digs, nobody stakes, nobody drills. First quiet answer this hold's had in forty years. I'll take quiet.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_rested",
+          "label": "the furrow, now it rests",
+          "if": [["flag", "fl_hollow_rested"]],
+          "once": true,
+          "say": "I slept the night through. First time since I was nine years old. I keep waking anyway, out of habit, and finding nothing wrong.",
+          "fx": [["xp", 2], ["addvar", "rep_keepers", 1]]
+        },
+        {
+          "id": "react_bargained",
+          "label": "the furrow, now it's bargained",
+          "if": [["flag", "fl_hollow_bargained"]],
+          "once": true,
+          "say": "Not rested. Paid. I've kept worse bargains for less reason. Mind the hold keeps this one.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "react_burned",
+          "label": "the furrow, now it's burned",
+          "if": [["flag", "fl_hollow_burned"]],
+          "once": true,
+          "say": "Fire took the whole cut in a night. Faster than forty years of my remembering, and it undid every bit of it just the same.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "quest_ede_protect",
+          "label": "offer to see someone looks in on her",
+          "if": [
+            ["flag", "fl_heard_winter"],
+            ["!flag", "fl_ede_protected"],
+            ["!flag", "fl_ede_left"],
+            ["!flag", "fl_ede_stayed_alone"]
+          ],
+          "say": "She argues exactly as long as it takes to see you mean it, then relents. \"There's a cloak in the chest,\" she says. \"His. He'd rather it kept someone living warm than kept me company.\"",
+          "fx": [
+            ["set", "fl_ede_protected"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_tamsin", 1],
+            ["move", "fl_watch_cloak", "inv"]
+          ]
+        },
+        {
+          "id": "quest_ede_leave",
+          "label": "tell her it's past time she left",
+          "if": [
+            ["flag", "fl_hollow_done"],
+            ["!flag", "fl_ede_protected"],
+            ["!flag", "fl_ede_left"],
+            ["!flag", "fl_ede_stayed_alone"]
+          ],
+          "say": "\"Past time,\" she repeats, like she's trying the words on. \"Maybe. The names are said now, one way or another. Let me think on it, at least. That's more than I'd have given the idea last week.\"",
+          "fx": [["set", "fl_ede_left"], ["score", 3], ["xp", 2], ["addvar", "appr_tamsin", -1]]
+        },
+        {
+          "id": "quest_ede_alone",
+          "label": "leave her exactly as she is",
+          "if": [
+            ["flag", "fl_heard_winter"],
+            ["!flag", "fl_ede_protected"],
+            ["!flag", "fl_ede_left"],
+            ["!flag", "fl_ede_stayed_alone"]
+          ],
+          "say": "She nods, unsurprised. \"Most people decide that, one way or the other, without asking me first. At least you asked.\"",
+          "fx": [["set", "fl_ede_stayed_alone"], ["xp", 1]]
+        },
+        {
+          "id": "sv_fl_naming_ask",
+          "label": "ask if there's room for one more name",
+          "if": [
+            ["flag", "sv_fl_back"],
+            ["any", [["flag", "fl_hollow_rested"], ["flag", "fl_hollow_bargained"]]],
+            ["flag", "fl_dain_named"],
+            ["!flag", "fl_dain_father_named"]
+          ],
+          "once": true,
+          "say": "\"There's always room for one more name,\" Ede says. \"There's a boy at the row lost his father here recently. Nobody's said this one properly yet.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_fl_naming_add",
+          "label": "bring her Dain's father's name",
+          "if": [["flag", "said_fl_ede_sv_fl_naming_ask"], ["!flag", "sv_fl_after_done"]],
+          "once": true,
+          "say": "You bring her what Dain remembers of his father's name, and she says it aloud once, plainly, the way she said the other two hundred. It costs her nothing extra to add one more. It costs Dain everything.",
+          "fx": [
+            ["set", "fl_dain_father_named"],
+            ["set", "sv_fl_rested_named"],
+            ["set", "sv_fl_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_osk", 1]
+          ]
+        },
+        {
+          "id": "sv_fl_naming_skip",
+          "label": "let the boy's grief be, for now",
+          "if": [["flag", "said_fl_ede_sv_fl_naming_ask"], ["flag", "fl_dain_father_seeking"], ["!flag", "sv_fl_after_done"]],
+          "once": true,
+          "say": "\"Not every grief wants handling right away,\" she says, and doesn't press you. \"He'll ask again himself, when he's ready, or he won't.\"",
+          "fx": [["set", "sv_fl_rested_unmarked"], ["set", "sv_fl_after_done"], ["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the withies",
+          "say": "Go on. Someone always has to keep something, and today it isn't you.",
+          "end": true
+        }
+      ]
+    },
+    "fl_pell": {
+      "name": "Surveyor Pell",
+      "room": "fl_common",
+      "dialogue": true,
+      "desc": "A tidy man with a chain and a ledger, pacing off distances with the unbothered patience of someone paid by the day.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Crown surveyor, and this is Crown ground — escheat, no heirs left to claim it. I'm to map what's worth having before anyone else decides it's theirs.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_escheat",
+          "label": "what escheat actually means",
+          "if": [["flag", "said_fl_pell_greet"]],
+          "once": true,
+          "say": "No living heir, the law finds, and the land reverts to the Crown. Tidy on paper. I try not to think too hard about the two hundred people who'd disagree with the finding.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "fl_help_survey",
+          "label": "help him drive the stakes true (wits)",
+          "if": [["!flag", "fl_stakes_held"], ["!flag", "fl_stakes_pulled"], ["!flag", "fl_stakes_brokered"]],
+          "say": "Steady hands are worth more than an opinion out here. Care to make yourself useful?",
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "fl_stakes_held"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_crown", 1],
+                ["addvar", "rep_keepers", -1],
+                ["say", "You sight the lines true and drive the last stakes home yourself. Pell's map, when he closes the ledger, is the most honest one this hold has had drawn of it in forty years — which does not make it kind."]
+              ],
+              [["say", "The stakes go in crooked. Pell notices, and says nothing, which is somehow worse than if he had."]]
+            ]
+          ]
+        },
+        {
+          "id": "fl_pull_stakes",
+          "label": "pull his stakes and scatter them (might)",
+          "if": [["!flag", "fl_stakes_held"], ["!flag", "fl_stakes_pulled"], ["!flag", "fl_stakes_brokered"]],
+          "say": "Touch one of those and you'll answer to the Crown for it, whoever you are.",
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "fl_stakes_pulled"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_keepers", 1],
+                ["addvar", "rep_crown", -2],
+                ["say", "You pull them faster than he can protest and scatter them into the reeds. Pell writes the incident up carefully, without once raising his voice, which is its own kind of threat."]
+              ],
+              [
+                ["say", "He's between you and the next stake before you reach it. \"Try that again,\" he says, \"and I'll write your name down too.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_muster",
+          "label": "ask about the drilling, since",
+          "if": [["any", [["flag", "fl_muster_broken"], ["flag", "fl_muster_off_common"], ["flag", "fl_muster_brokered"]]]],
+          "once": true,
+          "say": "Quieter out here since. I can hear myself count paces again, which I didn't know I'd missed.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the ground, now the furrow rests",
+          "if": [["flag", "fl_hollow_rested"]],
+          "once": true,
+          "say": "Rested ground and staked ground can be the same ground. I've surveyed worse consciences onto better maps.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the ground, now there's a bargain on it",
+          "if": [["flag", "fl_hollow_bargained"]],
+          "once": true,
+          "say": "A promise the dead are holding the living to. Not a thing my ledger has a column for, and it makes my ledger considerably less useful out here.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_fl_bargained_ask",
+          "label": "ask if the bargain is holding",
+          "if": [["flag", "sv_fl_back"], ["flag", "fl_hollow_bargained"]],
+          "once": true,
+          "say": "Marrowgate's sent word twice now asking why this ground still isn't mapped. My orders and your bargain are on a direct road to meeting each other. I'd rather they didn't, honestly — but I don't set my own orders.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_fl_bargained_pay",
+          "label": "pay him off (6 gold)",
+          "if": [["flag", "said_fl_pell_sv_fl_bargained_ask"], ["!flag", "sv_fl_bargained_done"], ["var", "gold", ">=", 6]],
+          "once": true,
+          "say": "He takes the coin like a man relieved to have a reason, and writes the common up as unfit for survey. It won't hold forever. It holds for now, which is what a bargain like this ever really buys.",
+          "fx": [
+            ["addvar", "gold", -6],
+            ["set", "sv_fl_bargained_paid"],
+            ["set", "sv_fl_bargained_done"],
+            ["set", "sv_fl_after_done"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_crown", -1]
+          ]
+        },
+        {
+          "id": "sv_fl_bargained_hold",
+          "label": "send him to the hold itself, not to you",
+          "if": [["flag", "said_fl_pell_sv_fl_bargained_ask"], ["!flag", "sv_fl_bargained_done"]],
+          "once": true,
+          "say": "You tell him it isn't yours to answer for — the hold made the promise, the hold should keep it. He asks Ede and Rue both, and gets the same flat no from each, which carries more weight than yours would have.",
+          "fx": [
+            ["set", "sv_fl_bargained_honored"],
+            ["set", "sv_fl_bargained_done"],
+            ["set", "sv_fl_after_done"],
+            ["score", 4],
+            ["xp", 2],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
+          "id": "sv_fl_bargained_lapse",
+          "label": "tell him to stake it anyway",
+          "if": [["flag", "said_fl_pell_sv_fl_bargained_ask"], ["!flag", "sv_fl_bargained_done"]],
+          "once": true,
+          "say": "You tell him orders are orders, and to get on with it. He does, visibly unbothered by whatever the furrow was promised. The stakes go back in before the week is out.",
+          "fx": [
+            ["set", "sv_fl_bargained_broken"],
+            ["set", "fl_bargain_broken"],
+            ["set", "sv_fl_bargained_done"],
+            ["set", "sv_fl_after_done"],
+            ["score", 2],
+            ["xp", 1],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_keepers", -2],
+            ["addvar", "appr_lys", -1]
+          ]
+        },
+        {
+          "id": "sv_fl_burned_ask",
+          "label": "the cleared ground, since the fire",
+          "if": [["flag", "sv_fl_back"], ["flag", "fl_hollow_burned"]],
+          "once": true,
+          "say": "A burned furrow is farmland by any measure the Crown keeps. My ledger doesn't ask what it used to be. Someone should decide whether that's a mercy or the last insult.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_fl_burned_claimed",
+          "label": "let him stake the burned ground now",
+          "if": [["flag", "said_fl_pell_sv_fl_burned_ask"], ["!flag", "sv_fl_after_done"]],
+          "once": true,
+          "say": "You tell him the ash is his to map. He does it without ceremony, and inside a season there's grain where the furrow was, which is either practical or obscene, depending who you ask.",
+          "fx": [
+            ["set", "sv_fl_burned_claimed"],
+            ["set", "sv_fl_after_done"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "appr_tamsin", 1]
+          ]
+        },
+        {
+          "id": "sv_fl_burned_spared",
+          "label": "tell him to leave the ash be",
+          "if": [["flag", "said_fl_pell_sv_fl_burned_ask"], ["!flag", "sv_fl_after_done"]],
+          "once": true,
+          "say": "He doesn't argue, exactly, but he does note the delay in his ledger, in a hand that suggests he'll remember it. The burned ground stays bare a while longer, unstaked, unplanted.",
+          "fx": [
+            ["set", "sv_fl_burned_spared"],
+            ["set", "sv_fl_after_done"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_crown", -1],
+            ["addvar", "appr_osk", 1]
+          ]
+        },
+        {
+          "id": "fl_declare_crown",
+          "label": "back the Crown's claim on the hold",
+          "if": [
+            ["flag", "said_fl_pell_bg_escheat"],
+            ["!flag", "fl_land_crown"],
+            ["!flag", "fl_land_free"],
+            ["!flag", "fl_land_returners"],
+            ["!flag", "fl_land_fallow"]
+          ],
+          "say": "You tell him plainly: the Fallows revert to the Crown, the whole of it — stakes, roads, every field.",
+          "fx": [
+            ["set", "fl_land_crown"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "rep_keepers", -2],
+            ["addvar", "appr_vell", -1],
+            [
+              "if",
+              [["flag", "fl_hollow_bargained"]],
+              [
+                ["set", "fl_bargain_broken"],
+                ["addvar", "rep_keepers", -1],
+                ["say", "Pell is plainly relieved to hear it. Whatever the furrow was promised, this breaks it, and you both know it."]
+              ],
+              [
+                ["say", "He closes his ledger with something almost like satisfaction. It is the tidiest ending available to him."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his chain",
+          "say": "Mind the stake-lines. A tripped chain costs me a whole afternoon.",
+          "end": true
+        }
+      ]
+    },
+    "fl_dace": {
+      "name": "Recruiter Dace",
+      "room": "fl_muster_barn",
+      "dialogue": true,
+      "desc": "Broad-shouldered and easy-voiced, the kind of recruiter who never once raises his hand and never once needs to.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Recruiter, Free Companies. Empty barn, empty hold, and more desperate hands looking for coin than any of the settled holds can spare. Good ground for my work, if nothing else.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_desperate",
+          "label": "recruiting the desperate specifically",
+          "if": [["flag", "said_fl_dace_greet"]],
+          "once": true,
+          "say": "I don't recruit anyone with another road open to them. Never have to. This hold's got nothing but people who lost their last one somewhere else.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "fl_break_muster",
+          "label": "break up the drilling (might)",
+          "if": [
+            ["!flag", "fl_muster_broken"],
+            ["!flag", "fl_muster_joined"],
+            ["!flag", "fl_muster_ignored"],
+            ["!flag", "fl_muster_brokered"]
+          ],
+          "say": "Careful. These people signed for this same as anyone signs for anything they can't afford to refuse.",
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "fl_muster_broken"],
+                ["score", 5],
+                ["xp", 3],
+                ["addvar", "rep_free", -2],
+                ["addvar", "appr_lys", 1],
+                ["say", "You put yourself between Dace and the line until the drilling stops being a thing that's happening. He doesn't fight you for it — a toll's a toll, and a scene costs him more recruits than it's worth."]
+              ],
+              [
+                ["say", "He talks over you without raising his voice, and the line keeps drilling straight through it. You haven't moved anything but air."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fl_join_muster",
+          "label": "help drill the recruits",
+          "if": [
+            ["!flag", "fl_muster_broken"],
+            ["!flag", "fl_muster_joined"],
+            ["!flag", "fl_muster_ignored"],
+            ["!flag", "fl_muster_brokered"]
+          ],
+          "say": "You spend the morning putting the line through its paces. They drill sharper for it, and Dace thanks you like you've done him a kindness rather than made his exploiting of them more effective.",
+          "fx": [["set", "fl_muster_joined"], ["score", 3], ["xp", 3], ["addvar", "rep_free", 1], ["addvar", "appr_lys", -1]]
+        },
+        {
+          "id": "fl_ignore_muster",
+          "label": "say nothing, and go",
+          "if": [
+            ["!flag", "fl_muster_broken"],
+            ["!flag", "fl_muster_joined"],
+            ["!flag", "fl_muster_ignored"],
+            ["!flag", "fl_muster_brokered"]
+          ],
+          "say": "You leave the barn without a word either way. Dace keeps counting cadence behind you, unbothered, and the desperate keep drilling for whatever he's paying them.",
+          "fx": [["set", "fl_muster_ignored"], ["xp", 1], ["addvar", "appr_lys", -1]]
+        },
+        {
+          "id": "react_stakes",
+          "label": "about the surveyor's stakes, since",
+          "if": [["any", [["flag", "fl_stakes_pulled"], ["flag", "fl_stakes_held"], ["flag", "fl_stakes_brokered"]]]],
+          "once": true,
+          "say": "Whatever the Crown's man decides, this barn's mine while it's empty. He can stake the grass. I'll take the roof.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the ground, now the furrow's burned",
+          "if": [["flag", "fl_hollow_burned"]],
+          "once": true,
+          "say": "Cleared field, no ghosts to spook the horses. If that's what it takes to end the gray, my Company's not the one arguing.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "fl_declare_free",
+          "label": "back the Companies' claim on the hold",
+          "if": [
+            ["flag", "said_fl_dace_bg_desperate"],
+            ["!flag", "fl_land_crown"],
+            ["!flag", "fl_land_free"],
+            ["!flag", "fl_land_returners"],
+            ["!flag", "fl_land_fallow"]
+          ],
+          "say": "You tell him the hold's his to muster, permanent roof and all. He claps you on the shoulder like a business partner.",
+          "fx": [
+            ["set", "fl_land_free"],
+            ["score", 8],
+            ["xp", 4],
+            ["addvar", "rep_free", 2],
+            ["addvar", "rep_church", -2],
+            ["addvar", "appr_lys", -1],
+            [
+              "if",
+              [["flag", "fl_hollow_bargained"]],
+              [
+                ["set", "fl_bargain_broken"],
+                ["addvar", "rep_church", -1],
+                ["say", "Whatever the furrow was promised about no muster ever standing here again, it's broken now, and he knows it as well as you do."]
+              ],
+              [["say", "He's already planning where the second barn goes."]]
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his cadence",
+          "say": "Watch yourself out there. Everyone's recruiting for something, one way or another.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "quests": {
+    "fl_q_land": {
+      "name": "Whose Ground",
+      "start": [["flag", "fl_entered"]],
+      "done": [
+        [
+          "any",
+          [
+            ["flag", "fl_land_crown"],
+            ["flag", "fl_land_free"],
+            ["flag", "fl_land_returners"],
+            ["flag", "fl_land_fallow"]
+          ]
+        ]
+      ],
+      "stages": [
+        {
+          "if": [["flag", "fl_land_crown"]],
+          "text": "The Fallows revert to the Crown. Surveyor Pell's stakes will stand."
+        },
+        {
+          "if": [["flag", "fl_land_free"]],
+          "text": "The Fallows go to the Free Companies. The barn's muster is permanent now."
+        },
+        {
+          "if": [["flag", "fl_land_returners"]],
+          "text": "The Fallows go to the returners. Sister Merrow rang the bell for it herself."
+        },
+        {
+          "if": [["flag", "fl_land_fallow"]],
+          "text": "The Fallows lie fallow, by the old covenant. Frey finally looked the part."
+        },
+        {
+          "if": [["flag", "fl_merrow_doubts"], ["flag", "fl_keeper_revealed"]],
+          "text": "Four claims stand on this ground: the surveyor's, the recruiter's, the sister's, and a Keeper's. Back one, at Wickstead."
+        },
+        {
+          "if": [["flag", "fl_entered"]],
+          "text": "Nobody is sure the Fallows are anyone's to have. A surveyor, a recruiter, a sister, and a stranger all want a say."
+        }
+      ]
+    },
+    "fl_q_stakes": {
+      "name": "The Surveyor's Stakes",
+      "start": [["flag", "said_fl_pell_greet"]],
+      "done": [["any", [["flag", "fl_stakes_held"], ["flag", "fl_stakes_pulled"], ["flag", "fl_stakes_brokered"]]]],
+      "stages": [
+        {
+          "if": [],
+          "text": "Surveyor Pell stakes the common for the Crown. Help him finish it, pull the stakes, or find a third way, at the common."
+        }
+      ]
+    },
+    "fl_q_muster": {
+      "name": "The Muster in the Barn",
+      "start": [["flag", "said_fl_dace_greet"]],
+      "done": [
+        [
+          "any",
+          [
+            ["flag", "fl_muster_broken"],
+            ["flag", "fl_muster_joined"],
+            ["flag", "fl_muster_ignored"],
+            ["flag", "fl_muster_brokered"]
+          ]
+        ]
+      ],
+      "stages": [
+        {
+          "if": [],
+          "text": "Recruiter Dace drills desperate refugees in the muster barn. Break it up, join it, or let it be."
+        }
+      ]
+    }
+  }
+}
