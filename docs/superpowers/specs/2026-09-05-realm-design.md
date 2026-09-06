@@ -311,6 +311,24 @@ Stone, Mother Ysme on Wenlock's answer, Quill on Gullhaven's tithe, the
 Preceptor-General on the Choir's bell made whole, the first Reeve's shade on
 every bargain a hold let lapse — carry the word to the capital.
 
+**The company at odds** (after the fourth playtest round): once per pair,
+the companions disagree hard enough that the player has to take a side. Lys
+and Osk over a mercy refused (the drowned boy denied his name), Osk and
+Tamsin over a second hollow burned or the Choir of Ash, Lys and Tamsin over
+the Company's hanging tree turned harsh again, Osk and Vell over a Church
+confession forced into the open, Tamsin and Vell over Highward's founding
+lie, Lys and Vell over a Keeper's bargain a hold let lapse. A pair remark
+opens the quarrel and sets `quarrel_<a>_<b>`; each of the two offers a topic
+to take their side (+2 regard with them, −2 with the other), and one offers a
+will check to make them settle it themselves (peace at no cost, or −1 each
+when it sours); the loser of a quarrel walks at regard −2 with a farewell of
+their own; follow-up remarks carry the grudge into Marrowgate and to the
+throne, an Osk who won his quarrel will not speak a rite beside a third fire,
+and a Tamsin who won hers promises to stand between the Company's rope and
+Lys's brother; 24 epilogue lines tell how each quarrel ended. Thirty remarks,
+eighteen topics, twelve leaves; none can fire on the walkthrough, which
+travels with Lys alone.
+
 ## Build order
 
 1. `world/reach.json` root + `companions.json` + `templates.json` + the
