@@ -270,7 +270,8 @@ export function renderStatus(world: World, s: State): string {
     const done = q.filter((x) => x.status === "done").map((x) => x.name);
     if (done.length) lines.push(`Done: ${done.join(", ")}`);
     const failed = q.filter((x) => x.status === "failed").map((x) => x.name);
-    if (failed.length) lines.push(`Failed: ${failed.join(", ")}`);
+    // a quest whose asker's wish is past meeting reads as closed, the word the journal event used
+    if (failed.length) lines.push(`Closed: ${failed.join(", ")}`);
   }
   for (const h of world.hud ?? []) lines.push(`${h.label}: ${s.vars[h.var] ?? 0}`);
   // The visited list is a memory aid, not a map: past a dozen places it

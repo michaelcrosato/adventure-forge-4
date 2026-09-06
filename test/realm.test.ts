@@ -218,7 +218,7 @@ test("the journal starts, advances, completes, or fails on conditions — and ev
   // the other branch fails it
   const sold = step(world, state, actionByLabel(world, state, "sell the ring")!);
   assert.match(sold.events.join(" "), /Quest closed: The Widow's Ring — its asker's wish is past meeting\./);
-  assert.match(renderStatus(world, sold.state), /Failed: The Widow's Ring/);
+  assert.match(renderStatus(world, sold.state), /Closed: The Widow's Ring/);
 });
 
 test("validator: quests need stages with conditions and text", () => {
