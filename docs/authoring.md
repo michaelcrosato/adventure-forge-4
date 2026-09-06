@@ -96,6 +96,10 @@ name in `world.skills`. Put the `check` **first** in an action's or topic's
 effects when you want the menu to preview its odds (`(DC 11, +2 wits: roll
 9+ on the die)` — the total must reach the DC; the die alone must reach the
 last number); a check buried after a `say` or inside an `if` gets no preview.
+The preview also names standing or regard the check puts at stake, by
+branch: "a miss costs standing with the Gray Church" when only the fail
+branch lowers `rep_church`, "a hit costs standing with …" when only the
+success branch does, "costs standing with …, hit or miss" when both do.
 
 ## 5. Rooms
 
