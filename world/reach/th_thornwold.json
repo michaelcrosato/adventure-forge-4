@@ -935,6 +935,20 @@
       "name": "a sealed letter, addressed only to Fenmarch's grieving",
       "loc": "nowhere",
       "hint": "carry it east to Fenmarch, and decide what's owed the dead"
+    },
+    "th_vane_tally": {
+      "name": "a bundle of Company tally-sticks",
+      "loc": "th_captains_tent",
+      "takeable": true,
+      "owner": "th_vane",
+      "hint": "wages owed, if you can read the notches"
+    },
+    "th_cook_coin": {
+      "name": "a dented coin-dish",
+      "loc": "th_cookfire",
+      "takeable": true,
+      "owner": "th_cook",
+      "hint": "tips left by mercs who didn't want to owe the cook a favor"
     }
   },
   "npcs": {
@@ -1108,6 +1122,14 @@
           "if": [["flag", "th_heard_passage"], ["!flag", "free_passage"], ["!flag", "th_rook_dealt"]],
           "say": "Rook, at the Rope Larder, poaching my woods and my patience. Deal with him — however you like, so long as it sticks — and the road under Coldpass is yours for nothing.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "th_vane_theft",
+          "label": "about the tally-sticks, since",
+          "if": [["flag", "stole_th_vane_tally"]],
+          "once": true,
+          "say": "\"Company pay went missing off my own table,\" Vane says, flat. \"I've named worse for less. Don't test how much worse.\"",
+          "fx": [["addvar", "rep_free", -1], ["xp", 1]]
         }
       ]
     },
@@ -1288,6 +1310,14 @@
           "label": "small talk with the cook",
           "once": true,
           "say": "Best thing about this posting is nobody complains about the food. Worst thing is I know why.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "th_cook_theft",
+          "label": "about the coin-dish, since",
+          "if": [["flag", "stole_th_cook_coin"]],
+          "once": true,
+          "say": "The cook doesn't look up from the pot. \"Saw that. Ladle's still full for you, this once. Won't be, next.\"",
           "fx": [["xp", 1]]
         }
       ]

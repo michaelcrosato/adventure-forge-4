@@ -1054,7 +1054,35 @@
         }
       ]
     },
-    "mg_ironbound_oil": { "name": "cask of Ironbound oil", "loc": "nowhere", "hint": "enough to burn a throne" }
+    "mg_ironbound_oil": { "name": "cask of Ironbound oil", "loc": "nowhere", "hint": "enough to burn a throne" },
+    "mg_mother_candles": {
+      "name": "a rack of ash-gray candles",
+      "loc": "mg_chapel_of_ash",
+      "takeable": true,
+      "owner": "mg_mother",
+      "hint": "burned for the city's own dead"
+    },
+    "mg_quill_deck": {
+      "name": "a deck of marked cards",
+      "loc": "mg_hanged_man",
+      "takeable": true,
+      "owner": "mg_quill",
+      "hint": "shorted, if you know where to look"
+    },
+    "mg_hald_medallion": {
+      "name": "a chapter medallion, iron-sun stamped",
+      "loc": "mg_ironbound_hall",
+      "takeable": true,
+      "owner": "mg_preceptor",
+      "hint": "issued, never sold"
+    },
+    "mg_tarn_baton": {
+      "name": "a watch-captain's baton",
+      "loc": "mg_watch_house",
+      "takeable": true,
+      "owner": "mg_marshal",
+      "hint": "Watch-issue, city-stamped"
+    }
   },
   "npcs": {
     "mg_regent": {
@@ -1484,7 +1512,23 @@
             ]
           ]
         },
-        { "id": "bye", "label": "leave the Marshal to his map", "say": "Keep to the Way after dark.", "end": true }
+        { "id": "bye", "label": "leave the Marshal to his map", "say": "Keep to the Way after dark.", "end": true },
+        {
+          "id": "mg_tarn_theft",
+          "label": "about the baton, since",
+          "if": [["flag", "stole_mg_tarn_baton"]],
+          "once": true,
+          "say": "\"Watch-issue, city-stamped, gone from my own house.\" Tarn doesn't raise his voice. \"Standing's not free. Yours just cost you some.\"",
+          "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
+        },
+        {
+          "id": "mg_watch_thefts",
+          "label": "word of light-fingered travelers",
+          "if": [["var", "thefts", ">=", 2]],
+          "once": true,
+          "say": "\"More than one hold's written to me about goods gone missing behind a stranger's back,\" Tarn says. \"The Watch keeps a ledger too, same as the chapterhouse.\"",
+          "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
+        }
       ]
     },
     "mg_preceptor": {
@@ -1693,6 +1737,14 @@
           "label": "leave him to the roll",
           "say": "Every name gets read. Even yours, in the end.",
           "end": true
+        },
+        {
+          "id": "mg_hald_theft",
+          "label": "about the medallion, since",
+          "if": [["flag", "stole_mg_hald_medallion"]],
+          "once": true,
+          "say": "\"A novice's medallion, from my own hall.\" Hald doesn't look up from the roll. \"I log thefts the same as fires. Both get remembered.\"",
+          "fx": [["addvar", "rep_iron", -1], ["xp", 1]]
         }
       ]
     },
@@ -1886,6 +1938,14 @@
           "label": "leave her to the font",
           "say": "Go carefully, and say the words even when nobody is listening. There's a chapel forgotten in the Warrens too, Saint Ossa's, if you ever find the door.",
           "end": true
+        },
+        {
+          "id": "mg_mother_theft",
+          "label": "about the candles, since",
+          "if": [["flag", "stole_mg_mother_candles"]],
+          "once": true,
+          "say": "\"Ash to the wrists, and short candles besides,\" she says. \"This font has had worse done to it than theft. That doesn't make it nothing.\"",
+          "fx": [["addvar", "rep_church", -1], ["xp", 1]]
         }
       ]
     },
@@ -2099,6 +2159,49 @@
           "label": "leave Quill to the cards",
           "say": "Three knocks and a pause. Everything is three knocks and a pause.",
           "end": true
+        },
+        {
+          "id": "mg_quill_theft",
+          "label": "about the deck, since",
+          "if": [["flag", "stole_mg_quill_deck"]],
+          "once": true,
+          "say": "\"My own cards, off my own table,\" Quill says, not looking up from the new deck. \"The Companies deal fair with people who deal fair with them.\"",
+          "fx": [["addvar", "rep_free", -1], ["xp", 1]]
+        },
+        {
+          "id": "mg_quill_thefts",
+          "label": "a stranger with light fingers",
+          "if": [["var", "thefts", ">=", 3]],
+          "once": true,
+          "say": "\"Three holds now, counting goods short since you passed through,\" Quill says. \"I deal in secrets, not tallies, but even I've heard this one three times over.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "em_choir",
+          "label": "the Choir of Ash, word from the west",
+          "if": [["any", [["flag", "em_hollow_burned"], ["flag", "em_hollow_rested"]]]],
+          "once": true,
+          "say": "Every trader off the Emberfall road has an opinion on the ridge now.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "em_hollow_burned"]],
+              [
+                ["say", "\"Fifth fire lit it, same as the last four,\" he says. \"Choir's louder for it, they tell me. Bad for business — the caravans go round now.\""],
+                ["addvar", "rep_free", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "em_hollow_rested"]],
+              [
+                ["say", "\"Quiet on the ridge, they tell me. First time in four hundred years nobody's had to route around Emberfall's noise.\" He almost smiles."]
+              ],
+              []
+            ]
+          ]
         }
       ]
     },

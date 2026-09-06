@@ -124,7 +124,7 @@
         {
           "id": "cp_buy_cloak",
           "label": "buy a lined pilgrim's cloak (6 gold)",
-          "if": [["!has", "cp_pilgrim_cloak"], ["var", "gold", ">=", 6]],
+          "if": [["!has", "cp_pilgrim_cloak"], ["var", "gold", ">=", 6], ["!flag", "stole_cp_enna_bread"]],
           "fx": [
             ["addvar", "gold", -6],
             ["move", "cp_pilgrim_cloak", "inv"],
@@ -288,6 +288,27 @@
       "loc": "nowhere",
       "takeable": true,
       "hint": "a keepsake from Abbot Corvin, worth little but the blessing"
+    },
+    "cp_abbot_candles": {
+      "name": "a bundle of altar candles",
+      "loc": "cp_bell_tower",
+      "takeable": true,
+      "owner": "cp_abbot",
+      "hint": "blessed for the bell, not the pocket"
+    },
+    "cp_fost_ink": {
+      "name": "a stoppered inkhorn",
+      "loc": "cp_scriptorium",
+      "takeable": true,
+      "owner": "cp_fost",
+      "hint": "good gall-ink, hoarded against the cold"
+    },
+    "cp_enna_bread": {
+      "name": "a round of pilgrim's bread",
+      "loc": "cp_pilgrims_hall",
+      "takeable": true,
+      "owner": "cp_enna",
+      "hint": "baked for whoever climbs the stair hungry"
     }
   },
   "npcs": {
@@ -370,6 +391,14 @@
           "label": "mind the stair",
           "say": "Mind the stair. It's steeper going down than up.",
           "end": true
+        },
+        {
+          "id": "cp_watch_thefts",
+          "label": "word of light-fingered travelers",
+          "if": [["var", "thefts", ">=", 2]],
+          "once": true,
+          "say": "\"Word comes up the stair same as everything else,\" Bray says. \"More than one hold's counted its goods short behind you. I'll be counting too.\"",
+          "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
         }
       ]
     },
@@ -596,6 +625,14 @@
           "label": "leave him to the damp",
           "say": "Mind the damp on your way out. It gets into everything.",
           "end": true
+        },
+        {
+          "id": "cp_fost_theft",
+          "label": "about the inkhorn, since",
+          "if": [["flag", "stole_cp_fost_ink"]],
+          "once": true,
+          "say": "Fost checks the shelf where the inkhorn stood, twice. \"I copy old debts as carefully as old verses,\" he says. \"You're in both ledgers now.\"",
+          "fx": [["addvar", "rep_keepers", -1], ["xp", 1]]
         }
       ]
     },
@@ -618,6 +655,14 @@
           "once": true,
           "say": "High in the Spine, past the tarn, a whole band went up during a whiteout years back and never came down. The Abbot still won't say their names.",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "cp_enna_theft",
+          "label": "about the bread, since",
+          "if": [["flag", "stole_cp_enna_bread"]],
+          "once": true,
+          "say": "Sister Enna doesn't scold. She just stops offering you the good loaf, and starts counting the hall's stores when you're in the room.",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -716,6 +761,14 @@
           "label": "leave him at the rail",
           "say": "Go carefully. The Spine doesn't forgive twice.",
           "end": true
+        },
+        {
+          "id": "cp_abbot_theft",
+          "label": "about the altar candles, since",
+          "if": [["flag", "stole_cp_abbot_candles"]],
+          "once": true,
+          "say": "\"The bell gets lit on faith and good wax both,\" the abbot says. \"You've cost the pilgrims one of those. I won't forget which.\"",
+          "fx": [["addvar", "rep_church", -1], ["xp", 1]]
         }
       ]
     },

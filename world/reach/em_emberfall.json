@@ -102,7 +102,7 @@
         {
           "id": "em_buy_flask",
           "label": "buy a quench-flask — 3 gold",
-          "if": [["var", "gold", ">=", 3]],
+          "if": [["var", "gold", ">=", 3], ["!flag", "stole_em_sorra_bauble"]],
           "fx": [
             ["addvar", "gold", -3],
             ["move", "em_quench_flask", "inv"],
@@ -403,6 +403,27 @@
       "name": "cask of cinder-oil",
       "loc": "nowhere",
       "hint": "Corrin sold this same oil before, to others, for the same chapel — ask him how that went"
+    },
+    "em_sorra_bauble": {
+      "name": "a swirled glass bauble",
+      "loc": "em_glassworks",
+      "takeable": true,
+      "owner": "em_sorra",
+      "hint": "pretty, and worth more than it looks"
+    },
+    "em_wenlock_reliquary": {
+      "name": "a small glass reliquary",
+      "loc": "em_priory",
+      "takeable": true,
+      "owner": "em_wenlock",
+      "hint": "empty; whatever it held went before the last fire"
+    },
+    "em_corrin_chit": {
+      "name": "a factor's brass chit",
+      "loc": "em_ironbound_post",
+      "takeable": true,
+      "owner": "em_corrin",
+      "hint": "marks a debt owed to the scale-house, not you"
     }
   },
   "npcs": {
@@ -488,6 +509,14 @@
           "label": "leave her to the furnace",
           "say": "Mind the furnace door. It doesn't care whose hand is careless.",
           "end": true
+        },
+        {
+          "id": "em_sorra_theft",
+          "label": "about the glass bauble, since",
+          "if": [["flag", "stole_em_sorra_bauble"]],
+          "once": true,
+          "say": "Sorra weighs her stock with a harder eye now. \"Glass remembers heat and hands both,\" she says. \"I remember hands better.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -557,6 +586,14 @@
           "label": "leave him to his candles",
           "say": "Go carefully on the ridge path. It has taken more than it's given back, that ground.",
           "end": true
+        },
+        {
+          "id": "em_wenlock_theft",
+          "label": "about the reliquary, since",
+          "if": [["flag", "stole_em_wenlock_reliquary"]],
+          "once": true,
+          "say": "\"Empty, and you took it anyway.\" Wenlock's voice doesn't rise. \"There's a word for that in every rite I know. The Church remembers it too.\"",
+          "fx": [["addvar", "rep_church", -1], ["xp", 1]]
         }
       ]
     },
@@ -683,6 +720,14 @@
           "label": "leave the scale-house to its ledger",
           "say": "Mind your own weight on the way out. Everything gets counted eventually.",
           "end": true
+        },
+        {
+          "id": "em_corrin_theft",
+          "label": "about the brass chit, since",
+          "if": [["flag", "stole_em_corrin_chit"]],
+          "once": true,
+          "say": "Corrin marks his own tally short and doesn't hide his temper about it. \"The scale-house remembers a debt whichever direction it runs,\" he says.",
+          "fx": [["addvar", "rep_iron", -1], ["xp", 1]]
         }
       ]
     },

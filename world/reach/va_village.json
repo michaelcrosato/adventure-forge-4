@@ -234,6 +234,27 @@
         }
       ],
       "variants": [{ "if": [["flag", "va_read_crown"]], "hint": "" }]
+    },
+    "va_smith_tongs": {
+      "name": "a set of smith's tongs",
+      "loc": "va_forge",
+      "takeable": true,
+      "owner": "va_smith",
+      "hint": "good steel, kept for the anvil, not the road"
+    },
+    "va_inn_coin_dish": {
+      "name": "a chipped coin-dish",
+      "loc": "va_inn",
+      "takeable": true,
+      "owner": "va_innkeep",
+      "hint": "tips left by travelers who didn't want to owe the house"
+    },
+    "va_chapel_candles": {
+      "name": "a bundle of blessed candles",
+      "loc": "va_chapel",
+      "takeable": true,
+      "owner": "va_gray_priest",
+      "hint": "kept lit against the damp, one at a time"
     }
   },
   "npcs": {
@@ -381,6 +402,14 @@
           "if": [["flag", "va_promised_seal"], ["flag", "va_barrow_open"], ["!flag", "va_doors_decided"]],
           "once": true,
           "say": "The priest opened it for you, I hear, blessing and all. Fine. Doors open to go in. Shut them after, as you said, and we'll have no quarrel."
+        },
+        {
+          "id": "thefts_watch",
+          "label": "word of light fingers about the Reach",
+          "if": [["var", "thefts", ">=", 2]],
+          "once": true,
+          "say": "\"Word travels with the riders — more than one hold's counted its goods short since you passed through,\" the reeve says. \"The watch doesn't forget whose hands those were.\"",
+          "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
         }
       ]
     },
@@ -409,6 +438,14 @@
           "once": true,
           "say": "Not a name I know, and I know most who've passed this counter. Half the vale's secrets end up here sooner or later. Keep it. Someone in the Reach will know it.",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "va_innkeep_theft",
+          "label": "about the coin-dish, since",
+          "if": [["flag", "stole_va_inn_coin_dish"]],
+          "once": true,
+          "say": "\"Saw you pocket that,\" he says, not unkindly. \"I'll not chase a guest over copper. I'll just remember your face at the door.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -436,6 +473,7 @@
           "id": "apprentice",
           "label": "your apprentice",
           "once": true,
+          "if": [["!flag", "stole_va_smith_tongs"]],
           "say": "Tamsin. Best hands I've trained and the worst temper. Her mother died in the Iron Downs when the Hundred came down — the mine, north and west of here. She's not said the word 'mine' since. Don't you say it either.",
           "fx": [["xp", 2]]
         },
@@ -460,6 +498,14 @@
           "label": "leave her to the forge",
           "say": "Come back with the blade in one piece.",
           "end": true
+        },
+        {
+          "id": "va_smith_theft",
+          "label": "about the tongs, since",
+          "if": [["flag", "stole_va_smith_tongs"]],
+          "once": true,
+          "say": "She's counted her tools since. \"A smith minds her own iron. Whatever else you came for, you'll get it plainer than you got that.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -559,7 +605,15 @@
           "say": "Three holds now, quieted by rite instead of fire. I did not think I would live to hear that said of even one. Whatever you are doing out there, the Church is grateful for it.",
           "fx": [["addvar", "rep_church", 1], ["xp", 2]]
         },
-        { "id": "bye", "label": "leave him to his candles", "say": "Go carefully.", "end": true }
+        { "id": "bye", "label": "leave him to his candles", "say": "Go carefully.", "end": true },
+        {
+          "id": "va_priest_theft",
+          "label": "about the candles, since",
+          "if": [["flag", "stole_va_chapel_candles"]],
+          "once": true,
+          "say": "\"Ash on my hands, and short candles besides,\" he says, not looking up. \"The Church notices what leaves a chapel unblessed. So do I.\"",
+          "fx": [["addvar", "rep_church", -1], ["xp", 1]]
+        }
       ]
     },
     "va_elder": {
@@ -790,6 +844,16 @@
     {
       "if": [["flag", "va_refused_herald"]],
       "text": "You told the Regent's herald no, plain, in Last Light square. The Free Companies still toast you for it.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "thefts", ">=", 1]],
+      "text": "Word gets around a hold fast: whose hands took what wasn't offered, and who saw them do it.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "thefts", ">=", 3]],
+      "text": "By the third hold counting its goods short, the story had a shape: a stranger who took what was watched and paid nothing for it.",
       "weight": 1
     }
   ]

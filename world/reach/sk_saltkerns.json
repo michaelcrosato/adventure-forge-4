@@ -145,7 +145,7 @@
         {
           "id": "sk_buy_oil",
           "label": "buy a flask of lamp oil (4 gold)",
-          "if": [["!has", "sk_lamp_oil"], ["var", "gold", ">=", 4]],
+          "if": [["!has", "sk_lamp_oil"], ["var", "gold", ">=", 4], ["!flag", "stole_sk_chandler_compass"]],
           "fx": [
             ["addvar", "gold", -4],
             ["move", "sk_lamp_oil", "inv"],
@@ -321,6 +321,27 @@
       "name": "the Drowned Bell's old ship's-bell",
       "loc": "nowhere",
       "hint": "owed as tithe to Hollowbrook's Keepers' Hall"
+    },
+    "sk_chandler_compass": {
+      "name": "a spare brass compass",
+      "loc": "sk_chandlery",
+      "takeable": true,
+      "owner": "sk_chandler",
+      "hint": "points true north, more or less"
+    },
+    "sk_tavern_flask": {
+      "name": "a stoppered flask of grog",
+      "loc": "sk_drowned_bell",
+      "takeable": true,
+      "owner": "sk_tavernkeep",
+      "hint": "house stock, not a round on the house"
+    },
+    "sk_harbour_glass": {
+      "name": "a brass spyglass",
+      "loc": "sk_harbourmaster_house",
+      "takeable": true,
+      "owner": "sk_harbourmaster",
+      "hint": "the lens is good; the charts under it are better"
     }
   },
   "npcs": {
@@ -522,6 +543,14 @@
           "label": "leave him to his charts",
           "say": "Mind the tide going out. It doesn't wait on strangers.",
           "end": true
+        },
+        {
+          "id": "sk_harbourmaster_theft",
+          "label": "about the spyglass, since",
+          "if": [["flag", "stole_sk_harbour_glass"]],
+          "once": true,
+          "say": "Rennick counts his instruments now before he counts the tide. \"A harbor runs on trust as much as rope,\" he says. \"You've spent yours here.\"",
+          "fx": [["addvar", "rep_free", -1], ["xp", 1]]
         }
       ]
     },
@@ -629,6 +658,14 @@
           "label": "leave the post to its ledgers",
           "say": "Straight roads, stranger. Fewer questions that way.",
           "end": true
+        },
+        {
+          "id": "sk_watch_thefts",
+          "label": "word of light-fingered travelers",
+          "if": [["var", "thefts", ">=", 2]],
+          "once": true,
+          "say": "\"More than one hold's written the customs post about goods gone missing,\" Brann says. \"I read every one. Yours keeps coming up.\"",
+          "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
         }
       ]
     },
@@ -717,6 +754,14 @@
           "label": "leave her to her accounts",
           "say": "Mind you settle up before you leave the coast.",
           "end": true
+        },
+        {
+          "id": "sk_chandler_theft",
+          "label": "about the compass, since",
+          "if": [["flag", "stole_sk_chandler_compass"]],
+          "once": true,
+          "say": "Marta's gone quiet in a way that isn't good. \"I know exactly what it's like to have something taken off a counter,\" she says. \"Didn't expect to learn it twice.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -934,6 +979,14 @@
             ["!flag", "rb_sk_hb_mound"]
           ],
           "say": "He shrugs, wiping down the bar. \"Wasn't ringing here. Wasn't ringing anywhere, far as I could tell.\""
+        },
+        {
+          "id": "sk_tavern_theft",
+          "label": "about the flask, since",
+          "if": [["flag", "stole_sk_tavern_flask"]],
+          "once": true,
+          "say": "Otts doesn't say much, but he marks your face against the door now, same as he does for men who've run a tab and skipped it.",
+          "fx": [["xp", 1]]
         }
       ]
     },

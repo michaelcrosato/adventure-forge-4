@@ -148,7 +148,7 @@
         {
           "id": "fd_buy_smoked",
           "label": "buy smoked eel — 3 gold",
-          "if": [["var", "gold", ">=", 3]],
+          "if": [["var", "gold", ">=", 3], ["!flag", "stole_fd_trader_scale"]],
           "fx": [
             ["addvar", "gold", -3],
             ["move", "fd_smoked_eel", "inv"],
@@ -647,6 +647,27 @@
       "loc": "nowhere",
       "takeable": true,
       "hint": "leave it at the next chapel's altar"
+    },
+    "fd_prior_candle": {
+      "name": "a fat altar candle, unlit",
+      "loc": "fd_priory",
+      "takeable": true,
+      "owner": "fd_prior",
+      "hint": "Church wax, meant for the drowned nave's altar"
+    },
+    "fd_trader_scale": {
+      "name": "a set of brass scale-weights",
+      "loc": "fd_eel_market",
+      "takeable": true,
+      "owner": "fd_eel_trader",
+      "hint": "keeps the trader honest, or looks like it"
+    },
+    "fd_netkeep_needle": {
+      "name": "a bone net-needle",
+      "loc": "fd_net_hall",
+      "takeable": true,
+      "owner": "fd_netkeep",
+      "hint": "worth little except to someone who knows knots"
     }
   },
   "npcs": {
@@ -784,6 +805,14 @@
           "label": "leave him to his candles",
           "say": "Go gently on the walkways. Reedholm loses someone to the water most years; I'd rather not add a name I know.",
           "end": true
+        },
+        {
+          "id": "fd_prior_theft",
+          "label": "about the altar candle, since",
+          "if": [["flag", "stole_fd_prior_candle"]],
+          "once": true,
+          "say": "Halm counts the candles now before he counts the collection plate. \"Take from the drowned's own altar, and pray to them yourself next time,\" he says.",
+          "fx": [["addvar", "rep_church", -1], ["xp", 1]]
         }
       ]
     },
@@ -824,7 +853,7 @@
         {
           "id": "rumor",
           "label": "what folk are saying",
-          "if": [["flag", "said_fd_netkeep_greet"]],
+          "if": [["flag", "said_fd_netkeep_greet"], ["!flag", "stole_fd_netkeep_needle"]],
           "once": true,
           "say": "That the singing's gotten louder since the Ironbound pitched their camp on Stilt Row. Whether that's the water answering them or just Reedholm's nerves, I couldn't say.",
           "fx": [["xp", 2]]
@@ -855,6 +884,14 @@
           "if": [["flag", "fd_hollow_burned"]],
           "once": true,
           "say": "I've mended nets under worse skies. Never one I helped make, though.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "fd_netkeep_theft",
+          "label": "about the net-needle, since",
+          "if": [["flag", "stole_fd_netkeep_needle"]],
+          "once": true,
+          "say": "He pats down the hall's tools before you're even out of sight now. \"Word doesn't travel free to hands that don't ask first,\" he says.",
           "fx": [["xp", 1]]
         }
       ]
@@ -921,6 +958,14 @@
           "id": "banter",
           "label": "the smell of the eel-market",
           "say": "Tubs and brine, morning to night. You get used to it, or you don't stay."
+        },
+        {
+          "id": "fd_eel_trader_theft",
+          "label": "about the scale-weights, since",
+          "if": [["flag", "stole_fd_trader_scale"]],
+          "once": true,
+          "say": "She's counted her weights twice since. \"Fingers that quick don't get my good prices anymore,\" she says, and means it.",
+          "fx": [["xp", 1]]
         }
       ]
     },

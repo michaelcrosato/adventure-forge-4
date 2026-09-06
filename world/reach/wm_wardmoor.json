@@ -107,7 +107,7 @@
           "id": "wm_buy_mail",
           "label": "buy a mail hauberk (10 gold)",
           "once": true,
-          "if": [["var", "gold", ">=", 10]],
+          "if": [["var", "gold", ">=", 10], ["!flag", "stole_wm_spare_mail"], ["!flag", "stole_wm_spare_spear"]],
           "fx": [
             ["addvar", "gold", -10],
             ["move", "wm_watch_mail", "inv"],
@@ -545,6 +545,27 @@
       "loc": "nowhere",
       "takeable": true,
       "hint": "meant for the Watch post at Highward"
+    },
+    "wm_spare_mail": {
+      "name": "a spare mail shirt",
+      "loc": "wm_armoury",
+      "takeable": true,
+      "owner": "wm_quartermaster",
+      "hint": "one more than the racks are counted for"
+    },
+    "wm_spare_spear": {
+      "name": "a watch-issue spear",
+      "loc": "wm_armoury",
+      "takeable": true,
+      "owner": "wm_quartermaster",
+      "hint": "racked with a dozen its match"
+    },
+    "wm_archivist_map": {
+      "name": "a curling survey map",
+      "loc": "wm_record_house",
+      "takeable": true,
+      "owner": "wm_archivist",
+      "hint": "shows roads that don't run true anymore"
     }
   },
   "npcs": {
@@ -624,7 +645,15 @@
             ["set", "wm_dispatch_delivered"]
           ]
         },
-        { "id": "bye", "label": "leave her to the drill", "say": "Keep to the cairns after dark.", "end": true }
+        { "id": "bye", "label": "leave her to the drill", "say": "Keep to the cairns after dark.", "end": true },
+        {
+          "id": "wm_watch_thefts",
+          "label": "word of light-fingered travelers",
+          "if": [["var", "thefts", ">=", 2]],
+          "once": true,
+          "say": "\"A corporal at the record-house has heard of light fingers working more than one hold,\" Rook says. \"Highward doesn't forget whose hands those were.\"",
+          "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
+        }
       ]
     },
     "wm_quartermaster": {
@@ -644,6 +673,14 @@
           "once": true,
           "say": "Every hold in the Reach sends its levy through this gate eventually. We arm what comes north, and bury what doesn't.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "wm_quartermaster_theft",
+          "label": "about the rack count, since",
+          "if": [["any", [["flag", "stole_wm_spare_mail"], ["flag", "stole_wm_spare_spear"]]]],
+          "once": true,
+          "say": "The quartermaster's tally comes up short and doesn't stay quiet about it long. \"Watch-issue's Watch-issue,\" she says. \"I mark down who I trust with the racks, and it isn't you.\"",
+          "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
         }
       ]
     },
@@ -1042,7 +1079,7 @@
         {
           "id": "wm_news_hb",
           "label": "word of a Hollowbrook ledger",
-          "if": [["flag", "vell_ledger_found"]],
+          "if": [["flag", "vell_ledger_found"], ["!flag", "stole_wm_archivist_map"]],
           "once": true,
           "say": "\"Another sealed shelf opened, and this Reach didn't end because of it,\" she says, half to herself, half to the roll she still hasn't touched.",
           "fx": [["addvar", "rep_watch", 1]]
@@ -1052,6 +1089,14 @@
           "label": "leave her to the shelves",
           "say": "Shut the door. The damp gets into the ink.",
           "end": true
+        },
+        {
+          "id": "wm_archivist_theft",
+          "label": "about the survey map, since",
+          "if": [["flag", "stole_wm_archivist_map"]],
+          "once": true,
+          "say": "\"I index what's missing as carefully as what's shelved,\" the archivist says, not looking up. \"You're indexed now, too.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },

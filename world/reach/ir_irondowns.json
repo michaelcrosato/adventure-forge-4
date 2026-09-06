@@ -115,7 +115,7 @@
         {
           "id": "ir_buy_salve",
           "label": "buy a tin of miner's salve — 3 gold",
-          "if": [["!has", "ir_miners_salve"], ["var", "gold", ">=", 3]],
+          "if": [["!has", "ir_miners_salve"], ["var", "gold", ">=", 3], ["!flag", "stole_ir_company_chit"]],
           "fx": [
             ["addvar", "gold", -3],
             ["move", "ir_miners_salve", "inv"],
@@ -604,6 +604,27 @@
       "name": "Aldric's iron ring",
       "loc": "nowhere",
       "hint": "Corporal Fenn, at Highward's barracks, would want this back"
+    },
+    "ir_company_chit": {
+      "name": "a brass company chit",
+      "loc": "ir_company_store",
+      "takeable": true,
+      "owner": "ir_mirren",
+      "hint": "good for nothing outside Cinderhall's own ledger"
+    },
+    "ir_aldous_pendant": {
+      "name": "a spare iron-sun pendant",
+      "loc": "ir_chapterhouse",
+      "takeable": true,
+      "owner": "ir_aldous",
+      "hint": "cheap tin, stamped for novices"
+    },
+    "ir_ness_lantern": {
+      "name": "a headframe lantern, unlit",
+      "loc": "ir_headframe",
+      "takeable": true,
+      "owner": "ir_ness",
+      "hint": "trims low; good for one more shift"
     }
   },
   "npcs": {
@@ -884,7 +905,42 @@
           "say": "\"Word came down the road that a stranger put a name on the Thornwold wayfire,\" Aldous says. \"That's the whole of the rite, done right — a name, a fire, nothing left to fester.\"",
           "fx": [["addvar", "rep_iron", 1], ["xp", 1]]
         },
-        { "id": "bye", "label": "leave the chapterhouse", "say": "Mind the fires on your way out.", "end": true }
+        { "id": "bye", "label": "leave the chapterhouse", "say": "Mind the fires on your way out.", "end": true },
+        {
+          "id": "ir_aldous_theft",
+          "label": "about the pendant, since",
+          "if": [["flag", "stole_ir_aldous_pendant"]],
+          "once": true,
+          "say": "\"A novice's pendant, gone from my own hall.\" Aldous doesn't raise his voice. \"The chapterhouse remembers small thefts as clearly as large ones.\"",
+          "fx": [["addvar", "rep_iron", -1], ["xp", 1]]
+        },
+        {
+          "id": "ir_news_em",
+          "label": "word of the Choir of Ash",
+          "if": [["any", [["flag", "em_hollow_burned"], ["flag", "em_hollow_rested"]]]],
+          "once": true,
+          "say": "News reaches the chapterhouse from west of Thornwold, the way it always does.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "em_hollow_burned"]],
+              [
+                ["say", "\"A fifth fire at Emberfall, same as the four before it, and the Choir sings louder for it,\" Aldous says. \"Four failures should have told someone something before a fifth was ever lit.\""],
+                ["addvar", "rep_iron", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "em_hollow_rested"]],
+              [
+                ["say", "\"Word says the ridge has gone quiet, and no fire lit it quiet.\" Aldous sets down his pen and says nothing else about it."]
+              ],
+              []
+            ]
+          ]
+        }
       ]
     },
     "ir_crick": {
@@ -1096,6 +1152,14 @@
           "label": "leave Ness to the tally",
           "say": "Watch the cage on your way past. It doesn't wait for anyone.",
           "end": true
+        },
+        {
+          "id": "ir_ness_theft",
+          "label": "about the lantern, since",
+          "if": [["flag", "stole_ir_ness_lantern"]],
+          "once": true,
+          "say": "\"Headframe lanterns are numbered,\" Ness says, not unkindly. \"Mine's short one now, and so is my patience for you.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -1152,6 +1216,14 @@
             ],
             ["xp", 1]
           ]
+        },
+        {
+          "id": "ir_mirren_theft",
+          "label": "about the company chit, since",
+          "if": [["flag", "stole_ir_company_chit"]],
+          "once": true,
+          "say": "Mirren marks the ledger without looking up. \"Company goods, company eyes. I'll dock it from whatever else you're owed here, starting now.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },

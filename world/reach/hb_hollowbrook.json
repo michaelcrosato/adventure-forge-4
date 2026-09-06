@@ -129,7 +129,7 @@
         {
           "id": "hb_buy_pitch",
           "label": "buy a jar of Ironbound pitch (5 gold)",
-          "if": [["!has", "hb_pitch_jar"], ["var", "gold", ">=", 5]],
+          "if": [["!has", "hb_pitch_jar"], ["var", "gold", ">=", 5], ["!flag", "stole_hb_chandler_wax"]],
           "fx": [
             ["addvar", "gold", -5],
             ["move", "hb_pitch_jar", "inv"],
@@ -319,7 +319,28 @@
       "loc": "nowhere",
       "hint": "thick and dark — it burns however wet the ground is"
     },
-    "hb_curio_clasp": { "name": "the stag-clasp", "loc": "nowhere", "hint": "a keepsake; nothing is owed on it" }
+    "hb_curio_clasp": { "name": "the stag-clasp", "loc": "nowhere", "hint": "a keepsake; nothing is owed on it" },
+    "hb_chandler_wax": {
+      "name": "a block of scented beeswax",
+      "loc": "hb_chandler",
+      "takeable": true,
+      "owner": "hb_chandler_npc",
+      "hint": "sold by the pound, not given"
+    },
+    "hb_wren_tablet": {
+      "name": "a cracked verse-tablet",
+      "loc": "hb_keepers_hall",
+      "takeable": true,
+      "owner": "hb_keeper_wren",
+      "hint": "half a rest-verse; the rest worn away"
+    },
+    "hb_warden_seal": {
+      "name": "the mound-warden's brass seal",
+      "loc": "hb_warden_house",
+      "takeable": true,
+      "owner": "hb_warden",
+      "hint": "presses a raised hand into wax"
+    }
   },
   "npcs": {
     "hb_warden": {
@@ -354,7 +375,7 @@
         {
           "id": "key",
           "label": "a shorter road than three verses",
-          "if": [["flag", "hb_heard_warden_lore"]],
+          "if": [["flag", "hb_heard_warden_lore"], ["!flag", "stole_hb_warden_seal"]],
           "once": true,
           "say": "There's talk of a key cut for that mound once, before the doors were sealed proper. Keeper Wren would know, if she still trusts anyone that far.",
           "fx": [["xp", 1]]
@@ -457,6 +478,14 @@
           "label": "let him get back to his maps",
           "say": "Mind the ditches after dark. And give the Weeping Cairn east a wide berth after.",
           "end": true
+        },
+        {
+          "id": "hb_warden_theft",
+          "label": "about the brass seal, since",
+          "if": [["flag", "stole_hb_warden_seal"]],
+          "once": true,
+          "say": "\"That seal's pressed every writ this house has kept for thirty years,\" the warden says. \"I'll not hand you the shorter road now. Earn the long one.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -558,7 +587,15 @@
             ]
           ]
         },
-        { "id": "bye", "label": "leave him to his wax", "say": "Mind what you carry out of here.", "end": true }
+        { "id": "bye", "label": "leave him to his wax", "say": "Mind what you carry out of here.", "end": true },
+        {
+          "id": "hb_chandler_theft",
+          "label": "about the beeswax, since",
+          "if": [["flag", "stole_hb_chandler_wax"]],
+          "once": true,
+          "say": "\"I keep a close shop,\" the chandler says, not quite looking at you. \"Closer, now. My good deals were never for hands like yours.\"",
+          "fx": [["xp", 1]]
+        }
       ]
     },
     "hb_keeper_wren": {
@@ -806,6 +843,14 @@
           "label": "leave her to the ledgers",
           "say": "Go carefully among the mounds. They notice who does.",
           "end": true
+        },
+        {
+          "id": "hb_wren_theft",
+          "label": "about the verse-tablet, since",
+          "if": [["flag", "stole_hb_wren_tablet"]],
+          "once": true,
+          "say": "\"Keepers counted every tablet in this hall once,\" Wren says. \"I still do. You're the reason I started again.\"",
+          "fx": [["addvar", "rep_keepers", -1], ["xp", 1]]
         }
       ]
     },

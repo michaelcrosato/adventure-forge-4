@@ -326,7 +326,14 @@
         }
       ]
     },
-    "mg_watch_blade": { "name": "a Watch officer's blade", "loc": "nowhere", "hit": 2, "dmg": 5, "hint": "Tarn's own, once" }
+    "mg_watch_blade": { "name": "a Watch officer's blade", "loc": "nowhere", "hit": 2, "dmg": 5, "hint": "Tarn's own, once" },
+    "mg_wick_rope": {
+      "name": "a coil of new rope",
+      "loc": "mg_ropewalk_loft",
+      "takeable": true,
+      "owner": "mg_guild_elder",
+      "hint": "guild-stamped, unlike the coil in the fens"
+    }
   },
   "npcs": {
     "mg_novice_jailed": {
@@ -618,6 +625,14 @@
           "label": "leave her to the beam",
           "say": "Mind the coin doesn't talk you into anything the rope wouldn't.",
           "end": true
+        },
+        {
+          "id": "mg_wick_theft",
+          "label": "about the rope, since",
+          "if": [["flag", "stole_mg_wick_rope"]],
+          "once": true,
+          "say": "\"Guild rope's counted by the coil,\" Sarah Wick says. \"Counted twice, now that I've met you. The loft doesn't forget a light-fingered guest.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },
