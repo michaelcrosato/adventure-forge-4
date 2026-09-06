@@ -271,6 +271,12 @@
             "id": "r_pair_lys_osk_intro",
             "if": [["inParty", "osk"]],
             "say": "You pray over every grave we pass. I do not think you have noticed you do it. — Osk: \"I have noticed. I just do not expect anyone else to.\""
+          },
+          {
+            "id": "r_theft_habit",
+            "if": [["var", "thefts", ">=", 2]],
+            "say": "Twice now. That's not hunger talking. That's a habit.",
+            "fx": [["addvar", "appr_lys", -1]]
           }
         ],
         "leaves": [
@@ -701,6 +707,23 @@
             "id": "r_pair_osk_vell_intro",
             "if": [["inParty", "vell"]],
             "say": "You never ask what I believe. Only what I have read. I think that might be its own kind of respect. — Vell: \"It is. Beliefs change hourly. What you've read tends to stay put.\""
+          },
+          {
+            "id": "r_theft_church",
+            "if": [
+              [
+                "any",
+                [
+                  ["flag", "stole_va_chapel_candles"],
+                  ["flag", "stole_fd_prior_candle"],
+                  ["flag", "stole_cp_abbot_candles"],
+                  ["flag", "stole_em_wenlock_reliquary"],
+                  ["flag", "stole_mg_mother_candles"]
+                ]
+              ]
+            ],
+            "say": "From a chapel's own altar. I don't have a verse for that kind of taking.",
+            "fx": [["addvar", "appr_osk", -1]]
           }
         ],
         "leaves": [
@@ -1118,6 +1141,18 @@
             "id": "r_pair_tamsin_vell_intro",
             "if": [["inParty", "vell"]],
             "say": "You talk like every word costs you coin. I talk like I am paying for someone else's silence. We will manage. — Vell: \"An astute observation, for someone who claims not to care for words.\""
+          },
+          {
+            "id": "r_theft_any",
+            "if": [["var", "thefts", ">=", 1]],
+            "say": "You don't lift a keeper's own goods from under their nose. That's not clever. That's just taking.",
+            "fx": [["addvar", "appr_tamsin", -1]]
+          },
+          {
+            "id": "r_theft_tongs",
+            "if": [["flag", "stole_va_smith_tongs"]],
+            "say": "That's my old master's iron gone missing. Put it back, or don't call yourself square with that forge again.",
+            "fx": [["addvar", "appr_tamsin", -1]]
           }
         ],
         "leaves": [
@@ -1528,6 +1563,14 @@
             "id": "r_pair_vell_lys_intro",
             "if": [["inParty", "lys"]],
             "say": "You watch everything and say almost none of it. I find that unbearably suspicious in a person. — Lys: \"Good. Keep finding it suspicious. Means you're paying attention.\""
+          },
+          {
+            "id": "r_theft_archive",
+            "if": [
+              ["any", [["flag", "stole_hb_wren_tablet"], ["flag", "stole_cp_fost_ink"], ["flag", "stole_wm_archivist_map"]]]
+            ],
+            "say": "Whatever that was worth, it was worth more sitting where someone could still read it.",
+            "fx": [["addvar", "appr_vell", -1]]
           }
         ],
         "leaves": [

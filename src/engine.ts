@@ -565,6 +565,7 @@ function partyRemarks(world: World, s: State, events: string[]): void {
       if (s.flags[flag] || !condsOk(world, s, r.if)) continue;
       s.flags[flag] = true;
       events.push(`${def.name}: "${r.say}"`);
+      if (r.fx) applyFx(world, s, r.fx, events);
       break;
     }
   }

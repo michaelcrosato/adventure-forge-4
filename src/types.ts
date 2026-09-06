@@ -135,6 +135,7 @@ export type RemarkDef = {
   id: string;
   if?: Cond[];
   say: string;
+  fx?: Fx[]; // runs when the remark is spoken: a companion who says what they think of a theft can also think less of you
 };
 
 export type CompanionDef = {

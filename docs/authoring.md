@@ -209,6 +209,8 @@ nobody's business but the player's.
   player stays in its room — walking through costs hp, and leaving is the
   answer. Use aggressive sparingly and never on a room the main path must
   linger in.
+- A remark may carry `fx`, run when it is spoken — a companion who says what
+  they think of a theft can also think less of you (`["addvar", "appr_lys", -1]`).
 - Companions: a `companion` block (`hit`, `dmg`, `remarks`) lets `["party",
   id, "join"]` recruit them. See the design doc for who the companions are;
   their definitions live in `companions.json`. In your region, react to them

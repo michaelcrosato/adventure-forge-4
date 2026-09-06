@@ -297,7 +297,10 @@ export function validateWorld(world: World): string[] {
       checkConds(`npc ${nid} topic ${t.id}`, t.if);
       checkFx(`npc ${nid} topic ${t.id}`, t.fx);
     }
-    for (const r of npc.companion?.remarks ?? []) checkConds(`npc ${nid} remark ${r.id}`, r.if);
+    for (const r of npc.companion?.remarks ?? []) {
+      checkConds(`npc ${nid} remark ${r.id}`, r.if);
+      if (r.fx) checkFx(`npc ${nid} remark ${r.id}`, r.fx);
+    }
     for (const [i, l] of (npc.companion?.leaves ?? []).entries()) checkConds(`npc ${nid} leaves ${i}`, l.if);
   }
 

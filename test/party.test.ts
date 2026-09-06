@@ -385,6 +385,21 @@ test("blows rotate onto standing companions; one struck to nothing falls back, s
   assert.ok(!back.state.flags["down_lys"]);
 });
 
+test("a remark can carry effects: a companion who speaks their mind can also think less of you", () => {
+  const world = mini({
+    items: { purse: { name: "purse", loc: "a", takeable: true, owner: "keeper" } },
+    npcs: {
+      keeper: { name: "shopkeeper", room: "a" },
+      lys: { name: "Lys", room: "a", hp: 6, companion: { remarks: [{ id: "theft", if: [["var", "thefts", ">=", 1]], say: "That's a habit.", fx: [["addvar", "appr_lys", -1]] }] }, topics: [{ id: "join", label: "come with me", say: "Fine.", fx: [["party", "lys", "join"]], once: true }] },
+    },
+  });
+  let { state } = newState(world, 1);
+  state = doLabel(world, state, "ask Lys: come with me");
+  const out = step(world, state, actionByLabel(world, state, "take purse")!);
+  assert.match(out.events.join(" "), /Lys: "That's a habit\." Lys disapproves\./);
+  assert.equal(out.state.vars["appr_lys"], -1);
+});
+
 test("companions roll their own attacks after the player's, and a leaving companion stays behind", () => {
   const world = company();
   let { state } = newState(world, 1);
