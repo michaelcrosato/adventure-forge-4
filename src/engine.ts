@@ -1274,6 +1274,20 @@ export function step(world: World, prev: State, action: Action): StepOut {
       events.push("(* marks an optional side path not yet visited.)");
     }
   }
+  // Once, the first time something that strikes through armor stands in the
+  // room: the "armor useless" tag was read by armored players as an afterthought
+  // to the first blow, not the warning before it that it is.
+  if (!s.ended && !s.flags["_seenPierce"]) {
+    const piercer = Object.keys(world.npcs).find(
+      (id) => world.npcs[id]!.pierce && s.npcRoom[id] === s.room && !s.party.includes(id) && !npcDead(world, s, id),
+    );
+    if (piercer) {
+      s.flags["_seenPierce"] = true;
+      events.push(
+        `(${TheName(world.npcs[piercer]!.name)} strikes through armor: mail and shield count for nothing against it. Anything marked 'armor useless' in a room is such a thing — weigh it before you fight.)`,
+      );
+    }
+  }
   return { state: s, events };
 }
 

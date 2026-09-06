@@ -721,3 +721,17 @@ test("a room action that heals — a rest — heals the companions standing here
   assert.equal(out.state.hp, 7);
   assert.equal(out.state.npcHp["lys"], 3, "an item's use heals only whoever takes it");
 });
+
+// ---------- armor-piercing foes announce themselves once ----------
+test("the first time something that strikes through armor stands in the room, the game says so once", () => {
+  const world = mini({
+    npcs: { wight: { name: "barrow-wight", room: "b", hp: 6, atk: 3, hostile: true, pierce: true } },
+  });
+  let { state } = newState(world, 1);
+  let out = step(world, state, actionByLabel(world, state, "go east")!);
+  assert.ok(out.events.some((e) => /strikes through armor/.test(e)), out.events.join(" | "));
+  state = out.state;
+  out = step(world, state, actionByLabel(world, state, "go west")!);
+  out = step(world, out.state, actionByLabel(world, out.state, "go east")!);
+  assert.ok(!out.events.some((e) => /strikes through armor/.test(e)), "said once");
+});
