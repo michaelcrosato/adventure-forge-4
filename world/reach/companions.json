@@ -380,6 +380,22 @@
             "say": "A promise doesn't stop being one just because you can prove it was never going to work."
           },
           {
+            "id": "r_quarrel_lys_vell_crown_open_kept",
+            "if": [["inParty", "lys"], ["inParty", "vell"], ["flag", "va_crown_kept"], ["!flag", "quarrel_lys_vell_crown"]],
+            "say": "He's still up there grieving, and you let Vell talk you into pocketing his crown. That's not honoring him — that's just taking. — Vell: \"It's the only proof left of my own blood.\" They both look at you.",
+            "fx": [["set", "quarrel_lys_vell_crown"]]
+          },
+          {
+            "id": "r_quarrel_lys_vell_crown_grateful_lys",
+            "if": [["flag", "quarrel_lys_vell_crown_lys"]],
+            "say": "Still glad you called it plain. Grief doesn't need a keepsake to prove it happened."
+          },
+          {
+            "id": "r_quarrel_lys_vell_crown_sour_lys",
+            "if": [["flag", "quarrel_lys_vell_crown_vell"]],
+            "say": "Fine, it's evidence. It's also a dead man's crown. I haven't made peace with both being true."
+          },
+          {
             "id": "r_or_sk_em_cold",
             "if": [["any", [["flag", "or_warden_sk_cold"], ["flag", "or_warden_em_cold"]]]],
             "say": "Whoever you just talked to went cold the moment they placed you as Watch. That is exactly how my brother's Company treats outsiders."
@@ -689,6 +705,45 @@
             ["addvar", "appr_vell", -2],
             ["set", "quarrel_lys_vell_lys"],
             ["set", "quarrel_lys_vell_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_vell_crown_side_lys",
+          "label": "back Lys — an ending beats none",
+          "if": [["flag", "quarrel_lys_vell_crown"], ["!flag", "quarrel_lys_vell_crown_done"]],
+          "once": true,
+          "say": "Good. Grief doesn't get gentler with age. — Vell makes a note, unconvinced but careful about it.",
+          "fx": [
+            ["addvar", "appr_lys", 2],
+            ["addvar", "appr_vell", -2],
+            ["set", "quarrel_lys_vell_crown_lys"],
+            ["set", "quarrel_lys_vell_crown_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_vell_crown_settle",
+          "label": "call the crown's claim a draw (will)",
+          "if": [["flag", "quarrel_lys_vell_crown"], ["!flag", "quarrel_lys_vell_crown_done"]],
+          "once": true,
+          "say": "You tell them plainly the crown isn't yours to fight over between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_vell_crown_peace"],
+                ["set", "quarrel_lys_vell_crown_done"],
+                ["say", "\"...Fair. It was never mine to grieve or study for you.\" — Vell, after a moment: \"Fair. Noted. Not forgotten.\""]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_vell", -1],
+                ["set", "quarrel_lys_vell_crown_sour"],
+                ["set", "quarrel_lys_vell_crown_done"],
+                ["say", "Neither wanted that answer. — Lys watches the road; Vell writes something down without saying what."]
+              ]
+            ]
           ]
         },
         {
@@ -1033,6 +1088,22 @@
             "say": "I still say a verse for every fire we didn't stop. Even the ones you'd call sense."
           },
           {
+            "id": "r_quarrel_osk_tamsin_doors_open_sealed",
+            "if": [["inParty", "osk"], ["inParty", "tamsin"], ["flag", "va_sealed"], ["!flag", "quarrel_osk_tamsin_doors"]],
+            "say": "You had them seal it. Grief needs air to go somewhere, and now there's none. — Tamsin: \"Air doesn't stop a thing from climbing back out. The living get the safer door.\" They both look at you.",
+            "fx": [["set", "quarrel_osk_tamsin_doors"]]
+          },
+          {
+            "id": "r_quarrel_osk_tamsin_doors_grateful_osk",
+            "if": [["flag", "quarrel_osk_tamsin_doors_osk"]],
+            "say": "Thank you, still, for that. Some things shouldn't need defending twice."
+          },
+          {
+            "id": "r_quarrel_osk_tamsin_doors_sour_osk",
+            "if": [["flag", "quarrel_osk_tamsin_doors_tamsin"]],
+            "say": "The door's shut. I still say a verse at the stone, some days, on the way past."
+          },
+          {
             "id": "r_quarrel_osk_vell_grateful_osk",
             "if": [["flag", "quarrel_osk_vell_osk"]],
             "say": "Thank you. Some things a man should get to keep between himself and his god."
@@ -1345,6 +1416,45 @@
                 ["set", "quarrel_osk_vell_sour"],
                 ["set", "quarrel_osk_vell_done"],
                 ["say", "You go quiet in the way that means you mind. — Vell writes something down without saying what."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_osk_tamsin_doors_side_osk",
+          "label": "back him — grief needs the air",
+          "if": [["flag", "quarrel_osk_tamsin_doors"], ["!flag", "quarrel_osk_tamsin_doors_done"]],
+          "once": true,
+          "say": "Thank you. Some things shouldn't have to argue for room to breathe. — Tamsin just shakes her head, unconvinced.",
+          "fx": [
+            ["addvar", "appr_osk", 2],
+            ["addvar", "appr_tamsin", -2],
+            ["set", "quarrel_osk_tamsin_doors_osk"],
+            ["set", "quarrel_osk_tamsin_doors_done"]
+          ]
+        },
+        {
+          "id": "quarrel_osk_tamsin_doors_settle",
+          "label": "call the door's fate a draw (will)",
+          "if": [["flag", "quarrel_osk_tamsin_doors"], ["!flag", "quarrel_osk_tamsin_doors_done"]],
+          "once": true,
+          "say": "You tell them plainly the barrow door isn't yours to fight over between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_osk_tamsin_doors_peace"],
+                ["set", "quarrel_osk_tamsin_doors_done"],
+                ["say", "\"...Fair. The door's shut either way now.\" — Tamsin, almost gracious: \"Wasn't going to keep arguing stone.\""]
+              ],
+              [
+                ["addvar", "appr_osk", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["set", "quarrel_osk_tamsin_doors_sour"],
+                ["set", "quarrel_osk_tamsin_doors_done"],
+                ["say", "Neither wanted to let it go that easily. — Osk and Tamsin go quiet, in the way that means they mean to keep disagreeing, just not out loud."]
               ]
             ]
           ]
@@ -1689,6 +1799,22 @@
             "say": "Hope your true history's worth what it costs the next recruit who believed in that wall."
           },
           {
+            "id": "r_quarrel_osk_tamsin_doors_open_left",
+            "if": [["inParty", "osk"], ["inParty", "tamsin"], ["flag", "va_left_open"], ["!flag", "quarrel_osk_tamsin_doors"]],
+            "say": "Open to the sky, after everything that hill already let out. That's not mercy, that's just careless. — Osk: \"Grief manages worse behind a shut door too. I'd rather careless than cruel.\" They both look at you.",
+            "fx": [["set", "quarrel_osk_tamsin_doors"]]
+          },
+          {
+            "id": "r_quarrel_osk_tamsin_doors_grateful_tamsin",
+            "if": [["flag", "quarrel_osk_tamsin_doors_tamsin"]],
+            "say": "Good. One less door for something to wander back out of."
+          },
+          {
+            "id": "r_quarrel_osk_tamsin_doors_sour_tamsin",
+            "if": [["flag", "quarrel_osk_tamsin_doors_osk"]],
+            "say": "Open to the sky. Fine. I'll be the one checking that hill every season, then."
+          },
+          {
             "id": "r_or_ir_frank_or_tally",
             "if": [["any", [["flag", "or_warden_ir_frank_truth"], ["flag", "or_scholar_ir_tally_dates"]]]],
             "say": "Aldous's own truth, pulled plain instead of beaten out of him. That's the kind of dealing I trust, soldier or scholar.",
@@ -2010,6 +2136,19 @@
                 ["say", "You're as bad as a politician, near as Tamsin's concerned. — Vell says nothing, which from Vell is its own verdict."]
               ]
             ]
+          ]
+        },
+        {
+          "id": "quarrel_osk_tamsin_doors_side_tamsin",
+          "label": "back her — a door that holds",
+          "if": [["flag", "quarrel_osk_tamsin_doors"], ["!flag", "quarrel_osk_tamsin_doors_done"]],
+          "once": true,
+          "say": "Good. Someone ought to think about who's still walking past that hill. — Osk says nothing, just looks at the sealed stone a while.",
+          "fx": [
+            ["addvar", "appr_tamsin", 2],
+            ["addvar", "appr_osk", -2],
+            ["set", "quarrel_osk_tamsin_doors_tamsin"],
+            ["set", "quarrel_osk_tamsin_doors_done"]
           ]
         },
         {
@@ -2350,6 +2489,22 @@
             "say": "Thank you for not romanticizing an arrangement that was never going to hold."
           },
           {
+            "id": "r_quarrel_lys_vell_crown_open_slain",
+            "if": [["inParty", "lys"], ["inParty", "vell"], ["flag", "va_king_slain"], ["!flag", "quarrel_lys_vell_crown"]],
+            "say": "No rite, no crown returned, nothing recorded — you killed him and called it finished. — Lys: \"Finished is finished. I'd rather that than watching him grieve forever.\" They both look at you.",
+            "fx": [["set", "quarrel_lys_vell_crown"]]
+          },
+          {
+            "id": "r_quarrel_lys_vell_crown_grateful_vell",
+            "if": [["flag", "quarrel_lys_vell_crown_vell"]],
+            "say": "Thank you. I intend to treat it better than a trophy, whatever anyone assumes."
+          },
+          {
+            "id": "r_quarrel_lys_vell_crown_sour_vell",
+            "if": [["flag", "quarrel_lys_vell_crown_lys"]],
+            "say": "You called it just taking. Maybe. I still think proof of a bloodline outweighs tidiness."
+          },
+          {
             "id": "r_or_hb_mg_peer",
             "if": [["any", [["flag", "or_scholar_hb_peer"], ["flag", "or_scholar_mg_penn"]]]],
             "say": "Arguing a covenant's terms until a Keeper forgets to be wary of you — I have built a career on exactly that trick. Effective, isn't it.",
@@ -2631,6 +2786,19 @@
           ]
         },
         {
+          "id": "quarrel_lys_vell_crown_side_vell",
+          "label": "back Vell — the crown is proof",
+          "if": [["flag", "quarrel_lys_vell_crown"], ["!flag", "quarrel_lys_vell_crown_done"]],
+          "once": true,
+          "say": "Thank you. Some things matter more than being comfortable to look at. — Lys just watches the road, unconvinced.",
+          "fx": [
+            ["addvar", "appr_vell", 2],
+            ["addvar", "appr_lys", -2],
+            ["set", "quarrel_lys_vell_crown_vell"],
+            ["set", "quarrel_lys_vell_crown_done"]
+          ]
+        },
+        {
           "id": "bye_trust",
           "label": "that's enough — noted, and kept",
           "if": [["var", "appr_vell", ">=", 2]],
@@ -2804,17 +2972,22 @@
       "weight": 1
     },
     {
-      "if": [["flag", "lys_brother_home"], ["var", "appr_lys", "<", 4]],
+      "if": [
+        ["flag", "lys_brother_home"],
+        ["var", "appr_lys", "<", 4],
+        ["!flag", "lys_brother_buried"],
+        ["!flag", "lys_brother_lost"]
+      ],
       "text": "Lys brought her brother home to the Vale, and the hunter's camp is loud again, for the first time in years.",
       "weight": 1
     },
     {
-      "if": [["flag", "lys_brother_buried"]],
+      "if": [["flag", "lys_brother_buried"], ["!flag", "lys_brother_home"], ["!flag", "lys_brother_lost"]],
       "text": "Lys buried her brother east of Camp Gallows and marked the spot the way hunters mark a trail.",
       "weight": 1
     },
     {
-      "if": [["flag", "lys_brother_lost"]],
+      "if": [["flag", "lys_brother_lost"], ["!flag", "lys_brother_home"], ["!flag", "lys_brother_buried"]],
       "text": "Lys still watches the eastern road some evenings, though she's stopped saying why.",
       "weight": 1
     },
@@ -2854,7 +3027,7 @@
       "weight": 1
     },
     {
-      "if": [["flag", "osk_family_rested"], ["var", "appr_osk", "<", 4]],
+      "if": [["flag", "osk_family_rested"], ["var", "appr_osk", "<", 4], ["!flag", "osk_family_burned"]],
       "text": "Brother Osk said the rite over his own family himself, and the Church quietly stopped calling him a novice.",
       "weight": 1
     },
@@ -2879,12 +3052,12 @@
       "weight": 1
     },
     {
-      "if": [["flag", "osk_advised_worth"]],
+      "if": [["flag", "osk_advised_worth"], ["!flag", "osk_family_burned"]],
       "text": "You told Osk his verses were worth saying. He has not stopped saying them since, badly, on purpose.",
       "weight": 1
     },
     {
-      "if": [["flag", "osk_advised_superstition"]],
+      "if": [["flag", "osk_advised_superstition"], ["!flag", "osk_family_burned"]],
       "text": "You called the old rites superstition, to Osk's face. He kept saying them anyway, just not to you.",
       "weight": 1
     },
@@ -2899,12 +3072,12 @@
       "weight": 1
     },
     {
-      "if": [["flag", "tamsin_mine_avenged"], ["var", "appr_tamsin", "<", 4]],
+      "if": [["flag", "tamsin_mine_avenged"], ["var", "appr_tamsin", "<", 4], ["!flag", "ir_miners_sold"]],
       "text": "Tamsin got her answer about the mine, and made whoever lied about it answer in turn.",
       "weight": 1
     },
     {
-      "if": [["flag", "tamsin_mine_forgiven"]],
+      "if": [["flag", "tamsin_mine_forgiven"], ["!flag", "ir_miners_sold"], ["!flag", "tamsin_mine_avenged"]],
       "text": "Tamsin let the mine keep its dead in the end. She sounds tired more than angry now, when it comes up.",
       "weight": 1
     },
@@ -2929,7 +3102,7 @@
       "weight": 1
     },
     {
-      "if": [["flag", "tamsin_advised_answer"]],
+      "if": [["flag", "tamsin_advised_answer"], ["!flag", "tamsin_mine_forgiven"], ["!flag", "ir_miners_sold"]],
       "text": "You told Tamsin to make them answer for the mine. She did, and never asked if you approved.",
       "weight": 1
     },
@@ -2949,7 +3122,7 @@
       "weight": 1
     },
     {
-      "if": [["flag", "vell_ledger_found"], ["var", "appr_vell", "<", 4]],
+      "if": [["flag", "vell_ledger_found"], ["var", "appr_vell", "<", 4], ["!flag", "vell_exposed"]],
       "text": "Vell found the Keepers' ledger, and whatever it says about their birth, they carry it quietly now, on their own terms.",
       "weight": 1
     },
@@ -2974,12 +3147,12 @@
       "weight": 1
     },
     {
-      "if": [["flag", "vell_advised_truth"]],
+      "if": [["flag", "vell_advised_truth"], ["!flag", "vell_exposed"]],
       "text": "You told Vell the truth was worth knowing, whatever it cost them. They paid it, and kept walking.",
       "weight": 1
     },
     {
-      "if": [["flag", "vell_advised_burn"]],
+      "if": [["flag", "vell_advised_burn"], ["!flag", "vell_exposed"]],
       "text": "You told Vell to burn the ledger and be done. They didn't. They still wonder if you were right.",
       "weight": 1
     },
@@ -3248,6 +3421,46 @@
     {
       "if": [["flag", "quarrel_lys_vell_sour"]],
       "text": "Lys and Vell never settled it, a promise to the dead against a promise that was never real. They still travel the same road, carefully.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_tamsin_doors_osk"]],
+      "text": "You backed Osk on the barrow doors, left open for grief's sake. Tamsin still checks that hill more than she says.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_tamsin_doors_tamsin"]],
+      "text": "You backed Tamsin on the barrow doors, sealed for the living's sake. Osk still says a verse at the stone, some days.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_tamsin_doors_peace"], ["flag", "quarrel_osk_tamsin_doors_done"]],
+      "text": "You told Osk and Tamsin the barrow door wasn't theirs to fight over. They let it go, and the door stayed however it stood.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_tamsin_doors_sour"]],
+      "text": "Osk and Tamsin never settled it, grief's air against the living's safety. Neither brings up that hill anymore.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_vell_crown_lys"]],
+      "text": "You told Vell the crown was a dead man's, not a claim to make. Lys never doubted it again; Vell hasn't entirely dropped the point.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_vell_crown_vell"]],
+      "text": "You told Lys the crown was proof, not plunder. Vell keeps it carefully; Lys still calls it taking, quietly, when it comes up.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_vell_crown_peace"], ["flag", "quarrel_lys_vell_crown_done"]],
+      "text": "You told Lys and Vell the crown wasn't theirs to fight over between them. They let it go, mostly, and moved on.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_vell_crown_sour"]],
+      "text": "Lys and Vell never settled it, a dead man's crown against a bloodline's only proof. They still travel the same road, carefully.",
       "weight": 1
     },
     {
