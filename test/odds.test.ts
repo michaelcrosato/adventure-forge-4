@@ -5,7 +5,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByLabel, actionLabel, newState, oddsHint, step } from "../src/engine.ts";
+import { NEAR_MISS_CUES, actionByLabel, actionLabel, newState, oddsHint, step } from "../src/engine.ts";
 import type { Action, State, World } from "../src/types.ts";
 
 const mini = (over: Partial<World> = {}): World => ({
@@ -240,7 +240,7 @@ test("a near-miss fail (within 2 of the DC) gets an extra cue; other outcomes do
     const [, totalStr, dcStr, verdict] = m;
     const near = verdict === "fail" && Number(dcStr) - Number(totalStr) <= 2;
     const cue = events[events.indexOf(line) + 1];
-    assert.equal(cue === "So close — that one nearly landed.", near, `seed ${seed}: "${line}" -> cue "${cue}"`);
+    assert.equal(NEAR_MISS_CUES.includes(cue as (typeof NEAR_MISS_CUES)[number]), near, `seed ${seed}: "${line}" -> cue "${cue}"`);
     if (near) sawNearMiss = true;
     if (verdict === "fail" && !near) sawFarMiss = true;
   }

@@ -1090,7 +1090,7 @@
           {
             "id": "r_quarrel_osk_tamsin_doors_open_sealed",
             "if": [["inParty", "osk"], ["inParty", "tamsin"], ["flag", "va_sealed"], ["!flag", "quarrel_osk_tamsin_doors"]],
-            "say": "You had them seal it. Grief needs air to go somewhere, and now there's none. — Tamsin: \"Air doesn't stop a thing from climbing back out. The living get the safer door.\" They both look at you.",
+            "say": "You had the Vale's barrow sealed. Grief needs air to go somewhere, and now there's none. — Tamsin: \"Air doesn't stop a thing from climbing back out. The living get the safer door.\" They both look at you.",
             "fx": [["set", "quarrel_osk_tamsin_doors"]]
           },
           {
@@ -1422,7 +1422,7 @@
         },
         {
           "id": "quarrel_osk_tamsin_doors_side_osk",
-          "label": "back him — grief needs the air",
+          "label": "back Osk — the barrow needs the air",
           "if": [["flag", "quarrel_osk_tamsin_doors"], ["!flag", "quarrel_osk_tamsin_doors_done"]],
           "once": true,
           "say": "Thank you. Some things shouldn't have to argue for room to breathe. — Tamsin just shakes her head, unconvinced.",
@@ -1597,7 +1597,7 @@
           {
             "id": "r_appr_pos",
             "if": [["var", "appr_tamsin", ">=", 2]],
-            "say": "You've earned my back in a fight. That's not a small thing, coming from me."
+            "say": "You've earned my back. That's not a small thing, coming from me."
           },
           {
             "id": "r_warn",
@@ -1801,7 +1801,7 @@
           {
             "id": "r_quarrel_osk_tamsin_doors_open_left",
             "if": [["inParty", "osk"], ["inParty", "tamsin"], ["flag", "va_left_open"], ["!flag", "quarrel_osk_tamsin_doors"]],
-            "say": "Open to the sky, after everything that hill already let out. That's not mercy, that's just careless. — Osk: \"Grief manages worse behind a shut door too. I'd rather careless than cruel.\" They both look at you.",
+            "say": "The Vale's barrow left open to the sky, after everything that hill let out. That's not mercy, just careless. — Osk: \"Grief manages worse behind a shut door too. I'd rather careless than cruel.\" They both look at you.",
             "fx": [["set", "quarrel_osk_tamsin_doors"]]
           },
           {
@@ -2140,10 +2140,10 @@
         },
         {
           "id": "quarrel_osk_tamsin_doors_side_tamsin",
-          "label": "back her — a door that holds",
+          "label": "back Tamsin — the barrow should hold",
           "if": [["flag", "quarrel_osk_tamsin_doors"], ["!flag", "quarrel_osk_tamsin_doors_done"]],
           "once": true,
-          "say": "Good. Someone ought to think about who's still walking past that hill. — Osk says nothing, just looks at the sealed stone a while.",
+          "say": "Good. Someone ought to think about who's still walking past that hill. — Osk says nothing, just looks back the way of the Vale a while.",
           "fx": [
             ["addvar", "appr_tamsin", 2],
             ["addvar", "appr_osk", -2],
@@ -3424,13 +3424,23 @@
       "weight": 1
     },
     {
-      "if": [["flag", "quarrel_osk_tamsin_doors_osk"]],
+      "if": [["flag", "quarrel_osk_tamsin_doors_osk"], ["!flag", "va_sealed"]],
       "text": "You backed Osk on the barrow doors, left open for grief's sake. Tamsin still checks that hill more than she says.",
       "weight": 1
     },
     {
-      "if": [["flag", "quarrel_osk_tamsin_doors_tamsin"]],
+      "if": [["flag", "quarrel_osk_tamsin_doors_osk"], ["flag", "va_sealed"]],
+      "text": "You backed Osk against sealing the barrow, though sealed it stayed. He still says a verse at the stone, some days.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_tamsin_doors_tamsin"], ["!flag", "va_left_open"]],
       "text": "You backed Tamsin on the barrow doors, sealed for the living's sake. Osk still says a verse at the stone, some days.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_osk_tamsin_doors_tamsin"], ["flag", "va_left_open"]],
+      "text": "You backed Tamsin against the open barrow, though open it stayed. She still checks that hill more than she says.",
       "weight": 1
     },
     {

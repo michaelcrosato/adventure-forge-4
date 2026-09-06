@@ -37,15 +37,15 @@
       },
       "variants": [
         {
-          "if": [["flag", "ir_hollow_rested"], ["flag", "sv_ir_back"]],
+          "if": [["flag", "ir_hollow_rested"], ["flag", "sv_ir_back"], ["!flag", "sv_ir_after_done"]],
           "brief": "The tally board, crossed through. Talk of a stone for the Hundred."
         },
         {
-          "if": [["flag", "ir_hollow_bargained"], ["flag", "sv_ir_back"]],
+          "if": [["flag", "ir_hollow_bargained"], ["flag", "sv_ir_back"], ["!flag", "sv_ir_after_done"]],
           "brief": "The tally board, hall-kept now. Someone keeps a vigil in the Deep."
         },
         {
-          "if": [["flag", "ir_hollow_burned"], ["flag", "sv_ir_back"]],
+          "if": [["flag", "ir_hollow_burned"], ["flag", "sv_ir_back"], ["!flag", "sv_ir_after_done"]],
           "brief": "Tally board still smells of smoke. Talk of a chapterhouse plaque."
         },
         {
@@ -272,6 +272,11 @@
         ]
       ],
       "variants": [
+        {
+          "if": [["flag", "ir_hollow_bargained"]],
+          "desc": "A hall of banked forges and hung armor, every wall scorched black on purpose. A miners' hall clerk keeps the desk where Aldous kept his, and watches the door less. The street lies east.",
+          "brief": "Banked forges. A hall clerk keeps Aldous's desk now."
+        },
         {
           "if": [["flag", "ir_aldous_ruined"], ["!npcDead", "ir_aldous"]],
           "brief": "Banked forges. A junior officer minds Aldous's old desk now."
@@ -776,7 +781,6 @@
                 ["set", "tamsin_mine_truth"],
                 ["score", 5],
                 ["xp", 3],
-                ["addvar", "rep_iron", -1],
                 ["say", "Something in him finally gives. 'I signed the order. Rotten timber, and I signed it anyway, because the company said the season couldn't wait. I've burned two hollows clean since. Ask yourself why.'"]
               ],
               [
@@ -1263,7 +1267,7 @@
         },
         {
           "id": "envoy_smooth_crick",
-          "label": "turn on the charm",
+          "label": "turn on the charm (a gamble)",
           "if": [["class", "envoy"], ["flag", "said_ir_crick_greet"], ["!flag", "or_envoy_ir_smooth"]],
           "once": true,
           "say": "You lay it on warm, an easy smile. Crick just looks at you until you stop. 'Save it for someone who wasn't already digging in the dark before you were born,' he says. Whatever that charm buys, it isn't his patience.",
@@ -1333,9 +1337,17 @@
           ]
         },
         {
+          "id": "ness_claim_moot",
+          "label": "the hall's claim, now",
+          "if": [["flag", "ir_hall_backing"], ["flag", "ir_hollow_resolved"], ["!flag", "ir_hollow_bargained"]],
+          "once": true,
+          "say": "Word came down from the gallery before you did. The hall's claim can wait for a quieter year; you gave the Hundred the truth instead, and that's older than any deed.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "hound_thanks",
           "label": "the slag-hound is dealt with",
-          "if": [["any", [["npcDead", "ir_slaghound"], ["npcDead", "ir_cave1_beast"]]]],
+          "if": [["npcDead", "ir_cave1_beast"]],
           "once": true,
           "say": "That hound won't trouble the night shift again. The hall's grateful, whatever else it can't give you.",
           "fx": [["xp", 1], ["addvar", "gold", 2]]
@@ -2280,8 +2292,12 @@
     "ir_hound": {
       "name": "The Slag-Hound",
       "start": [["flag", "said_ir_ness_greet"]],
-      "done": [["any", [["npcDead", "ir_slaghound"], ["npcDead", "ir_cave1_beast"]]]],
+      "done": [["npcDead", "ir_cave1_beast"]],
       "stages": [
+        {
+          "if": [["npcDead", "ir_slaghound"], ["!npcDead", "ir_cave1_beast"]],
+          "text": "A slag-hound lies dead on the spoil, but the den is the flooded quarry: three north of the head-frame, three east."
+        },
         {
           "if": [["flag", "said_ir_ness_bounty"]],
           "text": "A slag-hound dens three north of the head-frame, then three east, where the downs open into the flooded quarry."

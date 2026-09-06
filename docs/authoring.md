@@ -218,7 +218,9 @@ nobody's business but the player's.
 - Fighting: `hp`, `atk` (damage per strike), `df` (the d20 + weapon hit +
   might total needed), `onDeath` effects. `hostile: true` only changes the
   room line (`(hostile, hp3/3)`); a non-aggressive hostile waits to be
-  attacked. **`aggressive: true`** (needs hp and atk) strikes every turn the
+  attacked. A peaceable npc with `dialogue` is not listed as a target until
+  you have spoken with them (any topic said); the option then waits at the
+  foot of the menu. **`aggressive: true`** (needs hp and atk) strikes every turn the
   player stays in its room — walking through costs hp, and leaving is the
   answer. Use aggressive sparingly and never on a room the main path must
   linger in.

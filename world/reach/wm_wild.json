@@ -78,7 +78,28 @@
           "name": "Boot-Track Hollow",
           "desc": "A shallow dip where the heather's beaten flat in a line, boot-tracks going in step and stopping nowhere in particular. Whoever left them is still walking, somewhere close.",
           "brief": "Boot-tracks, going nowhere.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "wm_sentry_watchword",
+              "label": "give it the old watchword (will)",
+              "if": [["npcHere", "wm_lost_sentry"], ["!npcDead", "wm_lost_sentry"], ["!flag", "calm_wm_lost_sentry"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  11,
+                  [
+                    ["calm", "wm_lost_sentry"],
+                    ["xp", 3],
+                    ["score", 2],
+                    ["say", "You give it the Founding's own watchword, the one every Watch recruit still learns, and it stops mid-stride. Something in the old wool remembers being relieved of a post."]
+                  ],
+                  [["say", "It doesn't break step. Whatever word it's waiting for, that wasn't it."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 1],
@@ -372,7 +393,8 @@
         "NAME": "the Peat-Cutter's Hut",
         "HERMIT": "old Hesk",
         "SIGN": "Peat bricks are stacked to the rafters, drying, more than one person could burn.",
-        "LOOT": "a peat-cutter's whetstone"
+        "LOOT": "a peat-cutter's whetstone",
+        "VOICE": "Peat takes a year to dry and a night to burn. Say what you came for."
       }
     }
   ],

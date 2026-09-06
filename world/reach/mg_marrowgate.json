@@ -645,7 +645,7 @@
     },
     "mg_old_crypts": {
       "name": "The Old Crypts",
-      "desc": "The crypts of the kings before the Reeves, robbed to the bone. A shape in gray mail stands where the gray runs thickest — the first Reeve's honour guard, four hundred years at his post, and it lunges the moment it hears a living step.",
+      "desc": "The crypts of the kings before the Reeves, robbed to the bone. A shape in gray mail stands where the gray runs thickest: the first Reeve's honour guard, four hundred years at his post. It lunges at the first living step, at whoever stands nearest.",
       "brief": "Robbed crypts. The honour guard.",
       "region": "mg",
       "exits": {
@@ -1402,7 +1402,9 @@
             ["addvar", "rep_crown", 1],
             ["addvar", "rep_iron", 1],
             ["score", 4],
-            ["xp", 3]
+            ["xp", 3],
+            ["addvar", "appr_osk", -1],
+            ["addvar", "appr_lys", -1]
           ]
         },
         {
@@ -3359,7 +3361,8 @@
         "NAME": "the Cistern Cell",
         "HERMIT": "the last keeper",
         "SIGN": "Water drips somewhere behind the wall in a rhythm too steady to be an accident.",
-        "LOOT": "a tin cup, dented but sound"
+        "LOOT": "a tin cup, dented but sound",
+        "VOICE": "Four hundred years my order kept a cellar. Sit; the drip keeps time."
       },
       "sideTrip": true,
       "landmark": "a lit cell across the water"

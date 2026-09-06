@@ -584,7 +584,7 @@
         },
         {
           "id": "envoy_charm",
-          "label": "turn your best charm on him",
+          "label": "turn your best charm on him (a gamble)",
           "if": [["class", "envoy"], ["flag", "said_va_hunter_wood"]],
           "once": true,
           "say": "He watches the trees while you talk, not you, and answers exactly as plainly as before you started. \"Wood doesn't care how well a thing's said,\" he says. \"Neither do I, much.\"",
@@ -651,6 +651,23 @@
         ["score", 3],
         ["xp", 3],
         ["say", "The husk crumbles to gray dust over the stones. Whatever held it together came apart the night the barrow opened."]
+      ]
+    }
+  },
+  "quests": {
+    "va_sortie": {
+      "name": "The Hunter's Sortie",
+      "start": [["flag", "or_warden_va_hunter_sortie"]],
+      "done": [["flag", "or_warden_va_hunter_sortie_done"]],
+      "stages": [
+        {
+          "if": [["npcDead", "va_ash_wolf"], ["npcDead", "va_gaunt_wolf"], ["npcDead", "va_lean_wolf"]],
+          "text": "All three wolves are down. Report to the hunter at his camp, west of the split oak."
+        },
+        {
+          "if": [],
+          "text": "Kill all three wolves: the charcoal ring, the clawed trunks, the leaning stones. Then report to the hunter."
+        }
       ]
     }
   }

@@ -59,6 +59,9 @@ function canon(v: unknown): string {
   return `{${keys.map((k) => `${JSON.stringify(k)}:${canon(o[k])}`).join(",")}}`;
 }
 
+/** A fail within two of the DC says so — in one of a few voices, chosen by the roll, so the line doesn't wear out. */
+export const NEAR_MISS_CUES = ["So close — that one nearly landed.", "A hair short. It nearly went.", "Nearly; the margin was a breath."] as const;
+
 export function hashState(s: State): string {
   return createHash("sha256").update(canon(s)).digest("hex").slice(0, 8);
 }
@@ -541,7 +544,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         // a fail within 2 of the DC — close enough that a player weighing
         // "try again?" benefits from knowing the attempt nearly landed,
         // distinct from a wide miss that says nothing more.
-        if (!ok && dc - total <= 2) events.push("So close — that one nearly landed.");
+        if (!ok && dc - total <= 2) events.push(NEAR_MISS_CUES[(roll + s.turn) % NEAR_MISS_CUES.length]!);
         applyFx(world, s, ok ? okFx : failFx, events);
         break;
       }
@@ -868,6 +871,13 @@ function fxEnds(fxs: Fx[] | undefined): boolean {
 /** A topic whose effects send someone out of the party. */
 const partsWays = (t: TopicDef): boolean => (t.fx ?? []).some((f) => f[0] === "party" && f[2] === "leave");
 
+/** Has any topic of this npc's been said? (the "said_<npc>_<topic>" flags) */
+function spokenWith(s: State, npc: string): boolean {
+  const prefix = `said_${npc}_`;
+  for (const f of Object.keys(s.flags)) if (f.startsWith(prefix)) return true;
+  return false;
+}
+
 export function legalActions(world: World, s: State): Action[] {
   if (s.ended) return [];
   // class first: nothing else is legal until the player picks who they are
@@ -933,9 +943,12 @@ export function legalActions(world: World, s: State): Action[] {
       for (const t of topics) out.push({ kind: "talk", npc, topic: t.id });
     }
     // companions are not targets; a stranger who has drawn no blade is one, but
-    // the option waits at the foot of the menu, after everything else here
-    if (def.hp !== undefined && !s.party.includes(npc))
-      (hostileNow(world, s, npc) ? out : late).push({ kind: "attack", npc });
+    // the option waits at the foot of the menu, after everything else here —
+    // and someone you could talk to is not one until you have talked
+    if (def.hp !== undefined && !s.party.includes(npc)) {
+      if (hostileNow(world, s, npc)) out.push({ kind: "attack", npc });
+      else if (!def.dialogue || spokenWith(s, npc)) late.push({ kind: "attack", npc });
+    }
   }
   for (const id of s.inv) {
     for (const u of world.items[id]?.use ?? []) {

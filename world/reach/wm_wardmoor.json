@@ -580,7 +580,7 @@
       "name": "the true founding record",
       "loc": "nowhere",
       "takeable": true,
-      "hint": "read it at the oath-stone: north from Highward, then east at the Last Cairn — Wardmoor's own founding; the realm's ledger is a different book, chained in Marrowgate.",
+      "hint": "read it at the oath-stone: four stands north of Highward to the moor's top, one east to the Last Cairn, then north — Wardmoor's own founding; the realm's ledger is a different book, chained in Marrowgate",
       "use": [
         {
           "if": [["!flag", "wm_read_founding_record"]],
@@ -1423,10 +1423,23 @@
         {
           "id": "scholar_peer",
           "label": "read the founding outright",
-          "if": [["class", "scholar"], ["flag", "wm_founding_known"]],
+          "if": [
+            ["class", "scholar"],
+            ["flag", "wm_founding_known"],
+            ["!has", "wm_founding_record"],
+            ["!flag", "wm_record_unsealed"],
+            ["!flag", "wm_record_stolen"]
+          ],
           "once": true,
           "say": "You read the shelf-mark aloud, archivist to archivist, and Wynne doesn't stop you. \"'Hold the road till I send word.' No word was ever sent.\" She says nothing back, which says enough.",
-          "fx": [["set", "or_scholar_wm_wynne"], ["xp", 2], ["addvar", "rep_watch", 1]]
+          "fx": [
+            ["set", "or_scholar_wm_wynne"],
+            ["xp", 2],
+            ["addvar", "rep_watch", 1],
+            ["set", "wm_record_unsealed"],
+            ["move", "wm_founding_record", "inv"],
+            ["score", 4]
+          ]
         }
       ]
     },

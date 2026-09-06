@@ -38,7 +38,7 @@
     },
     "sk_settlement": {
       "name": "The Quay, Gullhaven",
-      "desc": "Boats ride at anchor over their own wrecked kin, stove in on the bar and never cleared. Gulls work the tide line. A track climbs north, the coast road bends east, a cellar hatch drops to the old stair. Streets rise west; the Drowned Bell's sign creaks south.",
+      "desc": "Boats ride at anchor over their own wrecked kin, stove in on the bar and never cleared. A track climbs north, the coast road bends east, the shore path runs west, a hatch drops to the old stair; the high street climbs above, the Drowned Bell south.",
       "brief": "Boats over their wrecked kin, on the tide.",
       "region": "sk",
       "landmark": "Gullhaven",
@@ -55,15 +55,15 @@
       ],
       "variants": [
         {
-          "if": [["flag", "sk_hollow_rested"], ["flag", "sv_sk_back"]],
+          "if": [["flag", "sk_hollow_rested"], ["flag", "sv_sk_back"], ["!flag", "sv_sk_after_done"]],
           "brief": "Boats on the tide. The widow's asking a harder question now."
         },
         {
-          "if": [["flag", "sk_hollow_bargained"], ["flag", "sv_sk_back"]],
+          "if": [["flag", "sk_hollow_bargained"], ["flag", "sv_sk_back"], ["!flag", "sv_sk_after_done"]],
           "brief": "Boats on the tide. Spring's tithe is due, and not everyone agrees."
         },
         {
-          "if": [["flag", "sk_hollow_burned"], ["flag", "sv_sk_back"]],
+          "if": [["flag", "sk_hollow_burned"], ["flag", "sv_sk_back"], ["!flag", "sv_sk_after_done"]],
           "brief": "Smoke past the point. Wreckers and the Watch both want the Pride."
         },
         { "if": [["flag", "sk_hollow_rested"]], "brief": "Boats on the tide. The fog off the point has thinned." },
