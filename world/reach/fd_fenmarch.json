@@ -69,10 +69,41 @@
       ],
       "variants": [
         {
+          "if": [["any", [["flag", "sv_fd_rested_named"], ["flag", "sv_fd_rested_refused"]]]],
+          "desc": "Stilt-houses crowd over black water, quiet now where the singing used to carry at dusk. Nets dry everywhere, and for once a few hands are out mending them instead of just watching the water.",
+          "brief": "Reedholm's landing, quiet, nets finally mended."
+        },
+        {
+          "if": [
+            [
+              "any",
+              [["flag", "sv_fd_bargained_paid"], ["flag", "sv_fd_bargained_honored"], ["flag", "fd_bargain_broken"]]
+            ]
+          ],
+          "desc": "Stilt-houses crowd over black water. The water's tithe came due this season, one way or another, and Reedholm still stands to talk about how it went.",
+          "brief": "Reedholm's landing. The tithe came due, one way or another."
+        },
+        {
+          "if": [["any", [["flag", "sv_fd_burned_claimed"], ["flag", "sv_fd_burned_spared"]]]],
+          "desc": "Stilt-houses crowd over black water gone merely dark where the nave burned. Reedholm has already decided, one way or another, what that water is for now.",
+          "brief": "Reedholm's landing. The burned water's use, decided."
+        },
+        {
           "if": [["var", "hollows_burned", ">=", 2]],
           "desc": "Stilt-houses crowd over black water, gray planking strung rail to rail between them. A length of black ribbon is tied to the landing rail, for hollows the Reach lost to fire this year. Nets dry everywhere and nobody mends them.",
           "brief": "Reedholm's landing. A black ribbon on the rail."
         }
+      ],
+      "onEnter": [
+        [
+          "if",
+          [
+            ["any", [["flag", "fd_hollow_rested"], ["flag", "fd_hollow_bargained"], ["flag", "fd_hollow_burned"]]],
+            ["!flag", "sv_fd_back"]
+          ],
+          [["set", "sv_fd_back"]],
+          []
+        ]
       ]
     },
     "fd_net_hall": {
@@ -813,6 +844,61 @@
           "once": true,
           "say": "Halm counts the candles now before he counts the collection plate. \"Take from the drowned's own altar, and pray to them yourself next time,\" he says.",
           "fx": [["addvar", "rep_church", -1], ["xp", 1]]
+        },
+        {
+          "id": "tithe_due",
+          "label": "the first tithe",
+          "if": [["flag", "fd_hollow_bargained"]],
+          "once": true,
+          "say": "Halm says the first tithe comes due at the dark of the month — a tenth of Reedholm's catch, promised to water that keeps a better ledger than most men.",
+          "fx": [["set", "fd_heard_tithe"], ["xp", 1]]
+        },
+        {
+          "id": "tithe_pay_self",
+          "label": "pay the tithe yourself (10 gold)",
+          "if": [
+            ["flag", "fd_heard_tithe"],
+            ["var", "gold", ">=", 10],
+            ["!flag", "sv_fd_bargained_paid"],
+            ["!flag", "sv_fd_bargained_honored"],
+            ["!flag", "fd_bargain_broken"]
+          ],
+          "once": true,
+          "say": "You cover the tenth yourself, coin instead of catch. Halm takes it to the water personally, and Reedholm's nets stay full a while longer for it.",
+          "fx": [["addvar", "gold", -10], ["set", "sv_fd_bargained_paid"], ["score", 4], ["xp", 3], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "tithe_honor",
+          "label": "let the eel-market pay it as promised",
+          "if": [
+            ["flag", "fd_heard_tithe"],
+            ["!flag", "sv_fd_bargained_paid"],
+            ["!flag", "sv_fd_bargained_honored"],
+            ["!flag", "fd_bargain_broken"]
+          ],
+          "once": true,
+          "say": "The eel-market weighs out its tenth same as any other toll, grumbling about a lean season made leaner. Halm calls it faith kept. The trader calls it Tuesday.",
+          "fx": [["set", "sv_fd_bargained_honored"], ["score", 3], ["xp", 2], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "tithe_break",
+          "label": "tell Halm the water can whistle for it",
+          "if": [
+            ["flag", "fd_heard_tithe"],
+            ["!flag", "sv_fd_bargained_paid"],
+            ["!flag", "sv_fd_bargained_honored"],
+            ["!flag", "fd_bargain_broken"]
+          ],
+          "once": true,
+          "say": "Halm's face goes the color of the water outside. \"You don't renegotiate with what's drowned,\" he says. Whether the water agrees, Reedholm will learn in its own time.",
+          "fx": [
+            ["set", "sv_fd_bargained_broken"],
+            ["set", "fd_bargain_broken"],
+            ["score", 2],
+            ["xp", 2],
+            ["addvar", "rep_church", -2],
+            ["addvar", "appr_osk", -1]
+          ]
         }
       ]
     },
@@ -835,6 +921,42 @@
           "once": true,
           "say": "The water rose faster than anyone thought it could, and the Priory prayed instead of ringing the bell to run. Halm wasn't Prior then. He was young, and he watched it happen.",
           "fx": [["xp", 2], ["set", "fd_knows_sexton_hint"]]
+        },
+        {
+          "id": "missed_name",
+          "label": "a name the rite missed",
+          "if": [["flag", "fd_hollow_rested"]],
+          "once": true,
+          "say": "The sexton says one more went into that water the night of the flood — a netmender's boy who drowned reaching for the chapel steps from outside, never counted among the congregation the bell rang for.",
+          "fx": [["set", "fd_heard_missed_name"], ["xp", 1]]
+        },
+        {
+          "id": "missed_carry",
+          "label": "carry his name back to the nave",
+          "if": [["flag", "fd_heard_missed_name"], ["!flag", "sv_fd_rested_named"], ["!flag", "sv_fd_rested_refused"]],
+          "once": true,
+          "say": "You go back out to the drowned nave and speak the boy's name over the water, alone. Nothing answers. You say it anyway, and somehow that turns out to be the whole point.",
+          "fx": [
+            ["set", "sv_fd_rested_named"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 1]
+          ]
+        },
+        {
+          "id": "missed_refuse",
+          "label": "the rite was for the congregation",
+          "if": [["flag", "fd_heard_missed_name"], ["!flag", "sv_fd_rested_named"], ["!flag", "sv_fd_rested_refused"]],
+          "once": true,
+          "say": "You tell him the bell rang for the congregation, not for every soul the water ever took. The sexton nods, like he expected as much, and goes back to scraping moss that keeps coming back.",
+          "fx": [
+            ["set", "sv_fd_rested_refused"],
+            ["score", 2],
+            ["xp", 1],
+            ["addvar", "rep_church", -1],
+            ["addvar", "appr_osk", -1]
+          ]
         }
       ]
     },
@@ -966,6 +1088,42 @@
           "once": true,
           "say": "She's counted her weights twice since. \"Fingers that quick don't get my good prices anymore,\" she says, and means it.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "ash_claim",
+          "label": "a claim on the burned water",
+          "if": [["flag", "fd_hollow_burned"]],
+          "once": true,
+          "say": "The eel-trader wants to stake nets over the burned nave's water — nothing sings there to spook the catch anymore, she says — and asks you to put the idea to Halm before she does.",
+          "fx": [["set", "fd_heard_ash_claim"], ["xp", 1]]
+        },
+        {
+          "id": "ash_back",
+          "label": "back her claim to the Prior",
+          "if": [["flag", "fd_heard_ash_claim"], ["!flag", "sv_fd_burned_claimed"], ["!flag", "sv_fd_burned_spared"]],
+          "once": true,
+          "say": "You put it to Halm plainly: the dead don't need the water anymore. He doesn't argue, which is somehow worse than if he had. Her nets go in within the week.",
+          "fx": [
+            ["set", "sv_fd_burned_claimed"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_church", -1],
+            ["addvar", "appr_osk", -1]
+          ]
+        },
+        {
+          "id": "ash_refuse",
+          "label": "tell her to leave the ash in peace",
+          "if": [["flag", "fd_heard_ash_claim"], ["!flag", "sv_fd_burned_claimed"], ["!flag", "sv_fd_burned_spared"]],
+          "once": true,
+          "say": "You tell her some water stays a grave whether anything sings in it or not. She shrugs and takes her nets elsewhere, no harder feelings than a missed sale usually costs.",
+          "fx": [
+            ["set", "sv_fd_burned_spared"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_osk", 1]
+          ]
         }
       ]
     },
@@ -1246,6 +1404,41 @@
       "if": [["flag", "fd_wayside_refused"]],
       "text": "Travelers on the coast road still speak of a stranger who looked a hungry family over and kept walking.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_rested_named"]],
+      "text": "A netmender's boy the rite missed has his name said now too, alone over the drowned nave, by a stranger who thought it mattered.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_rested_refused"]],
+      "text": "One name the rite missed stays unspoken. The sexton still scrapes moss off the one tablet Reedholm agreed to remember.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_bargained_paid"]],
+      "text": "A stranger's purse paid Reedholm's first tithe. Prior Halm has never explained where exactly that coin went into the water.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_bargained_honored"]],
+      "text": "Reedholm pays its tithe from the catch, same tenth, same grumbling, every season the eel-market can least afford it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "fd_bargain_broken"]],
+      "text": "Reedholm never paid the water's tithe. The Priory doesn't say aloud what it thinks that silence is costing them.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_burned_claimed"]],
+      "text": "Nets go out now over the burned nave's water. The eel-trader doesn't say what, if anything, comes up tangled in them.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_fd_burned_spared"]],
+      "text": "The burned nave's water stays empty of nets, by Reedholm's own choice, ash or no ash, grave or no grave.",
+      "weight": 1
     }
   ],
   "quests": {
@@ -1258,6 +1451,38 @@
         {
           "if": [],
           "text": "A Reedholm mother wants word of her son, pressed into the Watch at Highward, in Wardmoor."
+        }
+      ]
+    },
+    "fd_q_after": {
+      "name": "After the Nave",
+      "start": [["flag", "sv_fd_back"]],
+      "done": [
+        [
+          "any",
+          [
+            ["flag", "sv_fd_rested_named"],
+            ["flag", "sv_fd_rested_refused"],
+            ["flag", "sv_fd_bargained_paid"],
+            ["flag", "sv_fd_bargained_honored"],
+            ["flag", "fd_bargain_broken"],
+            ["flag", "sv_fd_burned_claimed"],
+            ["flag", "sv_fd_burned_spared"]
+          ]
+        ]
+      ],
+      "stages": [
+        {
+          "if": [["flag", "fd_hollow_rested"]],
+          "text": "The old sexton has a name the rite missed. He's at the Priory cloister."
+        },
+        {
+          "if": [["flag", "fd_hollow_bargained"]],
+          "text": "Prior Halm has word of the first tithe. Find him at the Priory."
+        },
+        {
+          "if": [["flag", "fd_hollow_burned"]],
+          "text": "The eel-trader has an idea about the burned water. Find her at the market."
         }
       ]
     }

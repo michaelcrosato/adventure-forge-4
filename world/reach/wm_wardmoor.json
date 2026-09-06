@@ -61,6 +61,26 @@
       },
       "variants": [
         {
+          "if": [["any", [["flag", "sv_wm_rested_drovers"], ["flag", "sv_wm_rested_cairn"]]]],
+          "desc": "Packed gravel, wide enough to drill three companies at once. Talk on the parade runs to the old oath-ground now, and what Highward decided to do with moor that finally belongs to nobody's grief.",
+          "brief": "The parade. Talk of what the old ground's for now."
+        },
+        {
+          "if": [
+            [
+              "any",
+              [["flag", "sv_wm_bargained_paid"], ["flag", "sv_wm_bargained_honored"], ["flag", "wm_bargain_broken"]]
+            ]
+          ],
+          "desc": "Packed gravel, wide enough to drill three companies at once. However the new oath's cost got settled, the quartermaster's ledger has stopped being the topic of every second conversation.",
+          "brief": "The parade. The new oath's cost, settled, one way or another."
+        },
+        {
+          "if": [["any", [["flag", "sv_wm_burned_claimed"], ["flag", "sv_wm_burned_spared"]]]],
+          "desc": "Packed gravel, wide enough to drill three companies at once. Word of the burned oath-ground's fate has finally settled into barracks gossip instead of barracks argument.",
+          "brief": "The parade. The burned ground's fate, out of the arguing."
+        },
+        {
           "if": [["flag", "wm_hollow_rested"]],
           "brief": "The parade ground. Drill has started again, first time in years."
         },
@@ -82,6 +102,17 @@
           ],
           "free": true
         }
+      ],
+      "onEnter": [
+        [
+          "if",
+          [
+            ["any", [["flag", "wm_hollow_rested"], ["flag", "wm_hollow_bargained"], ["flag", "wm_hollow_burned"]]],
+            ["!flag", "sv_wm_back"]
+          ],
+          [["set", "sv_wm_back"]],
+          []
+        ]
       ]
     },
     "wm_armoury": {
@@ -171,7 +202,7 @@
     },
     "wm_record_house": {
       "name": "The Record-House",
-      "desc": "Shelved scrolls run floor to rafters, older toward the back, dust thickening with each generation. The archivist works by a single candle and looks up at every footstep like it might ask the wrong question. West to the hall; north onto the road.",
+      "desc": "Shelved scrolls run floor to rafters, older toward the back, dust thickening with each generation. Wynne works by a single candle and looks up at every footstep like it might ask the wrong question. West to the hall; north onto the road.",
       "brief": "Shelves of old scrolls.",
       "region": "wm",
       "exits": { "west": { "to": "wm_hall" }, "north": { "to": "wm_north_road" } },
@@ -210,7 +241,7 @@
                 ["say", "The seal gives without a sound, and the record is in your coat before the candle so much as guttered."]
               ],
               [
-                ["say", "The seal holds fast, and the archivist's pen does not so much as pause. Try again when she looks elsewhere."]
+                ["say", "The seal holds fast, and Wynne's pen does not so much as pause. Try again when she looks elsewhere."]
               ]
             ]
           ]
@@ -235,7 +266,7 @@
                 ["score", 4],
                 ["xp", 3],
                 ["addvar", "rep_watch", -1],
-                ["say", "You don't wait for a quiet moment. The seal splits under your hands in plain view, and the archivist's pen finally stops."]
+                ["say", "You don't wait for a quiet moment. The seal splits under your hands in plain view, and Wynne's pen finally stops."]
               ],
               [
                 ["say", "The seal is stouter than the shelf it's set in, and all you get for the trying is a bruised hand and her full attention."]
@@ -570,7 +601,7 @@
   },
   "npcs": {
     "wm_sgt_rook": {
-      "name": "Sergeant Rook",
+      "name": "Sergeant Hale",
       "room": "wm_parade",
       "dialogue": true,
       "desc": "Drills recruits with a voice that carries without rising, and misses nothing while she does it.",
@@ -603,8 +634,8 @@
           "label": "the wandering dead",
           "if": [["flag", "said_wm_sgt_rook_duty"]],
           "once": true,
-          "say": "Moor-wights, the drovers call them — Founding men who split off from the main company, still walking their old rounds in the mist. Put one down and I'll owe you.",
-          "fx": [["set", "wm_wight_known"], ["xp", 2], ["score", 2]]
+          "say": "Moor-wights, the drovers call them — Founding men who split off from the main company. One's taken to pacing Boot-Track Hollow, north past the Cairn Field and Twin Ruts, then east. Put it down and I'll owe you.",
+          "fx": [["set", "wm_wight_known"], ["xp", 2], ["score", 2], ["npcgo", "wm_lost_sentry", "wm_moor_3_1"]]
         },
         {
           "id": "beacon_lit",
@@ -635,7 +666,7 @@
           "label": "hand over the sealed dispatch",
           "if": [["has", "wm_sealed_letter"]],
           "once": true,
-          "say": "Rook turns the seal over once, reads the address, and nods. \"Ferris's hand. Good — she'll have worried.\" She pays you out of her own purse rather than wait on the ledger.",
+          "say": "Hale turns the seal over once, reads the address, and nods. \"Ferris's hand. Good — she'll have worried.\" She pays you out of her own purse rather than wait on the ledger.",
           "fx": [
             ["move", "wm_sealed_letter", "nowhere"],
             ["addvar", "gold", 6],
@@ -651,7 +682,7 @@
           "label": "word of light-fingered travelers",
           "if": [["var", "thefts", ">=", 2]],
           "once": true,
-          "say": "\"A corporal at the record-house has heard of light fingers working more than one hold,\" Rook says. \"Highward doesn't forget whose hands those were.\"",
+          "say": "\"A corporal at the record-house has heard of light fingers working more than one hold,\" Hale says. \"Highward doesn't forget whose hands those were.\"",
           "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
         }
       ]
@@ -681,6 +712,67 @@
           "once": true,
           "say": "The quartermaster's tally comes up short and doesn't stay quiet about it long. \"Watch-issue's Watch-issue,\" she says. \"I mark down who I trust with the racks, and it isn't you.\"",
           "fx": [["addvar", "rep_watch", -1], ["xp", 1]]
+        },
+        {
+          "id": "patrol_bill",
+          "label": "the new oath's cost",
+          "if": [["flag", "wm_hollow_bargained"]],
+          "once": true,
+          "say": "The quartermaster says the new oath put patrols on the pilgrim road that the ledger never planned rations for. Someone has to answer for the shortfall before winter does.",
+          "fx": [["set", "wm_heard_bill"], ["xp", 1]]
+        },
+        {
+          "id": "bill_pay_self",
+          "label": "cover the shortfall yourself (12 gold)",
+          "if": [
+            ["flag", "wm_heard_bill"],
+            ["var", "gold", ">=", 12],
+            ["!flag", "sv_wm_bargained_paid"],
+            ["!flag", "sv_wm_bargained_honored"],
+            ["!flag", "wm_bargain_broken"]
+          ],
+          "once": true,
+          "say": "You cover it out of your own purse. The quartermaster counts it twice, suspicious of coin that solves a problem without an argument attached to it.",
+          "fx": [
+            ["addvar", "gold", -12],
+            ["set", "sv_wm_bargained_paid"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_tamsin", 1]
+          ]
+        },
+        {
+          "id": "bill_honor",
+          "label": "let the garrison tighten its belt",
+          "if": [
+            ["flag", "wm_heard_bill"],
+            ["!flag", "sv_wm_bargained_paid"],
+            ["!flag", "sv_wm_bargained_honored"],
+            ["!flag", "wm_bargain_broken"]
+          ],
+          "once": true,
+          "say": "The garrison eats thinner through the shoulder season and says nothing about it where the recruits can hear. The oath holds. So, barely, does the ledger.",
+          "fx": [["set", "sv_wm_bargained_honored"], ["score", 3], ["xp", 2], ["addvar", "rep_watch", 1]]
+        },
+        {
+          "id": "bill_break",
+          "label": "tell her to let the patrols lapse",
+          "if": [
+            ["flag", "wm_heard_bill"],
+            ["!flag", "sv_wm_bargained_paid"],
+            ["!flag", "sv_wm_bargained_honored"],
+            ["!flag", "wm_bargain_broken"]
+          ],
+          "once": true,
+          "say": "The patrols quietly stop walking the pilgrim road inside a month. Nobody announces it. The Keepers, who trust roads more than announcements, notice anyway.",
+          "fx": [
+            ["set", "sv_wm_bargained_broken"],
+            ["set", "wm_bargain_broken"],
+            ["score", 2],
+            ["xp", 2],
+            ["addvar", "rep_keepers", -1],
+            ["addvar", "rep_watch", -1]
+          ]
         }
       ]
     },
@@ -693,7 +785,7 @@
           "id": "moor",
           "label": "the wandering dead",
           "once": true,
-          "say": "You'll hear them before you see them in a mist — boots, in step, going nowhere. Founding men, split off and lost. Sergeant Rook's the one to tell if you settle one.",
+          "say": "You'll hear them before you see them in a mist — boots, in step, going nowhere. Founding men, split off and lost. Sergeant Hale's the one to tell if you settle one.",
           "fx": [["xp", 1]]
         },
         {
@@ -780,6 +872,36 @@
             ["!flag", "rb_wm_ir_bought"]
           ],
           "say": "He just nods, the way a man nods at weather he can't do anything about."
+        },
+        {
+          "id": "peat_claim",
+          "label": "the peat-cutters and the burned ground",
+          "if": [["flag", "wm_hollow_burned"]],
+          "once": true,
+          "say": "Fenn says peat-cutters are already eyeing the scorched oath-ground, since nothing's left there to trespass against — and half the barracks thinks cutting peat off a burned oath is one indignity too many.",
+          "fx": [["set", "wm_heard_peat"], ["xp", 1]]
+        },
+        {
+          "id": "peat_allow",
+          "label": "let the peat-cutters have the ground",
+          "if": [["flag", "wm_heard_peat"], ["!flag", "sv_wm_burned_claimed"], ["!flag", "sv_wm_burned_spared"]],
+          "once": true,
+          "say": "You tell him ground's just ground once the dead are done with it. The cutters move in by the next dry spell, and half the barracks stops meeting your eye for a while.",
+          "fx": [
+            ["set", "sv_wm_burned_claimed"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_watch", -1],
+            ["addvar", "rep_free", 1]
+          ]
+        },
+        {
+          "id": "peat_refuse",
+          "label": "tell him the ash stays untouched",
+          "if": [["flag", "wm_heard_peat"], ["!flag", "sv_wm_burned_claimed"], ["!flag", "sv_wm_burned_spared"]],
+          "once": true,
+          "say": "You tell him some ground earns its rest same as a person does. Fenn looks relieved to hear someone say it, and the cutters find peat somewhere else.",
+          "fx": [["set", "sv_wm_burned_spared"], ["score", 3], ["xp", 2], ["addvar", "rep_watch", 1]]
         }
       ]
     },
@@ -890,7 +1012,43 @@
             ]
           ]
         },
-        { "id": "bye", "label": "leave her to her dispatches", "say": "Mind the cairns after dark.", "end": true }
+        { "id": "bye", "label": "leave her to her dispatches", "say": "Mind the cairns after dark.", "end": true },
+        {
+          "id": "old_ground",
+          "label": "the oath-ground, now it's quiet",
+          "if": [["flag", "wm_hollow_rested"]],
+          "once": true,
+          "say": "She says the moor around the old stone is just moor again — drovers want their old road back through it; Sergeant Hale wants a new signal-cairn there instead. She'd have your word before she picks a side.",
+          "fx": [["set", "wm_heard_ground"], ["xp", 1]]
+        },
+        {
+          "id": "ground_drovers",
+          "label": "back the drovers' old road",
+          "if": [["flag", "wm_heard_ground"], ["!flag", "sv_wm_rested_drovers"], ["!flag", "sv_wm_rested_cairn"]],
+          "once": true,
+          "say": "You tell her the road served travelers before it ever served an oath. She allows it, plainly unconvinced, and the drovers' carts start crossing the moor again by autumn.",
+          "fx": [
+            ["set", "sv_wm_rested_drovers"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_watch", -1],
+            ["addvar", "rep_free", 1]
+          ]
+        },
+        {
+          "id": "ground_cairn",
+          "label": "back the Watch's new cairn",
+          "if": [["flag", "wm_heard_ground"], ["!flag", "sv_wm_rested_drovers"], ["!flag", "sv_wm_rested_cairn"]],
+          "once": true,
+          "say": "You tell her the Watch should hold ground it just finished earning. She has the cairn raised before the season turns, and for once nobody argues the cost of it.",
+          "fx": [
+            ["set", "sv_wm_rested_cairn"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_watch", 1],
+            ["addvar", "appr_tamsin", 1]
+          ]
+        }
       ]
     },
     "wm_envoy": {
@@ -992,7 +1150,7 @@
       ]
     },
     "wm_archivist": {
-      "name": "the archivist",
+      "name": "Wynne",
       "room": "wm_record_house",
       "dialogue": true,
       "desc": "Ink-stained to the wrist, and careful with every question the way other people are careful with fire.",
@@ -1061,6 +1219,64 @@
           ]
         },
         {
+          "id": "pry_seal",
+          "label": "pry the seal loose (grace)",
+          "if": [
+            ["flag", "wm_founding_known"],
+            ["!has", "wm_founding_record"],
+            ["!flag", "wm_record_unsealed"],
+            ["!flag", "wm_record_stolen"]
+          ],
+          "say": "You don't wait for leave.",
+          "fx": [
+            [
+              "check",
+              "grace",
+              11,
+              [
+                ["set", "wm_record_stolen"],
+                ["move", "wm_founding_record", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_watch", -1],
+                ["say", "The seal gives without a sound, and the record is in your coat before Wynne looks up from her page."]
+              ],
+              [
+                ["say", "The seal holds fast, and Wynne's pen does not so much as pause. Try again when she looks elsewhere."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "break_seal_talk",
+          "label": "break the seal in front of her (might)",
+          "if": [
+            ["flag", "wm_founding_known"],
+            ["!has", "wm_founding_record"],
+            ["!flag", "wm_record_unsealed"],
+            ["!flag", "wm_record_stolen"]
+          ],
+          "say": "You don't wait for leave either.",
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "wm_record_stolen"],
+                ["move", "wm_founding_record", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_watch", -1],
+                ["say", "The seal splits under your hands in plain view, and Wynne's pen finally stops."]
+              ],
+              [
+                ["say", "The seal is stouter than the shelf it's set in, and all you get for the trying is a bruised hand and her full attention."]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "after_unsealed",
           "label": "the record you were given",
           "if": [["flag", "wm_record_unsealed"]],
@@ -1095,7 +1311,7 @@
           "label": "about the survey map, since",
           "if": [["flag", "stole_wm_archivist_map"]],
           "once": true,
-          "say": "\"I index what's missing as carefully as what's shelved,\" the archivist says, not looking up. \"You're indexed now, too.\"",
+          "say": "\"I index what's missing as carefully as what's shelved,\" Wynne says, not looking up. \"You're indexed now, too.\"",
           "fx": [["xp", 1]]
         }
       ]
@@ -1142,7 +1358,7 @@
           "label": "report his wavering to the sergeant",
           "if": [["flag", "fd_asked_perrin"], ["flag", "wm_perrin_torn"], ["!flag", "rb_fd_wm_done"]],
           "once": true,
-          "say": "Sergeant Rook hears it plain and takes him aside herself. Perrin doesn't thank you for it. He also doesn't run.",
+          "say": "Sergeant Hale hears it plain and takes him aside herself. Perrin doesn't thank you for it. He also doesn't run.",
           "fx": [["set", "rb_fd_wm_reported"], ["set", "rb_fd_wm_done"], ["addvar", "rep_watch", 2], ["score", 3], ["xp", 2]]
         },
         {
@@ -1177,6 +1393,41 @@
     {
       "if": [["flag", "wm_dispatch_delivered"]],
       "text": "Ferris's letter reached Highward after all, carried the last mile out of a roadside ditch by a stranger's hand."
+    },
+    {
+      "if": [["flag", "sv_wm_rested_drovers"]],
+      "text": "Drovers' carts cross the old oath-ground again, same road it always was before four centuries made it sacred and then just sad.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_wm_rested_cairn"]],
+      "text": "A new signal-cairn stands on the old oath-ground now. The Watch held ground it just finished earning, and means to keep it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_wm_bargained_paid"]],
+      "text": "A stranger's coin quietly covered the new oath's first winter. The quartermaster has never once mentioned it since.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_wm_bargained_honored"]],
+      "text": "Highward's garrison still eats a little thinner some winters, the new oath's own quiet cost, and nobody there calls it unfair.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "wm_bargain_broken"]],
+      "text": "The patrols on the pilgrim road stopped inside a season. The Keepers still walk it anyway, and still notice they're alone.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_wm_burned_claimed"]],
+      "text": "Peat comes up off the burned oath-ground now, same as any other cutting. Half of Highward still won't burn it in their own hearths.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_wm_burned_spared"]],
+      "text": "The burned oath-ground lies uncut, by Highward's own choice. The peat-cutters found other ground, and didn't complain twice.",
+      "weight": 1
     }
   ],
   "quests": {
@@ -1192,6 +1443,38 @@
         {
           "if": [],
           "text": "Corporal Fenn pawned a dead partner's ring to Cinderhall's company store, years back. Find it there."
+        }
+      ]
+    },
+    "wm_q_after": {
+      "name": "After the Oath",
+      "start": [["flag", "sv_wm_back"]],
+      "done": [
+        [
+          "any",
+          [
+            ["flag", "sv_wm_rested_drovers"],
+            ["flag", "sv_wm_rested_cairn"],
+            ["flag", "sv_wm_bargained_paid"],
+            ["flag", "sv_wm_bargained_honored"],
+            ["flag", "wm_bargain_broken"],
+            ["flag", "sv_wm_burned_claimed"],
+            ["flag", "sv_wm_burned_spared"]
+          ]
+        ]
+      ],
+      "stages": [
+        {
+          "if": [["flag", "wm_hollow_rested"]],
+          "text": "The Captain-General wants your word on the old oath-ground. Find her in the hall."
+        },
+        {
+          "if": [["flag", "wm_hollow_bargained"]],
+          "text": "The quartermaster has a bill for the new oath's cost. Find her in the armoury."
+        },
+        {
+          "if": [["flag", "wm_hollow_burned"]],
+          "text": "Corporal Fenn has word of peat-cutters eyeing the burned ground. Find him in the barracks."
         }
       ]
     }

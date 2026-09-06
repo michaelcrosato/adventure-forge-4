@@ -78,6 +78,26 @@
       },
       "variants": [
         {
+          "if": [["any", [["flag", "sv_th_rested_named"], ["flag", "sv_th_rested_clean"]]]],
+          "desc": "A ring of sharpened stakes and old rope, the dead oak quiet inside it now. A fresh-cut stone stands by the gate, the mason still finishing the lettering, and off-duty Company men stop to read it going past.",
+          "brief": "The palisade. A new stone by the gate, freshly cut."
+        },
+        {
+          "if": [
+            [
+              "any",
+              [["flag", "sv_th_bargained_paid"], ["flag", "sv_th_bargained_honored"], ["flag", "th_bargain_broken"]]
+            ]
+          ],
+          "desc": "A ring of sharpened stakes and old rope, the camp's odd solemn quiet settled into something ordinary again. Whatever the oath's old toll cost the Company, one way or another, it is behind them now.",
+          "brief": "The palisade. The oath's old toll, behind them now."
+        },
+        {
+          "if": [["any", [["flag", "sv_th_burned_harsh"], ["flag", "sv_th_burned_spared"]]]],
+          "desc": "A ring of sharpened stakes and old rope. The dead oak stands black and bare inside the palisade; what the camp decided to do with that bareness, everyone here already knows.",
+          "brief": "The palisade. The camp's made its peace with the ash."
+        },
+        {
           "if": [["flag", "th_hollow_burned"]],
           "desc": "The dead oak stands black as ever inside the palisade, but the wind now carries a second smoke from west in the wood, one that does not smell of cooking fires.",
           "brief": "The palisade. A second smoke, west."
@@ -100,6 +120,15 @@
           "if",
           [["flag", "lys_brother_home"], ["!flag", "th_cal_gone"]],
           [["npcgo", "th_cal", null], ["set", "th_cal_gone"]],
+          []
+        ],
+        [
+          "if",
+          [
+            ["any", [["flag", "th_hollow_rested"], ["flag", "th_hollow_bargained"], ["flag", "th_hollow_burned"]]],
+            ["!flag", "sv_th_back"]
+          ],
+          [["set", "sv_th_back"]],
           []
         ]
       ]
@@ -578,6 +607,42 @@
             ["addvar", "appr_lys", 1],
             ["addvar", "appr_osk", 1],
             ["say", "You speak the verse Keeper Rowan taught you, plain and unhurried. Whatever it says, it says what they needed to hear — the turning slows, and stops, and does not start again."]
+          ]
+        },
+        {
+          "id": "th_rest_names",
+          "label": "read the names cut into the tree (wits)",
+          "if": [["!flag", "th_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              12,
+              [
+                ["set", "th_hollow_done"],
+                ["set", "th_hollow_rested"],
+                ["addvar", "hollows_rested", 1],
+                ["score", 25],
+                ["xp", 8],
+                ["addvar", "rep_keepers", 2],
+                ["addvar", "rep_free", 1],
+                ["addvar", "appr_lys", 1],
+                ["addvar", "appr_osk", 1],
+                ["say", "You find the dozen names cut into the trunk, weathered but readable if you know where the knife bit deepest, and speak each one back to the tree in the right order. The turning stops before you reach the last."]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "th_rest_names_missed"]],
+                  [
+                    ["set", "th_rest_names_missed"],
+                    ["addvar", "rep_keepers", -1],
+                    ["say", "The cuts blur together under your fingers, half of them guesses by now, and a name given wrong to the dead is a thing the Keepers will hear of, and not kindly."]
+                  ],
+                  [["say", "The cuts blur together under your fingers, half of them guesses by now. It can be tried again."]]
+                ]
+              ]
+            ]
           ]
         },
         {
@@ -1083,7 +1148,7 @@
         {
           "id": "bye",
           "label": "leave her to the map",
-          "say": "Mind the toll on your way out. Company rules, not mine.",
+          "say": "Mind the toll on your way out. They're mine to answer for, same as any of my Company.",
           "end": true
         },
         {
@@ -1130,6 +1195,50 @@
           "once": true,
           "say": "\"Company pay went missing off my own table,\" Vane says, flat. \"I've named worse for less. Don't test how much worse.\"",
           "fx": [["addvar", "rep_free", -1], ["xp", 1]]
+        },
+        {
+          "id": "gallows_stone",
+          "label": "the glade's memorial stone",
+          "if": [["flag", "th_hollow_rested"]],
+          "once": true,
+          "say": "Vane wants the dead named properly on stone this time — and asks whether the officer who signed the false charge, the name ringed twice in that old tin box, belongs carved beside them.",
+          "fx": [["set", "th_heard_stone_ask"], ["xp", 1]]
+        },
+        {
+          "id": "stone_shame",
+          "label": "carve his name in shame beside theirs",
+          "if": [["flag", "th_heard_stone_ask"], ["!flag", "sv_th_rested_named"], ["!flag", "sv_th_rested_clean"]],
+          "once": true,
+          "say": "You tell her the truth belongs on the stone too, guilty or not. Vane sets a mason to it herself, the officer's name cut smaller than the rest, but cut all the same.",
+          "fx": [
+            ["set", "sv_th_rested_named"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "rep_free", -1]
+          ]
+        },
+        {
+          "id": "stone_clean",
+          "label": "leave the stone to the hanged alone",
+          "if": [["flag", "th_heard_stone_ask"], ["!flag", "sv_th_rested_named"], ["!flag", "sv_th_rested_clean"]],
+          "once": true,
+          "say": "You tell her some names don't deserve the company. Vane nods, relieved more than she'll say, and the mason cuts only the Company's own, clean and plain.",
+          "fx": [
+            ["set", "sv_th_rested_clean"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_free", 1],
+            ["addvar", "rep_keepers", -1]
+          ]
+        },
+        {
+          "id": "rook_camp",
+          "label": "the poacher skimming your tolls",
+          "if": [["flag", "said_th_vane_greet"]],
+          "once": true,
+          "say": "Rook. Camped two stands west of here, then one north — past Fox Crossing, at what's left of an old snare-line we call the Rope Larder. Skims coin off travelers before my toll-men ever see it.",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -1232,6 +1341,60 @@
             ["!flag", "rb_th_fd_water"]
           ],
           "say": "Not yet. Word from Fenmarch travels slower than most, and slower still through me."
+        },
+        {
+          "id": "oath_toll",
+          "label": "the oath's old toll",
+          "if": [["flag", "th_hollow_bargained"]],
+          "once": true,
+          "say": "Bray says the living Company swore that oath in dead men's own names — and dead men's names carried a toll to Marrowgate, unpaid since before the hanging. It's come due, and someone has to answer for it.",
+          "fx": [["set", "th_heard_toll"], ["xp", 1]]
+        },
+        {
+          "id": "toll_pay_self",
+          "label": "pay the old toll yourself (12 gold)",
+          "if": [
+            ["flag", "th_heard_toll"],
+            ["var", "gold", ">=", 12],
+            ["!flag", "sv_th_bargained_paid"],
+            ["!flag", "sv_th_bargained_honored"],
+            ["!flag", "th_bargain_broken"]
+          ],
+          "once": true,
+          "say": "You count it out yourself, coin for a debt no one living actually owed. Bray marks the ledger square without a word of thanks — that's thanks enough, from him.",
+          "fx": [["addvar", "gold", -12], ["set", "sv_th_bargained_paid"], ["score", 4], ["xp", 3], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "toll_honor",
+          "label": "let the Company pay it from the tolls",
+          "if": [
+            ["flag", "th_heard_toll"],
+            ["!flag", "sv_th_bargained_paid"],
+            ["!flag", "sv_th_bargained_honored"],
+            ["!flag", "th_bargain_broken"]
+          ],
+          "once": true,
+          "say": "The Company pays it out of its own toll-take, grumbling the whole while. Bray notes it clean in the ledger. An oath sworn in dead men's names, it turns out, still costs the living.",
+          "fx": [["set", "sv_th_bargained_honored"], ["score", 3], ["xp", 2], ["addvar", "rep_free", -1]]
+        },
+        {
+          "id": "toll_break",
+          "label": "tell him to void the oath's debt",
+          "if": [
+            ["flag", "th_heard_toll"],
+            ["!flag", "sv_th_bargained_paid"],
+            ["!flag", "sv_th_bargained_honored"],
+            ["!flag", "th_bargain_broken"]
+          ],
+          "once": true,
+          "say": "Bray strikes the toll from the ledger at your word, and something in the set of his jaw says he'll remember you asked. An oath half-kept is a debt the Keepers count differently than Bray does.",
+          "fx": [
+            ["set", "sv_th_bargained_broken"],
+            ["set", "th_bargain_broken"],
+            ["score", 2],
+            ["xp", 2],
+            ["addvar", "rep_keepers", -2]
+          ]
         }
       ]
     },
@@ -1243,7 +1406,7 @@
           "id": "gossip",
           "label": "camp gossip",
           "once": true,
-          "say": "Everyone here's heard the tree groan at night. Half think it's the wind. There's talk of Keepers hiding somewhere deep in the wood, and a fool in the stockade who dug up something he shouldn't have.",
+          "say": "Everyone here's heard the tree groan at night. Half think it's the wind. Keepers hide west in the wood — past five stands, at its far corner — and a fool in the stockade dug up something he shouldn't have.",
           "fx": [["set", "th_heard_understory"], ["xp", 2], ["score", 2]]
         },
         {
@@ -1297,6 +1460,43 @@
                 ["addvar", "rep_watch", -1]
               ]
             ]
+          ]
+        },
+        {
+          "id": "hardening",
+          "label": "the talk of a new gallows",
+          "if": [["flag", "th_hollow_burned"]],
+          "once": true,
+          "say": "Coe says with the old dead gone quiet for good, some in camp want the glade put back to its old use — Company discipline, quick and visible, same tree.",
+          "fx": [["set", "th_heard_hardening"], ["xp", 1]]
+        },
+        {
+          "id": "harden_back",
+          "label": "back the harsher discipline",
+          "if": [["flag", "th_heard_hardening"], ["!flag", "sv_th_burned_harsh"], ["!flag", "sv_th_burned_spared"]],
+          "once": true,
+          "say": "You tell her a camp needs teeth. The old tree gets a new rope before the week's out, and the dicing, at least, gets loud again.",
+          "fx": [
+            ["set", "sv_th_burned_harsh"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_free", 1],
+            ["addvar", "rep_watch", -1],
+            ["addvar", "appr_lys", -1]
+          ]
+        },
+        {
+          "id": "harden_refuse",
+          "label": "tell her the glade's hanged enough",
+          "if": [["flag", "th_heard_hardening"], ["!flag", "sv_th_burned_harsh"], ["!flag", "sv_th_burned_spared"]],
+          "once": true,
+          "say": "You tell her one burning was reckoning enough for one lifetime. Coe shrugs, unconvinced, but the tree stays bare, and stays only a tree.",
+          "fx": [
+            ["set", "sv_th_burned_spared"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_watch", 1],
+            ["addvar", "appr_lys", 1]
           ]
         }
       ]
@@ -1679,7 +1879,7 @@
       "hp": 6,
       "atk": 2,
       "df": 9,
-      "desc": "Two in patched Company colors, a dicing crate between them and a pole they'd rather not lift for free.",
+      "desc": "Two in patched Company colors, a dicing crate between them and a pole they'd rather not lift for free. Kill Company men and the Companies remember it, toll or no toll.",
       "onDeath": [
         [
           "if",
@@ -2018,7 +2218,7 @@
         },
         {
           "if": [],
-          "text": "Keepers hide in the wood. From Camp Gallows go west to the far side, then north one stand: the black thorn opens north."
+          "text": "Keepers hide in the wood: west five stands from Camp Gallows to the Listening Break, then north twice."
         }
       ]
     },
@@ -2057,7 +2257,7 @@
         },
         {
           "if": [],
-          "text": "Vane will bring the Company to the glade when you can lead the words: a verse, the pardon, or an oath."
+          "text": "Rest them at the glade: the Keeper's verse, the true pardon, a remembered oath, or the names cut into the tree (wits)."
         }
       ]
     },
@@ -2096,7 +2296,7 @@
       "stages": [
         {
           "if": [],
-          "text": "A poacher named Rook is skimming Camp Gallows' tolls from a camp in the deep wood. Pay him, fight him, or talk him down."
+          "text": "Rook's camp is west of Camp Gallows, past Fox Crossing then north, at the Rope Larder. Pay, fight, or talk him down."
         }
       ]
     },
@@ -2131,6 +2331,38 @@
         {
           "if": [],
           "text": "Bray's dead-letter box gave up one more paper. Carry it east to Fenmarch and decide its fate."
+        }
+      ]
+    },
+    "th_q_after": {
+      "name": "After the Glade",
+      "start": [["flag", "sv_th_back"]],
+      "done": [
+        [
+          "any",
+          [
+            ["flag", "sv_th_rested_named"],
+            ["flag", "sv_th_rested_clean"],
+            ["flag", "sv_th_bargained_paid"],
+            ["flag", "sv_th_bargained_honored"],
+            ["flag", "th_bargain_broken"],
+            ["flag", "sv_th_burned_harsh"],
+            ["flag", "sv_th_burned_spared"]
+          ]
+        ]
+      ],
+      "stages": [
+        {
+          "if": [["flag", "th_hollow_rested"]],
+          "text": "Captain Vane wants a word about a stone for the glade. Find her at her tent."
+        },
+        {
+          "if": [["flag", "th_hollow_bargained"]],
+          "text": "Quartermaster Bray has a tally to settle — the oath's old toll. Find him at the wagon."
+        },
+        {
+          "if": [["flag", "th_hollow_burned"]],
+          "text": "Sergeant Coe wants to talk over what the glade's ash is good for now. Find her at the muster ground."
         }
       ]
     }
@@ -2197,6 +2429,41 @@
     {
       "if": [["flag", "rb_hb_th_refused"]],
       "text": "The Understory answered Barrowmere with nothing at all. Two Halls, and now two separate silences.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_th_rested_named"]],
+      "text": "The gallows stone names the hanged and the officer who hanged them falsely both. Camp Gallows reads all of it now.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_th_rested_clean"]],
+      "text": "The gallows stone names only the Company's own dead. Whoever signed the false charge stays nameless, by Camp Gallows' choice.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_th_bargained_paid"]],
+      "text": "A stranger's coin paid off an oath's old toll at Camp Gallows, and Bray's ledger has never balanced so easily since.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_th_bargained_honored"]],
+      "text": "The Free Company pays its oath's old toll from its own take every year, and grumbles every year exactly the same amount.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "th_bargain_broken"]],
+      "text": "Camp Gallows never paid the oath's old toll. The Keepers have not forgotten who told Bray to strike it from the ledger.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_th_burned_harsh"]],
+      "text": "The gallows tree at Camp Gallows hangs a new rope now, Company discipline, same as it ever was before the fire.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_th_burned_spared"]],
+      "text": "The gallows tree at Camp Gallows stands bare and stays bare. Camp Gallows decided one burning was reckoning enough.",
       "weight": 1
     }
   ]

@@ -62,7 +62,7 @@
         {
           "cell": [1, 1],
           "name": "Tower Rise",
-          "desc": "A shoulder of higher ground, and on it a signal tower gone to ruin, roofless, its stair still climbing into the wet air. Sergeant Rook's dark beacon, if the rumor's true, stands south of here.",
+          "desc": "A shoulder of higher ground, and on it a signal tower gone to ruin, roofless, its stair still climbing into the wet air. Sergeant Hale's dark beacon, if the rumor's true, stands south of here.",
           "brief": "The ruined tower rises here.",
           "onEnterOnce": [["xp", 2]]
         },
@@ -133,7 +133,7 @@
                   [
                     ["set", "wm_beacon_reported"],
                     ["xp", 2],
-                    ["say", "The cresset's rusted through at the base — light it and it comes down with whoever's standing under it. Worth telling Sergeant Rook plainly."]
+                    ["say", "The cresset's rusted through at the base — light it and it comes down with whoever's standing under it. Worth telling Sergeant Hale plainly."]
                   ],
                   [["say", "Rust and rot, but you can't be certain past that without climbing it yourself."]]
                 ]
@@ -299,7 +299,7 @@
             [
               [
                 "if",
-                [["!npcDead", "wm_lost_sentry"]],
+                [["!npcDead", "wm_lost_sentry"], ["!flag", "wm_wight_known"]],
                 [
                   ["npcgo", "wm_lost_sentry", "here"],
                   ["say", "The mist thickens, and boots fall into step behind you — in time, unhurried, and not yours."]
