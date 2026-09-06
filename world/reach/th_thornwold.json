@@ -306,7 +306,7 @@
         },
         {
           "id": "th_haggle_cal_debt",
-          "label": "haggle Cal's debt (Envoy, 6 gold)",
+          "label": "haggle Cal's debt (6 gold)",
           "if": [
             ["class", "envoy"],
             ["flag", "lys_brother_found"],
@@ -338,7 +338,7 @@
         },
         {
           "id": "th_wagon_gap_scout",
-          "label": "check under the wagon's boards (Scout)",
+          "label": "check under the wagon's boards",
           "if": [["class", "scout"]],
           "once": true,
           "free": true,
@@ -891,7 +891,7 @@
         },
         {
           "id": "th_toll_warden",
-          "label": "let your bearing speak (Warden)",
+          "label": "let your bearing speak",
           "if": [["class", "warden"], ["!flag", "th_toll_resolved"]],
           "fx": [
             ["set", "th_toll_resolved"],
@@ -1022,7 +1022,7 @@
         },
         {
           "id": "th_waymarker_scholar",
-          "label": "read the waymarker outright (Scholar)",
+          "label": "read the waymarker outright",
           "if": [["class", "scholar"], ["!flag", "th_waymarker_resolved"]],
           "fx": [
             ["set", "th_waymarker_resolved"],
@@ -1900,7 +1900,7 @@
         },
         {
           "id": "scout_trade",
-          "label": "trade him professional respect (Scout)",
+          "label": "trade him professional respect",
           "if": [["class", "scout"], ["!flag", "th_rook_dealt"]],
           "once": true,
           "say": "You don't offer coin or a threat, just a nod that says you know exactly what he's running here. He nods back, slower. \"...Fair enough. One quiet hand to another.\" He tosses you his own blade, grip-first.",
@@ -1958,6 +1958,14 @@
           "once": true,
           "say": "Every barrow, every hollow place, once had a keeper who spoke for the dead so the living wouldn't have to. The Reeve's line let that lapse, hold by hold. We're what's left of remembering how.",
           "fx": [["set", "th_heard_covenant"], ["xp", 2]]
+        },
+        {
+          "id": "other_keepers",
+          "label": "are any other keepers left",
+          "if": [["flag", "said_th_rowan_covenant"]],
+          "once": true,
+          "say": "One or two, if the years were kind — Hollowbrook kept a hall once. Find whoever's left there and tell them the Understory still stands, and still answers.",
+          "fx": [["xp", 1]]
         },
         {
           "id": "company_lore",
@@ -2252,7 +2260,17 @@
           "name": "The Heartwood Hollow",
           "desc": "A shallow bowl in the land where the oldest trees stand thickest, canopy closed enough to dim midday to dusk.",
           "brief": "Old growth, closed canopy.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_heartwood_bearings",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [
+                ["say", "From the Heartwood: the gallows road two stands west; the Understory two west, one north; the Cutter's Barrow one east, two north; the Denhollow two west, one south; the Long Watch one east, two south."]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 2],
@@ -2466,7 +2484,7 @@
         },
         {
           "if": [],
-          "text": "Rest them at the glade: the Keeper's verse, the true pardon, a remembered oath, or the names cut into the tree (wits)."
+          "text": "Rest them at the Gallows Glade, eight stands west past the Waiting Bough: verse, pardon, oath, or the tree's names."
         }
       ]
     },

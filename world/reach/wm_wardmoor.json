@@ -158,7 +158,7 @@
         },
         {
           "id": "wm_armoury_scout",
-          "label": "check behind the shield racks (Scout)",
+          "label": "check behind the shield racks",
           "if": [["class", "scout"]],
           "once": true,
           "free": true,
@@ -463,7 +463,7 @@
         },
         {
           "id": "wm_courier_scholar",
-          "label": "read the letter outright (Scholar)",
+          "label": "read the letter outright",
           "if": [["class", "scholar"], ["!flag", "wm_courier_resolved"]],
           "fx": [
             ["set", "wm_courier_resolved"],
@@ -540,7 +540,7 @@
         },
         {
           "id": "wm_checkpoint_warden",
-          "label": "show them your bearing (Warden)",
+          "label": "show them your bearing",
           "if": [["class", "warden"], ["!flag", "wm_checkpoint_resolved"]],
           "fx": [
             ["set", "wm_checkpoint_resolved"],
@@ -724,7 +724,7 @@
         {
           "id": "warden_frank",
           "label": "ask her to size up the garrison, plainly",
-          "if": [["class", "warden"], ["flag", "said_wm_sgt_rook_duty"]],
+          "if": [["class", "warden"], ["flag", "said_wm_sgt_rook_greet"]],
           "once": true,
           "say": "She drops the drillyard voice for a soldier's honesty. \"Half these recruits couldn't hold the wall a season back. You could. Wish I could put that in a report the Captain-General would read.\"",
           "fx": [["set", "or_warden_wm_hale"], ["xp", 2], ["addvar", "rep_watch", 1]]
@@ -820,7 +820,7 @@
         },
         {
           "id": "envoy_split",
-          "label": "split the shortfall (Envoy, 6 gold)",
+          "label": "split the shortfall (6 gold)",
           "if": [
             ["class", "envoy"],
             ["flag", "wm_heard_bill"],
@@ -998,6 +998,14 @@
           "once": true,
           "say": "I do, for as long as the moor lets me. Four hundred years of Captain-Generals before me, and every one of them swore the same oath at the same stone.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "warden_report",
+          "label": "report yourself, soldier to soldier",
+          "if": [["class", "warden"], ["flag", "said_wm_captain_general_greet"]],
+          "once": true,
+          "say": "She looks up from the dispatch half a breath longer than she gives anyone else who walks in unannounced. \"Old watch, by your stance. Highward could use a few more who don't need telling twice.\"",
+          "fx": [["set", "or_warden_wm_general"], ["xp", 2], ["addvar", "rep_watch", 1]]
         },
         {
           "id": "founding",
@@ -1414,7 +1422,7 @@
         },
         {
           "id": "scholar_peer",
-          "label": "read the founding outright (Scholar)",
+          "label": "read the founding outright",
           "if": [["class", "scholar"], ["flag", "wm_founding_known"]],
           "once": true,
           "say": "You read the shelf-mark aloud, archivist to archivist, and Wynne doesn't stop you. \"'Hold the road till I send word.' No word was ever sent.\" She says nothing back, which says enough.",
@@ -1543,6 +1551,11 @@
     {
       "if": [["flag", "or_warden_wm_hale"]],
       "text": "Sergeant Hale still says one Warden could have held the wall better than half her recruits, and told her so plainly.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "or_warden_wm_general"]],
+      "text": "The Captain-General still keeps a Warden's name on the short list of soldiers she'd trust with the wall unwatched.",
       "weight": 1
     },
     {

@@ -156,7 +156,7 @@
       "actions": [
         {
           "id": "va_flagstone_scout",
-          "label": "look under the swept flagstone (Scout)",
+          "label": "look under the swept flagstone",
           "if": [["class", "scout"]],
           "once": true,
           "free": true,
@@ -221,7 +221,7 @@
         },
         {
           "id": "va_ledger_scholar",
-          "label": "read the crossed name outright (Scholar)",
+          "label": "read the crossed name outright",
           "if": [["class", "scholar"]],
           "once": true,
           "fx": [
@@ -393,8 +393,8 @@
           "label": "ask about the doors, left open",
           "if": [["flag", "va_left_open"], ["!flag", "va_broke_promise"]],
           "once": true,
-          "say": "You left his doors open to the sky. The village will learn to live with that, or it won't.",
-          "fx": [["xp", 1]]
+          "say": "You left his doors open to the sky. No promise broken — you never gave me one. Still, the Watch marks what stands open on my patch, promised or not.",
+          "fx": [["xp", 1], ["addvar", "rep_watch", -1]]
         },
         {
           "id": "scrap",
