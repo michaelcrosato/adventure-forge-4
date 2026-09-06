@@ -59,6 +59,9 @@ function canon(v: unknown): string {
   return `{${keys.map((k) => `${JSON.stringify(k)}:${canon(o[k])}`).join(",")}}`;
 }
 
+/** Flags a quarrel sets that are outcomes, not the quarrel itself. */
+const QUARREL_TAILS = new Set(["done", "peace", "sour", "lys", "osk", "tamsin", "vell"]);
+
 /** A fail within two of the DC says so — in one of a few voices, chosen by the roll, so the line doesn't wear out. */
 export const NEAR_MISS_CUES = ["So close — that one nearly landed.", "A hair short. It nearly went.", "Nearly; the margin was a breath."] as const;
 
@@ -621,6 +624,14 @@ function partyRemarks(world: World, s: State, events: string[]): void {
       s.flags[flag] = true;
       events.push(`${def.name}: "${r.say}"`);
       if (r.fx) applyFx(world, s, r.fx, events);
+      // a remark that opens a quarrel between two companions says where the
+      // answer is: the sides and the settling live in their conversations
+      for (const fx of r.fx ?? []) {
+        const m = fx[0] === "set" ? /^quarrel_([a-z]+)_([a-z]+)(?:_([a-z]+))?$/.exec(fx[1]) : null;
+        if (!m || QUARREL_TAILS.has(m[3] ?? "")) continue;
+        const a = world.npcs[m[1]!]?.name, b = world.npcs[m[2]!]?.name;
+        if (a && b) events.push(`(Speak with ${a} or ${b} to take a side, or to tell them to settle it.)`);
+      }
       break;
     }
   }
@@ -1200,12 +1211,16 @@ export function step(world: World, prev: State, action: Action): StepOut {
       break;
     }
     case "take": {
+      const wieldedBefore = bestWeapon(world, s).item, wornBefore = bestArmor(world, s).item;
       s.itemLoc[action.item] = "inv";
       s.inv.push(action.item);
       const def = world.items[action.item];
       const label = def?.name ?? action.item;
       const hint = itemHint(world, s, action.item);
       events.push(hint ? `${label}: taken. (${hint})` : `${label}: taken.`);
+      // the best carried weapon and armor are the ones that count, silently — so say when a pickup changes which
+      if (bestWeapon(world, s).item === action.item && wieldedBefore !== action.item) events.push(`(You will fight with it now.)`);
+      if (bestArmor(world, s).item === action.item && wornBefore !== action.item) events.push(`(You will wear it now.)`);
       // an owned thing taken under its owner's eyes is a theft the world can remember
       const owner = def?.owner ? ownerWatching(world, s, def.owner) : null;
       if (owner) {

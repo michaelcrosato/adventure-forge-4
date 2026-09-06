@@ -326,7 +326,12 @@
         {
           "id": "fd_expose_ironbound",
           "label": "tell Halm what the Ironbound mean to do",
-          "if": [["flag", "fd_knows_ironbound_plan"], ["!flag", "fd_ironbound_sided"], ["!flag", "fd_ironbound_gone"]],
+          "if": [
+            ["flag", "fd_knows_ironbound_plan"],
+            ["!flag", "fd_ironbound_sided"],
+            ["!flag", "fd_ironbound_gone"],
+            ["!flag", "or_envoy_fd_broker"]
+          ],
           "once": true,
           "fx": [
             ["set", "fd_ironbound_exposed"],
@@ -1445,6 +1450,7 @@
           "once": true,
           "say": "She's been watching the causeway every evening since you asked.",
           "fx": [
+            ["set", "fd_perrin_told"],
             ["score", 6],
             ["xp", 3],
             [
@@ -1658,8 +1664,12 @@
     "fd_q_perrin": {
       "name": "Perrin's Mother",
       "start": [["flag", "fd_asked_perrin"]],
-      "done": [["any", [["flag", "rb_fd_wm_home"], ["flag", "rb_fd_wm_hidden"], ["flag", "rb_fd_wm_reported"]]]],
+      "done": [["flag", "fd_perrin_told"]],
       "stages": [
+        {
+          "if": [["any", [["flag", "rb_fd_wm_home"], ["flag", "rb_fd_wm_hidden"], ["flag", "rb_fd_wm_reported"]]]],
+          "text": "Perrin's fate is settled. Tell his mother in Reedholm, as you promised her."
+        },
         { "if": [["flag", "wm_entered"]], "text": "You're in Wardmoor. Ask after Perrin at Highward's barracks." },
         {
           "if": [],

@@ -23,19 +23,26 @@ const RUNS = join(ROOT, "runs");
 mkdirSync(RUNS, { recursive: true });
 
 const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "reach.json");
-const world: World = loadWorld(WORLD_PATH);
+/** Load the world fresh: a long-lived server must not keep serving the world it booted with after the files change. */
+function freshWorld(): World {
+  const w = loadWorld(WORLD_PATH);
+  const errs = validateWorld(w);
+  if (errs.length) throw new Error(`world ${WORLD_PATH} failed validation:\n${errs.map((e) => `  - ${e}`).join("\n")}`);
+  return w;
+}
 {
   // refuse a bad world at boot instead of crashing mid-session
-  const errs = validateWorld(world);
-  if (errs.length) {
-    console.error(`world ${WORLD_PATH} failed validation:`);
-    for (const e of errs) console.error(`  - ${e}`);
+  try {
+    freshWorld();
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : String(e));
     process.exit(1);
   }
 }
 
 type Session = {
   id: string;
+  world: World; // the world as it stood when this game began
   state: State;
   actions: Action[]; // menu offered for the CURRENT state
   trace: Trace;
@@ -52,11 +59,12 @@ function resolveSession(s: string): Session | undefined {
 }
 
 function flush(sess: Session): void {
-  if (sess.state.ended) sess.trace.receipt = receipt(world, sess.state);
+  if (sess.state.ended) sess.trace.receipt = receipt(sess.world, sess.state);
   writeFileSync(join(RUNS, `${sess.id}.json`), JSON.stringify(sess.trace));
 }
 
 function view(sess: Session, events: string[], full: boolean): string {
+  const world = sess.world;
   const first = !sess.seen.has(sess.state.room);
   if (!sess.state.ended && !inClassPhase(world, sess.state) && !inPerkPickPhase(world, sess.state) && !inTalkMode(world, sess.state))
     sess.seen.add(sess.state.room);
@@ -79,9 +87,16 @@ server.registerTool(
   async ({ seed }) => {
     const s = seed ?? Math.floor(Math.random() * 1e9);
     const id = `g${++counter}-${s}-${Date.now().toString(36)}`; // nonce keeps trace files distinct across server restarts
+    let world: World;
+    try {
+      world = freshWorld();
+    } catch (e) {
+      return text(e instanceof Error ? e.message : String(e));
+    }
     const out = newState(world, s);
     const sess: Session = {
       id,
+      world,
       state: out.state,
       actions: [],
       trace: { world: world.id, seed: s, actions: [] },
@@ -110,6 +125,7 @@ server.registerTool(
   async ({ s, a }) => {
     const sess = resolveSession(s);
     if (!sess) return text(`No such session ${s}. Call new_game.`);
+    const world = sess.world;
     if (sess.state.ended)
       return text(`Game over.\n${render(world, sess.state, []).text}`);
     const action = sess.actions[a - 1];
@@ -149,7 +165,7 @@ server.registerTool(
   async ({ s }) => {
     const sess = resolveSession(s);
     if (!sess) return text(`No such session ${s}. Call new_game.`);
-    return text(renderStatus(world, sess.state));
+    return text(renderStatus(sess.world, sess.state));
   },
 );
 

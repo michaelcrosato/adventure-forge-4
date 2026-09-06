@@ -226,6 +226,11 @@ nobody's business but the player's.
   linger in.
 - A remark may carry `fx`, run when it is spoken — a companion who says what
   they think of a theft can also think less of you (`["addvar", "appr_lys", -1]`).
+  A remark whose `fx` sets a quarrel flag (`quarrel_<a>_<b>` or
+  `quarrel_<a>_<b>_<tag>`, `<a>`/`<b>` companion ids) is followed by a pointer
+  naming the two, since the sides and the settling live in their conversations.
+  Taking an item that becomes the best weapon or armor carried says so
+  ("You will fight with it now.").
 - Companions: a `companion` block (`hit`, `dmg`, `remarks`) lets `["party",
   id, "join"]` recruit them. See the design doc for who the companions are;
   their definitions live in `companions.json`. In your region, react to them

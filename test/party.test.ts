@@ -807,3 +807,17 @@ test("calm: a hostile who stands down no longer blocks travel, reads as at peace
   assert.equal(menu[menu.length - 1], "attack Rook with bare hands", "attacking a man at peace is the last thing on the menu");
   assert.match(render(world, state, []).text, /Rook is here \(stood down\)/);
 });
+
+test("a remark that opens a quarrel says where the sides are", () => {
+  const world = mini({
+    npcs: {
+      lys: { name: "Lys", room: "a", hp: 6, companion: { remarks: [{ id: "q", if: [["flag", "did"]], say: "They both look at you.", fx: [["set", "quarrel_lys_osk"]] }] }, topics: [{ id: "join", label: "come with me", say: "Fine.", fx: [["party", "lys", "join"]], once: true }] },
+      osk: { name: "Osk", room: "b", hp: 6, companion: {} },
+    },
+  });
+  world.rooms["a"]!.actions = [{ id: "do", label: "do the thing", fx: [["set", "did"]] }];
+  const { state } = newState(world, 1);
+  const joined = step(world, state, actionByLabel(world, state, "ask Lys: come with me")!).state;
+  const out = step(world, joined, actionByLabel(world, joined, "do the thing")!);
+  assert.match(out.events.join(" "), /Lys: "They both look at you\." \(Speak with Lys or Osk to take a side, or to tell them to settle it\.\)/);
+});
