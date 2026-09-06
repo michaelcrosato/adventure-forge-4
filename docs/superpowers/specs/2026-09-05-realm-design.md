@@ -212,7 +212,7 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the tenth playtest round): fourteen regions, eleven holds;
+**As built** (after the eleventh playtest round): fourteen regions, eleven holds;
 681 rooms, 199 npcs, 204 items, 102 quests, 52 stamped places each with its own
 sign, reward and hermit's voice, 464 epilogue lines, 4 companions, 6 factions,
 7 endings each with a proof; every gate in the holds and the capital has a
@@ -227,11 +227,11 @@ stair in Gullhaven, climbs the Keepers' pilgrim stair at Coldpass, hears the
 first Reeve's confession, and speaks the Great Rite — 255 turns, about 417
 characters a screen on average. Proofs replay the Regent deposed by the
 Companies, the throne burned with the Regent's own oil, the Vale's crown worn
-on the gray seat, and kneeling to the hollow. Forty-four blind playtests of the
-whole realm (300–600 turns) reached thirty-seven wins on four different roads,
-one loss, and six players who ran out of turns in the holds; every one of the
-862 findings they raised is fixed, disproven by replaying the trace, or
-judged by design.
+on the gray seat, and kneeling to the hollow. Forty-six blind playtests of the
+whole realm (300–600 turns) reached thirty-eight wins on four different roads,
+one loss, and seven players who ran out of turns (six in the holds, one inside
+the palace with the seat's four doors in view); every one of the 915 findings
+they raised is fixed, disproven by replaying the trace, or judged by design.
 
 **The Meres** (the twelfth region, `me`, north of Barrowmere's water):
 reed-lakes and lantern-lit stilt-hamlets around Lantern Holm, where the
