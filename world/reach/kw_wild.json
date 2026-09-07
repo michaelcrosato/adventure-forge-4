@@ -57,7 +57,18 @@
           "name": "Boundary Holly",
           "desc": "A holly holt marks the old forest bound, leaves dark and sharp enough to have discouraged four centuries of shortcuts. Something about a holly holt keeps its own kind of quiet.",
           "brief": "A holly holt, marking the old bound.",
-          "onEnterOnce": [["xp", 1]],
+          "onEnterOnce": [
+            ["xp", 1],
+            [
+              "if",
+              [["!flag", "kw_entered"]],
+              [
+                ["set", "kw_entered"],
+                ["say", "This is the Kingswood: the old royal hunting forest under the Spine, where a king's hunt rode out four hundred years ago and never came home."]
+              ],
+              []
+            ]
+          ],
           "actions": [
             {
               "id": "kw_bearings_2_0",

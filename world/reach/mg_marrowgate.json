@@ -821,7 +821,8 @@
                     ["has", "kw_cinder_oil"],
                     ["has", "sh_cinder_oil"],
                     ["has", "pw_cinder_oil"],
-                    ["has", "mc_cinder_oil"]
+                    ["has", "mc_cinder_oil"],
+                    ["has", "ff_cinder_oil"]
                   ]
                 ]
               ],
@@ -921,7 +922,8 @@
                 ["has", "kw_cinder_oil"],
                 ["has", "sh_cinder_oil"],
                 ["has", "pw_cinder_oil"],
-                ["has", "mc_cinder_oil"]
+                ["has", "mc_cinder_oil"],
+                ["has", "ff_cinder_oil"]
               ]
             ],
             ["!flag", "mg_throne_resolved"]
@@ -938,6 +940,7 @@
             ["if", [["has", "sh_cinder_oil"]], [["move", "sh_cinder_oil", "nowhere"]], []],
             ["if", [["has", "pw_cinder_oil"]], [["move", "pw_cinder_oil", "nowhere"]], []],
             ["if", [["has", "mc_cinder_oil"]], [["move", "mc_cinder_oil", "nowhere"]], []],
+            ["if", [["has", "ff_cinder_oil"]], [["move", "ff_cinder_oil", "nowhere"]], []],
             ["if", [["has", "mg_ironbound_oil"]], [["move", "mg_ironbound_oil", "nowhere"]], []],
             ["end", "win", "reach_burned", "You break the casks over the seat and put the torch to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace, and mostly mean it."]
           ]
@@ -1782,6 +1785,61 @@
               [["flag", "mc_orchard_broker"]],
               [
                 ["say", "'Both hands on the press, the reeve's and the victualler's. It will pour, which is all cider has to do.'"]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "ff_wardlands_word",
+          "label": "Fosterfell's wardlands",
+          "if": [
+            ["flag", "mg_heard_regent"],
+            [
+              "any",
+              [
+                ["flag", "ff_wardlands_crown"],
+                ["flag", "ff_wardlands_free"],
+                ["flag", "ff_wardlands_common"],
+                ["flag", "ff_wardlands_broker"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Fosterfell. My house held thirty-one children on that fell for their fathers' good behaviour and called it schooling. Word came of whose the wardlands are now.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "ff_wardlands_crown"]],
+              [
+                ["say", "'The Crown keeps the wardlands. In trust, the writ says. Four hundred years is a long trust, and I find I am not proud of it.'"],
+                ["addvar", "rep_crown", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_free"]],
+              [
+                ["say", "'Enclosed for the Companies. The tenants will pay their rent to a captain instead of a bailiff and notice no difference. That is the Companies' whole art.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_common"]],
+              [
+                ["say", "'The tenants' own, with the houses' heirs in the deed. A stranger has paid my house's oldest debt with my house's land.'"],
+                ["addvar", "rep_crown", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_broker"]],
+              [
+                ["say", "'A lease the bailiff and the land-agent both signed. An Envoy's answer. It will hold until one of them dies, which is longer than most.'"]
               ],
               []
             ]
@@ -3527,6 +3585,44 @@
               [["flag", "mc_hollow_burned"]],
               [
                 ["say", "'Burned, with the guests seated. Twice, then, I have had that hall shut on them. The second time was yours.'"]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "ff_reeve_wards",
+          "label": "tell him of the wards he kept",
+          "if": [
+            ["flag", "mg_heard_reeve"],
+            ["any", [["flag", "ff_hollow_rested"], ["flag", "ff_hollow_bargained"], ["flag", "ff_hollow_burned"]]]
+          ],
+          "once": true,
+          "say": "Fosterfell. I took a child from every house that had not chosen and swore to send them home once the house had. No house ever had. Tell me whether they were sent for.",
+          "fx": [
+            ["xp", 2],
+            ["score", 2],
+            [
+              "if",
+              [["flag", "ff_hollow_rested"]],
+              [
+                ["say", "'Sent home. I meant to. Every spring I meant to, and every spring one more house gave me a reason. Tell me the bell was loud.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_hollow_bargained"]],
+              [
+                ["say", "'A school, in their names, the living at their benches. I would have called that a clever answer, once. I called most things clever, once.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_hollow_burned"]],
+              [
+                ["say", "'Burned, and the writ with it. No one will read my hand on that page again. I find that is not the relief I would have expected.'"]
               ],
               []
             ]

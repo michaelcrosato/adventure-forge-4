@@ -1070,7 +1070,18 @@
           "name": "The Old Switchback",
           "desc": "The trail doubles back on itself along a shelf too narrow for two to pass abreast. South the rock simply ends, a long fall into cloud. North a goat track climbs on; east the ground opens toward black ice.",
           "brief": "A narrow doubling shelf, a drop south.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [
+            ["xp", 1],
+            [
+              "if",
+              [["!flag", "cp_entered"]],
+              [
+                ["set", "cp_entered"],
+                ["say", "This is Coldpass: the pilgrims' road over the Spine, St. Ashwyn's Perch on its stair, and past it the gate to Marrowgate, which opens by the Keepers' stair, the Regent's writ, or the Companies' word."]
+              ],
+              []
+            ]
+          ]
         },
         {
           "cell": [1, 2],

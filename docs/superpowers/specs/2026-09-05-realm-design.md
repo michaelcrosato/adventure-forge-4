@@ -212,9 +212,9 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the sixteenth playtest round): seventeen regions, fourteen holds;
-850 rooms, 238 npcs, 243 items, 121 quests, 64 stamped places each with its own
-sign, reward and hermit's voice, 547 epilogue lines, 4 companions, 6 factions,
+**As built** (after the seventeenth playtest round): eighteen regions, fifteen holds;
+905 rooms, 251 npcs, 258 items, 128 quests, 68 stamped places each with its own
+sign, reward and hermit's voice, 568 epilogue lines, 4 companions, 6 factions,
 7 endings each with a proof; every gate in the holds and the capital has a
 force, a craft and a words route, every hold introduces itself in one line
 at whichever road you enter by, every hollow room weighs its grief for
@@ -228,12 +228,16 @@ stair in Gullhaven, climbs the Keepers' pilgrim stair at Coldpass, hears the
 first Reeve's confession, and speaks the Great Rite — 255 turns, about 417
 characters a screen on average. Proofs replay the Regent deposed by the
 Companies, the throne burned with the Regent's own oil, the Vale's crown worn
-on the gray seat, and kneeling to the hollow. Fifty-four blind playtests of the
-whole realm (300–650 turns) reached forty-five wins on four different roads,
+on the gray seat, and kneeling to the hollow. Fifty-six blind playtests of the
+whole realm (300–650 turns) reached forty-seven wins on four different roads,
 one loss, and nine players who ran out of turns (seven in the holds, one at the
 archivist's hall on the last of 650 turns, one inside
-the palace with the seat's four doors in view); every one of the 915 findings
+the palace with the seat's four doors in view); every one of the 948 findings
 they raised is fixed, disproven by replaying the trace, or judged by design.
+Fosterfell, the eighteenth region, landed after the last round and has not
+yet had a blind visitor: its three fates, four wardlands answers, four
+origins and three second-visit forks were walked and asserted against the
+engine by its author, and the bar is green.
 
 **The Meres** (the twelfth region, `me`, north of Barrowmere's water):
 reed-lakes and lantern-lit stilt-hamlets around Lantern Holm, where the
@@ -373,6 +377,36 @@ quests, 55 rooms, 13 npcs, 17 epilogue lines, four stamped places (the Combe
 Beacon, the Wax Caves, the Shriving Chapel, a skep-yard hermit); every
 companion has a word on entering and on how it went. It hooks on to
 Emberfall's Milestone and the Iron Downs' Cairn Path.
+
+**Fosterfell** (the eighteenth region, `ff`): the high sheep-hold under the
+Spine's western fells, north of the Kingswood's holly bound and west of
+Coldpass' switchback — walled pastures and slate roofs around Slatefold, and
+above it the long house the Reach calls the Fostering. The winter he took
+the crown, the first Reeve demanded a child of every house that had not yet
+chosen, "to be fostered and schooled at the Crown's charge" until the house
+had shown its loyalty; thirty-one came up the fell road, the Truce Field and
+the Feast of Wax broke every house that might have been judged loyal, and
+none were ever sent for. Slatefold today: a fold-wife, a Crown bailiff who
+still reads the writ of wardship aloud, a Free Companies land-agent mapping
+the bound for enclosure, an Ironbound lime-burner with cinder-oil, a Gray
+Church dame with a rite of dismissal never spoken, a Keepers' recorder with
+the Book of Houses, a bell-keeper who has never pulled the rope, and a child
+who hums the wards' rhyme back through the wall. Its grief is the
+Schoolroom: rested by the ward-roll read against the Book of Houses, the
+writ ended (persuaded, taken, or a Warden's own authority), the letters
+freed from the porch and the bell rung; bargained by keeping the house as
+Slatefold's own school in the wards' names, the rent paid to it; or burned
+with the lime-burner's cinder-oil, the writ with it. The wardlands are the
+region's own fork — the Crown's trust, the Companies' enclosure, the
+tenants' own with the houses' heirs in the deed, or an Envoy's lease both
+claimants sign — read back by the bailiff, the land-agent and the fold-wife,
+by the Regent, and by the first Reeve's shade, who took the sureties. Seven
+quests, 55 rooms, 13 npcs, 16 epilogue lines, four stamped places (the
+Sending Beacon, the Letter Hollow, the Confirming Chapel, a fell-shepherd
+hermit), a tall child that walks the fells with a slate; every companion has
+a word on entering and on how it went. It hooks on to the Kingswood's
+Boundary Holly and Coldpass' Old Switchback, and both cells introduce the
+hold they lead into.
 
 **The company in the newest holds** (after the twelfth round): the three
 holds added last — the Hearthlands, the Kingswood and the Shieldings — get
