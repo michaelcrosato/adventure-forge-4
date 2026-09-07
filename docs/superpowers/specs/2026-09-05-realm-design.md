@@ -212,9 +212,9 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the fifteenth playtest round): sixteen regions, thirteen holds;
-795 rooms, 225 npcs, 229 items, 115 quests, 60 stamped places each with its own
-sign, reward and hermit's voice, 511 epilogue lines, 4 companions, 6 factions,
+**As built** (after the sixteenth playtest round): seventeen regions, fourteen holds;
+850 rooms, 238 npcs, 243 items, 121 quests, 64 stamped places each with its own
+sign, reward and hermit's voice, 547 epilogue lines, 4 companions, 6 factions,
 7 endings each with a proof; every gate in the holds and the capital has a
 force, a craft and a words route, every hollow room weighs its grief for
 free, ten waystations on the roads between the holds each put a small choice
@@ -227,8 +227,8 @@ stair in Gullhaven, climbs the Keepers' pilgrim stair at Coldpass, hears the
 first Reeve's confession, and speaks the Great Rite — 255 turns, about 417
 characters a screen on average. Proofs replay the Regent deposed by the
 Companies, the throne burned with the Regent's own oil, the Vale's crown worn
-on the gray seat, and kneeling to the hollow. Fifty-two blind playtests of the
-whole realm (300–650 turns) reached forty-three wins on four different roads,
+on the gray seat, and kneeling to the hollow. Fifty-four blind playtests of the
+whole realm (300–650 turns) reached forty-five wins on four different roads,
 one loss, and nine players who ran out of turns (seven in the holds, one at the
 archivist's hall on the last of 650 turns, one inside
 the palace with the seat's four doors in view); every one of the 915 findings
@@ -342,6 +342,36 @@ quests, 56 rooms, 13 npcs, 19 epilogue lines, four stamped places (a
 toll-tower, the Ferry Chapel, the Silver Adit, a ferryman's hut); every
 companion has a word on entering and on how it went. It hooks on to the
 Fallows' East Bank and the Meres' Far Bank.
+
+**Mootcombe** (the seventeenth region, `mc`): the orchard combe under the
+western hills, west of Emberfall's burned milestone and down the old
+cairn-track from the Iron Downs — apple rows and wax-hive hedges on the
+slopes, a stream-turned cider-press and the Moot Hall on the combe's floor,
+where the Reach's kings were acclaimed for six hundred years. The first
+Reeve was acclaimed there too, and held his coronation feast in the Moot
+Hall under safe-conduct: the cider was laced and the doors were barred at
+the second course — the Feast of Wax, for the candles still burning when
+they shut. Mootcombe today: a cider-wife who will not press the oak's
+apples, a Crown levy-reeve, a Free Companies victualler, an Ironbound cooper,
+a chantry-priest who keeps the feast-day fast, a Keepers' recorder with the
+guest-list (and a planted guest in it), the steward's descendant who has
+never turned the hall's key, and a child who once knocked on the wall and was
+answered. Its grief is the Long Table: rested by the three toasts (the
+king's from the guest-list, the Church's from the rite, the guests' from the
+wassail) and the last course served (the oak's apples pressed at last), the
+cup raised at the table's head; bargained by keeping the hall shut and
+carrying the first pressing to its doors every feast-day (a bargain the
+levy-reeve comes to distrain, and that the Crown's or the Companies' orchard
+answer breaks); or burned with the cooper's cinder-oil, which the Hollow
+Throne recognises too. The orchards are the region's own fork — the Crown's
+levy, the Companies' contract, the moot's commons with the first pressing
+the dead's, or an Envoy's answer both claimants sign — read back in
+Mootcombe by the levy-reeve, the victualler and the cider-wife, by the
+Regent, and by the first Reeve's shade, who had the doors barred. Six
+quests, 55 rooms, 13 npcs, 17 epilogue lines, four stamped places (the Combe
+Beacon, the Wax Caves, the Shriving Chapel, a skep-yard hermit); every
+companion has a word on entering and on how it went. It hooks on to
+Emberfall's Milestone and the Iron Downs' Cairn Path.
 
 **The company in the newest holds** (after the twelfth round): the three
 holds added last — the Hearthlands, the Kingswood and the Shieldings — get

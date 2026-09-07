@@ -817,7 +817,8 @@
                     ["has", "fl_cinder_oil"],
                     ["has", "kw_cinder_oil"],
                     ["has", "sh_cinder_oil"],
-                    ["has", "pw_cinder_oil"]
+                    ["has", "pw_cinder_oil"],
+                    ["has", "mc_cinder_oil"]
                   ]
                 ]
               ],
@@ -916,7 +917,8 @@
                 ["has", "fl_cinder_oil"],
                 ["has", "kw_cinder_oil"],
                 ["has", "sh_cinder_oil"],
-                ["has", "pw_cinder_oil"]
+                ["has", "pw_cinder_oil"],
+                ["has", "mc_cinder_oil"]
               ]
             ],
             ["!flag", "mg_throne_resolved"]
@@ -932,6 +934,7 @@
             ["if", [["has", "kw_cinder_oil"]], [["move", "kw_cinder_oil", "nowhere"]], []],
             ["if", [["has", "sh_cinder_oil"]], [["move", "sh_cinder_oil", "nowhere"]], []],
             ["if", [["has", "pw_cinder_oil"]], [["move", "pw_cinder_oil", "nowhere"]], []],
+            ["if", [["has", "mc_cinder_oil"]], [["move", "mc_cinder_oil", "nowhere"]], []],
             ["if", [["has", "mg_ironbound_oil"]], [["move", "mg_ironbound_oil", "nowhere"]], []],
             ["end", "win", "reach_burned", "You break the casks over the seat and put the torch to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace, and mostly mean it."]
           ]
@@ -1718,6 +1721,61 @@
               [["flag", "pw_coin_broker"]],
               [
                 ["say", "'Both hands on the die, the warden's and the paymaster's. An Envoy's answer. It will pass, which is all a coin has to do.'"]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "mc_orchard_word",
+          "label": "Mootcombe's orchards",
+          "if": [
+            ["flag", "mg_heard_regent"],
+            [
+              "any",
+              [
+                ["flag", "mc_orchard_crown"],
+                ["flag", "mc_orchard_free"],
+                ["flag", "mc_orchard_common"],
+                ["flag", "mc_orchard_broker"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Mootcombe. My house was acclaimed under that oak and fed its guests at that table. Word came of whose the apples are now.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "mc_orchard_crown"]],
+              [
+                ["say", "'The Crown's levy on the combe's cider. Good. A hall that fed my house once can feed it again.'"],
+                ["addvar", "rep_crown", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_free"]],
+              [
+                ["say", "'The Companies' casks, under contract. Hired swords drinking the moot's cider. Every age finds its own joke.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_common"]],
+              [
+                ["say", "'The moot's own, and the first pressing to the dead. Four hundred years, and a stranger gives the combe back its commons.'"],
+                ["addvar", "rep_crown", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_broker"]],
+              [
+                ["say", "'Both hands on the press, the reeve's and the victualler's. It will pour, which is all cider has to do.'"]
               ],
               []
             ]
@@ -3399,6 +3457,42 @@
               [["flag", "pw_hollow_burned"]],
               [
                 ["say", "'Burned through, and the hoard melted. So my face is on all of it after all. I did not think that would feel like defeat.'"]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "mc_reeve_feast",
+          "label": "tell him of the feast he shut",
+          "if": [
+            ["flag", "mg_heard_reeve"],
+            ["any", [["flag", "mc_hollow_rested"], ["flag", "mc_hollow_bargained"], ["flag", "mc_hollow_burned"]]]
+          ],
+          "once": true,
+          "say": "Mootcombe. I gave them safe-conduct to my own feast and had the doors barred at the second course. I heard the cups for a year after. Tell me whether they rose.",
+          "fx": [
+            ["xp", 2],
+            ["score", 2],
+            [
+              "if",
+              [["flag", "mc_hollow_rested"]],
+              [
+                ["say", "'The third toast, drunk. Then they rose from my table at last, and I was not there to see it. I would have liked to be. I would have liked not to have needed to.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_hollow_bargained"]],
+              [["say", "'Shut still, and fed at the door. Mootcombe keeps my guests better than I did. That is not hard.'"]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_hollow_burned"]],
+              [
+                ["say", "'Burned, with the guests seated. Twice, then, I have had that hall shut on them. The second time was yours.'"]
               ],
               []
             ]
