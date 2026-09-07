@@ -126,7 +126,18 @@
           "name": "The East Bank",
           "desc": "A shallow dike-bank marks the fallow ground's true edge, water on the far side of it dark and unhurried. Nothing moves out there worth naming, most days.",
           "brief": "A dike-bank, dark water beyond.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [
+            ["xp", 1],
+            [
+              "if",
+              [["!flag", "fl_entered"]],
+              [
+                ["set", "fl_entered"],
+                ["say", "This is the Fallows: a hold that emptied in one winter forty years gone, when its people lost the will to stand and lay down in their own fields. A few dozen live here again now, at a crossroads called Wickstead."]
+              ],
+              []
+            ]
+          ]
         },
         {
           "cell": [0, 3],
@@ -263,7 +274,18 @@
           "name": "The Southern Dikes",
           "desc": "Low earthworks run on toward country the fallow fields don't claim, fen showing pale through the last of the reed. Whichever hold lies past it is somebody else's grief to carry.",
           "brief": "Low dikes, fen beyond.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [
+            ["xp", 1],
+            [
+              "if",
+              [["!flag", "fl_entered"]],
+              [
+                ["set", "fl_entered"],
+                ["say", "This is the Fallows: a hold that emptied in one winter forty years gone, when its people lost the will to stand and lay down in their own fields. A few dozen live here again now, at a crossroads called Wickstead."]
+              ],
+              []
+            ]
+          ]
         }
       ],
       "cellFx": {

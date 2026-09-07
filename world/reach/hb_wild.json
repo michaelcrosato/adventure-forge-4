@@ -39,7 +39,7 @@
           "desc": "A paved way, stones sunk and canted, runs south toward a great turf-grown mound. Half-buried in one worn slab, an old verse is cut for whichever king still walks this road.",
           "brief": "The causeway. The great mound south.",
           "landmark": "the king's causeway",
-          "onEnterOnce": [["xp", 1]],
+          "onEnterOnce": [["xp", 1], ["if", [["!flag", "hb_entered"]], [["set", "hb_entered"]], []]],
           "variants": [{ "if": [["flag", "hb_verse_causeway"]], "brief": "The causeway south. This verse is yours." }],
           "actions": [
             {

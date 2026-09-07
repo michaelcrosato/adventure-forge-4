@@ -186,7 +186,18 @@
           "name": "The Far Bank",
           "desc": "The channel widens toward a low bank at the region's eastern edge, mud packed hard by something that comes here to drink or to watch. Whichever it is, it isn't here now.",
           "brief": "A wide, muddy bank.",
-          "onEnterOnce": [["xp", 1]],
+          "onEnterOnce": [
+            ["xp", 1],
+            [
+              "if",
+              [["!flag", "me_entered"]],
+              [
+                ["set", "me_entered"],
+                ["say", "This is the Meres: reed-lakes north of Barrowmere, where the Keepers' first Hall stood on an island until the first Reeve's men came for the covenant, and the Keepers drowned it, and themselves, rather than give it up."]
+              ],
+              []
+            ]
+          ],
           "actions": [
             {
               "id": "me_bearings_5_1",

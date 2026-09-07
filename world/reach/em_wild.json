@@ -358,7 +358,18 @@
           "name": "The Milestone",
           "desc": "A stone marker leans in the drift, its carved word burned past reading. Whatever it once pointed toward, the fire took the name along with the road.",
           "brief": "A burned, leaning marker.",
-          "onEnterOnce": [["xp", 1]],
+          "onEnterOnce": [
+            ["xp", 1],
+            [
+              "if",
+              [["!flag", "em_entered"]],
+              [
+                ["set", "em_entered"],
+                ["say", "This is the hold that was burned once — or so the sayings east of here have it. From where you stand, it looks less like a story and more like a very long, very patient scar."]
+              ],
+              []
+            ]
+          ],
           "actions": [
             {
               "id": "em_bearings_0_4",

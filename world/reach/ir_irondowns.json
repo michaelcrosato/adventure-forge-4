@@ -1791,7 +1791,7 @@
           "name": "The High Cut",
           "desc": "An old surface working, shale stepped in benches too regular to be natural. Cart-rails, rusted to lace, still mark the grade downward.",
           "brief": "Benched shale, rusted rails.",
-          "onEnterOnce": [["xp", 1]],
+          "onEnterOnce": [["xp", 1], ["if", [["!flag", "ir_entered"]], [["set", "ir_entered"]], []]],
           "actions": [
             {
               "id": "ir_bearings_2_0",
@@ -2054,7 +2054,7 @@
           "name": "Cairn Path",
           "desc": "A track older than any mine climbs west between two lines of standing stones, half-swallowed by spoil from a working that never knew they were there.",
           "brief": "Standing stones, west.",
-          "onEnterOnce": [["xp", 1]],
+          "onEnterOnce": [["xp", 1], ["if", [["!flag", "ir_entered"]], [["set", "ir_entered"]], []]],
           "actions": [
             {
               "id": "ir_bearings_0_3",
