@@ -207,7 +207,17 @@
           "if": [["flag", "mc_hollow_bargained"]],
           "once": true,
           "say": "Not finished, but not lied about either. I'll take honest and unfinished over closed and false, every time I'm asked to choose.",
-          "fx": [["xp", 1]]
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["var", "mc_toasts_known", ">=", 3]],
+              [
+                ["say", "\"You had all three toasts,\" she adds. \"They'll keep. A cup's a cup whether it's raised this year or a hundred on; the guests have waited before.\""]
+              ],
+              []
+            ]
+          ]
         },
         {
           "id": "react_hollow_burned",

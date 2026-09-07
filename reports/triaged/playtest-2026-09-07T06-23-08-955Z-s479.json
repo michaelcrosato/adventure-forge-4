@@ -1,0 +1,54 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 602,
+  "receipt": "reach.479.602.366.reach_at_rest.2b6b1c20",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The founding ledger's inventory hint text ('the first Reeve's own account of the crown — read it') never updates after the item is actually read: I used 'use the founding ledger' at the Hall of Ledgers and read its full contents, then later showed/discussed it with Regent Ysolde at the Hollow Throne, but the inventory line still read '...read it' verbatim in the final status screen at turn 602.",
+      "where": "Hall of Ledgers / 'use the founding ledger' (and status screen inventory list thereafter)"
+    },
+    {
+      "sev": "P2",
+      "what": "The Sunken Lane's 'read the lane for where he walks (wits)' check is offered on first arrival with zero framing — no NPC or journal entry has yet explained it matters. I failed it twice (rolls under DC) with no idea why I was rolling. Only much later, at Fulk's cask-yard, did dialogue retroactively reveal it was the first step of The Victualler's Errand.",
+      "where": "The Sunken Lane (Mootcombe, on the descent from the Cairn-Track) / 'read the lane for where he walks'"
+    },
+    {
+      "sev": "P2",
+      "what": "Wandering west from Thornwold's North Track (via 'an Ironbound wayfire') silently leaves Thornwold and drops the party into a different, unrelated hold (Emberfall/Glasswick) with no on-screen warning that this path exits the hold being explored; the mistake only becomes clear once Emberfall's own arrival banner fires two rooms later.",
+      "where": "The North Track (Thornwold) → 'go west (toward an Ironbound wayfire)' → The Ironbound Wayfire → Emberfall's East Road"
+    },
+    {
+      "sev": "P2",
+      "what": "The Marrowgate envoy at Highward grants the Regent's writ for 'two honest services to this Watch' but never itemizes which two of my actions satisfied it (killing the Lost Sentry and reporting it to Sergeant Hale seem the likely pair, but the game never confirms this), leaving the tally opaque.",
+      "where": "The Captain-General's Hall (Highward) / 'ask for the Regent's writ'"
+    }
+  ],
+  "confusions": [
+    "The reeve's 'promise to seal the barrow / decline to promise' choice at Last Light Square, and the priest's 'a blessing for the barrow' thread at Gray Chapel, are never referenced again once the real sealed/open decision is made at the throne itself ('leave the barrow open to the sky' / 'seal the barrow doors'); it's unclear whether an early promise would have constrained that later choice or was purely flavor, since I declined and the decline was never called back to either.",
+    "Coldpass's Pass Gate is the first and only place that states plainly 'a companion's grief left unfinished [in a hold already passed] stays unfinished unless you walk back for it' — by the time a player reads this, companions' personal quests in holds off the main route (Vell's Hollowbrook ledger, Osk's Fenmarch family) may already be permanently unreachable, with no earlier warning at recruitment or at Act 2's opening that route choice forecloses them.",
+    "Gathering all three Feast of Wax toasts at Mootcombe (king's, Church's, guests') sets up the 'rite' resolution for the barred hall, but choosing the bargain instead (getting the three claimants to stand down) makes the toasts permanently decorative with no in-fiction acknowledgment that the alternate path is now moot — a completionist who collected all three has no way to know they won't be used.",
+    "It is not obvious from the Hollow Throne room text alone that the 'rite' option requires first talking to the first Reeve's shade one room south in his tomb to obtain his confession; a player who fought straight through the honour guard to the throne without lingering there could arrive to find the rite option apparently unavailable with no on-screen pointer back."
+  ],
+  "suggestions": [
+    "Refresh item hint text once its stated action is completed (e.g. swap 'read it' for '(already read)' on the founding ledger after the read action fires).",
+    "Give the Sunken Lane's wits check one line of up-front flavor hinting it matters to someone in town, mirroring how most other checks are quest-gated from the start.",
+    "Add a short 'you leave Thornwold behind' style line (or relabel the exit) where the Ironbound wayfire path crosses into Emberfall, so players hunting for Iron Downs don't wander a hold deep before noticing.",
+    "Surface the 'companion griefs lock at Coldpass' rule earlier than the Pass Gate itself — e.g. in each companion's recruitment text or the Act 2 opening blurb — so route planning can account for it.",
+    "Itemize which specific actions satisfied 'two honest services to the Watch' when the Regent's writ is granted, so the requirement feels earned and legible rather than just announced.",
+    "Consider scaling the Envoy's 'call it a draw' companion-quarrel check difficulty with party regard spread (or giving other classes an equivalent tool), since at high will investment it resolved all three companion quarrels I hit with zero risk or cost."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-07T06-23-08-955Z",
+  "seed": 479,
+  "build": {
+    "rev": "6fbe8e9",
+    "world": "f683071a"
+  },
+  "cost_usd": null,
+  "verified": true
+}

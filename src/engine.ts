@@ -505,7 +505,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
               events.push(`${npc.name} ${Math.abs(d) > 1 ? "strongly " : ""}${d > 0 ? "approves" : "disapproves"} (${d > 0 ? "+" : ""}${d}).`);
               if (!s.flags["_seenApproval"]) {
                 s.flags["_seenApproval"] = true;
-                events.push("(Companions judge what you do: their regard opens some doors and closes others; at -2 they are near leaving, and the next thing they mind is the last.)");
+                events.push("(Companions judge what you do: their regard opens and closes doors; at -2 they are near leaving, and the next thing they mind is the last.)");
               }
             } else if (npc && !npcDead(world, s, id) && (s.visited.includes(npc.room ?? "") || s.flags[`${id}_left`])) {
               // regard moved for someone not here to see it: a player found Osk at -1 with no idea why.
@@ -1512,7 +1512,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // whole map on foot for ninety turns before noticing the entry.
   if (!s.ended && !s.flags["_seenTravel"] && travelAvailable(world, s)) {
     s.flags["_seenTravel"] = true;
-    events.push("(You know more than one place now: 'travel to a known place' moves you between the named places you have seen — landmarks, not every room — in one turn.)");
+    events.push("(You know more than one place now: 'travel to a known place' moves you between the landmarks you have seen, not every room, in one turn.)");
   }
   // Once per room that holds an ending: a player three hollows in walked to the
   // seat and ended the tale on the next action with four threads still open.
