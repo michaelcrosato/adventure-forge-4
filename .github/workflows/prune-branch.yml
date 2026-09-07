@@ -1,0 +1,38 @@
+name: prune-branch
+
+# Delete a branch whose commits are already in main. Run it from the
+# Actions tab (or `gh workflow run prune-branch.yml -f branch=<name>`);
+# it refuses anything not already merged, so it cannot lose work.
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: The merged branch to delete
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Refuse a branch that is not merged into main
+        run: |
+          branch='${{ inputs.branch }}'
+          git rev-parse --verify "origin/$branch" >/dev/null
+          if ! git merge-base --is-ancestor "origin/$branch" origin/main; then
+            echo "::error::$branch has commits not in main — not deleting it."
+            exit 1
+          fi
+          echo "$branch is contained in main; deleting."
+
+      - name: Delete the branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/${{ inputs.branch }}"
