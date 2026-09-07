@@ -1,0 +1,423 @@
+{
+  "rooms": {
+    "mc_moot_green": {
+      "name": "The Moot-Green",
+      "desc": "Turf worn bald in a ring around the moot-oak, six centuries of hobnails and bare feet. Last autumn's apples lie where they fell, unpicked, going soft in the grass. North the ground climbs toward the barred hall; every other way is trade and smoke.",
+      "brief": "The moot-oak's green; the barred hall north.",
+      "region": "mc",
+      "landmark": "Mootcombe",
+      "exits": {
+        "north": { "to": "mc_hall_gate", "landmark": "the hall-gate" },
+        "south": { "to": "mc_press_hearth", "landmark": "the Press Hearth" },
+        "east": { "to": "mc_barter_row", "landmark": "the Barter Row" }
+      },
+      "variants": [
+        {
+          "if": [["flag", "mc_orchard_crown"]],
+          "desc": "Turf worn bald around the moot-oak. Crown tally-men walk the rows above the green now, counting what's owed. Nobody presses cider on the green anymore without a levy stamp."
+        },
+        {
+          "if": [["flag", "mc_orchard_free"]],
+          "desc": "Turf worn bald around the moot-oak. Free Company wagons stand loaded at the green's edge most mornings now, casks going out faster than Mootcombe drinks them."
+        },
+        {
+          "if": [["flag", "mc_orchard_common"]],
+          "desc": "Turf worn bald around the moot-oak. A tally-board stands new-nailed to its trunk: the moot's own count of the orchard's yield, and who it's owed to first."
+        },
+        {
+          "if": [["flag", "mc_orchard_broker"]],
+          "desc": "Turf worn bald around the moot-oak. A single lease-board stands nailed there, two seals pressed into the same wax — Crown and Companies, side by side, neither crowding the other."
+        }
+      ],
+      "actions": [
+        {
+          "id": "mc_orchard_crown",
+          "label": "orchards to the Crown (will)",
+          "if": [["flag", "mc_hollow_done"], ["!flag", "mc_orchard_settled"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "mc_orchard_crown"],
+                ["set", "mc_orchard_settled"],
+                ["addvar", "rep_crown", 2],
+                ["addvar", "rep_free", -2],
+                ["addvar", "appr_lys", -1],
+                ["score", 10],
+                ["xp", 4],
+                [
+                  "if",
+                  [["flag", "mc_hollow_bargained"]],
+                  [
+                    ["set", "mc_bargain_broken"],
+                    ["addvar", "rep_keepers", -1],
+                    ["addvar", "appr_tamsin", -1],
+                    ["say", "You give Mootcombe's yield to the Crown's levy under the moot-oak itself, in earshot of everyone who watched the hall's bargain struck. It is heard as what it is: a promise gone back on."]
+                  ],
+                  [
+                    ["say", "You give Mootcombe's yield to the Crown's levy, under the moot-oak where such things used to be decided by more than one voice. It is heard, and it is done."]
+                  ]
+                ]
+              ],
+              [
+                ["say", "The words don't land the way you meant them to. Whatever the moot-oak has seen, a stranger's say-so under it isn't enough today."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "mc_orchard_free",
+          "label": "orchards to the Companies (will)",
+          "if": [["flag", "mc_hollow_done"], ["!flag", "mc_orchard_settled"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "mc_orchard_free"],
+                ["set", "mc_orchard_settled"],
+                ["addvar", "rep_free", 2],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "appr_lys", -1],
+                ["score", 10],
+                ["xp", 4],
+                [
+                  "if",
+                  [["flag", "mc_hollow_bargained"]],
+                  [
+                    ["set", "mc_bargain_broken"],
+                    ["addvar", "rep_keepers", -1],
+                    ["addvar", "appr_tamsin", -1],
+                    ["say", "You sign the orchards over to the Companies' casks under the moot-oak itself, in earshot of everyone who watched the hall's bargain struck. It is heard as what it is: a promise gone back on."]
+                  ],
+                  [
+                    ["say", "You sign the orchards over to the Companies' casks, under the moot-oak where such things used to be decided by more than one voice. It is heard, and it is done."]
+                  ]
+                ]
+              ],
+              [
+                ["say", "The words don't land the way you meant them to. Whatever the moot-oak has seen, a stranger's say-so under it isn't enough today."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "mc_orchard_common",
+          "label": "orchards to the moot's own (will)",
+          "if": [["flag", "mc_hollow_done"], ["!flag", "mc_orchard_settled"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "mc_orchard_common"],
+                ["set", "mc_orchard_settled"],
+                ["addvar", "rep_keepers", 2],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "appr_lys", 1],
+                ["score", 10],
+                ["xp", 5],
+                ["say", "You call the moot back into being under its own oak, one voice standing where six hundred years used to stand many: the orchard is Mootcombe's, held in common, and the first pressing goes to the dead every year, unasked."]
+              ],
+              [
+                ["say", "You call for a moot that hasn't sat in four hundred years, and the ground under the oak stays exactly as bald and silent as it was."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "mc_orchard_broker",
+          "label": "broker a lease both will sign",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "mc_hollow_done"],
+            ["!flag", "mc_orchard_settled"],
+            ["flag", "mc_osric_bg"],
+            ["flag", "mc_fulk_bg"]
+          ],
+          "fx": [
+            ["set", "mc_orchard_broker"],
+            ["set", "mc_orchard_settled"],
+            ["set", "or_envoy_mc_broker"],
+            ["addvar", "or_envoy_words", 1],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_free", 1],
+            ["score", 10],
+            ["xp", 6],
+            ["say", "You draft one lease with a line for each of them, the levy and the contract both honored on the same page, and stand under the oak while Osric and Fulk sign it in turn, neither willing to be the one who signs second."]
+          ]
+        }
+      ]
+    },
+    "mc_press_hearth": {
+      "name": "The Press Hearth",
+      "desc": "A hearth-hall built around a cold cider-press nobody has turned this year, benches worn smooth by three generations of the same families. Hedda keeps the fire whatever else is or isn't pressed.",
+      "brief": "A hearth-hall; a cold press nobody has turned.",
+      "region": "mc",
+      "landmark": "the Press Hearth",
+      "exits": { "north": { "to": "mc_moot_green" }, "east": { "to": "mc_tally_house", "landmark": "the tally-house" } },
+      "onEnter": [["if", [["flag", "mc_hollow_done"], ["!flag", "sv_mc_back"]], [["set", "sv_mc_back"]], []]],
+      "actions": [
+        {
+          "id": "mc_rest",
+          "label": "rest by the hearth",
+          "fx": [
+            ["hp", 10],
+            ["say", "You sleep with your feet to the fire and wake to Hedda already up, sweeping a hearth that was swept clean the night before."]
+          ]
+        }
+      ]
+    },
+    "mc_tally_house": {
+      "name": "The Tally-House",
+      "desc": "A narrow room of the Crown's own timber, a levy-scale and a strongbox on a table scarred by four hundred years of coin sliding across it. Osric's warrant sits weighted under the scale, waiting to be read aloud.",
+      "brief": "A levy-scale, a strongbox, a warrant under weight.",
+      "region": "mc",
+      "landmark": "the tally-house",
+      "exits": { "west": { "to": "mc_press_hearth" }, "east": { "to": "mc_cask_yard", "landmark": "the cask-yard" } }
+    },
+    "mc_cask_yard": {
+      "name": "The Cask-Yard",
+      "desc": "Empty casks stand racked three deep against the yard's south wall, Free Company brands burned into every stave. Fulk keeps a ledger of what the orchards owe him this year, and reads from it whether or not you ask.",
+      "brief": "Racked casks, branded staves; Fulk and his ledger.",
+      "region": "mc",
+      "landmark": "the cask-yard",
+      "exits": { "west": { "to": "mc_tally_house" }, "east": { "to": "mc_cooper_shop", "landmark": "the cooper's shop" } },
+      "actions": [
+        {
+          "id": "mc_buy_maul",
+          "label": "buy a cask-maul, iron-hooped (7 gold)",
+          "if": [["!has", "mc_cask_maul"], ["var", "gold", ">=", 7]],
+          "fx": [
+            ["addvar", "gold", -7],
+            ["move", "mc_cask_maul", "inv"],
+            ["say", "Fulk hands it over without looking up from his ledger. \"Drives a hoop true. Drives most other things truer.\""]
+          ]
+        },
+        {
+          "id": "mc_buy_cider",
+          "label": "buy pressed cider from stock (4 gold)",
+          "if": [["!flag", "mc_apples_bought"], ["!flag", "mc_last_course"], ["var", "gold", ">=", 4]],
+          "fx": [
+            ["addvar", "gold", -4],
+            ["set", "mc_apples_bought"],
+            ["set", "mc_last_course"],
+            ["addvar", "rep_free", 1],
+            ["say", "\"Not the oak's own, but pressed all the same,\" Fulk says, weighing out a jar. \"A course is a course. Nobody at that table's in a state to taste the difference.\""]
+          ]
+        }
+      ]
+    },
+    "mc_cooper_shop": {
+      "name": "The Cooper's Shop",
+      "desc": "Stave-shavings drift ankle-deep across the floor, a half-hooped cask standing where Rendel left it mid-work. Cinder-oil casks sit racked by the door, ready for a road that most of them never leave the shop for.",
+      "brief": "Stave-shavings; racked cinder-oil by the door.",
+      "region": "mc",
+      "landmark": "the cooper's shop",
+      "exits": { "west": { "to": "mc_cask_yard" }, "east": { "to": "mc_chantry", "landmark": "the chantry" } },
+      "actions": [
+        {
+          "id": "mc_buy_cinder_oil",
+          "label": "buy a cask of cinder-oil (6 gold)",
+          "if": [["!has", "mc_cinder_oil"], ["!flag", "mc_hollow_done"], ["var", "gold", ">=", 6]],
+          "fx": [
+            ["addvar", "gold", -6],
+            ["move", "mc_cinder_oil", "inv"],
+            ["say", "Rendel doesn't ask what it's for. Nobody buying cinder-oil in this shop is buying it for the staves."]
+          ]
+        }
+      ]
+    },
+    "mc_chantry": {
+      "name": "The Chantry",
+      "desc": "A bare chapel kept for one day a year and swept the other three hundred and sixty-four, a fast-table laid with nothing on it but a folded cloth. Aldith keeps the feast-day empty, the way the rite has always demanded.",
+      "brief": "A bare chapel; a fast-table laid with nothing.",
+      "region": "mc",
+      "landmark": "the chantry",
+      "exits": {
+        "west": { "to": "mc_cooper_shop" },
+        "north": { "to": "mc_recorder_loft", "landmark": "the recorder's loft" }
+      }
+    },
+    "mc_recorder_loft": {
+      "name": "The Recorder's Loft",
+      "desc": "A loft above the chantry, shelved floor to roof-beam with rolls the damp hasn't yet claimed. One roll lies always open on the desk: the guest-list of the Feast of Wax, every name Ingrith has ever added to.",
+      "brief": "A loft of rolls; the guest-list always open.",
+      "region": "mc",
+      "landmark": "the recorder's loft",
+      "exits": { "south": { "to": "mc_chantry" }, "west": { "to": "mc_barter_row" } }
+    },
+    "mc_barter_row": {
+      "name": "The Barter Row",
+      "desc": "A plank counter under the green's lee wall, jars and small goods laid out for whoever's buying, none of it worth a levy-man's notice. Someone always minds it, and never seems to be the same someone twice.",
+      "brief": "A plank counter; jars and small goods.",
+      "region": "mc",
+      "exits": { "east": { "to": "mc_recorder_loft" }, "west": { "to": "mc_moot_green" } },
+      "actions": [
+        {
+          "id": "mc_buy_flask",
+          "label": "buy a flask of wax-sealed cider (3 gold)",
+          "if": [["!has", "mc_flask_cider"], ["var", "gold", ">=", 3]],
+          "fx": [
+            ["addvar", "gold", -3],
+            ["move", "mc_flask_cider", "inv"],
+            ["say", "The wax seal cracks clean under a thumbnail. Last year's pressing, and none the worse for waiting."]
+          ]
+        }
+      ]
+    },
+    "mc_hall_gate": {
+      "name": "The Hall-Gate",
+      "desc": "The ground climbs to a low gatehouse where the lane to the Moot Hall narrows to one width. Oswin keeps the gate whether or not anyone's asked him to, and a child sits most days with an ear to the wall beyond it.",
+      "brief": "A gatehouse; the lane to the hall narrows here.",
+      "region": "mc",
+      "landmark": "the hall-gate",
+      "exits": { "south": { "to": "mc_moot_green" }, "up": { "to": "mc_hall_doors" } }
+    },
+    "mc_east_road": {
+      "name": "The Burned Road",
+      "desc": "The road runs on east into ash-country, its milestone long since burned past reading on the far side. West it climbs down through the last apple rows into the combe proper, smoke and hearth-smell on the wind.",
+      "brief": "A road east into ash; the combe climbs west.",
+      "region": "mc",
+      "landmark": "Mootcombe",
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "mc_entered"]],
+          [
+            ["set", "mc_entered"],
+            ["xp", 2],
+            ["say", "This is Mootcombe: the orchard combe under the western hills, where the cider goes sour every feast-day and nobody presses the moot-oak's apples, four hundred years on from a hall that never let its guests rise."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"Six hundred years of kings acclaimed under that oak, and it ends in a hall nobody has opened since. I begin to understand why nobody in my family ever spoke this hold's name to me.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Brother Osk: \"A whole hold fasting on one day, every year, for four centuries. That is not a small grief to carry alone. I want to know what rite this is, and why it was never finished.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "tamsin"]],
+              [
+                ["say", "Tamsin: \"Apples rotting in the grass and nobody willing to press them. Whatever happened in that hall, it's still doing work on people who weren't alive for it.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [
+                ["say", "Lys: \"Wax-hives in every hedge and an orchard nobody picks clean. That's a hold feeding its dead before it feeds itself.\""]
+              ],
+              []
+            ]
+          ],
+          []
+        ]
+      ]
+    },
+    "mc_north_road": {
+      "name": "The Cairn-Track",
+      "desc": "The old track climbs north between standing stones toward the bare downs, the last apple row giving out a few strides on. South it drops away into the combe, hearth-smoke rising over the orchard rows below.",
+      "brief": "A stony track north; the combe drops away south.",
+      "region": "mc",
+      "landmark": "Mootcombe",
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "mc_entered"]],
+          [
+            ["set", "mc_entered"],
+            ["xp", 2],
+            ["say", "This is Mootcombe: the orchard combe under the western hills, where the cider goes sour every feast-day and nobody presses the moot-oak's apples, four hundred years on from a hall that never let its guests rise."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"Six hundred years of kings acclaimed under that oak, and it ends in a hall nobody has opened since. I begin to understand why nobody in my family ever spoke this hold's name to me.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Brother Osk: \"A whole hold fasting on one day, every year, for four centuries. That is not a small grief to carry alone. I want to know what rite this is, and why it was never finished.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "tamsin"]],
+              [
+                ["say", "Tamsin: \"Apples rotting in the grass and nobody willing to press them. Whatever happened in that hall, it's still doing work on people who weren't alive for it.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [
+                ["say", "Lys: \"Wax-hives in every hedge and an orchard nobody picks clean. That's a hold feeding its dead before it feeds itself.\""]
+              ],
+              []
+            ]
+          ],
+          []
+        ]
+      ]
+    }
+  },
+  "items": {
+    "mc_cask_maul": {
+      "name": "a cask-maul, iron-hooped",
+      "loc": "nowhere",
+      "takeable": true,
+      "hit": 1,
+      "dmg": 3,
+      "hint": "a cooper's tool turned to plainer work; a step above a belt-knife"
+    },
+    "mc_flask_cider": {
+      "name": "a flask of wax-sealed cider",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "drink it to steady yourself",
+      "use": [
+        {
+          "fx": [
+            ["hp", 3],
+            ["move", "mc_flask_cider", "nowhere"],
+            ["say", "Sharp and cold going down. Whatever else this hold is short of, it isn't short of cider."]
+          ]
+        }
+      ]
+    },
+    "mc_levy_warrant": {
+      "name": "the Crown's cider-levy warrant",
+      "loc": "mc_tally_house",
+      "takeable": true,
+      "owner": "mc_levy_reeve",
+      "hint": "Osric reads from this daily; he'd notice it gone before you reached the door"
+    },
+    "mc_tally_weights": {
+      "name": "a set of levy tally-weights, brass",
+      "loc": "mc_tally_house",
+      "takeable": true,
+      "owner": "mc_levy_reeve",
+      "hint": "a levy-reeve's own weights, stamped true; he'd miss them by the ounce"
+    }
+  }
+}
