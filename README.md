@@ -6,7 +6,7 @@ green changes. Content is data. Every claim about the game is proven by a
 replay, not asserted.
 
 Two worlds ship today. **The Gray Reach** is the default game: a realm of
-fifteen regions — the Vale of Ash as its first act, twelve holds each with its own
+sixteen regions — the Vale of Ash as its first act, thirteen holds each with its own
 unrested grief, a mountain pass, and a capital where the endings wait — with
 companions who judge you, six factions that remember, fast travel between the
 landmarks you have found, and seven endings, every one replay-proven. **The
@@ -106,7 +106,7 @@ whole 34-turn session is ~18k chars (~4.7k tokens) of game text.
 `npm run verify` (~10s) enforces:
 
 - **Typecheck** — strict, no unchecked indexing.
-- **Tests** (180) — determinism (same seed = byte-identical run, and an engine
+- **Tests** (181) — determinism (same seed = byte-identical run, and an engine
   core that provably never reads the clock), the character layer,
   conversations and companions, travel and the journal, templates and
   stamps, worlds in parts, worldgen scale, triage promotion rules, the fleet
@@ -173,7 +173,7 @@ src/player.ts     direct-API fleet lane
 src/triage.ts     reports -> atomic corroborated issues
 src/play.ts       human CLI
 world/reach.json  The Gray Reach (the default game): root, classes, perks, quests, walkthrough, proofs
-world/reach/      its parts — the Vale rebuilt, companions, templates, and fourteen more regions
+world/reach/      its parts — the Vale rebuilt, companions, templates, and fifteen more regions
 world/vale.json   The Vale of Ash, the original compact world
 world/lighthouse.json  the small regression world
 scripts/          author tools: lint, choice audit, walk, stubs, land, fmt

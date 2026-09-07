@@ -816,7 +816,8 @@
                     ["has", "hl_cinder_oil"],
                     ["has", "fl_cinder_oil"],
                     ["has", "kw_cinder_oil"],
-                    ["has", "sh_cinder_oil"]
+                    ["has", "sh_cinder_oil"],
+                    ["has", "pw_cinder_oil"]
                   ]
                 ]
               ],
@@ -914,7 +915,8 @@
                 ["has", "hl_cinder_oil"],
                 ["has", "fl_cinder_oil"],
                 ["has", "kw_cinder_oil"],
-                ["has", "sh_cinder_oil"]
+                ["has", "sh_cinder_oil"],
+                ["has", "pw_cinder_oil"]
               ]
             ],
             ["!flag", "mg_throne_resolved"]
@@ -929,6 +931,7 @@
             ["if", [["has", "fl_cinder_oil"]], [["move", "fl_cinder_oil", "nowhere"]], []],
             ["if", [["has", "kw_cinder_oil"]], [["move", "kw_cinder_oil", "nowhere"]], []],
             ["if", [["has", "sh_cinder_oil"]], [["move", "sh_cinder_oil", "nowhere"]], []],
+            ["if", [["has", "pw_cinder_oil"]], [["move", "pw_cinder_oil", "nowhere"]], []],
             ["end", "win", "reach_burned", "You break the casks over the seat and put the torch to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace, and mostly mean it."]
           ]
         },
@@ -1664,6 +1667,56 @@
               [["flag", "sh_stone_none"]],
               [
                 ["say", "'No stone at all, on a field my house won. The dead keep their ground and the living keep quiet. I am told that was the bargain.'"]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "pw_coin_word",
+          "label": "Pennywell's coin",
+          "if": [
+            ["flag", "mg_heard_regent"],
+            [
+              "any",
+              [["flag", "pw_coin_crown"], ["flag", "pw_coin_free"], ["flag", "pw_coin_king"], ["flag", "pw_coin_broker"]]
+            ]
+          ],
+          "once": true,
+          "say": "Pennywell. Every penny in the Reach was struck there with my house's face, and four men died under it sooner than strike one. Word came of what its mint strikes now.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "pw_coin_crown"]],
+              [
+                ["say", "'My face on Pennywell's own silver at last. Four hundred years late, and I find I want it less than my house did.'"],
+                ["addvar", "rep_crown", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_free"]],
+              [
+                ["say", "'The Companies' silver, faceless, weighed and not counted. A coin with no face on it answers to no one. They will like that.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_king"]],
+              [
+                ["say", "'The old king's face, struck again — with my house's leave or without it. A stranger has spent my ancestor's coin for him.'"],
+                ["addvar", "rep_crown", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_broker"]],
+              [
+                ["say", "'Both hands on the die, the warden's and the paymaster's. An Envoy's answer. It will pass, which is all a coin has to do.'"]
               ],
               []
             ]
@@ -3307,6 +3360,44 @@
               [["flag", "sh_hollow_burned"]],
               [
                 ["say", "'Burned. Both lines, mine and theirs, waiting for a word, and you gave them fire. So did I, in my way.'"]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "mg_reeve_vault",
+          "label": "tell him of the mint he sealed",
+          "if": [
+            ["flag", "mg_heard_reeve"],
+            ["any", [["flag", "pw_hollow_rested"], ["flag", "pw_hollow_bargained"], ["flag", "pw_hollow_burned"]]]
+          ],
+          "once": true,
+          "say": "Pennywell. I sent for the king's silver and four moneyers took it under the ground rather than give it my face. I had the door mortared. I have wondered since whether they were still striking. Tell me.",
+          "fx": [
+            ["xp", 2],
+            ["score", 2],
+            [
+              "if",
+              [["flag", "pw_hollow_rested"]],
+              [
+                ["say", "'Struck once more, by a living hand. Then the last coin with his face on it was made with my leave, in a way. I can bear that.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_hollow_bargained"]],
+              [
+                ["say", "'Sealed still, and their coin struck above it. Pennywell chose the dead men's face over mine. I would have too, by the end.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_hollow_burned"]],
+              [
+                ["say", "'Burned through, and the hoard melted. So my face is on all of it after all. I did not think that would feel like defeat.'"]
               ],
               []
             ]

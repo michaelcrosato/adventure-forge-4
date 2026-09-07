@@ -212,9 +212,9 @@ walkthrough proves one does. The walkthrough is the covenant road played
 straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
-**As built** (after the twelfth playtest round): fifteen regions, twelve holds;
-739 rooms, 212 npcs, 215 items, 109 quests, 56 stamped places each with its own
-sign, reward and hermit's voice, 490 epilogue lines, 4 companions, 6 factions,
+**As built** (after the thirteenth playtest round): sixteen regions, thirteen holds;
+795 rooms, 225 npcs, 228 items, 115 quests, 60 stamped places each with its own
+sign, reward and hermit's voice, 510 epilogue lines, 4 companions, 6 factions,
 7 endings each with a proof; every gate in the holds and the capital has a
 force, a craft and a words route, every hollow room weighs its grief for
 free, ten waystations on the roads between the holds each put a small choice
@@ -227,8 +227,8 @@ stair in Gullhaven, climbs the Keepers' pilgrim stair at Coldpass, hears the
 first Reeve's confession, and speaks the Great Rite — 255 turns, about 417
 characters a screen on average. Proofs replay the Regent deposed by the
 Companies, the throne burned with the Regent's own oil, the Vale's crown worn
-on the gray seat, and kneeling to the hollow. Forty-eight blind playtests of the
-whole realm (300–650 turns) reached forty wins on four different roads,
+on the gray seat, and kneeling to the hollow. Fifty blind playtests of the
+whole realm (300–650 turns) reached forty-two wins on four different roads,
 one loss, and seven players who ran out of turns (six in the holds, one inside
 the palace with the seat's four doors in view); every one of the 915 findings
 they raised is fixed, disproven by replaying the trace, or judged by design.
@@ -309,6 +309,38 @@ shade, who hired the Companies and did not stop the shot. Seven quests, 58
 rooms, 13 npcs, 14 epilogue lines, four stamped places (the Companies' first
 camp among them); every companion has a word on entering and on how it went.
 It hooks on to the Fallows' Southern Dikes and Fenmarch's Trapper's Blind.
+
+**Pennywell** (the sixteenth region, `pw`): the mint hold on the east bank of
+the Lastwater, the slow dark river that bounds the Fallows and the Meres to the
+east — willow holts, water-meadows, a mill-race that once drove the mint's
+hammers, the stumps of a bridge nobody rebuilt, a gravel spit where old
+pennies wash up. The first Reeve's first act with the crown was to strike coin
+with his own face, and every penny that bore the true king's was called in to
+Pennywell to be melted and struck again; the moneyers refused, carried the
+king's coin and dies into the strong-vault under the Old Mint and sealed
+themselves in, and the Reeve's men mortared the door. Pennywell today: a
+Crown mint-warden with a warrant to reopen the vault, a Free Companies
+paymaster who wants its hoard, an Ironbound smelter who wants it melted, a
+Gray Church tithe-collector counting faces into a ledger, a Keepers' assayer
+with the record of every face melted, a Watch sergeant who guards a door
+nobody has opened in four hundred years, the moneyer's descendant with the
+king's reverse die, and a child who pulled a king's penny from the ford and
+has heard hammers since. Its grief is the Old Vault: rested by striking the
+king's penny once more at the door (both dies — the reverse given, taken or
+found, the obverse from the outer strong-room, the smelter's scrap or the
+gravel spit — and the three moneyers' names from the assayer's record, the
+tithe-ledger and the child's penny), bargained by keeping the vault sealed and
+striking Pennywell's own coin with the king's face (the Crown's displeasure,
+and a mint-warden who comes back with a writ and soldiers), or burned through
+with the smelter's cinder-oil, which the Hollow Throne recognises too. The
+coin is the region's own fork — the Reeve's face for the Crown, the
+Companies' faceless silver, the old king's face for the Keepers, or an Envoy's
+strike both the warden and the paymaster sign — read back in Pennywell, by the
+Regent, and by the first Reeve's shade, who had the door mortared. Six
+quests, 56 rooms, 13 npcs, 19 epilogue lines, four stamped places (a
+toll-tower, the Ferry Chapel, the Silver Adit, a ferryman's hut); every
+companion has a word on entering and on how it went. It hooks on to the
+Fallows' East Bank and the Meres' Far Bank.
 
 **The company in the newest holds** (after the twelfth round): the three
 holds added last — the Hearthlands, the Kingswood and the Shieldings — get

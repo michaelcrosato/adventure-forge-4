@@ -680,7 +680,7 @@
           "label": "the king rests",
           "if": [["flag", "va_king_rested"]],
           "once": true,
-          "say": "I felt it in the candles. Whatever you said or gave him, it was the right thing. There are twelve more hollows in the Reach, if the rider's talk is true, and no keepers left to speak over them.",
+          "say": "I felt it in the candles. Whatever you said or gave him, it was the right thing. There are thirteen more hollows in the Reach, if the rider's talk is true, and no keepers left to speak over them.",
           "fx": [["xp", 2], ["addvar", "rep_church", 1]]
         },
         {
@@ -915,8 +915,11 @@
           "label": "the other hollows",
           "if": [["flag", "va_heard_decree"]],
           "once": true,
-          "say": "Fenmarch's nave, Thornwold's camp, Downs' mine, Wardmoor's oath, Saltkerns' fleet, Hollowbrook's mounds, Emberfall's choir, Fallows' furrow, Meres' Hall, Hearthlands' barn, Kingswood's hunt, Shieldings' field. Twelve.",
-          "fx": [["xp", 2]]
+          "say": "Fenmarch's nave, Thornwold's camp, Downs' mine, Wardmoor's oath, Saltkerns' fleet, Hollowbrook's mounds, Emberfall's choir —",
+          "fx": [
+            ["say", "— Fallows' furrow, Meres' Hall, Hearthlands' barn, Kingswood's hunt, Shieldings' field, Pennywell's vault. Thirteen, and Marrowgate."],
+            ["xp", 2]
+          ]
         },
         {
           "id": "swear",
