@@ -1198,7 +1198,8 @@ function classTag(world: World, s: State, a: Action): string {
 
 export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: boolean } = {}): string {
   const who = classTag(world, s, a);
-  if (a.kind === "custom" && world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.free) return who ? ` (free; ${who})` : " (free)";
+  // a free action still says what it costs in standing or regard: "free" is the turn, not the price
+  const isFree = a.kind === "custom" && !!world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.free;
   if (a.kind === "leave") return " (free)";
   if (a.kind === "take") {
     const owner = world.items[a.item]?.owner;
@@ -1267,6 +1268,7 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     if (costs.length) parts.push(`costs standing with ${costs.join(" and ")}`);
   }
   if (who) parts.unshift(who);
+  if (isFree) parts.unshift("free");
   if (parts.length) return ` (${parts.join("; ")})`;
   if (a.kind === "use" && opts.itemHints !== false) {
     // an item's use can sit in the menu for the rest of the game, so its hint

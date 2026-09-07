@@ -103,7 +103,7 @@ success branch does, "costs standing with …, hit or miss" when both do.
 An action or topic that lowers a faction's standing outright, with no die, says
 "costs standing with …" as things stand (a branch under an `if` counts when its
 condition holds now), so a gate's price is never learned from the company's
-banter afterwards.
+banter afterwards — a `free` action included: "free" is the turn, not the price.
 
 ## 5. Rooms
 

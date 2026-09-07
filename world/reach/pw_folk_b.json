@@ -162,7 +162,7 @@
           "id": "pw_name_assayer",
           "label": "ask for the moneyers' names (wits)",
           "if": [["flag", "pw_assayer_bg"], ["!flag", "pw_name_assayer"]],
-          "say": "Four names went in with the last melt before the sealing. Read the record's own marks and I'll confirm what you find.",
+          "say": "Three names went in with the last melt before the sealing. Read the record's own marks and I'll confirm what you find.",
           "fx": [
             [
               "check",
@@ -393,10 +393,16 @@
         {
           "id": "react_hollow_burned",
           "label": "the vault, now it's burned",
-          "if": [["flag", "pw_hollow_burned"]],
+          "if": [["flag", "pw_hollow_burned"], ["!has", "pw_reverse_die"]],
           "once": true,
           "say": "Hann's own die is ash and melt now, same as the rest of him. I don't know what my line was keeping it for, all those years, if that's how it ends.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned_die",
+          "label": "the vault, now it's burned",
+          "if": [["flag", "pw_hollow_burned"], ["has", "pw_reverse_die"]],
+          "say": "Hann's own die is in your pack, and the door it was cut for is ash. Keep it somewhere dry. I don't know what else there is to say to it now."
         },
         {
           "id": "sv_pw_rested_ask",
@@ -436,6 +442,53 @@
             ["addvar", "rep_keepers", 1],
             ["move", "pw_reverse_die", "nowhere"],
             ["move", "pw_obverse_die", "nowhere"]
+          ]
+        },
+        {
+          "id": "react_coin",
+          "label": "the coin, now its face is decided",
+          "if": [
+            [
+              "any",
+              [["flag", "pw_coin_crown"], ["flag", "pw_coin_free"], ["flag", "pw_coin_king"], ["flag", "pw_coin_broker"]]
+            ]
+          ],
+          "once": true,
+          "say": "Hann's die had a say in that, whatever anyone decided.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "pw_coin_crown"]],
+              [
+                ["say", "'The Regent's face, struck off Hann's die. He'd have spat. I find I only want the press turning again.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_free"]],
+              [
+                ["say", "'No face at all. Hann cut faces for a living; a blank coin would have broken his heart, or his hand.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_king"]],
+              [
+                ["say", "'The old face, off Hann's own die. I set it in the press myself. My hands shook and the strike came out clean anyway.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_broker"]],
+              [
+                ["say", "'Both of them on one coin. Hann would have said a die can't serve two masters. It seems it can, if you hold it steady.'"]
+              ],
+              []
+            ]
           ]
         },
         {
@@ -534,6 +587,49 @@
           "once": true,
           "say": "Gone quiet. I thought I'd be glad. Mostly I just miss having something under the ground that was listening back.",
           "fx": [["xp", 1], ["addvar", "appr_lys", -1]]
+        },
+        {
+          "id": "react_coin",
+          "label": "the coin, now its face is decided",
+          "if": [
+            [
+              "any",
+              [["flag", "pw_coin_crown"], ["flag", "pw_coin_free"], ["flag", "pw_coin_king"], ["flag", "pw_coin_broker"]]
+            ]
+          ],
+          "once": true,
+          "say": "Robin turns her river penny over while you tell her.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "pw_coin_crown"]],
+              [
+                ["say", "'The Regent's face. So the new ones won't match mine. I'll keep mine, then. Nobody's spending it.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_free"]],
+              [["say", "'No face? Then how do you know whose it is? Mine has a face. I'm keeping the one with the face.'"]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_king"]],
+              [
+                ["say", "'The old king's face, like my penny. So mine's not old anymore. It's just money. I think I mind that.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_broker"]],
+              [["say", "'Two faces. Meva says that's thrift. I think it's just two faces.'"]],
+              []
+            ]
+          ]
         },
         {
           "id": "bye",

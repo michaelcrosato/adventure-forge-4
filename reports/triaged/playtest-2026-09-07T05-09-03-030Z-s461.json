@@ -1,0 +1,64 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 619,
+  "receipt": "reach.461.619.366.reach_burned.7c580d27",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Room text says 'a chapel roof south' but the room's own exit list is only 'W E' — there is no south exit anywhere to reach the described chapel roof, so the described landmark is unreachable from where it's described.",
+      "where": "The Chapel Causeway (Pennywell approach) / room description vs exits list"
+    },
+    {
+      "sev": "P1",
+      "what": "Doran tells you 'Four names went in with the last melt before the sealing,' then the wits check reveals only three: 'Corbet, Wyle, and Hann, struck last, then nothing after' — the promised count (four) doesn't match the delivered list (three).",
+      "where": "The Assayer's Cot, Pennywell / 'ask for the moneyers' names'"
+    },
+    {
+      "sev": "P1",
+      "what": "After the vault burns, Sarel says 'Hann's own die is ash and melt now, same as the rest of him' — but the exact reverse die she personally handed me earlier ('She hands it over both-handed... he hands it over') is sitting safely in my pack the whole time, confirmed by its own item text later ('the vault burned through; nothing left to strike — a keepsake', i.e. still intact). She reacts as if her family's die was destroyed when it demonstrably wasn't; nothing distinguishes 'the die I kept' from 'other dies that stayed in the vault' in her line.",
+      "where": "The Hammer Hearth, Pennywell / talk to Sarel, 'the vault, now it's burned'"
+    },
+    {
+      "sev": "P2",
+      "what": "The Ironbound oil cask used to burn the Hollow Throne (the ending action) is still listed in the final carried-items recap after being spent — 'cask of Ironbound oil (enough to burn a throne)' — unlike the earlier cinder-oil cask at Pennywell's vault door, which was correctly removed from inventory the moment it was used.",
+      "where": "status, final screen, carrying list / after 'burn the throne with the oil you carry'"
+    },
+    {
+      "sev": "P2",
+      "what": "Robin (who found the river penny) and Sarel (whose family's die was used) never get a line reacting to the final 'Pennywell's Coin' decision once it's made — only Meva and Doran, the two NPCs actually consulted for the decision, get follow-up dialogue ('the coin, now its face is decided'). The two townsfolk most personally tied to the coin's history are silent on the outcome.",
+      "where": "The Mint Yard / talk to Robin, and The Hammer Hearth / talk to Sarel, both after 'Pennywell's Coin' quest completion"
+    },
+    {
+      "sev": "P2",
+      "what": "'order the muster off the common (free; as a Warden)' cost Free Companies standing (-1) on top of the Watch +1 it advertised, but the option text only flagged 'free' (no turn cost) — every other costed choice I saw named the faction at risk in the option label itself; this one didn't.",
+      "where": "The Staked Common, Wickstead (Fallows) / 'order the muster off the common'"
+    }
+  ],
+  "confusions": [
+    "Despite finishing a full win with two companions (Vell, Tamsin) through dozens of shared decision points, I never once saw a 'both companions look at you' quarrel prompt or the 'entry to leave a quarrel between them' the brief specifically asked me to try — it may need a third companion or specific locations I skipped (Wickstead's 'Whose Ground', the Meres' 'Old Dams', the Kings' Rest), but nothing in-game signals what triggers it.",
+    "Quest text for 'Perrin's Mother' ('Tell his mother in Reedholm, as you promised her') stays listed as a live, biddable promise all the way to the end screen, but the moment you cross the one-way Pass Gate toward Marrowgate it becomes physically impossible to fulfil; the gate's warning is generic ('a companion's grief left unfinished... stays unfinished') and never names which specific standing promises are about to be stranded.",
+    "The 'travel to a known place' list only ever offers a handful of named landmark hubs, never the dozens of ordinary rooms actually visited between them (confirmed intentional by the opening tutorial line, but easy to forget mid-game when a menu unexpectedly shrinks from '9 known places' to a short named list after grouping by region)."
+  ],
+  "suggestions": [
+    "Give Sarel a distinct line when the burn happens while you're holding her family's die, acknowledging it survived (vs. the version where you never asked her for it).",
+    "Fix Doran's 'four names' to say three, or add the missing fourth moneyer to the touchstone read.",
+    "Add a south exit (or drop the mention) for the chapel roof at The Chapel Causeway.",
+    "Clear a spent single-use quest item (the Ironbound throne-oil cask) from the carried-items list the same way the Pennywell cinder-oil cask was cleared.",
+    "Let Robin and Sarel react once to the finished coin decision, even a one-line callback, since Meva and Doran already do.",
+    "Name the standing cost in the option label for 'order the muster off the common,' matching every other costed Warden choice.",
+    "Surface the quarrel/'both look at you' mechanic at least once on a common path (e.g. tie one to an early Vale choice) so a two-companion, single-playthrough game reliably sees it."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-07T05-09-03-030Z",
+  "seed": 461,
+  "build": {
+    "rev": "ba4b533",
+    "world": "0e4616e5"
+  },
+  "cost_usd": null,
+  "verified": true
+}

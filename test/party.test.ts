@@ -905,6 +905,16 @@ test("an action that lowers a faction's standing outright says so in its hint, a
   assert.match(render(world, state, []).text, /press the point \(costs standing with the Gray Church\)/);
 });
 
+test("a free action still says what it costs in standing", () => {
+  const world = mini({
+    rooms: { a: { name: "A", desc: "Room A.", actions: [{ id: "order", label: "order the muster off", free: true, fx: [["addvar", "rep_free", -1], ["say", "They go."]] }, { id: "peek", label: "get your bearings", free: true, fx: [["say", "North."]] }] } },
+  });
+  world.factions = { rep_free: "the Free Companies" };
+  const text = render(world, newState(world, 1).state, []).text;
+  assert.match(text, /order the muster off \(free; costs standing with the Free Companies\)/);
+  assert.match(text, /get your bearings \(free\)/);
+});
+
 test("a remark that opens a quarrel says where the sides are", () => {
   const world = mini({
     npcs: {
