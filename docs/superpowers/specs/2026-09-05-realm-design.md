@@ -213,8 +213,8 @@ straight: Vale (verses and crown), Fenmarch, Hollowbrook, Thornwold's
 Understory, Coldpass, Marrowgate, `reach_at_rest`.
 
 **As built** (after the fifteenth playtest round): sixteen regions, thirteen holds;
-795 rooms, 225 npcs, 228 items, 115 quests, 60 stamped places each with its own
-sign, reward and hermit's voice, 510 epilogue lines, 4 companions, 6 factions,
+795 rooms, 225 npcs, 229 items, 115 quests, 60 stamped places each with its own
+sign, reward and hermit's voice, 511 epilogue lines, 4 companions, 6 factions,
 7 endings each with a proof; every gate in the holds and the capital has a
 force, a craft and a words route, every hollow room weighs its grief for
 free, ten waystations on the roads between the holds each put a small choice
@@ -229,7 +229,8 @@ characters a screen on average. Proofs replay the Regent deposed by the
 Companies, the throne burned with the Regent's own oil, the Vale's crown worn
 on the gray seat, and kneeling to the hollow. Fifty-two blind playtests of the
 whole realm (300–650 turns) reached forty-three wins on four different roads,
-one loss, and seven players who ran out of turns (six in the holds, one inside
+one loss, and nine players who ran out of turns (seven in the holds, one at the
+archivist's hall on the last of 650 turns, one inside
 the palace with the seat's four doors in view); every one of the 915 findings
 they raised is fixed, disproven by replaying the trace, or judged by design.
 
