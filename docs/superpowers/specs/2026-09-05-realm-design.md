@@ -46,9 +46,17 @@ alone, and never by kindness alone.
    [sk Saltkerns] ─────── coast road ──────┘
 ```
 
-Nine regions, nine two-letter codes. Every id in a region file carries its
+Nine regions, nine two-letter codes — the realm as first drawn. Nine more
+were added after it shipped, each with its own code, its own paragraph at the
+end of this file, and its own gateways on to two neighbours: Emberfall (`em`),
+the Fallows (`fl`), the Meres (`me`), the Hearthlands (`hl`), the Kingswood
+(`kw`), the Shieldings (`sh`), Pennywell (`pw`), Mootcombe (`mc`) and
+Fosterfell (`ff`) — eighteen in all. Every id in a region file carries its
 code. Neighbors connect through **gateway rooms** with fixed ids; each region
 defines its own gateway room and the exit pointing at the neighbor's gateway.
+A later region hooks on through a neighbour's wilderness grid instead, by
+adding a `link` to that grid's cell; both sides introduce the hold they lead
+into, once, whichever road the player comes in by.
 
 | code | region | settlement | gateways (own room → neighbor room) |
 |---|---|---|---|
