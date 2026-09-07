@@ -638,7 +638,8 @@
               ["inParty", "lys"],
               ["inParty", "tamsin"],
               ["any", [["flag", "kw_hollow_rested"], ["flag", "kw_hollow_bargained"]]],
-              ["!flag", "quarrel_lys_tamsin_wood"]
+              ["!flag", "quarrel_lys_tamsin_wood"],
+              ["!flag", "kw_wood_wild"]
             ],
             "say": "A wood that just got its hunt home again, and Cinderhall's already counting cords off it. — Tamsin: \"The forges have to eat something. A managed coppice is a fair trade for wood this good.\" They both look at you.",
             "fx": [["set", "quarrel_lys_tamsin_wood"]]
@@ -4986,9 +4987,22 @@
         ["!flag", "vell_ledger_found"],
         ["!flag", "vell_exposed"],
         ["!flag", "vell_left"],
-        ["!flag", "vell_dead"]
+        ["!flag", "vell_dead"],
+        ["!flag", "vell_secret_told"]
       ],
       "text": "Vell's ledger stayed unread in Hollowbrook's Keepers' Hall. They walked with you to the end still not saying what Marrowgate means to them."
+    },
+    {
+      "if": [
+        ["inParty", "vell"],
+        ["!flag", "vell_ledger_found"],
+        ["!flag", "vell_exposed"],
+        ["!flag", "vell_left"],
+        ["!flag", "vell_dead"],
+        ["flag", "vell_secret_told"]
+      ],
+      "text": "Vell's ledger stayed unread in the Keepers' Hall. They told you what Marrowgate means to them anyway, and walked with you to the end.",
+      "weight": 1
     },
     {
       "if": [["flag", "fell_lys"], ["!flag", "lys_dead"], ["!flag", "lys_left"]],

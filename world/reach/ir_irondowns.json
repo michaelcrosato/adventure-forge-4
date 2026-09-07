@@ -1364,6 +1364,7 @@
               "will",
               13,
               [
+                ["set", "or_envoy_ir_smooth_won"],
                 ["score", 2],
                 ["xp", 2],
                 ["addvar", "gold", 2],
@@ -2611,8 +2612,13 @@
       "weight": 1
     },
     {
-      "if": [["flag", "or_envoy_ir_smooth"]],
+      "if": [["flag", "or_envoy_ir_smooth"], ["!flag", "or_envoy_ir_smooth_won"]],
       "text": "Old Crick still isn't buying whatever an Envoy tried to sell him, and says so to anyone who asks.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_envoy_ir_smooth_won"]],
+      "text": "Old Crick paid an Envoy two coins for the pleasure of being flattered, and tells it as a joke on himself to anyone who asks.",
       "weight": 0
     },
     {

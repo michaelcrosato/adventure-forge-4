@@ -1,0 +1,70 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 567,
+  "receipt": "reach.463.567.366.reach_at_rest.3687864d",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Ending epilogue says of Vell: 'They walked with you to the end still not saying what Marrowgate means to them.' But Vell explicitly and at length told the player the secret at the Highward record-house ('I'm Marrowgate's own blood, exiled before I could walk... I'd rather you heard it from me than the throne', plus a follow-up about standing outside the palace once and not going in). The epilogue reads as if the confidence was never shared, when it plainly was.",
+      "where": "ending epilogue (Vell) / earlier: The Record-House, Highward, talk to Vell"
+    },
+    {
+      "sev": "P2",
+      "what": "Ending epilogue line 'Old Crick still isn't buying whatever an Envoy tried to sell him' doesn't match the actual scene: the Envoy option there ('turn on the charm (a gamble)') succeeded, and Crick unprompted paid 2 gold for the nostalgia — no sale was ever attempted or refused.",
+      "where": "ending epilogue (Old Crick) / earlier: The Miners' Hall, Cinderhall, talk to Old Crick"
+    },
+    {
+      "sev": "P2",
+      "what": "Dialogue menus renumber after every pick with no warning. Mid-conversation with the smith at The Forge, after asking 'the smith's trade' I picked option 3 intending the still-listed 'your apprentice', but the menu had shrunk and 3 was now 'leave her to the forge' — it ended the conversation early and I had to re-open it to actually ask about the apprentice.",
+      "where": "The Forge / talk to smith"
+    },
+    {
+      "sev": "P2",
+      "what": "'The Recall's Three Notes' quest text reads as an OR ('the last waits with Hollis, the lodge hall's roll, or Fry — whichever you haven't tried'), implying any one source fills the missing note. In practice status tracked 2/3 with the lodge hall specifically still required — the three sources give three different, non-interchangeable notes, not alternate routes to the same one.",
+      "where": "The Hunt's Stand, Kingswood / quest 'The Recall's Three Notes'"
+    },
+    {
+      "sev": "P2",
+      "what": "'The Wood Question' (verderer's warrant vs. factor's coppice vs. status quo) is raised by three separate NPCs in three separate rooms and stays 'Left undone' at the true ending, yet party banter at the horn-post afterward treats the Ironbound coppice as already decided ('Cinderhall's already counting cords off it') as if the underlying dispute resolved itself off-screen despite the open quest flag.",
+      "where": "Hornhallow (Colm/verderer's post, Garrow/charcoal-master's yard, Marrick/weigh-house), Kingswood"
+    },
+    {
+      "sev": "P2",
+      "what": "The Regent's dialogue offers 'name Vell's blood to the Regent (Vell -2)' as an ordinary, always-available menu entry once the secret is known, with no confirmation step — a single misclick this late could unilaterally out a trusted companion's deepest, freely-confided secret for a flat -2 regard, which felt like an outsized risk for a one-line menu pick.",
+      "where": "The Regent's Chambers, Marrowgate / talk to Regent Ysolde"
+    },
+    {
+      "sev": "P2",
+      "what": "'ask Mirren: take the hush-gold (a betrayal) (costs standing with the Free Companies)' appears in the menu with zero prior setup — no one has offered a bribe or hinted at one; the fully-formed betrayal option just exists from the first visit.",
+      "where": "The Company Store, Cinderhall / talk to Mirren"
+    }
+  ],
+  "confusions": [
+    "Lighting Beacon Hill and killing the Lost Sentry at Cairnwatch (Wardmoor) give no in-the-moment sign that they matter; their payoff (Watch standing) only surfaces if you happen to talk to Sergeant Hale at Highward's parade ground afterward — easy to light/kill and never learn it was worth reporting.",
+    "Status tracks 'Crypts of the dead laid to rest: 1/4' globally but never names or hints at the other three crypts or which holds hold them, so the counter implies a findable set with no way to go find it.",
+    "The one-way finality of crossing Coldpass ('A companion's grief left unfinished there stays unfinished unless you walk back for it') is only stated once you're standing at the Pass Gate itself — by then three companions' personal grief-sites (Fenmarch for Osk, a return trip to Thornwold for Lys, Hollowbrook's Keepers' Hall for Vell) are already a long walk behind you with no earlier heads-up to plan around it.",
+    "'(as an Envoy)' options are inconsistent in risk: most ('hear the whole of it, unasked', 'broker the hall a truce', 'offer him a face-saving trade', 'read his real terms, not his script') auto-succeed with no roll, but one early one at the Hunter's Camp ('turn your best charm on him') is a real DC roll and can fail — the only tell is the extra '(a gamble)' tag, easy to miss on a first read.",
+    "The carrying list in status never flags which items are actively equipped (weapon/armor) versus inert keepsakes; you only find out by reading each item's long description or the separate Combat line."
+  ],
+  "suggestions": [
+    "Give an earlier, gentler heads-up (e.g. when first recruiting a companion, or at Highward before Coldpass) that companion side-grief locations become unreachable once you cross into Marrowgate, not only at the Pass Gate itself.",
+    "Reword 'any-one-of-three' discovery quests (like the Recall's Three Notes) to make clear whether sources are interchangeable alternatives or each required once.",
+    "Tag equipped gear inline in the carry list (e.g. '[wielded]', '[worn]') instead of only in the separate Combat summary line.",
+    "Surface Wardmoor's beacon/wight payoff locally instead of only through a later, easy-to-skip conversation at Highward's parade ground.",
+    "Add a one-line confirm ('Are you sure?') before dialogue choices that irreversibly spend a companion's freely-confided secret, given how much weight those confidences carry elsewhere in the story.",
+    "Either resolve or explicitly close out multi-NPC side disputes like the Wood Question when the surrounding plot treats them as settled, so the quest log and the narrative don't disagree."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-07T05-04-24-695Z",
+  "seed": 463,
+  "build": {
+    "rev": "ba4b533",
+    "world": "0e4616e5"
+  },
+  "cost_usd": null,
+  "verified": true
+}
