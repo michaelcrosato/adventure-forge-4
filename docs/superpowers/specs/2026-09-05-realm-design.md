@@ -358,7 +358,7 @@ Gullhaven's sergeant on the Hearthlands, Cinderhall's chapterhouse and
 Highward's record-house on the Kingswood, Fenmarch's Priory and Wickstead's
 recruiter on the Shieldings), moving the faction that carried it; and
 Archivist Penn reads the Shieldings' stone back, with a Scholar's line naming
-the herald the records left unnamed. Seventeen quarrels, fifty-one exchanges.
+the herald the records left unnamed. Seventeen quarrels, fifty-one exchanges. Every quarrel, old or new, can also be left between them: a no-roll entry beside the sides and the draw that closes the quarrel, moves no regard, and leaves an epilogue line saying they settled it without you and neither has forgotten.
 
 **Roads Between** (added after the first playtest rounds): a ring of six
 cross-hold quests, each asked in one hold and settled in the next, flagged
