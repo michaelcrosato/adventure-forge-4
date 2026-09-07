@@ -1,0 +1,63 @@
+{
+  "verdict": "quit",
+  "fun": 4,
+  "clarity": 4,
+  "turns": 591,
+  "receipt": "",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "At the Hollow King's throne I chose 'leave the barrow open to the sky' and the game logged 'Quest done: The Barrow Doors.' Several turns later, back at Last Light Square, the reeve still offered 'promise to seal the barrow' as a live dialogue option. Taking it gave a full reward (the Watch +1, a 'watch shield' item, Tamsin approves/Osk disapproves) and the line 'I'm holding you to it: when he rests, the doors shut' — directly contradicting the already-finalized, opposite outcome I'd chosen at the throne minutes earlier.",
+      "where": "Last Light Square / talk to reeve, after already resolving 'The Barrow Doors' at Throne of the Barrow"
+    },
+    {
+      "sev": "P1",
+      "what": "Entities put to rest through lore/rite (no combat at all) are still labeled '(dead)' in the room header exactly like something I killed with a sword. Happened at least three times: St. Mara's Shrine ('St. Mara (dead)' after reading the vigil-plaque), the bloated drowned wight in Sunken Howe (the game's own text said 'these words were never meant for it' right before the header flipped to '(dead)'), and the frozen pilgrim at St. Ashwyn's Perch. It undercuts the narrative distinction the game otherwise draws between violence and peaceful rites.",
+      "where": "St. Mara's Shrine — nave; Sunken Howe — chamber; The Pilgrims' Shrine — nave"
+    },
+    {
+      "sev": "P2",
+      "what": "'get your bearings' (and its variants, e.g. at the Farlight, the parade ground) is a numbered menu action that spends a turn exactly like combat or dialogue, but it reads and behaves just like the explicitly free 'look' command described in the intro rules — nothing in the menu marks it as costed.",
+      "where": "Village Gate / 'get your bearings' (recurs at other landmarks)"
+    },
+    {
+      "sev": "P2",
+      "what": "Will/wits social checks can be retried immediately and as many times as wanted on failure for only the cost of one turn, with no stated penalty — unlike grace/might physical checks, which frequently show an explicit 'fail costs Xhp.' E.g. asking Widow Kestrel for the sailors' verse failed on a roll of 6, then succeeded next turn on a roll of 19, at no cost beyond the extra turn.",
+      "where": "Widow Kestrel's House, Gullhaven; also Prior Halm, Fenmarch Priory"
+    },
+    {
+      "sev": "P2",
+      "what": "Distinct armor items (mail shirt: 'blunts every blow just by riding in your pack'; tarred oilskin coat: 'turns a blade well'; watch shield: 'it has stopped worse than claws') each carry their own descriptive text implying a bonus, but status only ever shows one combined 'armor+N' figure, so there's no way to confirm whether picking up a second or third piece actually changed anything.",
+      "where": "status screen, Combat: line, after acquiring mail shirt / tarred oilskin coat / watch shield"
+    }
+  ],
+  "confusions": [
+    "The status header shows a fixed score denominator ('score0/366') from turn 1, and I hit the cap exactly ('score366/366') around turn 523 — with only 3 of 6 hold-hollows rested and Coldpass, Hollowbrook, the Iron Downs, and all of Marrowgate still completely unvisited. From that point on the score stat gave no further signal about how much of the game remained.",
+    "The eel-trader's bounty hint ('Worst of it's near the Eel-Run, if you know the place') never matched any room name I actually found. After exploring roughly two dozen distinct Fenmarch fen tiles looking for it, I finally stumbled on the creature by chance at 'Shingle's Edge,' reached from the Saltkerns side via 'Cutter's Path' — nothing anywhere was ever named 'the Eel-Run.'",
+    "Barrow Field describes 'Ivy chokes a loose-looking stone off to one side; the hunter west of the village would know how it moves,' and the hunter duly describes 'a gap under a fallen stone on the north face' as an alternate way into the barrow — but across two visits to Barrow Field, no menu option ever let me act on that stone (only the main doors, already open via the priest's blessing). I never learned whether the alternate entrance became moot once the doors opened, or whether I simply missed an action.",
+    "Two of my four companions' own introduction quests were still unresolved after 591 turns and about 160 locations visited: Tamsin's 'What the Mine Took' (her mother died at Cinderhall in the Iron Downs) and Vell's 'The Exile's Ledger' (the Keepers' Hall in Hollowbrook). Both were offered within the first 35 turns of recruiting them, but their payoff sits in holds I never reached — nothing signaled up front how far down the critical path those personal threads actually live.",
+    "Wardmoor's 'the true founding record' says plainly 'read it aloud at the oath-stone out on the moor,' but after checking six distinct moor tiles (Moor Road, Cairn Field, Twin Ruts, Peat Score, The Long Sight, Windbreak Stones) I still hadn't located the oath-stone when my turn budget ran out — I was actively searching, not blocked by a puzzle, just out of turns for how spread out this hold is.",
+    "Three visually similar wolves in the Vale wood are framed inconsistently with no warning: the ash wolf at Twin Stones is flagged as peaceful-if-left-alone ('It holds its ground and will let you pass if you let it be,' and Lys advises leaving it), while the gaunt wolf one tile away at Wolf Scrape and the lean wolf at Charcoal Ring are both 'hostile, attacks on sight' — the only way to learn which is which is to walk up to each one."
+  ],
+  "suggestions": [
+    "Check whether a quest is already resolved before still offering a dialogue branch that would contradict its outcome (the reeve's 'promise to seal' after the throne decision is the clearest case).",
+    "Give lore/rite resolutions their own status word ('settled' or 'at rest') instead of reusing '(dead)', which reads as a combat kill.",
+    "Mark turn-costing flavor actions like 'get your bearings' visibly differently from the truly free look/status commands, or fold their content into look's free output.",
+    "State up front whether a failed will/wits check can be freely retried, matching the 'fail costs Xhp' convention already used for grace/might checks.",
+    "Pair the score number with a 'holds visited' or 'content discovered' counter, since the score cap is reached long before most of the map is seen and then stops being informative.",
+    "Make quest-hint place-names match an actual room name (the Eel-Run, the oath-stone) or have 'get your bearings' name the correct heading once that quest is active.",
+    "Telegraph, even briefly, how far a companion's personal-quest payoff sits (which hold, roughly how central) so a player recruiting them early can choose to prioritize the trip.",
+    "Add a one-line tell (a growl, a stance, a note in the room text) that distinguishes a 'leave it be' creature from an 'attacks on sight' one before the player has to test each individually."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T20-27-13-370Z",
+  "seed": 211,
+  "build": {
+    "rev": "d4cbe42",
+    "world": "2a2a1adf"
+  },
+  "cost_usd": null,
+  "verified": false
+}

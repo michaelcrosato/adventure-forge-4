@@ -1,0 +1,45 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 519,
+  "receipt": "reach.179.519.366.reach_at_rest.8e7ebd5d",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "After sealing the Vale barrow doors ('You draw the great doors shut from within the passage and hear the seal-stone drop. True to your word.' / Tamsin: 'Sealed for good. That's a door that'll hold.'), the room still offers 'go in (toward the barrow)' and walking back in works with no obstacle at all, contradicting the narrative and the promise just made to the reeve.",
+      "where": "Barrow Field / Barrow Antechamber"
+    },
+    {
+      "sev": "P2",
+      "what": "Killed 'a scarred slag-hound' in the Flooded Quarry den (Iron Downs), matching Ness's description of something 'prowling the downs after dark,' but the status screen kept 'The Slag-Hound' listed as an open quest for the rest of the game — Ness has no dialogue option to report the kill, unlike the near-identical Wardmoor quests (Dark Beacon, Lost Sentry) which both had explicit report options and clear 'Quest done' messages.",
+      "where": "The Head-Frame (Ness) / the Flooded Quarry — den"
+    },
+    {
+      "sev": "P2",
+      "what": "The roll threshold shown in an action's menu label routinely does not match the DC used when it resolves, always a few points lower than the real DC. E.g. 'force the strongbox (might) (roll 7+...)' resolved as 'vs DC 10'; 'win his debt clear at the ring (might) (roll 8+...)' resolved as 'vs DC 11'; 'press him on the Hundred (will) (roll 10+...)' resolved as 'vs DC 12'. Seen repeatedly across many different checks all game.",
+      "where": "many rooms, e.g. Elder's House / The Muster Ground (Thornwold) / The Ironbound Chapterhouse"
+    }
+  ],
+  "confusions": [
+    "The displayed 'roll N+' hint on skill-check actions is unreliable (see bugs above), so you can't actually judge your odds from the menu text before committing a turn to it.",
+    "Wilderness stretches (the Ashwood between Last Light and the barrow; the bare downs above Cinderhall) are a grid of similarly-described rooms with no compass/map aid cheaper than just walking every exit — finding 'the gallows road' toward Thornwold's hollow took blind trial-and-error in the same direction several times before flavor text ('toward the gallows road') confirmed I was on the right thread."
+  ],
+  "suggestions": [
+    "Make the sealed barrow doors actually block re-entry (or drop the 'go in' option / reflavor it) once the player has sealed them.",
+    "Give The Slag-Hound a turn-in line with Ness (or auto-resolve it on the kill) so it doesn't sit forever as a phantom open quest.",
+    "Either compute the menu's 'roll N+' text from the real DC being rolled against, or drop the number from the label so it doesn't imply false odds.",
+    "In multi-room wilderness mazes, surface a cheap 'which way is X' hint (bearings-style) earlier/more often so backtracking a long straight corridor isn't the only way to find a landmark."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T18-44-50-642Z",
+  "seed": 179,
+  "build": {
+    "rev": "0976380",
+    "world": "27bcabd7"
+  },
+  "cost_usd": null,
+  "verified": true
+}

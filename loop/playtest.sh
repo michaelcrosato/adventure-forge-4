@@ -6,10 +6,10 @@
 #   loop/playtest.sh 3 --mock     zero-token wiring check (structural mock player)
 #
 # Env: TF_PLAYER_MODEL (claude model id; default = CLI default)
-#      TF_SEED_BASE (default: epoch seconds)   TF_MAX_TURNS (agent turns, default 100)
-#      TF_MAX_GAME_TURNS (in-game turn budget told to the player, default 80)
+#      TF_SEED_BASE (default: epoch seconds)   TF_MAX_TURNS (agent turns, default 340)
+#      TF_MAX_GAME_TURNS (in-game turn budget told to the player, default 300)
 #      TF_PARALLEL (players in flight, default 2)
-#      TF_WORLD (world file; default world/vale.json, same as the server)
+#      TF_WORLD (world file; default world/reach.json, same as the server)
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
@@ -18,7 +18,7 @@ cd "$ROOT"
 # to, the mock player, and the report checker (whose build hash names the world
 # the player saw) must all mean the same file. Absolute, so a relative override
 # survives being spawned from elsewhere.
-WORLD="${TF_WORLD:-$ROOT/world/vale.json}"
+WORLD="${TF_WORLD:-$ROOT/world/reach.json}"
 case "$WORLD" in /*|?:*) ;; *) WORLD="$ROOT/$WORLD" ;; esac
 [[ -f "$WORLD" ]] || { echo "TF_WORLD not found: $WORLD"; exit 1; }
 export TF_WORLD="$WORLD"
@@ -27,8 +27,8 @@ COUNT="${1:-1}"; [[ "$COUNT" == --* ]] && COUNT=1
 MOCK=0; for a in "$@"; do [[ "$a" == "--mock" ]] && MOCK=1; done
 SEED_BASE="${TF_SEED_BASE:-$(date +%s)}"
 SEED_BASE=$((SEED_BASE % 100000))
-MAX_TURNS="${TF_MAX_TURNS:-100}"
-MAX_GAME_TURNS="${TF_MAX_GAME_TURNS:-80}"
+MAX_TURNS="${TF_MAX_TURNS:-340}"
+MAX_GAME_TURNS="${TF_MAX_GAME_TURNS:-300}"
 PARALLEL="${TF_PARALLEL:-2}"
 WAVE_DIR="runs/playtest/$(date +%Y%m%dT%H%M%S)"
 mkdir -p "$WAVE_DIR" queue

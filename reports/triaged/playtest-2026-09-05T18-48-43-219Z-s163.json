@@ -1,0 +1,52 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 580,
+  "receipt": "reach.163.580.366.reach_at_rest.7f831502",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "Two unrelated NPCs are both named 'Ness' (the shift-tally keeper at Cinderhall's head-frame, and a bone-carver hermit at Hollowbrook's Hollow Eaves hut), which briefly reads as the same character turning up in a second hold.",
+      "where": "The Head-Frame (Cinderhall) / the Hollow Eaves (Hollowbrook)"
+    },
+    {
+      "sev": "P2",
+      "what": "The status screen's top line stays fixed on the original 'Act 1: settle the Hollow King...' summary for the entire game, including deep in Marrowgate and after the *** WIN screen, so it stops describing where the story actually is even though the 'road' and quest lines below it do update correctly.",
+      "where": "status command"
+    },
+    {
+      "sev": "P2",
+      "what": "The *** WIN epilogue recaps the Vale, Fenmarch, Hollowbrook, and Iron Downs threads by name, but never mentions Thornwold's pardoned Hanged Company or Wardmoor's relit beacon/laid sentry, and gives no closure line for any companion's personal arc (whether Cal stayed home, what came of Vell's exiled bloodline), despite all of those being fully resolved quests going into the ending.",
+      "where": "*** WIN: reach_at_rest ending screen"
+    },
+    {
+      "sev": "P2",
+      "what": "Prior Halm says of Brother Osk, \"a grief he didn't know was his own family's, not until you brought him this far east,\" but Osk himself had already said earlier, unprompted, \"The water took my family in Fenmarch, before I ever wore this gray\" — implying he already knew where and how they died.",
+      "where": "The Priory of the Gray Church / Prior Halm dialogue"
+    }
+  ],
+  "confusions": [
+    "A companion's 'talking with X' menu often includes 'wait here' as the first option once their intro dialogue is exhausted, with no hint of what it actually does (leave them at this spot? drop them from the party?) — I avoided it every time rather than risk losing a companion by accident.",
+    "Early on, the wood north of Last Light (Split Oak / Charcoal Ring / Antler Stake / etc.) and later the Hollowbrook downs have many similarly-described, unlabeled-on-entry nodes, so finding a specific target (the sunken shrine, the king's causeway) meant blind wandering in a direction until the room text finally named it, rather than the exits themselves hinting at what lay that way.",
+    "The status header's fixed Act-1 mission blurb never signals that Act 1 is long over or that you're now in the Marrowgate endgame — a player relying on status alone for orientation would think they were still working on the original barrow quest."
+  ],
+  "suggestions": [
+    "Give each active companion (and each rested hold) a one-line personal epilogue on the final *** WIN/LOSE screen, since the game clearly tracks that state in depth already.",
+    "Refresh or drop the status header's Act 1 summary once later acts begin, so the top line always matches current progress.",
+    "Rename one of the two 'Ness' NPCs to avoid the coincidence.",
+    "Add a short parenthetical to 'wait here' in companion menus explaining its effect, or remove it if it's inert.",
+    "Let 'get your bearings'-style hints be visible a beat earlier in a new sub-area (or on first entry) rather than only as a purchasable action, to cut down on blind directional wandering in the larger wilderness zones."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T18-48-43-219Z",
+  "seed": 163,
+  "build": {
+    "rev": "e30c89c",
+    "world": "97c5832e"
+  },
+  "cost_usd": null,
+  "verified": true
+}

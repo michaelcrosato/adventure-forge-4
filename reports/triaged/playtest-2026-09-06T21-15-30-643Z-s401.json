@@ -1,0 +1,94 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 535,
+  "receipt": "reach.401.535.366.regent_deposed.a51ac820",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The Envoy-only line 'broker a shared claim on the wood (as an Envoy)' at the verderer's post resolves The Wood Question quest and narrates the exact outcome the Hunt's Stand grief's bargain requires ('warrant and coppice held in abeyance, the rides kept as they are'), but it does not set the flags the grief's bargain checks. After brokering (and gaining Crown+1/Ironbound+1/Barrow-Keepers+1), the Hunt's Stand's 'weigh what this grief asks' still read verbatim 'The bargain wants both refused, in Hornhallow: the verderer's warrant... and the factor's coppice...' as if nothing had happened, and both NPCs still offered their separate 'argue him out of/off' persuasion checks as live, unconsumed options.",
+      "where": "Hunt's Stand — Muster Court / The Verderer's Post / The Ironbound Weigh-House"
+    },
+    {
+      "sev": "P1",
+      "what": "To make the Kingswood's grief-bargain option actually appear at Garrow's, I had to redundantly re-run the same two conversations via 'argue him out of the warrant' and 'argue him off the coppice' after already brokering — each attempt (including one natural-1 fail) cost more Crown/Ironbound standing on top of what brokering had already spent, so the diplomatic Envoy solution ended up costing MORE net reputation than just brute-forcing the two persuasion checks would have.",
+      "where": "The Verderer's Post (Colm) / The Ironbound Weigh-House (Marrick)"
+    },
+    {
+      "sev": "P2",
+      "what": "Even after 'The Wood Question' quest showed Done (via the broker), Marrick at the weigh-house still offered 'argue him off the coppice' as a live option, and using it still applied real consequences (a failed roll cost Ironbound -1) as if the matter were unresolved — a stale menu option that let me pay reputation costs for an already-settled question.",
+      "where": "The Ironbound Weigh-House / talk to Marrick"
+    },
+    {
+      "sev": "P1",
+      "what": "The quest 'The Old Kings' Hounds' ('the lodge hall's own roll might say more') never actually paid off through the lodge hall: reading the roll there ('read the roll's cadence') only resolved the separate 'Recall's Three Notes' quest and said nothing about hounds or a barrow. The Old Kings' Hounds quest was only resolved by stumbling into 'the Hound-Graves' through unguided riding exploration well south of the hinted location, with the quest's hint text never updating to point there.",
+      "where": "The Hunt's Stand — Lodge Hall / the Hound-Graves"
+    },
+    {
+      "sev": "P2",
+      "what": "On first entering the Kingswood ('The East Track'), all four companions spoke TWICE in a row with two overlapping-but-different sets of remarks fired back to back on the same turn (e.g. Vell: 'I don't think that's coincidence...' immediately followed by Vell: 'The records say the hunt was not recalled...'), reading as a doubled arrival-banter trigger rather than one clean introduction.",
+      "where": "the East Track (Kingswood entry)"
+    },
+    {
+      "sev": "P2",
+      "what": "Re-entering the Kingswood at its OTHER threshold room (the South Track, on the way out to the Iron Downs) re-fired the same four-companion arrival banter almost verbatim from the original entrance — well after the hold's grief and Wood Question were already fully resolved, so it read as stale/out-of-date flavor text.",
+      "where": "The South Track (Kingswood, south exit toward Iron Downs)"
+    },
+    {
+      "sev": "P2",
+      "what": "Room-title casing was inconsistent for what reads as the same waypoint type: 'The East Track' (capitalized, first visit) vs 'the East Track' (lowercase, later at the same coordinates), and similarly 'the South Track' vs 'The South Track'.",
+      "where": "the East Track / the South Track (Kingswood)"
+    },
+    {
+      "sev": "P2",
+      "what": "'The Recall's Three Notes' quest text said 'Two notes are known' even after Fry's rhyme fully described all three ('two notes rising, and a third that drops away') and Hollis had hummed and confirmed the exact shape of the third note — the game only credited the third note once I did the separate, explicit 'read the roll's cadence' action at the lodge hall, which felt redundant given what I'd already been told twice.",
+      "where": "The Hunt's Stand — the Boy's Stair / Lodge Hall"
+    },
+    {
+      "sev": "P1",
+      "what": "In a menu-driven dialogue, asking a topic removes it from the list and the remaining options silently renumber. At the Regent's Chambers this caused a misclick: after asking a question, option 6 ('the Kingswood's oaks', an inert lore question moments before) had shifted to be 'negotiate the terms first (Envoy)', a real, consequential commitment — I ended up taking the Regent's oil and costing Osk/Lys disapproval without meaning to select that option.",
+      "where": "The Regent's Chambers / talk to Regent Ysolde"
+    },
+    {
+      "sev": "P1",
+      "what": "No visible progress counter exists anywhere in status for 'two honest services to the Watch' (one of the four ways to earn the Regent's Writ / open Coldpass), unlike the explicit 'Hollows rested X/11' and 'Hollows burned X/11' counters for the other paths. I raised Watch reputation to 'trusted (+5)' through several favors (lighting the beacon, etc.) but never learned whether any of them counted as a discrete 'service', or how many I had.",
+      "where": "status screen / The Regent's Writ quest"
+    },
+    {
+      "sev": "P1",
+      "what": "A companion (Vell) dropped to 3/9 hp fighting the honour guard in the Old Crypts and never recovered before the ending — the final status screen's parenthetical 'a rest at any hearth heals them' only appeared after the game was already over, with no hearth reachable between that fight and the Hollow Throne two rooms later.",
+      "where": "The Old Crypts / final status screen"
+    },
+    {
+      "sev": "P2",
+      "what": "Companion speaker-tags are inconsistent for the same character: dialogue is sometimes attributed to 'Osk' and sometimes to 'Brother Osk' within the same scene (e.g. in one Kingswood arrival banter block both forms appear for what is clearly the same person), which read for a moment like two different characters.",
+      "where": "the East Track (Kingswood arrival banter)"
+    },
+    {
+      "sev": "P2",
+      "what": "The Old Watchtower's free 'get your bearings' said 'the fens spread east, toward Hollowbrook,' but every NPC (the reeve, the innkeep) names that same eastward hold 'Fenmarch,' with Hollowbrook described elsewhere as a separate hold lying beyond Fenmarch — the bearing skips the nearer, correctly-named landmark for a farther one.",
+      "where": "Old Watchtower / get your bearings from the parapet"
+    },
+    {
+      "sev": "P2",
+      "what": "The diplomatic 'settle a quarrel' will-check option offered near-identical phrasing both times two companions 'both looked at me' ('call the door's fate a draw' at the Vale barrow, 'call it a draw between them' at the Hundred Gallery) — functional and welcome both times, but repetitive enough to feel like reused text rather than a bespoke line for each quarrel.",
+      "where": "The Empty Seat (Vale) / The Hundred Gallery — Quiet (Iron Downs)"
+    },
+    {
+      "sev": "P2",
+      "what": "'get your bearings' inside the Kingswood's ridings routinely gave exact step-counts toward Hornhallow/Hunt's Stand (e.g. 'Hunt's Stand: 3 south and 3 east') but the rooms actually reached often lacked a matching exit in that direction, so the numbers read as straight-line distance rather than a walkable route — not wrong, but easy to take too literally when navigating.",
+      "where": "various ridings rooms, Kingswood"
+    }
+  ],
+  "confusions": ["The Hunt's Stand's grief-bargain silently requires the literal 'argue him out of/off' persuasion checks at Colm and Marrick to have each been attempted, not just the equivalent outcome from the Envoy's 'broker a shared claim' line — nothing in the weigh text or the Wood Question quest warns that the two systems track separately.", "The Old Kings' Hounds quest's only hint ('the lodge hall's own roll might say more') pointed at content that turned out to belong to a different quest entirely (The Recall's Three Notes); the actual answer required free exploration with no further hint ever offered.", "No way to check progress toward 'two honest services to the Watch' for the Regent's Writ — unlike every other Coldpass-opening path, this one has no counter or explicit confirmation of what counts.", "Dialogue menus renumber silently once a topic is consumed, so a memorized option index from one turn can point at a completely different (and sometimes costly) option the next — easy to misclick into an unintended commitment.", "It's not obvious before selecting it that a companion's grief-quest option like 'coax the old call out of him' or 'read the roll's cadence' only fully registers a piece of shared world-knowledge (like the recall's third note) once you take that specific action, even after two NPCs have already described/confirmed the same fact in conversation."],
+  "suggestions": ["Have the Wood Question's Envoy 'broker a shared claim' resolution also set the Hunt's Stand grief's 'both refused' bargain flags directly, since the fiction already says the outcome matches.", "Remove or gray out 'argue him out of/off' options at Colm and Marrick once The Wood Question quest is Done via any route, so they can't be replayed for extra (and pointless) reputation cost.", "Update the Old Kings' Hounds quest hint once the player has read the lodge hall roll and it didn't mention hounds, pointing them toward the Hound-Graves instead.", "Add a 'Watch services: X/2' line to status next to the Regent's Writ quest, mirroring the Hollows rested/burned counters.", "Keep dialogue option numbers stable turn-to-turn (e.g. by not immediately deleting a just-answered topic, or by always putting exit options last) so re-issuing the same index doesn't land on a different, uncosted-for choice.", "De-duplicate the double companion-banter block that fires on first entering the Kingswood, and suppress the full arrival banter on later re-entries at a different threshold room once the hold's grief is already resolved.", "Normalize room-title casing for the same waypoint ('The East Track' vs 'the East Track') and companion speaker tags ('Osk' vs 'Brother Osk') for consistency.", "Warn the player in-fiction (not just on the final screen) that a low-hp companion needs a hearth before pressing on into an unavoidable end-of-act encounter."],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T21-15-30-643Z",
+  "seed": 401,
+  "build": { "rev": "02d3dc9", "world": "26e35269" },
+  "cost_usd": null,
+  "verified": true
+}

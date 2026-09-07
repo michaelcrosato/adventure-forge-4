@@ -1,0 +1,84 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 560,
+  "receipt": "receipt:reach.241.560.366.reach_at_rest.087a71a8",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "On first meeting a future companion, before any dialogue has run, the menu already offers 'attack Vell with hunting knife (roll 9+ on the die)' — same pattern later for Brother Osk, Tamsin, and Lys. It reads as an easy way to accidentally kill a companion you haven't even talked to yet.",
+      "where": "The Last Light Inn / attack Vell with hunting knife"
+    },
+    {
+      "sev": "P1",
+      "what": "Companion disapproval is inconsistently telegraphed. Killing the starving 'gaunt wolf' produced 'Lys disapproves' only after the strike landed, with zero warning. The very next wolf (the ash wolf at Twin Stones) got an explicit pre-combat warning from Lys ('Leave it... we can go around') before I could act. Same category of choice, opposite signaling.",
+      "where": "Wolf Scrape / attack gaunt wolf with plain sword"
+    },
+    {
+      "sev": "P2",
+      "what": "The wits check 'find the error in his tally' (meant to clear Cal's debt) returned byte-identical failure text on every retry ('The figures are a mess, but an honest one...') with no cost, cap, or acknowledgment of repetition — it never actually worked, and the debt was only ever clearable later once I had 10 gold for a separate paid option.",
+      "where": "The Quartermaster's Wagon / find the error in his tally (wits)"
+    },
+    {
+      "sev": "P2",
+      "what": "Quest text for 'Cal's Reckoning' names only two resolutions ('Persuade him home (will), or clear his debt at the wagon'), but a third path exists in play — a might-based 'win his debt clear at the ring' at the Muster Ground — never mentioned in the quest log or in Cal's own dialogue.",
+      "where": "The Muster Ground / win his debt clear at the ring (might)"
+    },
+    {
+      "sev": "P2",
+      "what": "Captain Vane's own quest text promises the smugglers' road 'for 15 gold, or a favor worth the same to me,' but no dialogue option with her ever lets you ask what the favor is. It only surfaces indirectly after finishing an unrelated quest (dealing with Rook at the Rope Larder).",
+      "where": "Captain Vane's Tent / talk to Captain Sorrel Vane"
+    },
+    {
+      "sev": "P2",
+      "what": "Fenn is imprisoned on a charge his own dialogue (and the pardon he sends you to find) proves false, but no dialogue or action anywhere lets you free him, tell a guard, or return to him with the news. The whole thread resolves through the Gallows Glade ritual and Fenn's own captivity is never revisited.",
+      "where": "The Stockade / talk to Fenn"
+    },
+    {
+      "sev": "P2",
+      "what": "'The True Pardon' and 'The Hanged Company' are logged as two separate quest-log entries that both resolve with the single identical action (read the pardon at the Gallows Glade) — functionally one objective tracked twice under different names.",
+      "where": "status / Quests list"
+    },
+    {
+      "sev": "P1",
+      "what": "The moss-grown wight guardian in the Cutter's Barrow chamber advertises two non-combat resolutions ('read the verse-stone (wits)' and 'swear the rest-oath (will)') alongside combat. After one failed wits roll I fought it instead; killing it silently removed both alternate options, and the verse the room was built around was never actually readable — no warning that fighting would forfeit that content permanently.",
+      "where": "the Cutter's Barrow — chamber / attack a moss-grown wight"
+    },
+    {
+      "sev": "P2",
+      "what": "The Hidden Root quest ('the gap in the black thorn is at the wood's north-west corner') sent me through ~25 turns of a deep-wood maze of near-identically-described rooms (Deer Break, Split Beech, Spoil Verge, Bramble Break, The Bluff...) trying every unexplored exit from every reachable node, and the black-thorn gap was never found — the compass bearing never matched the room graph's actual layout.",
+      "where": "Camp Gallows deep wood / The Hidden Root (never resolved)"
+    }
+  ],
+  "confusions": [
+    "The elder's dialogue about 'the sealed coffer' never says what's inside it; I only learned it holds the old king's crown from the smith three rooms away ('if it's the crown you're after, the elder keeps it'). A player who never visits the forge has no idea why the coffer matters.",
+    "The reeve (wants the barrow sealed) and the gray priest (wants it open, and grants a blessing to that effect) never cross-reference each other's request even after I'd clearly sided with one — asking the priest for a blessing produced no 'the reeve won't like this' acknowledgment, and vice versa.",
+    "'The Wreckers' Roost' ('east along the shore from the quay, past the dunes') took 15+ turns of undirected wandering through a maze of similarly-flavored coastal rooms (Kelp Line, Samphire Bank, Reed Cut, The Widow Rocks, Low Marsh) before the entrance appeared — the bearing hint didn't meaningfully narrow the search.",
+    "Two encounters in entirely different regions (a bear/lynx den on the Saltkerns coast, and a hidden cell under Marrowgate) presented word-for-word identical room and NPC templates ('Doesn't look up first. Looks up eventually, and takes your measure quick.') down to the same dialogue options and resolution checks — reads as a reused encounter stamped into two locations rather than two distinct scenes.",
+    "The elder's ledger hints early on that 'the first reeve's name is written there, and then crossed out' — a strong, specific clue toward the endgame reveal that the first Reeve stole the crown — but no later dialogue (the steward's shade, the Hollow King, or the first Reeve's shade himself) ever explicitly calls back to that ledger, so the payoff lands only if the player remembers the throwaway line from hours before.",
+    "Companions fight alongside you in every combat with no visible per-companion HP, and I never once saw a companion take damage, flee, or go down across a full playthrough — it's unclear whether they can be hurt or lost in a fight at all, which undercuts any tension around bringing them into danger.",
+    "Turning down the Regent's herald's decree, and being told separately that Marrowgate had 'word you went under with the Companies,' both landed as flat +/-1 reputation ticks with no signal of how much weight they'd carry — only the final status recap made clear these were the two choices the whole epilogue hinged on ('You told the Regent's herald no, plain... Last Light heard you went under the mountain on the Free Companies' word, not the crown's')."
+  ],
+  "suggestions": [
+    "Gate or remove the raw 'attack <companion-to-be>' menu option until at least one line of dialogue has run with that NPC.",
+    "Vary or annotate repeated-failure text on retryable skill checks (or cap retries / show a hint that gold is the real solution) so a dead-end check doesn't read as a live one.",
+    "Give Cal's Reckoning and the Smugglers' Road quest text a line that at least gestures at their hidden alternate paths (the ring bout; the Rook favor) instead of surfacing them only by chance.",
+    "Let siding with one NPC in an opposed-request pair (reeve vs priest on the barrow doors; similarly Halm vs the Ironbound) register at least once in the other party's future dialogue.",
+    "Add a short in-fiction confirmation before a fight that would forfeit an advertised non-combat resolution (verse-stone, rest-oath) in the same room.",
+    "For side-quest destinations reached through a maze of same-flavored rooms, either give a distance/turn count in the hint or add a landmark unique to each maze so wandering feels navigable rather than uniform.",
+    "Show some visible sign when a companion is at risk in combat (even just 'Lys staggers') so bringing them into danger carries felt weight.",
+    "The end-of-game 'how the realm remembers you' recap is excellent and should be leaned on more — consider surfacing a condensed version of it mid-game via status once major reputation swings happen, not only at the ending."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T22-58-40-805Z",
+  "seed": 241,
+  "build": {
+    "rev": "846b6fd",
+    "world": "28db12be"
+  },
+  "cost_usd": null,
+  "verified": false
+}

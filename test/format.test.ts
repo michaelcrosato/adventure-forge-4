@@ -92,6 +92,13 @@ test("renderStatus: falls back to the room id if a visited room has no name (e.g
   assert.equal(renderStatus(world, state), "Visited: ghost_room");
 });
 
+test("renderStatus: past a dozen visited places, shows the count and the latest few instead of every name", () => {
+  const ids = Array.from({ length: 20 }, (_, i) => `r${i}`);
+  const world = { rooms: Object.fromEntries(ids.map((id) => [id, { name: `Room ${id.slice(1)}` }])) } as unknown as World;
+  const state = { vars: {}, inv: [], visited: ids } as unknown as State;
+  assert.equal(renderStatus(world, state), "Visited: 20 places (lately: Room 15, Room 16, Room 17, Room 18, Room 19)");
+});
+
 test("renderStatus: omits the visited line when nothing has been visited yet", () => {
   const world = { objectives: "Find the crown." } as World;
   const state = { vars: {}, inv: [], visited: [] } as unknown as State;
@@ -139,7 +146,7 @@ test("renderStatus: totals check and combat modifiers for worlds with a characte
   assert.equal(
     renderStatus(world, state),
     "Find the crown.\ncarrying: sword\nPerks: Keen Edge (+1 to hit), Old Lore (+1 wits)\n" +
-      "Checks: might+2 grace+0 wits+2 (+1 base, +1 Old Lore) will+0\nCombat: hit+4 dmg+3 armor+0",
+      "Checks: might+2 grace+0 wits+2 (+1 base, +1 Old Lore) will+0\nCombat: hit+4 dmg+3 (sword) armor+0",
   );
 });
 

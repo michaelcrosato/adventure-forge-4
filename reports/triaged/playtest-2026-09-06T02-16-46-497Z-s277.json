@@ -1,0 +1,89 @@
+{
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 4,
+  "turns": 581,
+  "receipt": "reach.277.581.366.reach_at_rest.37170863",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "After sealing the Vale barrow doors for good (the game itself said 'go in (locked: sealed for good if you sealed them...)' confirming it's irreversible), the gray priest still offered 'break my word to the reeve: release me' on a later visit. Choosing it applied (the Watch -1), (the Gray Church +1), granted a perk called 'Quiet Resolve', made Tamsin disapprove, and flipped the already-completed 'Barrow Doors' quest to 'Failed' in status -- even though the doors remained physically sealed the whole time and the reeve had already thanked me in person for keeping my word ('Sealed, as you said. The watch won't forget that.').",
+      "where": "Gray Chapel / talk to gray priest (option: break my word to the reeve)"
+    },
+    {
+      "sev": "P1",
+      "what": "When I went back to the reeve after the bug above, he said 'He told me himself, in his way. I'd rather have heard it from you first' (implying the priest told him) -- but the priest's own line moments earlier was 'I'll say nothing to the reeve. You will have to, in the end.' The two NPCs give directly contradictory accounts of who informed whom.",
+      "where": "Last Light Square / talk to reeve (option: about the promise I broke)"
+    },
+    {
+      "sev": "P1",
+      "what": "The final win epilogue says 'The reeve of Last Light never got his watch shield back, nor a word of why, and never spoke your name again' -- this contradicts the reeve's own warm, grateful dialogue earlier in the run, and is also factually backwards: the watch shield was a gift he pressed on me ('Take the shield -- it has stopped worse than claws'), never something borrowed or owed back. This is the same Barrow Doors bug (see above) surfacing all the way in the ending text.",
+      "where": "*** WIN screen / epilogue (How the realm remembers you)"
+    },
+    {
+      "sev": "P1",
+      "what": "Companion HP never recovers by any means I found: resting by the fire, eating at a cook-fire, eating dried herbs, and using a purchased 'tin of miner's salve' all healed only the player character, never party members. Vell sat at 6/9 hp from roughly turn 120 through the end of the game (turn 580+) with no way to restore it.",
+      "where": "Multiple / 'rest by the fire', 'eat by the cook-fire', 'use dried herbs', 'use a tin of miner's salve'"
+    },
+    {
+      "sev": "P2",
+      "what": "Quest text says 'Find Camp Gallows and ask after him by name' for Lys's brother, but after visiting every NPC I could find at Camp Gallows (Sergeant Coe, Captain Vane, Quartermaster Bray, the cook) and roughly 20 surrounding forest rooms, no dialogue option ever let me actually ask after him by name or learn his name -- the thread never advanced past 'find Camp Gallows.'",
+      "where": "Camp Gallows (Thornwold) / quest 'A Brother in the Company'"
+    },
+    {
+      "sev": "P2",
+      "what": "At the Hunter's Camp, the hunter's dialogue about the barrow said 'it's in the tally by the rack' (implying I still needed to read the tally marks myself), but the 'read the tally marks by the smoke rack' menu option silently disappeared before I ever selected it, and the loose-stone trick worked anyway without me ever reading the tally.",
+      "where": "Hunter's Camp (Vale) / talk to hunter (the old barrow)"
+    },
+    {
+      "sev": "P2",
+      "what": "Two separate 'offer to help, in trade (will)' bargains with hermit-like NPCs (old Maud in Thornwold, the last keeper under Marrowgate) say 'telling you what you came for without further prompting' on success, but no new lore, quest update, or concrete information followed -- only a flavor line and an unrelated 'parting gift' item.",
+      "where": "Maud's Smoke-Hut (Thornwold) and the Cistern Cell (Marrowgate) / 'offer to help, in trade'"
+    },
+    {
+      "sev": "P2",
+      "what": "The number of holds outside the Vale is stated inconsistently across the game's own text: the Act 1 intro says 'the roads open: six holds'; Herald Corvane explicitly lists exactly six (Fenmarch, Thornwold, Iron Downs, Wardmoor, Saltkerns, Hollowbrook); the Act 2 status screen says 'Seven holds, seven unrested griefs' and names a 7th (Emberfall) that the herald never mentions; and the gray priest, moments after the Vale is settled, says 'There are five more hollows in the Reach.' Three different counts (5, 6, 7) appear for what should be one fixed number.",
+      "where": "Act 1 intro / Herald Corvane dialogue / Act 2 status screen / gray priest dialogue"
+    },
+    {
+      "sev": "P2",
+      "what": "Taking damage from cold ('The wind finds the one gap your cloak doesn't cover, and takes its due', hp-1) happened as a plain room-entry event on the Coldpass mountain trail with no advance warning that the area deals passive environmental damage, unlike combat which is always clearly flagged with a hostile creature listed.",
+      "where": "The Pilgrims' Shrine (Coldpass) / go out (room transition)"
+    },
+    {
+      "sev": "P2",
+      "what": "Companion farewell lines never vary regardless of how much story has moved on: Lys said the exact line 'Mind your footing. This wood doesn't forgive twice.' verbatim every single time I ended a conversation with her across many separate visits in the Vale and Thornwold; Tamsin's 'Watch your footing. I'm not carrying you back.' repeated identically just as often. It reads as a canned tag rather than a reactive companion.",
+      "where": "Multiple rooms / ending any conversation with Lys or Tamsin"
+    }
+  ],
+  "confusions": [
+    "The Hunter's Camp implied I needed to personally 'read the tally marks' to learn the barrow's loose-stone trick, but the option vanished and the trick worked anyway via dialogue alone, so it was unclear whether the tally ever mattered.",
+    "'A Brother in the Company' (Lys's brother) never told me his name or gave a way to ask after him specifically, despite full exploration of Camp Gallows and its surrounding woods; the quest never progressed past its opening line.",
+    "The three-way promise 'pay it yourself / let the hold pay it / let it lapse' at Reedholm's tithe and Thornwold's oath-toll was crystal clear and well telegraphed with gold costs shown up front -- worth calling out as the game's clearest moment, in contrast to the murkier Vale Barrow Doors thread.",
+    "Status repeatedly showed party regard for Tamsin and Brother Osk from the moment they joined, but Vell's regard was simply absent from the Party line for the first several turns after recruiting (only 'Vell (hp 9/9)', no regard number) before it started appearing later.",
+    "It was never clear from any UI text whether picking up a watched item while an NPC is 'watching' (e.g. the headframe lantern at Ness's post) always counts as theft with a companion penalty, or only sometimes -- the consequence (Tamsin disapproves) only became visible after the fact, with no preview like the will-check DCs get.",
+    "Several found items pointed at named people in far-off places I never located (e.g. a 'name-carved buckle -- Mara, on Stilt Row, would want to know this was found'), but I could not find a navigable 'Stilt Row' location within Reedholm despite exploring its landing, net-hall, eel-market, and Priory -- it's possible the location exists but is gated behind a path I never found.",
+    "The founding ledger's content ('I took it from his brow while he slept... and called it inheritance') is nearly word-for-word identical to what the Hollow King's own scrap of paper said back in Act 1 and what the first Reeve's shade says again in his tomb -- three near-identical repetitions of the same confession text felt like the same beat replayed rather than escalating revelation."
+  ],
+  "suggestions": [
+    "Gate the priest's 'break my word to the reeve' dialogue option (and any equivalent) behind the promise's current fulfilled/unfulfilled state, so a promise already kept through action can never be retroactively flagged as broken.",
+    "Make the two NPCs' accounts of 'who told whom' about a broken vow agree with each other, or have the second NPC react to what actually happened rather than a generic stock line.",
+    "Give some way to heal companion HP directly (a shared rest, a companion-target salve/herb use) so the mechanic isn't purely cosmetic.",
+    "Either add a concrete 'ask after [name]' step once a companion's sibling/relative is named, or drop the 'ask after him by name' phrasing if no such NPC interaction exists yet.",
+    "Pick one canonical number of hollows/holds and use it everywhere (intro, herald, status, NPC dialogue) to avoid the reader wondering if they missed one.",
+    "Flag passive environmental damage rooms the same way combat is flagged, even just a one-line warning before the first hit lands.",
+    "Vary at least one companion farewell line based on region or how many turns have passed since the last conversation, so repeated check-ins don't feel identical.",
+    "When a 'bargain' trade dialogue succeeds and claims to reveal 'what you came for,' make sure a concrete piece of new information (not just an item) actually appears in the response or the journal."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T02-16-46-497Z",
+  "seed": 277,
+  "build": {
+    "rev": "8b6cfab",
+    "world": "83d82a03"
+  },
+  "cost_usd": null,
+  "verified": true
+}

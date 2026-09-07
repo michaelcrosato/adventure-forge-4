@@ -1,0 +1,90 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 619,
+  "receipt": "reach.433.619.366.reach_at_rest.96223f77",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The gray priest's barrow-doors blessing narrates the outcome immediately ('Far off, the stone doors grind open. No promise binds them shut.') and the Barrow Field room text shows the doors 'standing open into the dark' well before the actual mechanical seal-or-open choice is offered at the throne after resting the king. Had I later picked 'seal the barrow doors behind you' at the throne, the earlier narration would have directly contradicted the result.",
+      "where": "Gray Chapel (talk to gray priest: 'a blessing for the barrow') / Barrow Field"
+    },
+    {
+      "sev": "P1",
+      "what": "Sparrow's smuggling side-quest ('The Grain Run') still frames the job purely as dodging 'the Regent taking four in ten' with no acknowledgment that I had, minutes earlier at the almonry, already persuaded Sister Winnow to turn that same tithe barn into a common store open to all, worthy or not.",
+      "where": "The Back Lane (talk to Sparrow: 'run the sacks past the tithe')"
+    },
+    {
+      "sev": "P1",
+      "what": "Recurring theft-flagged props (coin-dish, tongs, candles, tithe-scales, iron-sun pendant) appear in nearly every shop/chapel/forge, explicitly called out and 'watched,' but none connect to any quest, dialogue, or consequence beyond a single flavor line if declined -- they read as deliberate hooks but are dead ends, which is misleading about what the game is signaling as worth pursuing.",
+      "where": "The Last Light Inn / The Forge / Gray Chapel / The Chandler's Counter / The Ironbound Chapterhouse"
+    },
+    {
+      "sev": "P2",
+      "what": "A healing consumable (dried herbs/dried peas) can be selected via 'use X' and is consumed even at full HP with only flavor text ('Bitter, but they ease the ache.') and zero effect; because the numbered menu shifts every turn as items are gained/lost, it's easy to hit the wrong 'use' entry by accident and waste it, which happened to me reaching for 'use king's seal.'",
+      "where": "The Empty Seat (menu item-use)"
+    },
+    {
+      "sev": "P2",
+      "what": "No fast travel exists to interior waypoint rooms inside a hold (only major named landmarks register for 'travel to a known place'), so finding a specific unlabeled connector -- the path from Cinderhall's head-frame through the spoil-heap maze to 'The High Cut' into the Kingswood -- took roughly 15 turns of manual N/S/E/W trial-and-error with repeated free bearings checks and no map/compass pointer at the connector itself.",
+      "where": "Iron Downs, head-frame spoil-heaps -> The High Cut"
+    },
+    {
+      "sev": "P2",
+      "what": "A companion's 'near leaving' state is warned in flavor text (Tamsin: 'One more like that and I'm gone. I don't give second warnings, only first ones.') but neither her dialogue nor `status` ever states the actual threshold (an absolute regard floor? a second strike?) at which she would actually depart the party.",
+      "where": "status / Tamsin dialogue after the barrow-doors quarrel"
+    },
+    {
+      "sev": "P2",
+      "what": "The rule that companions heal at any hearth/fire rest point ('a rest at any hearth heals them') is stated only once, in the very final end-of-game status screen, and is never mentioned during play; for most of the run Brother Osk and Vell sat at partial HP with no earlier hint that resting would top them off.",
+      "where": "status (final screen only)"
+    },
+    {
+      "sev": "P2",
+      "what": "The score bonus tally hit its 366/366 cap around the Kingswood's Wood Question resolution (roughly two-thirds through the run), after which resting a fourth hold, completing the Kingswood's full three-note recall, entering Marrowgate, and finishing the true ending itself all gave no visible (+N) score number -- consistent with the game's own disclaimer that the tally 'can fill long before the tale ends,' but it makes major late-game choices feel numerically unrewarded even though the epilogue text clearly still tracked them.",
+      "where": "status / general late-game actions after ~turn 514"
+    },
+    {
+      "sev": "P2",
+      "what": "After explicitly resolving 'The Wood Question' in favor of preserving the Kingswood ('keep the rides exactly as they are', Barrow-Keepers +2, Crown -2), a later pass by the Marked Oak reads 'A vast oak, chalked for felling -- again,' which on first read looks like the felling threat returned despite my decision (it's defensible as yearly re-marking per an earlier room's 'decades of marks never yet acted on,' but the wording invites the opposite reading).",
+      "where": "The Marked Oak, Kingswood"
+    },
+    {
+      "sev": "P2",
+      "what": "The Barrow Doors quest text ('Promise, or don't -- you decide at the throne') doesn't make clear that the earlier reeve/priest conversations are non-binding flavor and the real mechanical choice only happens later at the throne; I only understood the two-stage structure in hindsight.",
+      "where": "Last Light Square / Gray Chapel quest text"
+    }
+  ],
+  "confusions": [
+    "The load-bearing 'weigh what this grief asks' (free) menu entry, which clearly lists every path to resting/bargaining/burning a hold's grief with exact locations and costs, is never mentioned in the tutorial or status text -- it's only discoverable by noticing it appear once you're already standing in a grief-room.",
+    "The huntsman's horn keeps its 'sound it whole...' use-prompt in inventory after it has already been sounded and the Hunt's Stand's grief rested, with nothing marking it spent or ceremonial, so it's unclear from the UI whether using it again does anything.",
+    "Companion quarrel dialogue sometimes labels a choice as 'back Tamsin -- the barrow should hold' immediately after I had already acted (left the doors open) moments earlier in the same scene, so the option reads as re-litigating a decision already made rather than a fresh stance, which was momentarily disorienting.",
+    "Faction standing changes are reported inline per action ('the Ironbound -1', etc.) but accumulate silently across many small hits; only a full `status` call reveals the net total, so it's easy to lose track of exactly which action tipped a faction like the Ironbound from neutral into 'despised.'",
+    "Getting from one hold to the Kingswood required finding a specific unnamed room ('The High Cut') off the Iron Downs' spoil maze that isn't named in any NPC dialogue or quest text I encountered -- it was found purely by brute-force compass exploration, which is the single most 'lost' I felt in the whole run.",
+    "It's never explained what happens mechanically if you ignore a 'both look at you' companion quarrel entirely (walk away without choosing a side or a draw) versus actively choosing -- I always engaged, so I can't tell if silence itself has a distinct consequence track.",
+    "The king's seal (found via an easily-missed optional side room, the King's Strongroom) turns out to be reusable much later at Highward ('You already carry my seal') and at the very end (reading a note off it grants a level-up) -- a nice callback, but nothing on the item description itself hints that it has more than one use, so its full value is easy to undersell."
+  ],
+  "suggestions": [
+    "Gate the priest's barrow-doors 'blessing' flavor text so it doesn't narrate the doors as already open in the world until the throne-side choice actually locks that outcome in.",
+    "Have Sparrow's Grain Run dialogue branch or short-circuit once the Tithe Question has been resolved into a common store, since the smuggling premise no longer applies.",
+    "Add a short line in the opening tutorial or the first grief-room pointing players at the 'weigh what this grief asks' entry by name, since it's the clearest wayfinding tool in the game.",
+    "Add a lightweight in-hold waypoint list (even just named junctions) to 'travel to a known place' so backtracking across a large hold's interior doesn't require re-walking every step.",
+    "Surface the 'a rest at any hearth heals them' rule the first time a companion drops below full HP, not only in the closing summary.",
+    "Warn or block 'use [healing item]' when the player is already at full HP, to stop accidental consumption from menu-index drift.",
+    "Give theft-flagged trinket props either a small payoff (sale value, a later callback) or drop the 'is watching' framing so they stop reading as false quest hooks.",
+    "Consider letting some score stay unlocked in the back third of Act 2/Act 3 so major late-game turns (resting later hollows, reaching Marrowgate, the ending itself) register a visible number alongside the narrative payoff.",
+    "State plainly, in status or a companion's own warning line, what actually triggers a companion leaving (a regard floor vs. a strike count), so players can gauge risk before pushing a quarrel choice."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-07T01-08-49-548Z",
+  "seed": 433,
+  "build": {
+    "rev": "e93a7e3",
+    "world": "85ccde88"
+  },
+  "cost_usd": null,
+  "verified": true
+}

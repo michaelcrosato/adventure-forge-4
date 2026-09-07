@@ -1,0 +1,88 @@
+{
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 4,
+  "turns": 466,
+  "receipt": "reach.373.466.366.reach_at_rest.46add912",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Brother Osk's on-screen 'Brother Osk disapproves (-1)' message for a witnessed theft did not decrement his tracked regard, confirmed twice by an immediate status check on the same turn (turn 60: candles theft, regard stayed 0; turn 199: tally-sticks theft, regard stayed +4). His approvals, by contrast, always landed correctly (0 -> +4 via three approvals). The disapprove branch appears to silently no-op for this companion.",
+      "where": "Gray Chapel / Captain Vane's Tent - 'take a bundle of blessed candles' and 'take a bundle of Company tally-sticks'"
+    },
+    {
+      "sev": "P1",
+      "what": "In the same turn-199 theft, Lys's stated 'Lys disapproves (-1)' also failed to move her regard (stayed -1 before and after, per status). Two companions reacting to one theft event and neither delta landing suggests a bug specific to multi-companion-reaction turns, not just to one companion.",
+      "where": "Captain Vane's Tent - 'take a bundle of Company tally-sticks'"
+    },
+    {
+      "sev": "P1",
+      "what": "Two of the eight total thefts produced zero companion reaction or regard change at all, despite a full 3-4 person party present who had reliably reacted to thefts 1-5 and 7.",
+      "where": "The Head-Frame - 'take a headframe lantern, unlit' (turn 270); The Chapel of Ash - 'take a rack of ash-gray candles' (turn 442)"
+    },
+    {
+      "sev": "P1",
+      "what": "A companion (Tamsin) reacted to and lowered her regard for a theft that happened before she joined the party and that she never witnessed, but her line is phrased as if she watched it happen ('you don't lift a keeper's own goods from under their nose').",
+      "where": "The Forge - Tamsin's join dialogue (turn 36), referencing the earlier Last Light Inn coin-dish theft"
+    },
+    {
+      "sev": "P1",
+      "what": "Quest text said plainly 'Captain Vane will trade the smugglers' road for coin, or for Rook dealt with. Ask her.' After Rook was dealt with peacefully and I asked, she instead said the Companies 'don't sell the road on one favour to a stranger' and demanded an unspecified further good turn - the stated condition wasn't honored.",
+      "where": "Captain Vane's Tent - 'the road, now Rook's dealt with'"
+    },
+    {
+      "sev": "P1",
+      "what": "A companion's 'near leaving' state (Lys, regard -2, explicit one-time warning given: 'I only say a thing once') was never resolved either way by game end - she stayed at exactly that threshold through the winning ending with no further check-in, so it's unclear whether another theft would truly have made her leave or whether regard simply floors there.",
+      "where": "party-wide companion regard system, Lys"
+    },
+    {
+      "sev": "P2",
+      "what": "The Hunter's Camp's 'read the tally marks by the smoke rack (DC 9, +1 wits...)' menu option silently disappeared after asking the hunter about 'the old barrow' - it was never taken and never explained, just vanished from the list.",
+      "where": "Hunter's Camp"
+    },
+    {
+      "sev": "P2",
+      "what": "Wardmoor's hold-grief needed a second, distant step: the unsealed 'true founding record' had to be carried to and read at the oath-stone (several rooms away) to actually rest the hold and increment 'Hollows rested'; persuading the record-keeper to unseal it and reading it on the spot completed a different quest ('What the Roster Doesn't Say') but did not move the counter, with the extra requirement discoverable only via the item's own tooltip text.",
+      "where": "Highward Record-House -> The Oath-Ground - Circle"
+    },
+    {
+      "sev": "P2",
+      "what": "The narrator's bracketed hint '(Speak with X or Y to take a side, or to tell them to settle it.)' appeared several times, but no dialogue ever offered a literal neutral 'settle it' option - only 'back A', 'back B', or a risky will-check 'call it a draw' that still costs standing on a miss.",
+      "where": "The Empty Seat - companion dispute dialogues (Tamsin vs Vell, Tamsin vs Lys, Tamsin vs Osk)"
+    },
+    {
+      "sev": "P2",
+      "what": "Declining to promise the reeve on the barrow doors is explicitly reversible ('Ask again if you change your mind') and no promise is ever broken, yet leaving the doors open still cost Watch standing with a line that half-acknowledges the unfairness ('No promise broken... Still, the Watch marks it, promised or not').",
+      "where": "Last Light Square - reeve dialogue, 'ask about the doors, left open'"
+    }
+  ],
+  "confusions": [
+    "Status's 'Hollows rested: X/9' counter never states that Vale of Ash's own Hollow King resolution does not count toward it - easy to miscount when tallying progress toward the 'three hollows' Coldpass gate.",
+    "Room 'bearings' text (free look-around summaries) sometimes didn't match the real room graph closely enough to navigate by; chasing 'The Lost Sentry' via Sergeant Hale's directions from Highward led through several unrelated dead-end rooms (Cliff Edge, The Elbow) with no sentry found.",
+    "Nothing signals in advance that choosing a route between Acts (the pilgrim stair into Marrowgate vs. the writ, etc.) permanently forecloses that region's remaining side content - only found out when a companion (Osk) remarked mid-Coldpass that his own personal grief quest (Fenmarch) was now unreachable.",
+    "Skill-check menu lines are inconsistent about telegraphing failure cost: some explicitly say 'a miss costs standing with X', some say 'a hit costs standing', some (e.g. digging at the Avalanche Field) show no cost for failure at all beyond flavor text, making real risk hard to judge at a glance.",
+    "Companion-siding choices ('back Tamsin - the Watch keeps its honor') gave no advance signal of how large the swing would be - one such pick triggered an immediate 'strongly disapproves (-2)' and instant departure for a different companion (Vell) with zero warning beat beforehand.",
+    "'As a Scout' tagged actions are scattered contextually across many unrelated rooms with no way to know how many exist or whether you've found them all; status never tallies them."
+  ],
+  "suggestions": [
+    "Make Brother Osk's (and any companion's) disapprove-regard updates land as reliably as approve updates do - right now his disapprovals visibly no-op while approvals always work.",
+    "When two+ companions react to one event, apply every listed regard delta, not just some of them.",
+    "Add 'not counting the Vale' or similar to the 'Hollows rested X/9' status line.",
+    "Actually implement the neutral 'tell them to settle it' option the narrator's bracketed hint keeps promising, instead of only offering to pick a side.",
+    "Preview roughly how much a 'back A over B' dialogue choice will cost the other companion before committing, especially when it can trigger an outright departure.",
+    "State plainly, at the point a hold's grief item is obtained, if resolving it requires carrying that item to a different named location (as Wardmoor's founding record does).",
+    "Warn once, clearly, before a road/route choice that will forever close off a companion's still-open personal quest in the region being left behind.",
+    "Fix or remove the 'Smugglers' Road' quest's stated condition ('coin, or Rook dealt with') so it matches what Captain Vane actually asks for afterward."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T09-17-36-649Z",
+  "seed": 373,
+  "build": {
+    "rev": "547de62",
+    "world": "e682d26d"
+  },
+  "cost_usd": null,
+  "verified": true
+}

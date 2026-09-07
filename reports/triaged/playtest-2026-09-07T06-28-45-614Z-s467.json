@@ -1,0 +1,77 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 633,
+  "receipt": "reach.467.633.366.reach_at_rest.9a965a52",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The Thornwold Gallows Glade's free 'weigh what this grief asks' text says the surer route is 'the true pardon in Bray's dead-letter box (wits)', implying a direct wits check at the quartermaster's wagon. Actually asking Bray about 'older mail in the box' before finding Fenn in the stockade returns an unrelated item (a sealed letter for Fenmarch) instead; the real 'search the dead-letter box (wits)' option only appears after talking to Fenn and getting his lead. The hint's stated cost/path didn't match what was actually required.",
+      "where": "Thornwold / The Gallows Glade, weigh what this grief asks"
+    },
+    {
+      "sev": "P2",
+      "what": "After the Vale barrow's stone doors were already opened via the priest's blessing, the hunter at the hunter's camp still describes 'a gap under a fallen stone on the north face if you'd rather not test the doors' as a live alternative, though the doors were already open and the barrow already resolved by the time I heard it.",
+      "where": "Vale / Hunter's Camp, ask hunter: the old barrow"
+    },
+    {
+      "sev": "P2",
+      "what": "The item 'a tarnished stag clasp' (found in the Vale hunter's camp brush) is flavor-tagged the whole game as 'the elder knows it from his coffer's lid,' pointing at an NPC (the Last Light elder, reachable off the chapel) I never visited. Nothing ever nudges the player back to that NPC, and the item stays permanently unresolved once you cross Coldpass ('what you have left undone elsewhere stays undone').",
+      "where": "Vale / Hunter's Camp, search the brush past the smoke rack"
+    },
+    {
+      "sev": "P2",
+      "what": "Three visually similar collectible 'horn' items (a moss-cased hunting horn, a bent bronze calling-horn, and the quest-required huntsman's horn) are carried at once by the end of Kingswood, with near-identical flavor text ('worth the climb; nothing more is owed on it' / 'a grave-good; nothing more is owed for it'). Only the third, given later by Sabel, actually completes the Kingswood recall; nothing distinguishes the two decorative horns from a functional one before that point.",
+      "where": "Kingswood / Hunt's Stand, sound the recall whole at the horn-post"
+    },
+    {
+      "sev": "P2",
+      "what": "Companion regard numbers don't reflect all narrative outcomes: Vell's regard ended at a clearly positive +4, but the closing recap states his lineage 'came out before they were ready, dragged into daylight by someone else's hand. They have not forgiven it' — a beat triggered automatically by a wits check in the Hall of Ledgers, not a dialogue choice, so the positive regard number gave no warning this thread would end unresolved.",
+      "where": "Marrowgate / Hall of Ledgers, find the founding ledger; final status recap"
+    }
+  ],
+  "confusions": [
+    {
+      "what": "Of Mootcombe's three toasts, only two of the sources (the recorder's guest-list, the chantry's rite-table) carry the '(as a Scholar)' tag; the third (Hedda's wassail at the Press Hearth) is a plain will-based ask with no Scholar tag at all, even though the task/game clearly treats all three as a matched trio."
+    },
+    {
+      "what": "The recorder's Scholar-only entry at Mootcombe reveals a named 'planted guest' (Marl) seated among the elders in ink laid down after the rest of the guest-list had dried — a pointed, specific mystery — but there is no NPC, location, or further menu option anywhere to investigate who Marl was. The only payoff is a single closing-recap line confirming the detail is 'known now', with no in-game way to actually chase it."
+    },
+    {
+      "what": "A whole named companion with her own unresolved grief — Tamsin, at the Vale forge, who 'never went looking for what took her mother' per the ending recap — is mentioned only once in passing by the innkeep ('Tamsin at the forge across the square') and then only resurfaces as a hidden stake ('costs standing with... Tamsin') in Mootcombe's orchard-question weighing text. Nothing else across 630+ turns points the player back to her; her whole thread is invisible unless the Vale forge is visited early."
+    },
+    {
+      "what": "'Get your bearings' gives directions relative to the CURRENT room, and the underlying map isn't a strict grid, so the same landmark's stated distance changes unpredictably between rooms (e.g. 'the cairn-track's foot: 1 north and 2 east' from one spot, then '2 north and 2 east' from the very next room after moving the 'right' way) — pure dead-reckoning without re-checking bearings at every step reliably sends you the wrong way."
+    },
+    {
+      "what": "Mootcombe's Long Table 'weigh' text lists the bargain ending's requirement as 'three refused, in Mootcombe: the levy-reeve's warrant, the victualler's contract, and the cooper's timber.' I had already succeeded at two of these (Osric's warrant, Fulk's contract) for an unrelated reason (protecting the future commons vote) before ever reading this text — so I had unknowingly banked 2 of 3 requirements toward an ending I wasn't pursuing, with no indicator at the time each was earned that it counted toward anything beyond the immediate NPC interaction."
+    },
+    {
+      "what": "Raising the cup at the Long Table's head — the capstone of the fully-prepared 'resting way' (all three toasts known, last course served) — is still gated behind a will roll (DC10, 1hp on fail) rather than an automatic success once every prerequisite is met; a fully-prepared Scholar can still whiff the finale on a bad roll, though the fail cost here is trivial."
+    },
+    {
+      "what": "Every '(as a Scholar)' entry encountered all game (verses at the Vale barrow, lintels at side-barrows in Thornwold/Emberfall, the guest-list and rite-table at Mootcombe, the mason-mark cross-reference in Emberfall) was a flat, no-roll guaranteed success, meaningfully more reliable than the equivalent dice-based check open to other classes at the same spot. Presumably intentional class fantasy, but it means a Scholar essentially never fails the 'read something' beats the story treats as significant, removing tension exactly where the writing leans hardest on it."
+    }
+  ],
+  "suggestions": [
+    "Tag Hedda's wassail at the Press Hearth '(as a Scholar)' to match the other two toasts, or explain in the weigh text which of a matched trio are class-specific vs universal.",
+    "Give the Mootcombe 'Marl' planted-guest reveal a follow-up (an NPC to ask, or a second beat at the Long Table) instead of dead-ending after one Scholar-only line.",
+    "Mention Tamsin a second time from a different NPC (the reeve or priest) so a player who skips the Vale forge on the first visit still gets a later chance to learn she exists before the window closes at Coldpass.",
+    "When a 'weigh what this grief asks' screen lists an alternate ending's requirements, flag any the player has already met, so partial progress toward an unchosen path isn't invisible until the weigh text is read.",
+    "Let bearings state distance from a fixed waypoint rather than always from the current room, or show a running one-line breadcrumb so dead-reckoning across many rooms stays reliable.",
+    "Differentiate collectible-only 'horn' items from quest-required ones in their pickup text (name the ritual a horn is for, or note plainly that a given horn is 'just a keepsake') so players don't wonder if an early horn will substitute for a later quest's required one.",
+    "Resolve the 'the elder knows it from his coffer's lid' clue on the tarnished stag clasp even late in the game (e.g. let a Marrowgate archivist or the founding ledger answer it) since the Vale elder himself becomes unreachable once the player leaves the Vale for good."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-07T06-28-45-614Z",
+  "seed": 467,
+  "build": {
+    "rev": "6fbe8e9",
+    "world": "f683071a"
+  },
+  "cost_usd": null,
+  "verified": true
+}

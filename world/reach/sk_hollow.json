@@ -1,0 +1,967 @@
+{
+  "rooms": {
+    "sk_hollow_shingle": {
+      "name": "The Hidden Shingle",
+      "desc": "A narrow beach under the point, cut off from Gullhaven by cliff on every side but the sea. Old rope and older bone litter the tideline. Fog sits offshore; a line of black rock runs out into it from the beach's end, toward a shape too big for a boat.",
+      "brief": "A hidden beach; fog offshore.",
+      "region": "sk",
+      "landmark": "the Lost Fleet",
+      "exits": {
+        "out": {
+          "to": "sk_hollow_reef",
+          "landmark": "the reef"
+        }
+      },
+      "onEnterOnce": [
+        [
+          "score",
+          4
+        ],
+        [
+          "xp",
+          3
+        ],
+        [
+          "say",
+          "This is where the fog comes from, not just to. Even the gulls give this stretch of sand a wide berth."
+        ]
+      ]
+    },
+    "sk_hollow_reef": {
+      "name": "The Drowning Reef",
+      "desc": "Black rock breaks the surface in a long jagged line, and the fog thickens the further out you wade. Somewhere close, oars dip in water that shows no boat to own them.",
+      "brief": "Black reef, oars in the fog.",
+      "region": "sk",
+      "exits": {
+        "in": {
+          "to": "sk_hollow_shingle",
+          "landmark": "the shingle"
+        },
+        "out": {
+          "to": "sk_hollow_flagship",
+          "landmark": "the wreck"
+        }
+      },
+      "onEnterOnce": [
+        [
+          "xp",
+          3
+        ]
+      ],
+      "variants": [
+        {
+          "if": [
+            [
+              "flag",
+              "sk_hollow_resolved"
+            ]
+          ],
+          "brief": "Black reef. The fog here has thinned."
+        }
+      ],
+      "actions": [
+        {
+          "id": "sk_reef_flotsam",
+          "label": "search the flotsam caught on the rocks",
+          "once": true,
+          "fx": [
+            [
+              "addvar",
+              "gold",
+              3
+            ],
+            [
+              "xp",
+              1
+            ],
+            [
+              "say",
+              "Coin, cloth, a boot with no match — the reef gives up small change from a hundred years of wrecks, grudgingly."
+            ]
+          ]
+        }
+      ]
+    },
+    "sk_hollow_flagship": {
+      "name": "The Reeve's Pride",
+      "desc": "The old flagship sits wedged on the reef exactly as she broke, masts snapped, deck canted hard. Admiral Corwin Voss stands at what's left of the helm, still commanding a crew that answers from underwater.",
+      "brief": "The wrecked flagship; the drowned admiral at the helm.",
+      "region": "sk",
+      "exits": {
+        "in": {
+          "to": "sk_hollow_reef"
+        }
+      },
+      "onEnterOnce": [
+        [
+          "score",
+          4
+        ],
+        [
+          "xp",
+          3
+        ]
+      ],
+      "variants": [
+        {
+          "if": [
+            [
+              "flag",
+              "sk_hollow_rested"
+            ]
+          ],
+          "name": "The Reeve's Pride, at Rest",
+          "desc": "The old flagship still wears her wounds, but the deck is quiet now. No oars sound in the fog anymore, and the fog itself is thinning.",
+          "brief": "The wreck, quiet at last."
+        },
+        {
+          "if": [
+            [
+              "flag",
+              "sk_hollow_bargained"
+            ]
+          ],
+          "name": "The Reeve's Pride, Paid Her Due",
+          "desc": "The flagship sits as broken as ever, but something in the water has settled. Coin glints faintly between the reef stones below, sunk and staying sunk.",
+          "brief": "The wreck, its due paid."
+        },
+        {
+          "if": [
+            [
+              "flag",
+              "sk_hollow_burned"
+            ]
+          ],
+          "name": "The Reeve's Pride, Ash and Iron",
+          "desc": "Char and blackened iron are all that's left standing on the reef. The fog burned off with the fire and has not come back.",
+          "brief": "The wreck, burned to iron and ash."
+        }
+      ],
+      "actions": [
+        {
+          "id": "sk_rest_fleet",
+          "label": "speak the sailors' verse over the wreck",
+          "if": [
+            [
+              "flag",
+              "sk_verse_known"
+            ],
+            [
+              "flag",
+              "sk_lighthouse_lit"
+            ],
+            [
+              "!flag",
+              "sk_hollow_resolved"
+            ]
+          ],
+          "fx": [
+            [
+              "set",
+              "sk_hollow_rested"
+            ],
+            [
+              "set",
+              "sk_hollow_good"
+            ],
+            [
+              "set",
+              "sk_hollow_resolved"
+            ],
+            [
+              "addvar",
+              "hollows_rested",
+              1
+            ],
+            [
+              "score",
+              25
+            ],
+            [
+              "xp",
+              8
+            ],
+            [
+              "addvar",
+              "rep_church",
+              1
+            ],
+            [
+              "addvar",
+              "rep_keepers",
+              2
+            ],
+            [
+              "addvar",
+              "appr_osk",
+              1
+            ],
+            [
+              "addvar",
+              "appr_vell",
+              1
+            ],
+            [
+              "npcgo",
+              "sk_admiral",
+              null
+            ],
+            [
+              "say",
+              "The Farlight's beam finds the wreck at last. You speak the old verse whole, and the oars go still one by one until the fog itself seems to let a breath out. The Pride settles, and does not rise again."
+            ]
+          ]
+        },
+        {
+          "id": "sk_bargain_fleet",
+          "label": "pay the wreck-right (6 gold)",
+          "if": [
+            [
+              "flag",
+              "sk_bribe_admitted"
+            ],
+            [
+              "var",
+              "gold",
+              ">=",
+              6
+            ],
+            [
+              "!flag",
+              "sk_hollow_resolved"
+            ]
+          ],
+          "fx": [
+            [
+              "addvar",
+              "gold",
+              -6
+            ],
+            [
+              "set",
+              "sk_hollow_bargained"
+            ],
+            [
+              "addvar",
+              "hollows_bargained",
+              1
+            ],
+            [
+              "set",
+              "sk_hollow_good"
+            ],
+            [
+              "set",
+              "sk_hollow_resolved"
+            ],
+            [
+              "addvar",
+              "hollows_rested",
+              1
+            ],
+            [
+              "score",
+              20
+            ],
+            [
+              "xp",
+              8
+            ],
+            [
+              "addvar",
+              "rep_free",
+              -1
+            ],
+            [
+              "addvar",
+              "rep_watch",
+              2
+            ],
+            [
+              "addvar",
+              "appr_lys",
+              1
+            ],
+            [
+              "addvar",
+              "appr_vell",
+              1
+            ],
+            [
+              "npcgo",
+              "sk_admiral",
+              null
+            ],
+            [
+              "say",
+              "You say the bribe's true name aloud and let the coin go into the water after it. The admiral's shoulders ease, just once, before the fog takes him. The oars go quiet. The debt is not forgiven — only paid."
+            ]
+          ]
+        },
+        {
+          "id": "sk_burn_fleet",
+          "label": "loose the fire-ship into the fog (might)",
+          "if": [
+            [
+              "has",
+              "sk_pitch_torch"
+            ],
+            [
+              "!flag",
+              "sk_hollow_resolved"
+            ]
+          ],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                [
+                  "move",
+                  "sk_pitch_torch",
+                  "nowhere"
+                ],
+                [
+                  "set",
+                  "sk_hollow_burned"
+                ],
+                [
+                  "set",
+                  "sk_hollow_resolved"
+                ],
+                [
+                  "addvar",
+                  "hollows_burned",
+                  1
+                ],
+                [
+                  "score",
+                  15
+                ],
+                [
+                  "xp",
+                  8
+                ],
+                [
+                  "addvar",
+                  "rep_iron",
+                  2
+                ],
+                [
+                  "addvar",
+                  "rep_keepers",
+                  -2
+                ],
+                [
+                  "addvar",
+                  "appr_tamsin",
+                  1
+                ],
+                [
+                  "addvar",
+                  "appr_osk",
+                  -1
+                ],
+                [
+                  "npcgo",
+                  "sk_admiral",
+                  null
+                ],
+                [
+                  "say",
+                  "The torch catches. Fire walks the old timbers fast, and the admiral doesn't flinch — almost gratitude, in the last look he gives you. The fog burns off with the wreck. Quiet, after, in a way that isn't peace."
+                ]
+              ],
+              [
+                [
+                  "say",
+                  "The pitch catches, but the wind turns wrong and the flame gutters out over black water. The wreck sits untouched, and the fog closes back in."
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sk_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [
+            [
+              "!flag",
+              "sk_hollow_resolved"
+            ]
+          ],
+          "fx": [
+            [
+              "if",
+              [
+                [
+                  "flag",
+                  "sk_verse_known"
+                ],
+                [
+                  "flag",
+                  "sk_lighthouse_lit"
+                ]
+              ],
+              [
+                [
+                  "say",
+                  "The rest stands ready: the sailors' verse is yours, and the Farlight burns — speak it here, over the wreck."
+                ]
+              ],
+              [
+                [
+                  "if",
+                  [
+                    [
+                      "flag",
+                      "sk_verse_known"
+                    ]
+                  ],
+                  [
+                    [
+                      "say",
+                      "You have the sailors' verse. The rest still wants the Farlight lit, out on the point."
+                    ]
+                  ],
+                  [
+                    [
+                      "if",
+                      [
+                        [
+                          "flag",
+                          "sk_lighthouse_lit"
+                        ]
+                      ],
+                      [
+                        [
+                          "say",
+                          "The Farlight burns. The rest still wants the sailors' verse — Widow Kestrel, or Brother Osk, in Gullhaven."
+                        ]
+                      ],
+                      [
+                        [
+                          "say",
+                          "The rest wants both: the sailors' verse (Widow Kestrel or Brother Osk, in Gullhaven) and the Farlight lit, on the point."
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "if",
+              [
+                [
+                  "flag",
+                  "sk_bribe_admitted"
+                ],
+                [
+                  "var",
+                  "gold",
+                  ">=",
+                  6
+                ]
+              ],
+              [
+                [
+                  "say",
+                  "The bargain stands ready: the wreck-right is 6 gold, and the old bribe is out."
+                ]
+              ],
+              [
+                [
+                  "if",
+                  [
+                    [
+                      "flag",
+                      "sk_bribe_admitted"
+                    ]
+                  ],
+                  [
+                    [
+                      "say",
+                      "The old bribe is out — the wreck-right costs 6 gold, which you don't have yet."
+                    ]
+                  ],
+                  [
+                    [
+                      "say",
+                      "The bargain wants the old bribe named first — read the wreck-charts for truth (wits), at the harbourmaster's house."
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "if",
+              [
+                [
+                  "has",
+                  "sk_pitch_torch"
+                ]
+              ],
+              [
+                [
+                  "say",
+                  "The burn stands ready: a pitch-soaked torch is yours (might)."
+                ]
+              ],
+              [
+                [
+                  "say",
+                  "The burn wants a pitch-soaked torch — Marta sells one at the chandlery for 5 gold."
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "sk_admiral": {
+      "name": "Admiral Corwin Voss",
+      "room": "sk_hollow_flagship",
+      "dialogue": true,
+      "desc": "Salt-rotted dress uniform, a hand still closed on a wheel that no longer turns.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who commands this wreck",
+          "once": true,
+          "say": "Admiral of a fleet the Reeve sent to break the free-towns. We never saw the reef coming — the light that should have warned us never turned. I have had a long time to wonder why.",
+          "fx": [
+            [
+              "xp",
+              2
+            ]
+          ]
+        },
+        {
+          "id": "grieve",
+          "label": "ask why you cannot rest",
+          "if": [
+            [
+              "flag",
+              "said_sk_admiral_greet"
+            ]
+          ],
+          "once": true,
+          "say": "Bought and sold, my whole fleet, for a war that never got fought. Light the lamp that should have warned us, or make this coast own what it did, or burn what's left of us — I no longer care greatly which.",
+          "fx": [
+            [
+              "set",
+              "sk_heard_admiral"
+            ],
+            [
+              "score",
+              4
+            ],
+            [
+              "xp",
+              3
+            ]
+          ]
+        },
+        {
+          "id": "memories",
+          "label": "the night the fleet broke",
+          "if": [
+            [
+              "flag",
+              "sk_heard_admiral"
+            ]
+          ],
+          "once": true,
+          "say": "I remember the dark where a light should have stood, and men who couldn't swim in armor going down still shouting orders. I remember thinking someone would answer for it. No one ever has.",
+          "fx": [
+            [
+              "xp",
+              2
+            ]
+          ]
+        },
+        {
+          "id": "the_ways",
+          "label": "how you might finally rest",
+          "if": [
+            [
+              "flag",
+              "sk_heard_admiral"
+            ]
+          ],
+          "once": true,
+          "say": "Light and verse, together, would rest us properly. A paid debt would quiet us, if not heal us. Fire would end it outright, and I'd not blame you for choosing the quickest mercy.",
+          "fx": [
+            [
+              "xp",
+              2
+            ]
+          ]
+        },
+        {
+          "id": "vale_news",
+          "label": "the Vale's own grief",
+          "if": [
+            [
+              "flag",
+              "va_king_resolved"
+            ]
+          ],
+          "once": true,
+          "say": "Word crosses the Reach even to a wreck: the Vale's own king has been settled, one road or another. Every grief finds its ending in time. Mine has waited longer than most.",
+          "fx": [
+            [
+              "xp",
+              1
+            ]
+          ]
+        },
+        {
+          "id": "scholar_dedication",
+          "label": "read the dedication plate",
+          "if": [
+            [
+              "class",
+              "scholar"
+            ],
+            [
+              "flag",
+              "said_sk_admiral_greet"
+            ],
+            [
+              "!flag",
+              "or_scholar_sk_plate"
+            ]
+          ],
+          "once": true,
+          "say": "Under the salt-crust, the flagship's dedication plate: not a war fleet, a marriage envoy, sent to buy the free-towns' peace. Voss reads it on your face. 'Now you know what we died for. Nobody else has asked the plate.'",
+          "fx": [
+            [
+              "set",
+              "or_scholar_sk_plate"
+            ],
+            [
+              "score",
+              2
+            ],
+            [
+              "xp",
+              2
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "step back from the helm",
+          "say": "Take your time. I have had four hundred years of it, and I can spare you a little more.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "quests": {
+    "sk_q_lost_fleet": {
+      "name": "The Lost Fleet",
+      "start": [
+        [
+          "flag",
+          "sk_entered"
+        ]
+      ],
+      "done": [
+        [
+          "any",
+          [
+            [
+              "flag",
+              "sk_hollow_good"
+            ],
+            [
+              "flag",
+              "sk_hollow_burned"
+            ]
+          ]
+        ]
+      ],
+      "stages": [
+        {
+          "if": [
+            [
+              "flag",
+              "sk_verse_known"
+            ],
+            [
+              "flag",
+              "sk_lighthouse_lit"
+            ]
+          ],
+          "text": "Verse known, Farlight lit. The Pride lies off the hidden shingle: shore path west of the quay, five stands, then east."
+        },
+        {
+          "if": [
+            [
+              "flag",
+              "sk_bribe_admitted"
+            ]
+          ],
+          "text": "The old bribe is out. Pay the wreck-right at the Reeve's Pride, off the shingle east of the Point, to quiet the fleet."
+        },
+        {
+          "if": [
+            [
+              "flag",
+              "sk_verse_known"
+            ]
+          ],
+          "text": "You have the sailors' verse. Light the Farlight on the point to call the drowned home."
+        },
+        {
+          "if": [
+            [
+              "flag",
+              "sk_lighthouse_lit"
+            ]
+          ],
+          "text": "The Farlight burns. Learn the sailors' verse — Widow Kestrel in Gullhaven, or Brother Osk, if he trusts you."
+        },
+        {
+          "if": [],
+          "text": "Ships break on the reef past Gullhaven's point; the wreck lies off a shingle east of it. Someone in town may know why."
+        }
+      ]
+    },
+    "sk_q_passage": {
+      "name": "Passage Under the Pass",
+      "start": [
+        [
+          "any",
+          [
+            [
+              "flag",
+              "sk_heard_passage"
+            ],
+            [
+              "flag",
+              "sk_heard_customs"
+            ]
+          ]
+        ]
+      ],
+      "done": [
+        [
+          "any",
+          [
+            [
+              "flag",
+              "sk_helped_free"
+            ],
+            [
+              "flag",
+              "sk_sided_watch"
+            ],
+            [
+              "flag",
+              "or_warden_sk_watch"
+            ],
+            [
+              "flag",
+              "or_envoy_sk_broker"
+            ]
+          ]
+        ]
+      ],
+      "stages": [
+        {
+          "if": [
+            [
+              "flag",
+              "sk_heard_passage"
+            ]
+          ],
+          "text": "Rennick wants goods run past customs; Brann wants him reported. High street, Gullhaven — choose."
+        },
+        {
+          "if": [],
+          "text": "Gullhaven's harbourmaster and its customs sergeant don't trust each other. Hear both out, high street."
+        }
+      ]
+    },
+    "sk_q_nets": {
+      "name": "The Missing Nets",
+      "start": [
+        [
+          "flag",
+          "said_sk_chandler_nets"
+        ]
+      ],
+      "done": [
+        [
+          "flag",
+          "sk_nets_returned"
+        ]
+      ],
+      "failed": [
+        [
+          "flag",
+          "sk_nets_sold"
+        ]
+      ],
+      "stages": [
+        {
+          "if": [
+            [
+              "has",
+              "sk_stolen_nets"
+            ]
+          ],
+          "text": "The chandler's stolen nets are yours. Return them to Marta, or sell them on to Rennick instead."
+        },
+        {
+          "if": [],
+          "text": "Marta the chandler lost a haul of nets to wreckers. Search the beached longboat, two stands west of the quay."
+        }
+      ]
+    },
+    "sk_q_wreckroost": {
+      "name": "The Wreckers' Roost",
+      "start": [
+        [
+          "flag",
+          "sk_entered"
+        ]
+      ],
+      "done": [
+        [
+          "flag",
+          "sk_wreckroost_done"
+        ]
+      ],
+      "stages": [
+        {
+          "if": [],
+          "text": "Wreckers prey on salt-panners from a palisade: the shore path west of the quay, four stands along, then south."
+        }
+      ]
+    },
+    "sk_q_hermit": {
+      "name": "The Salt-Pan Hermit",
+      "start": [
+        [
+          "flag",
+          "sk_entered"
+        ]
+      ],
+      "done": [
+        [
+          "flag",
+          "sk_kernhut_done"
+        ]
+      ],
+      "stages": [
+        {
+          "if": [],
+          "text": "A salt-panner lives alone past the first pans: the shore path west of the quay, one stand along, then north."
+        }
+      ]
+    }
+  },
+  "epilogue": [
+    {
+      "if": [
+        [
+          "flag",
+          "sk_hollow_rested"
+        ]
+      ],
+      "text": "Gullhaven says the fog off the point runs thin now, and some nights the Farlight's beam shows clear across the whole bay.",
+      "weight": 2
+    },
+    {
+      "if": [
+        [
+          "flag",
+          "sk_hollow_bargained"
+        ]
+      ],
+      "text": "The wreck-right gets paid into the water every spring now, quiet and without ceremony. The drowned don't row anymore.",
+      "weight": 2
+    },
+    {
+      "if": [
+        [
+          "flag",
+          "sk_hollow_burned"
+        ]
+      ],
+      "text": "The Reeve's Pride burned to the waterline and took the old story with it. Gullhaven doesn't much miss either one.",
+      "weight": 2
+    },
+    {
+      "if": [
+        [
+          "!flag",
+          "sk_hollow_resolved"
+        ],
+        [
+          "flag",
+          "sk_entered"
+        ]
+      ],
+      "text": "The drowned fleet still rows the fog off Gullhaven's point, and the Farlight stands dark, waiting on someone else."
+    },
+    {
+      "if": [
+        [
+          "flag",
+          "sk_helped_free"
+        ]
+      ],
+      "text": "The smugglers' stair runs open and quiet under Gullhaven now, Rennick's word good as any crown's."
+    },
+    {
+      "if": [
+        [
+          "flag",
+          "sk_sided_watch"
+        ]
+      ],
+      "text": "Sergeant Brann shut the smugglers' stair for good. Rennick still won't say your name without spitting after."
+    },
+    {
+      "if": [
+        [
+          "flag",
+          "sk_nets_returned"
+        ]
+      ],
+      "text": "Marta Coyle still tells the story of the stranger who brought her nets back, whether you're there to hear it or not."
+    },
+    {
+      "if": [
+        [
+          "flag",
+          "sk_nets_sold"
+        ],
+        [
+          "!flag",
+          "sk_nets_amends"
+        ]
+      ],
+      "text": "Marta Coyle mends her own nets now, and doesn't trust a stranger's hands near her racks."
+    },
+    {
+      "if": [
+        [
+          "flag",
+          "sk_nets_amends"
+        ]
+      ],
+      "text": "Marta Coyle banks the coin that came back after the fact, and keeps close count of it still."
+    }
+  ]
+}

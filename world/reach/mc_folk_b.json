@@ -1,0 +1,453 @@
+{
+  "npcs": {
+    "mc_chantry_priest": {
+      "name": "Aldith",
+      "room": "mc_chantry",
+      "dialogue": true,
+      "desc": "The Gray Church's chantry-priest, thin from a fast she keeps whether or not anyone joins her, folding and refolding the cloth on an empty table.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Aldith. I keep the feast-day fast, every year, same as every chantry-priest before me. I have the rite for a table. I have never had the words to end it with.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "the rite, and what it's missing",
+          "if": [["flag", "said_mc_chantry_priest_greet"]],
+          "once": true,
+          "say": "The Church's own toast is written plain in the rite, the second of three. Without the other two spoken beside it, saying mine alone is like setting one plate at an empty table. So I fast instead, and wait.",
+          "fx": [["set", "mc_aldith_bg"], ["xp", 2]]
+        },
+        {
+          "id": "mc_toast_church",
+          "label": "ask for the Church's toast (will)",
+          "if": [["flag", "mc_aldith_bg"], ["!flag", "mc_toast_church"]],
+          "say": "You want it said aloud, before the other two are even found? That's not how the rite reads. Convince me it's worth the risk of saying it early.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "mc_toast_church"],
+                ["addvar", "mc_toasts_known", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "She speaks it low and exact, a rite kept whole in memory if nowhere else. \"There. The Church's part is yours now. Mind you find the other two before you spend it.\""]
+              ],
+              [
+                ["say", "She shakes her head, cloth still in her hands. \"Not yet. Not on a stranger's say-so.\" It can be asked again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "mc_scholar_chantry_free",
+          "label": "read the rite for the table outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "mc_toast_church"], ["!flag", "or_scholar_mc_chantry"]],
+          "say": "The rite is written plainer than Aldith lets on, the Church's toast sitting whole in its second verse. You read it back to her before she thinks to stop you, and she doesn't correct a word of it.",
+          "fx": [
+            ["set", "or_scholar_mc_chantry"],
+            ["addvar", "or_scholar_read", 1],
+            ["set", "mc_toast_church"],
+            ["addvar", "mc_toasts_known", 1],
+            ["score", 4],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "fast",
+          "label": "ask about the fast itself",
+          "say": "Bread and water, and nothing served on the feast-day table but the folded cloth. It isn't punishment. It's a place kept, in case the third toast is ever found.",
+          "fx": []
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the fast, now the rite is done",
+          "if": [["flag", "mc_hollow_rested"]],
+          "once": true,
+          "say": "I said the Church's toast myself, at last, beside the other two. Four hundred years of a place kept, and it turns out it only wanted filling, not forgiving.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the fast, now it's kept sealed",
+          "if": [["flag", "mc_hollow_bargained"]],
+          "once": true,
+          "say": "The rite still isn't finished. But a promise kept in its place is closer to grace than most bargains manage, and I'll keep the fast a while longer for it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the fast, now it's burned",
+          "if": [["flag", "mc_hollow_burned"]],
+          "once": true,
+          "say": "There's no table left to fast for. I kept it anyway, out of habit more than rite, and found I couldn't stop halfway through the day.",
+          "fx": [["xp", 1], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the empty table",
+          "say": "Go gently past the hall. Whatever's owed there, it isn't owed to the loud.",
+          "end": true
+        }
+      ]
+    },
+    "mc_recorder": {
+      "name": "Ingrith",
+      "room": "mc_recorder_loft",
+      "dialogue": true,
+      "desc": "The Keepers' recorder, ink-stained past the second knuckle, one roll always open on the desk under her hand as if it might close itself if she let go.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Ingrith. I keep the guest-list of the Feast of Wax — every name that sat that table, king's household and moot's elders both. Four hundred years of it, and still growing by inches.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what the list is for",
+          "if": [["flag", "said_mc_recorder_greet"]],
+          "once": true,
+          "say": "The king's own toast is written in it, the first of three, cut into the roll's own margin by whoever drew the seating. I've never known why. I've never dared cross it out to find out.",
+          "fx": [["set", "mc_ingrith_bg"], ["xp", 2]]
+        },
+        {
+          "id": "mc_toast_king",
+          "label": "ask to read the king's toast (wits)",
+          "if": [["flag", "mc_ingrith_bg"], ["!flag", "mc_toast_king"]],
+          "say": "It's there, in the margin, if you know how to read a seating-roll instead of just a list of names. Show me you can.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "mc_toast_king"],
+                ["addvar", "mc_toasts_known", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "You follow the seating from the head of the table outward, and the king's toast falls out of the margin exactly where the drawing hand meant it to. Ingrith watches you find it without needing to point."]
+              ],
+              [["say", "Four hundred years of cramped margin-hand, and you're reading it too fast. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "mc_guestlist_intruder",
+          "label": "read the guest-list once more (wits)",
+          "if": [["flag", "mc_toast_king"], ["!flag", "mc_marl_known"]],
+          "say": "You want to read it again? Most people stop once they've found what they came for.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "mc_marl_known"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "One name doesn't sit right: Marl, listed among the moot's own elders, in ink laid down after the rest of that line was dry. No household here claims him. Whoever barred those doors made certain of a seat inside first."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["say", "Vell: \"A planted guest. Not an accident at all, then. I don't know why that should make it worse, and it does.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["say", "The names blur together the second time through, no more willing to give up their secret than the first. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "mc_scholar_recorder_free",
+          "label": "read the guest-list outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "mc_toast_king"], ["!flag", "or_scholar_mc_recorder"]],
+          "say": "You read the seating-roll the way you'd read any old tongue: the king's toast falls from the margin, and so does a name inked in after the rest — Marl, seated among the elders, claimed by no household here.",
+          "fx": [
+            ["set", "or_scholar_mc_recorder"],
+            ["addvar", "or_scholar_read", 1],
+            ["set", "mc_toast_king"],
+            ["addvar", "mc_toasts_known", 1],
+            ["set", "mc_marl_known"],
+            ["score", 7],
+            ["xp", 5],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"A planted guest. Not an accident at all, then. I don't know why that should make it worse, and it does.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the list, now the rite is done",
+          "if": [["flag", "mc_hollow_rested"]],
+          "once": true,
+          "say": "I've marked the third toast spoken at last, in my own hand, beside the other two. Four hundred years is a long time to keep a margin waiting.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the list, now it's kept sealed",
+          "if": [["flag", "mc_hollow_bargained"]],
+          "once": true,
+          "say": "Not finished, but not lied about either. I'll take honest and unfinished over closed and false, every time I'm asked to choose.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["var", "mc_toasts_known", ">=", 3]],
+              [
+                ["say", "\"You had all three toasts,\" she adds. \"They'll keep. A cup's a cup whether it's raised this year or a hundred on; the guests have waited before.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the list, now it's burned",
+          "if": [["flag", "mc_hollow_burned"]],
+          "once": true,
+          "say": "Four hundred years of names, gone to smoke in one night. I'll copy what I remember of the list anyway — closed wrong is still closed.",
+          "fx": [["xp", 1], ["addvar", "rep_keepers", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the rolls",
+          "say": "Mind what names you carry out of here. I'll want them written down eventually, one way or another.",
+          "end": true
+        }
+      ]
+    },
+    "mc_steward": {
+      "name": "Oswin",
+      "room": "mc_hall_gate",
+      "dialogue": true,
+      "desc": "The steward's own descendant, an iron key worn smooth from handling but not from turning, hung on a cord he never quite lets out of reach.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Oswin. This gate's mine to keep, same as it was my father's, and his mother's before him. So is the key to what's beyond it. I have never turned it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why he's never turned it",
+          "if": [["flag", "said_mc_steward_greet"]],
+          "once": true,
+          "say": "My line kept this gate the night the doors were barred, and every night since. Turning that key felt like finishing what my own family started. So I've stood here instead, forty years, and let the wax do the deciding.",
+          "fx": [["set", "mc_oswin_bg"], ["xp", 2]]
+        },
+        {
+          "id": "mc_hall_key_ask",
+          "label": "ask to hold the key a moment",
+          "if": [["flag", "mc_oswin_bg"], ["!has", "mc_hall_key"]],
+          "once": true,
+          "say": "He works the cord over his head slower than the asking should take, and sets it in your hand like it might still refuse to leave his.",
+          "fx": [
+            ["move", "mc_hall_key", "inv"],
+            ["xp", 1],
+            ["say", "\"There. Heavier than it looks, for a piece of iron that's never done its one job.\""]
+          ]
+        },
+        {
+          "id": "mc_declare_bargain",
+          "label": "tell him the hall stays shut",
+          "if": [
+            ["flag", "mc_osric_refused"],
+            ["flag", "mc_fulk_refused"],
+            ["flag", "mc_rendel_refused"],
+            ["!flag", "mc_hollow_done"]
+          ],
+          "say": "You've talked the Crown, the Companies, and the Ironbound all off this hall in turn. That's everyone with a claim on it but Mootcombe's own.",
+          "fx": [
+            ["set", "mc_hollow_bargained"],
+            ["set", "mc_hollow_done"],
+            ["set", "mc_hall_kept"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "hollows_bargained", 1],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "appr_vell", 1],
+            ["addvar", "appr_tamsin", 1],
+            ["score", 20],
+            ["xp", 8],
+            ["say", "Oswin doesn't turn the key even now, only closes his hand tighter around it. \"Sealed, then. And the first pressing goes to that door every feast-day from now on, whether I ever turn this or not.\""],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"Kept, not opened, and not erased either. My family's shame stays exactly where it can be found. I can live with that more easily than I expected to.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the gate, now the rite is done",
+          "if": [["flag", "mc_hollow_rested"]],
+          "once": true,
+          "say": "It came open in the end without my hand on the key at all. Forty years I stood here deciding, and the deciding was never mine to make alone.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the gate, now it's burned",
+          "if": [["flag", "mc_hollow_burned"]],
+          "once": true,
+          "say": "Forty years guarding a door, and it went down to a cask of oil in one night. I try not to think too hard about what that says my watch was ever worth.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_mc_rested_ask",
+          "label": "ask what becomes of the key now",
+          "if": [["flag", "mc_hollow_rested"], ["flag", "sv_mc_back"], ["!flag", "sv_mc_after_done"], ["has", "mc_hall_key"]],
+          "once": true,
+          "say": "It never had to turn, in the end. I'm not sure it belongs back on my cord, doing nothing, forty more years. What would you have me do with it?",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_mc_rested_hung",
+          "label": "hang it over the moot-oak",
+          "if": [["flag", "said_mc_steward_sv_mc_rested_ask"], ["!flag", "sv_mc_after_done"]],
+          "once": true,
+          "say": "He drives a nail into the oak himself and hangs it there, plain for anyone crossing the green. \"There. Let it be seen not turning, instead of hidden not turning.\"",
+          "fx": [
+            ["move", "mc_hall_key", "nowhere"],
+            ["set", "sv_mc_rested_hung"],
+            ["set", "sv_mc_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_osk", 1]
+          ]
+        },
+        {
+          "id": "sv_mc_rested_given",
+          "label": "give it to Ingrith, with the list",
+          "if": [["flag", "said_mc_steward_sv_mc_rested_ask"], ["!flag", "sv_mc_after_done"]],
+          "once": true,
+          "say": "\"The recorder's loft, then,\" he says, already turning to carry it there himself, \"so it isn't only my line that remembers a door that finally opened.\"",
+          "fx": [
+            ["move", "mc_hall_key", "nowhere"],
+            ["set", "sv_mc_rested_given"],
+            ["set", "sv_mc_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the gate",
+          "say": "Walk soft past the hall wall. There's a child who listens to it harder than I ever let myself.",
+          "end": true
+        }
+      ]
+    },
+    "mc_child": {
+      "name": "Nell",
+      "room": "mc_hall_gate",
+      "dialogue": true,
+      "desc": "A child sitting cross-legged against the hall wall, one ear pressed to the stone, still as anything until you're close enough to notice her listening.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Nell. I sit here most days. You can hear cups set down on wood, if you're quiet and the wind's right. Once I knocked back. Nobody believes that part.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what happened when she knocked",
+          "if": [["flag", "said_mc_child_greet"]],
+          "once": true,
+          "say": "Three knocks came back, slow, like whoever it was had all the time there is. I haven't done it again. I think about doing it again every single day.",
+          "fx": [["set", "mc_nell_bg"], ["xp", 2]]
+        },
+        {
+          "id": "mc_nell_stop",
+          "label": "tell her it isn't safe to answer them",
+          "if": [["flag", "mc_nell_bg"], ["!flag", "mc_nell_stop"], ["!flag", "mc_nell_keep"]],
+          "once": true,
+          "say": "She's quiet a moment, then nods, like she'd been waiting for someone bigger than her to say it first. \"...Alright. I'll just listen, then.\"",
+          "fx": [["set", "mc_nell_stop"], ["score", 2], ["xp", 2], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "mc_nell_keep",
+          "label": "tell her she's right to listen back",
+          "if": [["flag", "mc_nell_bg"], ["!flag", "mc_nell_stop"], ["!flag", "mc_nell_keep"]],
+          "once": true,
+          "say": "Something in her face steadies, like being believed matters more than being kept safe. \"Nobody else even listens. Somebody should. Might as well be me.\"",
+          "fx": [["set", "mc_nell_keep"], ["score", 2], ["xp", 2], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "mc_nell_closure",
+          "label": "ask if she still hears the cups",
+          "if": [["flag", "mc_hollow_done"], ["!flag", "mc_nell_closure"]],
+          "once": true,
+          "say": "She presses her ear to the wall a long moment before she answers.",
+          "fx": [
+            ["set", "mc_nell_closure"],
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "mc_hollow_rested"]],
+              [
+                ["say", "\"Just the once, right at the end — glad-sounding, like a table breaking up for the night. Nothing since. I think they finally left.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_hollow_bargained"]],
+              [["say", "\"Still there. Quieter, though. Like they know somebody's finally minding them properly.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_hollow_burned"]],
+              [
+                ["say", "\"Nothing at all now. I thought I'd be glad. Mostly I just miss having something listening back.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the wall",
+          "say": "Mind you don't sit here past dark. Even a wall that talks back keeps its own hours.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "items": {
+    "mc_hall_key": {
+      "name": "an iron key, worn smooth but never turned",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "Oswin's own, and never used for its one purpose"
+    }
+  }
+}

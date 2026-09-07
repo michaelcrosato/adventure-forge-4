@@ -1,0 +1,353 @@
+{
+  "items": {
+    "sh_banner_cloth": {
+      "name": "the Companies' first banner, folded small",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "lost on the captains' knoll; Ossett has waited forty years to see it again"
+    }
+  },
+  "npcs": {
+    "sh_pensioner": {
+      "name": "Ossett",
+      "room": "sh_pensioners_house",
+      "dialogue": true,
+      "desc": "An old Free Companies captain gone soft in the middle and nowhere else, a pension and a bad hip and forty years of polishing a banner-staff every morning, out of a habit deeper than the banner.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Captain Ossett, pensioned. I fought under the first banner the Companies ever flew, the night it was signed for on this field. I've counted it their birthplace ever since.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "the founding, and the banner",
+          "if": [["flag", "said_sh_pensioner_greet"]],
+          "once": true,
+          "say": "The charter was signed that same night, by firelight, a captain's back for a writing-desk. The banner that flew over it went down on the knoll and was never found.",
+          "fx": [["set", "sh_pensioner_bg"], ["xp", 2]]
+        },
+        {
+          "id": "sh_warden_greet",
+          "label": "greet him as a soldier",
+          "if": [["class", "warden"], ["!flag", "or_warden_sh_pensioner"]],
+          "say": "He looks you over the way one old soldier takes the measure of a younger one, not unkindly.",
+          "fx": [
+            ["set", "or_warden_sh_pensioner"],
+            ["addvar", "or_warden_word", 1],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "\"Watch-trained, unless I've lost my eye entirely,\" Ossett says, straightening despite the hip. \"Whatever coat you wear now, you'll get a soldier's plain answer at this fire. Not everyone does.\""]
+          ]
+        },
+        {
+          "id": "sh_word_roll",
+          "label": "read the founding roll (wits)",
+          "if": [["flag", "sh_pensioner_bg"], ["!flag", "sh_word_roll"]],
+          "say": "Go on, then, if you can make sense of forty years of damp on old ink.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "sh_word_roll"],
+                ["addvar", "sh_words_known", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "The founding roll gives up its words slow but whole: not a boast, a promise — coin and no masters, sworn over a broken truce so the breaking would mean something after. The first of the truce-words is yours."]
+              ],
+              [
+                ["say", "The ink swims on the page, forty years of damp between you and the sense of it. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sh_word_roll_scholar",
+          "label": "read the founding roll outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "sh_word_roll"], ["!flag", "or_scholar_sh_roll"]],
+          "say": "You don't need Ossett's help making sense of forty years of damp on old ink.",
+          "fx": [
+            ["set", "or_scholar_sh_roll"],
+            ["addvar", "or_scholar_read", 1],
+            ["set", "sh_word_roll"],
+            ["addvar", "sh_words_known", 1],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "You have the roll's promise before Ossett's finished offering to fetch a lamp: coin and no masters, sworn over a broken truce so the breaking would mean something after. The first of the truce-words is yours."]
+          ]
+        },
+        {
+          "id": "sh_banner_return",
+          "label": "give him the banner",
+          "if": [["has", "sh_banner_cloth"]],
+          "say": "You set the folded cloth on the table between you.",
+          "fx": [
+            ["set", "sh_banner_returned"],
+            ["move", "sh_banner_cloth", "nowhere"],
+            ["score", 6],
+            ["xp", 5],
+            ["addvar", "gold", 6],
+            ["addvar", "rep_free", 2],
+            ["say", "Ossett takes the cloth in both hands like it might still be warm, voice unsteady. \"Forty years,\" he says. \"I will die easier for seeing it whole again.\" He hangs it on the bare staff himself."],
+            [
+              "if",
+              [["var", "rep_free", ">=", 2]],
+              [
+                ["set", "free_passage"],
+                ["say", "\"You've done the Companies a kindness worth more than coin,\" he adds. \"Say my name at the smugglers' stair or Camp Gallows. Either will know it now.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "sh_stone_companies",
+          "label": "raise the founding-stone (will)",
+          "if": [
+            ["flag", "sh_pensioner_bg"],
+            ["!flag", "sh_field_given"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
+          "say": "You want the Companies' own founding cut on that ditch, over the Crown's victory? Talk me into believing Bevan will stand for it.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "sh_stone_companies"],
+                ["addvar", "rep_free", 2],
+                ["addvar", "rep_crown", -2],
+                ["score", 10],
+                ["xp", 4],
+                ["say", "You make the case, and word goes to Bevan's lodge that same day: the charter, not the crown, cut into the ditch-stone. Ossett stands over the mason's shoulder for every line of it."]
+              ],
+              [["say", "\"Not yet, then,\" he says, disappointed but not surprised. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "react_stone_elsewhere",
+          "label": "tell him how the stone was decided",
+          "if": [["any", [["flag", "sh_stone_crown"], ["flag", "sh_stone_names"], ["flag", "sh_stone_none"]]]],
+          "once": true,
+          "say": "Not the Companies' wording, then. I'll say this for whoever's it is: better a stone that says something true than one that says nothing at all.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_stone_broker",
+          "label": "tell him how the stone was decided",
+          "if": [["flag", "sh_stone_broker"]],
+          "once": true,
+          "say": "My name cut on the same stone as the Crown's. Forty years I'd have spat at that. I find I can live with a stone that says something true, even if it says it twice."
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the field, now the truce is called",
+          "if": [["flag", "sh_hollow_rested"]],
+          "once": true,
+          "say": "Called proper, at last, four hundred years on. I stood a truce or two myself, in my time. None of them waited that long to be spoken.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the field, now it's given",
+          "if": [["flag", "sh_hollow_bargained"]],
+          "once": true,
+          "say": "No stakes, no muster, not even the Companies'. I won't pretend that doesn't sting a soldier's pride. I'll pretend it's the right call anyway.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the field, now it's burned",
+          "if": [["flag", "sh_hollow_burned"]],
+          "once": true,
+          "say": "Burned the birthplace of the whole Companies, and I can't even say it's wrong. Some grief doesn't want tending. It wants ending.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his staff",
+          "say": "Mind the knoll if you walk it. I lost good friends finding out how far a banner can fall and still be worth fetching.",
+          "end": true
+        }
+      ]
+    },
+    "sh_remembrancer": {
+      "name": "Tolan",
+      "room": "sh_remembrancers_cot",
+      "dialogue": true,
+      "desc": "The Keepers' remembrancer, ink-stained to the wrist, reading a tally-board the way another woman might read a letter from someone she's still angry at.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Tolan. Keeper-taught, for whatever that's worth out here. I keep the levies' count: every name, every ditch they stood in, four hundred years running.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why keep count at all",
+          "if": [["flag", "said_sh_remembrancer_greet"]],
+          "once": true,
+          "say": "Because nobody else will. The Crown remembers a victory. The Companies remember a founding. I remember the men who stood in a ditch and lost, and somebody ought to.",
+          "fx": [["set", "sh_remembrancer_bg"], ["xp", 2]]
+        },
+        {
+          "id": "sh_warden_cold",
+          "label": "greet her as a soldier",
+          "if": [["class", "warden"], ["!flag", "or_warden_sh_remembrancer"]],
+          "say": "She looks up from the board just long enough to place you, and no longer than that.",
+          "fx": [
+            ["set", "or_warden_sh_remembrancer"],
+            ["addvar", "or_warden_word", 1],
+            ["say", "\"Soldiers stood here once too,\" Tolan says, already back to her tally. \"I keep an exact count of how well that went. Don't mistake the courtesy of my listening for anything warmer.\""]
+          ]
+        },
+        {
+          "id": "sh_word_count",
+          "label": "read the Keepers' count (wits)",
+          "if": [["flag", "sh_remembrancer_bg"], ["!flag", "sh_word_count"]],
+          "say": "It's not written for easy reading. Go on, if you think you can follow it.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "sh_word_count"],
+                ["addvar", "sh_words_known", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "The tallies resolve into more than names: a formula, worn into the counting itself, words a truce was meant to carry to the middle of the field. The second of the truce-words is yours."]
+              ],
+              [["say", "The shorthand defeats you, line after line of it. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "sh_word_count_scholar",
+          "label": "read the Keepers' count outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "sh_word_count"], ["!flag", "or_scholar_sh_count"]],
+          "say": "You don't need Tolan's help following her own shorthand.",
+          "fx": [
+            ["set", "or_scholar_sh_count"],
+            ["addvar", "or_scholar_read", 1],
+            ["set", "sh_word_count"],
+            ["addvar", "sh_words_known", 1],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "The shorthand gives itself up at a glance: a formula worn into the counting itself, words a truce was meant to carry to the middle of the field. The second of the truce-words is yours."]
+          ]
+        },
+        {
+          "id": "sh_bosses_tell",
+          "label": "tell her what the shield-bosses showed",
+          "if": [["flag", "sh_bosses_read"], ["!flag", "said_sh_remembrancer_sh_bosses_tell"]],
+          "once": true,
+          "say": "She takes the marks down word for word, and for once looks almost grateful. \"Three names I had wrong the side of. Small thing. It isn't, to the ones I'm keeping count for.\"",
+          "fx": [["score", 3], ["xp", 2], ["addvar", "rep_keepers", 1]]
+        },
+        {
+          "id": "sh_stone_names",
+          "label": "raise the names-stone, no victor (will)",
+          "if": [
+            ["flag", "sh_remembrancer_bg"],
+            ["!flag", "sh_hollow_rested"],
+            ["!flag", "sh_field_given"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
+          "say": "Both lines' names, cut small, no victor claimed over either. Convince me Bevan will cut it that plain.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "sh_stone_names"],
+                ["addvar", "rep_keepers", 2],
+                ["addvar", "rep_church", 2],
+                ["score", 10],
+                ["xp", 4],
+                ["say", "You make the case, and Tolan hands over a count she's kept ready for exactly this forty years: every name, both lines, cut small and even, edge to edge, with no room left for a victor."]
+              ],
+              [["say", "\"Not from me alone, then,\" she says, unmoved. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "sh_stone_names_rested",
+          "label": "raise the names-stone, unrefusable now",
+          "if": [
+            ["flag", "sh_hollow_rested"],
+            ["!flag", "sh_field_given"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
+          "say": "A truce called whole leaves nobody a name to refuse. Say the word and I'll hand Bevan the count myself.",
+          "fx": [
+            ["set", "sh_stone_names"],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_church", 2],
+            ["score", 10],
+            ["xp", 4],
+            ["say", "Tolan hands over the count without a single argument raised against it — both lines, named plain, and nobody left standing who'd claim the field over the other."]
+          ]
+        },
+        {
+          "id": "react_stone_elsewhere",
+          "label": "tell her how the stone was decided",
+          "if": [["any", [["flag", "sh_stone_crown"], ["flag", "sh_stone_companies"], ["flag", "sh_stone_none"]]]],
+          "once": true,
+          "say": "Not the names, then. I'll go on keeping my own count regardless. Somebody has to, whatever the stone says or doesn't.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the field, now the truce is called",
+          "if": [["flag", "sh_hollow_rested"]],
+          "once": true,
+          "say": "Every name on my tally finally got the truce it was owed. I don't know what to do with my evenings now, honestly. Keep counting, I expect.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the field, now it's given",
+          "if": [["flag", "sh_hollow_bargained"]],
+          "once": true,
+          "say": "The ground's theirs outright now. Closer to a covenant kept than anything the Crown's ever managed. I'll take it, and keep my tally regardless.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the field, now it's burned",
+          "if": [["flag", "sh_hollow_burned"]],
+          "once": true,
+          "say": "Every name on my tally, gone with the mounds that held them. I'll keep the board anyway. It's what's left to keep.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the tally-boards",
+          "say": "Mind whose name you take lightly out there. I've spent a life making sure none of them are forgotten twice.",
+          "end": true
+        }
+      ]
+    }
+  }
+}

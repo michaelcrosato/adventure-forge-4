@@ -1,0 +1,256 @@
+{
+  "rooms": {
+    "sh_north_road": {
+      "name": "The North Road",
+      "desc": "A rutted track drops south off the Fallows' dikes onto open plough-land, hedge and furrow running out ahead under a wide, gray sky.",
+      "brief": "The rutted track down onto the plain.",
+      "region": "sh",
+      "landmark": "the north road",
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "sh_entered"]],
+          [
+            ["set", "sh_entered"],
+            ["xp", 2],
+            ["say", "This is the Shieldings: the open plain where the first Reeve's hired Companies broke a loyal shield-wall by dark, and both lines have held their ground, unrested, ever since."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"My own line's field, this — won here, the night the herald walked out with the white rod and was shot for his trouble. I have never once heard anyone in Marrowgate tell it that way.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Brother Osk: \"Every hold has its grief, but I begin to think none of them has a priest who has buried nobody at all. I want to meet this one.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "tamsin"]],
+              [
+                ["say", "Tamsin: \"The Free Companies were born on this ground, out of a broken truce and a captain's itchy trigger-finger. Worth remembering, whenever anyone tells you a hired sword answers to nobody.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [
+                ["say", "Lys: \"They say the crows never really left this field. I believe it. And I believe a dead herald is still owed the patience nobody gave him.\""]
+              ],
+              []
+            ]
+          ],
+          []
+        ]
+      ]
+    },
+    "sh_west_road": {
+      "name": "The Drove-Road",
+      "desc": "A drove-road picks its way off the fen's last reed onto firm ground, cart-ruts deepening with every stride away from the standing water behind.",
+      "brief": "The drove-road, off the fen's last reed.",
+      "region": "sh",
+      "landmark": "the drove-road",
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "sh_entered"]],
+          [
+            ["set", "sh_entered"],
+            ["xp", 2],
+            ["say", "This is the Shieldings: the open plain where the first Reeve's hired Companies broke a loyal shield-wall by dark, and both lines have held their ground, unrested, ever since."]
+          ],
+          []
+        ]
+      ]
+    },
+    "sh_green": {
+      "name": "Harrowfield — the Green",
+      "desc": "A worn green at the village's heart, a dry well at its center nobody has capped. Harrowfield's few streets run off it in every direction, and every one of them, sooner or later, leads back to the plain.",
+      "brief": "The green; every street leads back to the plain.",
+      "region": "sh",
+      "landmark": "Harrowfield",
+      "exits": {
+        "north": { "to": "sh_hearth", "landmark": "the Plough Hearth" },
+        "south": { "to": "sh_chantry_porch", "landmark": "the chantry porch" },
+        "east": { "to": "sh_reeve_yard", "landmark": "the field-reeve's yard" },
+        "west": { "to": "sh_stonecutter_lodge", "landmark": "the stone-cutter's lodge" },
+        "out": { "to": "sh_ditch_gate", "landmark": "the ditch-gate" }
+      },
+      "variants": [
+        {
+          "if": [["flag", "sh_field_given"], ["flag", "sv_sh_after_done"]],
+          "desc": "A worn green at the village's heart, a dry well at its center nobody has capped. The bread question is settled, one way or another, and nobody counts the loaves aloud anymore.",
+          "brief": "The green, its bread question settled."
+        },
+        {
+          "if": [["flag", "sh_hollow_rested"]],
+          "desc": "A worn green at the village's heart, a dry well at its center nobody has capped. Since the truce was finally called, folk here talk of the field the way they'd talk of a debt finally paid, not a haunting.",
+          "brief": "The green; the old debt is paid now."
+        },
+        {
+          "if": [["flag", "sh_field_given"]],
+          "desc": "A worn green at the village's heart. Bread is watched closer than it used to be, since the best furlongs went to the dead for good — but nobody here will say the bargain was the wrong one.",
+          "brief": "The green; bread watched closer, since the bargain."
+        },
+        {
+          "if": [["flag", "sh_hollow_burned"]],
+          "desc": "A worn green at the village's heart, a dry well at its center nobody has capped. Some evenings the wind off the plain still carries a smell that isn't quite woodsmoke, and nobody remarks on it twice.",
+          "brief": "The green; a smell on the wind some evenings."
+        }
+      ]
+    },
+    "sh_hearth": {
+      "name": "The Plough Hearth",
+      "desc": "Harrowfield's hearth-hall, low-beamed and always a little smoky, benches worn to the shape of generations of the same few families. A ladle and a cask of something rough sit ready by the fire for anyone who asks.",
+      "brief": "The hearth-hall, benches worn smooth by use.",
+      "region": "sh",
+      "landmark": "the Plough Hearth",
+      "exits": { "south": { "to": "sh_green" }, "east": { "to": "sh_trade_counter", "landmark": "the trade counter" } },
+      "onEnter": [["if", [["flag", "sh_hollow_done"], ["!flag", "sv_sh_back"]], [["set", "sv_sh_back"]], []]],
+      "actions": [
+        {
+          "id": "sh_rest",
+          "label": "rest by the hearth",
+          "fx": [
+            ["hp", 10],
+            ["say", "You sleep to the tick of the fire and wake stiff but whole. Someone has already banked it fresh for the next stranger through the door."]
+          ]
+        }
+      ]
+    },
+    "sh_trade_counter": {
+      "name": "The Trade Counter",
+      "desc": "A plank counter under a sagging awning, rope and pitch and a few honest tools stacked behind it. Crake works it most days when he isn't out digging, weighing cinder-oil and old iron with the same flat scale.",
+      "brief": "A plank counter; rope, pitch, and dug iron.",
+      "region": "sh",
+      "exits": { "west": { "to": "sh_hearth" } },
+      "actions": [
+        {
+          "id": "sh_buy_blade",
+          "label": "buy a length of dug-iron, honed (7 gold)",
+          "if": [["!has", "sh_iron_blade"], ["var", "gold", ">=", 7]],
+          "fx": [
+            ["addvar", "gold", -7],
+            ["move", "sh_iron_blade", "inv"],
+            ["say", "Crake hones the edge once more before he'll hand it over. \"Field-iron holds a better temper than you'd think. Everything out there's had four hundred years to season.\""]
+          ]
+        }
+      ]
+    },
+    "sh_reeve_yard": {
+      "name": "The Field-Reeve's Yard",
+      "desc": "A working yard behind a low wall, ploughs racked and carts backed under a lean-to. A map of Harrowfield's furlongs hangs nailed to the post, one long strip near its center left carefully, permanently blank.",
+      "brief": "A working yard; one furlong left blank on the map.",
+      "region": "sh",
+      "landmark": "the field-reeve's yard",
+      "exits": { "west": { "to": "sh_green" } },
+      "variants": [
+        {
+          "if": [["flag", "sh_field_given"]],
+          "desc": "A working yard behind a low wall. The furlong map hangs as it always did, except now a second strip is inked out beside the first, and a third, wherever the ploughs had to give further ground.",
+          "brief": "The yard; more furlongs inked out now."
+        }
+      ]
+    },
+    "sh_stonecutter_lodge": {
+      "name": "The Stone-Cutter's Lodge",
+      "desc": "A mason's lodge, chisels racked by size, a half-dressed block of good gray stone standing under canvas at its center like something waiting to be told what it's for.",
+      "brief": "A mason's lodge; a half-dressed stone under canvas.",
+      "region": "sh",
+      "landmark": "the stone-cutter's lodge",
+      "exits": { "east": { "to": "sh_green" }, "down": { "to": "sh_pensioners_house", "landmark": "the pensioner's house" } },
+      "variants": [
+        {
+          "if": [["flag", "sh_stone_crown"]],
+          "desc": "A mason's lodge, chisels racked by size. The canvas is gone from the block at its center, its face cut clean and bare, a Crown seal already blocked in above the first line.",
+          "brief": "The lodge; the stone cut for a Crown seal."
+        },
+        {
+          "if": [["flag", "sh_stone_companies"]],
+          "desc": "A mason's lodge, chisels racked by size. The block at its center bears a rough charter-mark now, cut plainer than Bevan is used to being asked for.",
+          "brief": "The lodge; the stone cut for a charter-mark."
+        },
+        {
+          "if": [["flag", "sh_stone_names"]],
+          "desc": "A mason's lodge, chisels racked by size. The block at its center is covered in names, cut small and even, running edge to edge with no room left for anything grander.",
+          "brief": "The lodge; the stone cut small, edge to edge."
+        },
+        {
+          "if": [["flag", "sh_stone_broker"]],
+          "desc": "A mason's lodge, chisels racked by size. The block at its center carries a wording Bevan still isn't sure he likes, though he can't say which line he'd cut instead.",
+          "brief": "The lodge; a wording nobody quite loves."
+        },
+        {
+          "if": [["flag", "sh_stone_none"]],
+          "desc": "A mason's lodge, chisels racked by size. The block at its center still stands under its canvas, and Bevan has stopped pretending he expects to uncover it.",
+          "brief": "The lodge; the stone still stands under canvas."
+        }
+      ]
+    },
+    "sh_pensioners_house": {
+      "name": "The Pensioner's House",
+      "desc": "A snug house kept too tidy for a soldier's, a company banner's bare staff racked over the mantel and a roll of names under glass beside it, the ink gone brown but every letter still true.",
+      "brief": "A tidy house; a bare banner-staff over the mantel.",
+      "region": "sh",
+      "landmark": "the pensioner's house",
+      "exits": { "up": { "to": "sh_stonecutter_lodge" } },
+      "variants": [
+        {
+          "if": [["flag", "sh_banner_returned"]],
+          "desc": "A snug house kept too tidy for a soldier's. The Companies' first banner hangs on the staff over the mantel again, faded to the colour of old rope, beside the roll of names under glass; Ossett keeps looking up at it.",
+          "brief": "The house; the staff bears its cloth again."
+        }
+      ]
+    },
+    "sh_chantry_porch": {
+      "name": "The Field Chantry Porch",
+      "desc": "A small chantry's porch, a rain-swollen door behind it and a chained ledger on a reading-stand, thick with names the porch keeps but the ground behind the door has never once received.",
+      "brief": "The chantry porch; a chained ledger of names.",
+      "region": "sh",
+      "landmark": "the field chantry's porch",
+      "exits": {
+        "north": { "to": "sh_green" },
+        "east": { "to": "sh_remembrancers_cot", "landmark": "the remembrancer's cot" }
+      }
+    },
+    "sh_remembrancers_cot": {
+      "name": "The Remembrancer's Cot",
+      "desc": "A narrow cot stacked floor to rafter with tally-boards, each one a levy's name and the ditch he stood in, kept the way the Keepers keep a covenant: exactly, and without anyone thanking her for it.",
+      "brief": "A narrow cot; tally-boards floor to rafter.",
+      "region": "sh",
+      "landmark": "the remembrancer's cot",
+      "exits": { "west": { "to": "sh_chantry_porch" } }
+    },
+    "sh_ditch_gate": {
+      "name": "The Ditch-Gate",
+      "desc": "Harrowfield's last gate, its timbers scarred where every plough and every funeral has passed for four hundred years. Beyond it, the ground stops being anyone's and starts being the plain's.",
+      "brief": "The last gate; beyond it, the open plain.",
+      "region": "sh",
+      "exits": { "in": { "to": "sh_green" } }
+    }
+  },
+  "items": {
+    "sh_measuring_chain": {
+      "name": "a brass furlong-chain",
+      "loc": "sh_reeve_yard",
+      "takeable": true,
+      "owner": "sh_reeve",
+      "hint": "Sten counts every furlong with this; he'd notice it gone"
+    },
+    "sh_iron_blade": {
+      "name": "a length of dug-iron, honed",
+      "loc": "nowhere",
+      "takeable": true,
+      "hit": 1,
+      "dmg": 3,
+      "hint": "field-iron, four hundred years seasoned; a step above a belt-knife"
+    }
+  }
+}

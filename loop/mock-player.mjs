@@ -20,7 +20,7 @@ const flag = (f) => args.includes(f);
 const opt = (f, d) => (args.includes(f) ? args[args.indexOf(f) + 1] : d);
 const SEED = Number(opt("--seed", 7));
 const MEASURE = flag("--measure");
-const MAX_STEPS = Number(opt("--max-steps", 200));
+const MAX_STEPS = Number(opt("--max-steps", 400));
 
 // node --import tsx (not npx) so this works on Windows too, where spawn("npx") fails
 const child = spawn(process.execPath, ["--import", "tsx", join(ROOT, "src", "mcp.ts")], {
@@ -102,7 +102,7 @@ const findEntry = (menu, want) =>
   menu.find((m) => matchesLabel(m.label, want));
 
 function expandWalkthrough() {
-  const path = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
+  const path = process.env.TF_WORLD ?? join(ROOT, "world", "reach.json");
   const world = JSON.parse(readFileSync(path, "utf8"));
   // repeats are expanded lazily at play time by label matching
   return world.walkthrough;

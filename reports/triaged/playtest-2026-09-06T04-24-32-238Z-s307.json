@@ -1,0 +1,92 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 599,
+  "receipt": "reach.307.599.366.reach_at_rest.21573340",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The Long Furrow's quest text advertises three resolution branches ('Rest it (names, rite, verse), bargain it (a vow or raised stones), or burn it (Ironbound oil)'). After collecting all 3/3 'Names for the Rite' sources, Sister Merrow's Church rite, and Osk's own written verse, the cairn menu still only ever offered the two 'bargain' options (vow / raised stones) — the 'rest' branch the side-content built toward never appeared.",
+      "where": "The Fallows / The Long Furrow — the Cairn"
+    },
+    {
+      "sev": "P1",
+      "what": "Killing the 'ash wolf' (which was explicitly not hunting and could be avoided) triggered '(Lys disapproves)' as a bare parenthetical with no number shown; the regard change is only visible by proactively running status afterward, so a companion souring on you is easy to miss entirely.",
+      "where": "The Vale of Ash / Twin Stones — attack ash wolf"
+    },
+    {
+      "sev": "P1",
+      "what": "Class-marked '(as a Warden)' options vary wildly in weight with no way to tell which from the label: 'take the reed-cuts on as your own watch (as a Warden)' at the eel-trader produced only a flavor line and no different bounty/outcome, while 'answer as a soldier of the old watch (as a Warden)' fully bypassed a fight/check with a drowned warden guaranteed. The tag doesn't signal how much the class actually changes the outcome.",
+      "where": "Fenmarch / The Eel-Market — ask eel-trader; Fenmarch / The Flood-Watch — stair"
+    },
+    {
+      "sev": "P1",
+      "what": "After settling the reeve/priest quarrel over the barrow doors (declined the reeve's promise, took the priest's blessing, chose 'open' at the throne), reporting back to the reeve produced only a flat acknowledgement line with no reputation or relationship consequence I could detect, despite him explicitly wanting the opposite outcome — the quarrel's setup implied more lasting weight than it paid off.",
+      "where": "Last Light Square — talk to reeve, 'ask about the doors, left open'"
+    },
+    {
+      "sev": "P1",
+      "what": "Barrowmere's mound-warden and the Hollowbrook/Fallows factions never referenced the outcome of 'Whose Ground' once it was decided — Surveyor Pell's and Recruiter Dace's remaining quests resolved through unrelated might-checks/free actions with no dialogue acknowledging the land had already been formally awarded to the returners.",
+      "where": "The Fallows / The Staked Common and Muster Barn"
+    },
+    {
+      "sev": "P2",
+      "what": "'Something in the Reed-Cuts' (eel-trader bounty, plus the Warden-marked 'take it on as your own watch') never resolved despite exploring what appeared to be the entire Fenmarch fen map and killing the one obvious candidate (the bloated drowned wight in Sunken Howe) — the quest stayed permanently open with no further clue toward a trigger.",
+      "where": "Fenmarch / The Eel-Market — 'the traps somebody's tearing out'"
+    },
+    {
+      "sev": "P2",
+      "what": "The Crow Perch's grace check ('climb for the scrap') can be retried indefinitely for 1hp per failure with no cap or scaling cost, turning a 0-grace character's encounter into a pure, boring hp-tax rather than a real choice.",
+      "where": "The Vale of Ash / Crow Perch — climb for the scrap"
+    },
+    {
+      "sev": "P2",
+      "what": "Three items (chipped coin-dish, smith's tongs, blessed candles) are permanently flagged 'taking it is theft' with the owner 'watching', across ~600 turns, with no payoff ever surfaced for taking or leaving them and no other reference to them anywhere else in the game.",
+      "where": "The Last Light Inn / The Forge / Gray Chapel"
+    },
+    {
+      "sev": "P2",
+      "what": "Two side-dungeons in different holds (Sunken Howe in Fenmarch, the Forebarrow in the Fallows) reuse the exact same wight-guards-verse-stone-then-alcove-loot structure down to identical sentence templates ('Whoever was laid here went with what mattered to them, not what was owed to a king.'), which undercuts the sense that each hold has its own distinct grief.",
+      "where": "Fenmarch / Sunken Howe — chamber; The Fallows / the Forebarrow — chamber"
+    },
+    {
+      "sev": "P2",
+      "what": "status never prints the current turn number itself; tracking turn budget requires cross-referencing the last act/look output instead.",
+      "where": "status command output"
+    }
+  ],
+  "confusions": [
+    "The Last Light Square notice board requires reading it twice ('read the notice board' then 'read the notice board again') to reach the paragraph that actually grants the game's first quest; nothing signals there's a second layer after the first read.",
+    "'travel to a known place' only fast-travels between an unstated subset of 'landmark' rooms, not every room visited; which rooms qualify is never explained, so retracing multi-room corridors (Fenmarch's inner fen, Hollowbrook's downs) by hand was frequently necessary despite having 'visited' every tile already.",
+    "Hollow-count bookkeeping is opaque: resting Fenmarch's drowned congregation (a full quest chain, its own bell-ringing climax, a big score reward, 'Quest done' line) did not increment 'Hollows rested' in status, while Hollowbrook's Old Court and the Fallows' Long Furrow did — nothing explains why the drowned nave isn't one of the 'eight holds, eight unrested griefs' toward opening Coldpass, which made planning how many hollows were still needed guesswork.",
+    "The brief's expectation of companions 'falling out among themselves and looking to you to decide' never materialized in ~600 turns and 4 companions: every piece of party banter was each companion reacting individually (approve/disapprove, one-line asides) to something the player did, never a dispute between two companions that required arbitration. The only two-party quarrel actually mediated was between two NPCs (the reeve and the priest over the barrow doors), not between party members.",
+    "Highward's barracks — the single location packed with fellow soldiers, guards, a sergeant and a Captain-General — never offered a single '(as a Warden)' dialogue option, even though a Warden is explicitly 'a soldier of the old watch'; the one place a soldier's bearing should land with living peers was silent, while a swamp tower's ghost recognized it instantly.",
+    "The Fallows' 'Whose Ground' quest promised four claims (surveyor, recruiter, sister, Keeper) but Frey the Keeper's 'leave it fallow' option was only ever offered once, in an early unrelated conversation, and never resurfaced or was recapped alongside the other three when the actual decision needed to be made at the chapel."
+  ],
+  "suggestions": [
+    "Surface a hint (room text or journal note) for what actually triggers 'Something in the Reed-Cuts', or auto-resolve it when the Sunken Howe wight is killed.",
+    "Make the advertised 'rest' branch (names+rite+verse) actually reachable at the Long Furrow cairn once its three prerequisites are met, or drop it from the quest text.",
+    "Cap or escalate the cost on infinitely-repeatable low-stat checks (Crow Perch) so grinding isn't the dominant strategy.",
+    "Print every regard change inline with its number ('Lys -1') rather than a bare '(disapproves)' aside.",
+    "Give the three permanently-theft-flagged decorative items either a real payoff for taking them or drop the theft flag entirely.",
+    "State explicitly, in its own completion text, whether a rested grief counts toward the eight-hollow tally (Fenmarch's drowned nave apparently doesn't; say so).",
+    "Recap all remembered multi-party land/faction claims together at the moment the decision is actually made, instead of relying on a one-time early offer.",
+    "Add at least one '(as a Warden)' beat at Highward's barracks so the class identity lands with living soldiers, not only ghosts.",
+    "Stage at least one real companion-vs-companion dispute the player must arbitrate, distinct from companions individually reacting to the player.",
+    "Vary the wight/verse-stone/alcove template's guardian type and loot flavor per hold so repeated mini-dungeons don't read as reskins.",
+    "Show the current turn count directly in status output instead of requiring a cross-reference to the last turn's header.",
+    "Have NPCs whose quest depended on a land/rite decision (surveyor, recruiter) reference the outcome once it's settled, even briefly."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T04-24-32-238Z",
+  "seed": 307,
+  "build": {
+    "rev": "e32ce36",
+    "world": "a9b7fb9a"
+  },
+  "cost_usd": null,
+  "verified": true
+}

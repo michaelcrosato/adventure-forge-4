@@ -1,0 +1,77 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 547,
+  "receipt": "reach.283.547.366.gray_crown.6b670140",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Perrin's Mother quest never recognizes that I had already met and talked to Perrin in person at Highward's barracks (he told me he's alive and weighing desertion). Back at Reedholm the only dialogue is 'ask Perrin's mother: tell her you've no word yet', repeatable, with no option to relay what I actually know.",
+      "where": "Reedholm — the Landing / talk to Perrin's mother"
+    },
+    {
+      "sev": "P1",
+      "what": "Tamsin gives an explicit last-warning line ('One more like that and I'm gone. I don't give second warnings, only first ones.') after I stole the smith's tongs; I immediately stole the chapel's blessed candles right after and she only says 'I'm starting to wonder why I'm still wasting it on you' with no regard change and no departure. The stated ultimatum has no teeth.",
+      "where": "Gray Chapel / take a bundle of blessed candles"
+    },
+    {
+      "sev": "P1",
+      "what": "After the Vale ending (crown pocketed, doors left open, 'Act I' and 'The Barrow Doors' quests closed), the smith gets two new reactive dialogue lines about it, but the gray priest (who personally gave the blessing that opened the doors) and the elder (who owned the coffer the crown came from) both show zero new dialogue on revisit -- just 'leave him to his candles' / 'leave her to the ledgers'.",
+      "where": "Gray Chapel / talk to gray priest; Elder's House / talk to elder"
+    },
+    {
+      "sev": "P2",
+      "what": "The Hollow King still says 'I have waited four hundred years. I can wait while you decide' when talked to after I had already finalized the decision (crown pocketed, doors set, quest already marked closed) -- the line no longer matches the game state.",
+      "where": "Throne of the Barrow / talk to hollow king"
+    },
+    {
+      "sev": "P2",
+      "what": "The Armoury quartermaster says of my theft 'I mark down who I trust with the racks, and it isn't you,' then immediately still offers to sell me a watch-issue blade, mail hauberk and field dressing with no friction or price change.",
+      "where": "The Armoury (Highward) / ask the quartermaster about the rack count"
+    },
+    {
+      "sev": "P2",
+      "what": "The 'Thefts seen' counter in status is shown as X/6 but climbed past its own denominator over the course of play (8/6, then 10/6, then 12/6), reading like a hard cap that isn't one.",
+      "where": "status screen / Thefts seen"
+    },
+    {
+      "sev": "P1",
+      "what": "At the Hollow Throne, Vell delivers an unprompted, major personal revelation as ambient banter ('Four hundred years of my own family's silence, and it ends in this room'), but 'talk to Vell' in that same room has no option referencing it -- just the generic greeting menu.",
+      "where": "The Hollow Throne / talk to Vell"
+    },
+    {
+      "sev": "P2",
+      "what": "Picking the elder's coffer lock happens 'while the elder's back is turned' with no 'elder sees you' flag (unlike every other witnessed theft in the game), yet asking her about it afterward gets a reaction ('fresh scratches round the keyhole... Someone tried this before ever asking') as if she does know -- mixed signal on whether the theft was actually witnessed.",
+      "where": "Elder's House / pick the coffer's lock"
+    }
+  ],
+  "confusions": [
+    "Finding Keeper Rowan's Understory and the Gallows Glade (Thornwold's own grief) required guessing through many similarly-described wood rooms (Deer Break, Black Thorn Stand, Split Beech, Root Tangle, Listening Break) from prose-only directions ('west past the Waiting Bough', 'west five stands from Camp Gallows... then north twice') with no map or waypoint aid.",
+    "The final ending epilogue (status after WIN) name-drops places and events I never encountered anywhere in 547 turns of play -- 'the Choir of Ash... above Glasswick', 'the drowned fleet still rows the fog off Gullhaven's point', 'the Farlight stands dark', 'Cinderhall's chapterhouse changed hands' -- since I never visited the Saltkerns, Iron Downs, or Hollowbrook, these read as an unearned lore-dump rather than a payoff for anything I did.",
+    "Score hit the literal maximum (366/366) well before the final throne decision, while whole regions (Iron Downs, Saltkerns, Emberfall, Hollowbrook) were never visited and several party members' personal quests (Tamsin's mine, Vell's Keepers'-Hall ledger, Lys's brother reunion beyond one talk) were left open -- 'full score' does not mean 'seen everything,' which the status text hints at but a completionist could easily misread.",
+    "Lys warns 'One more thing like that and I'm done following you. I only say a thing once' after I killed a wolf that 'would let you pass if you let it be'; I never repeated that exact kind of unnecessary-violence choice again, so it's unclear whether the threshold was real or just flavor -- the game never surfaces how close a companion is to actually leaving.",
+    "Companions who never got to finish their personal quest (Tamsin's mine, Vell's Marrowgate ledger, Perrin's mother) still get closing epilogue lines describing them as unresolved, but there is no in-game signal earlier that these threads were about to be permanently left open once I reached the Hollow Throne room (the room's own text does warn 'what you have left undone elsewhere stays undone', which is good, but it applies retroactively to a lot of threads at once with no per-thread confirmation)."
+  ],
+  "suggestions": [
+    "Let a quest-giver recognize when the player already met the person in question, offering an option to relay firsthand knowledge instead of a generic 'no word yet.'",
+    "Make a companion's 'final warning' line correspond to a real mechanical threshold, or soften the wording so it doesn't promise an imminent departure that never comes.",
+    "Give every NPC directly tied to a big resolved decision (not just some of them) at least one reactive line afterward, matching what better-covered NPCs already get.",
+    "Retire or rewrite static dialogue ('I can wait while you decide') once the relevant decision is actually finalized and the quest is closed.",
+    "Cap the 'Thefts seen: X/6' display at its own denominator, or relabel it so it's clear 6 isn't a hard ceiling.",
+    "Add a short trade cooldown or visible price/attitude penalty right after a shopkeeper catches a repeat theft, instead of resuming normal trade instantly.",
+    "Add a compass/waypoint nudge for landmarks that are only described in vague prose ('west past the Waiting Bough') so players aren't purely trial-and-error walking a maze.",
+    "When a companion drops a major unprompted revelation in a key room, add a same-scene dialogue option to actually follow up on it before the ending locks in."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T02-10-47-152Z",
+  "seed": 283,
+  "build": {
+    "rev": "8b6cfab",
+    "world": "83d82a03"
+  },
+  "cost_usd": null,
+  "verified": true
+}

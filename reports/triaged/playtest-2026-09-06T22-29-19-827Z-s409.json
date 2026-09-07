@@ -1,0 +1,87 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 551,
+  "receipt": "reach.409.551.366.reach_at_rest.8570dc20",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "A menu action marked '(free)' still let a hostile creature act: at Tithing's Edge with a hollow gleaner present, choosing 'get your bearings (free)' produced 'The hollow gleaner attacks at Brother Osk (-2hp...)' even though the turn counter did not advance. 'Free' is documented to cost no turn, but it was not damage-free.",
+      "where": "Tithing's Edge (Hearthlands) / get your bearings (free)"
+    },
+    {
+      "sev": "P1",
+      "what": "'Leave X be' printed the identical 'It holds its ground and lets you' line for the barrow-wight and the gray sergeant as it did for wolves that genuinely opened the way, but for these two the onward exit stayed 'locked' and still required a separate grace/will check (slip past / answer plainly) to actually proceed. The wording over-promises passage that had not opened.",
+      "where": "Barrow Crypt (Vale) / leave barrow-wight be; The Waiting Bough (Thornwold) / leave the gray sergeant be"
+    },
+    {
+      "sev": "P1",
+      "what": "The free 'weigh what this grief asks' said the rest 'still wants' Bray's dead-letter pardon or Keeper Rowan's verse in addition to the bargain-oath already offered, implying those items were required — but the same menu's 'read the names cut into the tree' (already available, no extra items) fully rested the hollow for the same top-tier reward (+25) that every other complete rest earned.",
+      "where": "The Gallows Glade (Thornwold) / weigh what this grief asks"
+    },
+    {
+      "sev": "P1",
+      "what": "Brother Osk's line 'I wasn't there. Sent off for dry wood on some errand nobody even remembers giving me now' reads as first-person memory of the chapel fire from four hundred years ago, but Osk is introduced as a present-day young novice whose only established grief is his family's recent drowning in Fenmarch — the two griefs blur together confusingly here.",
+      "where": "The Priory of Ash (Emberfall) / ask what he really remembers of that day"
+    },
+    {
+      "sev": "P1",
+      "what": "The 'call it a draw between them' option, used successfully three times to settle companion quarrels with no relationship cost, failed its roll on its fourth use and cost standing with BOTH companions at once ('Tamsin disapproves (-1). Vell disapproves (-1)') — a worse outcome on a miss than simply backing one side, which only ever costs one relationship.",
+      "where": "The Record-House (Wardmoor) / call it a draw between them (Vell vs Tamsin)"
+    },
+    {
+      "sev": "P2",
+      "what": "The generic 'leave be' template ignores grammatical number and person: 'You give toll-men a wide berth. It holds its ground' uses singular 'It' for two men, and the same template calls the named Quartermaster Coll 'It' rather than 'he'.",
+      "where": "The Toll Stand (Thornwold) / leave toll-men be; the Sack Road Camp — fire (Hearthlands) / leave Quartermaster Coll be"
+    },
+    {
+      "sev": "P2",
+      "what": "Lay-brother Emmet's farewell line ('Careful with that cask on the road...') references a cinder-oil cask regardless of whether one was ever requested — I never asked for or carried one, so the line is inventory-blind.",
+      "where": "The Back Lane (Hearthlands) / leave Lay-brother Emmet to his cart"
+    },
+    {
+      "sev": "P2",
+      "what": "The glass-ash wraith actively pursued across three separate room-changes, dealing armor-piercing damage each turn, unlike every other 'attacks on sight' creature met (wolves, boar, hollow gleaner, honour guard), which stay confined to their own room. Nothing signals this creature has a different, larger aggro range before it happens.",
+      "where": "The Slag Heaps (Emberfall) / retreat north/east after the wraith attacks"
+    },
+    {
+      "sev": "P2",
+      "what": "Telling Neave her brother 'is at peace' resolves and closes 'Neave's Brother' as a normal completed quest, even though the game's own narration flags the line as false ('though you found nothing of him at all... It isn't the truth') — quest-done framing does not distinguish a true resolution from a comforting fabrication.",
+      "where": "Ash Row (Emberfall) / tell her he's at peace"
+    },
+    {
+      "sev": "P2",
+      "what": "Picking up 'a mountaineer's ice axe' silently replaced the belt knife as the active weapon in later combat-option labels ('attack ... with a mountaineer's ice axe') with no message announcing the swap or any choice offered about which weapon to carry.",
+      "where": "The Avalanche Field (Wardmoor) / read where the drift's thinnest"
+    }
+  ],
+  "confusions": [
+    "Before ever meeting the companion Tamsin, the reeve's dialogue option read 'promise to seal the barrow (Tamsin +1, Brother Osk -1)' — easy to misread as the reeve's own name, since no one named Tamsin had been introduced yet (she turned out to be the smith's apprentice, met later across the square).",
+    "Emberfall's ash-flats sub-rooms (Cracked Flat, Bottle Row, Cinder Roost, The Long Melt, Glassmelt Flats, Ash Furrows, etc.) offer no 'get your bearings (free)' option, unlike the Vale's and Hearthlands' overworld tiles, so the large, visually repetitive flats gave no way to triangulate toward the ridge chapel except manual wandering room by room.",
+    "'The Regent's Commission' was still listed as an unfinished quest at the true ending even though the envoy had already told me its stated condition (serve the Watch twice) was met and all that remained was to 'claim' an already-earned, no-longer-needed writ — nothing marked the remaining step as optional/reward-only rather than a real requirement.",
+    "The hollow gleaner hazard in the Hearthlands' fields is never named or flagged as a roaming/randomized threat — the same tile (Tithing's Edge) was clear on my first pass through and had a gleaner waiting on the very next pass, with no in-fiction cue that field tiles behave this way.",
+    "Nothing distinguishes, ahead of time, a 'leave X be' that fully opens the road (the Vale's and Thornwold's wolves, the toll-men) from one that only avoids the fight while the path stays barred (the barrow-wight, the gray sergeant) — both print the exact same 'holds its ground and lets you' line, so a player can't tell from the text alone whether they can now move on."
+  ],
+  "suggestions": [
+    "Vary the 'leave be' flavor line by the target's grammatical number/person (he/she/they for a named or plural foe) instead of a single templated 'It'.",
+    "When 'leave be' avoids a fight but does not also open the way forward, print a distinct line (e.g. '...but the way past stays barred') instead of reusing the same 'lets you' wording used for foes that truly step aside.",
+    "Have 'weigh what this grief asks' check what the room's own menu already offers before naming extra prerequisites, so it never claims an item is needed when an already-available action fully resolves the grief without it.",
+    "Give hostile 'attacks on sight' creatures a documented exemption for free/look-type actions, or state plainly that 'free' only means no turn is spent, not that the room is safe.",
+    "Add a 'get your bearings (free)' option to Emberfall's ash-flats rooms, matching the Vale and Hearthlands overworld tiles, so the largest single area in the demo isn't the hardest to navigate.",
+    "Flag roaming/randomized field encounters (like the Hearthlands' hollow gleaner) as distinct from fixed ones so a tile that felt cleared doesn't ambush the party unwarned on a later pass.",
+    "Show the double-sided failure cost on 'call it a draw' options up front, the way single-sided options already preview '(X +1, Y -2)', since a miss here is strictly worse than just picking a side.",
+    "Give companion backstory lines an internal age/era check so a young novice can't be handed dialogue implying first-person presence at an event centuries before their introduction."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T22-29-19-827Z",
+  "seed": 409,
+  "build": {
+    "rev": "201874d",
+    "world": "cf21127c"
+  },
+  "cost_usd": null,
+  "verified": true
+}

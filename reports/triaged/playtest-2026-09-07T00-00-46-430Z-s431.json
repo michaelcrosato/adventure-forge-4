@@ -1,0 +1,101 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 3,
+  "turns": 615,
+  "receipt": "reach.431.615.366.regent_deposed.c09a5c81",
+  "bugs": [
+    {
+      "sev": "P0",
+      "what": "None found. The game reached a real *** WIN: regent_deposed *** ending at max score 366/366 with no crashes, dead-ends, or unresponsive menus across 615 turns.",
+      "where": "n/a"
+    },
+    {
+      "sev": "P1",
+      "what": "The Shieldings' stone and the bargain contradict each other and the game never reconciles it. 'The Field's Stone' quest completes with 'You draft a line neither asked for and both can stand behind. Bevan cuts it; Ossett signs the wording' (a physical carved, signed stone). Minutes later, 'argue him off the warrant' (needed for the bargain's three refusals) resolves with 'Bevan sets his chisel down... it stays under canvas' and 'No stone was ever going to sit easy... not the Crown's, not anyone's' (no stone at all). The game lets both be true simultaneously with no bridging text, and the final epilogue enshrines the contradiction permanently: 'A third wording stands on the Shieldings' stone, the Crown's and the Companies' both, brokered rather than won.' immediately followed by 'No stone stands on the Shieldings at all. The field was given whole to its dead, and the fork said so plainly.'",
+      "where": "The Stone-Cutter's Lodge (Bevan) / The Field-Reeve's Yard (declaring the bargain) / final ending epilogue"
+    },
+    {
+      "sev": "P1",
+      "what": "Ossett's post-bargain line directly contradicts Bevan's own account of the same object. Ossett: 'better a stone that says something true than one that says nothing at all' (implies a standing, inscribed stone). Bevan, the actual stone-cutter, says in the same sequence of events: 'No stone either... lets the canvas fall back over the stone for good' (no stone stands at all). Two NPCs give mutually exclusive testimony about the same physical thing with no in-fiction excuse (neither is lying or misinformed by design).",
+      "where": "The Pensioner's House (Ossett, 'tell him how the stone was decided') vs The Stone-Cutter's Lodge (Bevan, 'tell him no stone will stand here')"
+    },
+    {
+      "sev": "P1",
+      "what": "Two collected quest items permanently describe wanting to be joined with each other even though both sit in inventory together from the moment the second is found through the end of the game, and 'The White Rod' quest is marked Done the instant both are collected. Inventory shows, unchanged for ~450 turns and through the ending: 'the white rod's shaft, ferrule missing (wants its ferrule, dug from the herald's walk, to be made whole)' and 'the white rod's ferrule, dug clean (wants the shaft it was struck from, kept by Hew at the ditch-gate)' — the ferrule's own text even claims the shaft is still 'kept by Hew at the ditch-gate' long after Hew handed it over.",
+      "where": "Inventory, after The Truce Field — the Herald's Walk ('dig for the rod's ferrule')"
+    },
+    {
+      "sev": "P1",
+      "what": "Harrowfield's ambient description of the post-bargain food shortage never updates after the shortage is explicitly, permanently resolved. The green shows 'bread watched closer, since the bargain' both before and after I paid 10 gold to Sten to keep the field fallow, even though Sten's own dialogue confirms it is settled for good ('so the bargain never has to be asked twice... doesn't touch the furlong-map again all spring').",
+      "where": "Harrowfield — the Green (room description), after 'The Shieldings, After' quest completes"
+    },
+    {
+      "sev": "P1",
+      "what": "Bevan's stone-cutter farewell line never updates across three different, mutually exclusive story states (unsettled wording / a wording brokered and cut / the warrant fully refused and the stone shelved for good), always saying the same thing: 'It's held that stone's wording a long time, waiting on someone to settle it.' By the third state this is flatly false — it has been settled, twice over, in opposite directions.",
+      "where": "The Stone-Cutter's Lodge, leaving Bevan (every visit after the first)"
+    },
+    {
+      "sev": "P1",
+      "what": "The Pensioner's House room description reverts after the quest it describes completes. It updates to 'the staff bears its cloth again' as soon as the banner is *found* (before it's given to Ossett), but after I actually hand the banner over and Ossett's own line says 'He hangs it on the bare staff himself,' the room description reverts to the original 'A tidy house; a bare banner-staff over the mantel.'",
+      "where": "The Pensioner's House, after 'The Pensioner's Errand' completes"
+    },
+    {
+      "sev": "P1",
+      "what": "Using the Regent's writ to enter Marrowgate carries reputation costs that are not disclosed anywhere in the choice ('show the Regent's writ at the gate' has no cost annotation, unlike most other costed choices in the game which are consistently labeled, e.g. 'a hit costs standing with X'). It silently cost (the Gray Church -1) and (the Barrow-Keepers -1). Companions comment on the cost afterward ('Paid for in fire, but paid' / 'I keep counting what that writ actually cost') confirming it was intentional, just hidden at the decision point.",
+      "where": "Marrowgate, South Gate ('show the Regent's writ')"
+    },
+    {
+      "sev": "P2",
+      "what": "Sten's field-reeve farewell line ('Mind the blank strip on your way past') never updates even though the room's own short description updates twice (to 'more furlongs inked out now') and Sten's dialogue confirms the strip is permanently inked in, not blank, after the bargain.",
+      "where": "The Field-Reeve's Yard, leaving Sten (after the bargain)"
+    },
+    {
+      "sev": "P2",
+      "what": "Two open-country tiles on the Shieldings plain are named with raw internal coordinates instead of prose, unlike every other room on the same plain (which all have evocative names like 'The Old Chantry Path' or 'Harrow's Approach'): 'the Shieldings 2,2' and 'the Shieldings 3,5'.",
+      "where": "The Shieldings plain, open plough-land tiles between named landmarks"
+    },
+    {
+      "sev": "P2",
+      "what": "'get your bearings' gives straight-line distance/direction to Harrowfield and the Truce Field, but several rooms' bearings point in a direction that room has no exit for (e.g. at The Shield-Ditch, Further On bearings said the Truce Field was '1 north and 1 west' while the room's only exits were S/E; at Boundary Stone bearings said '2 west' with exits only N/S/E). Not a hard blocker — a detour always exists — but the tool reads as actionable direction and sometimes isn't.",
+      "where": "The Shieldings plain, multiple rooms (The Shield-Ditch Further On, The Boundary Stone)"
+    },
+    {
+      "sev": "P2",
+      "what": "The Envoy-flavored 'call it a draw' option to settle a companion quarrel is a real will check that can fail even with a very high bonus, and failure costs regard with BOTH quarreling companions at once (a strictly worse outcome than either partisan option, which only ever costs one side). It failed twice in this run: once at +6 needing 5+ (rolled 3), once at +8 needing 11+ (rolled 2). The 'diplomatic' path is billed as the peacemaking option but is mechanically the highest-variance, double-downside one.",
+      "where": "The Empty Seat (barrow-doors quarrel between Brother Osk and Tamsin) and Wynne's Record-House (Wardmoor; Vell/Tamsin quarrel over the fort's founding)"
+    },
+    {
+      "sev": "P2",
+      "what": "'travel to a known place' only offers 'landmark' rooms, and which visited rooms qualify as landmarks is not predictable from the fiction: Twin Stones and Old Watchtower became fast-travel landmarks, but equally named, content-bearing rooms visited in the same walk (Camp Smoke, Gray Cairn, Widow's Well) never appeared in the travel list, so returning to them required manual re-walking with no way to tell in advance which rooms would be reachable by fast travel.",
+      "where": "The Vale of Ash wood, 'travel to a known place' menu"
+    }
+  ],
+  "confusions": [
+    "The Truce Field's free 'weigh what this grief asks' is otherwise excellent and always matched reality (verses, truce-words, refusals all tracked live and correctly) — but it never once mentioned the parallel 'Field's Stone' quest as a factor, so nothing warned that brokering the stone and then bargaining the field could leave two contradictory outcomes on record; a player trusting the weighing tool alone would have zero warning of the clash documented above.",
+    "Companion personal-quest threads (Tamsin's Cinderhall/mine grief, Lys's brother at Camp Gallows) are silently locked out the moment you cross the Pass Gate toward Marrowgate ('A companion's grief left unfinished there stays unfinished unless you walk back for it'), but nothing earlier in the game signals how large the map is relative to how much an Envoy can realistically cover with a full four-person party before that gate closes — both threads were confirmed abandoned in the final epilogue ('Tamsin never got to Cinderhall with you'; 'Lys walked with you to the end with her brother's name still unspoken').",
+    "'Perrin's Mother' (Reedholm, Fenmarch) and its payoff (Highward barracks, Wardmoor) sit on opposite ends of the map with no fast-travel bridge between hold-regions; once Perrin's fate was resolved at Wardmoor there was no practical way back to Reedholm within the turn budget, so a two-line, low-effort quest was left permanently incomplete purely due to geography, not difficulty.",
+    "The Marrowgate south-gate and palace-gate writ checks give no on-screen indication of which factions, if any, are watching or will be charged for the crossing, so the actual price of the 'fast, safe' Regent's-writ route only becomes visible after the fact, via companion banter."
+  ],
+  "suggestions": [
+    "Make the bargain path for the Shieldings, once chosen, retroactively rewrite or gray out 'The Field's Stone' completion text (or vice versa) so the ending epilogue can't state 'a wording stands' and 'no stone stands at all' as two separate, equally true bullet points.",
+    "Merge 'the white rod's shaft' and 'the white rod's ferrule' into a single inventory item the moment both are held, instead of leaving two items that permanently describe wanting each other.",
+    "Refresh NPC farewell lines and room blurbs whenever the quest they reference changes state, especially at the moment of final resolution (Bevan's shelf, Ossett's banner-staff, Sten's furlong-map, Harrowfield's bread line all went stale after their quests closed).",
+    "Add a cost annotation to 'show the Regent's writ' at both Marrowgate gates, consistent with how every other costed choice in the game is labeled.",
+    "Give open plough-land filler tiles on the Shieldings the same light naming pass as the rest of the plain, instead of leaking raw coordinate labels like 'the Shieldings 2,2'.",
+    "Either make bearings account for the actual walkable graph (shortest reachable path) or soften the phrasing so 'X: 1 north, 1 west' doesn't read as a literal, immediately-available direction when the room has no such exit.",
+    "Consider making the 'call it a draw' Envoy option a flat success (or at least no worse than the single-target options on a miss), since right now the peacemaking choice is the one most likely to make things worse for the player.",
+    "Warn players earlier (e.g. at the Vale, when recruiting a fourth companion) that carrying a full party has a real chance of leaving one or more companion arcs permanently unresolved once the road to Marrowgate opens, so the choice to recruit widely vs. deeply is made with eyes open."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-07T00-00-46-430Z",
+  "seed": 431,
+  "build": {
+    "rev": "0110349",
+    "world": "df3fa16a"
+  },
+  "cost_usd": null,
+  "verified": true
+}

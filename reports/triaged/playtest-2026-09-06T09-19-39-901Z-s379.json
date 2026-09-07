@@ -1,0 +1,94 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 519,
+  "receipt": "reach.379.519.366.reach_burned.77e65cc2",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Preceptor Aldous states the Regent's writ needs only one hollow burned ('A hollow burned clean — one is proof enough for the Regent') the first time I asked, but after my second burn the same NPC in the same location says 'Two hollows burned clean... The Regent will want Cinderhall's name on this' and only then issues the writ — his own two statements contradict each other.",
+      "where": "Cinderhall — Ironbound Chapterhouse / talk to Preceptor Aldous, 'the Regent's writ'"
+    },
+    {
+      "sev": "P1",
+      "what": "The writ's hollow-count is stated differently by every source that mentions it: Herald Corvane says 'Burn two' at the very start, the status screen's road summary always says '(a hollow burned, or two services to Highward's Watch)' (implying one), and Highward's Captain-General separately says 'Burn a hollow, or serve this Watch twice over' (also implying one) — only Aldous's second statement and the actual quest trigger agree on two.",
+      "where": "Last Light Square (Herald Corvane) / status road summary / Highward Captain-General's Hall"
+    },
+    {
+      "sev": "P1",
+      "what": "Brother Osk gives an explicit, unambiguous ultimatum after the first hold I burned: 'If it happens again, I'm gone — I mean that, and I don't say things like that lightly.' I burned two more hollows afterward (Iron Downs' Hundred Gallery, then Wardmoor's oath-stone) and his regard just sat at -2 'near leaving' both times — the promised departure never fired.",
+      "where": "The Burned Glade (Thornwold) warning; The Hundred Gallery — Ash and The Oath-Ground — Circle (Wardmoor) are where it should have triggered and didn't"
+    },
+    {
+      "sev": "P1",
+      "what": "Tamsin's scripted regret line as we left the region says 'Cinderhall's behind us, and I still don't know who lied about that collapse. That's mine to finish' — but she was standing right there when Preceptor Aldous confessed to signing the rotten-timber order, and she reacted to it by name ('Aldous's own truth, pulled plain...') and approved. The later line flatly contradicts a scene she already lived.",
+      "where": "Coldpass South Stair, ambient party dialogue on arrival"
+    },
+    {
+      "sev": "P1",
+      "what": "A companion's regard can change with no on-screen attribution at all: killing the ash wolf at Twin Stones only printed 'Lys disapproves (-1)', but the next status check showed Brother Osk had also dropped to regard -1 with no message ever shown crediting that or any earlier turn for the change.",
+      "where": "Twin Stones (ash wolf fight) — discrepancy surfaced via status"
+    },
+    {
+      "sev": "P1",
+      "what": "The one hint that tells you to get the priest's barrow-blessing before promising the reeve to seal the barrow ('Ask his blessing before promising the reeve — both wishes hold. Promise first, and he wants his own way past it') is ordinary dialogue at the inn that can easily be heard after the fact, as it was for me — the promise-to-the-reeve choice itself carries no warning that it forecloses the priest's path.",
+      "where": "Last Light Inn (innkeep, 'the reeve and the priest') / Gray Chapel (gray priest, 'a blessing for the barrow')"
+    },
+    {
+      "sev": "P2",
+      "what": "A menu action vanished before I ever used it: 'read the tally marks by the smoke rack (DC 9, wits...)' was on the Hunter's Camp menu, then was simply gone on my next visit (after recruiting Lys) without my having selected it.",
+      "where": "Hunter's Camp"
+    },
+    {
+      "sev": "P2",
+      "what": "Room prose goes stale once its NPC joins the party: Hunter's Camp kept describing 'A young woman in a hunter's leathers sits apart, fletching, and watches you instead' after Lys was already travelling with me and no longer listed as a separate NPC.",
+      "where": "Hunter's Camp"
+    },
+    {
+      "sev": "P2",
+      "what": "The 'both look at you' quarrel prompt sometimes offers a neutral will-check line to settle it and sometimes doesn't for what reads like the same kind of Osk/Tamsin dispute: present at the Vale's barrow-doors and at Iron Downs' Hundred Gallery, absent at Wardmoor's oath-stone burn (only 'back Osk' was on offer there).",
+      "where": "The Oath-Ground — Circle (Wardmoor) vs. The Empty Seat (Vale) and The Hundred Gallery — Ash (Iron Downs)"
+    },
+    {
+      "sev": "P2",
+      "what": "Two consecutive lines are both tagged 'Lys:' where the second reads like it's answering on someone else's behalf ('Both of them. He asked it of you, so I'll keep what I'd have said otherwise. He's counted wolves longer than I have...') — unclear who 'he' is or why one speaker tag covers what feels like two different voices.",
+      "where": "Wolf Scrape, talking with Lys ('ask why she's gone quiet')"
+    },
+    {
+      "sev": "P2",
+      "what": "Breaking the sealed shelf in Wardmoor's record-house by main strength is tagged 'a hit costs standing with the Watch' — meaning outright success costs the same Watch reputation as failing the persuade attempt did, for a truth that mostly serves the Watch's own soldiers.",
+      "where": "Wardmoor Record-House (Wynne), 'break the seal open, plainly'"
+    }
+  ],
+  "confusions": [
+    "The Regent's-writ threshold (does it take one burned hollow or two?) is answered differently by the Herald, the status screen, the Captain-General, and Preceptor Aldous's own two visits — I only found out it actually meant 'two' by burning a second hollow and having the quest fire.",
+    "Nothing in the moment of promising the reeve to seal the barrow flags that it will later close off the priest's blessing path; you only learn the rule was 'ask the priest first' after you've already promised and been turned away.",
+    "Brother Osk's 'if it happens again I'm gone' reads as a hard mechanical threshold, but two further burns after it didn't move him past 'near leaving' — the fiction promises a harder line than the system enforces.",
+    "Companion regard changes are only sometimes individually attributed in the turn's text; the rest you can only discover by comparing status snapshots before and after, which makes it hard to know in the moment who is reacting to what.",
+    "Whether a two-companion disagreement offers a peaceful will-check mediation or only a 'pick a side' choice seems to vary without a visible pattern, so you can't tell going in whether staying neutral is even an option."
+  ],
+  "suggestions": [
+    "Make the Regent's-writ hollow-count consistent everywhere it's quoted (herald, status, Captain-General, Aldous) instead of stating one in three places and two in the quest trigger.",
+    "Either make Brother Osk actually leave the next time his stated red line is crossed, or soften his line so it isn't a promise the system doesn't keep.",
+    "Gate Tamsin's 'I still don't know who lied' regret line behind whether she's already heard the confession, so it stops contradicting a scene she lived through.",
+    "Print a regard-change tag for every companion affected by a choice, not just the first one the game happens to mention.",
+    "Flag the reeve's-promise choice itself as consequential for the priest's path, rather than only revealing the sequencing rule as later flavor dialogue.",
+    "Refresh a room's static description once a named NPC in it has joined the party, so it stops describing them as still sitting there.",
+    "Offer the same neutral 'settle it' mediation option consistently for every 'both look at you' companion dispute, not just some of them.",
+    "Don't charge the same Watch-standing cost for a clean success as for a failed persuade attempt on the Wardmoor record-house seal.",
+    "Double-check speaker tags on back-to-back companion lines so two different implied voices aren't both stamped with one name.",
+    "Consider surfacing a running 'N/9 burned, M/9 rested' readout in the relevant NPC dialogues themselves, not only in status, so stated thresholds are easy to verify without alt-tabbing."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T09-19-39-901Z",
+  "seed": 379,
+  "build": {
+    "rev": "547de62",
+    "world": "e682d26d"
+  },
+  "cost_usd": null,
+  "verified": true
+}

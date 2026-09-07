@@ -1,0 +1,54 @@
+{
+  "verdict": "stuck",
+  "fun": 4,
+  "clarity": 4,
+  "turns": 449,
+  "receipt": "",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Quest 'The Lost Fleet' says 'Speak it over the wreck at the Reeve's Pride, past the Point,' but after lighting the Farlight and exhaustively exploring every room off the Point (Hidden Shingle, the Weir, Mudflats, Low Marsh, Driftwood Reach, Fisherman's Cairn, Marram Dunes, Gull Colony, Reed Cut, Samphire Bank, Kelp Line, Widow Rocks, the Beached Longboat) I never found 'Reeve's Pride' or any action to speak the verse. 'travel to a known place' > 'the Lost Fleet' only ever routed me to the Hidden Shingle beach, which has no verse-speaking option, just flavor text about unseen oars in the fog. It may be gated behind clearing 'The Wreckers' Roost' but nothing in the quest text says so.",
+      "where": "Saltkerns / The Point (Gullhaven)"
+    },
+    {
+      "sev": "P2",
+      "what": "The status screen's item hint for the flask of lamp oil ('the Farlight on the point still has a wick worth lighting') kept showing after the Farlight was already lit and the quest log confirmed 'the Farlight burns' — stale/contradictory item text.",
+      "where": "status screen / inventory, after lighting The Farlight"
+    },
+    {
+      "sev": "P2",
+      "what": "Right after character creation, the very first 'status' call showed two seemingly-parallel, never-explained verse trackers at once: 'Old Court Verses: 0/3 (ring-ditch, king's causeway, mere-stone)' and 'Verses: 0/3 (drowned shrine, old watchtower, barrow hall)'. Only the second one persisted in later checks, with 'drowned shrine' silently renamed to 'sunken shrine' — reads like leftover/duplicate quest-tracking text.",
+      "where": "status screen, turn 5 (Village Gate/Last Light Square)"
+    },
+    {
+      "sev": "P2",
+      "what": "'The Regent's Writ' quest text ('Cinderhall's chapterhouse will write the Regent's writ for the crown road, once two hollows of the Reach have burned') only ever describes the burn-two-hollows path. The alternate, non-destructive route ('give this Watch two honest services') is never mentioned anywhere in the quest log and only surfaces in dialogue with the Marrowgate envoy once you physically reach Highward — a player tracking Watch reputation has no signal that path exists.",
+      "where": "quest log 'The Regent's Writ' vs. dialogue at Highward — The Captain-General's Hall"
+    }
+  ],
+  "confusions": [
+    "The realm's actual size vastly outstrips the 450-turn budget if you engage with the game's own invitation to 'talk to people twice, carry what they give you, choose and live with it': just the Vale of Ash (Act 1) plus companion recruitment took ~165 turns, and each subsequent hold (Thornwold, Iron Downs, Saltkerns) cost another 70-100+ turns even without finishing every side thread. By turn 449 I had rested only 2 of 6 hollows (though I'd separately earned the Regent's writ through honest Watch service) and never reached Coldpass or Marrowgate, despite steady, purposeful play throughout.",
+    "Saltkerns' coastal marsh around 'the Point' is a large, loosely-connected loop of ~15 samey rooms (tide pools, salt pans, reed cuts, dunes, etc.) with no map or bearings tool comparable to the Old Watchtower's 'get your bearings' in the Vale — easy to wander it at length without finding the quest objective it's meant to contain.",
+    "Companion approval/disapproval (e.g. Lys disapproving of killing a wolf that hadn't attacked, then explicitly saying 'leave it, we can go around' for a similar wolf later) is a nice hidden system but is never explained; a player could rack up disapproval for a long while without realizing companions are silently judging combat choices."
+  ],
+  "suggestions": [
+    "Either add a visible path/landmark toward 'Reeve's Pride' from the Point, or reword the quest text to hint it's behind the Wreckers' Roost.",
+    "Refresh item hint text once its associated one-time action is completed (e.g. lamp oil after the Farlight is lit).",
+    "Drop the duplicate 'Old Court Verses' tracker shown at game start, or explain why two verse trackers exist.",
+    "State both routes to the Regent's Writ (burn two hollows OR two services to a faction) in the quest log as soon as it's known, not only in on-site dialogue.",
+    "Give Saltkerns' marsh loop a 'get your bearings'-style free action like the Old Watchtower has, since it's large and visually repetitive.",
+    "Surface the companion approval/disapproval system explicitly (even just a one-line tooltip on first trigger) so players know it's tracked.",
+    "Consider flagging in the status screen roughly how many turns a hollow/hold typically takes to rest, so players can budget a 450-turn playthrough deliberately."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T15-31-34-108Z",
+  "seed": 73,
+  "build": {
+    "rev": "57b31ce",
+    "world": "c12aee1c"
+  },
+  "cost_usd": null,
+  "verified": false
+}

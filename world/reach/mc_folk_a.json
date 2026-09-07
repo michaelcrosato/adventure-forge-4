@@ -1,0 +1,637 @@
+{
+  "npcs": {
+    "mc_cider_wife": {
+      "name": "Hedda",
+      "room": "mc_press_hearth",
+      "dialogue": true,
+      "desc": "A broad, sure-handed woman with cider-must worked so deep into her apron it never washes out, watching the cold press the way you'd watch a sleeping dog.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Hedda. I keep this hearth, same as my mother did. I do not press the oak's apples. Sit by the fire; that much I'll always give a stranger.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why she won't press the oak's apples",
+          "if": [["flag", "said_mc_cider_wife_greet"]],
+          "once": true,
+          "say": "The third toast was never drunk. Press the oak's apples for a course, and you're serving guests who never got to finish their meal. I'd rather they rot honest than pretend the feast is done.",
+          "fx": [["set", "mc_hedda_bg"], ["xp", 2]]
+        },
+        {
+          "id": "mc_toast_guests",
+          "label": "ask for the guests' own wassail (will)",
+          "if": [["flag", "mc_hedda_bg"], ["!flag", "mc_toast_guests"]],
+          "say": "You want the wassail itself. That's not a tune I sing for coin, or for the asking.",
+          "fx": [
+            [
+              "check",
+              "will",
+              9,
+              [
+                ["set", "mc_toast_guests"],
+                ["addvar", "mc_toasts_known", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "She sings it low, once, like she's not sure she's allowed to: the guests' own toast, the one that lets a moot rise. \"There. Now it's yours to carry too, whatever you mean to do with it.\""]
+              ],
+              [["say", "She shakes her head. \"Not to a stranger. Not yet.\" It can be asked again."]]
+            ]
+          ]
+        },
+        {
+          "id": "mc_apples_hedda",
+          "label": "ask her to press the apples (will)",
+          "if": [["flag", "mc_hedda_bg"], ["!flag", "mc_last_course"]],
+          "say": "You're asking me to break four hundred years of fast with my own two hands. Give me a reason that isn't just that you want it done.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "mc_apples_hedda"],
+                ["set", "mc_last_course"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "Her hands shake taking up the press-lever, but she turns it anyway, and the wheel groans after four hundred years of standing still. \"There's your last course. Don't waste what that cost me.\""]
+              ],
+              [
+                ["say", "She sets the lever down again, hands steadier now that she's said no. \"Ask me again when you mean it more than you mean it today.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the fast, now the rite is done",
+          "if": [["flag", "mc_hollow_rested"]],
+          "once": true,
+          "say": "I broke it myself, in the end, with my own press. Four hundred years, and it turns out the fast was only ever waiting to be let go of properly.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the fast, now it's kept sealed",
+          "if": [["flag", "mc_hollow_bargained"]],
+          "once": true,
+          "say": "The hall stays shut, and I still won't press the oak's apples — but now it's a promise instead of a fear, and that sits easier in my hands.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the fast, now it's burned",
+          "if": [["flag", "mc_hollow_burned"]],
+          "once": true,
+          "say": "Burned. Well. Nobody's fasting for guests who've gone up in smoke, I suppose. I still don't feel like pressing this year.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_orchard",
+          "label": "the orchards, the answer decided",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "mc_orchard_crown"],
+                ["flag", "mc_orchard_free"],
+                ["flag", "mc_orchard_common"],
+                ["flag", "mc_orchard_broker"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Whatever's decided about the trees, I've heard it by now.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "mc_orchard_crown"]],
+              [
+                ["say", "\"The Crown's levy on every row. I'll press what's mine to press, and pay what's owed on it, same as everyone else now.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_free"]],
+              [
+                ["say", "\"The Companies' casks, row and branch. My own press feels smaller for it, somehow, though nothing about it's changed.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_common"]],
+              [
+                ["say", "\"The moot's own, and the dead's portion first. That's the only answer I'd have pressed for, if anyone had asked me before you did.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_broker"]],
+              [
+                ["say", "\"Both of them signing the same lease. I didn't think I'd live to see the Crown and the Companies agree on a tree.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the cold press",
+          "say": "Warm yourself before you go. The fire, at least, I keep lit every day of the year.",
+          "end": true
+        }
+      ]
+    },
+    "mc_levy_reeve": {
+      "name": "Osric",
+      "room": "mc_tally_house",
+      "dialogue": true,
+      "desc": "The Crown's levy-reeve, a warrant folded soft at its creases from being read aloud more times than anyone here has wanted to hear it.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Osric. Crown's levy-reeve. I hold the warrant on Mootcombe's cider — every press, every cask — and I've had my eye on that barred hall since the day I took this post.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "the warrant, and the hall",
+          "if": [["flag", "said_mc_levy_reeve_greet"]],
+          "once": true,
+          "say": "The Crown's coffers are thinner than the Regent likes said aloud. A hall that's stood barred four hundred years is a hall that's paid no levy in four hundred years. I mean to put a stop to both.",
+          "fx": [["set", "mc_osric_bg"], ["xp", 2]]
+        },
+        {
+          "id": "mc_warden_osric",
+          "label": "speak to him as one of the Crown's own",
+          "if": [["class", "warden"], ["flag", "mc_osric_bg"], ["!flag", "mc_warden_osric_done"]],
+          "once": true,
+          "say": "Something in your bearing reads familiar to him. \"Crown's own, are you. Then hear this plain, watch to watch.\"",
+          "fx": [
+            ["set", "mc_warden_osric_done"],
+            ["addvar", "or_warden_mc_word", 1],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "\"If you mean to keep that hall shut rather than opened, you'll need the victualler and the cooper to stand down too, not just me. I'd hear that argument out sooner from you than from most.\""]
+          ]
+        },
+        {
+          "id": "mc_osric_refused",
+          "label": "ask him to set the warrant aside (will)",
+          "if": [["flag", "mc_osric_bg"], ["!flag", "mc_osric_refused"], ["!flag", "mc_hollow_done"]],
+          "say": "Talk a Crown officer out of his own warrant? This ought to be worth hearing.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "mc_osric_refused"],
+                ["say", "He's quiet over the warrant a long moment. \"...Fine. I'll write that the hall held. It has, after all, held longer than most Crown promises.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "mc_osric_missed"]],
+                  [
+                    ["set", "mc_osric_missed"],
+                    ["addvar", "rep_crown", -1],
+                    ["say", "\"A warrant is a warrant,\" he says, not unkindly. \"Try again when you've something better than a plea.\" — and the Crown notes a petition tried, and refused, here."]
+                  ],
+                  [["say", "\"A warrant is a warrant,\" he says again, and folds it away."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the hall, now the rite is done",
+          "if": [["flag", "mc_hollow_rested"]],
+          "once": true,
+          "say": "A toast finished after four hundred years. My warrant's moot, and I find I mind less than I thought I would. The levy was never really the point of it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the hall, now it's burned",
+          "if": [["flag", "mc_hollow_burned"]],
+          "once": true,
+          "say": "The Ironbound had it before the Crown could tax it. I'll write it up as cleared ground and let Marrowgate read into that whatever it likes.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_theft",
+          "label": "about the warrant, since",
+          "if": [["any", [["flag", "stole_mc_levy_warrant"], ["flag", "stole_mc_tally_weights"]]]],
+          "once": true,
+          "say": "\"I noticed,\" is all he says, not looking up from the scale. \"I'll note it went missing under a Crown roof. Draw your own conclusions about what that costs you here.\"",
+          "fx": [["addvar", "rep_crown", -1]]
+        },
+        {
+          "id": "react_orchard",
+          "label": "the orchards, the answer decided",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "mc_orchard_crown"],
+                ["flag", "mc_orchard_free"],
+                ["flag", "mc_orchard_common"],
+                ["flag", "mc_orchard_broker"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "You want the Crown's word on it? Here it is.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "mc_orchard_crown"]],
+              [
+                ["say", "\"The levy on every row, as the warrant said. I'll not pretend it was your doing that carried it, but I'll write that it was.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_free"]],
+              [["say", "\"The Companies' casks. The warrant didn't cover that, and I have no words for it either.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_common"]],
+              [
+                ["say", "\"The moot's own commons. I'll send the warrant back with a line under it: not for want of trying. Marrowgate reads lines like that.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_broker"]],
+              [
+                ["say", "\"My hand on the lease beside the paymaster's. It will pass, and the warrant will call it obedience. I can live with that.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "sv_mc_bargain_ask",
+          "label": "ask what brings him back",
+          "if": [["flag", "mc_hollow_bargained"], ["flag", "sv_mc_back"], ["!flag", "sv_mc_after_done"]],
+          "once": true,
+          "say": "A new writ, and a levy-cart behind it. The Regent heard Mootcombe kept its hall sealed on nothing but its own word, and doesn't care for the lesson in it. I've come to distrain the first pressing for the Crown.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_mc_bargain_paid",
+          "label": "pay the levy yourself (10 gold)",
+          "if": [["flag", "said_mc_levy_reeve_sv_mc_bargain_ask"], ["!flag", "sv_mc_after_done"], ["var", "gold", ">=", 10]],
+          "once": true,
+          "say": "He counts it twice, then nods once. \"Your coin, not the hold's cider. The bargain holds, and nobody here goes without.\"",
+          "fx": [
+            ["addvar", "gold", -10],
+            ["set", "sv_mc_bargained_paid"],
+            ["set", "sv_mc_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_crown", 1]
+          ]
+        },
+        {
+          "id": "sv_mc_bargain_kept",
+          "label": "let Mootcombe pay it, at its own cost",
+          "if": [["flag", "said_mc_levy_reeve_sv_mc_bargain_ask"], ["!flag", "sv_mc_after_done"]],
+          "once": true,
+          "say": "\"Then it costs the hold its levy-share of the pressing, not the dead's,\" he says, and rides off with a cart lighter than he'd have liked but a bargain still standing behind him.",
+          "fx": [
+            ["set", "sv_mc_bargained_kept"],
+            ["set", "sv_mc_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_tamsin", 1]
+          ]
+        },
+        {
+          "id": "sv_mc_bargain_broken",
+          "label": "let him take the first pressing",
+          "if": [["flag", "said_mc_levy_reeve_sv_mc_bargain_ask"], ["!flag", "sv_mc_after_done"]],
+          "once": true,
+          "say": "\"At last,\" he says, and means it plainly. The cart takes the whole first pressing, dead's share and all, and the bargain that promised it elsewhere breaks in front of everyone who watched it made.",
+          "fx": [
+            ["set", "sv_mc_bargained_broken"],
+            ["set", "sv_mc_after_done"],
+            ["set", "mc_bargain_broken"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "rep_keepers", -2],
+            ["addvar", "appr_tamsin", -1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the warrant",
+          "say": "Mind the road on your way out. Whatever's decided here, someone still has to write it down true.",
+          "end": true
+        }
+      ]
+    },
+    "mc_victualler": {
+      "name": "Fulk",
+      "room": "mc_cask_yard",
+      "dialogue": true,
+      "desc": "The Free Companies' victualler, ledger under one arm, weighing every stranger by what they might be worth carrying instead of by what they say.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Fulk. I buy up what this orchard grows and cask it for the Companies' road. Every row here's worth something to somebody; I just get there first.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what the Companies want here",
+          "if": [["flag", "said_mc_victualler_greet"]],
+          "once": true,
+          "say": "A contract on every row, casks rolling out year-round instead of one bad harvest at a time. The Companies drink as much as they fight, and they'd rather not pay Gullhaven prices for it.",
+          "fx": [["set", "mc_fulk_bg"], ["xp", 2]]
+        },
+        {
+          "id": "bg2",
+          "label": "offer to carry a cask north for him",
+          "if": [["flag", "mc_fulk_bg"], ["!flag", "mc_fulk_errand"]],
+          "once": true,
+          "say": "Now that's useful. My last runner wouldn't take the cairn-track past dusk, not with what's been walking the sunken lane lately. Get this cask over to the Iron Downs side whole, and the Companies remember it.",
+          "fx": [["set", "mc_fulk_errand"], ["move", "mc_cask", "inv"], ["xp", 2]]
+        },
+        {
+          "id": "mc_fulk_refused",
+          "label": "ask him to drop the claim (will)",
+          "if": [["flag", "mc_fulk_bg"], ["!flag", "mc_fulk_refused"], ["!flag", "mc_hollow_done"]],
+          "say": "Talk the Companies out of a contract sitting for the taking? Go on, then.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "mc_fulk_refused"],
+                ["say", "He turns the ledger over twice, thinking, then closes it. \"...Fine. A contract nobody'll sign is no contract at all. We'll cask elsewhere.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "mc_fulk_missed"]],
+                  [
+                    ["set", "mc_fulk_missed"],
+                    ["addvar", "rep_free", -1],
+                    ["say", "\"Everyone's got a use for free apples,\" he says, unmoved. \"Try harder.\" — and the Companies mark a plea made, and refused, here."]
+                  ],
+                  [["say", "\"Same answer,\" he says, and goes back to his ledger."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "mc_warden_fulk_cold",
+          "label": "press him plainly, watch to watch",
+          "if": [["class", "warden"], ["!flag", "or_warden_mc_cold"]],
+          "once": true,
+          "say": "He goes flat the moment you talk like Watch trained you to talk. \"We deal in casks because they don't ask questions the way your lot does. Ask your business elsewhere.\"",
+          "fx": [["xp", 1], ["set", "or_warden_mc_cold"]]
+        },
+        {
+          "id": "quest_errand_done",
+          "label": "about the cask, now it's crossed",
+          "if": [["flag", "mc_fulk_errand_done"]],
+          "once": true,
+          "say": "Whole, and dry, and past whatever's been walking the lane at night. The Companies remember a debt like that. So do I.",
+          "fx": [["xp", 1], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the hall, now the rite is done",
+          "if": [["flag", "mc_hollow_rested"]],
+          "once": true,
+          "say": "Finished, not sold. Nobody's richer for it but the dead's own memory. Can't call that Companies' business, but I'll allow it's honest.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the hall, now it's kept sealed",
+          "if": [["flag", "mc_hollow_bargained"]],
+          "once": true,
+          "say": "Sealed, and I walked away from my own contract to see it done. Still deciding whether that makes me a fool or just tired of counting other men's apples.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the hall, now it's burned",
+          "if": [["flag", "mc_hollow_burned"]],
+          "once": true,
+          "say": "Burned before the Companies could so much as bid on the timber. That's a loss I'll hear about at every fire between here and Camp Gallows.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_orchard",
+          "label": "the orchards, the answer decided",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "mc_orchard_crown"],
+                ["flag", "mc_orchard_free"],
+                ["flag", "mc_orchard_common"],
+                ["flag", "mc_orchard_broker"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Apples are apples. Still.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "mc_orchard_crown"]],
+              [["say", "\"The Crown's row. My men will drink it the same, and pay the levy on it slower.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_free"]],
+              [["say", "\"My own contract, row and branch. I'll not deny I asked for it, and got it.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_common"]],
+              [["say", "\"The moot's own. Pretty notion. My men will still want their casks, common or not.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_broker"]],
+              [
+                ["say", "\"My hand on the lease beside the levy-reeve's. Never thought I'd sign a thing with the Crown. It fills a cask, though.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his ledger",
+          "say": "Mind yourself on the cairn-track. Some things out there still keep a night's grip on it.",
+          "end": true
+        }
+      ]
+    },
+    "mc_cooper": {
+      "name": "Rendel",
+      "room": "mc_cooper_shop",
+      "dialogue": true,
+      "desc": "The Ironbound's cooper, forearms pale-scarred where a hoop-iron caught him young, watching the barred hall's roofline through his own shop's open door.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Rendel. I hoop every cask this hold fills, and I've wanted that hall's oak timber for longer than I've been fit to admit to a stranger.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what he wants with the hall",
+          "if": [["flag", "said_mc_cooper_greet"]],
+          "once": true,
+          "say": "Seasoned oak, four hundred years dry, going to waste on a room nobody's allowed into. The Ironbound would rather it warmed a forge than sat there rotting a hold's nerve.",
+          "fx": [["set", "mc_rendel_bg"], ["xp", 2]]
+        },
+        {
+          "id": "mc_get_cinder_oil",
+          "label": "ask him for cinder-oil",
+          "if": [["flag", "mc_rendel_bg"], ["!has", "mc_cinder_oil"], ["!flag", "mc_hollow_done"]],
+          "say": "\"For the doors? Gladly,\" he says, already hefting a cask. \"Ask me twice and I'll carry it up there myself.\"",
+          "fx": [["move", "mc_cinder_oil", "inv"], ["xp", 1]]
+        },
+        {
+          "id": "mc_rendel_refused",
+          "label": "ask him to leave the timber be (will)",
+          "if": [["flag", "mc_rendel_bg"], ["!flag", "mc_rendel_refused"], ["!flag", "mc_hollow_done"]],
+          "say": "Talk an Ironbound cooper out of four hundred years of good dry oak? I'm listening, against my better sense.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "mc_rendel_refused"],
+                ["say", "He sets his adze down, harder than he needs to, and doesn't pick it up again. \"...Left be, then. Doesn't mean I'll stop wanting the wood.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "mc_rendel_missed"]],
+                  [
+                    ["set", "mc_rendel_missed"],
+                    ["addvar", "rep_iron", -1],
+                    ["say", "\"Wood's patient,\" he says. \"More patient than you, probably.\" — and the Ironbound mark a plea made, and refused, here."]
+                  ],
+                  [["say", "\"Same wood, same patience,\" he says, and won't hear more of it."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the hall, now the rite is done",
+          "if": [["flag", "mc_hollow_rested"]],
+          "once": true,
+          "say": "Finished instead of felled. A waste of good oak, if you ask me — but I'll allow a toast is a toast, whichever trade pours it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the hall, now it's kept sealed",
+          "if": [["flag", "mc_hollow_bargained"]],
+          "once": true,
+          "say": "Sealed, and my hands stay off that timber for it. I said I'd let it be, and I did. Doesn't mean I've stopped listening for someone to change their mind.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the hall, now it's burned",
+          "if": [["flag", "mc_hollow_burned"]],
+          "once": true,
+          "say": "Burned clean through. Whatever you think of how we got there, that oak's finally doing some good, one way or the other.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_mc_burn_ask",
+          "label": "ask what becomes of the timber now",
+          "if": [["flag", "mc_hollow_burned"], ["flag", "sv_mc_back"], ["!flag", "sv_mc_after_done"]],
+          "once": true,
+          "say": "It's stacked by the shop, waiting on a claim. The Crown wants it counted for Marrowgate's coffers. I'd sooner it went into new rows for the oak's own orchard.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_mc_burn_cleared",
+          "label": "let new rows be planted on the ash",
+          "if": [["flag", "said_mc_cooper_sv_mc_burn_ask"], ["!flag", "sv_mc_after_done"]],
+          "once": true,
+          "say": "He nods slow, like it's the answer he was hoping for without saying so. \"Good ground under that ash, once it's turned. Give it a season.\"",
+          "fx": [
+            ["set", "sv_mc_burned_cleared"],
+            ["set", "sv_mc_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_lys", 1]
+          ]
+        },
+        {
+          "id": "sv_mc_burn_memorial",
+          "label": "leave the ground bare, a memorial",
+          "if": [["flag", "said_mc_cooper_sv_mc_burn_ask"], ["!flag", "sv_mc_after_done"]],
+          "once": true,
+          "say": "\"Bare, then,\" he says, and doesn't argue it, though his hands twitch toward the timber-stack all the same. \"Some ground earns being left alone.\"",
+          "fx": [
+            ["set", "sv_mc_burned_memorial"],
+            ["set", "sv_mc_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_church", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the staves",
+          "say": "Mind the shavings underfoot. They catch quicker than you'd think.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "items": {
+    "mc_cask": {
+      "name": "the victualler's cask, iron-hooped",
+      "loc": "nowhere",
+      "hint": "wants carrying up the cairn-track at night, whole"
+    }
+  }
+}

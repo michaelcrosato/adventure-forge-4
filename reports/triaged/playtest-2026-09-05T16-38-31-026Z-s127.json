@@ -1,0 +1,46 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 584,
+  "receipt": "reach.127.584.366.reach_at_rest.78634239",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Slipping past the honour guard in The Old Crypts reported a full success ('GRACE ... success. ... You wait for its swing and go under it. The passage north is yours.') but then a separate line still fired 'The honour guard attacks — your armor takes 2 of it. (hp-1)', contradicting the successful-evasion text. Every other 'slip past' check in the game (wight in Barrow Crypt, Watch-shade in Ashwyn's Watch, bone-eel in the Weeping Caves) cost nothing on success, matching their 'fail costs Nhp' framing.",
+      "where": "The Old Crypts (under Marrowgate palace) / slip past the honour guard"
+    },
+    {
+      "sev": "P2",
+      "what": "Item flavor text doesn't clear after its associated turn-in. 'faded scrap of cloth' kept showing '(... worth showing the reeve)' in the carrying list and status screen long after I had already shown it to the reeve and been paid for it.",
+      "where": "status screen / inventory text, item: faded scrap of cloth"
+    },
+    {
+      "sev": "P2",
+      "what": "The visible score counter caps at the number shown at game start (score0/366) and I hit 366/366 mid-Marrowgate, well before finishing the Founding Ledger, the first Reeve's confession, and the Hollow Throne finale. Later discoveries still printed '(+N)' bonuses but the top-line score display stopped moving, which reads as 'nothing more to find' even though major content remained.",
+      "where": "status/turn header score display, from The Hanged Man onward"
+    }
+  ],
+  "confusions": [
+    "Bearings at Camp Gallows named 'North-west past the black thorn: the Understory, Ness's hut' as a destination for 'The Hidden Root' (Keepers hidden in the wood) quest, but after extensively mapping Thornwold's deep wood (Split Beech, Heartwood Hollow, Root Tangle, the whole gallows-road branch) I never found a location matching that name or an entry point for 'the gap in the black thorn' — gave up on that thread.",
+    "Similarly never located 'The Wreckers' Roost' or 'The Salt-Pan Hermit' around Gullhaven/Saltkerns despite exploring most of the coast path, cliffs, marsh, and dunes — the bearings from the Farlight named them but I didn't find the exact rooms in the time I gave it.",
+    "Two unrelated NPCs are both named 'Ness' (one flagged in Thornwold bearings as living in a hut past the black thorn, a different one actually met running the shift-tally at Cinderhall's head-frame) — briefly made me think I'd found the Thornwold NPC in the wrong hold."
+  ],
+  "suggestions": [
+    "Waive incidental combat damage on a check explicitly framed as 'slip past X — fail costs Nhp' when the roll succeeds, to match the other stealth-bypass checks in the game.",
+    "Clear or update an item's parenthetical hint text once its quest step is turned in, so the inventory/status list reflects what's still outstanding versus already delivered.",
+    "Let the score denominator/counter keep growing (or hide it) past the point it hits the seed's starting max, since hitting 'full score' with a whole capital-city questline still ahead undersells how much content is left.",
+    "Give a firmer locational hint (e.g. update the quest text once the general area has been visited) for wilderness-hub side-quests like The Hidden Root, The Wreckers' Roost, and The Salt-Pan Hermit — the sprawling grid-of-rooms wood/coast maps made a named-but-unfound room hard to track down by hand."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T16-38-31-026Z",
+  "seed": 127,
+  "build": {
+    "rev": "5382712",
+    "world": "4b87149c"
+  },
+  "cost_usd": null,
+  "verified": true
+}

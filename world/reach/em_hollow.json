@@ -1,0 +1,372 @@
+{
+  "rooms": {
+    "em_choir_approach": {
+      "name": "The Ash Ridge Path",
+      "desc": "A switchback path climbs through drifted ash toward a ridge that glitters wrong, frost that never melts. The singing is under your feet before it's in your ears, felt through the soles more than heard. Below, the path only goes down.",
+      "brief": "The switchback path, glittering ash.",
+      "region": "em",
+      "landmark": "the Ash Ridge path",
+      "exits": { "up": { "to": "em_choir_nave" } },
+      "onEnterOnce": [
+        ["xp", 3],
+        ["say", "This is the sound Glasswick doesn't talk about at the glassworks: layered voices, unhurried, more felt than heard, coming down off the ridge with the wind."]
+      ]
+    },
+    "em_choir_nave": {
+      "name": "The Roofless Chapel",
+      "desc": "Four walls, no roof, black glass fused thick across every sill where heat once ran molten. The congregation is here still, more felt than seen in the glass's shimmer, singing low and unhurried. Ash lies banded on the floor, layer under layer under layer.",
+      "brief": "Roofless walls, black glass, the Choir singing.",
+      "exits": { "down": { "to": "em_choir_approach" }, "in": { "to": "em_choir_vestry" } },
+      "onEnterOnce": [
+        ["score", 5],
+        ["xp", 4],
+        ["say", "Count the ash bands in the broken sill and you count the fires: three, maybe four, going back further than any mason's mark left standing. Each one left the singing louder than it found it."],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Brother Osk: \"This is us. The Church did this — not let it happen, did it. I have never said that thought aloud before now.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "tamsin"]],
+          [
+            ["say", "Tamsin: \"Four fires and it's still standing, still singing. That's not a fire that failed once. That's a fire that doesn't work here at all.\""]
+          ],
+          []
+        ]
+      ],
+      "variants": [
+        {
+          "if": [["flag", "em_hollow_rested"]],
+          "desc": "Four walls and no roof, black glass fused thick across every sill. The glass has gone dull and ordinary, and nothing sings under it any longer. Ash still bands the floor, a record now, not a wound.",
+          "brief": "Black glass, dull and quiet."
+        },
+        {
+          "if": [["flag", "em_hollow_bargained"]],
+          "desc": "Four walls and no roof, black glass fused thick across every sill. The singing has thinned to something almost gentle — not gone, but no longer grieving at the top of its voice.",
+          "brief": "Black glass, the singing quieter."
+        },
+        {
+          "if": [["flag", "em_hollow_burned"]],
+          "desc": "A fifth band of ash lies fresh over the old four, still warm underfoot. The singing did not stop. It came back inside a day, and it is louder now than the town has ever heard it.",
+          "brief": "A fresh fifth burning. Louder now."
+        }
+      ],
+      "actions": [
+        {
+          "id": "em_rest_choir",
+          "label": "speak the confession and the rest-verse",
+          "if": [["flag", "em_prior_confessed"], ["flag", "em_verse_known"], ["!flag", "em_hollow_done"]],
+          "fx": [
+            ["set", "em_hollow_rested"],
+            ["set", "em_hollow_done"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_church", 1],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "appr_osk", 2],
+            ["addvar", "appr_vell", 1],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You say Wenlock's confession whole, then Brenna's rest-verse over it, word answering word. The singing rises once, gathers itself like a breath finally let all the way out, and simply is not there anymore."]
+          ]
+        },
+        {
+          "id": "em_bargain_confession",
+          "label": "speak the confession alone",
+          "if": [["flag", "em_prior_confessed"], ["!flag", "em_verse_known"], ["!flag", "em_hollow_done"]],
+          "fx": [
+            ["set", "em_hollow_bargained"],
+            ["addvar", "hollows_bargained", 1],
+            ["set", "em_hollow_done"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_church", -1],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_osk", 1],
+            ["score", 20],
+            ["xp", 8],
+            ["say", "You say it whole, no verse to carry it home: Glasswick will know by nightfall its Church burned its own congregation. The singing doesn't stop. It quiets, like a debt spoken aloud at last instead of buried."]
+          ]
+        },
+        {
+          "id": "em_bargain_bell",
+          "label": "ring the recovered chapel bell",
+          "if": [["has", "em_chapel_bell"], ["!flag", "em_hollow_done"]],
+          "fx": [
+            ["set", "em_hollow_bargained"],
+            ["addvar", "hollows_bargained", 1],
+            ["set", "em_hollow_done"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_lys", 1],
+            ["score", 20],
+            ["xp", 8],
+            [
+              "if",
+              [["flag", "em_bell_whole"]],
+              [
+                ["addvar", "rep_church", 1],
+                ["say", "The Cinder Watch's clapper still hangs true inside it. The note goes out whole and clean, not cracked — the first sound this bell has made complete since the fire took it."]
+              ],
+              [
+                ["say", "The bell's note goes out cracked and uneven, and the singing eases to meet it, ragged, like a choir following a conductor who's forgotten half the tune. Not rest. Company. Glasswick owes the ridge a bell-tending now."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "em_burn_choir",
+          "label": "burn it with cinder-oil (1hp on fail)",
+          "if": [["has", "em_cinder_oil"], ["!flag", "em_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              9,
+              [
+                ["move", "em_cinder_oil", "nowhere"],
+                ["set", "em_hollow_burned"],
+                ["set", "em_hollow_done"],
+                ["addvar", "hollows_burned", 1],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_church", -1],
+                ["addvar", "appr_osk", -2],
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["score", 15],
+                ["xp", 8],
+                ["say", "Cinder-oil spreads black over glass, the cask empty and left in the ash. The fifth fire burns fast and hot, same as the four before. By the time you're back down the path, the singing's started again, louder."]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The oil catches wrong against the glass, flaring back at you before it spreads. You're driven back a step, singed, no closer to finishing what four fires before you already failed to finish."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "em_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "em_hollow_done"]],
+          "fx": [
+            [
+              "if",
+              [["flag", "em_prior_confessed"], ["flag", "em_verse_known"]],
+              [
+                ["say", "The rest stands ready: Wenlock's confession and Brenna's rest-verse are both yours — speak them together."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "em_prior_confessed"]],
+                  [
+                    ["say", "You hold Wenlock's confession. Alone it settles a bargain; add Brenna's rest-verse, from hiding in the sunken cellar, for the fuller rest."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["flag", "em_verse_known"]],
+                      [
+                        ["say", "You hold Brenna's rest-verse. It wants Wenlock's confession too — press him, at the priory, after reading the founding-day plaque."]
+                      ],
+                      [
+                        ["say", "The rest wants Wenlock's confession (the priory, after its founding-day plaque) and Brenna's rest-verse (she hides in the sunken cellar)."]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "if",
+              [["has", "em_chapel_bell"]],
+              [["say", "A second bargain stands ready: the recovered bell is yours — ring it here."]],
+              [
+                ["say", "A second bargain waits through the inner door, in the fused vestry — a bell still sealed under the glass."]
+              ]
+            ],
+            [
+              "if",
+              [["has", "em_cinder_oil"]],
+              [["say", "The burn stands ready: a cask of cinder-oil is yours (might; a failed try costs 1 hp)."]],
+              [
+                ["say", "The burn wants cinder-oil — Factor Corrin will give it, bound by doctrine, at the Ironbound Scale-House."]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "em_choir_vestry": {
+      "name": "The Fused Vestry",
+      "desc": "A side room, roof half-collapsed, its robing-chest and shelves run together in a single sheet of black glass. Something bell-shaped bulges under the glass at the far wall, and a cornerstone has fallen clear of the rubble, its carved date still legible.",
+      "brief": "A glassed-over vestry, a bell-shape under it.",
+      "exits": { "out": { "to": "em_choir_nave" } },
+      "onEnterOnce": [["xp", 2]],
+      "variants": [
+        {
+          "if": [["has", "em_chapel_bell"]],
+          "desc": "A side room, roof half-collapsed, its robing-chest and shelves run together in a single sheet of black glass. Where the bell-shape stood, the glass lies broken open and empty now.",
+          "brief": "The glass broken open, empty."
+        }
+      ],
+      "actions": [
+        {
+          "id": "em_free_bell_grace",
+          "label": "climb into the fused frame (grace)",
+          "if": [["!has", "em_chapel_bell"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              9,
+              [
+                ["move", "em_chapel_bell", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "You find the one gap the glass didn't quite seal and work the bell free through it, cracked along one side but whole enough to ring."]
+              ],
+              [["say", "The glass gives no handhold worth trusting. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "em_free_bell_might",
+          "label": "lever the fused frame apart (might)",
+          "if": [["!has", "em_chapel_bell"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              9,
+              [
+                ["move", "em_chapel_bell", "inv"],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "You brace and heave until the glass shears clean off the frame in one piece, the bell falling free of it, cracked but whole."]
+              ],
+              [["say", "The glass holds. Your shoulder does not thank you for the trying. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "em_read_cornerstone",
+          "label": "read the fallen cornerstone",
+          "once": true,
+          "fx": [
+            ["xp", 2],
+            ["score", 2],
+            ["set", "em_cornerstone_read"],
+            ["say", "A founding date, cut deep and sure — a decade earlier than the one on Glasswick's own plaque. Somebody moved the chapel's birth forward in the telling, to crowd the fire nearer an accident and further from a decision."]
+          ]
+        },
+        {
+          "id": "em_scholar_cornerstone",
+          "label": "cross-reference the mason-mark",
+          "if": [["class", "scholar"], ["flag", "em_cornerstone_read"], ["!flag", "or_scholar_em_mason"]],
+          "once": true,
+          "fx": [
+            ["set", "or_scholar_em_mason"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "The mason's mark matches one you've seen before, cut into the priory's own porch stone. Whoever built this chapel built the priory too, generations before either one burned — the same hands, hand in hand with the fire."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "em_chapel_bell": {
+      "name": "the chapel's recovered bell",
+      "loc": "nowhere",
+      "hint": "cracked, but it might still ring where the singing is loudest",
+      "variants": [{ "if": [["flag", "em_hollow_done"]], "hint": "" }],
+      "use": [
+        {
+          "target": "em_watch_loot",
+          "if": [["!flag", "em_bell_whole"]],
+          "fx": [
+            ["set", "em_bell_whole"],
+            ["say", "You fit the Cinder Watch's warped clapper back into the bell's cracked mouth. It won't ring true again, but for the first time since the fire, it rings whole."]
+          ]
+        }
+      ]
+    }
+  },
+  "quests": {
+    "em_q_choir": {
+      "name": "The Choir of Ash",
+      "start": [["flag", "em_entered"]],
+      "done": [["any", [["flag", "em_hollow_rested"], ["flag", "em_hollow_bargained"], ["flag", "em_hollow_burned"]]]],
+      "stages": [
+        {
+          "if": [["flag", "em_hollow_bargained"]],
+          "text": "The Choir sings quieter now, not rested — a bell tended or a truth spoken, and the ridge accepted it as enough."
+        },
+        {
+          "if": [["flag", "em_prior_confessed"], ["flag", "em_verse_known"]],
+          "text": "You have the confession and the rest-verse both. Speak them together in the roofless chapel above Glasswick."
+        },
+        {
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "em_prior_confessed"],
+                ["flag", "em_verse_known"],
+                ["has", "em_chapel_bell"],
+                ["has", "em_cinder_oil"]
+              ]
+            ]
+          ],
+          "text": "The chapel above Glasswick holds the Choir. Rest, bargain, or burn it — climb the ridge path from the ash flats."
+        },
+        {
+          "if": [["flag", "em_entered"]],
+          "text": "Something sings above Glasswick, in a chapel with no roof. Ask around the town, then climb the ridge."
+        },
+        { "if": [], "text": "Emberfall's grief waits somewhere west of Thornwold." }
+      ]
+    }
+  },
+  "epilogue": [
+    {
+      "if": [["flag", "em_hollow_rested"]],
+      "text": "The roofless chapel above Glasswick went quiet for good. The Church admits, now, what it never used to.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "em_hollow_bargained"]],
+      "text": "The Choir sings quieter above Glasswick, not gone. The town tends a cracked bell, or lives with a hard truth, every year since.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "em_hollow_burned"]],
+      "text": "A fifth fire took the roofless chapel and changed nothing. Emberfall's Choir sings louder now than anyone there remembers it singing before.",
+      "weight": 2
+    },
+    {
+      "if": [
+        ["!flag", "em_hollow_rested"],
+        ["!flag", "em_hollow_bargained"],
+        ["!flag", "em_hollow_burned"],
+        ["flag", "em_entered"]
+      ],
+      "text": "The Choir of Ash was never answered. It sings above Glasswick still, and the glass-blowers still don't look up when it does.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "em_cornerstone_read"]],
+      "text": "Someone finally noticed Glasswick's plaque and its chapel's cornerstone disagree on a date. Nobody has fixed either one.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "em_bell_whole"]],
+      "text": "The Cinder Watch's lost clapper found its way home to the chapel bell, and the two ring true together now.",
+      "weight": 1
+    }
+  ]
+}

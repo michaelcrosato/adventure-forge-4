@@ -1,0 +1,95 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 594,
+  "receipt": "reach.367.594.366.reach_at_rest.357d7e89",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "A quest-linked dialogue option kept firing after its quest was already resolved through a different path, and produced a contradictory extra outcome. I settled 'The Mission's Order' peacefully via the Envoy option 'make the maths simple for her' with Warder Iss (she stood the Ironbound mission down, took the arithmetic, gave gold, Church +1). The Priory's 'tell Halm what the Ironbound mean to do' option was still on the menu afterward; selecting it caused Halm to have the Ironbound forcibly walked off Stilt Row ('Not in my water'), adding another Ironbound -2 on top of an already-peaceful resolution.",
+      "where": "The Priory of the Gray Church / action 'tell Halm what the Ironbound mean to do'"
+    },
+    {
+      "sev": "P1",
+      "what": "Perrin's mother explicitly asked 'Tell me true, whatever you find. I'd rather know than keep hoping blind,' but resolving Perrin's own arc at Highward ('cover his wavering, quietly') closed the 'Perrin's Mother' quest instantly with no prompt, travel hook, or dialogue to actually deliver word back to her in Reedholm. The end-of-game status recap (which name-checks dozens of other minor NPCs' fates) never mentions her again either.",
+      "where": "The Barracks (Highward) / talk to Perrin -> 'cover his wavering, quietly'; quest 'Perrin's Mother'"
+    },
+    {
+      "sev": "P2",
+      "what": "Taking an item flagged theft ('a headframe lantern, unlit... Ness is watching: taking it is theft') uses the exact same menu phrasing/format as dozens of harmless, non-theft 'take' prompts elsewhere (e.g. the free plain sword at the Forge). The take succeeded instantly with no confirm step, then produced a real lasting cost: an in-the-moment companion disapproval (Tamsin) and a standing NPC grudge later ('so is my patience for you'), all riding on a tag that is easy to skim past.",
+      "where": "The Head-Frame (Cinderhall) / action 'take a headframe lantern, unlit'"
+    },
+    {
+      "sev": "P1",
+      "what": "When a companion quarrel fires ('They both look at you'), the room itself offers no immediate way to respond — the actual resolution option ('back her — a promise is a promise', 'back Tamsin — the Watch keeps its honor') only appears later, buried inside that companion's own full talk-tree, mixed in with unrelated evergreen topics (e.g. 'call her brother a deserter', 'ask what really drives her'). A player who doesn't think to reopen every companion's conversation after a quarrel could leave it permanently unaddressed without ever seeing that an option existed.",
+      "where": "The Head-Frame (Cinderhall) quarrel -> resolved via 'talk to Lys' -> 'back her — a promise is a promise'; The Record-House (Wardmoor) quarrel -> resolved via 'talk to Tamsin' -> 'back Tamsin — the Watch keeps its honor'"
+    },
+    {
+      "sev": "P2",
+      "what": "A free 'weigh what each choice would mean' option existed at the Hollow King's throne and again at the Marrowgate Pass Gate, but no equivalent 'weigh' entry ever appeared at any of the three hold-level grief sites I settled (the Drowned Nave, the Gallows Glade, the Oath-Ground). Costs/benefits at those sites had to be inferred from flavor text and the DC/'a miss costs standing' tags alone.",
+      "where": "The Drowned Nave (Fenmarch), The Gallows Glade (Thornwold), The Oath-Ground — Circle (Wardmoor)"
+    },
+    {
+      "sev": "P2",
+      "what": "The status screen's 'Hollows rested: X/8' counter climbs for bargained hollows too (it read 3/8 after exactly three bargains and zero true-rest resolutions), while in-fiction companion dialogue draws a sharp line between the two ('Bargained, not burned, not rested outright' — Lys). The counter turned out to satisfy the 'three hollows rested' Coldpass gate even though none of the three were 'rested' in the sense the prose uses, which wasn't stated anywhere before I tested it at the Pass Gate.",
+      "where": "status screen 'Hollows rested' line vs. Lys's line at The Sworn Glade after the Thornwold bargain"
+    },
+    {
+      "sev": "P2",
+      "what": "Whether a bargain can be paid personally by the player isn't consistent or predictable. Thornwold's toll offered 'pay the old toll yourself (12 gold)' outright. Fenmarch's tithe, when it came due, only offered 'let the eel-market pay it as promised' or 'tell Halm the water can whistle for it' — there was no option to cover it from my own purse, even though I was standing right there with gold on hand.",
+      "where": "The Quartermaster's Wagon (Camp Gallows) vs. The Priory of the Gray Church, 'the first tithe' dialogue"
+    },
+    {
+      "sev": "P2",
+      "what": "Two '(as an Envoy)' options were guaranteed no-ops against NPCs explicitly written as charm-proof: the hunter ('Wood doesn't care how well a thing's said... Neither do I, much') and Old Crick ('Save it for someone who wasn't already digging in the dark before you were born'). Both cost nothing but returned only 1xp and a flavor line, with no way to tell in advance that these two — unlike every other Envoy option I tried — would be inert.",
+      "where": "Hunter's Camp / 'turn your best charm on him (as an Envoy)'; The Miners' Hall (Cinderhall) / 'turn on the charm (Envoy)'"
+    },
+    {
+      "sev": "P2",
+      "what": "'Read the notice board again' at Last Light Square silently costs a full turn (t2 -> t3) despite repeating identical text and giving no new reward, unlike every other zero-cost recap action in the game, none of which are marked '(free)' the way look/status are.",
+      "where": "Last Light Square / action 'read the notice board again'"
+    },
+    {
+      "sev": "P2",
+      "what": "Better weapons/armor auto-equip with no on-screen confirmation. I never explicitly 'wore' the watch-pattern mail or wielded the Free Company blade — I only learned the swap happened by noticing the combat log's weapon name change on the next fight.",
+      "where": "combat action labels (e.g. 'attack ... with a Free Company blade') after picking up new gear at The Rope Larder and the Wardmoor armoury"
+    },
+    {
+      "sev": "P2",
+      "what": "This whole session was played through the mcp__tinyforge__(new_game/act/look/status) tool interface rather than the `npm run turn` CLI. loop/report-check.mjs looks for a matching trace file under runs/ to replay and verify the final receipt; none existed for this session's seed, so the checker filed the report with verified:false even though the run completed a real *** WIN *** with a well-formed receipt. The MCP-tool entry point and the CLI entry point appear not to share the same trace/runs storage (or the MCP server runs from a different working directory), which undermines the receipt-verification pipeline for anyone playing via the tool interface.",
+      "where": "loop/report-check.mjs replay step, after playing via mcp__tinyforge__act/new_game rather than `npm run -s turn`"
+    }
+  ],
+  "confusions": [
+    "The priest's blessing text ('the stone doors grind open. No promise binds them shut') reads, in isolation, like it has already decided the barrow's final seal/open fate — it actually only opens the doors for entry; the real, still-open seal/open choice only happens later at the throne. Took a return trip and a reeve conversation to confirm these were two separate things.",
+    "It's not obvious the 'Hollows rested' counter on the status screen counts bargained hollows as 'rested' for the purposes of the Coldpass gate, since companion dialogue treats 'bargained' and 'rested' as distinct outcomes.",
+    "Nothing in a quarrel's own scene signals that the way to settle it is to go start a fresh conversation with one specific companion afterward, rather than choosing from a menu offered at the moment the quarrel fires.",
+    "Whether a 'weigh' preview option exists is inconsistent from one hold's grief site to the next, so I could never be sure, walking into a new site, whether I'd get a free look at the costs before committing.",
+    "Perrin's Mother's quest closes the instant Perrin's own situation is settled, with no indication the promised loop back to her (delivering the actual news) was ever going to happen or had been skipped.",
+    "No indicator anywhere shows which weapon or armor piece is currently 'equipped' outside of reading the exact wording of the next combat round.",
+    "The milestone unlocking the Keepers' pilgrim stair to Coldpass ('Three hollows rested: the pilgrim stair at Coldpass opens for you') arrived as a small aside appended to an unrelated Iron Downs quest message, not as its own headline notice.",
+    "Some 'take X' and 'read/ask X' prompts cost a turn and some don't, with no consistent visual marker apart from the '(free)' tag used only for look/status — repeatable flavor actions like re-reading a notice board silently fall on the costly side."
+  ],
+  "suggestions": [
+    "Gray out or remove an NPC's quest-linked dialogue option the moment that plot thread resolves via any path, so a stale option can't fire a second, contradictory outcome.",
+    "When a companion quarrel fires, offer an immediate 'back X / back Y / stay out of it' choice in that same menu instead of only later, buried in one companion's separate talk-tree.",
+    "Add a free 'weigh what this would ask' option at every hold's grief-resolution site, not only the Vale throne and the Marrowgate gate.",
+    "Give theft prompts a visually distinct marker instead of parenthetical text identical in format to ordinary, consequence-free 'take' prompts.",
+    "State up front, in the bargain's own text, whether it can later be paid personally by the player or only by a third party/lapsed — Thornwold and Fenmarch handled this differently with no warning.",
+    "Route 'tell so-and-so's parent/spouse the news' quests back to the original asker with at least a one-line off-screen resolution in the status recap, the way most other NPC threads got one.",
+    "Show a brief 'equipped: X' notice on pickup when new gear silently replaces what's wielded.",
+    "Label the 'Hollows rested' status counter to clarify it includes bargained hollows (e.g. 'Hollows settled (rested+bargained): X/8'), since companion dialogue treats the two as meaningfully different."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T08-10-53-801Z",
+  "seed": 367,
+  "build": {
+    "rev": "32c3a4b",
+    "world": "0920b5d0"
+  },
+  "cost_usd": null,
+  "verified": false
+}

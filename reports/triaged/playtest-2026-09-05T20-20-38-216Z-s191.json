@@ -1,0 +1,80 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 568,
+  "receipt": "reach.191.568.366.reach_at_rest.5b185841",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "After completing a verse, the quest journal's 'remaining locations' text keeps listing the just-finished location instead of dropping it, contradicting the status line directly above it. Example: right after learning the water verse, status showed 'Verses: 1/3 (unexplored: old watchtower, barrow hall)' but the quest line still read 'One verse known. Two more: the sunken shrine and the old watchtower east of the wood, and the barrow's hall.' Same happened after the wind verse ('The third waits — shrine, tower, or the barrow's own hall' when only the barrow hall was left).",
+      "where": "status screen / quest 'The Three Verses', after Sunken Shrine and Old Watchtower"
+    },
+    {
+      "sev": "P2",
+      "what": "The party-conversation menu reuses option slot 1 for 'wait here (leaves the party for now)' right after recruiting a companion, in the same position where prior screens used 1 to continue/advance dialogue. I picked 1 expecting to end the chat and instead got 'Vell leaves your company' immediately after recruiting him.",
+      "where": "The Last Light Inn / talking with Vell, right after 'Vell joins you'"
+    },
+    {
+      "sev": "P1",
+      "what": "Choosing 'hand her the burn-order to bury' in the Regent's chambers permanently fails the Marshal's Oath quest ('She reads it twice, then folds it away in a drawer that locks. Thank you, she says, and means the drawer, not the truth in it. Quest failed: The Marshal's Oath') and costs a companion's approval, but it's offered right after a sympathetic, successful truth-confrontation using the founding ledger, so it reads like a continuation of the same 'confront her with the truth' beat rather than the betrayal-of-the-Marshal it actually is.",
+      "where": "The Regent's Chambers / talking with Regent Ysolde"
+    },
+    {
+      "sev": "P2",
+      "what": "Sealing the Vale barrow reads as if you trap yourself: 'You draw the great doors shut from within the passage and hear the seal-stone drop.' For a moment it looks like a softlock (exits at the throne then only showed S/D, no 'out'), though walking south through the crypt and antechamber let the whole party leave normally.",
+      "where": "The Empty Seat (Vale barrow) / 'seal the barrow doors behind you'"
+    },
+    {
+      "sev": "P2",
+      "what": "'Flask of lamp oil' is obtained with real narrative and reputation weight (Corporal Fenn: 'You want it for the stone, don't you. I'll not pretend I like it', the Watch -1) but I never found anywhere in the game it could actually be used; it was still sitting unused in inventory at the ending.",
+      "where": "The Barracks, Wardmoor / 'ask Corporal Fenn: ask for lamp oil, plainly'"
+    },
+    {
+      "sev": "P2",
+      "what": "'The sealed dispatch for Marrowgate' has a destination mismatch: the courier who hands it over says 'Highward. Watch post there will know what to do with it,' but the item itself is titled 'for Marrowgate' and its tooltip reads 'meant for the Watch post at Highward.' I carried it all the way into Marrowgate and no NPC or location there (or at Highward) ever offered a delivery option for it.",
+      "where": "The Roadside Hollow, Wardmoor east road"
+    },
+    {
+      "sev": "P2",
+      "what": "An 'attack [name] with [weapon]' option is present on essentially every character, including friendly NPCs on the very first turn you meet them, with no narrative cue that hostility is warranted — e.g. 'attack Brother Osk with short sword' appears the instant you meet a novice sweeping a chapel floor.",
+      "where": "Gray Chapel, first meeting Brother Osk (recurs with Vell, Tamsin, Regent Ysolde, etc.)"
+    },
+    {
+      "sev": "P2",
+      "what": "Social skill checks (will/wits, e.g. pressing Prior Halm, confronting Preceptor Aldous, the gray sergeant on the Waiting Bough) can be retried immediately and as many times as needed on failure for only the cost of a turn, with no stated penalty — unlike physical might/grace checks, which usually show an explicit 'fail costs Xhp.' Failure on these is effectively free as long as turns remain.",
+      "where": "The Ironbound Chapterhouse (Cinderhall), The Waiting Bough (Thornwold), The Priory (Fenmarch)"
+    }
+  ],
+  "confusions": [
+    "The Hollow King's throne option '(no dawn) kneel and take his place' uses an unexplained tag; its meaning (a doom/no-future ending) can only be inferred from an unrelated NPC's earlier warning, never defined in-fiction.",
+    "The '*' optional-path marker on exits is explained only once, incidentally, the first time it happens to appear ('(* marks an optional side path not yet visited.)') rather than up front, so a player could easily miss what it means.",
+    "'Get your bearings' (and variants like 'get your bearings from the parapet/head-frame/parade') is a numbered menu action that costs a turn exactly like combat or dialogue, but reads just like the free 'look' meta-command described in the rules — there's no visual cue distinguishing a costed in-fiction 'look-alike' from the genuinely free look/status commands.",
+    "'Travel to a known place' sometimes lists individual rooms directly and sometimes only broad region names that need a second selection to drill into a room, with no explanation of which form applies when.",
+    "The score cap (366) is never stated anywhere; it only became apparent by coincidence when my score exactly matched the max at the ending, so there was no way to gauge 'how much is left to find' from the running score.",
+    "The ending's epilogue ('How the realm remembers you') revealed an entire unvisited hold (Gullhaven — 'the drowned fleet still rows the fog off Gullhaven's point') and a whole other central grief in a hold I did visit (Barrowmere's 'great mound... waiting on someone else', plus a parallel 'Old Court Verses: 0/3' track in Marrowgate itself), none of which were ever surfaced as an active lead by any quest-giver or status line while I was physically in those places.",
+    "Playing a might-focused Warden with defensive perks, I never once felt meaningfully threatened by combat across 568 turns and dozens of fights (HP dipped only a few points per encounter at most) — death never felt like a real possibility for this build/path, which undercuts the game's own 'hp0 = death' framing from the intro.",
+    "I wanted to hand off 'the sealed dispatch for Marrowgate' once I actually reached Marrowgate, its stated destination, but no location or NPC there offered any way to turn it in — it stayed inert cargo through the ending."
+  ],
+  "suggestions": [
+    "Sync quest-journal 'remaining locations' text with the status line's '(unexplored: ...)' list so they can't contradict each other after partial completion.",
+    "Give 'leave the party' a menu slot that isn't reused from 'continue the conversation,' or add a one-step confirmation before a companion actually leaves.",
+    "Make choices that bury/hide evidence read distinctly from choices that confront someone with it (a different verb, or a one-line consequence preview), especially when offered back-to-back in the same conversation.",
+    "State up front (or the first time one appears) whether a failed will/wits check can be retried and at what cost, matching the 'fail costs Xhp' convention already used for might/grace checks.",
+    "Define one-off tags like '(no dawn)' inline the first time they're shown instead of leaving them to be inferred from unrelated dialogue.",
+    "Surface the maximum possible score (or a 'content discovered' percentage) somewhere in status rather than only revealing the cap by chance at the very end.",
+    "Fix the Highward/Marrowgate address mismatch on the sealed dispatch, and add an actual delivery option once the carrier reaches the letter's named destination.",
+    "Drop at least one in-fiction hint toward each major hold (Gullhaven, Barrowmere's 'great mound', Marrowgate's Old Court Verses) while the player can still act on it, rather than only naming them in the closing recap."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T20-20-38-216Z",
+  "seed": 191,
+  "build": {
+    "rev": "fa22325",
+    "world": "2a2a1adf"
+  },
+  "cost_usd": null,
+  "verified": true
+}

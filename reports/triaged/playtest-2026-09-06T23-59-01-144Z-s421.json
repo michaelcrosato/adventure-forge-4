@@ -1,0 +1,68 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 625,
+  "receipt": "receipt:reach.421.625.366.reach_at_rest.8fdd99ed",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "After walking the assembled rod out at dusk (\"You fit the ferrule to the shaft, speak the truce-words whole, and walk the rod out into the furrow at dusk\"), both component items stay in inventory with unchanged, now-false text: 'the white rod's ferrule, dug clean (wants the shaft it was struck from, kept by Hew at the ditch-gate)' and 'the white rod's shaft, ferrule missing (wants its ferrule, dug from the herald's walk, to be made whole)' — this persists even into the final win-state status screen, though the ending text itself says 'the rod made whole.'",
+      "where": "Truce Field — the Herald's Walk / inventory display"
+    },
+    {
+      "sev": "P1",
+      "what": "The satchel of dug shield-bosses keeps the description '(the marks on them want a reader who knows the old tongue)' after the marks were already read (successful wits check) and the findings delivered to Tolan, with the quest 'The Bone-Picker's Find' marked done.",
+      "where": "The Trade Counter (Harrowfield) / The Remembrancer's Cot"
+    },
+    {
+      "sev": "P1",
+      "what": "After giving Ossett the recovered Companies' banner ('He hangs it on the bare staff himself,' quest 'The Pensioner's Errand' done), every later look/visit to the room and Ossett's own character blurb still read 'a bare banner-staff' / 'a bare banner-staff he polishes anyway,' directly contradicting the delivery that just happened.",
+      "where": "The Pensioner's House"
+    },
+    {
+      "sev": "P2",
+      "what": "Keeper Wren refuses a plain request for the Keeper's Key (will check) and it costs Barrow-Keepers standing ('marks that a stranger asked before earning it'); moments later, forcing her locked chest open with a might check, in the same room with her still present, yields the same key, grants +1 Barrow-Keepers standing, and completes the quest literally named 'Keeper Wren's Trust' — with no line from her acknowledging the break-in. The polite path is punished and the forceful one is rewarded as 'trust.'",
+      "where": "The Keepers' Hall (Hollowbrook) — talking to Keeper Wren vs. 'force the bronze-bound chest'"
+    },
+    {
+      "sev": "P2",
+      "what": "The Hunter's Sortie names three wolves — 'the charcoal ring, the clawed trunks, the leaning stones' — but only two ('clawed trunks'/gaunt wolf at Wolf Scrape, 'leaning stones'/ash wolf at Twin Stones) were ever found. A full loop of the Ashwood (Camp Smoke, Gray Cairn, Ashfall Clearing, Widow's Well, Herb Hollow, Sunken Shrine, Tower Shadow, the Last Trees) turned up no room matching 'the charcoal ring'; the quest stays permanently open with no further hook after both known wolves are reported.",
+      "where": "Hunter's Camp (the Vale) — 'The Hunter's Sortie'"
+    },
+    {
+      "sev": "P2",
+      "what": "Farewell/ambient lines don't always update after a topic is resolved in the same conversation: Elgin's parting line ('come back, if you ever find a way to lay two unforgiving lines to rest at once') fires right after he thanks the player for doing exactly that; Merle's parting line ('some things out there still answer back') fires right after she says 'I haven't heard the pull since.'",
+      "where": "The Field Chantry Porch / Harrowfield — the Green"
+    },
+    {
+      "sev": "P2",
+      "what": "The tarnished locket, found early in the Vale ('a name scratched into the tin: MAREN. Someone in the Reach will know it.'), never surfaced a matching NPC or turn-in location across a full 625-turn run through the Vale, Fenmarch, Hollowbrook, the Fallows, the Shieldings, Wardmoor and Marrowgate — the promise reads confident but the payoff (if one exists) was never signposted anywhere I could find.",
+      "where": "Widow's Well (the Vale) item flavor text"
+    }
+  ],
+  "confusions": [
+    "The Hunter's Sortie's third wolf ('the charcoal ring') has no discoverable room name anywhere in the explored Ashwood loop, despite the other two being easy to find from the same hub.",
+    "Item descriptions don't consistently signal 'this thread is closed' — the tin reliquary and the woven eel-trap charm correctly gain 'nothing is owed on it' text once resolved, but the rod shaft/ferrule and the shield-bosses satchel never do, so a player re-checking inventory after finishing those quests is told (falsely) that something is still missing.",
+    "Post-completion village texture is inconsistent: some places rewrite their room description precisely (the stone-cutter's lodge correctly shows 'the stone cut small, edge to edge' after the field's-stone choice; Reedholm shows 'nets finally mended' after the drowned nave rests) while others (the pensioner's banner-staff) do not, making it unclear which visible details are meant to be tracking state versus flavor."
+  ],
+  "suggestions": [
+    "Clear or rewrite 'wants X' item flavor text once the paired action that fulfills it has fired (rod shaft+ferrule after 'walk the rod out at dusk'; shield-bosses after Tolan reads the marks) — mirror the pattern already used for the tin reliquary and the eel-trap charm.",
+    "Update Ossett's room description and character blurb once 'The Pensioner's Errand' completes, the same way Bevan's lodge and Tolan's cot correctly reflect the field's-stone decision.",
+    "Make forcing Keeper Wren's chest cost (or at least not gain) Barrow-Keepers standing, so the quest named 'Keeper Wren's Trust' doesn't reward the disrespectful shortcut more than the respectful ask.",
+    "Either place a findable 'charcoal ring' room in the Ashwood or drop it from the Hunter's Sortie's stated list so the quest can be seen through to a real close.",
+    "Give the MAREN locket a resolvable NPC/location, or soften 'someone in the Reach will know it' if the run's scope means most players will never meet them.",
+    "Branch NPC farewell lines on the state of their own resolved thread (Elgin, Merle) instead of appending a generic pre-resolution goodbye right after a reactive, post-resolution reply."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T23-59-01-144Z",
+  "seed": 421,
+  "build": {
+    "rev": "0110349",
+    "world": "df3fa16a"
+  },
+  "cost_usd": null,
+  "verified": true
+}

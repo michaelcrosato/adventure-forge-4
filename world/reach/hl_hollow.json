@@ -1,0 +1,570 @@
+{
+  "rooms": {
+    "hl_barn_doors": {
+      "name": "The Hunger Barn — the Doors",
+      "desc": "Two barred doors, scored deep from the outside by hands that had nothing left but fingernails and desperation. The scoring stops abruptly at a height no child would have reached. Nobody in Tithing walks out here without a reason.",
+      "brief": "The scored doors, barred from within.",
+      "region": "hl",
+      "exits": { "in": { "to": "hl_threshing_floor" } },
+      "onEnterOnce": [
+        ["set", "hl_hollow_grievance"],
+        ["score", 2],
+        ["xp", 3],
+        ["say", "This is the Hunger Barn: a Reeve's order locked its doors against the crofters who grew what it held, one winter four hundred years gone, and the barn-reeve who kept them shut. Neither grief has been spoken for."],
+        [
+          "if",
+          [["inParty", "vell"]],
+          [
+            ["say", "Vell: \"The order came from the crown itself, not the barn-reeve's own cruelty. I would rather it were only him. It would be so much simpler to hate one dead man.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Brother Osk: \"'Worthy' was a word my own Church chose to write in a ledger, and chose whom to spend it on. I have never once heard a priest apologize for a word.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "tamsin"]],
+          [
+            ["say", "Tamsin: \"Somebody always decides who eats first when there isn't enough. Somebody just usually has the decency not to lock the door on the rest.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "lys"]],
+          [
+            ["say", "Lys: \"Scored right through the wood, here — fingernails, maybe, or a blade, trying anything. I don't need the rest of the story after seeing that.\""]
+          ],
+          []
+        ]
+      ],
+      "actions": [
+        {
+          "id": "hl_listen_doors",
+          "label": "listen at the doors",
+          "free": true,
+          "fx": [
+            [
+              "if",
+              [["flag", "hl_hollow_rested"]],
+              [
+                ["say", "Quiet. The ordinary kind, now: timber settling, a mouse in the straw, wind under the door. Whatever was here to be heard has been heard."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "hl_hollow_burned"]],
+                  [["say", "Charred timber ticks as it cools. Nothing else. Nothing else will."]],
+                  [
+                    ["say", "Nothing. Not wind, not settling timber, not even the ordinary quiet of an empty building. Whatever is still here doesn't make sound to be heard by the living."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "hl_threshing_floor": {
+      "name": "The Hunger Barn — the Threshing Floor",
+      "desc": "A broad floor, swept bare by a hundred winters of threshing before the last one, dust standing undisturbed in every corner since. Whatever grain this floor last held went to feed people already dying at the doors behind you.",
+      "brief": "The threshing floor, undisturbed dust.",
+      "region": "hl",
+      "exits": { "out": { "to": "hl_barn_doors" }, "up": { "to": "hl_loft" }, "down": { "to": "hl_grain_pit" } },
+      "variants": [
+        {
+          "if": [["flag", "hl_hollow_rested"]],
+          "desc": "The threshing floor stands the same as it always has, but the dust in the corners no longer feels like something undisturbed. Names were spoken here, and an order, together, for the first time in four hundred years.",
+          "brief": "The floor, its grief finally spoken."
+        },
+        {
+          "if": [["flag", "hl_hollow_bargained"]],
+          "desc": "The threshing floor stands quiet, the promise struck over it not here but back in Tithing. Nothing here has changed. Something in the town beyond it has.",
+          "brief": "The floor, unchanged, though a promise stands."
+        },
+        {
+          "if": [["flag", "hl_hollow_burned"]],
+          "desc": "Ash and collapsed timber where the threshing floor stood. Whatever this barn had left to answer for went up with the beams in a single night.",
+          "brief": "Ash and fallen timber."
+        }
+      ],
+      "actions": [
+        {
+          "id": "hl_rest_hollow",
+          "label": "speak the names and the order together",
+          "if": [["var", "hl_ticks_known", ">=", 3], ["flag", "hl_order_known"], ["!flag", "hl_hollow_done"]],
+          "fx": [
+            ["set", "hl_hollow_rested"],
+            ["set", "hl_hollow_done"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_church", 2],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "appr_vell", 1],
+            ["addvar", "appr_lys", 1],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak every name the tally-sticks gave up, then the order that shut the doors on them, in the same breath — the crofters' due and the barn-reeve's guilt, named together at last."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"My own line's order, spoken back to the ones it starved. I did not know how much that would cost me to hear. I am glad I heard it anyway.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [
+                ["say", "Lys: \"Names, not numbers. That's the whole of what they were owed, and it took four hundred years to pay it. Better late.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "hl_burn_hollow",
+          "label": "burn it with cinder-oil (1hp on fail)",
+          "if": [["has", "hl_cinder_oil"], ["!flag", "hl_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              9,
+              [
+                ["move", "hl_cinder_oil", "nowhere"],
+                ["set", "hl_hollow_burned"],
+                ["addvar", "appr_osk", -1],
+                ["set", "hl_hollow_done"],
+                ["addvar", "hollows_burned", 1],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_church", -2],
+                ["addvar", "appr_tamsin", 1],
+                ["addvar", "appr_vell", -1],
+                ["score", 15],
+                ["xp", 8],
+                ["say", "The oil takes fast along seasoned timber, and the Hunger Barn burns a night and a day. By morning only cleared black ground is left, and smoke that finds the Vale's own west road on the wind."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["say", "Vell: \"The order, the ledger's older pages, whatever the beam itself might have told a Scholar in time — all of it, ash. That is not an ending. That is simply refusing to have one.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The oil catches wrong on the damp old timber and flares back short of the beam. You're driven off a step, singed, the barn untouched."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "hl_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "hl_hollow_done"]],
+          "fx": [
+            [
+              "if",
+              [["var", "hl_ticks_known", ">=", 3]],
+              [
+                ["say", "All three tally-sticks are yours: the tally-keeper's, the widow's croft, and the almonry's older ledger."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "hl_tick_keeper"], ["flag", "hl_tick_widow"]],
+                  [
+                    ["say", "Brida's stick and the widow's are yours. The last is the almonry's older ledger, or Saint Garner's chapel, out in the fields."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["flag", "hl_tick_keeper"], ["flag", "hl_tick_almonry"]],
+                      [
+                        ["say", "Brida's stick and the almonry's tally are yours. The last waits at the widow's croft, out past the boundary hedge."]
+                      ],
+                      [
+                        [
+                          "if",
+                          [["flag", "hl_tick_widow"], ["flag", "hl_tick_almonry"]],
+                          [
+                            ["say", "The widow's stick and the almonry's tally are yours. The last is Brida's, at the tally-keeper's cottage."]
+                          ],
+                          [
+                            [
+                              "if",
+                              [["flag", "hl_tick_keeper"]],
+                              [["say", "Brida's stick is yours. Two remain: the widow's croft, and the almonry's ledger (or the chapel)."]],
+                              [
+                                [
+                                  "if",
+                                  [["flag", "hl_tick_widow"]],
+                                  [
+                                    ["say", "The widow's stick is yours. Two remain: Brida's cottage, and the almonry's ledger (or the chapel)."]
+                                  ],
+                                  [
+                                    [
+                                      "if",
+                                      [["flag", "hl_tick_almonry"]],
+                                      [["say", "The almonry's tally is yours. Two remain: Brida's cottage, and the widow's croft."]],
+                                      [
+                                        ["say", "The rest wants three tally-sticks: the tally-keeper Brida's, the widow's croft, and the almonry's older ledger (or the chapel)."]
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "if",
+              [["flag", "hl_order_known"]],
+              [["say", "The barn-reeve's order is known too."]],
+              [
+                ["say", "The order isn't known yet: search his chest here in the loft, or buy, force, or argue a copy out of Bailiff Vance's counting-house."]
+              ]
+            ],
+            [
+              "if",
+              [["var", "hl_ticks_known", ">=", 3], ["flag", "hl_order_known"]],
+              [["say", "Both ready together: speak the names and the order here, to rest the barn whole."]],
+              []
+            ],
+            ["say", "The bargain stands ready either way, back in Tithing: persuade the bailiff (will), force his strongbox (might), alter the almoner's ledger (wits), or simply pay the tithe yourself, at the granary steps."],
+            [
+              "if",
+              [["has", "hl_cinder_oil"]],
+              [
+                ["say", "The burn stands ready: Ironbound cinder-oil is yours — burn it here (might; a failed try costs 1 hp)."]
+              ],
+              [
+                ["say", "The burn wants Ironbound cinder-oil — Lay-brother Emmet, at the back lane, gives it for the asking."]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "hl_loft": {
+      "name": "The Hunger Barn — the Loft",
+      "desc": "A hayloft under the barn's own roof-beam, the beam itself still marked with an old rope's wear at its center. A traveling-chest sits beneath it, undisturbed, exactly where its owner left it the night he climbed up here for the last time.",
+      "brief": "The loft, the beam, and a chest below it.",
+      "region": "hl",
+      "exits": { "down": { "to": "hl_threshing_floor" } },
+      "variants": [
+        {
+          "if": [["flag", "hl_order_known"]],
+          "desc": "The loft's beam still bears the rope's old wear, and the chest beneath it stands open now, its one secret already given up.",
+          "brief": "The loft, the chest already opened."
+        }
+      ],
+      "actions": [
+        {
+          "id": "hl_force_chest",
+          "label": "force the chest open (might)",
+          "if": [["!flag", "hl_order_known"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "hl_order_known"],
+                ["set", "hl_order_source_loft"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "The old lock gives all at once, and the order is right where he left it: his own copy, kept rather than burned, the Reeve's seal still whole on it after four hundred years."]
+              ],
+              [["say", "The lock holds, old iron somehow tougher than it looks. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "hl_pick_chest",
+          "label": "pick the chest's lock (grace)",
+          "if": [["!flag", "hl_order_known"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              10,
+              [
+                ["set", "hl_order_known"],
+                ["set", "hl_order_source_loft"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "The old mechanism gives to patience rather than force, and the order is right where he left it: his own copy, kept rather than burned, the Reeve's seal still whole on it after four hundred years."]
+              ],
+              [["say", "The mechanism won't quite turn. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "hl_scholar_chest",
+          "label": "read the chest's own hand outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "hl_order_known"]],
+          "fx": [
+            ["set", "hl_order_known"],
+            ["set", "hl_order_source_loft"],
+            ["addvar", "or_scholar_read", 1],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "You have the lock's old mechanism and the order both read before you've properly caught your breath from the climb: his own copy, kept rather than burned, the Reeve's seal whole."],
+            [
+              "if",
+              [["flag", "hl_ledger_unworthy_known"], ["!flag", "hl_ledger_hand_known"]],
+              [
+                ["set", "hl_ledger_hand_known"],
+                ["xp", 2],
+                ["say", "The hand that signed this order is the same hand that marked names unworthy in the almonry's own ledger — one man, keeping both accounts, and never once letting them touch on the same page."]
+              ],
+              []
+            ]
+          ]
+        }
+      ]
+    },
+    "hl_grain_pit": {
+      "name": "The Hunger Barn — the Grain Pit",
+      "desc": "A storage pit sunk below the threshing floor, empty of grain and has been for longer than anyone alive remembers. Something small is caught in the dust at the bottom, undisturbed since it was dropped there.",
+      "brief": "The empty grain pit.",
+      "region": "hl",
+      "exits": { "up": { "to": "hl_threshing_floor" } },
+      "actions": [
+        {
+          "id": "hl_search_pit",
+          "label": "search the pit's floor",
+          "once": true,
+          "fx": [
+            ["move", "hl_crofter_token", "inv"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "A carved wooden token, a child's work, worn from being turned over in a pocket long before it was dropped here. Nobody has come looking for it in four hundred years."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "hl_crofter_token": {
+      "name": "a carved wooden token",
+      "loc": "nowhere",
+      "hint": "a child's keepsake; nothing more is owed on it"
+    },
+    "hl_cinder_oil": {
+      "name": "a cask of Ironbound cinder-oil",
+      "loc": "nowhere",
+      "hint": "burns however wet the ground is — Lay-brother Emmet, at the back lane, keeps a supply"
+    }
+  },
+  "npcs": {
+    "hl_reeve_shade": {
+      "name": "the barn-reeve's shade",
+      "room": "hl_loft",
+      "dialogue": true,
+      "desc": "A gray shape standing beneath the beam rather than hanging from it now, as if standing were somehow the harder penance of the two.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "The barn-reeve. I kept these doors barred the winter the order said to, and I have kept this beam company every spring since.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg_order",
+          "label": "why he barred the doors",
+          "if": [["flag", "said_hl_reeve_shade_greet"]],
+          "once": true,
+          "say": "An order came down from the Reeve's own household: the tithe stores hold, no matter who stands outside. I believed it was for one bad week. It was the whole winter, and I only understood once the scratching stopped.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bg_hanged",
+          "label": "why he climbed to the beam",
+          "if": [["flag", "said_hl_reeve_shade_bg_order"]],
+          "once": true,
+          "say": "Spring came, and the doors opened on what four sacks in ten had cost. I had followed the order exactly, the way I was trained to. Exactly was the whole of the problem.",
+          "fx": [["set", "hl_reeve_confessed"], ["xp", 2]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the barn, now it's rested",
+          "if": [["flag", "hl_hollow_rested"], ["flag", "hl_reeve_confessed"]],
+          "once": true,
+          "say": "Named alongside them, not apart from them. I did not expect that mercy, and I am not sure I have earned it. I will take it anyway.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the barn opened, in your name",
+          "if": [["flag", "hl_hollow_bargained"]],
+          "once": true,
+          "say": "Opened. The living barn, not this one. That is more than I did, and less than they are owed. I will keep the beam a while longer; it is not a punishment, only a place.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the barn burned",
+          "if": [["flag", "hl_hollow_burned"]],
+          "once": true,
+          "say": "Fire, where they died of cold. There is a symmetry in it a barn-reeve can admire. It does not name them. Nothing you do now will.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "step back from the beam",
+          "say": "Go carefully on the ladder. It's held longer than it had any right to.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "quests": {
+    "hl_q_order": {
+      "name": "The Barn-Reeve's Order",
+      "start": [["flag", "hl_hollow_grievance"]],
+      "done": [["flag", "hl_order_known"]],
+      "stages": [
+        {
+          "if": [["flag", "hl_bailiff_order_known"]],
+          "text": "Vance keeps a title-copy in his strongbox — buy, force, argue it loose. Or search the reeve's chest, in the loft."
+        },
+        {
+          "if": [],
+          "text": "The order might still exist — in the barn-reeve's chest, in the loft, or a kept copy in the counting-house."
+        }
+      ]
+    },
+    "hl_q_after": {
+      "name": "The Hearthlands, After",
+      "start": [["flag", "sv_hl_back"]],
+      "done": [["flag", "sv_hl_after_done"]],
+      "stages": [
+        {
+          "if": [["flag", "hl_hollow_rested"], ["!flag", "said_hl_tallykeeper_sv_hl_rested_ask"]],
+          "text": "The barn rests. Brida, at the tally-keeper's cottage, wonders what becomes of the sticks now they're read."
+        },
+        {
+          "if": [
+            ["any", [["flag", "hl_hollow_bargained"], ["flag", "hl_tithe_common"]]],
+            ["!flag", "said_hl_bailiff_sv_hl_bargain_ask"]
+          ],
+          "text": "The open barn drew Marrowgate's notice. Bailiff Vance has a report he'd rather not have written alone."
+        },
+        {
+          "if": [["flag", "hl_hollow_burned"], ["!flag", "said_hl_almoner_sv_hl_burned_ask"]],
+          "text": "The barn is ash. Sister Winnow, at the almonry, wonders what becomes of the burned ground now."
+        },
+        { "if": [], "text": "Tithing settles back into itself, whatever the Hunger Barn's fate cost it." }
+      ]
+    }
+  },
+  "statusTracks": [
+    {
+      "var": "hl_ticks_known",
+      "label": "The Hearthlands' Tally-Sticks",
+      "max": 3,
+      "remaining": [
+        { "flag": "hl_tick_keeper", "label": "the tally-keeper Brida" },
+        { "flag": "hl_tick_widow", "label": "the widow's croft" },
+        { "flag": "hl_tick_almonry", "label": "the almonry's older ledger" }
+      ],
+      "if": [["flag", "hl_hollow_grievance"]]
+    }
+  ],
+  "epilogue": [
+    {
+      "if": [["flag", "hl_hollow_rested"]],
+      "text": "The Hunger Barn rests at last: the crofters' names and the order that starved them, spoken together after four hundred years.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "hl_hollow_bargained"]],
+      "text": "The Hunger Barn keeps its dead a while longer, paid in an open granary instead of a finished rite.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "hl_hollow_burned"]],
+      "text": "Ironbound oil cleared the Hunger Barn in a night. There is nothing left there now to rest, bargain, or grieve over.",
+      "weight": 2
+    },
+    {
+      "if": [["!flag", "hl_hollow_done"], ["flag", "hl_entered"]],
+      "text": "The Hunger Barn still stands out in the Hearthlands' fields, its doors scored, its grief exactly where the winter left it."
+    },
+    {
+      "if": [["flag", "hl_tithe_crown"]],
+      "text": "The Hearthlands' tithe stays the Crown's, four sacks in ten, exactly as it has run for four hundred years.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "hl_tithe_free"]],
+      "text": "The Free Companies run Tithing's tithe now, sacks chalked openly on Sparrow's own board.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "hl_tithe_common"]],
+      "text": "The working Tithe Barn stands open in Tithing, a common store, the living paying what the dead were once denied.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "hl_bargain_broken"]],
+      "text": "Tithing's bargain with its own dead did not hold. Nobody there talks about what that cost, exactly.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "sv_hl_bargained_paid"]],
+      "text": "The Hunger Barn's bargain held a while longer on borrowed coin. Someone will have to keep paying it, eventually."
+    },
+    {
+      "if": [["flag", "sv_hl_bargained_honored"]],
+      "text": "Tithing kept its own bargain at its own cost, and told Marrowgate so plainly."
+    },
+    {
+      "if": [["flag", "sv_hl_rested_kept"]],
+      "text": "The tally-sticks hang plain in Brida's cottage now, read once and kept for anyone who asks again."
+    },
+    {
+      "if": [["flag", "sv_hl_rested_sent"]],
+      "text": "The Hearthlands' names went on to Barrowmere's Keepers' Hall, so more than Tithing remembers them."
+    },
+    {
+      "if": [["flag", "sv_hl_burned_marked"]],
+      "text": "A plain marker stands over the Hunger Barn's ash now, Sister Winnow's doing."
+    },
+    {
+      "if": [["flag", "sv_hl_burned_claimed"]],
+      "text": "A new granary rises where the Hunger Barn burned, the ground's older grief already paved over."
+    },
+    {
+      "if": [["flag", "hl_ledger_hand_known"]],
+      "text": "The almonry's ledger and the barn-reeve's order share one hand. Tithing has stopped pretending the two griefs were separate."
+    },
+    {
+      "if": [["flag", "hl_order_source_loft"]],
+      "text": "The barn-reeve's order came out of his own kept chest. He never could bring himself to burn it either."
+    },
+    {
+      "if": [["flag", "hl_order_source_bailiff"]],
+      "text": "The barn-reeve's order came out of a Crown strongbox, filed as title, same as any theft can be filed away."
+    }
+  ]
+}

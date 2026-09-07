@@ -1,0 +1,98 @@
+{
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 4,
+  "turns": 593,
+  "receipt": "reach.239.593.366.reach_burned.29c83042",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "'the Crown' reputation line stayed frozen at 'unknown to Marrowgate' for all 593 turns, even though I explicitly swore to burn hollows for the Regent, was told '(the Crown +1)' twice in dialogue (Herald Corvane at Last Light; the Marrowgate envoy at Highward when the writ was granted), used the Regent's writ to cross Coldpass and Marrowgate's gate, and finished by burning the Hollow Throne itself — the single most Regent-aligned ending available. The label never once changed to reflect any of that.",
+      "where": "status screen, 'the Crown' line, throughout / confirmed again on the final status after *** WIN ***"
+    },
+    {
+      "sev": "P1",
+      "what": "Companion regard shifts are never flagged in the line where they happen. Promising the reeve to seal the barrow (a direct choice) never said Brother Osk disliked it; I only discovered his regard had already dropped to -1 by checking status many turns later.",
+      "where": "Last Light Square, reeve dialogue 'promise to seal the barrow' vs. later status screen (Party: Brother Osk regard -1)"
+    },
+    {
+      "sev": "P1",
+      "what": "Grief-resolution rooms mix two kinds of options with no visual distinction: some actions are clearly exploratory (loot, lore, side-NPC requests) and some are the actual one-shot ending trigger, but nothing marks which is which until after you've picked it. I resolved both Iron Downs ('speak the truth over the Hundred') and Fenmarch ('ring the saint's bell out over the water') as 'rested' purely by pursuing side-quest dialogue/items, without ever seeing an explicit rest-vs-burn menu the way Thornwold's Gallows Glade or the Kings' Rest presented one.",
+      "where": "The Hundred Gallery — Deep / 'speak the truth over the Hundred'; The Drowned Nave / 'ring the saint's bell out over the water'"
+    },
+    {
+      "sev": "P1",
+      "what": "Three different fire/oil items (a jug of pitch-oil, a cask of Ironbound oil, a skin of Ironbound pitch) were carried the entire game, each flavor-texted for burning a hollow ('meant for burning a hollow clean' / 'meant for burning what won't rest') — none was ever consumed by any burn action. Both hollows I actually burned (the Gallows Glade, the Kings' Rest hearth-stone) resolved through a bare might-check with text like 'You don't wait on pitch,' leaving all three oils sitting unused in the final inventory.",
+      "where": "The Gallows Glade / 'burn it — a failed try costs 1hp (might)'; The Kings' Rest — the Old Court / 'shatter the hearth-stone (might)'"
+    },
+    {
+      "sev": "P2",
+      "what": "At Hunter's Camp, the menu offered 'read the tally marks by the smoke rack (DC 9, wits)' as a distinct action; after asking the hunter about 'the old barrow' (whose reply referenced 'it's in the tally by the rack'), that option silently disappeared from the menu on the next screen without me ever selecting it or seeing any text saying it had been read.",
+      "where": "Hunter's Camp, action 'read the tally marks by the smoke rack'"
+    },
+    {
+      "sev": "P2",
+      "what": "The repeatable grace check 'climb for the scrap (grace, 1hp on fail)' failed four times running (-4hp total) with only 'It can be tried again' as feedback each time — no cap, no rising odds, no hint that stopping might be wiser, so a player can bleed hp indefinitely chasing a minor loot item.",
+      "where": "Crow Perch, action 'climb for the scrap'"
+    },
+    {
+      "sev": "P2",
+      "what": "Every friendly, unmet NPC I later recruited (Vell, Tamsin, Lys) offered an 'attack X with short sword' menu option before a single line of dialogue, phrased identically to genuinely hostile monster attacks; the same option persisted for Brother Osk even after dozens of turns as a loyal party member.",
+      "where": "The Last Light Inn, 'attack Vell with short sword'; Gray Chapel (late game), 'attack Brother Osk with short sword'"
+    },
+    {
+      "sev": "P2",
+      "what": "Taking the free 'plain sword' at the Forge granted a permanent perk (Keen Edge, +1 to hit) but the Combat status line kept showing 'short sword' as the equipped weapon for the rest of the 593-turn game; there is no equip/swap action anywhere, so the second weapon exists purely to trigger its one-time perk and then sits inert.",
+      "where": "The Forge, 'take the plain sword from the wall'; status screen 'Combat:' line thereafter"
+    },
+    {
+      "sev": "P2",
+      "what": "The refusal-ending tag '(no dawn)' on the two kneel options is never defined in any text the player sees at that point — its meaning (a story-ending, no-continuation choice) is only inferable from a separate status line seen much earlier ('Kneeling to the king ends your story').",
+      "where": "Throne of the Barrow, 'kneel and take his place'; The Hollow Throne, 'kneel to the hollow seat'"
+    },
+    {
+      "sev": "P2",
+      "what": "The final epilogue line 'The guard at the gate never once asked your name' sits oddly next to the live text from that same crossing moments earlier, 'One of them will not meet your eye' — the two read as mildly contradictory accounts of the same gate guards' reaction.",
+      "where": "Marrowgate, South Gate (live text) vs. final status epilogue"
+    },
+    {
+      "sev": "P2",
+      "what": "Score hit its hard maximum, 366/366, at turn 517 (right after burning the Kings' Rest in Hollowbrook) — 76 turns and an entire final act (Marrowgate itself) before the story actually ended. Past that point score simply could not register anything else I did.",
+      "where": "status screen, immediately after 'shatter the hearth-stone' at The Kings' Rest — Hollowbrook"
+    },
+    {
+      "sev": "P2",
+      "what": "Reputation labels move in large, unpredictable jumps relative to the individual '(the X ±1)' deltas shown: the Ironbound went 'counted a brother' -> 'despised' (after exposing Preceptor Aldous at Cinderhall) -> back to 'neither friend nor foe' (after one favor at Fenmarch's mission), with no visible threshold a player could use to predict when a label would flip.",
+      "where": "status screen, 'the Ironbound' line, Iron Downs through Fenmarch"
+    }
+  ],
+  "confusions": [
+    "The Kings' Rest, Hollowbrook offered 'lay the Keeper's Key on the hearth-stone' (rest) right next to 'shatter the hearth-stone' (burn) with no third option to simply leave and use the key elsewhere — but the key's own item text later says it also opens 'the pilgrims' stair at Coldpass,' so choosing to burn here may have foreclosed a use I never got to test.",
+    "No room text anywhere states the running tally toward Coldpass (rest 3 / burn 2 / Companies' word) — the only way to track progress is the `status` command; a player relying purely on scene text could lose track of exactly how close they are to unlocking the pass.",
+    "Several side quests I picked up (Berin's Coin Road, the Dark Beacon, the Lost Sentry, Two Keepers-One Covenant, Bray's Watch) were simply left behind at game's end with no epilogue line acknowledging them one way or the other, while a couple of similarly-abandoned threads (the oath-stone at Highward) did get a specific closing line — the game is inconsistent about which loose ends it bothers to resolve narratively.",
+    "The Crown surveyor at Barrowmere offered a real, well-signposted trade-off ('refuse to help him map the dead' costs '(the Crown -1)') between protecting local people and pleasing a literal Crown official — a good moment of nuance, but it complicates a simple 'always side with the Crown' strategy since the game itself treats 'Crown official' and 'locally right' as sometimes opposed.",
+    "Companion approval swung on quest choices that had nothing to do with my main crown-loyalist thread (e.g. helping Cal, exposing Aldous) about as much as it swung on the thread itself (swearing to burn hollows, killing the Hollow King) — so a companion's final regard number reads more like an average of many small choices than a clear verdict on the big ones."
+  ],
+  "suggestions": [
+    "Move 'the Crown' reputation label off 'unknown to Marrowgate' at some point during a playthrough that visibly serves the Regent's stated policy, or explain in text why the Crown stays unreadable even after the Regent's own writ and a burn-clean ending.",
+    "Flag companion regard changes inline, in the same bracketed style as reputation changes, right when the triggering choice is made.",
+    "Give repeatable minor checks (like the crow-perch climb) a visible cap, a rising-odds hint, or a line acknowledging repeated failure, so players know when persistence stops paying off.",
+    "Either have burn actions consume one of the fire-oil items the player is carrying, or drop the 'meant for burning a hollow' flavor text from items that are never actually used by any burn prompt.",
+    "Mark grief-resolution actions that are secretly terminal (ring the bell, speak the truth aloud) with the same '(this settles it)' style warning used at the Barrow Doors and Hollow Throne, even when they aren't phrased as an explicit rest/burn menu.",
+    "Replace the unexplained '(no dawn)' tag with plain language, e.g. '(this ends your story)'.",
+    "Hide 'attack X' options for named NPCs until a relationship has actually turned hostile, instead of offering it identically for every ally and stranger alike.",
+    "Surface the Coldpass-progress tally (hollows rested/burned so far) in ordinary travel or town text, not only in `status`, since it's the central gate for reaching Act 3.",
+    "Reconcile the two guard-reaction lines from the same Marrowgate gate crossing so the live scene and the final epilogue don't read as contradicting each other."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T23-04-06-189Z",
+  "seed": 239,
+  "build": {
+    "rev": "846b6fd",
+    "world": "28db12be"
+  },
+  "cost_usd": null,
+  "verified": true
+}

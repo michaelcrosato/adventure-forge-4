@@ -1,0 +1,57 @@
+{
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 4,
+  "turns": 295,
+  "receipt": "reach.7.295.290.reach_burned.1ed3d80b",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Item/quest hint text in the inventory list does not clear once its prompted action is actually completed, so it keeps telling you to do something you already did. Confirmed twice: 'lean wolf's pelt' and 'gaunt rib-bone' still showed '(the hunter might want to see it)' in a status check well after I had shown both to the hunter; 'the true pardon, unsent' still showed '(...read it where the Company can hear it)' in the status check taken immediately after I had already read it aloud over the Hanged Company.",
+      "where": "status screen / carrying list, Hunter's Camp and Gallows Glade items"
+    },
+    {
+      "sev": "P2",
+      "what": "Most rooms label every exit with its destination, e.g. 'go south (toward the south track)', but The South Track listed bare 'go south' and 'go in' with no destination hint. 'go in' there actually leads backward to Camp Gallows rather than onward to Gullhaven, which cost a wasted turn going the wrong way before I found the correct 'go south' to continue.",
+      "where": "The South Track, Thornwold (route to Saltkerns/Gullhaven)"
+    },
+    {
+      "sev": "P2",
+      "what": "The top-level goal 'rest three griefs (or earn the writ, or buy the Companies' road) to open Coldpass' has no visible numeric progress anywhere, unlike the per-hold verse quests which clearly show 'X/3'. After resolving Thornwold's grief the status screen's 'The Gray' entry just described the same overall condition again with no tally; I only learned a threshold had been crossed when buying the Companies' road announced pass access outright.",
+      "where": "status screen, quest 'The Gray'"
+    },
+    {
+      "sev": "P2",
+      "what": "'Old Court Verses: 0/3 (unexplored: the ring-ditch, the king's causeway, the mere-stone)' is shown on the status screen from turn 1 and stayed at 0/3, completely unexplained, for the entire ~295-turn run - no NPC, notice board, or location I found (including full completion of Act I and a WIN ending) ever mentioned the ring-ditch, the king's causeway, or the mere-stone.",
+      "where": "status screen, present from game start"
+    },
+    {
+      "sev": "P2",
+      "what": "The first Reeve's shade names four ways to resolve the Hollow Throne ('fill it, burn it, sit in it, or read the truth aloud'), but the throne room itself only ever offered two as selectable menu options (burn, via oil the Regent supplies; kneel/sit). 'Fill it' and 'read the truth aloud' were never offered there, and unlike every other locked path in the game (which states 'locked: do X, or Y'), nothing in the throne room said what those two required - reaching 'truth' apparently needed the Founding Ledger fetched earlier from the Hall of Ledgers, with no pointer back to that from the throne.",
+      "where": "The Hollow Throne, Marrowgate"
+    }
+  ],
+  "confusions": [
+    "The deep forest west of Camp Gallows (Thornwold) strings together many visually similar unnamed-feeling 'wood' rooms with no bearings/map aid inside it, so finding the route to 'the gallows glade' meant trial-and-error room-hopping rather than following any signpost, unlike the Vale's watchtower parapet 'get your bearings' option.",
+    "Barrow Field describes 'Ivy chokes a loose-looking stone off to one side' but as a Warden I was never offered any action on it; only much later, in unrelated hunter dialogue, did it become clear it was an alternate (grace/Scout) entrance - in the moment it just read as a dangling, un-actionable detail.",
+    "The Hollow Throne names four endings but only surfaces two without warning which two are locked or why (see bugs) - a player who wanted the 'truth' ending would need advance knowledge to detour through the Hall of Ledgers before ever coming down to the throne."
+  ],
+  "suggestions": [
+    "Clear an item's 'show this to X' / 'read this at Y' hint text once that action is actually completed, instead of leaving it standing indefinitely.",
+    "Annotate every room exit with its destination consistently - a couple of nodes (e.g. The South Track) omit the '(toward X)' hints the rest of the game reliably provides.",
+    "Add a visible 'griefs rested: n/3' counter next to the per-hold verse trackers so progress toward opening Coldpass is as legible as Act I's verse count was.",
+    "Either signpost the Old Court Verses thread somewhere reachable in the Vale, or withhold it from the status screen until it has actually been introduced.",
+    "At the Hollow Throne, list all four endings as visible options (locked where applicable) with what unlocks each, matching how other locked doors in the game already communicate their requirements."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T14-36-42-169Z",
+  "seed": 7,
+  "build": {
+    "rev": "73255e2",
+    "world": "37e9dc1b"
+  },
+  "cost_usd": null,
+  "verified": true
+}

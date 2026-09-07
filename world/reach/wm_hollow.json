@@ -1,0 +1,481 @@
+{
+  "rooms": {
+    "wm_oathstone_approach": {
+      "name": "The Oath-Ground — Approach",
+      "desc": "Rank on rank of standing shapes, watch-gray gone the color of the mist they stand in, banners rotted to threads on their poles. Not one of them turns to look at you. South, rougher ground falls back toward the last cairn.",
+      "brief": "Ranked, unmoving shapes in the mist.",
+      "region": "wm",
+      "exits": { "in": { "to": "wm_oathstone_circle" } },
+      "onEnterOnce": [["set", "wm_oath_found"], ["score", 3], ["xp", 3]],
+      "actions": [
+        {
+          "id": "wm_read_standards",
+          "label": "read what's left of the standards",
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "Company markings, faded past a living man's reading, and under them a single line repeated on every pole: HOLD THE ROAD."]
+          ]
+        }
+      ]
+    },
+    "wm_oathstone_circle": {
+      "name": "The Oath-Ground — Circle",
+      "desc": "A ring of standing stones, and at its center the oath-stone itself, cut with a promise four centuries old. A shade in a captain's cloak turns from the ring to face you — the only one of them, still, who seems to know you're here.",
+      "brief": "The oath-stone, and its captain.",
+      "region": "wm",
+      "landmark": "the oath-stone",
+      "exits": {
+        "out": { "to": "wm_oathstone_approach" },
+        "in": {
+          "to": "wm_oathstone_muster",
+          "if": [["flag", "wm_oath_resolved"]],
+          "lockedMsg": "There's nothing further in until this ground is settled, one way or another.",
+          "hint": "resolve the oath-stone first"
+        }
+      },
+      "variants": [
+        {
+          "if": [["flag", "wm_hollow_rested"]],
+          "desc": "The oath-stone stands bare in its ring. The company that guarded it has stood down at last, one by one, into the grass.",
+          "brief": "The oath-stone, quiet now."
+        },
+        {
+          "if": [["flag", "wm_hollow_bargained"]],
+          "desc": "The oath-stone carries a second oath now, cut fresher than the first. The ring that stood here has traded its old post for a newer one.",
+          "brief": "The oath-stone, sworn anew."
+        },
+        {
+          "if": [["flag", "wm_hollow_burned"]],
+          "desc": "The oath-stone stands scorched black in a ring of ash. Whatever stood watch here is only smoke now, and the smell doesn't lift.",
+          "brief": "The oath-stone, burned."
+        }
+      ],
+      "actions": [
+        {
+          "id": "wm_oath_wits",
+          "label": "puzzle out the old oath (wits)",
+          "if": [["flag", "wm_oath_heard"], ["!flag", "wm_oath_resolved"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "wm_oath_resolved"],
+                ["set", "wm_hollow_rested"],
+                ["addvar", "hollows_rested", 1],
+                ["score", 25],
+                ["xp", 8],
+                ["addvar", "rep_watch", 2],
+                ["addvar", "rep_keepers", 2],
+                ["addvar", "appr_tamsin", 1],
+                ["addvar", "appr_vell", 1],
+                ["npcgo", "wm_oath_captain", null],
+                ["say", "The cuts resolve under a patient eye: not a hero's oath but a soldier's, plain and overdue. You speak it back to the ring, word for word, and the captain finally, fully, stands down."]
+              ],
+              [["say", "The old cuts run together, worn past a quick reading. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "wm_oath_record",
+          "label": "read the true founding record aloud",
+          "if": [["flag", "wm_oath_heard"], ["has", "wm_founding_record"], ["!flag", "wm_oath_resolved"]],
+          "fx": [
+            ["set", "wm_oath_resolved"],
+            ["set", "wm_hollow_rested"],
+            ["addvar", "hollows_rested", 1],
+            ["score", 25],
+            ["xp", 8],
+            ["addvar", "rep_watch", 2],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "appr_tamsin", 1],
+            ["addvar", "appr_vell", 1],
+            ["npcgo", "wm_oath_captain", null],
+            [
+              "if",
+              [["flag", "wm_record_stolen"]],
+              [
+                ["say", "You read the stolen record aloud anyway, and the truth in it doesn't care how it got here. The ring hears its own name spoken honestly, and stands down."]
+              ],
+              [
+                ["say", "You read the record aloud, properly given, properly heard. 'Hold the road till I send word.' No word was ever sent. Now, at least, one was."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "wm_oath_bargain",
+          "label": "swear a new oath over the stone (will)",
+          "if": [["flag", "wm_oath_heard"], ["var", "rep_watch", ">=", 1], ["!flag", "wm_oath_resolved"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "wm_oath_resolved"],
+                ["set", "wm_hollow_bargained"],
+                ["addvar", "hollows_rested", 1],
+                ["addvar", "hollows_bargained", 1],
+                ["score", 20],
+                ["xp", 8],
+                ["addvar", "rep_watch", 2],
+                ["addvar", "rep_iron", -2],
+                ["addvar", "appr_tamsin", 1],
+                ["npcgo", "wm_oath_captain", null],
+                ["say", "You swear a new oath in the old one's place, plain and meant. The ring lowers its standards together, and files off into wherever soldiers go when the watch finally changes."]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "wm_oath_bargain_missed"]],
+                  [
+                    ["set", "wm_oath_bargain_missed"],
+                    ["addvar", "rep_watch", -1],
+                    ["say", "The words come out uneven, half-borrowed, and the ring does not move — word of a botched oath at the old stone reaches Highward before you do."]
+                  ],
+                  [
+                    ["say", "The words come out uneven, half-borrowed. The ring does not move, and does not forgive an oath that isn't whole."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "wm_oath_burn",
+          "label": "put the oath-stone to the torch",
+          "if": [["flag", "wm_oath_heard"], ["has", "wm_oil_flask"], ["!flag", "wm_oath_resolved"]],
+          "fx": [
+            ["move", "wm_oil_flask", "nowhere"],
+            ["set", "wm_oath_resolved"],
+            ["set", "wm_hollow_burned"],
+            ["addvar", "appr_osk", -1],
+            ["addvar", "hollows_burned", 1],
+            ["score", 15],
+            ["xp", 8],
+            ["addvar", "rep_iron", 2],
+            ["addvar", "rep_watch", -2],
+            ["addvar", "appr_vell", -1],
+            ["npcgo", "wm_oath_captain", null],
+            ["say", "The oil catches fast on stone that old, and the whole ring goes with it, standards and all. Whatever they were still guarding, there's nothing left now to guard it from."]
+          ]
+        },
+        {
+          "id": "wm_oath_break",
+          "label": "break the stone — the burn road (might)",
+          "if": [["flag", "wm_oath_heard"], ["!flag", "wm_oath_resolved"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "wm_oath_resolved"],
+                ["set", "wm_hollow_burned"],
+                ["addvar", "appr_osk", -1],
+                ["addvar", "hollows_burned", 1],
+                ["score", 15],
+                ["xp", 8],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_watch", -2],
+                ["addvar", "appr_vell", -1],
+                ["npcgo", "wm_oath_captain", null],
+                ["say", "You put your shoulder to the oath-stone until the old cut face shears clean off. The ring has nothing left to guard, and stands down because there's nothing left to stand for."]
+              ],
+              [
+                ["say", "The stone doesn't give, and your shoulder does. Four centuries of weather have left it harder than you."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "wm_oath_plea",
+          "label": "plead the ring down, plain (will)",
+          "if": [["flag", "wm_oath_heard"], ["!flag", "wm_oath_resolved"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "wm_oath_resolved"],
+                ["set", "wm_hollow_bargained"],
+                ["addvar", "hollows_rested", 1],
+                ["addvar", "hollows_bargained", 1],
+                ["score", 20],
+                ["xp", 8],
+                ["addvar", "rep_watch", 2],
+                ["addvar", "rep_iron", -2],
+                ["addvar", "appr_tamsin", 1],
+                ["npcgo", "wm_oath_captain", null],
+                ["say", "You ask it of them plainly, no standing to back the asking, only the asking itself. The captain studies you a long moment, then lowers the standard anyway. \"Close enough,\" he says, \"to an order.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "wm_oath_plea_missed"]],
+                  [
+                    ["set", "wm_oath_plea_missed"],
+                    ["addvar", "rep_watch", -1],
+                    ["say", "The ring hears you out and does not move — and Highward hears, too, that a plain ask wasn't enough to settle its own old watch."]
+                  ],
+                  [["say", "The ring hears you out and does not move. Whatever it's still waiting on, a plain ask wasn't it."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "wm_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "wm_oath_resolved"]],
+          "fx": [
+            [
+              "if",
+              [["!flag", "wm_oath_heard"]],
+              [
+                ["say", "Nothing here can be settled until the ring is heard out — ask the oath-captain why he still stands."]
+              ],
+              [
+                [
+                  "if",
+                  [["has", "wm_founding_record"]],
+                  [["say", "The rest can be read clean: the true founding record is yours — speak it to the ring."]],
+                  [
+                    ["say", "The rest can be puzzled out by wits alone — or read clean from the true founding record, which Wynne might unseal at the record-house."]
+                  ]
+                ],
+                [
+                  "if",
+                  [["var", "rep_watch", ">=", 1]],
+                  [
+                    ["say", "The bargain stands ready: the Watch trusts you enough (standing 1) to swear a new oath here (will)."]
+                  ],
+                  [
+                    ["say", "The bargain wants the Watch's trust (standing 1) — or plead the ring down on nerve alone (will), risking Highward's opinion."]
+                  ]
+                ],
+                [
+                  "if",
+                  [["has", "wm_oil_flask"]],
+                  [["say", "The burn stands ready: a flask of lamp oil is yours — put it to the stone."]],
+                  [
+                    ["say", "The burn wants a flask of lamp oil — Corporal Fenn, in the barracks, gives it reluctantly — or break the stone by might alone."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "wm_oathstone_muster": {
+      "name": "The Oath-Ground — Muster Hollow",
+      "desc": "A shallow dip behind the ring, out of the wind, where a company once mustered before a watch that never ended. Whatever they carried and couldn't use is still here, waiting on hands that finally are.",
+      "brief": "The old muster hollow.",
+      "region": "wm",
+      "exits": { "out": { "to": "wm_oathstone_circle" } },
+      "variants": [
+        { "if": [["flag", "wm_hollow_rested"]], "brief": "The muster hollow. Quiet, and only quiet, now." },
+        {
+          "if": [["flag", "wm_hollow_bargained"]],
+          "brief": "The muster hollow. New gear stands stacked where the old did."
+        },
+        {
+          "if": [["flag", "wm_hollow_burned"]],
+          "brief": "The muster hollow. Ash has drifted in and settled over everything."
+        }
+      ],
+      "actions": [
+        {
+          "id": "wm_muster_search",
+          "label": "search the muster hollow",
+          "once": true,
+          "fx": [
+            ["move", "wm_oath_seal", "inv"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "gold", 5],
+            ["say", "Under a fold of rotted canvas: a captain's seal-ring, four centuries out of date, and a handful of coin nobody left to spend."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "wm_oath_seal": {
+      "name": "an old captain's seal-ring",
+      "loc": "nowhere",
+      "hint": "the Founding's own mark — a curiosity now, nothing more"
+    }
+  },
+  "npcs": {
+    "wm_oath_captain": {
+      "name": "the oath-captain",
+      "room": "wm_oathstone_circle",
+      "dialogue": true,
+      "desc": "Cloak and rank both gone gray past telling, standing the way a man stands who has forgotten how to sit.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who commands this ring",
+          "once": true,
+          "say": "Captain of the Watch, or was, before the Watch was a word anyone used. We were left here. We are still here.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "grieve",
+          "label": "why do you still stand",
+          "if": [["flag", "said_wm_oath_captain_greet"]],
+          "once": true,
+          "say": "We swore to hold this road while the king carried his crown south, and to stand until he sent word we could stand down. No word ever came. We have been waiting on it since.",
+          "fx": [["set", "wm_oath_heard"], ["score", 5], ["xp", 3]]
+        },
+        {
+          "id": "theft",
+          "label": "the crown he carried",
+          "if": [["flag", "wm_oath_heard"]],
+          "once": true,
+          "say": "His own blood, we heard after, though by then we'd stopped hearing much of anything new. A theft dressed as an inheritance. We held the road for it anyway. That was the oath, not the reason.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "bye",
+          "label": "step back from the ring",
+          "say": "We are in no hurry. We have had four hundred years to learn to wait.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "quests": {
+    "wm_q_founding": {
+      "name": "The Oath That Never Ended",
+      "start": [["flag", "wm_gate_notice_2"]],
+      "done": [["flag", "wm_oath_resolved"]],
+      "stages": [
+        {
+          "if": [["flag", "wm_oath_heard"]],
+          "text": "Rest it, bargain it, or burn it — the choice at the oath-stone is yours to make now."
+        },
+        {
+          "if": [["flag", "wm_oath_found"]],
+          "text": "You've found the ring of standing men on the moor. Something there still waits to be heard out."
+        },
+        {
+          "if": [["flag", "wm_gate_notice_2"]],
+          "text": "The oath-stone: north from Highward to the moor's top (four stands), one east to the Last Cairn, then north."
+        },
+        {
+          "if": [],
+          "text": "Serve Highward long enough and you'll hear of the oath the Watch still keeps somewhere out on the moor."
+        }
+      ]
+    },
+    "wm_q_record": {
+      "name": "What the Roster Doesn't Say",
+      "start": [["flag", "wm_founding_known"]],
+      "done": [["has", "wm_founding_record"]],
+      "stages": [
+        {
+          "if": [["has", "wm_founding_record"]],
+          "text": "The record is yours. Read it at the oath-stone: four stands north of Highward, one east (the Last Cairn), then north."
+        },
+        {
+          "if": [["flag", "wm_founding_known"]],
+          "text": "Wynne named what's truly sealed here. Persuade her, win the Captain-General's leave, or take it yourself."
+        },
+        {
+          "if": [],
+          "text": "The record-house, east of the hall, keeps more than dust — ask Wynne the right question."
+        }
+      ]
+    },
+    "wm_q_writ": {
+      "name": "The Regent's Commission",
+      "start": [["flag", "said_wm_envoy_greet"]],
+      "done": [["flag", "regent_writ"]],
+      "stages": [
+        {
+          "if": [["var", "hollows_burned", ">=", 1]],
+          "text": "Word of a burned hollow travels fast. The envoy in the hall will have the writ ready."
+        },
+        {
+          "if": [["var", "rep_watch", ">=", 2]],
+          "text": "Twice over you've served this Watch. Claim the writ from the envoy in the hall."
+        },
+        {
+          "if": [["var", "rep_watch", ">=", 1]],
+          "text": "You've served the Watch once. Once more — or a hollow burned anywhere in the Reach — earns the writ."
+        },
+        {
+          "if": [],
+          "text": "The envoy in the hall trades the Regent's writ for service to the Watch, twice over, or a hollow's ashes."
+        }
+      ]
+    },
+    "wm_q_beacon": {
+      "name": "The Dark Beacon",
+      "start": [["flag", "wm_beacon_known"]],
+      "done": [["any", [["flag", "wm_beacon_lit"], ["flag", "wm_beacon_reported"]]]],
+      "stages": [
+        {
+          "if": [],
+          "text": "Sergeant Hale wants the beacon on the moor lit again, or honestly written off — a hill past the waystation."
+        }
+      ]
+    },
+    "wm_q_wights": {
+      "name": "The Lost Sentry",
+      "start": [["flag", "wm_wight_known"]],
+      "done": [["flag", "wm_wight_task_done"]],
+      "stages": [
+        {
+          "if": [],
+          "text": "The Lost Sentry paces Boot-Track Hollow — north from Highward past the Cairn Field and Twin Ruts, then east."
+        }
+      ]
+    }
+  },
+  "epilogue": [
+    {
+      "if": [["flag", "wm_hollow_rested"]],
+      "text": "On the moor the oath-stone stands bare. Highward drills again, and for once knows exactly what it swore to.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "wm_hollow_bargained"]],
+      "text": "The Watch swore a new oath over the old stone. The dead stood down; the living took their place, plainly.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "wm_hollow_burned"]],
+      "text": "The oath-stone is ash and scorched rock. Half of Highward calls it mercy. The other half won't say your name.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "wm_entered"], ["!flag", "wm_oath_resolved"]],
+      "text": "The oath-stone still stands on the moor, and the old guard with it, waiting on a word that was never going to come."
+    },
+    {
+      "if": [["flag", "wm_record_stolen"]],
+      "text": "The record-house keeps a gap on one shelf where the truth used to sit. The archivist has her suspicions, and keeps them."
+    },
+    {
+      "if": [["flag", "wm_beacon_lit"]],
+      "text": "The beacon on the moor burns again on clear nights, a small stubborn fire against a great deal of gray."
+    },
+    {
+      "if": [["flag", "regent_writ"], ["flag", "said_wm_envoy_greet"]],
+      "text": "Highward's envoy still keeps his ledger. Somewhere in it, your name sits beside the Regent's writ."
+    },
+    {
+      "if": [["flag", "wm_wight_task_done"]],
+      "text": "The moor is one boot-step quieter now. Sergeant Hale still watches the mist, out of habit more than need."
+    }
+  ]
+}

@@ -20,6 +20,8 @@ const worlds: World[] = readdirSync(dir)
 function checks(fxs: Fx[] | undefined): Extract<Fx, [op: "check", ...rest: unknown[]]>[] {
   const out: Extract<Fx, [op: "check", ...rest: unknown[]]>[] = [];
   for (const fx of fxs ?? []) {
+    if (fx[0] === "if") out.push(...checks(fx[2]), ...checks(fx[3]));
+    if (fx[0] === "chance") out.push(...checks(fx[2]), ...checks(fx[3]));
     if (fx[0] !== "check") continue;
     out.push(fx);
     out.push(...checks(fx[3]), ...checks(fx[4]));

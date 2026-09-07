@@ -1,0 +1,110 @@
+{
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 3,
+  "turns": 305,
+  "receipt": "reach.349.305.315.regent_deposed.e576a5e6",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The Last Light Square notice board, when read, gives the exact solution to Act 1 verbatim ('Three verses were cut for him — sunken shrine, old watchtower (east of the wood), the barrow's hall. Speak them and he sleeps.'), but the opening bearings at Village Gate never suggest visiting the village before the barrow, and the intro text points straight at 'the barrow on the hill.' I did not find the board until turn ~68, long after solving Act 1 by trial and error.",
+      "where": "Last Light Square / 'read the notice board'"
+    },
+    {
+      "sev": "P1",
+      "what": "'work the loose stone by the ivy (wits)' at the barrow door shows a normal DC/roll UI (DC 11, roll 10+ succeeds) but returns the identical failure line ('There is a trick to it you have not found') on every attempt regardless of the die shown, strongly implying the check cannot succeed at all until the hunter's hint is obtained. The UI should not present it as a live probability check if it is actually gated by a missing flag.",
+      "where": "Barrow Field / 'work the loose stone by the ivy'"
+    },
+    {
+      "sev": "P1",
+      "what": "'press the king's grievance (will)' at the Elder's House failed its shown die roll three times in a row (2, 7, 7 vs DC 11) yet succeeded anyway on the third try ('Patience does what a quick word could not'), meaning the displayed dice mechanic did not actually determine the outcome. The roll/DC framing misleads the player about how the check resolves.",
+      "where": "Elder's House / 'press the king's grievance'"
+    },
+    {
+      "sev": "P1",
+      "what": "After peacefully resolving Rook via the Scout-only option (quest 'The Rope Larder' marked Done), Rook still shows as '(hostile, holds its ground, hp8/8)' in the room, and the 'travel to a known place' fast-travel option disappears entirely from that room's menu — it is present in every adjacent room, before the resolution, and one step away at Fox Crossing. Forced a manual walk back out instead of a fast travel.",
+      "where": "The Rope Larder / room menu after resolving Rook"
+    },
+    {
+      "sev": "P1",
+      "what": "Captain Vane's quest text said 'do right by the Free Companies, then ask her about the road,' but immediately after resolving Rook (the exact favor she named) and returning to ask again, she repeated her original Rook briefing verbatim with no new option — the unlock only actually appeared later, after completing the unrelated, larger 'Hanged Company' quest. Cost a return trip (~9 turns) that produced nothing.",
+      "where": "Captain Vane's Tent / 'the poacher skimming your tolls'"
+    },
+    {
+      "sev": "P2",
+      "what": "'The Wreckers' Roost' quest text reads 'a palisade east along the shore from the quay, past the dunes,' but the literal east exit from the Quay leads to 'Saltkerns Coast Road' toward Fenmarch — a different hold entirely, with no dunes or roost anywhere on it. Never located the actual Roost in the time spent.",
+      "where": "The Quay, Gullhaven / 'go east (toward the coast road)'"
+    },
+    {
+      "sev": "P2",
+      "what": "'get your bearings' at Camp Gallows returned a wall of unfamiliar sub-location names (Understory, Maud's hut, Denhollow, Long Watch, Cutter's Barrow, Rook) with relative directions between them, but none of it mapped onto the room's own compass exits (E/N/S/W/In) the way the Vale's bearings cleanly did. Read as noise rather than a usable bearing.",
+      "where": "Camp Gallows — Palisade Gate / 'get your bearings'"
+    },
+    {
+      "sev": "P2",
+      "what": "Talking to Lys at The Rope Larder (right after peacefully resolving Rook) offered 'tell her to go to him himself' and 'call her brother a deserter' — dialogue that reads as belonging to the earlier Cal/Camp Gallows conversation, not the scene we were actually in (standing next to Rook).",
+      "where": "The Rope Larder / 'talk to Lys'"
+    },
+    {
+      "sev": "P2",
+      "what": "The top-level status 'road' recap line stayed frozen on generic Coldpass-unlock text ('opens on three hollows rested... or Free Companies' word') through several real objective changes, and never mentioned the better 'Smugglers' Road' shortcut once it was secured; had to infer next steps from NPC dialogue rather than the recap meant to summarize them.",
+      "where": "status / 'The road' line, Thornwold-to-Coldpass stretch"
+    },
+    {
+      "sev": "P2",
+      "what": "Saltkerns/Gullhaven opened five side quests in about 35 turns (Lost Fleet, Wreckers' Roost, Salt-Pan Hermit, Missing Nets, Passage Under the Pass) with no signal of which, if any, mattered to 'resting' that hollow versus pure flavor, making it hard to judge whether to keep pulling threads or move on.",
+      "where": "Gullhaven (Quay/High Street) / multiple quest pickups"
+    },
+    {
+      "sev": "P2",
+      "what": "Act 3's opening recap lists 'sit in it with a crown' as an ending path but never flags, anywhere in the journal, that the Vale side-quest crown (obtained ~150 turns earlier, in Act 1's Elder's House) is the very item that satisfies it — no 'this may matter later' marker the way other quest items get.",
+      "where": "status / Act 3 recap vs. carried 'iron crown'"
+    },
+    {
+      "sev": "P1",
+      "what": "The honour guard in the Old Crypts attacks the instant you enter with no warning beat, and its offered peaceful option ('speak the old rest-rite,' a will check) fails at even odds with no indication that a miss makes it immediately attack a party member rather than the player — Lys dropped from full to 4/10 hp on the one failed attempt.",
+      "where": "The Old Crypts / 'speak the old rest-rite at it'"
+    },
+    {
+      "sev": "P2",
+      "what": "'Cal's Reckoning' offers 'clear his debt at the wagon' as a live resolution option, but by the time the quest is reachable the game has given no prior chance to earn gold, so the option is dead on arrival (we had 0 gold) with no signpost that it would need advance preparation.",
+      "where": "The Scout Line / Cal's Reckoning quest options"
+    },
+    {
+      "sev": "P2",
+      "what": "Reputation-gated free unlocks (Mother Ysme opening the pilgrims' door, Archivist Penn handing over the founding ledger and the barred-stair key, all with zero dice) were a highlight of Marrowgate, but nothing comparable exists in Acts 1-2 — nearly every gate there was a pure skill roll even when standing with a faction (e.g. Barrow-Keepers, Free Companies) was already high, so the payoff for reputation felt backloaded rather than consistent."
+    }
+  ],
+  "confusions": [
+    "The single most valuable piece of Act 1 guidance (all three verse locations, spelled out) sits on a notice board in Last Light Square, a location the opening bearings never point you toward before sending you into the Ashwood.",
+    "The barrow-door 'loose stone' check reads as a normal percentage roll but is actually unwinnable without first getting the hunter's hint — nothing distinguishes 'this check can never succeed yet' from a normal hard check.",
+    "Rook's 'hostile' tag and the loss of fast-travel from his room persisted after his questline was marked Done, making that one location feel still-dangerous/locked when it wasn't.",
+    "Captain Vane's stated unlock condition for the Smugglers' Road ('do right by the Free Companies') did not actually unlock the option when met; a second, unstated quest had to be finished first.",
+    "Wreckers' Roost's stated direction ('east along the shore... past the dunes') does not match what lies east of the Quay in-game.",
+    "The status 'road' recap does not update to reflect a newly secured shortcut (Smugglers' Road) even after it replaces the objective it was describing.",
+    "No in-fiction signal exists for which of Saltkerns' five simultaneously-opened side quests are load-bearing to the hold's resolution versus optional color.",
+    "Nothing in the journal retroactively flags that an early Act 1 item (the Vale's iron crown) is one of only four ways to end the entire game at Marrowgate."
+  ],
+  "suggestions": [
+    "Have the Village Gate's opening bearings (or the Act 1 recap) explicitly mention Last Light Square's notice board, since it contains the full verse-location solution.",
+    "Gray out or relabel skill-check options that cannot succeed without a prerequisite hint, rather than showing a live DC/roll that always fails with identical flavor text.",
+    "Make 'persistence' checks (like the elder's coffer) visually distinct from real dice checks, or have the shown roll actually matter, so players aren't misled about why they succeeded.",
+    "Clear an NPC's 'hostile' tag and restore fast-travel the same turn their questline resolves peacefully.",
+    "When a favor-for-trust exchange (Vane/Rook) doesn't immediately unlock the promised reward, say so explicitly ('word hasn't reached her yet') instead of replaying the original briefing verbatim.",
+    "Audit quest direction text against actual room exits — Wreckers' Roost and the Camp Gallows bearings both pointed away from where the destination actually is.",
+    "Update the status 'road' line whenever the underlying objective is satisfied by an alternate route, not just when the originally-listed route is taken.",
+    "Add a one-line marker in the journal when an obtained item will matter for an ending path later, the way quest-relevant items already get a description hint.",
+    "Warn before or during the honour-guard peaceful check that failure damages a companion, not the player, so the risk is legible before choosing it."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T06-07-59-826Z",
+  "seed": 349,
+  "build": {
+    "rev": "d9445f5",
+    "world": "22330ff2"
+  },
+  "cost_usd": null,
+  "verified": true
+}

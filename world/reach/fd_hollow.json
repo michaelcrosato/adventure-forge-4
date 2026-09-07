@@ -1,0 +1,480 @@
+{
+  "rooms": {
+    "fd_nave_approach": {
+      "name": "The Nave's Threshold",
+      "desc": "Broken roof-slates form an unsteady path out over black water toward the sunk chapel. The singing is clearer here, though still more felt than heard — voices layered on voices, none of them alone.",
+      "brief": "A broken path over black water.",
+      "region": "fd",
+      "landmark": "the drowned nave",
+      "exits": { "in": { "to": "fd_drowned_nave" } },
+      "onEnterOnce": [
+        ["xp", 3],
+        ["say", "This close, there's no mistaking it for wind or water. Something down there is still keeping time."]
+      ]
+    },
+    "fd_drowned_nave": {
+      "name": "The Drowned Nave",
+      "desc": "Pews stand underwater in ranks, straight as the day they were set. The congregation is here still, more felt than seen beneath black water, singing low and unhurried, in no rush to be done.",
+      "brief": "Pews underwater, the congregation singing.",
+      "region": "fd",
+      "exits": {
+        "out": { "to": "fd_nave_approach" },
+        "down": {
+          "to": "fd_font",
+          "if": [["flag", "fd_hollow_done"]],
+          "lockedMsg": "The water's too disturbed, still, to see anything beneath it.",
+          "hint": "settle the congregation first"
+        }
+      },
+      "onEnterOnce": [
+        ["set", "osk_family_found"],
+        ["score", 5],
+        ["xp", 4],
+        ["say", "This is the drowned congregation Reedholm doesn't speak of at dusk. Rows of pews, straight as the day they were set, and a shape more felt than seen beneath the black water, singing."],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Brother Osk: \"I know that hymn. My mother used to sing it. I didn't think I'd hear it again, not like this.\""]
+          ],
+          []
+        ]
+      ],
+      "variants": [
+        {
+          "if": [["flag", "fd_hollow_rested"]],
+          "desc": "Pews stand underwater in ranks, quiet now. The black water has gone merely dark, and nothing sings under it any longer.",
+          "brief": "Pews underwater, quiet now."
+        },
+        {
+          "if": [["flag", "fd_hollow_bargained"]],
+          "desc": "Pews stand underwater in ranks. The singing has thinned to something almost peaceful — not gone, but no longer grieving quite so loud.",
+          "brief": "Pews underwater, quieter now."
+        },
+        {
+          "if": [["flag", "fd_hollow_burned"]],
+          "desc": "Char and ash float on water gone still and black. Nothing sings here anymore. Nothing at all.",
+          "brief": "Ash on still water."
+        }
+      ],
+      "actions": [
+        {
+          "id": "fd_dive_bell",
+          "label": "dive for the sunken bell (grace)",
+          "if": [["!has", "fd_saint_bell"], ["!flag", "fd_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              9,
+              [
+                ["move", "fd_saint_bell", "inv"],
+                ["xp", 3],
+                ["say", "You go down between the pews and find it by feel: a bell, green with years underwater, still whole. It comes free easier than you expected."]
+              ],
+              [["say", "The water's colder than it looks and your hands find nothing but silt. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "fd_reason_bell",
+          "label": "guess where the bell would hang (wits)",
+          "if": [["!has", "fd_saint_bell"], ["!flag", "fd_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["move", "fd_saint_bell", "inv"],
+                ["xp", 3],
+                ["say", "A nave this size, the bell would hang square behind the door, not over the altar. You wade straight to it and haul it up without wasting a dive."]
+              ],
+              [["say", "Your reasoning holds up right until your hands close on empty water. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "fd_rope_bell",
+          "label": "haul for the bell with the rope",
+          "if": [["has", "fd_tarred_rope"], ["!has", "fd_saint_bell"], ["!flag", "fd_hollow_done"]],
+          "once": true,
+          "fx": [
+            ["move", "fd_saint_bell", "inv"],
+            ["xp", 3],
+            ["say", "The rope holds where your hands wouldn't have. Whatever's down there gives up the bell without much of a fight."]
+          ]
+        },
+        {
+          "id": "fd_ring_bell",
+          "label": "ring the saint's bell out over the water",
+          "if": [["has", "fd_saint_bell"], ["!flag", "fd_hollow_done"]],
+          "fx": [
+            ["set", "fd_hollow_rested"],
+            ["set", "fd_hollow_done"],
+            ["set", "osk_family_rested"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_church", 2],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_osk", 1],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "The bell's note goes out over the water and doesn't come back the way it went. The singing under the pews rises once, gently, and then simply isn't there anymore."]
+          ]
+        },
+        {
+          "id": "fd_confess_bell",
+          "label": "speak Halm's confession over the water",
+          "if": [["flag", "fd_prior_confessed"], ["!flag", "fd_hollow_done"]],
+          "fx": [
+            ["set", "fd_hollow_rested"],
+            ["set", "fd_hollow_done"],
+            ["set", "osk_family_rested"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_church", 1],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_osk", 1],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You say it plain, the Prior's own admission, out over the water where they can hear it: they prayed instead of ringing the bell. The singing catches, breaks, and finally stops."]
+          ]
+        },
+        {
+          "id": "fd_tithe",
+          "label": "promise the water a tithe (will)",
+          "if": [["!flag", "fd_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "fd_hollow_bargained"],
+                ["set", "fd_hollow_done"],
+                ["set", "osk_family_rested"],
+                ["addvar", "hollows_rested", 1],
+                ["addvar", "hollows_bargained", 1],
+                ["addvar", "rep_church", 1],
+                ["addvar", "rep_iron", -1],
+                ["addvar", "appr_osk", 1],
+                ["score", 20],
+                ["xp", 8],
+                ["say", "You promise it plainly, a tenth of every catch, every year, for as long as Reedholm nets an eel. The singing doesn't stop, but it eases, like a debt finally acknowledged."]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "fd_tithe_missed"]],
+                  [
+                    ["set", "fd_tithe_missed"],
+                    ["addvar", "rep_church", -1],
+                    ["say", "The words land wrong, too quick to mean enough — and Fenmarch's own church hears a stranger tried to bargain with its drowned and failed. It can be tried again."]
+                  ],
+                  [
+                    ["say", "The words leave your mouth and land wrong somehow — too quick, or not meant enough. The water doesn't take the bargain. It can be tried again."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_burn_nave",
+          "label": "put the water to the torch — 1hp risk",
+          "if": [["has", "fd_pitch"], ["!flag", "fd_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              8,
+              [
+                ["set", "fd_hollow_burned"],
+                ["set", "fd_hollow_done"],
+                ["set", "osk_family_burned"],
+                ["addvar", "hollows_burned", 1],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_church", -2],
+                ["addvar", "appr_osk", -2],
+                ["score", 15],
+                ["xp", 8],
+                ["move", "fd_pitch", "nowhere"],
+                ["say", "Pitch spreads black on the black water and takes the torch eager. Fire runs the whole nave in a breath, and the singing goes out with it, all at once, and does not come back."]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The pitch catches wrong, flaring back at you before it's spread. You're driven back a step, singed and short one attempt's worth of nerve."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_letter_water",
+          "label": "give the letter to the black water",
+          "if": [["has", "th_letter"]],
+          "once": true,
+          "fx": [
+            ["move", "th_letter", "nowhere"],
+            ["set", "rb_th_fd_water"],
+            ["addvar", "rep_keepers", 1],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "You lay the letter on the black water and it sinks before the ink can run. Whatever grief it carried joins the rest down here, uncounted and, at last, unhurried."]
+          ]
+        },
+        {
+          "id": "fd_speak_of_flood",
+          "label": "say what you learned of the flood",
+          "if": [
+            ["flag", "fd_knows_hollow"],
+            ["!flag", "fd_hollow_bargained"],
+            ["!flag", "fd_hollow_burned"],
+            ["!flag", "fd_hollow_done"],
+            ["!flag", "fd_hollow_rested"]
+          ],
+          "once": true,
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "fd_knows_sexton_hint"]],
+              [
+                ["say", "You say it whole, out over the water: the Priory prayed instead of ringing the bell, twenty years gone — and the Prior who let it happen was barely more than a boy, watching, not choosing. The singing doesn't stop."]
+              ],
+              [
+                ["say", "You say it plain, over the water: the Priory prayed instead of ringing the warning, twenty years gone, same as everyone down there already knows. The singing doesn't change, but someone finally said it where they'd hear."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "fd_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "fd_hollow_done"]],
+          "fx": [
+            [
+              "if",
+              [["has", "fd_saint_bell"]],
+              [["say", "The rest stands ready: the saint's bell is yours — ring it out over the water."]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "fd_prior_confessed"]],
+              [["say", "The rest stands ready: Prior Halm's own confession is yours — speak it over the water."]],
+              []
+            ],
+            [
+              "if",
+              [["!has", "fd_saint_bell"], ["!flag", "fd_prior_confessed"]],
+              [
+                ["say", "The rest still wants the saint's bell — dive, reason it out, or haul with tarred rope from the drying racks — or Halm's confession, pressed after the cloister's tablet."]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["has", "fd_pitch"]],
+              [["say", "The burn stands ready: Warder Iss's pitch is yours, from the Ironbound mission on Stilt Row."]],
+              [
+                ["say", "The burn wants a skin of Ironbound pitch — Warder Iss gives it, at the mission on Stilt Row, to those who side with her."]
+              ]
+            ],
+            ["say", "The water's tithe can be sworn now (will) — no finding needed, though a botched vow costs the church's trust."]
+          ]
+        }
+      ]
+    },
+    "fd_font": {
+      "name": "The Drowned Font",
+      "desc": "A stone font, tipped on its side, sits in a foot of clearing water beneath the nave. Whatever the water was hiding is easier to see now that it's stopped grieving so loudly.",
+      "brief": "A tipped font, clearer water.",
+      "region": "fd",
+      "exits": { "up": { "to": "fd_drowned_nave" } },
+      "actions": [
+        {
+          "id": "fd_search_font",
+          "label": "search the clearing water",
+          "once": true,
+          "fx": [
+            ["move", "fd_grief_token", "inv"],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "Silt gives up a name-carved buckle, black with years underwater. Someone in Reedholm might still want to know it was found."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "fd_saint_bell": {
+      "name": "the saint's bell",
+      "loc": "nowhere",
+      "hint": "ring it where the grief is loudest",
+      "variants": [{ "if": [["flag", "fd_hollow_done"]], "hint": "" }]
+    },
+    "fd_grief_token": {
+      "name": "a name-carved buckle",
+      "loc": "nowhere",
+      "hint": "Mara, on Stilt Row, would want to know this was found",
+      "variants": [{ "if": [["flag", "fd_mara_closure"]], "hint": "" }]
+    }
+  },
+  "quests": {
+    "fd_q_congregation": {
+      "name": "The Drowned Congregation",
+      "start": [["flag", "fd_entered"]],
+      "done": [["any", [["flag", "fd_hollow_rested"], ["flag", "fd_hollow_bargained"], ["flag", "fd_hollow_burned"]]]],
+      "stages": [
+        {
+          "if": [["flag", "fd_hollow_bargained"]],
+          "text": "The water took the tithe. Quieter now, not gone — Reedholm pays it every year from here on."
+        },
+        {
+          "if": [["flag", "osk_family_found"]],
+          "text": "The drowned nave is found, deep in the fens. Rest them, bargain with the water, or burn it — your choice."
+        },
+        {
+          "if": [["flag", "fd_entered"]],
+          "text": "Something sings under the water at dusk. Ask in Reedholm, then out onto the fen: two stands west, then in."
+        },
+        { "if": [], "text": "Fenmarch's grief waits somewhere in its fens." }
+      ]
+    },
+    "fd_q_confession": {
+      "name": "What the Priory Won't Say",
+      "start": [["flag", "fd_read_tablet"]],
+      "done": [["flag", "fd_prior_confessed"]],
+      "stages": [
+        {
+          "if": [["flag", "fd_prior_confessed"]],
+          "text": "Halm admitted it. The water may hear the truth as clearly as any bell, at the drowned nave."
+        },
+        {
+          "if": [["flag", "fd_read_tablet"]],
+          "text": "A grave-tablet in the Priory's cloister hints at a hidden fault. Press Prior Halm on it."
+        },
+        { "if": [], "text": "Something about the flood doesn't add up. The Priory's cloister might know more." }
+      ]
+    },
+    "fd_q_ironbound": {
+      "name": "The Mission's Order",
+      "start": [["flag", "fd_knows_ironbound_plan"]],
+      "done": [
+        [
+          "any",
+          [
+            ["flag", "fd_ironbound_sided"],
+            ["flag", "fd_ironbound_refused"],
+            ["flag", "fd_ironbound_exposed"],
+            ["flag", "fd_hollow_done"]
+          ]
+        ]
+      ],
+      "stages": [
+        {
+          "if": [["flag", "fd_ironbound_exposed"]],
+          "text": "You told the Priory. The Ironbound were walked off Stilt Row; their camp is cold."
+        },
+        {
+          "if": [["flag", "fd_ironbound_refused"]],
+          "text": "You turned the Ironbound down. They're still camped on Stilt Row, waiting on someone less scrupulous."
+        },
+        {
+          "if": [["flag", "fd_ironbound_sided"]],
+          "text": "You took their pitch. The nave will burn, if you carry it there."
+        },
+        {
+          "if": [["flag", "fd_knows_ironbound_plan"]],
+          "text": "The Ironbound mean to burn the drowned nave. Side with them, refuse, or tell the Priory what they intend."
+        },
+        { "if": [], "text": "Two Ironbound zealots have made camp somewhere in Reedholm." }
+      ]
+    },
+    "fd_q_kin": {
+      "name": "Mara's Husband",
+      "start": [["flag", "fd_mara_asked"]],
+      "done": [["any", [["flag", "fd_mara_told_truth"], ["flag", "fd_mara_lied"]]]],
+      "stages": [
+        {
+          "if": [["flag", "fd_mara_closure"]],
+          "text": "Mara has her answer, one way or another. The row is quieter for it."
+        },
+        {
+          "if": [["has", "fd_grief_token"]],
+          "text": "You found something of her husband's in the drowned nave. Bring it to Mara on Stilt Row."
+        },
+        {
+          "if": [["flag", "fd_mara_asked"]],
+          "text": "Mara's husband never came home from the flood. If the drowned nave holds anything of his, she wants to know."
+        },
+        { "if": [], "text": "A woman on Stilt Row still watches the water some evenings." }
+      ]
+    },
+    "fd_q_bog": {
+      "name": "Something in the Reed-Cuts",
+      "start": [["flag", "fd_bog_bounty"]],
+      "done": [["flag", "fd_bog_paid"]],
+      "stages": [
+        {
+          "if": [["flag", "fd_bog_charm_paid"], ["!has", "fd_bog_hide"]],
+          "text": "The trader paid for the charm, but a bog-thing still tears her traps by the Eel-Run. Its hide would end it."
+        },
+        {
+          "if": [["any", [["has", "fd_bog_hide"], ["has", "fd_eelrun_loot"]]]],
+          "text": "You have proof from the fens. The eel-trader in Reedholm pays for either kind — bring it to her."
+        },
+        {
+          "if": [["flag", "fd_bog_bounty"]],
+          "text": "A bog-thing tears traps near the Eel-Run — one stand west, one south of the landing. Kill it, or raid its den for proof."
+        },
+        { "if": [], "text": "The eel-market's traps keep coming back torn." }
+      ]
+    },
+    "fd_q_buckle": {
+      "name": "A Name on a Buckle",
+      "start": [["has", "fd_grief_token"]],
+      "done": [["flag", "fd_mara_closure"]],
+      "stages": [{ "if": [], "text": "Mara, on Stilt Row in Reedholm, would want to know the name-carved buckle was found." }]
+    }
+  },
+  "epilogue": [
+    {
+      "if": [["flag", "fd_hollow_rested"]],
+      "text": "The drowned nave went quiet for good. Reedholm rings a bell out over the water some evenings, just to be sure.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "fd_hollow_bargained"], ["!flag", "fd_bargain_broken"]],
+      "text": "Reedholm pays its yearly tithe without complaint. The singing is quieter, not gone, and nobody minds much either way.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "fd_hollow_burned"]],
+      "text": "Smoke hung over Reedholm a week after the nave burned. The Priory has not forgiven it, and does not expect to.",
+      "weight": 2
+    },
+    {
+      "if": [
+        ["flag", "fd_entered"],
+        ["!flag", "fd_hollow_rested"],
+        ["!flag", "fd_hollow_bargained"],
+        ["!flag", "fd_hollow_burned"]
+      ],
+      "text": "The singing under the water was never answered. It's still there some dusks, if you know to listen.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "fd_prior_confessed"]],
+      "text": "Prior Halm still tends the one clear grave-tablet in the cloister, though he no longer needs reminding what it says."
+    },
+    {
+      "if": [["flag", "fd_mara_told_truth"]],
+      "text": "Mara keeps a name-carved buckle on her sill now, and has stopped watching the water each evening."
+    },
+    {
+      "if": [["flag", "fd_mara_lied"]],
+      "text": "Mara believes her husband found peace. She never learned otherwise, and Reedholm let her keep believing it."
+    }
+  ]
+}

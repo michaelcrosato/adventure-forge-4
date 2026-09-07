@@ -1,0 +1,21 @@
+{
+  "id": "parts",
+  "title": "Parts",
+  "intro": "A world in pieces.",
+  "start": "home",
+  "hp": 10,
+  "maxScore": 5,
+  "include": ["regions/*.json", "extra.json"],
+  "rooms": {
+    "home": {
+      "name": "Home",
+      "desc": "Home.",
+      "landmark": "home",
+      "region": "core",
+      "exits": { "east": { "to": "field" } },
+      "actions": [{ "id": "win", "label": "win", "fx": [["score", 5], ["end", "win", "done", "Done."]] }]
+    }
+  },
+  "regions": { "core": { "name": "the Core" } },
+  "walkthrough": ["win"]
+}

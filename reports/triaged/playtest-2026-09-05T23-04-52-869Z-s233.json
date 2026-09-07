@@ -1,0 +1,100 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 590,
+  "receipt": "reach.233.590.366.reach_at_rest.414102cb",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The oath-stone's might-check option 'break the stone by main strength' reads like a forceful-entry attempt, but it is actually the hollow's destructive 'burn' resolution — permanent, costs Watch reputation (-2), and triggers 'Vell disapproves' — with none of the explicit 'burn' framing used elsewhere (e.g. the Ironbound Mission's plain 'burn it' choice). I picked it after two failed peaceful attempts, not realizing it would end the encounter destructively rather than just being a third skill-check attempt.",
+      "where": "The Oath-Ground — Circle / 'break the stone by main strength'"
+    },
+    {
+      "sev": "P1",
+      "what": "Failing 'plead the ring down, plain' and 'swear a new oath over the stone' at the same oath-stone each printed '(the Watch -1)' with no prior warning in the menu — unlike risky checks elsewhere that say 'a fail costs 1hp' up front, and unlike the wits check at the same spot ('puzzle out the old oath') which failed for free and said 'it can be tried again.'",
+      "where": "The Oath-Ground — Circle / 'plead the ring down, plain', 'swear a new oath over the stone'"
+    },
+    {
+      "sev": "P1",
+      "what": "Choosing 'name Vell's blood to the Regent' — revealing a companion's secret exiled-royal lineage that she had explicitly asked to keep private ('I'd rather you heard it from me than the throne') — produced gold and a Crown reputation change but no regard shift and no reaction line from Vell at all, unlike almost every other consequential choice in the game, which reliably fires an approves/disapproves flag plus a follow-up line.",
+      "where": "The Regent's Chambers / 'name Vell's blood to the Regent'"
+    },
+    {
+      "sev": "P2",
+      "what": "After a companion disapproves of an action (e.g. 'Lys disapproves' right after killing a gaunt wolf), talking to them immediately after offers only the same generic dialogue tree — no option to ask why, apologize, or explain yourself in that moment.",
+      "where": "Wolf Scrape / 'talk to Lys' right after the gaunt wolf fight"
+    },
+    {
+      "sev": "P2",
+      "what": "'Say what you learned of the flood' stayed on the menu at the drowned nave even after the congregation was already put to rest via 'speak Halm's confession over the water'; using it afterward printed 'The singing doesn't stop' — a non-sequitur, since the singing had already stopped for good moments earlier.",
+      "where": "The Drowned Nave / 'say what you learned of the flood' (used after 'The Drowned Congregation' was already done)"
+    },
+    {
+      "sev": "P2",
+      "what": "Whether killing a creature will upset Lys seems to hinge on 'blighted vs. ordinary wildlife,' but that distinction isn't consistently flagged in the room text before you commit to the fight — the gray boar's room text called it 'blight-pale' up front, but the gaunt wolf that triggered Lys's disapproval carried no such warning before the attack.",
+      "where": "Wolf Scrape / gaunt wolf encounter"
+    },
+    {
+      "sev": "P2",
+      "what": "It's never shown or explained whether party companions can be hurt, downed, or killed in combat — across dozens of fights no companion ever took visible damage or dropped, so there's no visible stakes around their physical survival despite the game investing heavily elsewhere in not losing them.",
+      "where": "general combat resolution text, all fights"
+    },
+    {
+      "sev": "P2",
+      "what": "'Travel to a known place' looks like a free navigation menu (opening the submenu itself doesn't advance the turn counter), but picking a destination from it costs a full turn exactly like walking there room by room; nothing in the option's label says so.",
+      "where": "any location, action 'travel to a known place'"
+    },
+    {
+      "sev": "P2",
+      "what": "A standalone wits-check action ('read the tally marks by the smoke rack') silently vanished from the menu after the same information was given for free through a dialogue answer, rather than being marked done/redundant — easy to assume it's still an option you just haven't tried yet.",
+      "where": "Hunter's Camp / 'read the tally marks by the smoke rack'"
+    },
+    {
+      "sev": "P2",
+      "what": "Backing 'the hall's claim' through the Free Companies vs. the Watch at the head-frame is a one-shot pick with no preview of what either choice actually changes mechanically beyond a reputation nudge — no way to tell which serves the miners better or affects the Hundred Gallery outcome.",
+      "where": "The Head-Frame (Cinderhall) / 'back the hall's claim (Free Companies)' vs '(the Watch)'"
+    },
+    {
+      "sev": "P2",
+      "what": "Crown reputation shifted on several calm, non-confrontational dialogue lines with Regent Ysolde (e.g. discussing rested holds, or refusing to burn anything for her), with no clear tell in the text for which specific lines were 'costing' Crown standing versus which were neutral.",
+      "where": "The Hollow Throne / dialogue with Regent Ysolde"
+    },
+    {
+      "sev": "P2",
+      "what": "The 'Hollows rested: X/6' / 'Hollows burned: X/6' split in status only appears after you've resolved your first hollow, so there's no early signal that burning a hollow counts the same as resting it toward the tally that opens Coldpass — I assumed burning was a worse/avoid path until the parallel counter showed otherwise.",
+      "where": "status screen, on first appearance of the Hollows counters"
+    }
+  ],
+  "confusions": [
+    "No signal, before resolving the first hollow, that 'burning' it counts the same as 'resting' it toward the 6-hollow total needed for Coldpass — only discovered via a parallel 'Hollows burned' counter after the fact.",
+    "No hold-by-hold sense of time cost anywhere — status only gives a realm-wide '~300 turns straight, many times that for everything', so budgeting turns across 6 hollows, 4 companion arcs, and the capital was pure guesswork; I ended up skipping the Saltkerns hold and most of Wardmoor's side quests on a turn-budget guess alone.",
+    "Whether companions can be hurt or killed in combat is never demonstrated — none ever took a hit in dozens of fights, so the emotional stakes the game builds around losing a companion never visibly extend to combat itself.",
+    "The mechanical difference between backing a faction claim through the Free Companies vs. the Watch (Cinderhall miners' hall) was never explained before the choice.",
+    "Why some failed skill checks are freely retryable ('it can be tried again') while others silently cost reputation on failure was never signposted in the option text.",
+    "A companion's own explicitly-stated wish for secrecy (Vell's exiled bloodline) could be overridden to a major NPC with zero narrative or mechanical reaction, unclear if intentional restraint in the writing or an oversight."
+  ],
+  "suggestions": [
+    "Label destructive/ending-locking options as clearly as 'burn' is elsewhere (the oath-stone's 'break the stone by main strength' reads as a retry, not a permanent alternate resolution).",
+    "Add 'fail costs Watch -1'-style annotations to checks that penalize reputation on failure, matching the existing 'fail costs 1hp' convention already used for physical risk.",
+    "Let a companion's approval/disapproval open a one-off follow-up line next time you talk to them, even a generic 'about what happened back there.'",
+    "Remove or relabel one-time narrative actions once their quest is already resolved, instead of leaving a now-moot option live in the menu.",
+    "Flag blighted vs. ordinary creatures consistently in room text before combat, since companion approval hinges on the distinction.",
+    "Show, even once, whether companions can be downed or killed in a fight, since it's core tension the game otherwise invests in heavily.",
+    "State plainly that 'travel to a known place' costs a turn like any other move.",
+    "Give a rough per-hold time estimate (short/medium/long tag) in status so players can budget a turn count across many hollows and companion arcs.",
+    "Preview in one line what a faction-aligned choice actually changes before committing to it.",
+    "Make revealing a companion's requested secret to an NPC trigger the same approve/disapprove feedback used everywhere else in the game."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T23-04-52-869Z",
+  "seed": 233,
+  "build": {
+    "rev": "846b6fd",
+    "world": "28db12be"
+  },
+  "cost_usd": null,
+  "verified": true
+}

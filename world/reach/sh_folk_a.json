@@ -1,0 +1,492 @@
+{
+  "npcs": {
+    "sh_reeve": {
+      "name": "Sten",
+      "room": "sh_reeve_yard",
+      "dialogue": true,
+      "desc": "The field-reeve, sun-cracked and permanently short-tempered, a chalk stub always in one hand for marking furlongs he'd rather not have to mark around.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Sten. Field-reeve. I set the ploughs, keep the furlong count true, and hate every yard of ground in this parish that isn't mine to plough.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "the ground you can't plough",
+          "if": [["flag", "said_sh_reeve_greet"]],
+          "once": true,
+          "say": "Dead center of my best land, and every ox we've ever put near it balks. So we go around. Forty years I've drawn that furlong-map with a blank strip in the middle of it, like a fool.",
+          "fx": [["set", "sh_reeve_bg"], ["xp", 2]]
+        },
+        {
+          "id": "sh_reeve_furlongs",
+          "label": "ask him to leave the field to the dead",
+          "if": [["flag", "sh_reeve_bg"], ["!flag", "sh_reeve_refused"], ["!flag", "sh_hollow_done"]],
+          "say": "Give up good land to men four hundred years past caring? Talk me into it, then.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "sh_reeve_refused"],
+                ["say", "He goes quiet a long moment, chalk turning over in his fingers. \"...Fine. Mark it lost, same as it's always been, only honest about it now.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "sh_reeve_missed"]],
+                  [
+                    ["set", "sh_reeve_missed"],
+                    ["say", "\"Talk's cheap on a full stomach,\" he says, and doesn't look up from the map. It can be tried again."]
+                  ],
+                  [["say", "\"Same argument, same answer,\" he says, and goes back to his chalk."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sh_declare_bargain",
+          "label": "declare the field given to the dead",
+          "if": [
+            ["flag", "sh_reeve_refused"],
+            ["flag", "sh_cutter_refused"],
+            ["flag", "sh_picker_refused"],
+            ["!flag", "sh_hollow_done"]
+          ],
+          "say": "You've talked Bevan out of his warrant and Crake off his spade. That's the whole parish's say in it but mine.",
+          "fx": [
+            ["set", "sh_hollow_bargained"],
+            ["set", "sh_hollow_done"],
+            ["set", "sh_field_given"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "hollows_bargained", 1],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "rep_iron", -2],
+            ["addvar", "appr_lys", 1],
+            ["score", 20],
+            ["xp", 8],
+            ["say", "Sten marks the furlong-map one last time, in ink instead of chalk, and doesn't erase it after. \"There. Lost for good, and no more lying to myself about it come spring.\""]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the field, now the truce is called",
+          "if": [["flag", "sh_hollow_rested"]],
+          "once": true,
+          "say": "Whole rod, proper words, and the lines walked out at dusk. I'll believe it when the ground stops fighting the plough. Ask me again come harvest.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the bargain, now it's struck",
+          "if": [["flag", "sh_hollow_bargained"], ["!flag", "sv_sh_after_done"]],
+          "once": true,
+          "say": "I struck it and I'll stand by it. Doesn't mean I've stopped counting what it cost me every time I walk that furlong-line.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the field, now it's burned",
+          "if": [["flag", "sh_hollow_burned"]],
+          "once": true,
+          "say": "Ash ploughs easier than a haunted furlong ever did, I'll grant that much. Doesn't sit as easy as it ploughs.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_stone",
+          "label": "the stone, now it's decided",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "sh_stone_crown"],
+                ["flag", "sh_stone_companies"],
+                ["flag", "sh_stone_names"],
+                ["flag", "sh_stone_broker"],
+                ["flag", "sh_stone_none"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Whatever it says, it's more than that ground had to show for itself in forty years of my knowing it. I'll take that.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_theft",
+          "label": "about the missing chain, since",
+          "if": [["flag", "stole_sh_measuring_chain"]],
+          "once": true,
+          "say": "\"Counted every furlong with that chain since I took the post,\" he says, not looking at you. \"I'll count them by eye a while, and remember why.\"",
+          "fx": [["addvar", "rep_crown", -1]]
+        },
+        {
+          "id": "sv_sh_bargain_ask",
+          "label": "ask about the spring ploughing",
+          "if": [["flag", "sh_hollow_bargained"], ["flag", "sv_sh_back"], ["!flag", "sv_sh_after_done"]],
+          "once": true,
+          "say": "Bread's short this spring, same as I told the bargain would cost us eventually. The dead's furlong would feed three families through to harvest. I haven't asked them yet whether they'd forgive me for it.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_sh_bargain_paid",
+          "label": "pay to keep it fallow yourself (10 gold)",
+          "if": [["flag", "said_sh_reeve_sv_sh_bargain_ask"], ["!flag", "sv_sh_after_done"], ["var", "gold", ">=", 10]],
+          "once": true,
+          "say": "You put the bread on the table yourself, quiet, so the bargain never has to be asked twice. Sten takes it without much grace, and doesn't touch the furlong-map again all spring.",
+          "fx": [
+            ["addvar", "gold", -10],
+            ["set", "sv_sh_bargained_paid"],
+            ["set", "sv_sh_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_tamsin", 1]
+          ]
+        },
+        {
+          "id": "sv_sh_bargain_broken",
+          "label": "tell him to plough it after all",
+          "if": [["flag", "said_sh_reeve_sv_sh_bargain_ask"], ["!flag", "sv_sh_after_done"]],
+          "once": true,
+          "say": "\"If that's your word,\" he says, and has the oxen out within the week. The furlong turns green again by midsummer, and nobody in Harrowfield will say what they hear some evenings, walking its edge.",
+          "fx": [
+            ["set", "sv_sh_bargained_broken"],
+            ["set", "sh_bargain_broken"],
+            ["set", "sv_sh_after_done"],
+            ["score", 2],
+            ["xp", 1],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_keepers", -1],
+            ["addvar", "appr_lys", -1]
+          ]
+        },
+        {
+          "id": "sv_sh_bargain_sold",
+          "label": "let Bevan buy the ground for the Crown",
+          "if": [["flag", "said_sh_reeve_sv_sh_bargain_ask"], ["!flag", "sv_sh_after_done"]],
+          "once": true,
+          "say": "Bevan pays a fair Crown price, and the furlong passes out of Harrowfield's keeping for good. \"Not ploughed,\" Sten says, like it matters which way the ground stops being ours. \"Just not ours to answer for anymore.\"",
+          "fx": [
+            ["set", "sv_sh_bargained_sold"],
+            ["set", "sv_sh_after_done"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "gold", 8],
+            ["addvar", "appr_lys", -1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the furlong-map",
+          "say": "Mind the blank strip on your way past. Everyone in this parish learns to, sooner or later.",
+          "end": true,
+          "if": [["!flag", "sh_hollow_done"]]
+        },
+        {
+          "id": "bye_done",
+          "label": "leave him to the furlong-map",
+          "if": [["flag", "sh_hollow_done"]],
+          "say": "Mind the ditch on your way past. Nobody calls that strip blank anymore — whatever it is now, it's decided, and I've inked it.",
+          "end": true
+        }
+      ]
+    },
+    "sh_cutter": {
+      "name": "Bevan",
+      "room": "sh_stonecutter_lodge",
+      "dialogue": true,
+      "desc": "The Crown's stone-cutter, dust in every crease of him, a warrant folded soft with a year's carrying and a stone dressed and waiting under canvas for someone to settle its wording.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Bevan. The Crown sent me a year gone with a warrant to raise a victory-stone on the old ditch. I've had the stone dressed since spring. Nobody yet agrees what it should say.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what the warrant asks for",
+          "if": [["flag", "said_sh_cutter_greet"]],
+          "once": true,
+          "say": "The Crown warrant asks for a victory-stone on the ditch, plain, in the first Reeve's own words. I have had the stone dressed since spring. Every soul here has other ideas.",
+          "fx": [["set", "sh_cutter_bg"], ["xp", 2]]
+        },
+        {
+          "id": "sh_cutter_argue",
+          "label": "argue him off the warrant (will)",
+          "if": [
+            ["flag", "sh_cutter_bg"],
+            ["!flag", "sh_cutter_refused"],
+            ["!flag", "sh_hollow_done"],
+            ["!flag", "sh_field_given"]
+          ],
+          "say": "Talk a mason out of a year's commission? Go on, then.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "sh_cutter_refused"],
+                ["say", "You lay out plainly what a stone raised over an unsettled field would actually cost the Crown's standing here. Bevan sets his chisel down. \"...Then it stays under canvas. Let Marrowgate send someone with less to lose.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "sh_cutter_missed"]],
+                  [
+                    ["set", "sh_cutter_missed"],
+                    ["say", "\"A warrant's a warrant,\" he says, not quite meeting your eye — and the Crown notes a petition tried, and refused, here. It can be tried again."]
+                  ],
+                  [["say", "\"A warrant's a warrant,\" he says again, and goes back to the stone."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sh_cutter_force",
+          "label": "make the cost of a stone plain (might)",
+          "if": [
+            ["flag", "sh_cutter_bg"],
+            ["!flag", "sh_cutter_refused"],
+            ["!flag", "sh_hollow_done"],
+            ["!flag", "sh_field_given"]
+          ],
+          "say": "Threaten a Crown mason at his own bench? I'm listening.",
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "sh_cutter_refused"],
+                ["say", "You make it plain, in terms a chisel can't argue with, exactly what happens if that stone goes up. \"...Noted,\" is all he says, and doesn't reach for the chisel again that day."]
+              ],
+              [["say", "He doesn't flinch. \"I've dressed harder stone than this argument.\" It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "sh_stone_crown",
+          "label": "raise the Crown's victory-stone (will)",
+          "if": [
+            ["flag", "sh_cutter_bg"],
+            ["!flag", "sh_hollow_burned"],
+            ["!flag", "sh_field_given"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
+          "say": "You want it cut plain, the Crown's own words? Convince me the rest of this village won't burn it down the week after.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "sh_stone_crown"],
+                ["addvar", "rep_crown", 2],
+                ["addvar", "rep_free", -2],
+                ["score", 10],
+                ["xp", 4],
+                ["say", "You make the case, and Bevan uncovers the stone and sets to it that same afternoon: the first Reeve's victory, cut deep, no other name on it."]
+              ],
+              [["say", "\"Not yet, then,\" he says, and leaves the canvas where it is. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "sh_stone_crown_burned",
+          "label": "raise the Crown's stone, unopposed",
+          "if": [
+            ["flag", "sh_hollow_burned"],
+            ["!flag", "sh_field_given"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
+          "say": "With the field burned clean, there's nobody left standing in that ground to argue the wording with me. Say the word.",
+          "fx": [
+            ["set", "sh_stone_crown"],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "rep_free", -2],
+            ["score", 10],
+            ["xp", 4],
+            ["say", "Bevan cuts it in an afternoon, nobody in the village troubling to watch. With no mounds left to gainsay it, the Crown's victory stands unanswered on the ditch."]
+          ]
+        },
+        {
+          "id": "sh_stone_broker",
+          "label": "broker a stone both sides can sign",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "sh_cutter_bg"],
+            ["flag", "sh_pensioner_bg"],
+            ["!flag", "sh_field_given"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
+          "say": "Ossett's founding and my victory, cut on the same stone? I'd want to see the wording before I believed it.",
+          "fx": [
+            ["set", "sh_stone_broker"],
+            ["set", "or_envoy_sh_broker"],
+            ["score", 10],
+            ["xp", 6],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_free", 1],
+            ["addvar", "or_envoy_words", 1],
+            ["say", "You draft a line neither asked for and both can stand behind. Bevan cuts it; Ossett signs the wording, and keeps his own counsel on the rest."]
+          ]
+        },
+        {
+          "id": "sh_stone_none",
+          "label": "tell him no stone will stand here",
+          "if": [
+            ["flag", "sh_field_given"],
+            ["!flag", "sh_stone_none"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
+          "say": "The ground's given to the dead. No stakes, no muster, and the fork says no stone either — not the Crown's, not anyone's.",
+          "fx": [
+            ["set", "sh_stone_none"],
+            ["score", 5],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1],
+            ["say", "Bevan takes it better than you'd expect. \"A year's commission, and the honestest answer I've had all of it,\" he says, and lets the canvas fall back over the stone for good."]
+          ]
+        },
+        {
+          "id": "sh_stone_stands",
+          "label": "ask where the stone stands now",
+          "if": [
+            ["flag", "sh_field_given"],
+            [
+              "any",
+              [
+                ["flag", "sh_stone_crown"],
+                ["flag", "sh_stone_companies"],
+                ["flag", "sh_stone_names"],
+                ["flag", "sh_stone_broker"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Off the dead's ground. The fork gave them the field, not the ditch-gate: the stone stands where the road meets the plain and says what it said before. Nobody ploughs under it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_stone_elsewhere",
+          "label": "tell him how the stone was decided",
+          "if": [["any", [["flag", "sh_stone_companies"], ["flag", "sh_stone_names"]]]],
+          "once": true,
+          "say": "Not my wording, then. I dressed the stone; I don't own what gets cut into it. Whoever's words those are, they'll outlast my say in the matter, same as everyone's do out here.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the field, now the truce is called",
+          "if": [["flag", "sh_hollow_rested"]],
+          "once": true,
+          "say": "A truce four hundred years late is still a truce. Whatever the stone says now, it says it over settled ground, and that's more than my warrant ever promised.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the field, now it's given",
+          "if": [
+            ["flag", "sh_hollow_bargained"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
+          "once": true,
+          "say": "No stone was ever going to sit easy on ground the dead were given back outright. I'd cut a warning-marker at the boundary, if anyone asked. Nobody has.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained_stone",
+          "label": "the field, now it's given",
+          "if": [
+            ["flag", "sh_hollow_bargained"],
+            [
+              "any",
+              [
+                ["flag", "sh_stone_crown"],
+                ["flag", "sh_stone_companies"],
+                ["flag", "sh_stone_names"],
+                ["flag", "sh_stone_broker"]
+              ]
+            ]
+          ],
+          "say": "The ground's theirs, and the stone stands at the ditch-gate where I cut it — on the road's side, off the given field. It says what it says to whoever passes, and the dead don't read."
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the field, now it's burned",
+          "if": [["flag", "sh_hollow_burned"]],
+          "once": true,
+          "say": "Cleaner ground to cut a stone on than I've had all year, if I'm honest about it. I try not to be, too often.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the stone",
+          "say": "Mind the canvas on your way out. It's held that stone's wording a long time, waiting on someone to settle it.",
+          "end": true,
+          "if": [
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"],
+            ["!flag", "sh_field_given"]
+          ]
+        },
+        {
+          "id": "bye_cut",
+          "label": "leave him to the stone",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "sh_stone_crown"],
+                ["flag", "sh_stone_companies"],
+                ["flag", "sh_stone_names"],
+                ["flag", "sh_stone_broker"]
+              ]
+            ]
+          ],
+          "say": "Mind the step. The canvas is off and the stone's cut; it says what it says now, whoever likes it.",
+          "end": true
+        },
+        {
+          "id": "bye_given",
+          "label": "leave him to the stone",
+          "if": [
+            ["flag", "sh_field_given"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
+          "say": "Mind the ditch on your way out. The canvas stays on that stone for good; I've made my peace with a bench that cuts gateposts.",
+          "end": true
+        }
+      ]
+    }
+  }
+}

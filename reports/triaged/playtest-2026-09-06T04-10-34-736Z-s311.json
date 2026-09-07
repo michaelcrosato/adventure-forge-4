@@ -1,0 +1,66 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 574,
+  "receipt": "reach.311.574.366.reach_at_rest.c5cc94d4",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Across ~15+ fights (wolves, wights, the honour guard, the grave-wight) companions never once appear to take damage or need healing — only the player's own hp ever changes (e.g. 'The lean wolf attacks. (hp-2)'), and `status` never lists a hp value for any companion, only regard (e.g. 'Party: Vell (regard +1), Tamsin (regard +7)'). This makes it impossible to actually 'watch who gets hit' or see whether resting at an inn mends a companion.",
+      "where": "any combat, e.g. Barrow Crypt (barrow-wight) / The Kings' Rest — Hall (honour guard) / status command"
+    },
+    {
+      "sev": "P2",
+      "what": "The Slag-Hound quest ('Miners at the head-frame complain of something prowling the downs after dark') gave bearings naming 'Quarry north-east; Old Cairn west edge; Gibbet Tower far north-east; scrappers' camp east', but ~15 turns of wandering the Iron Downs grid (Tally Rise, Marker Stone, Long Spoil, Cracked Adit, High Cut, Windbreak Ridge, Cinder Shrine Approach, etc.) never surfaced a slag-hound or those named landmarks by name; the quest stayed on the final 'Left undone' list.",
+      "where": "Iron Downs / The Head-Frame — 'The Slag-Hound' quest"
+    },
+    {
+      "sev": "P2",
+      "what": "The Chapel of Iron (Iron Downs) and the Pilgrims' Shrine (Coldpass) are near-identical reskins: porch/nave/crypt layout, an undead vigil-keeper resolved by rite/reading/force ('Saint Mora of the Vein' vs 'the frozen pilgrim'), and an identical crypt choice between 'lay them to rest' or take a reliquary, with matching flavor phrasing ('the ones the nave forgot').",
+      "where": "Iron Downs — the Chapel of Iron; Coldpass — the Pilgrims' Shrine"
+    },
+    {
+      "sev": "P2",
+      "what": "Checks flagged 'a miss costs standing' never name which faction is at risk beforehand; the specific reputation hit (e.g. '(the Gray Church -1)', '(the Ironbound -1)') only appears after a failed roll.",
+      "where": "The Ironbound Chapterhouse ('make the truth public'), The Priory of the Gray Church ('lay the tablet against his words'), The Regent's Chambers ('the founding ledger')"
+    },
+    {
+      "sev": "P2",
+      "what": "Companion approval feedback is inconsistent: some choices produce an explicit '<Name> approves/disapproves' tag with a visible regard delta in the next status check, while others (e.g. declining to fight the ash wolf at Lys's request: 'Leave it. It isn't hunting — it's keeping something. We can go around.') produce no approval tag and no detectable regard change at all.",
+      "where": "Twin Stones — sparing the ash wolf; general companion-regard system"
+    },
+    {
+      "sev": "P2",
+      "what": "'attack <name>' is offered as a standing menu option against companions already traveling in the party (e.g. 'attack Vell with hunting knife', 'attack Tamsin with hunting knife') with no warning, even mid-conversation, inviting an accidental hostile action against your own ally.",
+      "where": "The Last Light Inn / The Forge — menu options while Vell/Tamsin are present"
+    }
+  ],
+  "confusions": [
+    "The task framing promised menu entries flagged '(as a Scout)' for class-specific finds, but that literal string never appeared in any menu across ~570 turns; Scout-favored content exists only implicitly as very generous grace-check DCs (e.g. 'trace the water verse by touch (grace) (DC 8, +5 grace: roll 3+ on the die)').",
+    "The 'Two Keepers, One Covenant' quest (picked up from Keeper Wren in Hollowbrook) asks you to carry a question to Keeper Rowan in Thornwold's Understory, but Rowan was met and fully exhausted much earlier with no forward hook planted for this later question — completing it means a long, unsignposted backtrack across two regions.",
+    "'the bare downs' in Iron Downs has no 'get bearings' option except at the Head-Frame landmark itself; once a few rooms in, there is no way to re-orient short of retracing steps, unlike the Ashwood or Coldpass which reliably offer bearings at entry points.",
+    "'travel to a known place' only lists visited landmarks, not every room passed through (e.g. Split Oak, Charcoal Ring, and most Iron Downs rooms never appear even after being visited), which is explained once up front but easy to forget mid-game when a shortcut you expect isn't offered.",
+    "Companions occasionally comment on a decision before any decision-relevant menu option has actually been chosen (e.g. Lys's 'We can go around' appearing in the room's entry text before the ash wolf is engaged), which can read as reacting to a choice not yet made."
+  ],
+  "suggestions": [
+    "Surface a wound state for companions (hp, or at minimum a 'wounded' flag) in status and in combat lines, so an inn rest actually has something visible to mend.",
+    "Add a free 'get bearings' option at more nodes inside maze-like zones (the Iron Downs downs especially) so directional-only sidequests like The Slag-Hound are findable without exhaustive grid-walking.",
+    "Either literally label class-favored options '(as a Scout)' as advertised, or drop that framing so players aren't hunting for text that isn't there.",
+    "Name the faction at stake before a 'costs standing' roll, not only after a failed one.",
+    "Give the two porch/nave/crypt vigil-keeper encounters (Iron Downs, Coldpass) at least one structurally different beat so a second visit doesn't feel like a copy-paste.",
+    "Make companion regard changes consistently visible (always tag approves/disapproves, or always show a running delta) so a player can tell when a choice actually moved the needle.",
+    "Hide or gate 'attack <companion>' behind a confirmation once that character has joined the party, to prevent an accidental one-command betrayal."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T04-10-34-736Z",
+  "seed": 311,
+  "build": {
+    "rev": "e32ce36",
+    "world": "a9b7fb9a"
+  },
+  "cost_usd": null,
+  "verified": false
+}

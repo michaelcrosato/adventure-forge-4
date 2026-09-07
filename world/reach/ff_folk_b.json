@@ -1,0 +1,427 @@
+{
+  "npcs": {
+    "ff_dame": {
+      "name": "Dame Sisley",
+      "room": "ff_chantry",
+      "dialogue": true,
+      "desc": "The Gray Church's dame, chalk-dust worked into every crease of her hands, standing before thirty-one slates the way another woman might stand before an altar.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Dame Sisley. I keep the wards' lesson chalked, same as every dame before me, and I hold the rite that would dismiss them. I have never once been let to say it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why she's never said the rite",
+          "if": [["flag", "said_ff_dame_greet"]],
+          "once": true,
+          "say": "The dismissal wants a name to send each ward home to. I have no roll of names — only the rite, and thirty-one slates nobody has read since the ink was fresh.",
+          "fx": [["set", "ff_dame_bg"], ["xp", 2]]
+        },
+        {
+          "id": "ff_dame_agrees",
+          "label": "ask her to teach the living (will)",
+          "if": [["flag", "ff_dame_bg"], ["!flag", "ff_dame_agrees"]],
+          "say": "Teach living children at a dead lesson's benches? That's not nothing to ask of me.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "ff_dame_agrees"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "She looks at the slates a long while before she answers. \"...Yes. Better the lesson taught than only mourned. I'll chalk it fresh for children who can carry it out the door.\""]
+              ],
+              [
+                ["say", "She shakes her head, chalk dust drifting off her sleeve. \"Not yet. Ask me again when you mean it for more than the asking.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "ff_scholar_dame_free",
+          "label": "read the slates outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "ff_dame_agrees"], ["!flag", "or_scholar_ff_chantry"]],
+          "say": "You read the thirty-one slates the way you'd read any old lesson, and find the rite's own answer chalked plain in their margins: teach it forward, or lose it entirely. Dame Sisley doesn't correct a word of your reading.",
+          "fx": [
+            ["set", "or_scholar_ff_chantry"],
+            ["addvar", "or_scholar_read", 1],
+            ["set", "ff_dame_agrees"],
+            ["score", 4],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the rite, now the wards are sent home",
+          "if": [["flag", "ff_hollow_rested"]],
+          "once": true,
+          "say": "I said it at last, over the bell — every word of the dismissal I've held four hundred years and never once been let speak. It fit them better than I feared it might.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the rite, now the lesson's kept",
+          "if": [["flag", "ff_hollow_bargained"]],
+          "once": true,
+          "say": "The rite still isn't said. But a lesson taught forward is closer to grace than a lesson only grieved over, and I'll chalk these slates a good while longer for it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the rite, now it's burned",
+          "if": [["flag", "ff_hollow_burned"]],
+          "once": true,
+          "say": "There's no lesson left to chalk. I kept teaching an empty chantry the day after anyway, out of habit more than sense, and couldn't stop halfway through it.",
+          "fx": [["xp", 1], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the slates",
+          "say": "Go gently up that lane. Whatever's owed up there, it isn't owed to the loud.",
+          "end": true
+        }
+      ]
+    },
+    "ff_recorder": {
+      "name": "Tuck",
+      "room": "ff_recorder_loft",
+      "dialogue": true,
+      "desc": "The Keepers' recorder, ink-stained past the second knuckle, one hand always resting on the Book of Houses as if it might close itself the moment he let go.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Tuck. I keep the Book of Houses — every house of the Reach marked living, fallen at the Truce Field, or died at the Long Table. Four hundred years of it, and still growing.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what the book is for",
+          "if": [["flag", "said_ff_recorder_greet"]],
+          "once": true,
+          "say": "Bring me the ward-roll from the schoolroom, and I'll set the two side by side. Thirty-one names went up that fell road. I can tell you which of their houses are still standing to hear it.",
+          "fx": [["set", "ff_recorder_bg"], ["xp", 2]]
+        },
+        {
+          "id": "ff_roll_read",
+          "label": "read the roll against the book (wits)",
+          "if": [["has", "ff_ward_roll"], ["!flag", "ff_roll_read"]],
+          "say": "Let's see it, then.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "ff_roll_read"],
+                ["addvar", "ff_sent_for_known", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "You lay the two together, name against name, and the book answers back: some houses fallen, some fell later still, a handful standing yet with a ward's place still empty at their own table."]
+              ],
+              [
+                ["say", "Four hundred years of cramped hands on both rolls, and the names won't sit still long enough to match. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "ff_reeve_ward_known",
+          "label": "read the roll once more (wits)",
+          "if": [["flag", "ff_roll_read"], ["!flag", "ff_reeve_ward_known"]],
+          "say": "Read it again? Most stop once they've found their answer.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "ff_reeve_ward_known"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "One name doesn't sit right against the book: a ward of the first Reeve's own house, sent up with the rest that first winter — and quietly fetched home again the following spring, no record made of it anywhere but here."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["say", "Vell: \"His own house sent a surety, and took it back within the year, while the other thirty stayed. I don't know why that should surprise me, and it does.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["say", "The names blur together the second time through, no more willing to give up their secret than the first. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "ff_scholar_recorder_free",
+          "label": "read both rolls outright",
+          "free": true,
+          "if": [
+            ["class", "scholar"],
+            ["has", "ff_ward_roll"],
+            ["!flag", "ff_roll_read"],
+            ["!flag", "or_scholar_ff_recorder"]
+          ],
+          "say": "You read the ward-roll against the Book of Houses the way you'd read any old tongue: the standing houses fall out at once, and so does a name fetched quietly home the spring after it was sent — the first Reeve's own.",
+          "fx": [
+            ["set", "or_scholar_ff_recorder"],
+            ["addvar", "or_scholar_read", 1],
+            ["set", "ff_roll_read"],
+            ["set", "ff_reeve_ward_known"],
+            ["addvar", "ff_sent_for_known", 1],
+            ["score", 7],
+            ["xp", 5],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"His own house sent a surety, and took it back within the year, while the other thirty stayed. I don't know why that should surprise me, and it does.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the roll, now the wards are sent home",
+          "if": [["flag", "ff_hollow_rested"]],
+          "once": true,
+          "say": "I've marked it in the book myself: thirty-one names, sent home at last, four hundred years late. Some entries want a long time to finish writing.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the roll, now the lesson's kept",
+          "if": [["flag", "ff_hollow_bargained"]],
+          "once": true,
+          "say": "Not finished, but not lied about either. I'll take honest and unfinished over closed and false, every time I'm asked to choose.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the roll, now it's burned",
+          "if": [["flag", "ff_hollow_burned"]],
+          "once": true,
+          "say": "Thirty-one names, gone to smoke with the roll that named them. I'll copy what I remember into the book anyway — closed wrong is still closed.",
+          "fx": [["xp", 1], ["addvar", "rep_keepers", -1]]
+        },
+        {
+          "id": "sv_ff_rested_ask",
+          "label": "hear the word he has of a rider",
+          "if": [["flag", "ff_hollow_rested"], ["flag", "sv_ff_back"], ["!flag", "sv_ff_after_done"]],
+          "once": true,
+          "say": "A rider's come up from one of the standing houses, asking after their ward's things. Do they get the letters and the slate, if you're still carrying them — or does Fosterfell keep them as its own?",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_ff_rested_given",
+          "label": "give the house what's carried",
+          "if": [["flag", "said_ff_recorder_sv_ff_rested_ask"], ["!flag", "sv_ff_after_done"]],
+          "once": true,
+          "say": "You hand over what you're carrying, letter and slate both. The rider takes them like something owed a very long time, and rides back down without another word said.",
+          "fx": [
+            ["if", [["has", "ff_ward_letters"]], [["move", "ff_ward_letters", "nowhere"]], []],
+            ["if", [["has", "ff_ward_slate"]], [["move", "ff_ward_slate", "nowhere"]], []],
+            ["set", "sv_ff_rested_given"],
+            ["set", "sv_ff_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
+          "id": "sv_ff_rested_kept",
+          "label": "keep them as Fosterfell's own",
+          "if": [["flag", "said_ff_recorder_sv_ff_rested_ask"], ["!flag", "sv_ff_after_done"]],
+          "once": true,
+          "say": "You tell the rider Fosterfell keeps what's left, as the hold's own memory of what it cost to fail thirty-one houses so completely. The rider doesn't argue it, and doesn't look glad of it either.",
+          "fx": [
+            ["set", "sv_ff_rested_kept"],
+            ["set", "sv_ff_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_vell", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the rolls",
+          "say": "Mind what you carry out of that schoolroom. I'll want it written down eventually, one way or another.",
+          "end": true
+        }
+      ]
+    },
+    "ff_bell_keeper": {
+      "name": "Garth",
+      "room": "ff_walled_lane",
+      "dialogue": true,
+      "desc": "The dame's old pupil, a coil of bell-rope slung over one shoulder that he dusts more often than he climbs to use, watching the porch the way a man watches a door he's sworn not to open.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Garth. Dame Sisley taught me my letters at those very benches, before I grew too old for a lesson meant for children. I keep the schoolroom's bell-rope. I have never once pulled it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why he's never pulled it",
+          "if": [["flag", "said_ff_bell_keeper_greet"]],
+          "once": true,
+          "say": "That bell dismisses. I was let leave those benches on my own two feet, grown and unremarkable. Pulling the rope for the ones who never got to felt like claiming something that was never mine to claim.",
+          "fx": [["set", "ff_bell_keeper_bg"], ["xp", 2]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the rope, now the wards are sent home",
+          "if": [["flag", "ff_hollow_rested"]],
+          "once": true,
+          "say": "Somebody else pulled it in the end, up in the study. I heard it from here, one clean note, and understood at last what forty years of not pulling it had spared me.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the rope, now it's burned",
+          "if": [["flag", "ff_hollow_burned"]],
+          "once": true,
+          "say": "The rope went up with the ceiling it hung through. I keep finding my hand reaching for a coil that isn't slung over my shoulder anymore.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_ff_bargain_ask",
+          "label": "ask about the school's first lesson",
+          "if": [["flag", "ff_hollow_bargained"], ["flag", "sv_ff_back"], ["!flag", "sv_ff_after_done"]],
+          "once": true,
+          "say": "The living children start at those benches this week. Somebody must keep the lesson — Dame Sisley, by rights, or Tuck, with the Book of Houses beside the slates so nobody forgets whose lesson it was.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_ff_bargain_church",
+          "label": "let Dame Sisley keep the lesson",
+          "if": [["flag", "said_ff_bell_keeper_sv_ff_bargain_ask"], ["!flag", "sv_ff_after_done"]],
+          "once": true,
+          "say": "\"The dame's, then,\" he says, already easier for the deciding. \"She's held the rite this long. Might as well hold the lesson too.\"",
+          "fx": [
+            ["set", "sv_ff_bargain_church"],
+            ["set", "sv_ff_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_church", 1]
+          ]
+        },
+        {
+          "id": "sv_ff_bargain_keepers",
+          "label": "let Tuck keep it, book beside the slates",
+          "if": [["flag", "said_ff_bell_keeper_sv_ff_bargain_ask"], ["!flag", "sv_ff_after_done"]],
+          "once": true,
+          "say": "He nods slow. \"So none of them forget what this lesson cost, teaching it. I'll carry that word to Tuck myself.\"",
+          "fx": [
+            ["set", "sv_ff_bargain_keepers"],
+            ["set", "sv_ff_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the rope",
+          "say": "Mind the porch on your way past. I've swept it every day of my life and it's never once felt swept clean.",
+          "end": true
+        }
+      ]
+    },
+    "ff_child": {
+      "name": "Tibb",
+      "room": "ff_walled_lane",
+      "dialogue": true,
+      "desc": "A child crouched at the walled lane's own stones, one ear pressed flat against the wall, humming under their breath in time with something only they can hear.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Tibb. I learned the wards' rhyme through this wall before I learned my letters proper. If you hum it right they hum it back. Nobody else round here will try.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what happens when she hums it back",
+          "if": [["flag", "said_ff_child_greet"]],
+          "once": true,
+          "say": "Thirty-one voices, small as mine, humming the same three lines I do. I've done it every week since I was old enough to reach the wall. I think I'm the only friend they've had in four hundred years.",
+          "fx": [["set", "ff_child_bg"], ["xp", 2]]
+        },
+        {
+          "id": "ff_tibb_stop",
+          "label": "tell her it isn't safe to answer them",
+          "if": [["flag", "ff_child_bg"], ["!flag", "ff_tibb_stop"], ["!flag", "ff_tibb_keep"]],
+          "once": true,
+          "say": "She goes quiet a moment, like she'd been waiting for someone bigger to say it first. \"...Alright. I'll just listen from now on, then.\"",
+          "fx": [["set", "ff_tibb_stop"], ["score", 2], ["xp", 2], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "ff_tibb_keep",
+          "label": "tell her she's right to answer back",
+          "if": [["flag", "ff_child_bg"], ["!flag", "ff_tibb_stop"], ["!flag", "ff_tibb_keep"]],
+          "once": true,
+          "say": "Something in her steadies, like being believed matters more than being kept safe. \"Nobody else even hums it right. Somebody should. Might as well be me.\"",
+          "fx": [["set", "ff_tibb_keep"], ["score", 2], ["xp", 2], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "ff_tibb_closure",
+          "label": "ask if she still hears them hum",
+          "if": [["flag", "ff_hollow_done"], ["!flag", "ff_tibb_closure"]],
+          "once": true,
+          "say": "She presses her ear to the wall a long moment before she answers.",
+          "fx": [
+            ["set", "ff_tibb_closure"],
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "ff_hollow_rested"]],
+              [
+                ["say", "\"Just the once more, right at the end — glad-sounding, like a class let out early. Nothing since. I think they finally went home.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_hollow_bargained"]],
+              [
+                ["say", "\"Still there. Quieter, and there's other voices now too, littler ones from the living benches. I think they like the company.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_hollow_burned"]],
+              [
+                ["say", "\"Nothing at all now. I thought I'd be glad of the quiet. Mostly I just miss having something hum back.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the wall",
+          "say": "Mind you don't sit out here past dark. Even a wall that hums back keeps its own hours.",
+          "end": true
+        }
+      ]
+    }
+  }
+}

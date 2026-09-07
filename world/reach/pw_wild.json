@@ -1,0 +1,683 @@
+{
+  "regions": { "pw": { "name": "Pennywell" } },
+  "gen": [
+    {
+      "id": "pw_bank",
+      "name": "the Lastwater bank",
+      "seed": 161,
+      "w": 6,
+      "h": 6,
+      "region": "pw",
+      "walls": [[0, 0], [0, 5], [5, 0], [5, 5], [1, 0], [4, 5]],
+      "pools": {
+        "descs": ["The Lastwater's bank, willow and water-meadow, mud that never quite dries between one flood and the next."],
+        "briefs": ["Willow, mud, water-meadow."],
+        "scenes": []
+      },
+      "links": [
+        { "cell": [0, 1], "dir": "west", "to": "pw_causeway", "back": "east", "landmark": "the chapel causeway" },
+        { "cell": [0, 4], "dir": "west", "to": "pw_ferry", "back": "east", "landmark": "the Far Bank ferry" },
+        { "cell": [5, 2], "dir": "east", "to": "pw_mint_yard", "back": "out", "landmark": "Pennywell" },
+        { "cell": [1, 2], "dir": "in", "to": "pw_striking_hall", "back": "out", "landmark": "the Old Vault" }
+      ],
+      "spots": [
+        {
+          "cell": [2, 0],
+          "name": "The Chapel Rise",
+          "desc": "The ground rises to a whole chapel roof, dry and unattended — built, Pennywell says, for a ferry crossing that moved south a lifetime ago and left the chapel standing over nothing in particular.",
+          "brief": "Rising ground; a whole, unattended chapel roof.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_2_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 2 north and 3 east. The Old Vault: 2 north and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 0],
+          "name": "The Sedge Flat",
+          "desc": "Sedge grows shoulder-high and cuts like a blade if you take it wrong, the last dry ground before the meadows start flooding in earnest to the south.",
+          "brief": "Shoulder-high sedge; flooding ground beyond.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_3_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 2 north and 2 east. The Old Vault: 2 north and 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 0],
+          "name": "Cutpurse Corner",
+          "desc": "The old mint road bends here out of sight of the yard, and every generation of Pennywell tells its children the same story about why the bend is named what it is.",
+          "brief": "A blind bend, ill-named for good reason.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_4_0",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 2 north and 1 east. The Old Vault: 2 north and 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 1],
+          "name": "The Causeway's Foot",
+          "desc": "A raised stone track starts here and runs west out over the flooded water-meadows, dry-shod even in flood. East, Pennywell's chimney shows over the willows.",
+          "brief": "The causeway's foot; the meadows flooded either side.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_0_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 north and 5 east. The Old Vault: 1 north and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 1],
+          "name": "The Eyot",
+          "desc": "A low island sits mid-channel, reachable dry-shod only when the Lastwater's running thin. Willow scrub has taken all of it; something has been cutting withies here without asking anyone.",
+          "brief": "A low mid-channel island, cut withies on it.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "pw_bearings_1_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 north and 4 east. The Old Vault: 1 north."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 1],
+          "name": "The Bridge Stumps",
+          "desc": "Two stone stumps stand mid-current, all that's left of a bridge nobody in living memory has rebuilt. A tower's stair climbs from the near stump into the light, its door long fallen from its hinges.",
+          "brief": "Bridge stumps in the current; a tower's stair above.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "pw_bearings_2_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 north and 3 east. The Old Vault: 1 north and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 1],
+          "name": "The Weir Stones",
+          "desc": "Cut stones lie tumbled in the shallows, the last of an old weir that once fed the mill-race a steadier flow. Nobody has stacked them true since the hammers stopped needing the water they held back.",
+          "brief": "Tumbled weir-stones in the shallows.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_3_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 north and 2 east. The Old Vault: 1 north and 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 1],
+          "name": "The Gibbet Rise",
+          "desc": "A gibbet-post leans on the higher ground here, empty and has been for longer than anyone can say why it's kept upright at all. Pennywell mends the base every spring and never says whose job that is.",
+          "brief": "An old, empty gibbet-post, kept upright out of habit.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "pw_bearings_4_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 north and 1 east. The Old Vault: 1 north and 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 1],
+          "name": "Longmeadow",
+          "desc": "A long hay-meadow runs east from the bank, the ground rising gently toward fields the Fallows would recognize as their own kind of forgotten, if either hold's dead ever spoke across the water.",
+          "brief": "A long hay-meadow, rising gently east.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_5_1",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 north. The Old Vault: 1 north and 4 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 2],
+          "name": "The Gravel Spit",
+          "desc": "A gravel spit runs out into the current, and Pennywell's children have combed it since before anyone living was born. Old pennies wash up here more often than they should, always face down.",
+          "brief": "A gravel spit; old pennies wash up, always face down.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "pw_bearings_0_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 5 east. The Old Vault: 1 east."]]
+            },
+            {
+              "id": "pw_search_spit",
+              "label": "comb the spit for silver (wits)",
+              "if": [["!flag", "pw_die_obverse_known"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  10,
+                  [
+                    ["set", "pw_die_obverse_known"],
+                    ["move", "pw_obverse_die", "inv"],
+                    ["score", 4],
+                    ["xp", 3],
+                    ["say", "Face down in the gravel, worn nearly smooth: the mint's own obverse die, silver-black with river-age. Whoever dropped it did not drop it kindly."]
+                  ],
+                  [["say", "Gravel and old iron and river glass, nothing more. It can be combed again."]]
+                ]
+              ]
+            },
+            {
+              "id": "pw_spit_scout",
+              "label": "read the wash-line at a glance",
+              "free": true,
+              "if": [["class", "scout"], ["!flag", "pw_die_obverse_known"], ["!flag", "or_scout_pw_spit"]],
+              "fx": [
+                ["set", "or_scout_pw_spit"],
+                ["addvar", "or_scout_marks", 1],
+                ["set", "pw_die_obverse_known"],
+                ["move", "pw_obverse_die", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "A wash-line reads the same as a spoor-line to you: heavier things settle where the current first slows. You go straight to the obverse die, silver-black, face down where the river left it."]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [1, 2],
+          "name": "The Mill-Race",
+          "desc": "The Old Mint's mill-race runs dry now, its wheel broken and canted half into the bed. A doorway stands open in the ruin behind it, and even here you can feel a warmth that has no business coming off cold stone.",
+          "brief": "A dry race, a broken wheel, a warm doorway in.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [2, 2],
+          "name": "The Drowned Quay",
+          "desc": "A stone quay slopes down into the water, mooring-rings still bolted along its length from when the mint shipped silver out and coin dies in by barge. Half of it is underwater at any tide the Lastwater troubles to keep.",
+          "brief": "A stone quay, half-drowned, old mooring-rings still bolted.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "pw_bearings_2_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 3 east. The Old Vault: 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 2],
+          "name": "The Towpath",
+          "desc": "A towpath runs straight along the bank, ruts worn by barge-horses that haven't hauled anything up it in longer than the mint's furnace has been cold.",
+          "brief": "A straight, disused towpath.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_3_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 2 east. The Old Vault: 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 2],
+          "name": "The Boundary Meadow",
+          "desc": "Squared stones sit at even paces through the grass, the mint's own old boundary-marks, cut with a hammer-and-die that hasn't been the town seal in four hundred years. The meadow inside them is greener than the meadow outside.",
+          "brief": "The mint's old boundary stones, still squarely set.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "pw_bearings_4_2",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 east. The Old Vault: 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 2],
+          "name": "Millgate",
+          "desc": "The bank gives way to a beaten road here, Pennywell's cold chimney and press-shed close now to the east. West, the willows close back over the water like the road was never cut through them at all.",
+          "brief": "A beaten road; Pennywell close east.",
+          "onEnterOnce": [["xp", 1]]
+        },
+        {
+          "cell": [0, 3],
+          "name": "The Ford",
+          "desc": "A ford crosses the Lastwater here, the only place for a mile the water runs shallow enough to trust. Cart-ruts climb both banks, and something about the far side's mud never quite dries between crossings.",
+          "brief": "A shallow ford; cart-ruts on both banks.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "pw_bearings_0_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 south and 5 east. The Old Vault: 1 south and 1 east."]]
+            },
+            {
+              "id": "pw_read_ford",
+              "label": "read the ford for the safe crossing line",
+              "if": [["flag", "pw_paymaster_errand"], ["!flag", "pw_ford_line_known"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  10,
+                  [
+                    ["set", "pw_ford_line_known"],
+                    ["xp", 2],
+                    ["say", "The mud tells you where the footing holds and where it doesn't, and where the current runs faster than it looks. You'd trust a laden cart on this line at dusk."]
+                  ],
+                  [["say", "The ford keeps its own counsel. Whatever line is safe at dusk, you haven't found it yet."]]
+                ]
+              ]
+            },
+            {
+              "id": "pw_read_ford_scout",
+              "label": "read the ford's line at a glance",
+              "free": true,
+              "if": [
+                ["class", "scout"],
+                ["flag", "pw_paymaster_errand"],
+                ["!flag", "pw_ford_line_known"],
+                ["!flag", "or_scout_pw_ford"]
+              ],
+              "fx": [
+                ["set", "or_scout_pw_ford"],
+                ["addvar", "or_scout_marks", 1],
+                ["set", "pw_ford_line_known"],
+                ["xp", 2],
+                ["say", "You read the water the way you'd read any ground: firm footing shows as a paler ripple, soft mud as a darker one. The safe line at dusk is plain to you before you've broken a sweat."]
+              ]
+            },
+            {
+              "id": "pw_carry_chest_line",
+              "label": "carry the chest, safe line (might, 1hp)",
+              "if": [["has", "pw_paymaster_chest"], ["flag", "pw_ford_line_known"], ["!flag", "pw_paymaster_errand_done"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  8,
+                  [
+                    ["move", "pw_paymaster_chest", "nowhere"],
+                    ["set", "pw_paymaster_errand_done"],
+                    ["set", "free_passage"],
+                    ["addvar", "rep_free", 2],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "You keep to the line you read and the chest never so much as dips. Something gray-mud watches from the far bank the whole crossing and doesn't come closer."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "A step off the line and the current has an opinion about it. The chest stays dry, barely, and so do you. It can be tried again."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "pw_carry_chest_blind",
+              "label": "carry the chest, blind (might, 2hp)",
+              "if": [["has", "pw_paymaster_chest"], ["!flag", "pw_ford_line_known"], ["!flag", "pw_paymaster_errand_done"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  12,
+                  [
+                    ["move", "pw_paymaster_chest", "nowhere"],
+                    ["set", "pw_paymaster_errand_done"],
+                    ["set", "free_passage"],
+                    ["addvar", "rep_free", 2],
+                    ["score", 6],
+                    ["xp", 5],
+                    ["say", "You guess the footing and guess right, chest held high the whole way. Something gray-mud surfaces mid-current, thinks better of it, and sinks again."]
+                  ],
+                  [
+                    ["hp", -2],
+                    ["say", "The footing gives out mid-current, and something gray-mud is suddenly very close. You get the chest to the far bank soaked and shaking. It can be tried again."]
+                  ]
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [1, 3],
+          "name": "The Willow Holt",
+          "desc": "A stand of pollarded willows crowds the low ground, cut back hard every few years for withies and never once for firewood. Someone still tends this holt, though nobody in the tithe-house will say who.",
+          "brief": "A pollarded willow holt, still quietly tended.",
+          "onEnterOnce": [["score", 2], ["xp", 2]],
+          "actions": [
+            {
+              "id": "pw_bearings_1_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 south and 4 east. The Old Vault: 1 south."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 3],
+          "name": "Rushy Corner",
+          "desc": "Rushes crowd a bend in the bank, thick enough to hide a deer, or a man, or whatever it is that flattens a bed in them most nights and is always gone by morning.",
+          "brief": "A rush-choked bend; something beds down here nightly.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_2_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 south and 3 east. The Old Vault: 1 south and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 3],
+          "name": "The Osier Bed",
+          "desc": "Rows of osier withies stand cropped and orderly, the one patch of this bank that still looks tended for a purpose rather than merely surviving. Basket-work, mostly, and coin-bags, when there's coin worth bagging.",
+          "brief": "An orderly osier bed, cropped for basket-work.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_3_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 south and 2 east. The Old Vault: 1 south and 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 3],
+          "name": "The Adit Bank",
+          "desc": "The ground rises to a low bluff, timbered black at its foot where an old adit was cut into the silver-bearing rock. The mint drew its ore from here once, back when the mint drew ore from anywhere at all.",
+          "brief": "A low bluff; a timbered adit cut into the rock.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_4_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 south and 1 east. The Old Vault: 1 south and 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 3],
+          "name": "Millstone Rise",
+          "desc": "A cracked millstone lies half-buried on the high ground, too heavy to have walked here on its own and too far from any mill to explain how it did.",
+          "brief": "A cracked millstone, stranded far from any mill.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_5_3",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 1 south. The Old Vault: 1 south and 4 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [0, 4],
+          "name": "The Ferry Cut",
+          "desc": "The bank flattens into a landing-cut here, a chained ferry riding low against its post. The Lastwater runs wide and unhurried, the far side lost some mornings in the Meres' own fog.",
+          "brief": "A ferry landing; the far bank lost in fog some mornings.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_0_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 2 south and 5 east. The Old Vault: 2 south and 1 east."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 4],
+          "name": "Slack-Water Reach",
+          "desc": "The current stills to almost nothing here, a favorite spot for whatever the river isn't ready to carry on downstream. A one-room hut stands just off the bank, rope run from its door to a mooring-post on the water.",
+          "brief": "Slack water; a hut with a rope to a mooring-post.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_1_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 2 south and 4 east. The Old Vault: 2 south."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 4],
+          "name": "The Sump",
+          "desc": "The ground gives way to a boggy sump, black water standing over black mud, held together by nothing but reed-roots and old habit.",
+          "brief": "A black, boggy sump.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_2_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 2 south and 3 east. The Old Vault: 2 south and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 4],
+          "name": "Coldwater Bend",
+          "desc": "A spring-fed side-channel joins the Lastwater here, cold enough to numb a hand in under a minute even in high summer, and the fish know it — nothing much rises past this bend.",
+          "brief": "A cold, spring-fed bend; little rises past it.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_3_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 2 south and 2 east. The Old Vault: 2 south and 2 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [4, 4],
+          "name": "The Cattle Wade",
+          "desc": "A shallow wade lets stock cross without troubling the ford, banks pocked deep with hoofprints that never quite dry into hard ground.",
+          "brief": "A shallow cattle-wade, hoof-pocked banks.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_4_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 2 south and 1 east. The Old Vault: 2 south and 3 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [5, 4],
+          "name": "Pennyfield",
+          "desc": "A field the tithe-house still calls Pennyfield on its oldest maps, rent once paid in mint-work rather than coin. Nobody now farming it could tell you why, or seems to want to ask.",
+          "brief": "A field named for a rent nobody now remembers.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_5_4",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 2 south. The Old Vault: 2 south and 4 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [1, 5],
+          "name": "The Drown-Grass",
+          "desc": "Low ground holds every flood a season longer than the rest of the bank, grass gone pale and slick underfoot even in a dry month.",
+          "brief": "Low, flood-holding ground; pale, slick grass.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_1_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 3 south and 4 east. The Old Vault: 3 south."]]
+            }
+          ]
+        },
+        {
+          "cell": [2, 5],
+          "name": "South Bank Path",
+          "desc": "A footpath runs along the bank's southern reach, worn by whoever walks it most — moneyers' kin visiting the furrow where the old bridge's traffic used to pass, most likely.",
+          "brief": "A worn footpath along the bank's south reach.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_2_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 3 south and 3 east. The Old Vault: 3 south and 1 west."]]
+            }
+          ]
+        },
+        {
+          "cell": [3, 5],
+          "name": "The Last Willow",
+          "desc": "One old willow marks the bank's southern edge, trunk split wide enough to shelter from rain in, if the rain doesn't mind you sharing with whatever already lives in the hollow.",
+          "brief": "A split old willow at the bank's southern edge.",
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_bearings_3_5",
+              "label": "get your bearings",
+              "free": true,
+              "fx": [["say", "As the bank runs, Pennywell is 3 south and 2 east. The Old Vault: 3 south and 2 west."]]
+            }
+          ]
+        }
+      ],
+      "cellFx": {
+        "onEnter": [
+          [
+            "chance",
+            8,
+            [
+              [
+                "if",
+                [["!npcDead", "pw_drowned"]],
+                [
+                  ["npcgo", "pw_drowned", "here"],
+                  ["say", "Something comes up the bank behind you, gray as river-mud and dripping, a hammer still gripped in one fist — a moneyer who never stopped keeping his old trade."]
+                ],
+                []
+              ]
+            ],
+            []
+          ]
+        ]
+      }
+    }
+  ],
+  "stamps": [
+    {
+      "template": "tower",
+      "id": "pw_toll_tower",
+      "at": "pw_bank_2_1",
+      "dir": "up",
+      "back": "down",
+      "sideTrip": true,
+      "landmark": "Farthing Tower",
+      "vars": {
+        "NAME": "Farthing Tower",
+        "WATCHER": "a toll-keeper's shade",
+        "VIEW": "the Lastwater's bend shows below, Pennywell's chimney east, the Fallows pale west, the Meres' fog south",
+        "SIGN": "A rusted toll-box is still chained to the stair's foot.",
+        "LOOT": "a strung line of toll-farthings, green with age"
+      }
+    },
+    {
+      "template": "chapel",
+      "id": "pw_ferry_chapel",
+      "at": "pw_bank_2_0",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the Ferry Chapel",
+      "vars": {
+        "NAME": "the Ferry Chapel",
+        "SAINT": "a wayfarer-saint's shade",
+        "SIGN": "The door hangs unbarred; nobody has thought a chapel this unvisited worth the trouble of a lock.",
+        "LOOT": "a bent votive penny"
+      }
+    },
+    {
+      "template": "mine",
+      "id": "pw_silver_adit",
+      "at": "pw_bank_4_3",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the Silver Adit",
+      "vars": {
+        "NAME": "the Silver Adit",
+        "FOREMAN": "a stamp-master's ghost",
+        "SIGN": "An old assay-scale hangs inside, one pan gone mid-weighing.",
+        "LOOT": "an assay-hammer's head, silver still bright at the eye"
+      }
+    },
+    {
+      "template": "hut",
+      "id": "pw_slackwater_hut",
+      "at": "pw_bank_1_4",
+      "dir": "in",
+      "back": "out",
+      "sideTrip": true,
+      "landmark": "the Slack-Water Hut",
+      "vars": {
+        "NAME": "the Slack-Water Hut",
+        "HERMIT": "Hodder",
+        "SIGN": "A rope runs from the door to the water, slack, unused in days.",
+        "LOOT": "a ferryman's lucky penny, worn to a blank disc",
+        "VOICE": "Coins don't ferry. People do. State your business, if it isn't coin."
+      }
+    }
+  ],
+  "npcs": {
+    "pw_drowned": {
+      "name": "drowned moneyer",
+      "room": null,
+      "hostile": true,
+      "aggressive": true,
+      "hp": 9,
+      "atk": 2,
+      "df": 10,
+      "desc": "Gray as river-mud and dripping steadily, a striking-hammer still gripped in one fist the way a drowning man is said to grip whatever's nearest.",
+      "onDeath": [
+        ["score", 3],
+        ["xp", 4],
+        ["say", "It goes down into the mud and doesn't come up again this time, the hammer sinking with it. Somewhere under the ground, for a moment, the quarter-day hammers seem to miss a stroke."]
+      ]
+    }
+  }
+}

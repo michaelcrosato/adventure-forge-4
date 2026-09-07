@@ -1,0 +1,90 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 578,
+  "receipt": "reach.347.578.366.reach_at_rest.b2de521c",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The Envoy-tagged action 'turn your best charm on him (as an Envoy)' is flatly rebuffed by its target ('Wood doesn't care how well a thing's said,' he says. 'Neither do I, much.'), costing a turn for +1xp and no material change.",
+      "where": "Hunter's Camp / talk to hunter -> 'turn your best charm on him (as an Envoy)'"
+    },
+    {
+      "sev": "P1",
+      "what": "The same Envoy charm action produces an identical null result on a different NPC ('Save it for someone who wasn't already digging in the dark before you were born'), suggesting charm has no listed odds or fail-state, it just silently does nothing against certain characters.",
+      "where": "The Miners' Hall (Cinderhall) / talk to Old Crick -> 'turn on the charm (as an Envoy)'"
+    },
+    {
+      "sev": "P1",
+      "what": "The Lost Sentry is the only hostile encountered in ~130 rooms with zero grace/wits/will bypass. It is tagged 'attacks on sight' (not 'holds its ground' like every other undead) and struck for 3hp on room-entry with no dialogue offered; only 'attack' or retreat to another exit were available, breaking the pattern every other encounter (barrow-wight, ash wolf, gaunt wolf, gray sergeant, peat-black wight, honour guard, frozen pilgrim) established of a talk/verse/slip-past option.",
+      "where": "Boot-Track Hollow (Wardmoor moor) / room entry"
+    },
+    {
+      "sev": "P1",
+      "what": "An item explicitly instructs 'read it at the oath-stone: north from Highward, then east at the Last Cairn,' and a quest names the same 'Last Cairn' destination, but no room by that name or description was ever reached despite full traversal of the Wardmoor moor grid (Cairn Field, Twin Ruts, Sedge Flat, Wet Hollow, the Watch Cairn) - the stated route dead-ends at the Lost Sentry's forced fight instead.",
+      "where": "carried item 'the true founding record' flavor text; quest 'The Oath That Never Ended'"
+    },
+    {
+      "sev": "P2",
+      "what": "'Find the error in his tally' failed with the identical flavor line three times running ('The figures are a mess, but an honest one... the columns won't say otherwise'), which reads as if the check can never succeed once the debt is already 'owed fair' - if so, the action should say so rather than offering an endless, unwinnable re-roll.",
+      "where": "The Quartermaster's Wagon (Camp Gallows) / 'find the error in his tally (wits)'"
+    },
+    {
+      "sev": "P1",
+      "what": "Taking the Regent's cask of Ironbound oil via the Envoy option drew visible disapproval from all four companions in the same turn (Vell: 'whose furniture you are burning'; Tamsin: 'do not forget whose name goes on it'; Osk: 'I still had to look away'; Lys: 'I hope you know what you traded for it'), yet none of their regard numbers moved from before to after (checked via status), contradicting the game's own stated rule that 'companions judge what you do: their regard opens some doors and closes others.'",
+      "where": "The Regent's Chambers (Marrowgate) / 'negotiate the terms first (Envoy)'"
+    },
+    {
+      "sev": "P2",
+      "what": "Tamsin's approval banter says 'You've earned my back in a fight. That's not a small thing, coming from me' despite the player never having fought anything with her (every hostile encounter this run was talked past or avoided) - the approval trigger appears to fire from accumulated standing rather than any shared combat, so the line rings false for a no-violence playthrough.",
+      "where": "The Captain-General's Hall (Wardmoor) / ambient companion approval"
+    },
+    {
+      "sev": "P2",
+      "what": "The priest's blessing physically opens the barrow doors hours before the barrow is even entered ('Far off, the stone doors grind open. No promise binds them shut.'), even though the reeve's quest text promises 'you decide at the throne' - the later throne-side choice does still register as its own decision, but the early line briefly reads as if the outcome were already locked in.",
+      "where": "Gray Chapel / 'a blessing for the barrow', paid off later at Throne of the Barrow / 'leave the barrow open to the sky'"
+    },
+    {
+      "sev": "P2",
+      "what": "Every plainly friendly, not-yet-recruited companion (the traveler who becomes Vell, the apprentice who becomes Tamsin, etc.) lists 'attack NPC with belt knife' on the very first turn they are met, with zero prior hostility or provocation shown - tonally odd in a game whose stated thesis is finding 'the words, the bargain, the third way.'",
+      "where": "The Last Light Inn / 'attack Vell with belt knife' (same pattern at The Forge, Gray Chapel, Hunter's Camp)"
+    },
+    {
+      "sev": "P2",
+      "what": "'Read the tally marks by the smoke rack (DC 9, wits)' is offered on first arrival but silently disappears from the menu two turns later (after asking the hunter about herbs), without ever being taken and with no in-fiction explanation - replaced by an unrelated 'search the brush' action.",
+      "where": "Hunter's Camp"
+    },
+    {
+      "sev": "P2",
+      "what": "Earlier at Cinderhall, Ness set up an alternate hold-grief resolution ('back the hall's claim (Free Companies)') tied to a later choice at the Hundred Gallery, but once 'speak the truth over the Hundred' was chosen instead, returning to Ness produced no acknowledgment that her thread was now moot - she just repeats her stock line.",
+      "where": "The Head-Frame (Cinderhall) / talk to Ness, after resolving The Hundred at the Hundred Gallery — Deep"
+    }
+  ],
+  "confusions": [
+    "A quest's relative-direction hint ('two stands west of the landing') actually meant two stands west of a different room reached via the landing's separate 'out' exit, not west of the landing itself - cost several wrong turns before finding the drowned nave.",
+    "The oath-stone and its 'Last Cairn' were named by two separate quests and a carried item, but never turned up despite a full grid-search of the Wardmoor moor; it was unclear whether I'd missed a direction or whether the location is simply gated behind defeating the Lost Sentry.",
+    "Score hit its stated maximum (366/366) with four entire holds (Hollowbrook, Saltkerns, Emberfall, the Fallows) and a companion's whole personal arc (Vell's Exile's Ledger) still untouched, so the counter stopped giving any signal about how much story-relevant content remained versus purely optional side content.",
+    "Whether reading the letter at the Priory's cloister or the net-hall's fire (the two options not taken) would have produced a meaningfully different outcome than the drowned-nave option I used was never made clear - the three felt interchangeable rather than distinct."
+  ],
+  "suggestions": [
+    "Give the Lost Sentry (or any 'attacks on sight' foe) at least one grace/wits/will bypass to match every other hostile encounter in the game.",
+    "Flag or foreclose skill-checks that can never succeed (Bray's tally-error hunt once the debt is already 'fair') instead of letting them fail identically forever.",
+    "Anchor relative-direction hints to the actual sub-room they measure from, not a landmark the player may be standing in without yet having found the referenced room.",
+    "Nudge at least one companion's regard when a scene visibly unsettles the whole party, so spoken disapproval and the numeric trust track stay in sync.",
+    "Have an NPC whose alternate proposal was superseded (Ness, after the Hundred Gallery choice) briefly acknowledge that their path closed, rather than repeating a stock line.",
+    "Trim ambient banter that references shared combat ('earned my back in a fight') so it doesn't fire for a run where the party has fought nothing.",
+    "Consider a distinct 'main story complete' marker separate from the numeric score cap, since 366/366 arrived well before the realm's remaining holds and a companion's personal arc were even visited."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T06-41-50-144Z",
+  "seed": 347,
+  "build": {
+    "rev": "d9445f5",
+    "world": "22330ff2"
+  },
+  "cost_usd": null,
+  "verified": true
+}

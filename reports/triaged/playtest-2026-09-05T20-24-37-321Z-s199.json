@@ -1,0 +1,78 @@
+{
+  "verdict": "won",
+  "fun": 4,
+  "clarity": 3,
+  "turns": 564,
+  "receipt": "reach.199.564.366.gray_crown.1b13916a",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Both status and the throne room's own 'weigh the doors' text advertise 'burn it with Ironbound oil' as a valid ending, and I was carrying 'a cask of Ironbound oil (meant for burning a hollow clean)' at the time, but the action menu at The Hollow Throne only ever offered 'sit the throne, wearing the Vale's crown' and the kneel trap — no burn option ever appeared.",
+      "where": "The Hollow Throne / weigh the doors of the seat"
+    },
+    {
+      "sev": "P1",
+      "what": "'Read the founding ledger aloud' is advertised (status: 'to those who trust you') as needing only Watch/Church/Companies trust, which I had (Church 'in your debt', Free Companies 'a friend of the Companies'), but the option never appeared at the throne; it silently also needs the physical ledger from the Hall of Ledgers, which the throne-room text never says.",
+      "where": "The Hollow Throne"
+    },
+    {
+      "sev": "P1",
+      "what": "Cal's outcome contradicts itself: at the Scout Line I chose 'let him make his own choice and stay' and he confirmed it in his own words ('I'd rather fight for the captain than run from my own debts'), but a separate action elsewhere ('win his debt clear at the ring') immediately completed the same quest thread with 'Go home, it's paid' and Lys reacting as if he were always coming home, with no scene showing him change his mind.",
+      "where": "The Scout Line (Cal's Reckoning) vs The Muster Ground (win his debt clear at the ring)"
+    },
+    {
+      "sev": "P2",
+      "what": "Captain Vane says 'I'll bring the Company to the glade myself, when you're ready to lead the words' once I proposed the oath and later learned the Hanged Company's rest-verse from Keeper Rowan, but no dialogue option or location action ever appeared afterward (checked her tent and the hanging oak repeatedly) to actually hold the ceremony. The ending epilogue itself confirms it: 'The oath-stone still stands on the moor... waiting on a word that was never going to come.'",
+      "where": "Captain Vane's Tent / Camp Gallows"
+    },
+    {
+      "sev": "P2",
+      "what": "Barrow Field's flavor text ('Ivy chokes a loose-looking stone... the hunter west of the village would know how it moves') never resolves into an action even after visiting the hunter and getting exactly the promised info ('a gap under a fallen stone on the north face... it's in the tally by the rack').",
+      "where": "Barrow Field"
+    },
+    {
+      "sev": "P2",
+      "what": "Other locked exits consistently spell out their unlock condition inline, e.g. 'go north (locked: defeat it, slip past it (grace), or go around)', but The Hollow Throne simply drops two of its four advertised endings from the menu with no '(locked: ...)' note explaining why, breaking the game's own convention.",
+      "where": "The Hollow Throne"
+    },
+    {
+      "sev": "P2",
+      "what": "Most might/wits/grace/will checks (force the strongbox, force the font's bolt, work out the wind carvings, press for it plainly, etc.) can be retried immediately for free on failure with no cooldown or consequence, so failure rarely mattered outside the handful of checks explicitly flagged 'fail costs Nhp'.",
+      "where": "general (e.g. The King's Strongroom, The Chapel of Ash, the Old Watchtower)"
+    },
+    {
+      "sev": "P2",
+      "what": "Selling Marta's recovered stolen nets to Rennick flips 'The Missing Nets' to Failed and Marta calls it out by name in dialogue, but there is no way to ever make it right with her afterward (pay her back, apologize) even though I kept talking to her.",
+      "where": "The Chandlery, Gullhaven"
+    }
+  ],
+  "confusions": [
+    "Barrow Field's loose stone/hunter hint (see bugs) never led anywhere despite following it exactly as the game suggested.",
+    "The Camp Gallows oath-for-the-Hanged-Company thread (see bugs) was set up in two separate conversations but never got a payoff scene, and the ending epilogue treats it as a deliberately missed opportunity rather than clarifying how to trigger it.",
+    "No signal anywhere warned that 600 turns would only cover half the advertised content (I ended at turn 564 having rested 3 of 6 hollows) — Vell's whole personal quest ('The Exile's Ledger', tied to Marrowgate itself), Wardmoor/Highward, and Hollowbrook's Keepers' Hall stayed completely untouched despite being flagged as important from very early on.",
+    "Vell is standing right beside me when I finally sit Marrowgate's throne — the exact city his hidden secret is about — but his reaction line ('says nothing at all, which is the worst thing Vell has ever said') is generic and never touches his own unresolved plot, which felt like a missed beat given how much buildup his 'goes quiet at Marrowgate' hook got.",
+    "'The Crown' reputation track stayed 'unknown to Marrowgate' for the entire game, including through the whole final act set inside Marrowgate and ending on its throne; it's never explained whether that track can ever move or whether entering via the smugglers' cut specifically bypasses it.",
+    "The overall score meter (shown as scoreN/366 on every turn) hit its 366/366 cap at turn 518, roughly 46 turns before the game's actual climax, so for the whole final stretch (Cinderhall closure, the whole Marrowgate act, the throne itself) further real story choices no longer moved the number that's displayed as the primary progress readout on every single turn."
+  ],
+  "suggestions": [
+    "Make the burn-the-throne action actually fire when the Ironbound oil is in inventory, or explain in the room text why it's unavailable.",
+    "Add a '(locked: needs X)' annotation to the Hollow Throne's menu for the fill/burn/read-ledger paths, matching how every other locked exit in the game explains itself.",
+    "Give the Camp Gallows oath ceremony a concrete trigger (e.g. a new 'lead the Company in the rest-verse' option at the hanging oak) once the player has both proposed it to Vane and learned the verse from Keeper Rowan.",
+    "Either remove the Barrow Field loose-stone flavor line once its 'ask the hunter' payoff has been delivered, or actually add the shortcut action it promises.",
+    "Reconcile Cal's two resolution paths so 'let him choose and stay' can't be silently overwritten by clearing his debt elsewhere without at least one line showing him reconsider.",
+    "Surface hollows-rested-vs-total and a rough 'holds left unvisited' count more prominently in status, so players can budget a fixed turn count across companion quests before committing to an ending.",
+    "Give Vell a bespoke reaction tied to his own secret at the moment the player finally acts on the Hollow Throne inside Marrowgate, since that is literally the location his whole personal arc points at.",
+    "Decouple the score cap from turn count, or raise it, so the final act's choices still move the number that's presented as the main progress readout on every turn."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-05T20-24-37-321Z",
+  "seed": 199,
+  "build": {
+    "rev": "19f9988",
+    "world": "2a2a1adf"
+  },
+  "cost_usd": null,
+  "verified": true
+}

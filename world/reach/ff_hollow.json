@@ -1,0 +1,681 @@
+{
+  "rooms": {
+    "ff_porch": {
+      "name": "The Porch",
+      "desc": "Where the letters went in and never came out. A wooden letter-box stands bolted beside the door, still stuffed full, the topmost envelopes gone soft and gray with damp that's had four hundred years to work at them.",
+      "brief": "The porch; a letter-box, still stuffed full.",
+      "region": "ff",
+      "landmark": "the Fostering's porch",
+      "exits": { "out": { "to": "ff_walled_lane" }, "in": { "to": "ff_schoolroom" } },
+      "onEnterOnce": [
+        ["set", "ff_hollow_grievance"],
+        ["score", 2],
+        ["xp", 3],
+        ["say", "This is the Schoolroom: thirty-one wards still at their benches, unrested because no house was ever judged loyal enough for them to be sent for, and the bell that would dismiss them was never rung."],
+        [
+          "if",
+          [["inParty", "vell"]],
+          [
+            ["say", "Vell: \"My ancestor wrote the writ that filled this porch's letter-box. I want to know how many of these he read himself, and pretended not to.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Brother Osk: \"A dame with a dismissal rite she's never once been let speak, thirty-one benches still full. This is exactly the unfinished grief I came looking for.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "tamsin"]],
+          [
+            ["say", "Tamsin: \"Sureties, kept past every reasonable term, letters never sent. The Watch would call this three crimes wearing one roof.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "lys"]],
+          [
+            ["say", "Lys: \"Children who never once got to go home, in a house that still sweeps their floor for them. I don't have a clean word for what that is.\""]
+          ],
+          []
+        ]
+      ],
+      "variants": [
+        {
+          "if": [["flag", "ff_hollow_burned"]],
+          "desc": "A black, ragged gap stands where the porch door used to be, the letter-box burned to its iron bolts and nothing else."
+        },
+        {
+          "if": [["flag", "ff_hollow_rested"]],
+          "desc": "The letter-box stands open and empty at last, its lid propped back rather than latched, like something finally allowed to stop keeping a secret."
+        },
+        {
+          "if": [["flag", "ff_hollow_bargained"]],
+          "desc": "The letter-box stands open now, a fresh stack of living children's own letters home resting where the old ones used to be jammed."
+        }
+      ],
+      "actions": [
+        {
+          "id": "ff_free_letters_grace",
+          "label": "work the swollen latch loose (grace)",
+          "if": [["!flag", "ff_letters_freed"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              9,
+              [
+                ["set", "ff_letters_freed"],
+                ["move", "ff_ward_letters", "inv"],
+                ["addvar", "ff_sent_for_known", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "The latch gives all at once, swollen wood tearing free of its own rust. Thirty-one letters spill into your hands, addressed in a child's careful copybook hand to thirty-one houses that never once wrote back."]
+              ],
+              [["say", "The latch holds, swollen shut tighter than it looks. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "ff_free_letters_wits",
+          "label": "puzzle out the box's old lock (wits)",
+          "if": [["!flag", "ff_letters_freed"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "ff_letters_freed"],
+                ["move", "ff_ward_letters", "inv"],
+                ["addvar", "ff_sent_for_known", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "The lock is old but plain once you see its trick, a porter's fitting meant to keep out weather, not hands. Thirty-one letters come free, addressed in a child's careful copybook hand to houses that never once wrote back."]
+              ],
+              [["say", "The mechanism won't give up its trick on a glance. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "ff_burn_hollow",
+          "label": "burn the schoolroom (might, 1hp fail)",
+          "if": [["has", "ff_cinder_oil"], ["!flag", "ff_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              9,
+              [
+                ["move", "ff_cinder_oil", "nowhere"],
+                ["set", "ff_hollow_burned"],
+                ["set", "ff_hollow_done"],
+                ["set", "ff_writ_ended"],
+                ["addvar", "hollows_burned", 1],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_church", -2],
+                ["addvar", "appr_vell", -1],
+                ["addvar", "appr_osk", -1],
+                ["score", 15],
+                ["xp", 8],
+                ["say", "The cinder-oil eats through four hundred years of swept floors and chalk dust in a single night. By morning the Fostering is a black shell, and whatever the writ once claimed has nothing left to stand on."],
+                [
+                  "if",
+                  [["inParty", "tamsin"]],
+                  [["say", "Tamsin: \"Quick, and clean enough. I won't pretend I'm sorry to see that writ answered for.\""]],
+                  []
+                ],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["say", "Vell: \"My ancestor's own writ, and my own fire, four hundred years apart. Someone should have asked the children first. Nobody did, either time.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The oil catches wrong on the damp old wood and flares back short. You're driven off the step, singed, the porch untouched."]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "ff_schoolroom": {
+      "name": "The Schoolroom",
+      "desc": "Thirty-one benches, cut for children, stand in neat rows before a slate board where the day's lesson is still chalked mid-sentence, the dust on the ledge not yet gone stale. Nobody in the room has moved in four hundred years.",
+      "brief": "Thirty-one benches; the day's lesson still chalked.",
+      "region": "ff",
+      "exits": { "out": { "to": "ff_porch" }, "in": { "to": "ff_dormitory" } },
+      "variants": [
+        {
+          "if": [["flag", "ff_hollow_rested"]],
+          "desc": "The benches stand exactly as they did, but the board's been wiped clean and left bare — a lesson finished, at last, rather than merely stopped."
+        },
+        {
+          "if": [["flag", "ff_hollow_bargained"]],
+          "desc": "Old worn benches stand mixed now with newer, smaller ones, and the board carries today's lesson in a living child's uneven, careful hand."
+        },
+        {
+          "if": [["flag", "ff_hollow_burned"]],
+          "desc": "Char and a fallen roof-beam where the benches stood, chalk dust burned to a fine white ash no different from any other."
+        }
+      ],
+      "actions": [
+        {
+          "id": "ff_read_lesson",
+          "label": "read the chalked lesson",
+          "free": true,
+          "once": true,
+          "if": [["!flag", "ff_hollow_burned"]],
+          "fx": [
+            ["xp", 1],
+            ["say", "A list of the Reach's noble houses, copied out in a careful hand and never finished: the ink stops mid-word on the thirteenth name, as if the writer had simply, one ordinary afternoon, been called away."]
+          ]
+        }
+      ]
+    },
+    "ff_dormitory": {
+      "name": "The Dormitory",
+      "desc": "Beds cut child-sized, frames worn smooth and sagging at the middle from decades of grown bodies folded into a child's frame long after they'd stopped growing into it. Someone has smoothed every blanket flat, every morning, for four hundred years.",
+      "brief": "Child-sized beds, worn long by grown sleepers.",
+      "region": "ff",
+      "exits": { "out": { "to": "ff_schoolroom" }, "in": { "to": "ff_dame_study" } },
+      "actions": [
+        {
+          "id": "ff_search_beds",
+          "label": "search the beds",
+          "once": true,
+          "fx": [
+            ["move", "ff_ward_slate", "inv"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "gold", 5],
+            ["say", "Tucked under the nearest bed's frame, worn to the shape of a hand that held it every day: a slate, thirty-one names scratched round its frame in a script that changed, over the years, from a child's to an old woman's."]
+          ]
+        }
+      ]
+    },
+    "ff_dame_study": {
+      "name": "The Dame's Study",
+      "desc": "A narrow room off the dormitory, the ward-roll still open on the desk where it was last read, and a bell-rope threading down through a hole cut in the ceiling, coiled twice round an iron cleat nobody has ever loosed.",
+      "brief": "The study; the ward-roll open, a bell-rope through the ceiling.",
+      "region": "ff",
+      "exits": { "out": { "to": "ff_dormitory" } },
+      "variants": [
+        {
+          "if": [["flag", "ff_hollow_rested"]],
+          "desc": "The ward-roll lies closed on the desk now, and the bell-rope hangs slack from the cleat, its one pull finally spent."
+        },
+        {
+          "if": [["flag", "ff_hollow_burned"]],
+          "desc": "Where the desk stood is only a shape burned into the floor, darker than the char around it, and a length of rope-ash where the bell-rope hung."
+        }
+      ],
+      "actions": [
+        {
+          "id": "ff_writ_stolen_realize",
+          "label": "weigh the writ's weight in your hand",
+          "free": true,
+          "once": true,
+          "if": [["has", "ff_writ"], ["!flag", "ff_writ_ended"]],
+          "fx": [
+            ["set", "ff_writ_ended"],
+            ["addvar", "ff_sent_for_known", 1],
+            ["say", "You turn the writ over in your hands, four hundred years of a Crown's claim on paper gone soft at the folds. Out of Rowe's tally, it's worth exactly nothing at all — and everyone here knows it."]
+          ]
+        },
+        {
+          "id": "ff_weigh_grief",
+          "label": "weigh what this grief asks",
+          "free": true,
+          "if": [["!flag", "ff_hollow_done"]],
+          "fx": [
+            [
+              "if",
+              [["has", "ff_writ"], ["!flag", "ff_writ_ended"]],
+              [["set", "ff_writ_ended"], ["addvar", "ff_sent_for_known", 1]],
+              []
+            ],
+            ["say", "The bell wants three things brought to this room first: the ward-roll read against the Book of Houses, the writ of wardship ended, and the letters carried free of the porch."],
+            [
+              "if",
+              [["flag", "ff_roll_read"]],
+              [["say", "The ward-roll is read."]],
+              [
+                ["say", "The ward-roll is still wanted: carried from this desk to Tuck, at the recorder's loft, and read against the Book of Houses."]
+              ]
+            ],
+            [
+              "if",
+              [["any", [["flag", "ff_writ_ended"], ["has", "ff_writ"]]]],
+              [["say", "The writ is ended."]],
+              [
+                ["say", "The writ is still wanted: Bailiff Rowe persuaded, or answered to by a Warden's own authority, at the tally-house — or simply carried off."]
+              ]
+            ],
+            [
+              "if",
+              [["flag", "ff_letters_freed"]],
+              [["say", "The letters are carried free."]],
+              [["say", "The letters are still wanted: worked or read free of the box, back at the porch."]]
+            ],
+            [
+              "if",
+              [
+                ["flag", "ff_roll_read"],
+                ["any", [["flag", "ff_writ_ended"], ["has", "ff_writ"]]],
+                ["flag", "ff_letters_freed"]
+              ],
+              [["say", "Everything's ready: ring the bell, here."]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_dame_agrees"], ["flag", "ff_hold_word"], ["flag", "ff_rent_turned"]],
+              [["say", "The bargain stands ready too: tell Garth, at the walled lane, that the lesson is kept."]],
+              [
+                ["say", "The bargain wants three of its own: the dame's agreement at the chantry, the hold's word from Freda, and the rent turned at the tally-house."]
+              ]
+            ],
+            [
+              "if",
+              [["has", "ff_cinder_oil"]],
+              [
+                ["say", "The burn stands ready: cinder-oil is yours — burn it at the porch (might; a failed try costs 1 hp)."]
+              ],
+              [["say", "The burn wants cinder-oil — Sark, at the lime-kiln, gives it gladly once his want of it is known."]]
+            ]
+          ]
+        },
+        {
+          "id": "ff_rest_hollow",
+          "label": "ring the bell, dismiss them (will, 1hp)",
+          "if": [
+            ["flag", "ff_roll_read"],
+            ["any", [["flag", "ff_writ_ended"], ["has", "ff_writ"]]],
+            ["flag", "ff_letters_freed"],
+            ["!flag", "ff_hollow_done"]
+          ],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "ff_hollow_rested"],
+                ["set", "ff_hollow_done"],
+                ["addvar", "hollows_rested", 1],
+                ["addvar", "rep_keepers", 2],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "appr_vell", 1],
+                ["addvar", "appr_osk", 1],
+                ["score", 25],
+                ["xp", 8],
+                ["say", "You ring the bell and read the dismissal whole: thirty-one names, thirty-one houses, sent home by a hand and a bell four hundred years too late to matter to anyone but them. The benches, behind you, finally empty."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["say", "Vell: \"Struck, sworn, or simply carried off — however it went, the writ's answered for. Someone should have asked them first, and this time, in the end, someone did.\""]
+                  ],
+                  []
+                ],
+                [
+                  "if",
+                  [["inParty", "osk"]],
+                  [
+                    ["say", "Brother Osk: \"The rite Dame Sisley never got to speak, spoken at last. I've never said words that felt more like they were waiting specifically for me.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["hp", -1],
+                ["say", "A word catches wrong in your throat, and the rope nearly goes with it, rough fiber tearing your palm as you steady yourself. The benches stay exactly as still as they were. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "ff_search_ashes",
+          "label": "search where the desk burned",
+          "once": true,
+          "if": [["flag", "ff_hollow_burned"]],
+          "fx": [
+            ["move", "ff_wax_ember", "inv"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "gold", 6],
+            ["say", "Fused into the char where the ward-roll lay: a fire-hardened knot of desk-wood and old ink, thirty-one names burned into one unreadable lump. You take it, and try not to look too long at the bell-rope's ash."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "ff_cinder_oil": {
+      "name": "a cask of Ironbound cinder-oil",
+      "loc": "nowhere",
+      "hint": "eats through swept floors and old chalk the way it eats through anything else stubborn"
+    },
+    "ff_ward_roll": {
+      "name": "the ward-roll",
+      "loc": "ff_dame_study",
+      "takeable": true,
+      "hint": "wants carrying to Tuck, at the recorder's loft, and reading against the Book of Houses"
+    },
+    "ff_ward_letters": {
+      "name": "thirty-one unsent letters",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "addressed home in a child's careful hand; a house or the hold itself might want them, once this is over",
+      "variants": [
+        { "if": [["flag", "sv_ff_after_done"]], "hint": "" },
+        {
+          "if": [["flag", "ff_hollow_rested"]],
+          "hint": "a house may yet ask after these, once you're back in Slatefold"
+        }
+      ]
+    },
+    "ff_ward_slate": {
+      "name": "a ward's slate, thirty-one names scratched round its frame",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "a keepsake now; a house or the hold itself might want it, once this is over",
+      "variants": [
+        { "if": [["flag", "sv_ff_after_done"]], "hint": "" },
+        {
+          "if": [["flag", "ff_hollow_rested"]],
+          "hint": "a house may yet ask after this, once you're back in Slatefold"
+        }
+      ]
+    },
+    "ff_wax_ember": {
+      "name": "a fire-hardened knot of desk-wood and old ink",
+      "loc": "nowhere",
+      "hint": "worth its weight, nothing more; nothing is owed on it"
+    }
+  },
+  "quests": {
+    "ff_q_sent_for": {
+      "name": "Sent For",
+      "start": [["flag", "ff_hollow_grievance"]],
+      "done": [["flag", "ff_hollow_rested"]],
+      "failed": [["any", [["flag", "ff_hollow_bargained"], ["flag", "ff_hollow_burned"]]]],
+      "stages": [
+        {
+          "if": [
+            ["flag", "ff_roll_read"],
+            ["any", [["flag", "ff_writ_ended"], ["has", "ff_writ"]]],
+            ["flag", "ff_letters_freed"]
+          ],
+          "text": "Everything's ready: ring the bell in the dame's study, past the porch and the dormitory."
+        },
+        {
+          "if": [
+            ["flag", "ff_roll_read"],
+            ["any", [["flag", "ff_writ_ended"], ["has", "ff_writ"]]],
+            ["!flag", "ff_letters_freed"]
+          ],
+          "text": "The roll is read and the writ is ended. Only the letters remain: work or read the letter-box free, at the porch."
+        },
+        {
+          "if": [["flag", "ff_roll_read"], ["!flag", "ff_writ_ended"], ["!has", "ff_writ"], ["flag", "ff_letters_freed"]],
+          "text": "The roll is read and the letters are free. Only the writ remains: Bailiff Rowe, at the tally-house."
+        },
+        {
+          "if": [
+            ["!flag", "ff_roll_read"],
+            ["any", [["flag", "ff_writ_ended"], ["has", "ff_writ"]]],
+            ["flag", "ff_letters_freed"]
+          ],
+          "text": "The writ is ended and the letters are free. Only the ward-roll remains: to Tuck, at the recorder's loft."
+        },
+        {
+          "if": [["flag", "ff_roll_read"], ["!flag", "ff_writ_ended"], ["!has", "ff_writ"], ["!flag", "ff_letters_freed"]],
+          "text": "The roll is read. Two remain: the writ, at the tally-house, and the letters, at the porch."
+        },
+        {
+          "if": [
+            ["!flag", "ff_roll_read"],
+            ["any", [["flag", "ff_writ_ended"], ["has", "ff_writ"]]],
+            ["!flag", "ff_letters_freed"]
+          ],
+          "text": "The writ is ended. Two remain: the ward-roll, at the recorder's loft, and the letters, at the porch."
+        },
+        {
+          "if": [["!flag", "ff_roll_read"], ["!flag", "ff_writ_ended"], ["!has", "ff_writ"], ["flag", "ff_letters_freed"]],
+          "text": "The letters are free. Two remain: the ward-roll, at the recorder's loft, and the writ, at the tally-house."
+        },
+        {
+          "if": [],
+          "text": "Three are wanted first: the roll at the loft, the writ at the tally-house, the letters at the porch."
+        }
+      ]
+    },
+    "ff_q_lesson": {
+      "name": "The Lesson Kept",
+      "start": [["flag", "ff_hollow_grievance"]],
+      "done": [["flag", "ff_hollow_bargained"]],
+      "failed": [["any", [["flag", "ff_hollow_rested"], ["flag", "ff_hollow_burned"]]]],
+      "stages": [
+        {
+          "if": [["flag", "ff_dame_agrees"], ["flag", "ff_hold_word"], ["flag", "ff_rent_turned"]],
+          "text": "Everything's ready: tell Garth, at the walled lane, that the lesson is kept."
+        },
+        {
+          "if": [["flag", "ff_dame_agrees"], ["flag", "ff_hold_word"], ["!flag", "ff_rent_turned"]],
+          "text": "The dame agrees and the hold's given its word. Only the rent remains: Bailiff Rowe, at the tally-house."
+        },
+        {
+          "if": [["flag", "ff_dame_agrees"], ["!flag", "ff_hold_word"], ["flag", "ff_rent_turned"]],
+          "text": "The dame agrees and the rent's turned. Only the hold's word remains: Freda, at the hearth-house."
+        },
+        {
+          "if": [["!flag", "ff_dame_agrees"], ["flag", "ff_hold_word"], ["flag", "ff_rent_turned"]],
+          "text": "The hold's given its word and the rent's turned. Only the dame remains: Dame Sisley, at the chantry."
+        },
+        {
+          "if": [["flag", "ff_dame_agrees"], ["!flag", "ff_hold_word"], ["!flag", "ff_rent_turned"]],
+          "text": "The dame agrees. Two remain: the hold's word, from Freda, and the rent, from Bailiff Rowe."
+        },
+        {
+          "if": [["!flag", "ff_dame_agrees"], ["flag", "ff_hold_word"], ["!flag", "ff_rent_turned"]],
+          "text": "The hold's given its word. Two remain: the dame's agreement, at the chantry, and the rent, at the tally-house."
+        },
+        {
+          "if": [["!flag", "ff_dame_agrees"], ["!flag", "ff_hold_word"], ["flag", "ff_rent_turned"]],
+          "text": "The rent's turned. Two remain: the dame's agreement, at the chantry, and the hold's word, from Freda."
+        },
+        {
+          "if": [],
+          "text": "Three are wanted: the dame's word at the chantry, the hold's word from Freda, and the rent turned at the tally-house."
+        }
+      ]
+    },
+    "ff_q_wardlands": {
+      "name": "The Wardlands Question",
+      "start": [["flag", "ff_hollow_grievance"]],
+      "done": [["flag", "ff_wardlands_settled"]],
+      "stages": [
+        {
+          "if": [["flag", "ff_wardlands_crown"]],
+          "text": "The wardlands answer to the Crown now, rent and all, from the tally-house."
+        },
+        {
+          "if": [["flag", "ff_wardlands_free"]],
+          "text": "The wardlands are the Companies' enclosure now, walled out of the land-agent's lodging."
+        },
+        {
+          "if": [["flag", "ff_wardlands_common"]],
+          "text": "The wardlands are the tenants' own now, the houses' heirs named in the deed."
+        },
+        {
+          "if": [["flag", "ff_wardlands_broker"]],
+          "text": "An Envoy's deed binds the Crown and the Companies to the same wardlands now."
+        },
+        {
+          "if": [["flag", "ff_hollow_bargained"], ["!flag", "ff_wardlands_settled"]],
+          "text": "Fosterfell promised the wardlands' rent to the school. Settling it another way, at the fold-green, breaks that word."
+        },
+        {
+          "if": [["flag", "ff_hollow_done"], ["!flag", "ff_wardlands_settled"]],
+          "text": "The Schoolroom's fate is settled. The wardlands question is still open: declare it at the fold-green."
+        },
+        { "if": [], "text": "Whose the wardlands are waits on the Schoolroom's own fate being settled first." }
+      ]
+    },
+    "ff_q_agent_errand": {
+      "name": "The Land-Agent's Errand",
+      "start": [["flag", "ff_agent_errand"]],
+      "done": [["flag", "ff_agent_errand_done"]],
+      "stages": [
+        {
+          "if": [["flag", "ff_lane_known"]],
+          "text": "The fell-lane's line is known. Carry Coster's stakes to the fell road and cut the bound by that line."
+        },
+        {
+          "if": [],
+          "text": "Coster's bound-stakes want carrying to the fell road. Read the lane's line first, if you can find where it's walked."
+        }
+      ]
+    },
+    "ff_q_ward_roll": {
+      "name": "The Ward-Roll",
+      "start": [["any", [["has", "ff_ward_roll"], ["flag", "ff_recorder_bg"]]]],
+      "done": [["flag", "ff_reeve_ward_known"]],
+      "stages": [
+        {
+          "if": [["flag", "ff_roll_read"], ["!flag", "ff_reeve_ward_known"]],
+          "text": "The roll's read once, against the Book of Houses. Read it again with Tuck for what the first pass missed."
+        },
+        {
+          "if": [],
+          "text": "The ward-roll wants reading against the Book of Houses. Tuck keeps the book; the roll waits in the dame's study."
+        }
+      ]
+    },
+    "ff_q_child": {
+      "name": "The Child at the Wall",
+      "start": [["flag", "ff_child_bg"]],
+      "done": [["any", [["flag", "ff_tibb_stop"], ["flag", "ff_tibb_keep"]]]],
+      "stages": [
+        {
+          "if": [],
+          "text": "Tibb hums the wards' rhyme through the wall some nights. Tell her it isn't safe, or that she's right to answer."
+        }
+      ]
+    },
+    "ff_q_after": {
+      "name": "Fosterfell, After",
+      "start": [["flag", "sv_ff_back"]],
+      "done": [["flag", "sv_ff_after_done"]],
+      "stages": [
+        {
+          "if": [["flag", "ff_hollow_bargained"], ["!flag", "said_ff_bell_keeper_sv_ff_bargain_ask"]],
+          "text": "The lesson's kept. Garth, at the walled lane, wonders who should keep the school's first lesson now."
+        },
+        {
+          "if": [["flag", "ff_hollow_rested"], ["!flag", "said_ff_recorder_sv_ff_rested_ask"]],
+          "text": "The wards are sent home. Tuck, at the recorder's loft, has word of a rider come up asking after one."
+        },
+        {
+          "if": [["flag", "ff_hollow_burned"], ["!flag", "said_ff_bailiff_sv_ff_burn_ask"]],
+          "text": "The schoolroom is ash. Bailiff Rowe, at the tally-house, wonders what the Crown's claim rests on now."
+        },
+        { "if": [], "text": "Fosterfell settles back into itself, whatever the Schoolroom's fate cost it." }
+      ]
+    }
+  },
+  "statusTracks": [
+    {
+      "var": "ff_sent_for_known",
+      "label": "Sent for: the roll, the writ, the letters",
+      "max": 3,
+      "remaining": [
+        { "flag": "ff_roll_read", "label": "the ward-roll, read at the recorder's loft" },
+        { "flag": "ff_writ_ended", "label": "the writ, ended at the tally-house" },
+        { "flag": "ff_letters_freed", "label": "the letters, freed at the porch" }
+      ],
+      "if": [["flag", "ff_hollow_grievance"]]
+    }
+  ],
+  "epilogue": [
+    {
+      "if": [["flag", "ff_hollow_rested"]],
+      "text": "The ward-roll was read, the writ ended, the letters carried out, and the bell rung — thirty-one wards sent home four centuries late.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "ff_hollow_bargained"]],
+      "text": "Fosterfell's schoolroom teaches living children now, in the wards' own names, and the wardlands' rent runs to the school every year.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "ff_hollow_burned"]],
+      "text": "Ironbound cinder-oil ate the Fostering to a black shell in a night, and the writ that held the wardlands has nothing left to stand on.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "ff_entered"], ["!flag", "ff_hollow_done"]],
+      "text": "Fosterfell's schoolroom stands as it always has, benches full and a bell nobody rings. Still nights hear a slate being cleaned.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "ff_wardlands_crown"]],
+      "text": "The wardlands answer to the Crown's rent-roll now, four hundred years after the writ first laid its claim on them."
+    },
+    {
+      "if": [["flag", "ff_wardlands_free"]],
+      "text": "Free Company fence-lines climb the wardlands now, on ground thirty-one children once called their own for a season."
+    },
+    {
+      "if": [["flag", "ff_wardlands_common"]],
+      "text": "The wardlands belong to Fosterfell's own tenants now, the houses' heirs written into a deed for the first time in four hundred years."
+    },
+    {
+      "if": [["flag", "ff_wardlands_broker"]],
+      "text": "An Envoy talked Fosterfell's bailiff and the Companies' land-agent into signing the same deed. Neither has stopped watching the other since."
+    },
+    {
+      "if": [["flag", "ff_bargain_broken"]],
+      "text": "The word Fosterfell gave its own school was broken again, later, by someone who had the choosing of it."
+    },
+    {
+      "if": [["flag", "ff_reeve_ward_known"]],
+      "text": "One ward of the first Reeve's own house was fetched quietly home the spring after the rest were sent up, and never spoken of again."
+    },
+    {
+      "if": [["flag", "free_passage"], ["flag", "ff_agent_errand_done"]],
+      "text": "Fosterfell's bound-stakes bought the Free Companies' road under the pass, same as Gullhaven's fog and Mootcombe's cask errand did."
+    },
+    {
+      "if": [["flag", "ff_tibb_stop"]],
+      "text": "Tibb stopped humming the wards' rhyme back through the wall. She still listens, most nights, just quieter about it now."
+    },
+    {
+      "if": [["flag", "ff_tibb_keep"]],
+      "text": "Tibb still hums the wards' rhyme back through the wall, the only one in Slatefold who ever has."
+    },
+    {
+      "if": [["flag", "or_warden_ff_cold"]],
+      "text": "A Warden found Fosterfell's own land-agent close ranks the moment Watch training showed, same as everywhere else the Companies buy ground."
+    },
+    {
+      "if": [["any", [["flag", "sv_ff_burn_sworn"], ["flag", "sv_ff_burn_lapsed"]]]],
+      "text": "Marrowgate asked what Fosterfell's claim on the wardlands rests on with the writ gone. The answer depended on who was asked."
+    },
+    {
+      "if": [["any", [["flag", "sv_ff_rested_given"], ["flag", "sv_ff_rested_kept"]]]],
+      "text": "A rider came up from one of the standing houses, asking after its ward's things — and rode back down either with them, or without."
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 512,
+  "receipt": "reach.419.512.366.reach_burned.7e06c438",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The task's promised free 'weigh the writ against the stair' entry could not be found anywhere in Coldpass despite thorough exploration (Watch Checkpoint, Coldpass South Stair with Sergeant Bray both before and after obtaining the writ, St. Ashwyn's Perch courtyard/guesthouse/scriptorium/pilgrims' hall/bell tower, and the Pass Gate). Only 'show the Regent's writ at the gate' existed as an action; the closest substitute was Abbot Corvin's spoken line 'The writ's fastest, and costs what you won't see billed.'",
+      "where": "Coldpass South Stair / St. Ashwyn's Perch (no matching menu entry found)"
+    },
+    {
+      "sev": "P1",
+      "what": "Attacking the two 'holds its ground' gray wolves (ash wolf at Twin Stones, gaunt wolf at Wolf Scrape) carried no standing-cost warning in the action label itself ('attack ash wolf with short sword (roll 6+ on the die)'), yet both hits cost Lys regard (-1 each) and eventually escalated to 'near leaving.' Later similar choices (e.g. burning the Gallows Glade) explicitly stated 'a hit costs standing with the Free Companies, Lys and Brother Osk' in the menu before acting. The inconsistent hinting made the early Lys losses feel like a surprise rather than an informed choice.",
+      "where": "Twin Stones / Wolf Scrape - 'attack ash wolf' and 'attack gaunt wolf' entries"
+    },
+    {
+      "sev": "P1",
+      "what": "After the Thornwold burning, Lys's rejection line says 'Thornwold burned with him still inside it,' which reads as if her brother Cal was endangered by the fire. Cal was safe the whole time at the Scout Line/Camp Gallows muster ground, nowhere near the Gallows Glade that burned (a different location, several rooms into the deep wood). The line is misleading about what actually happened to him.",
+      "where": "The Burned Glade - talking to Lys after she leaves the party"
+    },
+    {
+      "sev": "P1",
+      "what": "Two menu entries when talking to a departed Lys are both labeled 'ask after her brother' with no visible distinction, but one is flagged '(Lys -1)' and the other '(Lys +1)' - a player cannot tell which is which before choosing, unlike almost every other consequence-tagged choice in the game which differentiates its options' wording.",
+      "where": "The Burned Glade - talking to Lys, two identically-worded 'ask after her brother' options"
+    },
+    {
+      "sev": "P2",
+      "what": "Burning Thornwold's hollow (the Gallows Glade) itself left no collectible residue (no oil, cask, or ash) at the site or immediately after - the pitch-oil jug is simply consumed. A cask of Ironbound oil only became available much later and far away, at the Ironbound Hall in Marrowgate, gated behind Ironbound reputation. A player expecting a direct token from 'the burning' (as hinted by later throne mechanics) would find nothing at Thornwold itself.",
+      "where": "The Burned Glade (Thornwold) - no pickup after the burn action"
+    },
+    {
+      "sev": "P2",
+      "what": "Two unrelated NPCs in different, distant regions are both named 'Old Maud' and share an identical dialogue/description template ('doesn't look up first. Looks up eventually, and takes your measure quick'): one in Thornwold's deep wood (Maud's Smoke-Hut) and one implied on Coldpass's Goat Track (Abbot Corvin's bell-clapper quest). A near-identical unnamed template also appears as 'the last keeper' in Marrowgate's Cistern Cell. Reusing the same name for a different character risks momentary confusion about whether it's the same person.",
+      "where": "Maud's Smoke-Hut (Thornwold) vs. Abbot Corvin's 'Ringing the Bell' quest reference to 'Old Maud, on the Goat Track' (Coldpass)"
+    },
+    {
+      "sev": "P2",
+      "what": "Armor pickups (mail shirt in the Barrow Crypt) show an explicit '(You will wear it now.)' notice, but weapon pickups that also clearly auto-equip (the plain sword at the Forge which changed my hit bonus via Keen Edge; the Free Company blade from Rook which became my listed combat weapon) never showed the parallel '(You will fight with it now.)' notice at any point in this run.",
+      "where": "The Forge - 'take the plain sword from the wall'; The Rope Larder - Rook's blade reward"
+    },
+    {
+      "sev": "P2",
+      "what": "The global 'Hollows burned' counter read 2/11 at the end, even though only one of the eleven named Act 2 holds (Thornwold) was actually burned - the second increment came from burning the Hollow Throne itself, which is Act 3/Marrowgate content and not one of the eleven enumerated holds. The counter's denominator (/11) becomes slightly misleading once the throne is counted in the numerator.",
+      "where": "Final status screen - 'Hollows burned: 2/11'"
+    },
+    {
+      "sev": "P2",
+      "what": "Quest closure text for 'Quill's Ballot' reads 'Quest closed: Quill's Ballot - its asker's wish is past meeting' after handing the bribe purse to the Watch instead of delivering it - serviceable but the phrase 'past meeting' is an odd/stiff way to say the quest resolved in a way Quill didn't want.",
+      "where": "The Watch House - 'hand Quill's coin to the Watch'"
+    }
+  ],
+  "confusions": [
+    "No in-fiction way to reconcile with Lys after the Thornwold burning: 'ask her to come back' gives the identical rejection line every time, even after raising her regard back to +1 via unrelated positive dialogue - it's unclear whether she can ever rejoin or whether the door is simply closed for the rest of the run.",
+    "The Marshal's Oath thread (Tanners' Row burn-order) was left open at game's end with no in-throne-room way to resolve it; the ending epilogue never mentions what became of it, though the quest text implied 'Take it to Tarn, to the Regent, or sell it to Quill - each closes this differently.'",
+    "Several companion personal-grief quests (Osk's Drowned Family/Fenmarch, Tamsin's mine/Cinderhall, Vell's ledger/Hollowbrook) are explicitly and permanently foreclosed the moment you cross the Pass Gate ('A companion's grief left unfinished there stays unfinished'), which is clearly telegraphed, but nothing earlier in the Vale or Thornwold hints that choosing a single hold (per the west-or-east framing) forecloses the other two companions' arcs entirely rather than just delaying them.",
+    "It is not obvious from any menu that burning the Hollow Throne with Ironbound oil is compatible with (and does not erase) having just extracted the first Reeve's confession - the game explicitly comments on this tension in the epilogue ('He confessed, four hundred years late - and the throne burned anyway'), but nothing in the throne room itself warns that the confession doesn't block or discourage the fire ending."
+  ],
+  "suggestions": [
+    "Add the same '(a hit costs standing with X)' annotation used on later fights to the early Ashwood 'holds its ground' wolf attacks, so the first companion-regard lesson lands as an informed choice rather than a retroactive surprise.",
+    "Differentiate the two 'ask after her brother' labels in Lys's post-departure dialogue (e.g. one could be 'ask after her brother, gently' vs. 'ask after her brother, pointedly') so their opposite regard effects aren't a coin flip.",
+    "Either surface a literal 'weigh the writ against the stair' free entry somewhere along the Coldpass climb, or drop that specific phrasing from onboarding text/hints so testers aren't sent looking for a menu option that doesn't exist under that name.",
+    "Give Thornwold's Gallows Glade a small on-site pickup (an ash vial, a scorched nail) immediately after burning it, so the 'burning leaves you something' payoff isn't solely a much-later, reputation-gated cask two acts away.",
+    "Rename one of the two 'Old Maud' characters (or explicitly lampshade the coincidence) so the reused name doesn't read as a location/continuity slip.",
+    "Add a '(You will fight with it now.)' notice to weapon pickups that auto-equip, mirroring the existing armor notice, for consistency."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T22-24-55-188Z",
+  "seed": 419,
+  "build": {
+    "rev": "201874d",
+    "world": "cf21127c"
+  },
+  "cost_usd": null,
+  "verified": true
+}

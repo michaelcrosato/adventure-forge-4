@@ -1,0 +1,80 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 569,
+  "receipt": "reach.251.569.366.reach_at_rest.90d872ff",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "After 'The Choir of Ash' is fully rested (confession + rest-verse spoken, singing explicitly said to be gone), the room text at 'The Ridge Foot' below the ridge still reads 'Singing carries down from it, faint, unhurried, and never quite stops,' directly contradicting the resolution text.",
+      "where": "The Ridge Foot (Emberfall ash flats) / room description"
+    },
+    {
+      "sev": "P1",
+      "what": "After speaking the rest-rite that ends the frozen pilgrim's vigil, re-entering/leaving the shrine still triggers Brother Osk's bark 'Pilgrims, unrested, this close to a working chapel. Someone should have come back for them.' — stale pre-resolution text.",
+      "where": "The Pilgrims' Shrine (Coldpass) / companion bark on room entry"
+    },
+    {
+      "sev": "P1",
+      "what": "After exposing Preceptor Aldous and the narration stating 'Aldous has a cell, or a road out of Cinderhall' and 'A junior officer minds Aldous's old desk now,' Aldous remains fully present, talkable (still offers 'the Regent's writ' and 'ask for oil to burn a hollow') and attackable in the same room.",
+      "where": "The Ironbound Chapterhouse (Cinderhall) / talk to Preceptor Aldous"
+    },
+    {
+      "sev": "P1",
+      "what": "Vell's personal quest consistently names her ledger's location as 'Hollowbrook' ('The Keepers' Hall in Hollowbrook') everywhere it's mentioned during play, but the game's final epilogue instead calls the same place 'Barrowmere' ('Vell's ledger stayed unread in Barrowmere,' 'the great mound's door still stands at Barrowmere's edge') — two different names for what should be one hold.",
+      "where": "Quest 'The Exile's Ledger' vs. final status epilogue"
+    },
+    {
+      "sev": "P2",
+      "what": "For a long stretch after Act I ended, status's 'The Gray:' summary line still read 'Six holds, six unrested griefs' while the paragraph directly above it (and the Hollows-rested counter) already reflected the real count of seven named holds (Thornwold, Fenmarch, Wardmoor, Iron Downs, Hollowbrook, Saltkerns, Emberfall). The game's opening pitch also promises only 'six holds' at the very start.",
+      "where": "status output, 'The road' section, throughout Act 2"
+    },
+    {
+      "sev": "P2",
+      "what": "Prior Wenlock, met in Emberfall (reached by travelling due west from the Vale, past Thornwold), describes Brother Osk as 'A novice of the gray, this far east' — a compass direction that reads backwards for a location the player just walked west to reach.",
+      "where": "The Priory of Ash (Emberfall) / talk to Prior Wenlock, 'your gray-robed companion'"
+    },
+    {
+      "sev": "P2",
+      "what": "At a single blocking obstacle (a bell-ringer's shade), two different failed social-check attempts (a will-based bluff, then a wits-based honest answer) each independently cost Watch standing before a third, unrelated grace check finally succeeded — bad luck on retries can stack multiple reputation losses against one guard.",
+      "where": "the Cinder Watch — stair (Emberfall) / bluff and answer options"
+    },
+    {
+      "sev": "P2",
+      "what": "Every other purchase in the game explicitly names and deducts a gold cost (e.g. 'buy a quench-flask — 3 gold'), but asking Factor Corrin for 'cinder-oil, for the chapel' hands over a full cask with no price shown or charged, breaking the game's own established shop pattern.",
+      "where": "The Ironbound Scale-House (Emberfall) / talk to Factor Corrin, 'cinder-oil, for the chapel'"
+    }
+  ],
+  "confusions": [
+    "'The Hidden Root' quest says 'From Camp Gallows go west to the far side, then north one stand: the black thorn opens north,' but walking the entire western gallows-road corridor from the palisade gate to its literal dead end (the Gallows Glade) never revealed a north branch or a black thorn.",
+    "'Neave's Brother' asks for 'anything of his' from the ash flats; after fully clearing the Bell-Shard Flat, the Sand Mine, the Glazed Cairn barrow, and the Cinder Watch tower (four grave-goods collected along the way, each explicitly tagged 'nothing more is owed on it'), no item ever unlocked a new line with Neave and the quest stayed open with no further clue.",
+    "Major, irreversible companion-trust choices aren't always flagged before you commit: naming Vell's exiled royal blood to the Regent produced an immediate, severe trust hit (her regard fell from +2 to 0, 'Vell strongly disapproves') with zero warning — unlike the Vale throne and the Hollow Throne itself, which both offer a free 'weigh what this choice would mean' preview first.",
+    "The Vale barrow-sealing text ('You draw the great doors shut from within the passage... The crypt way south still stands open behind you') reads as though it might trap the player inside; in practice, leaving via the antechamber's normal exit worked with no issue, so the line oversells a risk that isn't real.",
+    "The chapel's recovered bell (pried from a fused frame in Emberfall's vestry) and the warped bronze bell-clapper (found atop the Cinder Watch tower) are clearly meant to be a matched pair — both unique items, both about the same broken bell — but no location or dialogue ever offered a way to actually reunite them.",
+    "Captain Vane's 'Smugglers' Road' favor names 'Rook, at the Rope Larder' and bearings twice point 'north-west' toward Rook from Camp Gallows, but following that direction through the deep-wood grid never surfaced a Rope Larder or a way to reach Rook."
+  ],
+  "suggestions": [
+    "Refresh room descriptions and companion barks once a hold's grief is rested so revisited locations stop referencing singing/grief that the game itself just said is gone.",
+    "Remove or reflavor an NPC's dialogue and combat options once the story explicitly states they've been arrested or exiled (Preceptor Aldous stayed fully interactive after his own downfall).",
+    "Pick one name for Vell's home hold and use it consistently between the quest log and the ending epilogue (Hollowbrook vs. Barrowmere).",
+    "Fix the stale 'six holds' line in status (and the opening pitch) once the real count of seven is established, so the two lines in the same screen stop disagreeing.",
+    "Cap standing loss to once per blocked obstacle, or make a second attempt free after the first miss, so unlucky rolls can't cascade into repeated reputation penalties at one gate.",
+    "Add a free 'weigh this choice' preview before any dialogue line that will sharply tank a companion's regard, matching the pattern already used at the two throne rooms.",
+    "Give the recovered chapel bell and the tower bell-clapper an actual place to be reunited, since both items clearly telegraph it.",
+    "Double-check that hinted directions ('north-west past the black thorn,' 'Rook north-west') resolve to an actual walkable path in the shipped map — both the Hidden Root and the Rope Larder dead-ended for me.",
+    "Give 'Neave's Brother' a concrete found-item flag somewhere in the flats, or have Neave say plainly that nothing there will ever satisfy it, so the quest doesn't read as perpetually open.",
+    "The ending's 'how the realm remembers you' epilogue is a genuinely excellent recap of scattered consequences — consider surfacing a lighter version of it mid-game (e.g. when asking a specific companion about their own quest) to cut down on blind backtracking for loose threads."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-06T00-31-44-534Z",
+  "seed": 251,
+  "build": {
+    "rev": "126226f",
+    "world": "b9d7cc47"
+  },
+  "cost_usd": null,
+  "verified": true
+}

@@ -12,8 +12,8 @@
  */
 import { execFileSync, execSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -21,13 +21,33 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 // The same world the MCP server (src/mcp.ts) serves by default, so a report's
 // content hash names the world the player actually saw; loop/playtest.sh also
 // passes its resolved TF_WORLD to both, so an override cannot drift either.
-const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "vale.json");
+const WORLD_PATH = process.env.TF_WORLD ?? join(ROOT, "world", "reach.json");
+
+// The files a world is made of: the root, then every `include` part in load
+// order (globs sort by name). Mirrors worldFiles in src/validate.ts — this
+// file runs without tsx, so it cannot import it.
+function worldFiles(path) {
+  const root = JSON.parse(readFileSync(path, "utf8"));
+  const dir = dirname(path);
+  const files = [path];
+  for (const pat of root.include ?? []) {
+    const base = basename(pat);
+    if (base.includes("*")) {
+      const d = join(dir, dirname(pat));
+      const re = new RegExp(`^${base.split("*").map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join(".*")}$`);
+      const matches = existsSync(d) ? readdirSync(d).filter((f) => re.test(f)).sort().map((f) => join(d, f)) : [];
+      files.push(...matches);
+    } else files.push(join(dir, pat));
+  }
+  return files;
+}
 
 function buildId() {
   let rev = "nogit";
   try { rev = execSync("git rev-parse --short HEAD", { cwd: ROOT, encoding: "utf8" }).trim(); } catch {}
-  const world = createHash("sha256").update(readFileSync(WORLD_PATH)).digest("hex").slice(0, 8);
-  return { rev, world };
+  const h = createHash("sha256");
+  for (const f of worldFiles(WORLD_PATH)) h.update(readFileSync(f));
+  return { rev, world: h.digest("hex").slice(0, 8) };
 }
 
 // The fields a player's report may contribute, and nothing else. Everything the
@@ -84,6 +104,8 @@ if (errs.length) {
 // Verify the receipt against the recorded trace, by replay. The trace's seed
 // must also match the seed this player was assigned — a receipt from some other
 // session in runs/ does not count.
+// players sometimes quote the whole "receipt:…" token; the receipt is what follows the label
+const wanted = String(report.receipt).replace(/^\s*receipt:\s*/, "");
 let verified = false;
 const runsDir = join(ROOT, "runs");
 try {
@@ -95,13 +117,13 @@ try {
     } catch {
       continue; // a concurrent player may be mid-write to this file; it isn't our receipt either way
     }
-    if (trace.receipt === report.receipt) {
+    if (trace.receipt === wanted) {
       if (seed !== null && trace.seed !== seed) continue;
       const replayed = execFileSync(process.execPath, ["--import", "tsx", join(ROOT, "src", "crawl.ts"), "--replay", join(runsDir, f)], {
         cwd: ROOT,
         encoding: "utf8",
       }).trim();
-      verified = replayed === report.receipt;
+      verified = replayed === wanted;
       break;
     }
   }

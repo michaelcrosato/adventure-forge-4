@@ -1,0 +1,276 @@
+{
+  "items": {
+    "sh_rod_shaft": {
+      "name": "the white rod's shaft, ferrule missing",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "wants its ferrule, dug from the herald's walk, to be made whole",
+      "variants": [
+        {
+          "if": [["has", "sh_rod_ferrule"]],
+          "hint": "its ferrule is in your pack; walk them out at the herald's walk at dusk"
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "sh_descendant": {
+      "name": "Hew",
+      "room": "sh_ditch_gate",
+      "dialogue": true,
+      "desc": "The herald's own descendant, always at this gate and never past it, turning a bare wooden shaft over in his hands the way another man might turn over a debt he can't pay down.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Hew. The herald's line, however many generations on. I keep his rod's shaft. I have never once carried it past this gate.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why he won't walk out with it",
+          "if": [["flag", "said_sh_descendant_greet"]],
+          "once": true,
+          "say": "He walked out with it once, between the lines, and was shot before he had spoken. Every one of my line since has kept the shaft and lost the ferrule to the ground where he fell.",
+          "fx": [["set", "sh_descendant_bg"], ["xp", 2]]
+        },
+        {
+          "id": "sh_rod_given",
+          "label": "ask him for the shaft plainly",
+          "if": [["flag", "sh_descendant_bg"], ["!flag", "sh_rod_shaft_known"]],
+          "say": "...You mean to walk it out properly? Finish what he started?",
+          "fx": [
+            ["set", "sh_rod_given"],
+            ["set", "sh_rod_shaft_known"],
+            ["move", "sh_rod_shaft", "inv"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_vell", 1],
+            ["say", "He hands it over both-handed, careful as a relic, and doesn't quite let go at once. \"Then it should go to someone who might. Bring it back whole, if you manage it.\""]
+          ]
+        },
+        {
+          "id": "sh_rod_taken",
+          "label": "take the shaft by force (might)",
+          "if": [["flag", "sh_descendant_bg"], ["!flag", "sh_rod_shaft_known"]],
+          "say": "That's my line's whole inheritance. Think carefully before you finish that sentence.",
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "sh_rod_taken"],
+                ["set", "sh_rod_shaft_known"],
+                ["move", "sh_rod_shaft", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "appr_vell", -1],
+                ["say", "You take it from him over his protest, and he doesn't fight you for it — just watches, white-lipped, as four hundred years of his family's failure walks out the gate in a stranger's hands."]
+              ],
+              [
+                ["say", "He plants himself in the gateway and doesn't move. \"Not like this. Not ever like this.\" It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sh_rod_found",
+          "label": "notice where he keeps it (wits)",
+          "if": [["flag", "sh_descendant_bg"], ["!flag", "sh_rod_shaft_known"]],
+          "say": "He doesn't offer, and doesn't refuse outright either — just watches you watch him.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              11,
+              [
+                ["set", "sh_rod_found"],
+                ["set", "sh_rod_shaft_known"],
+                ["move", "sh_rod_shaft", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "appr_vell", 1],
+                ["say", "It's in the way he stands, hand never far from the same fold of his coat. You know before he says a word, and he lets you take it without making either of you name what just happened."]
+              ],
+              [["say", "Whatever he's giving away, it isn't where he keeps things by habit. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the field, now the truce is called",
+          "if": [["flag", "sh_hollow_rested"]],
+          "once": true,
+          "say": "Whole, and carried, and finally heard. Four hundred years my line has stood at this gate for exactly this. I think I can walk past it now, if I ever need to.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the field, now it's given",
+          "if": [["flag", "sh_hollow_bargained"]],
+          "once": true,
+          "say": "Not the truce he died trying to carry. Still, the ground's left in peace, which is closer than my whole line ever managed on its own. I'll take it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the field, now it's burned",
+          "if": [["flag", "sh_hollow_burned"]],
+          "once": true,
+          "say": "Whatever he was trying to carry across that field, there's nothing left now for it to reach. I don't know if that's an ending or just a different kind of failing.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_sh_rested_ask",
+          "label": "ask what becomes of the rod now",
+          "if": [["flag", "sh_hollow_rested"], ["flag", "sv_sh_back"], ["!flag", "sv_sh_after_done"]],
+          "once": true,
+          "say": "It's done what four hundred years of my line couldn't. I'm not sure it belongs back over my mantel, gathering dust on a debt that's paid. What would you do with it?",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_sh_rested_keep",
+          "label": "leave it at the herald's walk",
+          "if": [["flag", "said_sh_descendant_sv_sh_rested_ask"], ["!flag", "sv_sh_after_done"]],
+          "once": true,
+          "say": "He carries it out himself and sets it upright in the furrow where his ancestor fell. \"There. Let anyone who doubts the truce go and see it stand.\"",
+          "fx": [
+            ["set", "sv_sh_rested_kept"],
+            ["set", "sv_sh_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_vell", 1]
+          ]
+        },
+        {
+          "id": "sv_sh_rested_send",
+          "label": "tell him to send it to the Keepers' Hall",
+          "if": [["flag", "said_sh_descendant_sv_sh_rested_ask"], ["!flag", "sv_sh_after_done"]],
+          "once": true,
+          "say": "\"The Keepers' Hall, then,\" he says, already wrapping it for the road, \"so it isn't only Harrowfield that remembers a truce finally carried whole.\"",
+          "fx": [
+            ["set", "sv_sh_rested_sent"],
+            ["set", "sv_sh_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him at the gate",
+          "say": "Go carefully past the ditch. I'll be here, same as always, whichever way it goes.",
+          "end": true
+        }
+      ]
+    },
+    "sh_daughter": {
+      "name": "Merle",
+      "room": "sh_green",
+      "dialogue": true,
+      "desc": "A ploughman's daughter, watching the plain past the last rooftop with the particular stillness of someone listening for something nobody else can hear.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Merle. My father ploughs the field's edge. I sit here most dusks and listen, though my mother's told me a hundred times not to.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what she listens for",
+          "if": [["flag", "said_sh_daughter_greet"]],
+          "once": true,
+          "say": "The lines call, some dusks, out past the ditch — not words, exactly, more a pressure, like a held breath waiting on an answer. Once, I answered it back. I've never told my father that part.",
+          "fx": [["set", "sh_daughter_bg"], ["xp", 2]]
+        },
+        {
+          "id": "sh_daughter_bound",
+          "label": "urge her never to answer again (will)",
+          "if": [["flag", "sh_daughter_bg"], ["!flag", "sh_daughter_bound"], ["!flag", "sh_daughter_answered_back"]],
+          "say": "You want me to promise. All right. Convince me it's a promise I can keep.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "sh_daughter_bound"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "appr_osk", 1],
+                ["say", "She lets Elgin say a plain ward over her at the porch that same evening, ash on the doorstep and a promise witnessed. \"There,\" she says after. \"Now it's harder to break than just my own word.\""]
+              ],
+              [["say", "\"I don't think I believe you, or me,\" she says, unconvinced. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "sh_daughter_answer",
+          "label": "answer with her again (grace; 1hp miss)",
+          "if": [["flag", "sh_daughter_bg"], ["!flag", "sh_daughter_answered_back"], ["!flag", "sh_daughter_bound"]],
+          "say": "Properly, this time, with someone else standing close? I've never dared that. Ask me to, and I will.",
+          "fx": [
+            [
+              "check",
+              "grace",
+              10,
+              [
+                ["set", "sh_daughter_answered_back"],
+                ["score", 5],
+                ["xp", 4],
+                ["addvar", "appr_lys", 1],
+                ["say", "At dusk she answers the pressure plain, and it eases rather than pulls — heard, not called. \"That felt different,\" she says, steadier than you have seen her."]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The pull is stronger than either of you judged, and it costs you both a bad moment before it lets go. She's shaken, but whole. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the field, now the truce is called",
+          "if": [["flag", "sh_hollow_rested"]],
+          "once": true,
+          "say": "I haven't heard the pull since. Not silence, exactly — more like a question that finally got its answer, and doesn't need to ask again.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the field, now it's given",
+          "if": [["flag", "sh_hollow_bargained"]],
+          "once": true,
+          "say": "Quieter, since. Not gone. I think the lines know the ground's theirs now, and don't need to ask so hard for it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the field, now it's burned",
+          "if": [["flag", "sh_hollow_burned"]],
+          "once": true,
+          "say": "Nothing calls anymore. I thought I'd be glad of that. Mostly I just feel like I lost the only conversation I ever had that wasn't with the living.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her watching the plain",
+          "say": "Mind the dusk yourself, then, if you're out on the ditch. Some things out there still answer back.",
+          "end": true,
+          "if": [["!flag", "sh_hollow_done"]]
+        },
+        {
+          "id": "bye_done",
+          "label": "leave her watching the plain",
+          "if": [["flag", "sh_hollow_done"]],
+          "say": "Mind the dusk yourself, then, if you're out on the ditch. Old habit. I still listen, whatever's changed out there.",
+          "end": true
+        }
+      ]
+    }
+  }
+}

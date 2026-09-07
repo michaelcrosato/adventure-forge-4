@@ -1,0 +1,310 @@
+{
+  "items": {
+    "sh_cinder_oil": {
+      "name": "a cask of Ironbound cinder-oil",
+      "loc": "nowhere",
+      "hint": "burns however wet the ground gets — Crake, at the trade counter, gives it for the asking"
+    },
+    "sh_shield_bosses": {
+      "name": "a satchel of dug shield-bosses",
+      "loc": "nowhere",
+      "hint": "the marks on them want a reader who knows the old tongue",
+      "variants": [{ "if": [["flag", "sh_bosses_read"]], "hint": "read; the unit-marks are Tolan's count now" }]
+    }
+  },
+  "npcs": {
+    "sh_priest": {
+      "name": "Elgin",
+      "room": "sh_chantry_porch",
+      "dialogue": true,
+      "desc": "The field chantry's priest, a man built for patience and worn thin by forty years of it, the chained ledger under his hand the only thing here he'll call finished.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Elgin, priest of this chantry, such as it is. I've kept this porch for thirty years and buried, in all that time, not one soul from the field behind the ditch.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why he's buried none of them",
+          "if": [["flag", "said_sh_priest_greet"]],
+          "once": true,
+          "say": "Two lines died unforgiven of each other. I will not lay one to rest ahead of the other and call that a rite — either both go to ground together, in the same hour, or neither does. Nobody has ever managed the both.",
+          "fx": [["set", "sh_priest_bg"], ["xp", 2]]
+        },
+        {
+          "id": "sh_word_book",
+          "label": "read the chantry's book (wits)",
+          "if": [["flag", "sh_priest_bg"], ["!flag", "sh_word_book"]],
+          "say": "The truce-rite's written in here, word for word, if you can read a chantry hand gone soft with age. Go on.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "sh_word_book"],
+                ["addvar", "sh_words_known", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "The book gives up its rite slow: a truce spoken whole is spoken for the dead as much as the living, and carries its own words to close it. The third of the truce-words is yours."]
+              ],
+              [["say", "The hand's too soft with age, too much of it guesswork. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "sh_priest_buries",
+          "label": "ask if he'll bury them now",
+          "if": [["flag", "sh_hollow_rested"], ["!flag", "sh_priest_buried"]],
+          "once": true,
+          "say": "At last — the whole field, both lines, in one hour, together, the way it should always have been done. \"Thirty years I waited on that,\" Elgin says, and for once doesn't sound patient about it at all.",
+          "fx": [["set", "sh_priest_buried"], ["score", 4], ["xp", 3], ["addvar", "rep_church", 1], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the field, now the truce is called",
+          "if": [["flag", "sh_hollow_rested"], ["!flag", "sh_priest_buried"]],
+          "once": true,
+          "say": "A truce, whole, at last. I have a rite thirty years overdue to see to, now that both lines can finally go to ground together.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the field, now it's given",
+          "if": [["flag", "sh_hollow_bargained"]],
+          "once": true,
+          "say": "No rite, but no more waiting on one either. The ground's theirs to keep unrited, if that's what forty years of my own failure has finally earned them.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the field, now it's burned",
+          "if": [["flag", "sh_hollow_burned"]],
+          "once": true,
+          "say": "Thirty years I waited to bury them properly, and now there's nothing left to bury at all. I don't have a verse for that. I've been trying to write one since.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_sh_burn_ask",
+          "label": "ask what becomes of the burned ground",
+          "if": [["flag", "sh_hollow_burned"], ["flag", "sv_sh_back"], ["!flag", "sv_sh_after_done"]],
+          "once": true,
+          "say": "Crake already has his eye on the cleared ash for easier digging. I'd rather Harrowfield decided what stands there before his spade does. Your word will carry further than mine.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_sh_burn_marked",
+          "label": "urge a plain marker over the ash",
+          "if": [["flag", "said_sh_priest_sv_sh_burn_ask"], ["!flag", "sv_sh_after_done"]],
+          "once": true,
+          "say": "He has one cut within the week, plain stone, no saint's name and no side named either. \"That much I can still give them,\" he says, and means both lines, not the ash.",
+          "fx": [
+            ["set", "sv_sh_burned_marked"],
+            ["set", "sv_sh_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_church", 1]
+          ]
+        },
+        {
+          "id": "sv_sh_burn_claimed",
+          "label": "let Crake dig the cleared ground",
+          "if": [["flag", "said_sh_priest_sv_sh_burn_ask"], ["!flag", "sv_sh_after_done"]],
+          "once": true,
+          "say": "He doesn't argue, exactly, but he doesn't come to watch the spade go in either. \"Practical,\" he calls it, the way people name a thing they've decided not to fight.",
+          "fx": [
+            ["set", "sv_sh_burned_claimed"],
+            ["set", "sv_sh_after_done"],
+            ["score", 2],
+            ["xp", 1],
+            ["addvar", "rep_iron", 1],
+            ["addvar", "appr_osk", -1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his ledger",
+          "say": "Go carefully past the ditch. And come back, if you ever find a way to lay two unforgiving lines to rest at once.",
+          "end": true,
+          "if": [["!flag", "sh_hollow_done"]]
+        },
+        {
+          "id": "bye_done",
+          "label": "leave him to his ledger",
+          "if": [["flag", "sh_hollow_done"]],
+          "say": "Go carefully past the ditch. It's quiet out there now, and I find I don't yet know what to do with quiet.",
+          "end": true
+        }
+      ]
+    },
+    "sh_picker": {
+      "name": "Crake",
+      "room": "sh_trade_counter",
+      "dialogue": true,
+      "desc": "The Ironbound's own bone-picker, knuckles scarred from forty years of a spade meeting old iron, weighing cinder-oil and dug scrap on the same honest scale.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Crake. Ironbound, for my sins. I dig that field for old iron and sell cinder-oil to whoever's got the coin — and I don't ask what either one's wanted for.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "digging a battlefield for scrap",
+          "if": [["flag", "said_sh_picker_greet"]],
+          "once": true,
+          "say": "Four hundred years of iron just lying there, going to rust nobody's using. Somebody was going to dig it eventually. Might as well be somebody who knows what he's holding.",
+          "fx": [["set", "sh_picker_bg"], ["xp", 2]]
+        },
+        {
+          "id": "sh_take_oil",
+          "label": "ask him for a cask of cinder-oil",
+          "if": [["!has", "sh_cinder_oil"]],
+          "say": "He hands it over without much ceremony, like he's been waiting all season for someone to finally ask. \"Use it well, or don't. Either way I'll smell it on the wind.\"",
+          "fx": [["move", "sh_cinder_oil", "inv"], ["xp", 1]]
+        },
+        {
+          "id": "sh_picker_argue",
+          "label": "show him the digging has to stop (wits)",
+          "if": [
+            ["flag", "sh_picker_bg"],
+            ["!flag", "sh_picker_refused"],
+            ["!flag", "sh_hollow_done"],
+            ["!flag", "sh_field_given"]
+          ],
+          "say": "Talk an Ironbound man out of good iron? Go on, then.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "sh_picker_refused"],
+                ["say", "You lay out plain what every spadeful costs a field that isn't settled yet, and Crake, for once, sets the spade down and leaves it. \"...Fine. It'll keep. It's kept four hundred years already.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "sh_picker_missed"]],
+                  [
+                    ["set", "sh_picker_missed"],
+                    ["say", "\"Iron's iron,\" he says, and goes back to the spoil-heap — and the order notes a stranger's petition, tried and lost here. It can be tried again."]
+                  ],
+                  [["say", "\"Iron's iron,\" he says again, unmoved."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sh_picker_pay",
+          "label": "pay him to leave off (8 gold)",
+          "if": [
+            ["flag", "sh_picker_bg"],
+            ["!flag", "sh_picker_refused"],
+            ["var", "gold", ">=", 8],
+            ["!flag", "sh_hollow_done"],
+            ["!flag", "sh_field_given"]
+          ],
+          "say": "Eight gold to walk off a field I mean to keep digging anyway? Convince me.",
+          "fx": [
+            ["addvar", "gold", -8],
+            ["set", "sh_picker_refused"],
+            ["say", "He weighs the coin twice, same as everything else, and pockets it without a flicker. \"Your coin, your quiet. I'll dig the Fallows instead.\""]
+          ]
+        },
+        {
+          "id": "sh_bosses_show",
+          "label": "ask what he's dug up lately",
+          "if": [["flag", "sh_picker_bg"], ["!flag", "sh_bosses_shown"]],
+          "once": true,
+          "say": "\"This, mostly,\" he says, and tips out a satchel of curved bronze, shield-bosses, three or four, marked with cuts he's never once made sense of. \"Someone who reads the old tongue could tell you more than I can.\"",
+          "fx": [["set", "sh_bosses_shown"], ["move", "sh_shield_bosses", "inv"], ["xp", 2]]
+        },
+        {
+          "id": "sh_bosses_read",
+          "label": "read the shield-bosses' marks (wits)",
+          "if": [["has", "sh_shield_bosses"], ["!flag", "sh_bosses_read"]],
+          "say": "Go on, if you can make anything of them.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "sh_bosses_read"],
+                ["score", 4],
+                ["xp", 4],
+                ["addvar", "rep_iron", 1],
+                ["say", "The cuts resolve into unit-marks, worn but legible: whose levies stood where along the wall, and in what order the line finally gave. Tolan, at the remembrancer's cot, will want this exactly."]
+              ],
+              [["say", "The cuts are too shallow, too worn, and you're guessing more than reading. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "sh_bosses_read_scholar",
+          "label": "read the shield-bosses' marks outright",
+          "free": true,
+          "if": [
+            ["class", "scholar"],
+            ["has", "sh_shield_bosses"],
+            ["!flag", "sh_bosses_read"],
+            ["!flag", "or_scholar_sh_bosses"]
+          ],
+          "say": "You don't need Crake's guess at what the marks mean.",
+          "fx": [
+            ["set", "or_scholar_sh_bosses"],
+            ["addvar", "or_scholar_read", 1],
+            ["set", "sh_bosses_read"],
+            ["score", 4],
+            ["xp", 4],
+            ["addvar", "rep_iron", 1],
+            ["say", "The unit-marks are plain the moment you look for them: whose levies stood where along the wall, and in what order the line finally gave. Tolan, at the remembrancer's cot, will want this exactly."]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the field, now the truce is called",
+          "if": [["flag", "sh_hollow_rested"], ["!flag", "sh_picker_refused"]],
+          "once": true,
+          "say": "A truce doesn't put the iron back in the ground. I'll go on digging, quieter about it than I used to.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested_stopped",
+          "label": "the field, now the truce is called",
+          "if": [["flag", "sh_hollow_rested"], ["flag", "sh_picker_refused"]],
+          "say": "Truce called, and my spade's stayed where I said it would. Four hundred years of iron can keep a while longer; I gave my word on it, more or less."
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the field, now it's given",
+          "if": [["flag", "sh_hollow_bargained"]],
+          "once": true,
+          "say": "Stopped for good, same as I promised. Forty years of iron I'll never dig now. I try not to think too hard about what that's worth in coin.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the field, now it's burned",
+          "if": [["flag", "sh_hollow_burned"]],
+          "once": true,
+          "say": "My own oil, in the end. Can't say I didn't sell it knowing what it might be wanted for. Can't say I'm sorry, either, exactly.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the scale",
+          "say": "Mind your step out there. Some of what I dig up still has an edge on it, four hundred years or no.",
+          "end": true
+        }
+      ]
+    }
+  }
+}
