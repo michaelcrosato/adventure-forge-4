@@ -184,6 +184,14 @@
           "id": "bye",
           "label": "leave him to the furlong-map",
           "say": "Mind the blank strip on your way past. Everyone in this parish learns to, sooner or later.",
+          "end": true,
+          "if": [["!flag", "sh_hollow_done"]]
+        },
+        {
+          "id": "bye_done",
+          "label": "leave him to the furlong-map",
+          "if": [["flag", "sh_hollow_done"]],
+          "say": "Mind the ditch on your way past. Nobody calls that strip blank anymore — whatever it is now, it's decided, and I've inked it.",
           "end": true
         }
       ]
@@ -344,7 +352,14 @@
         {
           "id": "sh_stone_none",
           "label": "tell him no stone will stand here",
-          "if": [["flag", "sh_field_given"], ["!flag", "sh_stone_none"]],
+          "if": [
+            ["flag", "sh_field_given"],
+            ["!flag", "sh_stone_none"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
           "say": "The ground's given to the dead. No stakes, no muster, and the fork says no stone either — not the Crown's, not anyone's.",
           "fx": [
             ["set", "sh_stone_none"],
@@ -353,6 +368,25 @@
             ["addvar", "rep_keepers", 1],
             ["say", "Bevan takes it better than you'd expect. \"A year's commission, and the honestest answer I've had all of it,\" he says, and lets the canvas fall back over the stone for good."]
           ]
+        },
+        {
+          "id": "sh_stone_stands",
+          "label": "ask where the stone stands now",
+          "if": [
+            ["flag", "sh_field_given"],
+            [
+              "any",
+              [
+                ["flag", "sh_stone_crown"],
+                ["flag", "sh_stone_companies"],
+                ["flag", "sh_stone_names"],
+                ["flag", "sh_stone_broker"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Off the dead's ground. The fork gave them the field, not the ditch-gate: the stone stands where the road meets the plain and says what it said before. Nobody ploughs under it.",
+          "fx": [["xp", 1]]
         },
         {
           "id": "react_stone_elsewhere",
@@ -373,10 +407,33 @@
         {
           "id": "react_hollow_bargained",
           "label": "the field, now it's given",
-          "if": [["flag", "sh_hollow_bargained"]],
+          "if": [
+            ["flag", "sh_hollow_bargained"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
           "once": true,
           "say": "No stone was ever going to sit easy on ground the dead were given back outright. I'd cut a warning-marker at the boundary, if anyone asked. Nobody has.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained_stone",
+          "label": "the field, now it's given",
+          "if": [
+            ["flag", "sh_hollow_bargained"],
+            [
+              "any",
+              [
+                ["flag", "sh_stone_crown"],
+                ["flag", "sh_stone_companies"],
+                ["flag", "sh_stone_names"],
+                ["flag", "sh_stone_broker"]
+              ]
+            ]
+          ],
+          "say": "The ground's theirs, and the stone stands at the ditch-gate where I cut it — on the road's side, off the given field. It says what it says to whoever passes, and the dead don't read."
         },
         {
           "id": "react_hollow_burned",
@@ -390,6 +447,43 @@
           "id": "bye",
           "label": "leave him to the stone",
           "say": "Mind the canvas on your way out. It's held that stone's wording a long time, waiting on someone to settle it.",
+          "end": true,
+          "if": [
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"],
+            ["!flag", "sh_field_given"]
+          ]
+        },
+        {
+          "id": "bye_cut",
+          "label": "leave him to the stone",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "sh_stone_crown"],
+                ["flag", "sh_stone_companies"],
+                ["flag", "sh_stone_names"],
+                ["flag", "sh_stone_broker"]
+              ]
+            ]
+          ],
+          "say": "Mind the step. The canvas is off and the stone's cut; it says what it says now, whoever likes it.",
+          "end": true
+        },
+        {
+          "id": "bye_given",
+          "label": "leave him to the stone",
+          "if": [
+            ["flag", "sh_field_given"],
+            ["!flag", "sh_stone_crown"],
+            ["!flag", "sh_stone_companies"],
+            ["!flag", "sh_stone_names"],
+            ["!flag", "sh_stone_broker"]
+          ],
+          "say": "Mind the ditch on your way out. The canvas stays on that stone for good; I've made my peace with a bench that cuts gateposts.",
           "end": true
         }
       ]

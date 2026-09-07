@@ -8,7 +8,8 @@
     "sh_shield_bosses": {
       "name": "a satchel of dug shield-bosses",
       "loc": "nowhere",
-      "hint": "the marks on them want a reader who knows the old tongue"
+      "hint": "the marks on them want a reader who knows the old tongue",
+      "variants": [{ "if": [["flag", "sh_bosses_read"]], "hint": "read; the unit-marks are Tolan's count now" }]
     }
   },
   "npcs": {
@@ -127,6 +128,14 @@
           "id": "bye",
           "label": "leave him to his ledger",
           "say": "Go carefully past the ditch. And come back, if you ever find a way to lay two unforgiving lines to rest at once.",
+          "end": true,
+          "if": [["!flag", "sh_hollow_done"]]
+        },
+        {
+          "id": "bye_done",
+          "label": "leave him to his ledger",
+          "if": [["flag", "sh_hollow_done"]],
+          "say": "Go carefully past the ditch. It's quiet out there now, and I find I don't yet know what to do with quiet.",
           "end": true
         }
       ]

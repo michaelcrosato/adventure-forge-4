@@ -100,6 +100,10 @@ The preview also names standing or regard the check puts at stake, by
 branch: "a miss costs standing with the Gray Church" when only the fail
 branch lowers `rep_church`, "a hit costs standing with …" when only the
 success branch does, "costs standing with …, hit or miss" when both do.
+An action or topic that lowers a faction's standing outright, with no die, says
+"costs standing with …" as things stand (a branch under an `if` counts when its
+condition holds now), so a gate's price is never learned from the company's
+banter afterwards.
 
 ## 5. Rooms
 

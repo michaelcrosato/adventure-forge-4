@@ -883,6 +883,28 @@ test("a weapon handed over by an effect says it will be fought with", () => {
   assert.ok(out.events.includes("(You will fight with it now.)"), out.events.join(" | "));
 });
 
+test("an action that lowers a faction's standing outright says so in its hint, as things stand", () => {
+  const world = mini({
+    rooms: {
+      a: {
+        name: "A",
+        desc: "Room A.",
+        actions: [
+          { id: "writ", label: "show the writ", fx: [["addvar", "rep_church", -1], ["addvar", "rep_keepers", -1], ["say", "The grate swings wide."]] },
+          { id: "press", label: "press the point", fx: [["if", [["flag", "pressed"]], [["addvar", "rep_church", -1]], [["say", "Nothing."]]]] },
+        ],
+      },
+    },
+  });
+  world.factions = { rep_church: "the Gray Church", rep_keepers: "the Barrow-Keepers" };
+  const { state } = newState(world, 1);
+  const text = render(world, state, []).text;
+  assert.match(text, /show the writ \(costs standing with the Gray Church and the Barrow-Keepers\)/);
+  assert.ok(!/press the point \(/.test(text), "a branch that would not run now is not a cost");
+  state.flags["pressed"] = true;
+  assert.match(render(world, state, []).text, /press the point \(costs standing with the Gray Church\)/);
+});
+
 test("a remark that opens a quarrel says where the sides are", () => {
   const world = mini({
     npcs: {

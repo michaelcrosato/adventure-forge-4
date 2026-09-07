@@ -275,7 +275,9 @@
                 ["say", "Lys: \"That's a truce, not a victory. Whoever taught you the words knew exactly what they were asking the rod to say. Well done.\""]
               ],
               []
-            ]
+            ],
+            ["move", "sh_rod_shaft", "nowhere"],
+            ["move", "sh_rod_ferrule", "nowhere"]
           ]
         }
       ]
@@ -340,7 +342,13 @@
     "sh_rod_ferrule": {
       "name": "the white rod's ferrule, dug clean",
       "loc": "nowhere",
-      "hint": "wants the shaft it was struck from, kept by Hew at the ditch-gate"
+      "hint": "wants the shaft it was struck from, kept by Hew at the ditch-gate",
+      "variants": [
+        {
+          "if": [["has", "sh_rod_shaft"]],
+          "hint": "the shaft is in your pack; walk them out at the herald's walk at dusk"
+        }
+      ]
     }
   },
   "quests": {
@@ -518,8 +526,30 @@
       "weight": 2
     },
     {
-      "if": [["flag", "sh_hollow_bargained"]],
+      "if": [
+        ["flag", "sh_hollow_bargained"],
+        ["!flag", "sh_stone_crown"],
+        ["!flag", "sh_stone_companies"],
+        ["!flag", "sh_stone_names"],
+        ["!flag", "sh_stone_broker"]
+      ],
       "text": "Harrowfield gave the Truce Field to its dead outright — no plough, no stone, no digging — and pays for it every hungry spring.",
+      "weight": 2
+    },
+    {
+      "if": [
+        ["flag", "sh_hollow_bargained"],
+        [
+          "any",
+          [
+            ["flag", "sh_stone_crown"],
+            ["flag", "sh_stone_companies"],
+            ["flag", "sh_stone_names"],
+            ["flag", "sh_stone_broker"]
+          ]
+        ]
+      ],
+      "text": "Harrowfield gave the Truce Field to its dead — no plough, no digging — and the stone stands at the ditch-gate, off the given ground.",
       "weight": 2
     },
     {

@@ -867,6 +867,16 @@ function standingAtRisk(fxs: Fx[] | undefined): string[] {
   return [...new Set(out)];
 }
 
+/** Factions an effect list lowers outright as things stand: top-level `addvar rep_* < 0`, and inside an `if` whose branch would run now. */
+function outrightCosts(world: World, s: State, fxs: Fx[]): string[] {
+  const out: string[] = [];
+  for (const fx of fxs) {
+    if (fx[0] === "addvar" && fx[2] < 0 && fx[1].startsWith("rep_") && world.factions?.[fx[1]]) out.push(world.factions[fx[1]]!);
+    if (fx[0] === "if") out.push(...outrightCosts(world, s, (condsOk(world, s, fx[1]) ? fx[2] : fx[3]) ?? []));
+  }
+  return [...new Set(out)];
+}
+
 /** A companion the player has met: in the party, their home visited, or walked out on the player. A name never heard is a spoiler, not news. */
 function companionMet(world: World, s: State, id: string): boolean {
   const npc = world.npcs[id];
@@ -1241,6 +1251,11 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     .filter((f): f is ["addvar", string, number] => f[0] === "addvar" && f[1].startsWith("appr_") && f[2] !== 0 && companionMet(world, s, f[1].slice(5)))
     .map((f) => `${world.npcs[f[1].slice(5)]!.name} ${f[2] > 0 ? "+" : "-"}${Math.abs(f[2])}`);
   if (moves.length) parts.push(moves.join(", "));
+  // a standing an action lowers outright is said too, as things stand — the Coldpass gate's writ cost two factions a point with no word beforehand
+  if (!(chk && chk[0] === "check")) {
+    const costs = outrightCosts(world, s, fx ?? []);
+    if (costs.length) parts.push(`costs standing with ${costs.join(" and ")}`);
+  }
   if (who) parts.unshift(who);
   if (parts.length) return ` (${parts.join("; ")})`;
   if (a.kind === "use" && opts.itemHints !== false) {

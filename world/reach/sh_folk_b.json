@@ -12,7 +12,7 @@
       "name": "Ossett",
       "room": "sh_pensioners_house",
       "dialogue": true,
-      "desc": "An old Free Companies captain gone soft in the middle and nowhere else, a pension and a bad hip and a bare banner-staff he polishes anyway, every morning, out of a habit forty years deep.",
+      "desc": "An old Free Companies captain gone soft in the middle and nowhere else, a pension and a bad hip and forty years of polishing a banner-staff every morning, out of a habit deeper than the banner.",
       "topics": [
         {
           "id": "greet",
@@ -141,6 +141,13 @@
           "once": true,
           "say": "Not the Companies' wording, then. I'll say this for whoever's it is: better a stone that says something true than one that says nothing at all.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_stone_broker",
+          "label": "tell him how the stone was decided",
+          "if": [["flag", "sh_stone_broker"]],
+          "once": true,
+          "say": "My name cut on the same stone as the Crown's. Forty years I'd have spat at that. I find I can live with a stone that says something true, even if it says it twice."
         },
         {
           "id": "react_hollow_rested",

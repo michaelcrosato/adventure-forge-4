@@ -509,7 +509,7 @@
     "hb_q_ledger": {
       "name": "Keeper Wren's Trust",
       "start": [["flag", "said_hb_keeper_wren_greet"]],
-      "done": [["flag", "hb_keepers_key_found"]],
+      "done": [["flag", "hb_keepers_key_found"], ["!flag", "hb_wren_chest_forced"]],
       "stages": [
         {
           "if": [["flag", "said_hb_keeper_wren_order"]],
@@ -519,7 +519,8 @@
           "if": [],
           "text": "Keeper Wren tends the ruined Hall alone. Hear what she has to say before asking for what she guards."
         }
-      ]
+      ],
+      "failed": [["flag", "hb_wren_chest_forced"]]
     },
     "hb_q_surveyor": {
       "name": "The Surveyor's Map",

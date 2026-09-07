@@ -78,6 +78,11 @@
       },
       "variants": [
         {
+          "if": [["flag", "sh_field_given"], ["flag", "sv_sh_after_done"]],
+          "desc": "A worn green at the village's heart, a dry well at its center nobody has capped. The bread question is settled, one way or another, and nobody counts the loaves aloud anymore.",
+          "brief": "The green, its bread question settled."
+        },
+        {
           "if": [["flag", "sh_hollow_rested"]],
           "desc": "A worn green at the village's heart, a dry well at its center nobody has capped. Since the truce was finally called, folk here talk of the field the way they'd talk of a debt finally paid, not a haunting.",
           "brief": "The green; the old debt is paid now."
@@ -191,8 +196,8 @@
       "exits": { "up": { "to": "sh_stonecutter_lodge" } },
       "variants": [
         {
-          "if": [["has", "sh_banner_cloth"]],
-          "desc": "A snug house kept too tidy for a soldier's, the banner-staff over the mantel bare no longer — Ossett has not stopped looking at it since it came home.",
+          "if": [["flag", "sh_banner_returned"]],
+          "desc": "A snug house kept too tidy for a soldier's. The Companies' first banner hangs on the staff over the mantel again, faded to the colour of old rope, beside the roll of names under glass; Ossett keeps looking up at it.",
           "brief": "The house; the staff bears its cloth again."
         }
       ]

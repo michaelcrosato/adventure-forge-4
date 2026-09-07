@@ -4,7 +4,13 @@
       "name": "the white rod's shaft, ferrule missing",
       "loc": "nowhere",
       "takeable": true,
-      "hint": "wants its ferrule, dug from the herald's walk, to be made whole"
+      "hint": "wants its ferrule, dug from the herald's walk, to be made whole",
+      "variants": [
+        {
+          "if": [["has", "sh_rod_ferrule"]],
+          "hint": "its ferrule is in your pack; walk them out at the herald's walk at dusk"
+        }
+      ]
     }
   },
   "npcs": {
@@ -254,6 +260,14 @@
           "id": "bye",
           "label": "leave her watching the plain",
           "say": "Mind the dusk yourself, then, if you're out on the ditch. Some things out there still answer back.",
+          "end": true,
+          "if": [["!flag", "sh_hollow_done"]]
+        },
+        {
+          "id": "bye_done",
+          "label": "leave her watching the plain",
+          "if": [["flag", "sh_hollow_done"]],
+          "say": "Mind the dusk yourself, then, if you're out on the ditch. Old habit. I still listen, whatever's changed out there.",
           "end": true
         }
       ]

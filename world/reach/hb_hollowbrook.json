@@ -249,12 +249,13 @@
               "might",
               11,
               [
+                ["set", "hb_wren_chest_forced"],
                 ["set", "hb_keepers_key_found"],
                 ["move", "hb_keepers_key", "inv"],
                 ["score", 4],
                 ["xp", 3],
-                ["addvar", "rep_keepers", 1],
-                ["say", "The old bronze gives with a crack. Inside, wrapped in oilcloth: a long iron key, cut for a lock far from here."]
+                ["addvar", "rep_keepers", -2],
+                ["say", "The old bronze gives with a crack, and Keeper Wren watches you do it and says nothing at all. Inside, wrapped in oilcloth: a long iron key, cut for a lock far from here."]
               ],
               [["say", "The bronze dents. It does not open."]]
             ]
@@ -270,12 +271,13 @@
               "grace",
               10,
               [
+                ["set", "hb_wren_chest_forced"],
                 ["set", "hb_keepers_key_found"],
                 ["move", "hb_keepers_key", "inv"],
                 ["score", 4],
                 ["xp", 3],
-                ["addvar", "rep_keepers", 1],
-                ["say", "The old pins give one by one. Inside, wrapped in oilcloth: a long iron key, cut for a lock far from here."]
+                ["addvar", "rep_keepers", -1],
+                ["say", "The old pins give one by one under Keeper Wren's eye. Inside, wrapped in oilcloth: a long iron key, cut for a lock far from here."]
               ],
               [["say", "A pin sticks fast. It can be tried again."]]
             ]
@@ -904,6 +906,13 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "react_forced",
+          "label": "about the chest",
+          "if": [["flag", "hb_wren_chest_forced"]],
+          "once": true,
+          "say": "You took it in front of me. The key is yours; the trust it was named for isn't. Bring the old court its peace anyway — I want that more than my pride."
         },
         {
           "id": "vell_party",
