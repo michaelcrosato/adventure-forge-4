@@ -593,8 +593,13 @@
       "text": "The Keepers' Hall gave up its ledger at last. What it says of a Marrowgate exile is not this telling's secret to keep."
     },
     {
-      "if": [["flag", "hb_keepers_key_found"]],
+      "if": [["flag", "hb_keepers_key_found"], ["!flag", "cp_came_by_stair"]],
       "text": "The Keeper's Key left Barrowmere in a pocket, bound for a pilgrim stair at Coldpass that has not opened in a hundred years."
+    },
+    {
+      "if": [["flag", "hb_keepers_key_found"], ["flag", "cp_came_by_stair"]],
+      "text": "The Keeper's Key left Barrowmere in a pocket and turned the pilgrim stair at Coldpass, a hundred years after it last turned.",
+      "weight": 1
     }
   ],
   "items": {

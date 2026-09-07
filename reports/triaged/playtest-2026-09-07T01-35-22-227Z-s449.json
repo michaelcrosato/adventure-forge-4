@@ -1,0 +1,103 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 623,
+  "receipt": "reach.449.623.366.reach_at_rest.8fae3f09",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Chose 'leave the dies at the vault-door (Vell +1)' with Sarel at the Hammer Hearth, and the game confirmed 'She sets them herself into a niche cut fresh beside the door.' The ending's 'how the realm remembers you' recap repeats this: 'The struck penny's dies stand in their own niche at Pennywell's vault-door now.' Yet both 'the king's reverse die' and 'the king's obverse die' stayed in my carried inventory for the rest of the run, all the way to the final status screen.",
+      "where": "The Hammer Hearth / 'leave the dies at the vault-door' — final status inventory"
+    },
+    {
+      "sev": "P1",
+      "what": "Old Ede gives a keepsake ('a warden's old watch-cloak: obtained... her husband's, kept forty years for someone to grow into') that stays in my inventory the whole game. The ending recap instead says 'Old Ede keeps her wicker house, watched now, warm in a dead man's cloak she finally let herself wear' — describing her as wearing the very item I am still carrying.",
+      "where": "Ede's Wicker House / 'offer to see someone looks in on her' — final status 'how the realm remembers you'"
+    },
+    {
+      "sev": "P1",
+      "what": "Used the Keepers' pilgrim stair to enter Marrowgate; the game itself said at the time 'The pilgrim stair lets out behind the guards' backs. Nobody has watched it in a hundred years.' The closing recap directly contradicts this by describing the stair as still unopened: 'The Keeper's Key left Barrowmere in a pocket, bound for a pilgrim stair at Coldpass that has not opened in a hundred years' — even though I had just opened and walked it that same session.",
+      "where": "The Pass Gate / 'climb the Keepers' pilgrim stair' — final status 'how the realm remembers you'"
+    },
+    {
+      "sev": "P1",
+      "what": "The item text on 'the king's reverse die' ('wants the obverse to be struck true; Hann's own hand cut this one') never updates after the obverse die was found and both dies were used together to strike the penny at Pennywell's vault-door — the description still reads as an open want in every inventory listing for the rest of the ~230-turn run afterward.",
+      "where": "carried-items list, any status after t395 (die found) / t395 (dies struck)"
+    },
+    {
+      "sev": "P1",
+      "what": "Asked Dain at Refugee Row to name his dead father 'gently'; the game says 'He tells you, careful, like it might break if said wrong' but never prints the name to the player. After the Long Furrow is later rested (names drawn from Ede, the parish roll, and the headland markers — all confirmed 3/3), returning to Dain and choosing 'the furrow, now it rests' has the game answer 'you don't know yet' on my behalf, even though I (the player) was never given the name to check and the quest that gathered it had already closed. Feels like the quest silently failed to connect its own two halves.",
+      "where": "The Refugee Row / 'ask for his father's name, gently' and 'the furrow, now it rests'"
+    },
+    {
+      "sev": "P2",
+      "what": "Three of Pennywell's central 'whose face' stakeholders — Averil (mint-warden), Dray (paymaster), and Meva (tithe-collector) — have no bespoke reaction to the final ruling ('strike the coin with the old king's face'). Asking them afterward returns only the default farewell line (Averil, Dray) or no new dialogue option at all (Meva), unlike Doran, Sarel, Slade, Robin, and Sergeant Wray, who each got a specific line about it. Averil in particular staked her whole warrant on this question.",
+      "where": "The Counting-House / talk to Averil; Paymaster's Chest-Room / talk to Dray; The Tithe-House / talk to Meva (all post-'Pennywell's Coin')"
+    },
+    {
+      "sev": "P2",
+      "what": "The weighing at the vault-door credits 'Meva's ledger' as one of the three sources for the moneyers' names, but reading Meva's ledger of faces ('read the ledger of faces outright') only ever returns flavor text about finding 'the gap-year,' never a name the way Doran's touchstone-record ('Corbet, Wyle, and Hann') or Robin's river-penny ('Hann') plainly do. The third name-source is credited without ever being shown to the reader.",
+      "where": "The Tithe-House / 'read the ledger of faces outright'; The Vault-Door / 'weigh what this grief asks'"
+    },
+    {
+      "sev": "P2",
+      "what": "The Chapel Causeway's room text twice describes 'a chapel roof standing dry and unattended' to the south, but no south exit is ever offered from either causeway room — a named, described location that can never actually be entered.",
+      "where": "The Chapel Causeway (Pennywell approach, both visits)"
+    },
+    {
+      "sev": "P2",
+      "what": "Two unrelated rooms in two different holds share the exact name 'Slack Water' — one on Pennywell's river bank (Hodder's hut) and a second, unconnected one deep in the Meres — which could easily confuse cross-referencing notes or a 'travel to a known place' pick.",
+      "where": "Pennywell river bank vs. the Meres"
+    },
+    {
+      "sev": "P2",
+      "what": "Most menu entries that move a companion's regard print the change up front (e.g. '(Vell +1)'), but a few don't: 'argue the covenant's terms (as a Scholar)' at the Keepers' Hall and 'swear to carry the covenant' at the Drowned Hall both moved Vell's regard afterward with no hint beforehand (the covenant oath only hinted its Crown-standing cost, not the approval).",
+      "where": "The Keeper's Hall / 'argue the covenant's terms'; The Drowned Hall — the Covenant Chamber / 'swear to carry the covenant'"
+    },
+    {
+      "sev": "P2",
+      "what": "Picking up a second 'cask of Ironbound cinder-oil' (one from Cobb at Wickstead's cart lot, one from Slade at Pennywell's furnace-yard) creates two separate inventory lines with two different flavor-text descriptions instead of stacking into one item with a quantity, cluttering the carry list for the rest of the game.",
+      "where": "The Cart Lot (Fallows) and The Furnace-Yard (Pennywell)"
+    },
+    {
+      "sev": "P2",
+      "what": "'The Paymaster's Errand' hint says to read the ford's line 'west of the mill-race,' but the actual Ford is roughly eight river-bank rooms further out (Millgate, Boundary Meadow, Towpath, Drowned Quay, Rushy Corner, Willow Holt, Slack Water, Ferry Cut, then one more north) — a much longer walk than 'west of the mill-race' suggests, with no distance given the way other hints (e.g. Fenmarch's 'two stands west, then in') provide.",
+      "where": "The Paymaster's Chest-Room quest text; the Pennywell river-bank rooms between Millgate and The Ford"
+    },
+    {
+      "sev": "P2",
+      "what": "'get your bearings' never names the road onward once you're at a hold's outer edge — from the Meres there was no bearing or quest text pointing toward Wardmoor (the actual connector to Coldpass); it only turned up by retracing Barrowmere's old 'west to Wardmoor' exit remembered from an earlier, unrelated visit.",
+      "where": "The South Shore / The King's Causeway (the Meres) — 'get your bearings at the shore'"
+    }
+  ],
+  "confusions": [
+    "No bearing, quest text, or NPC in the Meres ever names Wardmoor or Coldpass directly; the only way to find the connecting road was to recall Barrowmere's 'west to Wardmoor' exit from an earlier, unrelated visit to that hold.",
+    "'Read the ford's line first, west of the mill-race' undersold the actual distance — about eight rooms of river bank stood between Millgate and the real Ford, with no room-count or landmark given the way other hold hints provide one.",
+    "Dain's father's name is never shown to the player when he 'tells' it, so there is no way to confirm later whether it was among the ~200 names spoken over the Long Furrow, and the game's own follow-up line ('you don't know yet') reads as though it forgot its own quest.",
+    "The Chapel Causeway names and describes an 'unattended' chapel to the south twice, on both passes through, but never actually opens a way into it.",
+    "Averil's entire arc is the warrant to decide whose face Pennywell strikes; once that's settled against her by Doran, she has no reaction dialogue at all — it feels like the loop back to her was left unwritten."
+  ],
+  "suggestions": [
+    "Drop narrated/given-away items (dies left at the vault-door, a cloak given to an NPC) from the carried-items list so the ending recap and the inventory agree.",
+    "Print the specific name a dialogue 'tells' the player (e.g. Dain's father) as literal text, not just 'he tells you,' so it can be recognized again later.",
+    "Give Averil, Dray, and Meva one bespoke line reacting to the final whose-face ruling, matching the reactions already written for Doran, Sarel, Slade, Robin, and Wray.",
+    "Rename one of the two 'Slack Water' rooms so notes and travel menus don't collide across holds.",
+    "State an approximate room-count or landmark in directional hints like 'west of the mill-race,' the way 'two stands west, then in' already does elsewhere.",
+    "Let 'get your bearings' name the next hold's connector road once the player is at a hold's outer edge, not only the current hold's own landmarks.",
+    "Stack duplicate consumable/quest items (e.g. two casks of the same cinder-oil) into one entry with a quantity.",
+    "Either add a real path into the chapel south of the Chapel Causeway, or drop the 'off to the south' framing if it's meant to stay unreachable.",
+    "Show a regard-change hint on every menu entry that moves one, including Scholar-only lines and oath/covenant swears that currently move approval silently."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-07T01-35-22-227Z",
+  "seed": 449,
+  "build": {
+    "rev": "4721b33",
+    "world": "f920debd"
+  },
+  "cost_usd": null,
+  "verified": true
+}

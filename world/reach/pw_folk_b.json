@@ -56,7 +56,8 @@
             ["set", "pw_name_tithe"],
             ["addvar", "pw_names_known", 1],
             ["score", 4],
-            ["xp", 3]
+            ["xp", 3],
+            ["say", "The gap-year's last entry is a name with no face counted against it. You say it aloud before she can stop you, and she writes it down again."]
           ]
         },
         {
@@ -82,6 +83,51 @@
           "once": true,
           "say": "Four hundred years of faces, melted past reading in one night. I'll mark the gap-year closed anyway — closed wrong, but closed.",
           "fx": [["xp", 1], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "react_coin",
+          "label": "the coin, now its face is decided",
+          "if": [
+            [
+              "any",
+              [["flag", "pw_coin_crown"], ["flag", "pw_coin_free"], ["flag", "pw_coin_king"], ["flag", "pw_coin_broker"]]
+            ]
+          ],
+          "once": true,
+          "say": "The Church counts faces, whoever's they are.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "pw_coin_crown"]],
+              [
+                ["say", "'The Regent's, then. My ledger has a column for it already. It has had one for four hundred years.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_free"]],
+              [["say", "'No face at all. My ledger has no column for that. I suppose I'll rule one.'"]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_king"]],
+              [
+                ["say", "'The old king's. I'll open the old column again and pretend the gap-year never happened. It's a small lie; the Church allows those.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_broker"]],
+              [
+                ["say", "'Both faces, or as near as makes no matter. Two columns, one coin. The Church will call that thrift.'"]
+              ],
+              []
+            ]
+          ]
         },
         {
           "id": "bye",
@@ -371,7 +417,9 @@
             ["set", "sv_pw_after_done"],
             ["score", 4],
             ["xp", 3],
-            ["addvar", "appr_vell", 1]
+            ["addvar", "appr_vell", 1],
+            ["move", "pw_reverse_die", "nowhere"],
+            ["move", "pw_obverse_die", "nowhere"]
           ]
         },
         {
@@ -385,7 +433,9 @@
             ["set", "sv_pw_after_done"],
             ["score", 4],
             ["xp", 3],
-            ["addvar", "rep_keepers", 1]
+            ["addvar", "rep_keepers", 1],
+            ["move", "pw_reverse_die", "nowhere"],
+            ["move", "pw_obverse_die", "nowhere"]
           ]
         },
         {

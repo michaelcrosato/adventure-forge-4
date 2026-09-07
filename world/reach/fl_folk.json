@@ -325,7 +325,7 @@
             ["!flag", "fl_dain_token"],
             ["!flag", "fl_dain_turned_away"]
           ],
-          "say": "He tells you, careful, like it might break if said wrong. \"If it's said right, somewhere, does that help him?\" You tell him you mean to find out.",
+          "say": "He tells you, careful, like it might break if said wrong: \"Harl. Harl of the Long Acre.\" \"If it's said right, somewhere, does that help him?\" You tell him you mean to find out.",
           "fx": [["set", "fl_dain_named"], ["score", 3], ["xp", 2], ["addvar", "appr_osk", 1]]
         },
         {
@@ -381,11 +381,11 @@
           "label": "the furrow, now it rests",
           "if": [["flag", "fl_dain_father_seeking"], ["flag", "fl_hollow_rested"]],
           "once": true,
-          "say": "He looks up when you tell him. \"Is he in it,\" he says, \"whatever got said?\" It isn't really a question you answer no to.",
+          "say": "He looks up when you tell him. \"Is Harl in it,\" he says, \"whatever got said?\" It isn't really a question you answer no to.",
           "fx": [
             [
               "if",
-              [["flag", "fl_dain_father_named"]],
+              [["any", [["flag", "fl_dain_father_named"], ["flag", "fl_dain_named"]]]],
               [
                 ["xp", 2],
                 ["say", "\"He is,\" you tell him, and mean it. He nods, once, like something finally sits right."]

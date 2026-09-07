@@ -233,6 +233,53 @@
           ]
         },
         {
+          "id": "react_coin",
+          "label": "the coin, now its face is decided",
+          "if": [
+            [
+              "any",
+              [["flag", "pw_coin_crown"], ["flag", "pw_coin_free"], ["flag", "pw_coin_king"], ["flag", "pw_coin_broker"]]
+            ]
+          ],
+          "once": true,
+          "say": "You want the Crown's word on it? Here it is.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "pw_coin_crown"]],
+              [
+                ["say", "'The Regent's face, as the warrant said. I'll not pretend it was your doing that carried it, but I'll write that it was.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_free"]],
+              [
+                ["say", "'Faceless silver, weighed by the Companies. A coin that answers to no one. The warrant didn't cover that, and I have no words for it either.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_king"]],
+              [
+                ["say", "'The old king's face. I'll send the warrant back with a line under it: not for want of trying. Marrowgate reads lines like that.'"]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_broker"]],
+              [
+                ["say", "'Both hands on the die, mine and the paymaster's. It will pass, and the warrant will call it obedience. I can live with that.'"]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave her to the warrant",
           "say": "Mind the yard on your way out. Whatever's decided here, somebody has to write it down true.",
@@ -298,6 +345,20 @@
           ]
         },
         {
+          "id": "pw_paymaster_refused_cold",
+          "label": "refuse his claim for him, watch to watch",
+          "if": [
+            ["class", "warden"],
+            ["flag", "or_warden_pw_cold"],
+            ["flag", "pw_paymaster_bg"],
+            ["!flag", "pw_paymaster_refused"],
+            ["!flag", "pw_hollow_done"]
+          ],
+          "once": true,
+          "say": "He goes flat, then flatter. 'Watch to watch, then. The chest stays chained and the vault's not my business. Don't make me say it twice.'",
+          "fx": [["set", "pw_paymaster_refused"], ["xp", 2], ["score", 2]]
+        },
+        {
           "id": "pw_coin_free",
           "label": "let silver run the mint, faceless (will)",
           "if": [["flag", "pw_hollow_done"], ["!flag", "pw_coin_settled"]],
@@ -334,7 +395,7 @@
           "if": [["class", "warden"], ["!flag", "or_warden_pw_cold"]],
           "once": true,
           "say": "He goes flat the moment you talk like Watch trained you to talk. \"We pay in silver because it doesn't ask questions the way your lot does. Ask your chest business elsewhere.\"",
-          "fx": [["set", "or_warden_pw_cold"]]
+          "fx": [["xp", 1], ["set", "or_warden_pw_cold"]]
         },
         {
           "id": "react_hollow_rested",
@@ -359,6 +420,47 @@
           "once": true,
           "say": "Melted for the Ironbound's forges before the Companies could so much as bid on it. That's a loss I'll be hearing about at every fire between here and Camp Gallows.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_coin",
+          "label": "the coin, now its face is decided",
+          "if": [
+            [
+              "any",
+              [["flag", "pw_coin_crown"], ["flag", "pw_coin_free"], ["flag", "pw_coin_king"], ["flag", "pw_coin_broker"]]
+            ]
+          ],
+          "once": true,
+          "say": "Silver's silver. Still.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "pw_coin_crown"]],
+              [["say", "'The Regent's face on it. My men will spend it the same, and count it slower.'"]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_free"]],
+              [["say", "'Weighed, not counted, and no face. That's Companies' coin, and I'll not deny I asked for it.'"]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_king"]],
+              [["say", "'The old king's face. Pretty. My men will bite it same as any other.'"]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_broker"]],
+              [
+                ["say", "'My hand on the die beside the warden's. Never thought I'd sign a thing with the Crown. It spends, though.'"]
+              ],
+              []
+            ]
+          ]
         },
         {
           "id": "bye",

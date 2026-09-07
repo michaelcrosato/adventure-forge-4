@@ -606,6 +606,22 @@
           "fx": [["set", "or_warden_va_hunter_sortie_done"], ["addvar", "gold", 4], ["xp", 2], ["score", 2]]
         },
         {
+          "id": "warden_sortie_report_partial",
+          "label": "report the pack, the rest let be",
+          "if": [
+            ["class", "warden"],
+            ["flag", "or_warden_va_hunter_sortie"],
+            ["!flag", "or_warden_va_hunter_sortie_done"],
+            ["any", [["flag", "left_va_ash_wolf"], ["flag", "left_va_gaunt_wolf"], ["flag", "left_va_lean_wolf"]]],
+            ["any", [["npcDead", "va_ash_wolf"], ["flag", "left_va_ash_wolf"]]],
+            ["any", [["npcDead", "va_gaunt_wolf"], ["flag", "left_va_gaunt_wolf"]]],
+            ["any", [["npcDead", "va_lean_wolf"], ["flag", "left_va_lean_wolf"]]]
+          ],
+          "once": true,
+          "say": "Some down and the rest let be. That's a hunter's answer, not a soldier's, and I asked for a soldier's. I'll take it; the wood's quieter, and the ones you left will keep their distance.",
+          "fx": [["set", "or_warden_va_hunter_sortie_done"], ["xp", 2]]
+        },
+        {
           "id": "envoy_charm",
           "label": "turn your best charm on him (a gamble)",
           "if": [["class", "envoy"], ["flag", "said_va_hunter_wood"]],
@@ -703,6 +719,10 @@
         {
           "if": [["npcDead", "va_ash_wolf"], ["npcDead", "va_gaunt_wolf"], ["npcDead", "va_lean_wolf"]],
           "text": "All three wolves are down. Report to the hunter at his camp, west of the split oak."
+        },
+        {
+          "if": [["any", [["flag", "left_va_ash_wolf"], ["flag", "left_va_gaunt_wolf"], ["flag", "left_va_lean_wolf"]]]],
+          "text": "A wolf let be keeps its distance; the hunter will take that answer. Report to him at his camp, west of the split oak."
         },
         {
           "if": [],

@@ -867,6 +867,16 @@ function standingAtRisk(fxs: Fx[] | undefined): string[] {
   return [...new Set(out)];
 }
 
+/** Regard an effect list moves outright as things stand: top-level `addvar appr_*`, and inside an `if` whose branch would run now. */
+function regardMoves(world: World, s: State, fxs: Fx[]): ["addvar", string, number][] {
+  const out: ["addvar", string, number][] = [];
+  for (const fx of fxs) {
+    if (fx[0] === "addvar" && fx[1].startsWith("appr_") && fx[2] !== 0) out.push(fx);
+    if (fx[0] === "if") out.push(...regardMoves(world, s, (condsOk(world, s, fx[1]) ? fx[2] : fx[3]) ?? []));
+  }
+  return out;
+}
+
 /** Factions an effect list lowers outright as things stand: top-level `addvar rep_* < 0`, and inside an `if` whose branch would run now. */
 function outrightCosts(world: World, s: State, fxs: Fx[]): string[] {
   const out: string[] = [];
@@ -1247,8 +1257,8 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   if (route) parts.push(`settles this hold's grief: ${route}`);
   // regard an action moves outright (a side taken in a quarrel, an oath sworn to a companion) is said by name and number
   // (only companions already met are named — the reeve's "Tamsin +1" read as the reeve's own name to a player who had not crossed the square yet)
-  const moves = (fx ?? [])
-    .filter((f): f is ["addvar", string, number] => f[0] === "addvar" && f[1].startsWith("appr_") && f[2] !== 0 && companionMet(world, s, f[1].slice(5)))
+  const moves = regardMoves(world, s, fx ?? [])
+    .filter((f) => companionMet(world, s, f[1].slice(5)))
     .map((f) => `${world.npcs[f[1].slice(5)]!.name} ${f[2] > 0 ? "+" : "-"}${Math.abs(f[2])}`);
   if (moves.length) parts.push(moves.join(", "));
   // a standing an action lowers outright is said too, as things stand — the Coldpass gate's writ cost two factions a point with no word beforehand
