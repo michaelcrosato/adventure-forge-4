@@ -3294,6 +3294,26 @@
               []
             ]
           ]
+        },
+        {
+          "id": "mg_penn_mc_marl",
+          "label": "Mootcombe's guest-list",
+          "if": [["flag", "mc_marl_known"], ["!flag", "said_mg_archivist_mg_penn_mc_marl"]],
+          "once": true,
+          "say": "Word came that someone read Mootcombe's seating-roll twice. The palace copy gives the moot's elders thirty names. The Keepers' copy gives thirty-one.",
+          "fx": [
+            ["xp", 2],
+            ["say", "\"Marl,\" Penn says. \"No house, no seat by right, ink laid down after the rest was dry. The palace copy dropped him the year after the feast. I have wondered thirty years who paid for the ink.\""],
+            [
+              "if",
+              [["class", "scholar"]],
+              [
+                ["score", 2],
+                ["say", "\"Reader to reader: the first Reeve's household rolls pay a Marl of no house a pension until the year he died. He died in this palace. Tell no one where you heard it.\""]
+              ],
+              []
+            ]
+          ]
         }
       ]
     },

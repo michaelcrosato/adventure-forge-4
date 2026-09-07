@@ -361,7 +361,13 @@
                   ["flag", "wm_bargain_broken"],
                   ["flag", "fd_bargain_broken"],
                   ["flag", "sk_bargain_broken"],
-                  ["flag", "em_bargain_broken"]
+                  ["flag", "em_bargain_broken"],
+                  ["flag", "fl_bargain_broken"],
+                  ["flag", "hl_bargain_broken"],
+                  ["flag", "kw_bargain_broken"],
+                  ["flag", "mc_bargain_broken"],
+                  ["flag", "pw_bargain_broken"],
+                  ["flag", "sh_bargain_broken"]
                 ]
               ],
               ["!flag", "quarrel_lys_vell"]
@@ -596,6 +602,27 @@
             "id": "r_mc_hollow_burned",
             "if": [["flag", "mc_hollow_burned"]],
             "say": "You burned a hall with the guests still seated. They were poisoned at a table under a promise, and now they're ash under one. I don't know what that rests."
+          },
+          {
+            "id": "r_quarrel_lys_osk_pressing_open",
+            "if": [
+              ["inParty", "lys"],
+              ["inParty", "osk"],
+              ["flag", "mc_hollow_bargained"],
+              ["!flag", "quarrel_lys_osk_pressing"]
+            ],
+            "say": "Its best pressing to a barred door every year, and they call that a bargain. Starving on purpose, I call it. — Osk: \"A fast kept on purpose is the only kind that means anything. The guests had none.\" Both look at you.",
+            "fx": [["set", "quarrel_lys_osk_pressing"]]
+          },
+          {
+            "id": "r_quarrel_lys_osk_pressing_grateful_lys",
+            "if": [["flag", "quarrel_lys_osk_pressing_lys"]],
+            "say": "Still glad you said it. The living get fed first. The dead can have what's left, and they've never once said it wasn't enough."
+          },
+          {
+            "id": "r_quarrel_lys_osk_pressing_sour_lys",
+            "if": [["flag", "quarrel_lys_osk_pressing_osk"]],
+            "say": "A fast that means something. Tell that to whoever goes short in a bad year so a barred door can have the first pressing."
           },
           {
             "id": "r_pair_lys_osk_hl",
@@ -1179,6 +1206,45 @@
           ]
         },
         {
+          "id": "quarrel_lys_osk_pressing_side_lys",
+          "label": "back Lys — the living come first",
+          "if": [["flag", "quarrel_lys_osk_pressing"], ["!flag", "quarrel_lys_osk_pressing_done"]],
+          "once": true,
+          "say": "Good — a hold shouldn't starve itself for a door. — Osk says nothing, only looks up toward the hall a while longer than he needs to.",
+          "fx": [
+            ["addvar", "appr_lys", 2],
+            ["addvar", "appr_osk", -2],
+            ["set", "quarrel_lys_osk_pressing_lys"],
+            ["set", "quarrel_lys_osk_pressing_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_osk_pressing_settle_b",
+          "label": "call the pressing a draw (will)",
+          "if": [["flag", "quarrel_lys_osk_pressing"], ["!flag", "quarrel_lys_osk_pressing_done"]],
+          "once": true,
+          "say": "You tell them plainly whether Mootcombe feeds its dead or its living isn't yours to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_osk_pressing_peace"],
+                ["set", "quarrel_lys_osk_pressing_done"],
+                ["say", "\"...Fair. It's Mootcombe's fast, not mine.\" — Osk, quieter: \"Nor mine to keep for them.\""]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_osk", -1],
+                ["set", "quarrel_lys_osk_pressing_sour"],
+                ["set", "quarrel_lys_osk_pressing_done"],
+                ["say", "Neither wanted that answer. — Lys goes to look at the rows; Osk says the office under his breath, done with the talk."]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "quarrel_lys_vell_settle_b",
           "label": "call it a draw between them (will)",
           "if": [["flag", "quarrel_lys_vell"], ["!flag", "quarrel_lys_vell_done"]],
@@ -1746,6 +1812,16 @@
             "say": "The hall kept shut, and the first pressing carried to its doors. A fast turned into a tithe. I can't tell yet whether that's mercy or habit."
           },
           {
+            "id": "r_quarrel_lys_osk_pressing_grateful_osk",
+            "if": [["flag", "quarrel_lys_osk_pressing_osk"]],
+            "say": "A promise carried to a door every year, and you saw that it was one. I'll remember that you did."
+          },
+          {
+            "id": "r_quarrel_lys_osk_pressing_sour_osk",
+            "if": [["flag", "quarrel_lys_osk_pressing_lys"]],
+            "say": "Fed first, and the door gets what's left, if anything is. That's how a fast ends: not broken. Forgotten."
+          },
+          {
             "id": "r_pair_osk_tamsin_hl",
             "if": [["inParty", "tamsin"], ["flag", "hl_entered"]],
             "say": "A Church almonry once kept a ledger of who deserved to eat. I have never been proud of that page. — Tamsin: \"Then be glad someone finally reads it aloud instead of just filing it.\""
@@ -2274,6 +2350,53 @@
           "once": true,
           "say": "You tell Lys and Brother Osk it's theirs to settle, and step back. They settle it the way people do: quietly, badly, and without you. Neither asks you again.",
           "fx": [["set", "quarrel_lys_osk_covenant_done"], ["set", "quarrel_lys_osk_covenant_left"], ["xp", 1]]
+        },
+        {
+          "id": "quarrel_lys_osk_pressing_side_osk",
+          "label": "back Osk — a fast kept on purpose",
+          "if": [["flag", "quarrel_lys_osk_pressing"], ["!flag", "quarrel_lys_osk_pressing_done"]],
+          "once": true,
+          "say": "Good. A fast Mootcombe chose is worth more than one it was handed. — Lys says nothing, just counts the rows she can see from here.",
+          "fx": [
+            ["addvar", "appr_osk", 2],
+            ["addvar", "appr_lys", -2],
+            ["set", "quarrel_lys_osk_pressing_osk"],
+            ["set", "quarrel_lys_osk_pressing_done"]
+          ]
+        },
+        {
+          "id": "quarrel_lys_osk_pressing_settle",
+          "label": "call the pressing a draw (will)",
+          "if": [["flag", "quarrel_lys_osk_pressing"], ["!flag", "quarrel_lys_osk_pressing_done"]],
+          "once": true,
+          "say": "You tell them plainly whether Mootcombe feeds its dead or its living isn't yours to settle between them.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "quarrel_lys_osk_pressing_peace"],
+                ["set", "quarrel_lys_osk_pressing_done"],
+                ["say", "\"...Fair. It's Mootcombe's fast, not mine.\" — Osk, quieter: \"Nor mine to keep for them.\""]
+              ],
+              [
+                ["addvar", "appr_lys", -1],
+                ["addvar", "appr_osk", -1],
+                ["set", "quarrel_lys_osk_pressing_sour"],
+                ["set", "quarrel_lys_osk_pressing_done"],
+                ["say", "Neither wanted that answer. — Lys goes to look at the rows; Osk says the office under his breath, done with the talk."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "quarrel_lys_osk_pressing_stay",
+          "label": "leave it between them",
+          "if": [["flag", "quarrel_lys_osk_pressing"], ["!flag", "quarrel_lys_osk_pressing_done"]],
+          "once": true,
+          "say": "You tell Lys and Osk it's theirs to settle, and step back. They settle it the way people do: quietly, badly, and without you. Neither asks you again.",
+          "fx": [["set", "quarrel_lys_osk_pressing_done"], ["set", "quarrel_lys_osk_pressing_left"], ["xp", 1]]
         },
         {
           "id": "quarrel_osk_tamsin_settle_b",
@@ -5563,6 +5686,31 @@
     {
       "if": [["flag", "quarrel_lys_tamsin_wood_left"]],
       "text": "Lys and Tamsin settled the Kingswood's coppice between themselves, without you. Neither says how, and neither has forgotten.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_osk_pressing_lys"]],
+      "text": "You backed Lys on Mootcombe's pressing: the living fed first. Osk still says a fast forgotten is a fast broken.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_osk_pressing_osk"]],
+      "text": "You backed Osk's fast at Mootcombe. The pressing goes to the door each year; Lys still calls it starving on purpose.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_osk_pressing_peace"], ["flag", "quarrel_lys_osk_pressing_done"]],
+      "text": "You told Lys and Osk Mootcombe's fast wasn't yours to referee between them. They let it go, mostly.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_osk_pressing_sour"]],
+      "text": "Lys and Osk never settled it, the living's cider against the dead's due. Neither brings up Mootcombe first anymore.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "quarrel_lys_osk_pressing_left"]],
+      "text": "Lys and Osk settled Mootcombe's pressing between themselves, without you. Neither says how, and neither has forgotten.",
       "weight": 1
     },
     {

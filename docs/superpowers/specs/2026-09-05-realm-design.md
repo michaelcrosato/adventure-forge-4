@@ -388,7 +388,11 @@ Gullhaven's sergeant on the Hearthlands, Cinderhall's chapterhouse and
 Highward's record-house on the Kingswood, Fenmarch's Priory and Wickstead's
 recruiter on the Shieldings), moving the faction that carried it; and
 Archivist Penn reads the Shieldings' stone back, with a Scholar's line naming
-the herald the records left unnamed. Seventeen quarrels, fifty-one exchanges. Every quarrel, old or new, can also be left between them: a no-roll entry beside the sides and the draw that closes the quarrel, moves no regard, and leaves an epilogue line saying they settled it without you and neither has forgotten.
+the herald the records left unnamed, and Mootcombe's guest-list back, with a
+Scholar's line on who paid the planted guest's pension. Eighteen quarrels — the
+eighteenth Lys and Brother Osk over Mootcombe's bargain, the living's cider
+against the dead's due, and every hold's broken bargain now opens Lys and
+Vell's — fifty-one exchanges. Every quarrel, old or new, can also be left between them: a no-roll entry beside the sides and the draw that closes the quarrel, moves no regard, and leaves an epilogue line saying they settled it without you and neither has forgotten.
 
 **Roads Between** (added after the first playtest rounds): a ring of six
 cross-hold quests, each asked in one hold and settled in the next, flagged
