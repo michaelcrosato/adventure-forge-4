@@ -873,7 +873,17 @@
                 ["say", "The rest stands ready: the true pardon is yours, or Keeper Rowan's verse — read one, or speak the other, and the turning stops. The names cut into the tree can be read too (wits)."]
               ],
               [
-                ["say", "The rest stands open by wits alone: read the names cut into the tree (wits; a wrong name costs the Keepers' regard). Surer: the true pardon in Bray's dead-letter box (wits), or Keeper Rowan's verse in the Understory."]
+                ["say", "The rest stands open by wits alone: read the names cut into the tree (wits; a wrong name costs the Keepers' regard)."],
+                [
+                  "if",
+                  [["flag", "th_pardon_clue"]],
+                  [
+                    ["say", "Surer: the true pardon in Bray's dead-letter box (wits), or Keeper Rowan's verse in the Understory."]
+                  ],
+                  [
+                    ["say", "Surer: the true pardon — Fenn, in the stockade, knows where it went; then Bray's dead-letter box (wits) — or Keeper Rowan's verse in the Understory."]
+                  ]
+                ]
               ]
             ],
             [

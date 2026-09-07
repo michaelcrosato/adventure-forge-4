@@ -207,7 +207,9 @@
             [
               "if",
               [["!flag", "mc_toast_guests"]],
-              [["say", "One toast is still wanted: the guests', from Hedda's wassail at the Press Hearth."]],
+              [
+                ["say", "One toast is still wanted: the guests', from Hedda's wassail at the Press Hearth (asked of her, not read)."]
+              ],
               []
             ],
             [
@@ -229,7 +231,25 @@
               [["flag", "mc_osric_refused"], ["flag", "mc_fulk_refused"], ["flag", "mc_rendel_refused"]],
               [["say", "The bargain stands ready: tell Oswin, at the hall-gate, the hall stays shut."]],
               [
-                ["say", "The bargain wants three refused, in Mootcombe: the levy-reeve's warrant, the victualler's contract, and the cooper's timber."]
+                ["say", "The bargain wants three claims refused, in Mootcombe:"],
+                [
+                  "if",
+                  [["!flag", "mc_osric_refused"]],
+                  [["say", "the levy-reeve's warrant (Osric, at the tally-house);"]],
+                  [["say", "the levy-reeve's warrant — refused already;"]]
+                ],
+                [
+                  "if",
+                  [["!flag", "mc_fulk_refused"]],
+                  [["say", "the victualler's contract (Fulk, at the cask-yard);"]],
+                  [["say", "the victualler's contract — refused already;"]]
+                ],
+                [
+                  "if",
+                  [["!flag", "mc_rendel_refused"]],
+                  [["say", "the cooper's timber (Rendel, at the cooper's shop)."]],
+                  [["say", "the cooper's timber — refused already."]]
+                ]
               ]
             ],
             [

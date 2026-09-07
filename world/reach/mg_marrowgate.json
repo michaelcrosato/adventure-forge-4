@@ -452,6 +452,7 @@
                   [["inParty", "vell"]],
                   [
                     ["set", "vell_exposed"],
+                    ["addvar", "appr_vell", -1],
                     ["say", "The chained shelf is a shelf like the others once you know which chain is only for show. The founding ledger: the first Reeve's own account of the crown, and the names of his line — one of them Vell's."]
                   ],
                   [
@@ -482,6 +483,7 @@
                   [["inParty", "vell"]],
                   [
                     ["set", "vell_exposed"],
+                    ["addvar", "appr_vell", -1],
                     ["say", "The chain drops. The founding ledger: the first Reeve's own account of the crown, and the names of his line — one of them Vell's."]
                   ],
                   [
@@ -535,6 +537,7 @@
                   [["inParty", "vell"]],
                   [
                     ["set", "vell_exposed"],
+                    ["addvar", "appr_vell", -1],
                     ["say", "You don't work the lock. You haul on the chain until the old iron gives, links first. The founding ledger: the first Reeve's own account of the crown, and the names of his line -- one of them Vell's."]
                   ],
                   [
@@ -3317,6 +3320,14 @@
               []
             ]
           ]
+        },
+        {
+          "id": "mg_penn_clasp",
+          "label": "the stag clasp",
+          "if": [["has", "va_stag_clasp"], ["!flag", "va_clasp_read"]],
+          "once": true,
+          "say": "Penn turns the clasp to the candle. \"The old king's household mark — a hundred brooches, once. Last Light's elder keeps its twin on a coffer lid. Keep it; it buys nothing, and it is worth more than that.\"",
+          "fx": [["set", "va_clasp_read"], ["xp", 2], ["score", 2]]
         }
       ]
     },

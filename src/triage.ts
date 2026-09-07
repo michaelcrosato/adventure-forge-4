@@ -68,9 +68,11 @@ export function unitsFromReport(file: string, r: Record<string, unknown>): Unit[
     const sev = b.sev === "P0" ? "P0" : "P1";
     out.push({ kind: "bug", sev, title: b.what, where: b.where, ...meta });
   }
-  for (const c of (Array.isArray(r.confusions) ? r.confusions : []) as string[])
+  // a player sometimes files a confusion as {what: "..."} rather than a string; read either
+  const line = (x: unknown): string => (typeof x === "string" ? x : x && typeof x === "object" && typeof (x as { what?: unknown }).what === "string" ? (x as { what: string }).what : "");
+  for (const c of (Array.isArray(r.confusions) ? r.confusions : []).map(line))
     if (c) out.push({ kind: "confusion", sev: "P2", title: c, ...meta });
-  for (const s of (Array.isArray(r.suggestions) ? r.suggestions : []) as string[])
+  for (const s of (Array.isArray(r.suggestions) ? r.suggestions : []).map(line))
     if (s) out.push({ kind: "suggestion", sev: "P2", title: s, ...meta });
   return out;
 }

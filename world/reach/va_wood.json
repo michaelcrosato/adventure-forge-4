@@ -506,7 +506,14 @@
       "name": "a tarnished stag clasp",
       "loc": "nowhere",
       "takeable": true,
-      "hint": "the old king's mark; the elder knows it from his coffer's lid"
+      "hint": "the old king's mark; the elder knows it from his coffer's lid",
+      "variants": [
+        { "if": [["flag", "va_clasp_read"]], "hint": "the old king's mark, known; a keepsake" },
+        {
+          "if": [["flag", "cp_pass_seen"]],
+          "hint": "the old king's mark; the Vale's elder is behind you now, a keepsake"
+        }
+      ]
     }
   },
   "npcs": {
@@ -528,7 +535,16 @@
           "label": "the old barrow",
           "once": true,
           "say": "Doors face north, sealed since before me. There's a gap under a fallen stone on the north face if you'd rather not test the doors — knees have worn it smooth over years of use. A verse is cut into the barrow's hall, too.",
-          "fx": [["xp", 2], ["score", 3], ["set", "va_knows_gap"]]
+          "fx": [["xp", 2], ["score", 3], ["set", "va_knows_gap"]],
+          "if": [["!flag", "act2_open"]]
+        },
+        {
+          "id": "barrow_after",
+          "label": "the old barrow",
+          "if": [["flag", "act2_open"]],
+          "once": true,
+          "say": "Doors open and the hill gone quiet, I hear. The gap under the fallen stone's for foxes again. Good; my knees were tired of it.",
+          "fx": [["xp", 1]]
         },
         {
           "id": "herbs",
