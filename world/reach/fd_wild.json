@@ -166,7 +166,18 @@
           "name": "Trapper's Blind",
           "desc": "A hunter's blind of woven reed, collapsed at one corner, aimed out over water where nothing has moved in years.",
           "brief": "A collapsed reed blind.",
-          "onEnterOnce": [["xp", 1], ["if", [["!flag", "fd_entered"]], [["set", "fd_entered"]], []]]
+          "onEnterOnce": [
+            ["xp", 1],
+            [
+              "if",
+              [["!flag", "fd_entered"]],
+              [
+                ["set", "fd_entered"],
+                ["say", "This is Fenmarch: the fen where the water rose in a night twenty years gone and took the old nave, congregation and all."]
+              ],
+              []
+            ]
+          ]
         },
         {
           "cell": [0, 4],

@@ -11,7 +11,18 @@
         "in": { "to": "fd_settlement", "landmark": "Reedholm" },
         "south": { "to": "fd_way_shrine", "sideTrip": true, "landmark": "a wayside shrine" }
       },
-      "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
+      "onEnterOnce": [
+        ["xp", 2],
+        [
+          "if",
+          [["!flag", "fd_entered"]],
+          [
+            ["set", "fd_entered"],
+            ["say", "This is Fenmarch: the fen where the water rose in a night twenty years gone and took the old nave, congregation and all."]
+          ],
+          []
+        ]
+      ]
     },
     "fd_north_dike": {
       "name": "Fenmarch North Dike",
@@ -24,7 +35,18 @@
         "in": { "to": "fd_settlement", "landmark": "Reedholm" },
         "down": { "to": "fd_ford", "sideTrip": true, "landmark": "a washed-out ford" }
       },
-      "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
+      "onEnterOnce": [
+        ["xp", 2],
+        [
+          "if",
+          [["!flag", "fd_entered"]],
+          [
+            ["set", "fd_entered"],
+            ["say", "This is Fenmarch: the fen where the water rose in a night twenty years gone and took the old nave, congregation and all."]
+          ],
+          []
+        ]
+      ]
     },
     "fd_coast_road": {
       "name": "Fenmarch Coast Road",
@@ -37,7 +59,18 @@
         "in": { "to": "fd_settlement", "landmark": "Reedholm" },
         "east": { "to": "fd_wayside_camp", "sideTrip": true, "landmark": "a roadside camp" }
       },
-      "onEnterOnce": [["set", "fd_entered"], ["xp", 2]]
+      "onEnterOnce": [
+        ["xp", 2],
+        [
+          "if",
+          [["!flag", "fd_entered"]],
+          [
+            ["set", "fd_entered"],
+            ["say", "This is Fenmarch: the fen where the water rose in a night twenty years gone and took the old nave, congregation and all."]
+          ],
+          []
+        ]
+      ]
     },
     "fd_settlement": {
       "name": "Reedholm — the Landing",

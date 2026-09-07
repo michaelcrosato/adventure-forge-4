@@ -216,7 +216,8 @@ Understory, Coldpass, Marrowgate, `reach_at_rest`.
 850 rooms, 238 npcs, 243 items, 121 quests, 64 stamped places each with its own
 sign, reward and hermit's voice, 547 epilogue lines, 4 companions, 6 factions,
 7 endings each with a proof; every gate in the holds and the capital has a
-force, a craft and a words route, every hollow room weighs its grief for
+force, a craft and a words route, every hold introduces itself in one line
+at whichever road you enter by, every hollow room weighs its grief for
 free, ten waystations on the roads between the holds each put a small choice
 in the traveller's way, and a travel list or a conversation that outgrows the
 menu cap turns pages, so neither regions nor landmarks are capped. `maxScore`

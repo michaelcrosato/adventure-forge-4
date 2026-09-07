@@ -45,8 +45,12 @@ Do not edit any other file. Do not commit. Scratch files go under `/tmp`.
   Anyone with 4+ topics uses `dialogue: true` and has a farewell topic
   (`end: true`).
 - **Gateway rooms** with the exact ids and neighbor targets from your
-  assignment. Set `["set","<code>_entered"]` in `onEnterOnce` of every
-  gateway (companions react to it). Gateways are landmarks.
+  assignment. Every gateway's `onEnterOnce` sets `<code>_entered` and says
+  in one line what this hold is ("This is X: …", its grief in a breath),
+  wrapped in `["if", [["!flag","<code>_entered"]], …]` so the hold
+  introduces itself once whichever road you come in by (companions react
+  to the flag). A neighbour's grid cell that links straight into your
+  region must set the flag and say the line too. Gateways are landmarks.
 - **Wilderness** as one `gen` region (5×5 to 7×7, walled into a shape, ≤ 30
   open cells): a `scenes` pool with **at least as many scenes as open
   cells**, each a distinct named place with one concrete detail; `links` to

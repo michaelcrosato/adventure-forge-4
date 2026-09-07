@@ -11,7 +11,18 @@
         "in": { "to": "th_settlement" },
         "south": { "to": "th_toll_stand", "sideTrip": true, "landmark": "a roadside toll stand" }
       },
-      "onEnterOnce": [["set", "th_entered"], ["xp", 1]],
+      "onEnterOnce": [
+        ["xp", 1],
+        [
+          "if",
+          [["!flag", "th_entered"]],
+          [
+            ["set", "th_entered"],
+            ["say", "This is Thornwold: the wood where a Free Company was hanged forty years back, and hangs there yet."]
+          ],
+          []
+        ]
+      ],
       "onEnter": [
         [
           "if",
@@ -32,7 +43,18 @@
         "in": { "to": "th_settlement" },
         "west": { "to": "th_wayfire", "sideTrip": true, "landmark": "an Ironbound wayfire" }
       },
-      "onEnterOnce": [["set", "th_entered"], ["xp", 1]],
+      "onEnterOnce": [
+        ["xp", 1],
+        [
+          "if",
+          [["!flag", "th_entered"]],
+          [
+            ["set", "th_entered"],
+            ["say", "This is Thornwold: the wood where a Free Company was hanged forty years back, and hangs there yet."]
+          ],
+          []
+        ]
+      ],
       "onEnter": [
         [
           "if",
@@ -53,7 +75,18 @@
         "in": { "to": "th_settlement" },
         "east": { "to": "th_waymarker", "sideTrip": true, "landmark": "an old waymarker" }
       },
-      "onEnterOnce": [["set", "th_entered"], ["xp", 1]],
+      "onEnterOnce": [
+        ["xp", 1],
+        [
+          "if",
+          [["!flag", "th_entered"]],
+          [
+            ["set", "th_entered"],
+            ["say", "This is Thornwold: the wood where a Free Company was hanged forty years back, and hangs there yet."]
+          ],
+          []
+        ]
+      ],
       "onEnter": [
         [
           "if",

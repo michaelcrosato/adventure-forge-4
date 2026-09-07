@@ -15,7 +15,17 @@
           "hint": "settle the Vale's barrow first"
         }
       },
-      "onEnterOnce": [["set", "wm_entered"]],
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "wm_entered"]],
+          [
+            ["set", "wm_entered"],
+            ["say", "This is Wardmoor: the Watch's moor, where a company swore on a stone four centuries ago to keep a watch nobody called off."]
+          ],
+          []
+        ]
+      ],
       "actions": [
         {
           "id": "wm_gate_notice_1",
@@ -300,7 +310,17 @@
         "in": { "to": "wm_armoury" },
         "south": { "to": "wm_peddler_stop", "sideTrip": true, "landmark": "a peddler's stop" }
       },
-      "onEnterOnce": [["set", "wm_entered"]]
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "wm_entered"]],
+          [
+            ["set", "wm_entered"],
+            ["say", "This is Wardmoor: the Watch's moor, where a company swore on a stone four centuries ago to keep a watch nobody called off."]
+          ],
+          []
+        ]
+      ]
     },
     "wm_east_road": {
       "name": "Wardmoor — East Road",
@@ -313,7 +333,17 @@
         "in": { "to": "wm_barracks" },
         "south": { "to": "wm_courier_hollow", "sideTrip": true, "landmark": "a hurt courier" }
       },
-      "onEnterOnce": [["set", "wm_entered"]]
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "wm_entered"]],
+          [
+            ["set", "wm_entered"],
+            ["say", "This is Wardmoor: the Watch's moor, where a company swore on a stone four centuries ago to keep a watch nobody called off."]
+          ],
+          []
+        ]
+      ]
     },
     "wm_north_road": {
       "name": "Wardmoor — North Road",
@@ -326,7 +356,17 @@
         "in": { "to": "wm_record_house" },
         "east": { "to": "wm_checkpoint", "sideTrip": true, "landmark": "a Watch checkpoint" }
       },
-      "onEnterOnce": [["set", "wm_entered"]]
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "wm_entered"]],
+          [
+            ["set", "wm_entered"],
+            ["say", "This is Wardmoor: the Watch's moor, where a company swore on a stone four centuries ago to keep a watch nobody called off."]
+          ],
+          []
+        ]
+      ]
     },
     "wm_peddler_stop": {
       "name": "The Peddler's Stop",

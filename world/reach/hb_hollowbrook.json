@@ -10,7 +10,17 @@
         "west": { "to": "wm_east_road", "landmark": "Wardmoor" },
         "in": { "to": "hb_mere_shore", "landmark": "Barrowmere" }
       },
-      "onEnterOnce": [["set", "hb_entered"]]
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "hb_entered"]],
+          [
+            ["set", "hb_entered"],
+            ["say", "This is Hollowbrook: barrow country, where the Keepers tend the graves and the Kings' Rest holds a court that never rose."]
+          ],
+          []
+        ]
+      ]
     },
     "hb_south_dike": {
       "name": "Hollowbrook South Dike",
@@ -23,7 +33,17 @@
         "in": { "to": "hb_mere_shore", "landmark": "Barrowmere" },
         "east": { "to": "fl_west_dike", "landmark": "the Fallows" }
       },
-      "onEnterOnce": [["set", "hb_entered"]]
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "hb_entered"]],
+          [
+            ["set", "hb_entered"],
+            ["say", "This is Hollowbrook: barrow country, where the Keepers tend the graves and the Kings' Rest holds a court that never rose."]
+          ],
+          []
+        ]
+      ]
     },
     "hb_mere_shore": {
       "name": "Barrowmere, the Mere-Shore",

@@ -10,7 +10,18 @@
         "east": { "to": "wm_west_road", "landmark": "Wardmoor" },
         "in": { "to": "ir_tally_gate", "landmark": "Cinderhall" }
       },
-      "onEnterOnce": [["set", "ir_entered"], ["xp", 2]]
+      "onEnterOnce": [
+        ["xp", 2],
+        [
+          "if",
+          [["!flag", "ir_entered"]],
+          [
+            ["set", "ir_entered"],
+            ["say", "This is the Iron Downs: the Ironbound's hold, where a gallery fell on a hundred miners never told to stop."]
+          ],
+          []
+        ]
+      ]
     },
     "ir_south_track": {
       "name": "The South Track",
@@ -22,7 +33,18 @@
         "south": { "to": "th_north_track", "landmark": "Thornwold" },
         "in": { "to": "ir_tally_gate", "landmark": "Cinderhall" }
       },
-      "onEnterOnce": [["set", "ir_entered"], ["xp", 2]]
+      "onEnterOnce": [
+        ["xp", 2],
+        [
+          "if",
+          [["!flag", "ir_entered"]],
+          [
+            ["set", "ir_entered"],
+            ["say", "This is the Iron Downs: the Ironbound's hold, where a gallery fell on a hundred miners never told to stop."]
+          ],
+          []
+        ]
+      ]
     },
     "ir_tally_gate": {
       "name": "Cinderhall — Tally Gate",
@@ -1791,7 +1813,18 @@
           "name": "The High Cut",
           "desc": "An old surface working, shale stepped in benches too regular to be natural. Cart-rails, rusted to lace, still mark the grade downward.",
           "brief": "Benched shale, rusted rails.",
-          "onEnterOnce": [["xp", 1], ["if", [["!flag", "ir_entered"]], [["set", "ir_entered"]], []]],
+          "onEnterOnce": [
+            ["xp", 1],
+            [
+              "if",
+              [["!flag", "ir_entered"]],
+              [
+                ["set", "ir_entered"],
+                ["say", "This is the Iron Downs: the Ironbound's hold, where a gallery fell on a hundred miners never told to stop."]
+              ],
+              []
+            ]
+          ],
           "actions": [
             {
               "id": "ir_bearings_2_0",
@@ -2054,7 +2087,18 @@
           "name": "Cairn Path",
           "desc": "A track older than any mine climbs west between two lines of standing stones, half-swallowed by spoil from a working that never knew they were there.",
           "brief": "Standing stones, west.",
-          "onEnterOnce": [["xp", 1], ["if", [["!flag", "ir_entered"]], [["set", "ir_entered"]], []]],
+          "onEnterOnce": [
+            ["xp", 1],
+            [
+              "if",
+              [["!flag", "ir_entered"]],
+              [
+                ["set", "ir_entered"],
+                ["say", "This is the Iron Downs: the Ironbound's hold, where a gallery fell on a hundred miners never told to stop."]
+              ],
+              []
+            ]
+          ],
           "actions": [
             {
               "id": "ir_bearings_0_3",

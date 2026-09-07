@@ -7,7 +7,18 @@
       "region": "sk",
       "landmark": "Saltkerns north track",
       "exits": { "north": { "to": "th_south_track" }, "in": { "to": "sk_settlement" } },
-      "onEnterOnce": [["set", "sk_entered"], ["xp", 2]]
+      "onEnterOnce": [
+        ["xp", 2],
+        [
+          "if",
+          [["!flag", "sk_entered"]],
+          [
+            ["set", "sk_entered"],
+            ["say", "This is the Saltkerns: where the Reeve's fleet broke on the reef and rows the fog yet under a dark Farlight."]
+          ],
+          []
+        ]
+      ]
     },
     "sk_coast_road": {
       "name": "Saltkerns Coast Road",
@@ -20,7 +31,18 @@
         "in": { "to": "sk_settlement" },
         "north": { "to": "hl_south_lane", "landmark": "the Hearthlands" }
       },
-      "onEnterOnce": [["set", "sk_entered"], ["xp", 2]]
+      "onEnterOnce": [
+        ["xp", 2],
+        [
+          "if",
+          [["!flag", "sk_entered"]],
+          [
+            ["set", "sk_entered"],
+            ["say", "This is the Saltkerns: where the Reeve's fleet broke on the reef and rows the fog yet under a dark Farlight."]
+          ],
+          []
+        ]
+      ]
     },
     "sk_smugglers_stair": {
       "name": "The Smugglers' Stair",

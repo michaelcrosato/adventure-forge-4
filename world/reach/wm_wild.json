@@ -98,7 +98,18 @@
           "name": "Cairnwatch",
           "desc": "A line of boundary cairns marches south, older than any border they were meant to keep. West the ground falls away toward smoke on the horizon — the Iron Downs, by the color of it.",
           "brief": "Boundary cairns.",
-          "onEnterOnce": [["xp", 1], ["if", [["!flag", "wm_entered"]], [["set", "wm_entered"]], []]],
+          "onEnterOnce": [
+            ["xp", 1],
+            [
+              "if",
+              [["!flag", "wm_entered"]],
+              [
+                ["set", "wm_entered"],
+                ["say", "This is Wardmoor: the Watch's moor, where a company swore on a stone four centuries ago to keep a watch nobody called off."]
+              ],
+              []
+            ]
+          ],
           "actions": [
             {
               "id": "wm_bearings_0_1",
