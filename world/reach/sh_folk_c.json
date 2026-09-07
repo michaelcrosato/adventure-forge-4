@@ -271,10 +271,16 @@
         {
           "id": "react_hollow_rested",
           "label": "the field, now the truce is called",
-          "if": [["flag", "sh_hollow_rested"]],
+          "if": [["flag", "sh_hollow_rested"], ["!flag", "sh_picker_refused"]],
           "once": true,
           "say": "A truce doesn't put the iron back in the ground. I'll go on digging, quieter about it than I used to.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested_stopped",
+          "label": "the field, now the truce is called",
+          "if": [["flag", "sh_hollow_rested"], ["flag", "sh_picker_refused"]],
+          "say": "Truce called, and my spade's stayed where I said it would. Four hundred years of iron can keep a while longer; I gave my word on it, more or less."
         },
         {
           "id": "react_hollow_bargained",

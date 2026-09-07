@@ -629,7 +629,7 @@
           "label": "a blessing for the barrow",
           "if": [["flag", "va_heard_oldking"], ["!flag", "va_barrow_open"], ["!flag", "va_promised_seal"]],
           "once": true,
-          "say": "Go with the gray blessing, then. Far off, the stone doors grind open. No promise binds them shut. Go when you're ready.",
+          "say": "Go with the gray blessing, then. Far off, the stone doors grind open for you. No promise binds them shut; whether they close again behind you is yours to decide at the seat. Go when you're ready.",
           "fx": [["set", "va_barrow_open"], ["set", "va_barrow_blessed"], ["addvar", "rep_church", 1]]
         },
         {
@@ -893,6 +893,14 @@
           "once": true,
           "say": "Her hands still on the page. \"My grandmother's hand, that. She never once said which word she believed. I've wondered my whole life which one she died still doubting.\"",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "clasp",
+          "label": "the clasp from the hunter's brush",
+          "if": [["has", "va_stag_clasp"]],
+          "once": true,
+          "say": "The stag — the same mark as my coffer's lid. A brooch from the old king's household; there were a hundred like it once, and I'd have sworn none left. Keep it. It buys nothing, and it's worth more than that.",
+          "fx": [["xp", 2], ["score", 2]]
         },
         { "id": "bye", "label": "leave her to the ledgers", "say": "Shut the door. The wood is close.", "end": true }
       ]

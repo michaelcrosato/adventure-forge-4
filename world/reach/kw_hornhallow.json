@@ -161,9 +161,16 @@
       "region": "kw",
       "landmark": "the south track",
       "onEnterOnce": [
-        ["set", "kw_entered"],
-        ["xp", 2],
-        ["say", "This is the Kingswood: the old royal hunting forest under the Spine, where a king's hunt rode out four hundred years ago and never came home."]
+        [
+          "if",
+          [["!flag", "kw_entered"]],
+          [
+            ["set", "kw_entered"],
+            ["xp", 2],
+            ["say", "This is the Kingswood: the old royal hunting forest under the Spine, where a king's hunt rode out four hundred years ago and never came home."]
+          ],
+          []
+        ]
       ]
     },
     "kw_east_track": {

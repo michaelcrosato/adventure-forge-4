@@ -1,0 +1,75 @@
+{
+  "verdict": "quit",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 650,
+  "receipt": "",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "Region entry text repeats the original 'unrested' framing and companion dialogue verbatim on a later visit even after that hold's grief is fully rested. Re-entering the Shieldings after the White Rod rite still opened with 'both lines have held their ground, unrested, ever since' and Lys said 'I can already hear drilling from here' about the muster barn we had already broken up two visits earlier.",
+      "where": "The West Road / The North Road (Shieldings) and The West Dike (the Fallows) — region-entry banter"
+    },
+    {
+      "sev": "P1",
+      "what": "Searching the brush at the Hunter's Camp describes finding 'a tarnished clasp stamped with a rearing stag — the old king's mark, the same one on the elder's coffer lid' in loving plot-relevant detail, but only gold is actually granted; there is no 'clasp: obtained' line and it never appears in carrying/status. The text strongly promises a key item that never materializes.",
+      "where": "Hunter's Camp / search the brush past the smoke rack"
+    },
+    {
+      "sev": "P1",
+      "what": "The worn half-token's inventory hint text ('half a ward-sign; the gray priest may know it') never updates after it is actually shown to the gray priest and its lore fully resolved early in Act I. It reads as an open lead for the rest of the 650-turn run.",
+      "where": "status/carrying listing — worn half-token"
+    },
+    {
+      "sev": "P2",
+      "what": "Crake at the Fallows' trade counter, after being talked into stopping ('...Fine. It'll keep. It's kept four hundred years already.'), later answers 'the field, now the truce is called' with 'I'll go on digging, quieter about it than I used to' — a direct walk-back of the agreement just a few turns after we secured it.",
+      "where": "The Trade Counter (the Fallows) / talk to Crake"
+    },
+    {
+      "sev": "P2",
+      "what": "Two unrelated rooms in two different holds share the exact display name 'The West Road' — one west of Last Light in the Vale, one the Shieldings' entry room from Fenmarch's drove-road — with no hold-context in the name, which is confusing when scanning travel history.",
+      "where": "The West Road (Vale) vs. The West Road (Shieldings entry)"
+    },
+    {
+      "sev": "P2",
+      "what": "The Charge Barge's Hodd, an explicit named stakeholder in 'The Old Dams' (she wants the dams blown), never gets a follow-up 'the dams, now they're decided' dialogue option the way every other multi-voice NPC in the game does (Yarrow, Sten, Bevan, Elgin, Tolan, Merle, Hew, Old Ede, Prior Halm, Canon Loach all got one). Her side of the three-voice quest is left without closure text.",
+      "where": "The Charge Barge (the Meres) / talk to Hodd"
+    },
+    {
+      "sev": "P2",
+      "what": "Both attempts to 'call it a draw' between quarrelling companions (Osk/Vell over the drowned nave's records; Vell/Tamsin over the Old Court's rings) rolled a bare 2 on a d20 against a need of 4+, yet the miss text ('So close — that one nearly landed') implies a narrow failure regardless of how badly the roll actually missed by, undercutting the shown math.",
+      "where": "The Drowned Nave / The Old Court, at Rest — 'call it a draw' will checks"
+    },
+    {
+      "sev": "P1",
+      "what": "The route to Marrowgate from any of the eastern/southern holds (Fenmarch, the Shieldings, the Fallows, Hollowbrook, the Meres) is not signposted from that side at all — Wardmoor and Coldpass are only reachable by backtracking all the way to the Vale's barrow field and going north from there. Nothing in the Meres' 'get your bearings,' Hollowbrook's landmarks, or any NPC dialogue in that whole eastern cluster hints that the only road to Coldpass runs back through the Vale rather than onward from where a thorough player naturally ends up. This consumed nearly the entire 650-turn budget before the true route was found, leaving no turns left to act on the Hollow Throne itself once the capital was finally reached.",
+      "where": "world geography — Meres/Hollowbrook cluster to Wardmoor/Coldpass"
+    }
+  ],
+  "confusions": [
+    "Nothing in the Meres or Hollowbrook signals that Coldpass/Wardmoor must be reached by backtracking through the Vale's barrow field rather than northward from the eastern hold cluster — this is the single biggest way-finding gap in the run.",
+    "Act 2's overview text distinguishes 'the pilgrim stair at Coldpass' (three hollows rested) from 'the covenant carried out of the Meres (the Keepers' stair)' as if they were two different routes, but both resolve to the exact same action at the exact same room (The Pass Gate / 'climb the Keepers' pilgrim stair'), which reads as one path described twice.",
+    "Large hub rooms (Wickstead Crossroads, Lantern Holm Landing) present 8-13 simultaneous menu entries without any way to see at a glance which sub-areas have already been fully explored, making it easy to lose track of what's left.",
+    "The barrow-field clasp and the widow's-well locket both read as important plot-clue items (matching the elder's coffer, and the MAREN name later paid off at the Drowned Hall) but only one of the two (the locket) actually persisted as a real, later-relevant item — the clasp's promise fizzled, which undercuts trust in similar-feeling item finds elsewhere."
+  ],
+  "suggestions": [
+    "Re-check a hold's rested/settled state before firing region-entry banter, so companions and scene text don't repeat the original unrested framing after the grief is resolved.",
+    "Either make the Hunter's Camp clasp a real obtainable/usable item or drop the 'same mark as the elder's coffer lid' line so the find doesn't over-promise.",
+    "Refresh an item's inventory hint text once its lead is resolved (e.g., worn half-token after the gray priest has explained it), so a mid-game inventory scan doesn't imply a stale open thread.",
+    "Add a bearings hint from the Meres/Hollowbrook side pointing back toward the Vale as the only road to Wardmoor and Coldpass, since that cluster otherwise reads as a dead end for northward progress.",
+    "Give Hodd the same 'the dams, now they're decided' closure line the other two dam-stakeholders receive, so all three named voices in The Old Dams get acknowledged.",
+    "Scale the 'draw' miss-flavor text to the actual margin of the roll (a bare-minimum miss vs. a roll of 1-2) so the narration doesn't claim a near-success on a clear failure.",
+    "Rename one of the two 'The West Road' rooms so travel history isn't ambiguous between the Vale and the Shieldings."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-07T01-08-37-368Z",
+  "seed": 443,
+  "build": {
+    "rev": "e93a7e3",
+    "world": "85ccde88"
+  },
+  "cost_usd": null,
+  "verified": false
+}

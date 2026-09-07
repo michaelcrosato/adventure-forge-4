@@ -505,7 +505,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
               events.push(`${npc.name} ${Math.abs(d) > 1 ? "strongly " : ""}${d > 0 ? "approves" : "disapproves"} (${d > 0 ? "+" : ""}${d}).`);
               if (!s.flags["_seenApproval"]) {
                 s.flags["_seenApproval"] = true;
-                events.push("(Companions judge what you do: their regard opens some doors and closes others, and one pushed too far walks out.)");
+                events.push("(Companions judge what you do: their regard opens some doors and closes others; at -2 they are near leaving, and the next thing they mind is the last.)");
               }
             } else if (npc && !npcDead(world, s, id) && (s.visited.includes(npc.room ?? "") || s.flags[`${id}_left`])) {
               // regard moved for someone not here to see it: a player found Osk at -1 with no idea why.

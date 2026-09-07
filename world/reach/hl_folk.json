@@ -567,8 +567,25 @@
         {
           "id": "hl_grainrun_offer",
           "label": "ask what he needs run",
-          "if": [["flag", "hl_runner_bg"], ["!class", "warden"], ["!flag", "hl_grainrun_offered"]],
+          "if": [
+            ["flag", "hl_runner_bg"],
+            ["!class", "warden"],
+            ["!flag", "hl_grainrun_offered"],
+            ["!flag", "hl_tithe_common"]
+          ],
           "say": "One load, past the tally, down to Sack Road and on to the coast. Do it clean, and the Companies remember who ran it.",
+          "fx": [["set", "hl_grainrun_offered"], ["xp", 1]]
+        },
+        {
+          "id": "hl_grainrun_offer_common",
+          "label": "ask what he needs run",
+          "if": [
+            ["flag", "hl_runner_bg"],
+            ["!class", "warden"],
+            ["!flag", "hl_grainrun_offered"],
+            ["flag", "hl_tithe_common"]
+          ],
+          "say": "The store's open to all now, they say. There's still a count at the gate, and my sacks still don't want counting — old habits, and the Companies' are older than mine.",
           "fx": [["set", "hl_grainrun_offered"], ["xp", 1]]
         },
         {

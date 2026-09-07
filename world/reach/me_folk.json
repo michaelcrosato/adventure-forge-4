@@ -440,6 +440,40 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "react_dams",
+          "label": "the dams, now they're decided",
+          "if": [["any", [["flag", "me_dams_blown"], ["flag", "me_dams_crown"], ["flag", "me_dams_folk"]]]],
+          "once": true,
+          "say": "You want my word on it? Here it is.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "me_dams_blown"]],
+              [
+                ["say", "\"Blown, and the water's finding its old level. I asked for that. I'll not pretend the Holm thanks me for it.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "me_dams_crown"]],
+              [
+                ["say", "\"Kept, for the Crown's levy-men to mind. Then the reed-lakes stay, and my casks stay dry. I can live with dry.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "me_dams_folk"]],
+              [
+                ["say", "\"Left to the Holm's own hands. They'll patch them every spring and curse them every winter, same as always. Ask me again in ten years.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave her to the casks",
           "say": "Mind the charges stay dry until you mean to use them. Damp powder's worse than none at all.",

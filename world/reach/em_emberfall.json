@@ -8,9 +8,16 @@
       "landmark": "Emberfall's east road",
       "exits": { "east": { "to": "th_wayfire" }, "in": { "to": "em_settlement", "landmark": "Glasswick" } },
       "onEnterOnce": [
-        ["set", "em_entered"],
-        ["xp", 2],
-        ["say", "This is the hold that was burned once — or so the sayings east of here have it. From where you stand, it looks less like a story and more like a very long, very patient scar."]
+        [
+          "if",
+          [["!flag", "em_entered"]],
+          [
+            ["set", "em_entered"],
+            ["xp", 2],
+            ["say", "This is the hold that was burned once — or so the sayings east of here have it. From where you stand, it looks less like a story and more like a very long, very patient scar."]
+          ],
+          []
+        ]
       ],
       "actions": [
         {
