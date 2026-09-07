@@ -1,0 +1,454 @@
+{
+  "rooms": {
+    "ff_fold_green": {
+      "name": "The Fold-Green",
+      "desc": "A green trampled bare around the village well, drystone folds walled off on every side for lambing. Slate roofs step up the fellside behind it; above them all stands the long house the Reach still calls the Fostering.",
+      "brief": "The well-green; slate roofs climb behind it.",
+      "region": "ff",
+      "landmark": "Slatefold",
+      "exits": {
+        "north": { "to": "ff_walled_lane", "landmark": "the walled lane" },
+        "south": { "to": "ff_hearth_house", "landmark": "the hearth-house" },
+        "east": { "to": "ff_tally_house", "landmark": "the tally-house" }
+      },
+      "variants": [
+        {
+          "if": [["flag", "ff_wardlands_crown"]],
+          "desc": "A green trampled bare around the well. Crown surveyors walk the fold-lines above the green now, staking the wardlands as the Crown's own demesne."
+        },
+        {
+          "if": [["flag", "ff_wardlands_free"]],
+          "desc": "A green trampled bare around the well. Free Company hands are already up on the wardlands' walls, pulling stone for a fence line the fell has never worn before."
+        },
+        {
+          "if": [["flag", "ff_wardlands_common"]],
+          "desc": "A green trampled bare around the well. A single deed-board stands nailed by the well now, naming the tenant houses that hold the wardlands as their own."
+        },
+        {
+          "if": [["flag", "ff_wardlands_broker"]],
+          "desc": "A green trampled bare around the well. A lease-board by the well carries two seals in the same wax, Crown and Companies, neither crowding the other."
+        }
+      ],
+      "actions": [
+        {
+          "id": "ff_wardlands_crown",
+          "label": "wardlands to the Crown (will)",
+          "if": [["flag", "ff_hollow_done"], ["!flag", "ff_wardlands_settled"], ["!flag", "ff_hollow_burned"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "ff_wardlands_crown"],
+                ["set", "ff_wardlands_settled"],
+                ["addvar", "rep_crown", 2],
+                ["addvar", "rep_free", -2],
+                ["addvar", "appr_lys", -1],
+                ["score", 10],
+                ["xp", 4],
+                [
+                  "if",
+                  [["flag", "ff_hollow_bargained"]],
+                  [
+                    ["set", "ff_bargain_broken"],
+                    ["addvar", "rep_keepers", -1],
+                    ["addvar", "appr_tamsin", -1],
+                    ["say", "You declare the wardlands the Crown's own demesne, in earshot of a hold that promised its rent to the school. It is heard as what it is: a word gone back on."]
+                  ],
+                  [
+                    ["say", "You declare the wardlands the Crown's own demesne, four hundred years after the writ that first laid claim to them. Bailiff Rowe writes it up before you've finished speaking."]
+                  ]
+                ]
+              ],
+              [
+                ["say", "The words don't land. Whatever weight a Crown claim wants here, a stranger's say-so on the green isn't it today."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "ff_wardlands_free",
+          "label": "wardlands to the Companies (will)",
+          "if": [["flag", "ff_hollow_done"], ["!flag", "ff_wardlands_settled"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "ff_wardlands_free"],
+                ["set", "ff_wardlands_settled"],
+                ["addvar", "rep_free", 2],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "appr_lys", -1],
+                ["score", 10],
+                ["xp", 4],
+                [
+                  "if",
+                  [["flag", "ff_hollow_bargained"]],
+                  [
+                    ["set", "ff_bargain_broken"],
+                    ["addvar", "rep_keepers", -1],
+                    ["addvar", "appr_tamsin", -1],
+                    ["say", "You sign the wardlands over to Coster's enclosure, in earshot of a hold that promised its rent to the school. It is heard as what it is: a word gone back on."]
+                  ],
+                  [
+                    ["say", "You sign the wardlands over to Coster's enclosure. Fence-stakes go up on the fell within the week, on ground thirty-one children once called their own."]
+                  ]
+                ]
+              ],
+              [
+                ["say", "The words don't land. Whatever weight a Companies claim wants here, a stranger's say-so on the green isn't it today."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "ff_wardlands_common",
+          "label": "wardlands to the tenants (will)",
+          "if": [["flag", "ff_hollow_done"], ["!flag", "ff_wardlands_settled"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "ff_wardlands_common"],
+                ["set", "ff_wardlands_settled"],
+                ["addvar", "rep_keepers", 2],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "appr_lys", 1],
+                ["score", 10],
+                ["xp", 5],
+                [
+                  "if",
+                  [["flag", "ff_hollow_bargained"]],
+                  [
+                    ["set", "ff_bargain_broken"],
+                    ["addvar", "rep_keepers", -1],
+                    ["addvar", "appr_tamsin", -1],
+                    ["say", "You name the tenants heirs of the wardlands, in earshot of a hold that promised its rent to the school instead. It is heard as what it is: a word gone back on, however kindly meant."]
+                  ],
+                  [
+                    ["say", "You name the wardlands the tenants' own, the houses' heirs written into the deed at last. Four hundred years of farming another family's grief, and it's theirs now in fact as well as sweat."]
+                  ]
+                ]
+              ],
+              [
+                ["say", "The words don't land. A stranger naming heirs on a green full of Fosterfell's own isn't enough today."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "ff_wardlands_broker",
+          "label": "broker a deed both will sign",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "ff_hollow_done"],
+            ["!flag", "ff_wardlands_settled"],
+            ["flag", "ff_bailiff_bg"],
+            ["flag", "ff_agent_bg"]
+          ],
+          "fx": [
+            ["set", "ff_wardlands_broker"],
+            ["set", "ff_wardlands_settled"],
+            ["set", "or_envoy_ff_broker"],
+            ["addvar", "or_envoy_words", 1],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_free", 1],
+            ["score", 10],
+            ["xp", 6],
+            [
+              "if",
+              [["flag", "ff_hollow_bargained"]],
+              [
+                ["set", "ff_bargain_broken"],
+                ["addvar", "rep_keepers", -1],
+                ["addvar", "appr_tamsin", -1],
+                ["say", "You draft a deed with a line for Rowe and a line for Coster both, and stand on the green while they sign it in turn — over a school's rent that was already promised elsewhere. It is heard as what it is."]
+              ],
+              [
+                ["say", "You draft one deed with a line for each of them, and stand on the green while Rowe and Coster sign it in turn, neither willing to be the one who signs second."]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "ff_hearth_house": {
+      "name": "The Hearth-House",
+      "desc": "The one hearth in Slatefold that never goes cold, benches worn to the shape of four hundred years of shepherds waiting out weather. Freda keeps it, and keeps her own eyes off the fell road once the light goes.",
+      "brief": "The hearth-house; a fire that never goes cold.",
+      "region": "ff",
+      "landmark": "the hearth-house",
+      "exits": { "north": { "to": "ff_fold_green" }, "east": { "to": "ff_lime_kiln", "landmark": "the lime-kiln" } },
+      "onEnter": [["if", [["flag", "ff_hollow_done"], ["!flag", "sv_ff_back"]], [["set", "sv_ff_back"]], []]],
+      "actions": [
+        {
+          "id": "ff_rest",
+          "label": "rest by the hearth",
+          "fx": [
+            ["hp", 10],
+            ["say", "You sleep with your boots off for once. Freda's already up when you wake, sweeping a hearth that swept itself clean overnight, same as it does every morning."]
+          ]
+        }
+      ]
+    },
+    "ff_lime_kiln": {
+      "name": "The Lime-Kiln",
+      "desc": "A stone kiln vents pale smoke over racked barrels of cinder-oil, lime-dust ghosting every surface Sark hasn't scrubbed today. The heat of it reaches the door before you do.",
+      "brief": "The lime-kiln; racked cinder-oil, pale smoke.",
+      "region": "ff",
+      "landmark": "the lime-kiln",
+      "exits": { "west": { "to": "ff_hearth_house" }, "east": { "to": "ff_chantry", "landmark": "the chantry" } }
+    },
+    "ff_chantry": {
+      "name": "The Chantry",
+      "desc": "A bare stone chantry kept scrupulously swept, thirty-one small slates racked along one wall in a neat, untouched row. Dame Sisley keeps the day's lesson chalked fresh on each of them, though none have been read in four hundred years.",
+      "brief": "The chantry; thirty-one slates racked on the wall.",
+      "region": "ff",
+      "landmark": "the chantry",
+      "exits": { "west": { "to": "ff_lime_kiln" }, "north": { "to": "ff_recorder_loft", "landmark": "the recorder's loft" } }
+    },
+    "ff_recorder_loft": {
+      "name": "The Recorder's Loft",
+      "desc": "Shelves of the Keepers' rolls climb to the roof-beam, and on the desk under Tuck's hand lies the Book of Houses — every house of the Reach marked living, fallen at the Truce Field, or died at the Long Table, in a slow, careful hand.",
+      "brief": "The recorder's loft; the Book of Houses on the desk.",
+      "region": "ff",
+      "landmark": "the recorder's loft",
+      "exits": { "south": { "to": "ff_chantry" }, "west": { "to": "ff_trade_counter", "landmark": "the trade counter" } }
+    },
+    "ff_trade_counter": {
+      "name": "The Trade Counter",
+      "desc": "A plank counter under the fold-green's lee wall, wool and small goods laid out for whoever's minding it today. Nobody in Slatefold seems to keep the job for long.",
+      "brief": "A plank counter; wool and small goods.",
+      "region": "ff",
+      "exits": {
+        "east": { "to": "ff_recorder_loft" },
+        "south": { "to": "ff_agents_lodging", "landmark": "the land-agent's lodging" }
+      },
+      "actions": [
+        {
+          "id": "ff_buy_crook",
+          "label": "buy an iron-shod fell-crook (7 gold)",
+          "if": [["!has", "ff_crook"], ["var", "gold", ">=", 7]],
+          "fx": [
+            ["addvar", "gold", -7],
+            ["move", "ff_crook", "inv"],
+            ["say", "Whoever's minding the counter today wraps it without a word. \"Turns a ram or a man, that one. Mind the hook end.\""]
+          ]
+        },
+        {
+          "id": "ff_buy_broth",
+          "label": "buy a flask of shepherd's broth (3 gold)",
+          "if": [["!has", "ff_broth_flask"], ["var", "gold", ">=", 3]],
+          "fx": [
+            ["addvar", "gold", -3],
+            ["move", "ff_broth_flask", "inv"],
+            ["say", "Hot enough to burn your tongue if you're not careful. \"Fell weather. Everyone keeps a flask.\""]
+          ]
+        }
+      ]
+    },
+    "ff_agents_lodging": {
+      "name": "The Land-Agent's Lodging",
+      "desc": "A rented room above the trade counter, maps of the wardlands' bound pinned to every wall, corners already marked in a surveyor's careful ink for ground that isn't sold yet.",
+      "brief": "The agent's room; wardland maps on every wall.",
+      "region": "ff",
+      "landmark": "the land-agent's lodging",
+      "exits": { "north": { "to": "ff_trade_counter" }, "west": { "to": "ff_tally_house" } }
+    },
+    "ff_tally_house": {
+      "name": "The Tally-House",
+      "desc": "The Crown's own room in Slatefold, a scale and strongbox on a table worn by four hundred years of coin. The writ of wardship lies weighted flat under the scale, and beside it the wardlands' rent-roll, thick with names.",
+      "brief": "The tally-house; the writ weighted under the scale.",
+      "region": "ff",
+      "landmark": "the tally-house",
+      "exits": { "east": { "to": "ff_agents_lodging" }, "west": { "to": "ff_fold_green" } }
+    },
+    "ff_walled_lane": {
+      "name": "The Walled Lane",
+      "desc": "A lane climbs between drystone walls toward the Fostering's porch, the stone itself worn smooth at child-height by hands that stopped growing taller four hundred years ago. Garth keeps watch here more than he keeps the bell-rope.",
+      "brief": "The walled lane; it climbs to the Fostering's porch.",
+      "region": "ff",
+      "landmark": "the walled lane",
+      "exits": { "south": { "to": "ff_fold_green" }, "in": { "to": "ff_porch", "landmark": "the Fostering's porch" } },
+      "actions": [
+        {
+          "id": "ff_declare_bargain",
+          "label": "tell Garth the lesson is kept",
+          "if": [
+            ["flag", "ff_dame_agrees"],
+            ["flag", "ff_hold_word"],
+            ["flag", "ff_rent_turned"],
+            ["!flag", "ff_hollow_done"]
+          ],
+          "fx": [
+            ["set", "ff_hollow_bargained"],
+            ["set", "ff_hollow_done"],
+            ["set", "ff_school_kept"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "hollows_bargained", 1],
+            ["addvar", "rep_church", 2],
+            ["addvar", "rep_free", -2],
+            ["addvar", "appr_tamsin", 1],
+            ["score", 20],
+            ["xp", 8],
+            ["say", "You tell Garth the dame will teach it, the hold's word is given, and the rent runs to the school now. He doesn't reach for the rope. \"Kept, then. Not dismissed — kept. I can live easier with that than I expected.\""],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Brother Osk: \"A lesson carried on instead of only mourned. It isn't the rite finished, but it is the rite honored. I'll allow that's close enough to grace.\""]
+              ],
+              []
+            ]
+          ]
+        }
+      ]
+    },
+    "ff_south_road": {
+      "name": "The Bound-Stone",
+      "desc": "A weathered stone marks where the Kingswood's holly gives out and the open fell begins, the old fell road climbing away from it into walled pasture. Wind off the high ground carries wet slate and sheep before it carries anything else.",
+      "brief": "The bound-stone; the fell road climbs on from here.",
+      "region": "ff",
+      "landmark": "the bound-stone",
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "ff_entered"]],
+          [
+            ["set", "ff_entered"],
+            ["xp", 2],
+            ["say", "This is Fosterfell: the high sheep-hold under the Spine's western fells, where thirty-one wards were sent up four hundred years ago and no house was ever judged loyal enough to send for them again."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"The writ that sent them up here is in my ancestor's hand. Sureties were the first Reeve's own idea. I didn't expect to have to stand in the place his idea emptied out.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Brother Osk: \"A dame with a dismissal rite she's never once been let speak. Four hundred years of a lesson with no one to end it properly. I mean to see that changed.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "tamsin"]],
+              [
+                ["say", "Tamsin: \"Hostages, dressed up as fostering. The Watch's first law forbids taking a child as anyone's surety. Someone should have said so, four hundred years back.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [
+                ["say", "Lys: \"Thirty-one children carried up a fell road, and a hold still farming the dead's own land for a Crown that never once sent for them. That's not a debt. That's a theft with good manners.\""]
+              ],
+              []
+            ]
+          ],
+          []
+        ]
+      ]
+    },
+    "ff_east_road": {
+      "name": "The Goat-Track's Foot",
+      "desc": "A goat-track climbs west out of black ice and switchback stone into walled fell pasture, the last cairn of Coldpass' road at your back. The ground here already smells of wet wool and woodsmoke, though no roof is yet in sight.",
+      "brief": "The goat-track's foot; fell pasture climbs west.",
+      "region": "ff",
+      "landmark": "the goat-track's foot",
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "ff_entered"]],
+          [
+            ["set", "ff_entered"],
+            ["xp", 2],
+            ["say", "This is Fosterfell: the high sheep-hold under the Spine's western fells, where thirty-one wards were sent up four hundred years ago and no house was ever judged loyal enough to send for them again."],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["say", "Vell: \"The writ that sent them up here is in my ancestor's hand. Sureties were the first Reeve's own idea. I didn't expect to have to stand in the place his idea emptied out.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Brother Osk: \"A dame with a dismissal rite she's never once been let speak. Four hundred years of a lesson with no one to end it properly. I mean to see that changed.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "tamsin"]],
+              [
+                ["say", "Tamsin: \"Hostages, dressed up as fostering. The Watch's first law forbids taking a child as anyone's surety. Someone should have said so, four hundred years back.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "lys"]],
+              [
+                ["say", "Lys: \"Thirty-one children carried up a fell road, and a hold still farming the dead's own land for a Crown that never once sent for them. That's not a debt. That's a theft with good manners.\""]
+              ],
+              []
+            ]
+          ],
+          []
+        ]
+      ]
+    }
+  },
+  "items": {
+    "ff_writ": {
+      "name": "the writ of wardship",
+      "loc": "ff_tally_house",
+      "takeable": true,
+      "owner": "ff_bailiff",
+      "hint": "Rowe reads from this every quarter-day; he'd notice it gone before you reached the door"
+    },
+    "ff_rent_roll": {
+      "name": "the wardlands' rent-roll",
+      "loc": "ff_tally_house",
+      "takeable": true,
+      "owner": "ff_bailiff",
+      "hint": "four hundred years of names paying rent on land that was never rightly the Crown's to lease"
+    },
+    "ff_crook": {
+      "name": "an iron-shod fell-crook",
+      "loc": "nowhere",
+      "takeable": true,
+      "hit": 1,
+      "dmg": 3,
+      "hint": "a shepherd's tool turned to plainer work; a step above a belt-knife"
+    },
+    "ff_broth_flask": {
+      "name": "a flask of shepherd's broth",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "drink it to steady yourself against the fell wind",
+      "use": [
+        {
+          "fx": [
+            ["hp", 3],
+            ["move", "ff_broth_flask", "nowhere"],
+            ["say", "Hot and salty and better than it has any right to be. The fell wind feels a little less like an argument."]
+          ]
+        }
+      ]
+    }
+  }
+}

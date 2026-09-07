@@ -1,0 +1,542 @@
+{
+  "npcs": {
+    "ff_fold_wife": {
+      "name": "Freda",
+      "room": "ff_hearth_house",
+      "dialogue": true,
+      "desc": "A broad, sure-handed woman, fire-tongs never far from her hand, watching the dark past the door the way you'd watch a dog that's bitten before.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Freda. I keep this hearth, same as my mother did, and hers before her. I don't go up past the paddock once the light goes. You'll do as you like.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why she won't go up after dark",
+          "if": [["flag", "said_ff_fold_wife_greet"]],
+          "once": true,
+          "say": "Nothing to see, most nights. Some nights a slate scrapes clean up at the schoolroom, and a lesson gets said, word for word, by nobody at all. I've heard it since I was a girl.",
+          "fx": [["set", "ff_fold_wife_bg"], ["xp", 2]]
+        },
+        {
+          "id": "ff_hold_word",
+          "label": "ask her for the hold's word (will)",
+          "if": [["flag", "ff_fold_wife_bg"], ["!flag", "ff_hold_word"]],
+          "say": "You want me speaking for the whole fold? That's not mine to give lightly, but say your piece.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "ff_hold_word"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "\"The hold's word, then,\" she says, and means it the way she means a promise made over a fire. \"The school keeps the lesson, and we keep the school. Say it done.\""]
+              ],
+              [
+                ["say", "She shakes her head, tongs still in hand. \"Not on a stranger's say-so. Ask me again when you've more behind it.\" It can be asked again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the schoolroom, wards sent home",
+          "if": [["flag", "ff_hollow_rested"]],
+          "once": true,
+          "say": "I went up past the paddock myself, that night. No slate scraping. First quiet night up there in as long as I've been alive to hear it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the schoolroom, now the lesson's kept",
+          "if": [["flag", "ff_hollow_bargained"]],
+          "once": true,
+          "say": "The slate still scrapes some nights. But there's living children up there learning now too, and somehow that makes the sound easier to sit with.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the schoolroom, now it's burned",
+          "if": [["flag", "ff_hollow_burned"]],
+          "once": true,
+          "say": "Burned. Well. I'll go up past the paddock now, I suppose, seeing there's nothing left up there to hear me coming.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_wardlands",
+          "label": "the wardlands, the answer decided",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "ff_wardlands_crown"],
+                ["flag", "ff_wardlands_free"],
+                ["flag", "ff_wardlands_common"],
+                ["flag", "ff_wardlands_broker"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Whatever's been decided about the fell-land, I've heard it by now.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "ff_wardlands_crown"]],
+              [
+                ["say", "\"The Crown's own again, same as it was written four hundred years back. I'll pay what's owed on it, same as everyone.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_free"]],
+              [
+                ["say", "\"Fenced for the Companies. My folk grazed those slopes free their whole lives. That fence wasn't there yesterday and it wasn't wanted today either.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_common"]],
+              [
+                ["say", "\"Ours, in the deed as well as in the sweat. That's the only answer I'd have given, if anyone had thought to ask a fold-wife first.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_broker"]],
+              [
+                ["say", "\"Crown and Companies both signing the same paper. Didn't think I'd live to see those two agree on a fence-line.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the fire",
+          "say": "Warm yourself before you go up that lane. The fire's the one thing here that's never once let a child down.",
+          "end": true
+        }
+      ]
+    },
+    "ff_bailiff": {
+      "name": "Bailiff Rowe",
+      "room": "ff_tally_house",
+      "dialogue": true,
+      "desc": "The Crown's own man in Slatefold, the writ of wardship folded soft at its creases from being read aloud more times than duty ever strictly required.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Bailiff Rowe. I hold the writ of wardship for the Crown, and the wardlands' rent besides. Four hundred years of tenants paying rent on land nobody living was ever meant to keep.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "the writ, and what it costs",
+          "if": [["flag", "said_ff_bailiff_greet"]],
+          "once": true,
+          "say": "Thirty-one houses owed a ward returned, and thirty-one houses never told otherwise. The writ says I hold the wardlands in trust until the last of them's judged loyal. Nobody's ever judged them anything.",
+          "fx": [["set", "ff_bailiff_bg"], ["xp", 2]]
+        },
+        {
+          "id": "ff_writ_persuade",
+          "label": "ask him to strike the writ (will)",
+          "if": [["flag", "ff_bailiff_bg"], ["!flag", "ff_writ_ended"], ["!has", "ff_writ"]],
+          "say": "Talk me into voiding my own writ? This ought to be good.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "ff_writ_ended"],
+                ["set", "ff_writ_persuaded"],
+                ["addvar", "ff_sent_for_known", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "He's quiet over the writ a long moment, then folds it away for good. \"...Struck, then. Four hundred years is long enough for any surety to have paid itself off twice over.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "ff_writ_missed"]],
+                  [
+                    ["set", "ff_writ_missed"],
+                    ["addvar", "rep_crown", -1],
+                    ["say", "\"A writ is a writ,\" he says, not unkindly. \"Try again with something better than a plea.\" — and the Crown notes a petition tried, and refused, here."]
+                  ],
+                  [["say", "\"A writ is a writ,\" he says again, and unfolds it back to its crease."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "ff_warden_writ",
+          "label": "end the writ by the Crown's authority",
+          "if": [["class", "warden"], ["flag", "ff_bailiff_bg"], ["!flag", "ff_writ_ended"], ["!has", "ff_writ"]],
+          "once": true,
+          "say": "Something in your bearing reads familiar to him. \"Crown's own, are you. Then hear this watch to watch, not stranger to bailiff.\"",
+          "fx": [
+            ["set", "ff_writ_ended"],
+            ["set", "ff_writ_warden"],
+            ["addvar", "or_warden_ff_word", 1],
+            ["addvar", "ff_sent_for_known", 1],
+            ["score", 4],
+            ["xp", 3],
+            ["say", "\"Then by the Crown's own authority, carried in you as much as in me, I strike it.\" He does, on the spot, and looks steadier for it than he has all conversation."]
+          ]
+        },
+        {
+          "id": "ff_rent_turn",
+          "label": "turn the rent to the school (will)",
+          "if": [["flag", "ff_bailiff_bg"], ["!flag", "ff_rent_turned"]],
+          "say": "Sign the Crown's own rent over to a schoolroom? Convince me it's worth the ledger trouble.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "ff_rent_turned"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "He rules a new line into the rent-roll himself, hand steadier than his voice. \"There. The school's account, from this quarter-day on. I'll answer for it if Marrowgate asks."]
+              ],
+              [
+                ["say", "He shakes his head over the ledger. \"Not without better cause than the asking.\" It can be asked again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the writ, now the wards are sent home",
+          "if": [["flag", "ff_hollow_rested"]],
+          "once": true,
+          "say": "Struck or stolen or given by a Warden's word, it's gone from my tally either way, and I find I mind it less than the ledger says I should.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the writ, now the lesson's kept",
+          "if": [["flag", "ff_hollow_bargained"]],
+          "once": true,
+          "say": "The writ stands, technically. Nobody's read it aloud since the rent turned to the school's account. Some laws die of disuse before anyone gets round to striking them.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the writ, now it's burned",
+          "if": [["flag", "ff_hollow_burned"]],
+          "once": true,
+          "say": "Ash doesn't need striking. I'll write it up as lapsed and let Marrowgate read into that whatever it likes.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_theft",
+          "label": "about the writ, since",
+          "if": [["any", [["flag", "stole_ff_writ"], ["flag", "stole_ff_rent_roll"]]]],
+          "once": true,
+          "say": "\"I noticed,\" is all he says, not looking up from the scale. \"I'll note what went missing under a Crown roof, and what that costs you here.\"",
+          "fx": [["addvar", "rep_crown", -1]]
+        },
+        {
+          "id": "react_wardlands",
+          "label": "the wardlands, the answer decided",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "ff_wardlands_crown"],
+                ["flag", "ff_wardlands_free"],
+                ["flag", "ff_wardlands_common"],
+                ["flag", "ff_wardlands_broker"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "You want the Crown's word on it. Here it is.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "ff_wardlands_crown"]],
+              [
+                ["say", "\"Demesne again, as the writ always said. I'll not pretend it was your doing that carried it, but I'll write that it was.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_free"]],
+              [
+                ["say", "\"The Companies' fence-lines. The writ never covered that, and I have no ready words for it either.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_common"]],
+              [
+                ["say", "\"The tenants' own. I'll send the writ back with a line under it: not for want of trying. Marrowgate reads lines like that.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_broker"]],
+              [
+                ["say", "\"My hand on the deed beside Coster's. It will pass, and the writ will call it obedience. I can live with that.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "sv_ff_burn_ask",
+          "label": "ask what the Crown's claim rests on now",
+          "if": [["flag", "ff_hollow_burned"], ["flag", "sv_ff_back"], ["!flag", "sv_ff_after_done"]],
+          "once": true,
+          "say": "The writ's ash. My claim on this ground was never anything but that writ. So — what does the Crown's claim rest on now, do you think?",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_ff_burn_sworn",
+          "label": "swear to the claim yourself",
+          "if": [["flag", "said_ff_bailiff_sv_ff_burn_ask"], ["!flag", "sv_ff_after_done"]],
+          "once": true,
+          "say": "He looks at you a long moment, then nods slowly. \"Sworn testimony's not nothing. I'll write your word down in the writ's place, and stand by it if Marrowgate asks.\"",
+          "fx": [
+            ["set", "sv_ff_burn_sworn"],
+            ["set", "sv_ff_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_crown", 1]
+          ]
+        },
+        {
+          "id": "sv_ff_burn_lapsed",
+          "label": "tell him to let it lapse to the tenants",
+          "if": [["flag", "said_ff_bailiff_sv_ff_burn_ask"], ["!flag", "sv_ff_after_done"]],
+          "once": true,
+          "say": "\"Lapsed, then,\" he says, and doesn't argue it long. \"No writ, no rent, no Crown's claim worth the ink. The tenants can have what they've farmed.\"",
+          "fx": [
+            ["set", "sv_ff_burn_lapsed"],
+            ["set", "sv_ff_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "appr_tamsin", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the ledger",
+          "say": "Mind the fell road on your way out. Whatever's decided up here, someone still has to write it down true.",
+          "end": true
+        }
+      ]
+    },
+    "ff_land_agent": {
+      "name": "Coster",
+      "room": "ff_agents_lodging",
+      "dialogue": true,
+      "desc": "The Free Companies' land-agent, a surveyor's chain looped twice round one wrist, weighing the room's worth in fence-posts before he's finished the greeting.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Coster. I buy up ground the Companies can use, and this fell is wasted on sheep and slate when it could carry a proper enclosure. Every acre's worth something to somebody.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what the Companies want here",
+          "if": [["flag", "said_ff_land_agent_greet"]],
+          "once": true,
+          "say": "Bought and walled, the whole bound of it, before some Crown clerk remembers it exists and taxes it out from under us. Land nobody's watching is the best land there is to buy.",
+          "fx": [["set", "ff_agent_bg"], ["xp", 2]]
+        },
+        {
+          "id": "ff_agent_errand",
+          "label": "offer to walk the bound for him",
+          "if": [["flag", "ff_agent_bg"], ["!flag", "ff_agent_errand"]],
+          "once": true,
+          "say": "Now that's useful. My own hands won't cut marks past dusk, not with what's been walking the fell-lane lately. Carry these stakes up and cut the bound whole, and the Companies remember it.",
+          "fx": [["set", "ff_agent_errand"], ["move", "ff_bound_stakes", "inv"], ["xp", 2]]
+        },
+        {
+          "id": "ff_warden_agent_cold",
+          "label": "press him plainly, watch to watch",
+          "if": [["class", "warden"], ["!flag", "or_warden_ff_cold"]],
+          "once": true,
+          "say": "He goes flat the moment your bearing reads Watch-trained. \"We buy land because it doesn't ask questions the way your lot does. Take your business to the bailiff.\"",
+          "fx": [["set", "or_warden_ff_cold"], ["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the wards, now they're sent home",
+          "if": [["flag", "ff_hollow_rested"]],
+          "once": true,
+          "say": "Finished, not sold. There's no coin in it for the Companies either way, but I'll allow it's tidier ground now than it was.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the wards, now the lesson's kept",
+          "if": [["flag", "ff_hollow_bargained"]],
+          "once": true,
+          "say": "A schoolroom instead of an enclosure. Still deciding whether that costs the Companies anything worth counting.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the wards, now it's burned",
+          "if": [["flag", "ff_hollow_burned"]],
+          "once": true,
+          "say": "Burned before I could so much as walk the timber. That's a loss I'll hear about at every fire between here and Camp Gallows.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "quest_errand_done",
+          "label": "about the bound, now it's walked",
+          "if": [["flag", "ff_agent_errand_done"]],
+          "once": true,
+          "say": "Whole and marked, past whatever's been walking that lane at night. The Companies remember a debt like that. So do I.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_wardlands",
+          "label": "the wardlands, the answer decided",
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "ff_wardlands_crown"],
+                ["flag", "ff_wardlands_free"],
+                ["flag", "ff_wardlands_common"],
+                ["flag", "ff_wardlands_broker"]
+              ]
+            ]
+          ],
+          "once": true,
+          "say": "Land's land. Still.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "ff_wardlands_crown"]],
+              [["say", "\"The Crown's row, every acre. My chain stays coiled a while longer, I suppose.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_free"]],
+              [["say", "\"My own enclosure, bound and branch. I'll not deny I asked for it, and got it.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_common"]],
+              [["say", "\"The tenants' own. Pretty notion. My chain still measures the same acres, common or not.\""]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "ff_wardlands_broker"]],
+              [
+                ["say", "\"My hand on the deed beside the bailiff's. Never thought I'd sign a thing with the Crown. It walls a fence, though.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the chain",
+          "say": "Mind yourself on the fell road at night. Some things out there don't much care whose ground they're crossing.",
+          "end": true
+        }
+      ]
+    },
+    "ff_lime_burner": {
+      "name": "Sark",
+      "room": "ff_lime_kiln",
+      "dialogue": true,
+      "desc": "The Ironbound's lime-burner, forearms lime-pale to the elbow, watching the Fostering's roofline through the kiln's own smoke like he's already measured what it'd take to bring it down.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Sark. I burn lime and cask cinder-oil for the Ironbound, and I've thought longer than I'd admit to a stranger about that schoolroom up the lane.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what he thinks should happen to it",
+          "if": [["flag", "said_ff_lime_burner_greet"]],
+          "once": true,
+          "say": "Burn it. Not out of spite — out of mercy. Four hundred years of a hold too frightened to walk its own fell after dark. The living deserve better than a grief that never lets them alone.",
+          "fx": [["set", "ff_lime_burner_bg"], ["xp", 2]]
+        },
+        {
+          "id": "ff_get_cinder_oil",
+          "label": "ask him for cinder-oil",
+          "if": [["flag", "ff_lime_burner_bg"], ["!has", "ff_cinder_oil"], ["!flag", "ff_hollow_done"]],
+          "say": "\"For the schoolroom? Gladly,\" he says, already hefting a cask. \"Ask me twice and I'll carry it up there myself.\"",
+          "fx": [["move", "ff_cinder_oil", "inv"], ["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the schoolroom, wards sent home",
+          "if": [["flag", "ff_hollow_rested"]],
+          "once": true,
+          "say": "Finished instead of burned. A waste of good cinder-oil, if you ask me — but a rite's a rite, whichever trade sees it done.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the schoolroom, now the lesson's kept",
+          "if": [["flag", "ff_hollow_bargained"]],
+          "once": true,
+          "say": "Kept, not cleared. My cask stays racked for it. Doesn't mean I've stopped thinking the living would sleep easier without that fell wall up there at all.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the schoolroom, now it's burned",
+          "if": [["flag", "ff_hollow_burned"]],
+          "once": true,
+          "say": "Burned clean through, writ and all. Whatever you think of how we got there, that grief's finally doing the living some good.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the kiln",
+          "say": "Mind the smoke on your way up the lane. It carries further than most folk think it does.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "items": {
+    "ff_bound_stakes": {
+      "name": "a bundle of Free Company boundary-stakes",
+      "loc": "nowhere",
+      "hint": "wants carrying up the fell road at night, and cutting into the wardlands' own bound"
+    }
+  }
+}
