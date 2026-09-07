@@ -1311,6 +1311,73 @@
           ]
         },
         {
+          "id": "th_news_mc",
+          "label": "word from the orchard combe",
+          "if": [["any", [["flag", "mc_hollow_rested"], ["flag", "mc_hollow_bargained"], ["flag", "mc_hollow_burned"]]]],
+          "once": true,
+          "say": "Runners came up from the orchard combe with word of Mootcombe, and a cask.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "mc_hollow_burned"]],
+              [
+                ["say", "\"Somebody put the cooper's fire to the Moot Hall. Four hundred years of cups, and the Ironbound answer it with oil. We'd have charged less.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_hollow_rested"]],
+              [
+                ["say", "\"The guests rose, they say, and the fast's over. The runners drank to it. The combe makes a cider worth marching for.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_hollow_bargained"]],
+              [
+                ["say", "\"The hall stays shut and the best pressing goes to its door. A hold that pays its dead first. We've served worse paymasters.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_free"]],
+              [
+                ["say", "\"And the orchards under the Companies' contract. Casks for every camp between here and the coast.\" Vane almost smiles. \"That's pay a recruit can taste.\""],
+                ["addvar", "rep_free", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_crown"]],
+              [
+                ["say", "\"The Crown's levy on the cider. Camp Gallows will pay Crown prices for its casks, then. We've paid worse.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_common"]],
+              [
+                ["say", "\"The moot's own. We'll buy our cider like anyone. The Crown will hate that, which is worth a cask on its own.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_orchard_broker"]],
+              [
+                ["say", "\"Both hands on the press, the reeve's and the victualler's. It will pour. The victualler will send the invoice either way.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave her to the map",
           "say": "Mind the toll on your way out. They're mine to answer for, same as any of my Company.",

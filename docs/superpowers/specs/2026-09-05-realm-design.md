@@ -386,7 +386,9 @@ on, four epilogue lines each; word of each hold's fate reaches two
 neighbouring settlements along faction lines (the Vale's priest and
 Gullhaven's sergeant on the Hearthlands, Cinderhall's chapterhouse and
 Highward's record-house on the Kingswood, Fenmarch's Priory and Wickstead's
-recruiter on the Shieldings), moving the faction that carried it; and
+recruiter on the Shieldings, the Meres' assessor and Wickstead's recruiter on
+Pennywell's silver, Emberfall's prior and Camp Gallows' captain on Mootcombe's
+fast and its orchards), moving the faction that carried it; and
 Archivist Penn reads the Shieldings' stone back, with a Scholar's line naming
 the herald the records left unnamed, and Mootcombe's guest-list back, with a
 Scholar's line on who paid the planted guest's pension. Eighteen quarrels — the

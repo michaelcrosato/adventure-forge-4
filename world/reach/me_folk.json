@@ -573,6 +573,75 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "me_word_pw",
+          "label": "word of Pennywell's mint",
+          "if": [["any", [["flag", "pw_hollow_rested"], ["flag", "pw_hollow_bargained"], ["flag", "pw_hollow_burned"]]]],
+          "once": true,
+          "say": "Word of Pennywell comes up the ferry road before the Regent's own post does. Corliss notes it in a margin, then looks up from the ledger.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "pw_hollow_rested"]],
+              [
+                ["say", "\"The old die, struck. Silver with a dead king's face on it, and every ledger in the Meres will have to say which face it counts.\" He does not write that down."]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_hollow_bargained"]],
+              [
+                ["say", "\"Sealed still, and the town striking above it. Four men's silver left in the ground on purpose. I can price most things. Not that.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_hollow_burned"]],
+              [
+                ["say", "\"Burned through, and four hundred years of coin run to solder. I have never wanted to weep over a ledger before.\""],
+                ["addvar", "rep_crown", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_crown"]],
+              [
+                ["say", "\"The Regent's face on Pennywell's own silver at last. The tally-house will send me a new weight for it. I will pretend to need one.\""],
+                ["addvar", "rep_crown", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_king"]],
+              [
+                ["say", "\"The old king's face, struck again, and passing. Every coin of it is a small treason the Crown will have to spend anyway.\""],
+                ["addvar", "rep_crown", -1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_free"]],
+              [
+                ["say", "\"Faceless silver, weighed and not counted. An assessor's nightmare. The Companies will love it precisely that much.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_broker"]],
+              [
+                ["say", "\"Both hands on the die, the warden's and the paymaster's. It will pass. My ledger asks only that much of a coin.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to the columns",
           "say": "Mind the ledger stays dry. Ink and mere-damp don't agree with each other, or with my accounts.",

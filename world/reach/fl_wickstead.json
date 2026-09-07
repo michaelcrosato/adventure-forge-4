@@ -1000,6 +1000,73 @@
           ]
         },
         {
+          "id": "fl_word_pw",
+          "label": "word of Pennywell's silver",
+          "if": [["any", [["flag", "pw_hollow_rested"], ["flag", "pw_hollow_bargained"], ["flag", "pw_hollow_burned"]]]],
+          "once": true,
+          "say": "A runner off the coin road brings Dace word of Pennywell, where the Companies' pay is struck.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "pw_hollow_rested"]],
+              [
+                ["say", "\"The king's penny, struck at last, and the hammers gone quiet.\" Dace turns a coin over. \"Every recruit's paid in that silver. Now they'll ask whose face it is.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_hollow_bargained"]],
+              [
+                ["say", "\"Sealed, and the town striking the old face above it.\" Dace shrugs. \"Silver's silver. The paymaster will take it and the Crown will scowl. Good.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_hollow_burned"]],
+              [
+                ["say", "\"Burned through, the hoard gone to solder.\" Dace whistles. \"Four hundred years of pay, and nobody gets it. The Ironbound have expensive ideas of clean.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_free"]],
+              [
+                ["say", "\"Faceless silver, weighed at the paymaster's counter. The Companies' own coin at last.\" Dace stands straighter. \"That's a story recruits will like.\""],
+                ["addvar", "rep_free", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_crown"]],
+              [
+                ["say", "\"The Regent's face on the pay. The men will spend it the same and grumble the same. The paymaster's counter counts it anyway.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_king"]],
+              [
+                ["say", "\"The old king's face on the pay.\" Dace grins. \"Every recruit a small traitor by the week's end. The Crown will hate it, which is a point in its favour.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "pw_coin_broker"]],
+              [
+                ["say", "\"Both hands on the die. The paymaster signed for it, so it's ours enough. It will pass, which is all a coin has to do.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to his cadence",
           "say": "Watch yourself out there. Everyone's recruiting for something, one way or another.",

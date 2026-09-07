@@ -730,6 +730,42 @@
           ]
         },
         {
+          "id": "em_word_mc",
+          "label": "word of Mootcombe's fast",
+          "if": [["any", [["flag", "mc_hollow_rested"], ["flag", "mc_hollow_bargained"], ["flag", "mc_hollow_burned"]]]],
+          "once": true,
+          "say": "Word of Mootcombe comes down the ash road with the cider carts. The priory keeps the feast-day fast too; it always has.",
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "mc_hollow_rested"]],
+              [
+                ["say", "\"The third toast, drunk, and the guests risen. Four hundred years of fasting ended by a cup. I will say a mass for a cider-wife, and mean every word.\""],
+                ["addvar", "rep_church", 1]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_hollow_bargained"]],
+              [
+                ["say", "\"The hall kept shut and the first pressing carried to its door. A fast turned into a tithe. The Church will call that devotion and take a tenth for saying so.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "mc_hollow_burned"]],
+              [
+                ["say", "\"Burned, with the guests seated, on a day the Church blessed once already. I have no rite for a table burned twice. I have stopped looking for one.\""],
+                ["addvar", "rep_church", -1]
+              ],
+              []
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave him to his candles",
           "say": "Go carefully on the ridge path. It has taken more than it's given back, that ground.",
