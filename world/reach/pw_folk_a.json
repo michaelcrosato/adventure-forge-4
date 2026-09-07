@@ -1,0 +1,587 @@
+{
+  "npcs": {
+    "pw_warden": {
+      "name": "Averil",
+      "room": "pw_counting_house",
+      "dialogue": true,
+      "desc": "The Crown's mint-warden, gray at the temples, a warrant she has read so often the fold-lines are going soft as cloth.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Averil. Mint-warden, by the Regent's own warrant. I've come to open a door that's stayed shut longer than my family's had a surname.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "the warrant",
+          "if": [["flag", "said_pw_warden_greet"]],
+          "once": true,
+          "say": "Every true penny in the Reach was called in here once, to be melted and struck again with the Reeve's face. The moneyers refused it and sealed themselves in rather than strike a lie. I mean to finish what they stopped.",
+          "fx": [["set", "pw_warden_bg"], ["xp", 2]]
+        },
+        {
+          "id": "bg2",
+          "label": "why now, after four hundred years",
+          "if": [["flag", "pw_warden_bg"]],
+          "once": true,
+          "say": "The Regent's coffers are thin and the gray is spreading. A hoard of old silver, struck fresh, solves one problem and answers the other with a coin in every hand that says whose Reach this is.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "pw_warden_refused",
+          "label": "ask her to set the warrant aside (will)",
+          "if": [["flag", "pw_warden_bg"], ["!flag", "pw_warden_refused"], ["!flag", "pw_hollow_done"]],
+          "say": "Talk a Crown officer out of her own warrant? This ought to be worth hearing.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "pw_warden_refused"],
+                ["say", "She's quiet a long moment, warrant still in hand. \"...Fine. I'll write that the door held. It has, after all, held longer than most Crown promises.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "pw_warden_missed"]],
+                  [
+                    ["set", "pw_warden_missed"],
+                    ["say", "\"A warrant is a warrant,\" she says, not unkindly. \"Try again when you've something better than a plea.\" — and the Crown notes a petition tried, and refused, here."]
+                  ],
+                  [["say", "\"A warrant is a warrant,\" she says again, and goes back to reading it."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "pw_declare_bargain",
+          "label": "tell her the vault stays sealed",
+          "if": [
+            ["flag", "pw_warden_refused"],
+            ["flag", "pw_paymaster_refused"],
+            ["flag", "pw_smelter_refused"],
+            ["!flag", "pw_hollow_done"]
+          ],
+          "say": "You've talked the paymaster off his chest and the smelter off his melt. That's the whole of Pennywell's say in it but the Crown's, and the Crown's say is mine.",
+          "fx": [
+            ["set", "pw_hollow_bargained"],
+            ["set", "pw_hollow_done"],
+            ["set", "pw_vault_kept"],
+            ["set", "pw_coin_king"],
+            ["set", "pw_coin_settled"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "hollows_bargained", 1],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "appr_osk", 1],
+            ["score", 20],
+            ["xp", 8],
+            ["say", "Averil folds the warrant away unread, for the first time in a year. \"Sealed, then. And struck with the old face from now on — if Pennywell's coin has to lie to somebody, let it lie to the Regent instead of the dead.\""],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Brother Osk: \"Four men chose a door over a lie. Pennywell just chose the same, out loud, in daylight. That's worth more than it will be thanked for.\""]
+              ],
+              []
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the vault, now the rite is done",
+          "if": [["flag", "pw_hollow_rested"]],
+          "once": true,
+          "say": "Struck, not melted. My warrant's moot and I find I mind less than I expected to. The Reeve's face was never the point of it, was it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the vault, now it's burned",
+          "if": [["flag", "pw_hollow_burned"]],
+          "once": true,
+          "say": "The Ironbound had it before the Crown could. I'll write it up as recovered material and let Marrowgate read into that whatever it likes.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "pw_coin_crown",
+          "label": "strike the coin, the Crown's face (will)",
+          "if": [["flag", "pw_hollow_done"], ["!flag", "pw_coin_settled"], ["!flag", "pw_hollow_burned"]],
+          "say": "You want it plain: the Reeve's own face, over the paymaster's weighed silver and the Keepers' old ghost both. Convince me it'll stand.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "pw_coin_crown"],
+                ["set", "pw_coin_settled"],
+                ["addvar", "rep_crown", 2],
+                ["addvar", "rep_keepers", -2],
+                ["score", 10],
+                ["xp", 4],
+                ["say", "Averil sets the die herself, first strike in her own hand. \"There. Whatever this hold owes anyone, it owes the Crown a face on its coin, same as everywhere else.\""]
+              ],
+              [["say", "\"Not today,\" she says, warrant still folded. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "pw_coin_crown_burned",
+          "label": "strike the coin with the Crown's face",
+          "if": [["flag", "pw_hollow_burned"], ["!flag", "pw_coin_settled"]],
+          "say": "With the hoard already melted, there's no old silver left to argue over — only the Crown's die, and a furnace that owes it a use.",
+          "fx": [
+            ["set", "pw_coin_crown"],
+            ["set", "pw_coin_settled"],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "rep_keepers", -2],
+            ["score", 10],
+            ["xp", 4],
+            ["say", "Averil doesn't have to convince anyone of anything. She just strikes it, the metal still warm from Slade's furnace, and nobody in the yard troubles to object."]
+          ]
+        },
+        {
+          "id": "pw_coin_broker",
+          "label": "broker a coin both sides will sign",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "pw_hollow_done"],
+            ["!flag", "pw_hollow_bargained"],
+            ["!flag", "pw_coin_settled"],
+            ["flag", "pw_paymaster_bg"]
+          ],
+          "say": "The paymaster's weighed silver and my Reeve's face, on the same coin? I'd want to hear how you square that before I believe it's possible.",
+          "fx": [
+            ["set", "pw_coin_king"],
+            ["set", "pw_coin_settled"],
+            ["set", "or_envoy_pw_broker"],
+            ["addvar", "or_envoy_words", 1],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "rep_free", 1],
+            ["score", 10],
+            ["xp", 6],
+            ["say", "You note that a face nobody living can claim is the one face neither of them loses by signing. Averil reads it twice, then nods once. \"The old king's, then. Nobody's, and everybody's. I can carry that to Marrowgate.\""]
+          ]
+        },
+        {
+          "id": "react_theft",
+          "label": "about the warrant, since",
+          "if": [["any", [["flag", "stole_pw_mint_warrant"], ["flag", "stole_pw_assay_weights"]]]],
+          "once": true,
+          "say": "\"I noticed,\" is all she says, not looking up. \"I'll note it went missing under a Crown roof. Draw your own conclusions about what that costs you here.\"",
+          "fx": [["addvar", "rep_crown", -1]]
+        },
+        {
+          "id": "sv_pw_bargain_ask",
+          "label": "ask what brings her back",
+          "if": [["flag", "pw_hollow_bargained"], ["flag", "sv_pw_back"], ["!flag", "sv_pw_after_done"]],
+          "once": true,
+          "say": "A new warrant, and soldiers to stand behind it this time. The Regent heard Pennywell struck its own coin and didn't care for the lesson in it. She means the vault open after all.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_pw_bargain_kept",
+          "label": "keep it sealed, whatever it costs",
+          "if": [["flag", "said_pw_warden_sv_pw_bargain_ask"], ["!flag", "sv_pw_after_done"]],
+          "once": true,
+          "say": "\"Then it costs you the Regent's favor, not Pennywell's,\" she says, and means it — she rides back with the soldiers unused and her own name under the writ that failed.",
+          "fx": [
+            ["set", "sv_pw_bargained_kept"],
+            ["set", "sv_pw_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_crown", -1],
+            ["addvar", "appr_osk", 1]
+          ]
+        },
+        {
+          "id": "sv_pw_bargain_paid",
+          "label": "buy the writ off, quietly (12 gold)",
+          "if": [["flag", "said_pw_warden_sv_pw_bargain_ask"], ["!flag", "sv_pw_after_done"], ["var", "gold", ">=", 12]],
+          "once": true,
+          "say": "Coin moves quieter than a refusal ever does. Averil pockets it without comment and rides back reporting the vault \"not worth the soldiers' time.\" The bargain holds a little longer, at Pennywell's own expense.",
+          "fx": [
+            ["addvar", "gold", -12],
+            ["set", "sv_pw_bargained_paid"],
+            ["set", "sv_pw_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_crown", 1]
+          ]
+        },
+        {
+          "id": "sv_pw_bargain_opened",
+          "label": "tell her to open it, then",
+          "if": [["flag", "said_pw_warden_sv_pw_bargain_ask"], ["!flag", "sv_pw_after_done"]],
+          "once": true,
+          "say": "\"At last,\" she says, and means it kindly, for once. The soldiers do in an afternoon what four hundred years wouldn't. The bargain breaks; the hoard goes to Marrowgate, Reeve's face and all.",
+          "fx": [
+            ["set", "sv_pw_bargained_opened"],
+            ["set", "sv_pw_after_done"],
+            ["set", "pw_bargain_broken"],
+            ["clear", "pw_coin_king"],
+            ["set", "pw_coin_crown"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "rep_keepers", -2]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the warrant",
+          "say": "Mind the yard on your way out. Whatever's decided here, somebody has to write it down true.",
+          "end": true
+        }
+      ]
+    },
+    "pw_paymaster": {
+      "name": "Dray",
+      "room": "pw_chest_room",
+      "dialogue": true,
+      "desc": "The Free Companies' paymaster, ledger under one arm, weighing every stranger the same way he weighs old silver: by heft, not by face.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Dray. I pay the Companies' men out of this chest, in old silver, weighed. They don't care whose face is on it and neither, lately, do I.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what the Companies want with the hoard",
+          "if": [["flag", "said_pw_paymaster_greet"]],
+          "once": true,
+          "say": "A vault of old silver is a war-chest that doesn't answer to any crown. The Companies would rather melt every face on it than let the Regent strike one more.",
+          "fx": [["set", "pw_paymaster_bg"], ["xp", 2]]
+        },
+        {
+          "id": "bg2",
+          "label": "offer to run his chest over the ford",
+          "if": [["flag", "pw_paymaster_bg"], ["!flag", "pw_paymaster_errand"]],
+          "once": true,
+          "say": "Now that's useful. My last courier wouldn't go near the ford past dusk, not with what's been coming up the bank lately. Get this chest across whole and the Companies remember it.",
+          "fx": [["set", "pw_paymaster_errand"], ["move", "pw_paymaster_chest", "inv"], ["xp", 2]]
+        },
+        {
+          "id": "pw_paymaster_refused",
+          "label": "ask him to drop the claim (will)",
+          "if": [["flag", "pw_paymaster_bg"], ["!flag", "pw_paymaster_refused"], ["!flag", "pw_hollow_done"]],
+          "say": "Talk the Companies out of a war-chest sitting for the taking? Go on, then.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "pw_paymaster_refused"],
+                ["say", "He turns a coin over twice, thinking, then pockets it. \"...Fine. Sealed silver's no silver at all. We'll find our chest elsewhere.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "pw_paymaster_missed"]],
+                  [
+                    ["set", "pw_paymaster_missed"],
+                    ["say", "\"Everyone's got a use for free silver,\" he says, unmoved. \"Try harder.\" — and the Companies mark a plea made, and refused, here."]
+                  ],
+                  [["say", "\"Same answer,\" he says, and goes back to his ledger."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "pw_coin_free",
+          "label": "let silver run the mint, faceless (will)",
+          "if": [["flag", "pw_hollow_done"], ["!flag", "pw_coin_settled"]],
+          "say": "You want Pennywell's mint striking nothing but weighed silver, no face at all? Make the case. I like the sound of it already, mind.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "pw_coin_free"],
+                ["set", "pw_coin_settled"],
+                ["addvar", "rep_free", 2],
+                ["addvar", "rep_crown", -2],
+                ["score", 10],
+                ["xp", 4],
+                ["say", "Dray grins like you've handed him a gift. \"Weighed, not counted. No king, no Regent, no argument. I'll have the scales out by morning.\""]
+              ],
+              [["say", "\"Not enough,\" he says, still weighing the idea. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "quest_errand_done",
+          "label": "about the chest, now it's crossed",
+          "if": [["flag", "pw_paymaster_errand_done"]],
+          "once": true,
+          "say": "Whole, and dry, and past whatever's been coming up the bank. The Companies remember a debt like that. So do I.",
+          "fx": [["xp", 1], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "pw_paymaster_cold",
+          "label": "press him plainly, watch to watch",
+          "if": [["class", "warden"], ["!flag", "or_warden_pw_cold"]],
+          "once": true,
+          "say": "He goes flat the moment you talk like Watch trained you to talk. \"We pay in silver because it doesn't ask questions the way your lot does. Ask your chest business elsewhere.\"",
+          "fx": [["set", "or_warden_pw_cold"]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the vault, now the rite is done",
+          "if": [["flag", "pw_hollow_rested"]],
+          "once": true,
+          "say": "Struck, not melted, not sold. Nobody's richer for it but four dead men's names. Can't say that's the Companies' kind of ending, but I'll allow it's an honest one.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the vault, now it's kept sealed",
+          "if": [["flag", "pw_hollow_bargained"]],
+          "once": true,
+          "say": "Sealed, and I walked away from my own chest's claim to see it done. I'm still deciding whether that makes me a fool or just tired of counting other men's silver.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the vault, now it's burned",
+          "if": [["flag", "pw_hollow_burned"]],
+          "once": true,
+          "say": "Melted for the Ironbound's forges before the Companies could so much as bid on it. That's a loss I'll be hearing about at every fire between here and Camp Gallows.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his ledger",
+          "say": "Mind yourself on the ford road. Some things out there still keep a mint-hand's grip.",
+          "end": true
+        }
+      ]
+    },
+    "pw_smelter": {
+      "name": "Slade",
+      "room": "pw_furnace_yard",
+      "dialogue": true,
+      "desc": "The Ironbound's smelter-master, forearms scarred pale where old burns never tanned back, watching the banked furnace like it owes him an answer.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Slade. I keep this furnace banked and waiting, same as my master did, and hers before that. Four hundred years is long enough to wait on anything.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what he wants with the hoard",
+          "if": [["flag", "said_pw_smelter_greet"]],
+          "once": true,
+          "say": "Melt it. Every coin, every die, into solder and good iron the forges can use. The dead don't need silver. The living need the Ironbound's fires lit.",
+          "fx": [["set", "pw_smelter_bg"], ["xp", 2]]
+        },
+        {
+          "id": "pw_obverse_scrap",
+          "label": "ask about a die in his scrap (will)",
+          "if": [["flag", "pw_smelter_bg"], ["!flag", "pw_die_obverse_known"]],
+          "say": "Might have. Everything that's ever come off this bank ends up on my scrap-pile eventually. Convince me it's worth the digging.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "pw_die_obverse_known"],
+                ["move", "pw_obverse_die", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "He turns it over from a crate of river-scrap without much ceremony. \"That old thing. Was going in the melt eventually. Take it, if it means that much to somebody.\""]
+              ],
+              [["say", "\"Not worth my time digging for,\" he says, and goes back to the furnace. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "pw_get_cinder_oil",
+          "label": "ask him for cinder-oil",
+          "if": [["flag", "pw_smelter_bg"], ["!has", "pw_cinder_oil"], ["!flag", "pw_hollow_done"]],
+          "say": "\"For the door? Gladly,\" he says, already reaching for a cask. \"Ask me twice and I'll carry it down myself.\"",
+          "fx": [["move", "pw_cinder_oil", "inv"], ["xp", 1]]
+        },
+        {
+          "id": "pw_smelter_refused",
+          "label": "ask him to leave the furnace cold (will)",
+          "if": [["flag", "pw_smelter_bg"], ["!flag", "pw_smelter_refused"], ["!flag", "pw_hollow_done"]],
+          "say": "Talk an Ironbound smelter out of four hundred years of banked fire? I'm listening, against my better sense.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "pw_smelter_refused"],
+                ["say", "He bangs the furnace door shut, harder than he needs to, and doesn't open it again. \"...Cold, then. Doesn't mean I'll stop wanting it lit.\""]
+              ],
+              [
+                [
+                  "if",
+                  [["!flag", "pw_smelter_missed"]],
+                  [
+                    ["set", "pw_smelter_missed"],
+                    ["say", "\"Fire's patient,\" he says. \"More patient than you, probably.\" — and the Ironbound mark a plea made, and refused, here."]
+                  ],
+                  [["say", "\"Same fire, same patience,\" he says, and won't hear more of it."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the vault, now the rite is done",
+          "if": [["flag", "pw_hollow_rested"]],
+          "once": true,
+          "say": "Struck instead of melted. A waste of good silver, if you ask me — but I'll allow a hammer's a hammer, whichever trade swings it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the vault, now it's kept sealed",
+          "if": [["flag", "pw_hollow_bargained"]],
+          "once": true,
+          "say": "Sealed, and my furnace stays cold for it. I said I'd let it, and I did. Doesn't mean I've stopped listening for someone to change their mind.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the vault, now it's burned",
+          "if": [["flag", "pw_hollow_burned"]],
+          "once": true,
+          "say": "Lit her properly for the first time in four hundred years. Whatever you think of how we got there, that furnace earned its fire back.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_pw_burn_ask",
+          "label": "ask what becomes of the silver now",
+          "if": [["flag", "pw_hollow_burned"], ["flag", "sv_pw_back"], ["!flag", "sv_pw_after_done"]],
+          "once": true,
+          "say": "It's sitting in ingots by the furnace, waiting on a claim. The Crown wants it counted for the Regent's coffers. I'd sooner it stayed here, feeding forges instead of ledgers.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_pw_burn_crown",
+          "label": "hand the recovered silver to the Crown",
+          "if": [["flag", "said_pw_smelter_sv_pw_burn_ask"], ["!flag", "sv_pw_after_done"]],
+          "once": true,
+          "say": "He doesn't argue, just stacks the ingots for Averil's wagon himself, jaw tight the whole time. \"Your call. Don't ask me to smile about it.\"",
+          "fx": [
+            ["set", "sv_pw_burned_crown"],
+            ["set", "sv_pw_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_crown", 1],
+            ["addvar", "appr_tamsin", -1]
+          ]
+        },
+        {
+          "id": "sv_pw_burn_iron",
+          "label": "let the Ironbound keep the silver",
+          "if": [["flag", "said_pw_smelter_sv_pw_burn_ask"], ["!flag", "sv_pw_after_done"]],
+          "once": true,
+          "say": "\"Good,\" is all he says, but the furnace runs hot for a week after, and Pennywell's tools come back sharper than they've been in years.",
+          "fx": [
+            ["set", "sv_pw_burned_iron"],
+            ["set", "sv_pw_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_iron", 1],
+            ["addvar", "appr_tamsin", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the furnace",
+          "say": "Mind the heat on your way past. She's banked, not out.",
+          "end": true
+        }
+      ]
+    },
+    "pw_sergeant": {
+      "name": "Sergeant Wray",
+      "room": "pw_vault_stair",
+      "dialogue": true,
+      "desc": "A Watch sergeant posted at the top of the vault-stair, close enough to the dark below to have opinions about it she doesn't share with just anyone.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Sergeant Wray. Watch. I've held this step twelve years and heard everything Pennywell has to say about what's down there twice over.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what she hears through the door",
+          "if": [["flag", "said_pw_sergeant_greet"]],
+          "once": true,
+          "say": "Hammers, on quarter-days, faint as a memory. And the stone's warm year-round, which no stone I've ever stood a post against has any business being. I don't ask it to explain itself anymore.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "pw_sergeant_warden_plain",
+          "label": "ask her plainly, one watch to another",
+          "if": [["class", "warden"], ["flag", "said_pw_sergeant_bg"], ["!flag", "or_warden_pw_word"]],
+          "once": true,
+          "say": "\"You'll get a straight answer,\" she says, dropping the careful tone she keeps for everyone else. \"The warmth moves — slower on quiet nights, faster near a quarter-day. It's listening, not just holding heat.\"",
+          "fx": [["set", "or_warden_pw_word"], ["xp", 3]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the door, now the rite is done",
+          "if": [["flag", "pw_hollow_rested"]],
+          "once": true,
+          "say": "Warmth's still there, but it's settled — like a dog that's finally been let in from the yard. I stand this post easier for it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the door, now it's kept sealed",
+          "if": [["flag", "pw_hollow_bargained"]],
+          "once": true,
+          "say": "Sealed's sealed. My orders haven't changed in twelve years and won't now. I'll allow I like the new coin better than the old warrant, if anyone's asking a sergeant.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the door, now it's burned",
+          "if": [["flag", "pw_hollow_burned"]],
+          "once": true,
+          "say": "Twelve years guarding a door, and it went down to a cask of oil in one night. I try not to think too hard about what that says my post was ever worth.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her the stair",
+          "say": "Watch your step going down. It's darker than the yard makes it look.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "items": {
+    "pw_paymaster_chest": {
+      "name": "the paymaster's chest, iron-bound",
+      "loc": "nowhere",
+      "hint": "wants carrying over the ford at dusk, whole"
+    }
+  }
+}

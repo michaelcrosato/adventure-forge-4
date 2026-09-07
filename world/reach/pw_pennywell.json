@@ -1,0 +1,217 @@
+{
+  "rooms": {
+    "pw_mint_yard": {
+      "name": "The Mint Yard",
+      "desc": "Cobbles worn smooth in rings around an idle stamping-press, the Old Mint's cold chimney over the roofs to the south. Pennywell goes about its business here without once looking at the ground underneath it.",
+      "brief": "Cobbles, an idle press, a chimney nobody watches.",
+      "region": "pw",
+      "landmark": "Pennywell",
+      "exits": {
+        "north": { "to": "pw_hearth", "landmark": "the Hammer Hearth" },
+        "east": { "to": "pw_counting_house", "landmark": "the counting-house" },
+        "south": { "to": "pw_furnace_yard", "landmark": "the furnace-yard" },
+        "west": { "to": "pw_trade_counter", "landmark": "the trade counter" },
+        "down": { "to": "pw_vault_stair", "landmark": "the vault-stair" }
+      },
+      "variants": [
+        {
+          "if": [["flag", "pw_hollow_burned"]],
+          "desc": "Cobbles worn smooth around the press. The chimney over the south roofs draws smoke again, and the coin that comes off the press these days is honest, ordinary, and nobody's grandfather's face.",
+          "brief": "The chimney smokes again; the coin is ordinary now."
+        },
+        {
+          "if": [["flag", "pw_hollow_rested"]],
+          "desc": "Cobbles worn smooth around the press. Folk still stop what they're doing on quarter-days, listening for the hammers — but the sound they wait for came once, and answered, and hasn't come since.",
+          "brief": "Quiet now; the hammers answered once, and stopped."
+        },
+        {
+          "if": [["flag", "pw_hollow_bargained"]],
+          "desc": "Cobbles worn smooth around the press. The press strikes Pennywell's own coin now, an old king's face on every one — nobody living remembers deciding that was allowed.",
+          "brief": "The press strikes an old king's face now."
+        }
+      ]
+    },
+    "pw_hearth": {
+      "name": "The Hammer Hearth",
+      "desc": "A low hearth-hall named for a sound nobody living has heard start: hammers, they say, under the ground, on quarter-days. The benches are Pennywell's own — moneyers' kin mostly, three tables deep in old iron surnames.",
+      "brief": "The hearth-hall named for a sound underground.",
+      "region": "pw",
+      "landmark": "the Hammer Hearth",
+      "exits": { "south": { "to": "pw_mint_yard" }, "east": { "to": "pw_tithe_house", "landmark": "the tithe-house" } },
+      "onEnter": [["if", [["flag", "pw_hollow_done"], ["!flag", "sv_pw_back"]], [["set", "sv_pw_back"]], []]],
+      "actions": [
+        {
+          "id": "pw_rest",
+          "label": "rest by the hearth",
+          "fx": [
+            ["hp", 10],
+            ["say", "You sleep with one ear on the floorboards, the way everyone here does, and wake to no hammers and a banked fire someone else fed in the night."]
+          ]
+        }
+      ]
+    },
+    "pw_counting_house": {
+      "name": "The Counting-House",
+      "desc": "A narrow room behind the yard, a scale and a strongbox on a table scarred by four hundred years of coin sliding across it. A Crown warrant sits weighted under an assay-stone, waiting to be read aloud.",
+      "brief": "A scale, a strongbox, a Crown warrant weighted under stone.",
+      "region": "pw",
+      "landmark": "the counting-house",
+      "exits": {
+        "west": { "to": "pw_mint_yard" },
+        "north": { "to": "pw_chest_room", "landmark": "the paymaster's chest-room" }
+      }
+    },
+    "pw_chest_room": {
+      "name": "The Paymaster's Chest-Room",
+      "desc": "A bare room the Free Companies rent by the season, three iron-bound chests chained to the floor-ring. Old silver is stacked and counted here by weight, not by whatever face happens to be looking up.",
+      "brief": "Three chained chests; silver counted by weight.",
+      "region": "pw",
+      "exits": { "south": { "to": "pw_counting_house" } }
+    },
+    "pw_furnace_yard": {
+      "name": "The Furnace-Yard",
+      "desc": "A walled yard behind the mint, its great melting-furnace banked but not lit — hasn't been, properly, since the vault was sealed. Crucibles stand racked and empty, waiting on a hoard everyone here has an opinion about.",
+      "brief": "A banked furnace, empty crucibles, waiting.",
+      "region": "pw",
+      "landmark": "the furnace-yard",
+      "exits": { "north": { "to": "pw_mint_yard" } },
+      "variants": [
+        {
+          "if": [["flag", "pw_hollow_burned"]],
+          "desc": "The great furnace roars properly for the first time in four hundred years, the vault's whole hoard gone into it by now. Slade hasn't stopped grinning since the door came down.",
+          "brief": "The furnace roars; the hoard is long gone into it."
+        }
+      ]
+    },
+    "pw_tithe_house": {
+      "name": "The Tithe-House",
+      "desc": "A narrow office thick with the smell of tallow and old ink, one wall given over entirely to a ledger of faces — every penny's stamp, counted and judged, back four hundred years and still growing.",
+      "brief": "An office; a whole wall is a ledger of coined faces.",
+      "region": "pw",
+      "landmark": "the tithe-house",
+      "exits": { "west": { "to": "pw_hearth" }, "north": { "to": "pw_assayer_cot", "landmark": "the assayer's cot" } }
+    },
+    "pw_assayer_cot": {
+      "name": "The Assayer's Cot",
+      "desc": "A one-room cot given to the Keepers by long custom, touchstones and a set of scales on every surface. The record kept here doesn't judge a face's worth — only which face it was, and when it stopped being struck.",
+      "brief": "A cot; touchstones, scales, and a record of faces.",
+      "region": "pw",
+      "landmark": "the assayer's cot",
+      "exits": { "south": { "to": "pw_tithe_house" } }
+    },
+    "pw_trade_counter": {
+      "name": "The Trade Counter",
+      "desc": "A plank counter under the mint yard's lee wall, scrap iron and river-finds laid out for whoever's buying. Half of what's sold here started life as somebody's coin, once, before it forgot what it was for.",
+      "brief": "A plank counter; scrap iron and river-finds.",
+      "region": "pw",
+      "exits": { "east": { "to": "pw_mint_yard" } },
+      "actions": [
+        {
+          "id": "pw_buy_hammer",
+          "label": "buy a mint-hammer, reweighted (7 gold)",
+          "if": [["!has", "pw_hammer"], ["var", "gold", ">=", 7]],
+          "fx": [
+            ["addvar", "gold", -7],
+            ["move", "pw_hammer", "inv"],
+            ["say", "The counter-keeper reweights the head herself before she'll let it go. \"Struck a few coins in its day, that one. Strikes other things well enough now.\""]
+          ]
+        }
+      ]
+    },
+    "pw_vault_stair": {
+      "name": "The Vault-Stair",
+      "desc": "A stair drops from the yard's lee corner into the dark, timbered where the town keeps it timbered and no further. Sergeant Wray sits the top step on a stool that's worn a groove for itself, and has for years.",
+      "brief": "A stair into the dark; Wray sits the top step.",
+      "region": "pw",
+      "landmark": "the vault-stair",
+      "exits": { "up": { "to": "pw_mint_yard" }, "down": { "to": "pw_striking_hall" } }
+    },
+    "pw_causeway": {
+      "name": "The Chapel Causeway",
+      "desc": "A raised stone track carries the road east over flooded water-meadows, a whole chapel roof standing dry and unattended off to the south. West, the causeway runs on into country that isn't Pennywell's grief to carry.",
+      "brief": "A raised causeway over the meadows; a chapel roof south.",
+      "region": "pw",
+      "landmark": "the chapel causeway",
+      "onEnterOnce": [
+        ["set", "pw_entered"],
+        ["xp", 2],
+        ["say", "This is Pennywell: the mint hold on the Lastwater's east bank, where the moneyers who refused the first Reeve's coin still strike one no living hand will spend."],
+        [
+          "if",
+          [["inParty", "vell"]],
+          [
+            ["say", "Vell: \"The first Reeve's own face, struck fresh over a Reach that had just watched him take a barrow's crown. I begin to see why four men thought that worth a mortared door.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "osk"]],
+          [
+            ["say", "Brother Osk: \"Men who chose a sealed door over striking a lie into silver. I did not know that story until today, and I am glad, finally, to.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "tamsin"]],
+          [
+            ["say", "Tamsin: \"A mill-race gone still and hammers nobody swings. Whatever's down there was built to work. Worth remembering, before anyone decides what to do with it.\""]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["inParty", "lys"]],
+          [
+            ["say", "Lys: \"A river with old pennies washing up on its spit, and a child who won't stop hearing hammers for it. That's not a haunting I'd want growing up beside.\""]
+          ],
+          []
+        ]
+      ]
+    },
+    "pw_ferry": {
+      "name": "The Far Bank Ferry-Landing",
+      "desc": "A flat-bottomed ferry sits chained to a post at the river's edge, the Lastwater running slow and dark past a landing worn smooth by four hundred years of the same crossing. Pennywell's roofs show east past the willows.",
+      "brief": "A chained ferry; the Lastwater running slow and dark.",
+      "region": "pw",
+      "landmark": "the Far Bank ferry",
+      "onEnterOnce": [
+        [
+          "if",
+          [["!flag", "pw_entered"]],
+          [
+            ["set", "pw_entered"],
+            ["xp", 2],
+            ["say", "This is Pennywell: the mint hold on the Lastwater's east bank, where the moneyers who refused the first Reeve's coin still strike one no living hand will spend."]
+          ],
+          []
+        ]
+      ]
+    }
+  },
+  "items": {
+    "pw_mint_warrant": {
+      "name": "the Crown's mint-warrant",
+      "loc": "pw_counting_house",
+      "takeable": true,
+      "owner": "pw_warden",
+      "hint": "Averil reads from this daily; she'd notice it gone before you reached the door"
+    },
+    "pw_assay_weights": {
+      "name": "a set of nested assay-weights, brass",
+      "loc": "pw_counting_house",
+      "takeable": true,
+      "owner": "pw_warden",
+      "hint": "a mint-warden's own weights, stamped true; she'd miss them by the ounce"
+    },
+    "pw_hammer": {
+      "name": "a mint-hammer, reweighted",
+      "loc": "nowhere",
+      "takeable": true,
+      "hit": 1,
+      "dmg": 3,
+      "hint": "a striking-hammer turned to plainer work; a step above a belt-knife"
+    }
+  }
+}

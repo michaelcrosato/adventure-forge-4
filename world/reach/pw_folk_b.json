@@ -1,0 +1,504 @@
+{
+  "npcs": {
+    "pw_tithe": {
+      "name": "Meva",
+      "room": "pw_tithe_house",
+      "dialogue": true,
+      "desc": "The Gray Church's tithe-collector, ink-stained to the second knuckle, reading a stranger's face the way she reads a coin's: for what it's worth, not what it claims.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Meva. I keep the ledger of faces — every penny struck in this hold, whose likeness, and whether it was worthy of the striking. Four hundred years of it, on that wall.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what makes a coin worthy",
+          "if": [["flag", "said_pw_tithe_greet"]],
+          "once": true,
+          "say": "A face struck honestly, by hands that meant it. That's the whole test. The Reeve's men melted honest faces to strike a dishonest one, and I've marked every year since as a debt still owed.",
+          "fx": [["set", "pw_tithe_bg"], ["xp", 2]]
+        },
+        {
+          "id": "pw_name_tithe",
+          "label": "ask her to read the names (wits)",
+          "if": [["flag", "pw_tithe_bg"], ["!flag", "pw_name_tithe"]],
+          "say": "Their names are in there, if you know which year to ask for. Show me you can find the year, and I'll read you the rest.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "pw_name_tithe"],
+                ["addvar", "pw_names_known", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "You find the year by the gap in the striking-tallies — a hold's worth of coin, and then nothing, for four hundred years. Meva reads the rest without needing asking twice."]
+              ],
+              [
+                ["say", "Four hundred years of tallies, and the gap you want is one line among thousands. It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "pw_scholar_tithe_free",
+          "label": "read the ledger of faces outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "pw_name_tithe"], ["!flag", "or_scholar_pw_tithe"]],
+          "say": "You find the gap-year the way you'd find a missing verse: by the shape of what isn't there. Meva watches you read her own ledger faster than she can, and says nothing, for once.",
+          "fx": [
+            ["set", "or_scholar_pw_tithe"],
+            ["addvar", "or_scholar_read", 1],
+            ["set", "pw_name_tithe"],
+            ["addvar", "pw_names_known", 1],
+            ["score", 4],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the vault, now the rite is done",
+          "if": [["flag", "pw_hollow_rested"]],
+          "once": true,
+          "say": "I've marked the gap-year closed at last, in my own hand. Four hundred years is a long time to owe anyone a line in a ledger.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the vault, now it's kept sealed",
+          "if": [["flag", "pw_hollow_bargained"]],
+          "once": true,
+          "say": "Not rested, but not lied about either. I'll take honest and unfinished over false and closed, every time I'm asked to choose.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the vault, now it's burned",
+          "if": [["flag", "pw_hollow_burned"]],
+          "once": true,
+          "say": "Four hundred years of faces, melted past reading in one night. I'll mark the gap-year closed anyway — closed wrong, but closed.",
+          "fx": [["xp", 1], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the ledger",
+          "say": "Mind which face you spend next. I'll hear about it eventually, one way or another.",
+          "end": true
+        }
+      ]
+    },
+    "pw_assayer": {
+      "name": "Doran",
+      "room": "pw_assayer_cot",
+      "dialogue": true,
+      "desc": "The Keepers' assayer, touchstone in one hand out of habit even when nothing's being tested, a man who trusts a scratch of metal further than most people's word.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Doran. Keepers' assayer. I keep the record of every face that was ever melted here — not to judge it, only to see it isn't forgotten twice.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "the record he keeps",
+          "if": [["flag", "said_pw_assayer_greet"]],
+          "once": true,
+          "say": "Every coin the Reeve's men melted, its face noted before it went into the crucible. The old covenant says nothing is truly gone if somebody wrote down that it was here.",
+          "fx": [["set", "pw_assayer_bg"], ["xp", 2]]
+        },
+        {
+          "id": "pw_name_assayer",
+          "label": "ask for the moneyers' names (wits)",
+          "if": [["flag", "pw_assayer_bg"], ["!flag", "pw_name_assayer"]],
+          "say": "Four names went in with the last melt before the sealing. Read the record's own marks and I'll confirm what you find.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "pw_name_assayer"],
+                ["addvar", "pw_names_known", 1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "The touchstone-marks read like a short verse once you know the pattern: Corbet, Wyle, and Hann, struck last, then nothing after. Doran nods once, like you've passed a test he didn't announce."]
+              ],
+              [["say", "The marks are precise past careless reading, and you're being careless. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "pw_scholar_assayer_free",
+          "label": "read the assayer's record outright",
+          "free": true,
+          "if": [["class", "scholar"], ["!flag", "pw_name_assayer"], ["!flag", "or_scholar_pw_assayer"]],
+          "say": "The touchstone-marks are just another old tongue to you, and this one reads easy: Corbet, Wyle, and Hann, the last names struck before the door went up.",
+          "fx": [
+            ["set", "or_scholar_pw_assayer"],
+            ["addvar", "or_scholar_read", 1],
+            ["set", "pw_name_assayer"],
+            ["addvar", "pw_names_known", 1],
+            ["score", 4],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "pw_coin_king",
+          "label": "strike the coin, the king's face (will)",
+          "if": [["flag", "pw_hollow_done"], ["!flag", "pw_coin_settled"], ["!flag", "pw_hollow_rested"]],
+          "say": "You want the Reach's oldest, truest face back on Pennywell's coin, with nobody living to answer for it? Convince me the Keepers won't be the only ones who'll stand behind that.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "pw_coin_king"],
+                ["set", "pw_coin_settled"],
+                ["addvar", "rep_keepers", 2],
+                ["addvar", "rep_crown", -2],
+                ["score", 10],
+                ["xp", 4],
+                ["say", "Doran sets the touchstone down like a man laying something to rest. \"The covenant remembers this face. Let the coin remember it too.\""]
+              ],
+              [["say", "\"Not yet,\" he says, unmoved. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "pw_coin_king_rested",
+          "label": "strike the coin with the old king's face",
+          "if": [["flag", "pw_hollow_rested"], ["!flag", "pw_coin_settled"]],
+          "say": "Everyone in this hold watched that penny struck at the door. There's no arguing whose face belongs on the rest of the mint's coin now.",
+          "fx": [
+            ["set", "pw_coin_king"],
+            ["set", "pw_coin_settled"],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            ["score", 10],
+            ["xp", 4],
+            ["say", "Doran doesn't so much decide it as confirm it. \"You've already struck it once, at the door. This is only the mint catching up to what's true.\""]
+          ]
+        },
+        {
+          "id": "pw_coin_overturn_king",
+          "label": "strike a different face after all (will)",
+          "if": [
+            ["flag", "pw_hollow_rested"],
+            ["flag", "pw_coin_settled"],
+            ["flag", "pw_coin_king"],
+            ["!flag", "pw_coin_overturned"]
+          ],
+          "say": "You'd strike over what this whole hold just watched happen at the door? I won't stop you, but I won't pretend it costs nothing either.",
+          "fx": [
+            [
+              "check",
+              "will",
+              12,
+              [
+                ["set", "pw_coin_overturned"],
+                ["addvar", "rep_keepers", -1],
+                ["say", "He doesn't argue further, just watches you undo it. \"Noted. The record will say what it cost, whatever face you settle on now.\""]
+              ],
+              [
+                ["say", "\"No,\" he says, and this time he means it flatly. \"Not this. Not after what the door already answered.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the vault, now the rite is done",
+          "if": [["flag", "pw_hollow_rested"]],
+          "once": true,
+          "say": "Corbet, Wyle, and Hann, struck true one more time. I'll add that line to the record myself, in the old hand, not the tithe-house's tally-marks.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the vault, now it's kept sealed",
+          "if": [["flag", "pw_hollow_bargained"]],
+          "once": true,
+          "say": "Not rested, but the covenant's own face on the coin regardless. I'll allow the Keepers can live with an unfinished rite that still got the face right.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the vault, now it's burned",
+          "if": [["flag", "pw_hollow_burned"]],
+          "once": true,
+          "say": "Melted past reading. I'll write the record anyway, from memory and Meva's tally — a name is still owed, even to metal that can't answer to it anymore.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to the touchstones",
+          "say": "Mind what you're told a coin's worth. It's rarely the whole of what it cost.",
+          "end": true
+        }
+      ]
+    },
+    "pw_descendant": {
+      "name": "Sarel",
+      "room": "pw_hearth",
+      "dialogue": true,
+      "desc": "Keeps the Hammer Hearth and, closer than she'll say aloud, the reverse die her own line has held since the sealing — Hann's die, Hann's blood, four hundred years unstruck.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Sarel. This hearth is mine to keep, same as it was my mother's. So is something else, though I don't show that to everyone who asks.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why she won't strike with it",
+          "if": [["flag", "said_pw_descendant_greet"]],
+          "once": true,
+          "say": "The king's reverse die. Hann's own hand cut it, and Hann's own hand carried it down with the rest, all but this one piece — dropped, or hidden, before the door went up. I won't be the one who strikes a lie with his work.",
+          "fx": [["set", "pw_descendant_bg"], ["xp", 2]]
+        },
+        {
+          "id": "pw_die_given",
+          "label": "ask her for the die plainly",
+          "if": [["flag", "pw_descendant_bg"], ["!flag", "pw_die_reverse_known"]],
+          "say": "...You mean to strike it true? Finish what Hann started, not what the Reeve wanted?",
+          "fx": [
+            ["set", "pw_die_given"],
+            ["set", "pw_die_reverse_known"],
+            ["move", "pw_reverse_die", "inv"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_vell", 1],
+            ["say", "She hands it over both-handed, careful as a relic, and doesn't quite let go at once. \"Then it goes to someone who might. Bring it back true, if you manage it.\""]
+          ]
+        },
+        {
+          "id": "pw_die_taken",
+          "label": "take the die by force (might)",
+          "if": [["flag", "pw_descendant_bg"], ["!flag", "pw_die_reverse_known"]],
+          "say": "That's four hundred years of my line's whole inheritance. Think carefully before you finish that sentence.",
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "pw_die_taken"],
+                ["set", "pw_die_reverse_known"],
+                ["move", "pw_reverse_die", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "appr_vell", -1],
+                ["say", "You take it over her protest, and she doesn't fight you for it — just watches, white-lipped, as Hann's die walks out her own door in a stranger's hand."]
+              ],
+              [
+                ["say", "She plants herself between you and the hearth-stone where it's hidden, and doesn't move. \"Not like this. Not ever like this.\" It can be tried again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "pw_die_found",
+          "label": "notice where she keeps it (wits)",
+          "if": [["flag", "pw_descendant_bg"], ["!flag", "pw_die_reverse_known"]],
+          "say": "She doesn't offer, and doesn't refuse outright either — just watches you watch her.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              11,
+              [
+                ["set", "pw_die_found"],
+                ["set", "pw_die_reverse_known"],
+                ["move", "pw_reverse_die", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "appr_vell", 1],
+                ["say", "It's in the loose hearth-stone she never quite stops glancing at. You know before she says a word, and she lets you take it without either of you naming what just happened."]
+              ],
+              [["say", "Whatever she's guarding, it isn't kept where habit would give it away. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the vault, now the rite is done",
+          "if": [["flag", "pw_hollow_rested"]],
+          "once": true,
+          "say": "Hann's own die, struck true at last, by someone who wasn't lying with it. Four hundred years my line kept it unstruck rather than let that not be so.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the vault, now it's kept sealed",
+          "if": [["flag", "pw_hollow_bargained"]],
+          "once": true,
+          "say": "Sealed's not struck, but it's not a lie either. I can keep the hearth easy with that much settled.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the vault, now it's burned",
+          "if": [["flag", "pw_hollow_burned"]],
+          "once": true,
+          "say": "Hann's own die is ash and melt now, same as the rest of him. I don't know what my line was keeping it for, all those years, if that's how it ends.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sv_pw_rested_ask",
+          "label": "ask what becomes of the dies now",
+          "if": [["flag", "pw_hollow_rested"], ["flag", "sv_pw_back"], ["!flag", "sv_pw_after_done"]],
+          "once": true,
+          "say": "They've done what four hundred years of my line couldn't manage alone. I'm not sure they belong back under my hearth-stone, gathering dust on a debt that's paid. What would you do with them?",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "sv_pw_rested_kept",
+          "label": "leave the dies at the vault-door",
+          "if": [["flag", "said_pw_descendant_sv_pw_rested_ask"], ["!flag", "sv_pw_after_done"]],
+          "once": true,
+          "say": "She sets them herself into a niche cut fresh beside the door. \"There. Let anyone who doubts the rite go and see it standing.\"",
+          "fx": [
+            ["set", "sv_pw_rested_kept"],
+            ["set", "sv_pw_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "appr_vell", 1]
+          ]
+        },
+        {
+          "id": "sv_pw_rested_sent",
+          "label": "send the dies to the Keepers' Hall",
+          "if": [["flag", "said_pw_descendant_sv_pw_rested_ask"], ["!flag", "sv_pw_after_done"]],
+          "once": true,
+          "say": "\"The Keepers' Hall, then,\" she says, already wrapping them for the road, \"so it isn't only Pennywell that remembers a coin struck true.\"",
+          "fx": [
+            ["set", "sv_pw_rested_sent"],
+            ["set", "sv_pw_after_done"],
+            ["score", 4],
+            ["xp", 3],
+            ["addvar", "rep_keepers", 1]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the hearth",
+          "say": "Rest easy while you're under my roof. It's the one thing this hearth's always been good for.",
+          "end": true
+        }
+      ]
+    },
+    "pw_child": {
+      "name": "Robin",
+      "room": "pw_mint_yard",
+      "dialogue": true,
+      "desc": "A child crouched by the idle press, turning an old penny over and over between two fingers, listening for something nobody else in the yard can hear.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Robin. I pulled this out of the ford myself, two winters back. Everyone says I ought to have thrown it back in.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "why she keeps it",
+          "if": [["flag", "said_pw_child_greet"]],
+          "once": true,
+          "say": "Because I've heard hammers ever since, under the ground, on quarter-days — same as everyone says the mint does. I think the penny and the hammers are the same thing, missing each other.",
+          "fx": [["set", "pw_robin_bg"], ["xp", 2]]
+        },
+        {
+          "id": "pw_penny_read",
+          "label": "ask to read the penny for a name (wits)",
+          "if": [["flag", "pw_robin_bg"], ["!flag", "pw_penny_given"], ["!flag", "pw_penny_read"]],
+          "say": "You can look. I'm not giving it up, just — look, if it helps.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "pw_penny_read"],
+                ["if", [["!flag", "pw_name_child"]], [["set", "pw_name_child"], ["addvar", "pw_names_known", 1]], []],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "Under the grime, worn but whole: a name, cut small the way a moneyer signs his own work rather than the king's. Hann. You hand it back, and Robin holds it a little tighter than before."]
+              ],
+              [["say", "Whatever's cut into it, it's worn past a glance. It can be tried again."]]
+            ]
+          ]
+        },
+        {
+          "id": "pw_penny_given",
+          "label": "urge her to give the penny to Meva",
+          "if": [["flag", "pw_robin_bg"], ["!flag", "pw_penny_given"]],
+          "once": true,
+          "say": "She looks at it a long moment, then presses it into your hand instead of arguing. \"If it helps you finish this, take it there yourself. I don't want to watch her write it down.\"",
+          "fx": [
+            ["set", "pw_penny_given"],
+            ["if", [["!flag", "pw_name_child"]], [["set", "pw_name_child"], ["addvar", "pw_names_known", 1]], []],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "rep_church", 1],
+            ["addvar", "appr_lys", -1]
+          ]
+        },
+        {
+          "id": "pw_penny_kept",
+          "label": "tell her to keep it, unread",
+          "if": [["flag", "pw_robin_bg"], ["!flag", "pw_penny_given"], ["!flag", "pw_penny_kept"]],
+          "once": true,
+          "say": "She closes her fist around it like she'd been braced for you to ask otherwise. \"Nobody's said that to me before. Thank you.\"",
+          "fx": [["set", "pw_penny_kept"], ["addvar", "appr_lys", 1], ["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested",
+          "label": "the hammers, now the rite is done",
+          "if": [["flag", "pw_hollow_rested"]],
+          "once": true,
+          "say": "I heard them answer, once, plain as anything, and then nothing since. I miss it a little. Is that strange?",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_bargained",
+          "label": "the hammers, now the vault's kept sealed",
+          "if": [["flag", "pw_hollow_bargained"]],
+          "once": true,
+          "say": "Still there, under everything, same as always. I don't mind so much now that I know somebody finally decided on purpose to leave them be.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_burned",
+          "label": "the hammers, now the vault's burned",
+          "if": [["flag", "pw_hollow_burned"]],
+          "once": true,
+          "say": "Gone quiet. I thought I'd be glad. Mostly I just miss having something under the ground that was listening back.",
+          "fx": [["xp", 1], ["addvar", "appr_lys", -1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to the penny",
+          "say": "Mind the press. It doesn't move, but Mother says it still bites, somehow.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "items": {
+    "pw_river_penny": {
+      "name": "a king's penny, ford-worn",
+      "loc": "nowhere",
+      "hint": "Robin's own; she'll let it be read, given, or left be"
+    }
+  }
+}
