@@ -128,7 +128,10 @@ lane can hand-wave a session.
 The same bar runs in CI (`.github/workflows/verify.yml`) on Node 20, 22, and
 24 for every push to `main` and every pull request, followed by the
 zero-token mock player and the walkthrough measurement over the real MCP
-server.
+server. A second workflow, `prune-branch.yml`, deletes a branch whose
+commits are already in `main` and refuses one whose are not, so a finished
+branch never lingers — an agent session's own credentials are scoped to the
+branch it was given, and cannot delete another.
 
 ## Three playtest lanes
 
