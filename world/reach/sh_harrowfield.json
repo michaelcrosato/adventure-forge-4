@@ -49,6 +49,20 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "sh_north_road_envoy",
+          "label": "guess which way the levy marched",
+          "free": true,
+          "once": true,
+          "if": [["class", "envoy"]],
+          "fx": [
+            ["addvar", "or_envoy_words", 1],
+            ["xp", 1],
+            ["say", "The ruts cut two ways, but only one is worn deep enough for men marching in step: south, into the Shieldings. None of them came back out on this road."]
+          ]
+        }
       ]
     },
     "sh_west_road": {
@@ -251,6 +265,18 @@
       "hit": 1,
       "dmg": 3,
       "hint": "field-iron, four hundred years seasoned; a step above a belt-knife"
+    },
+    "sh_road_buckle": {
+      "name": "a corroded belt-buckle, army-issue",
+      "loc": "sh_north_road",
+      "takeable": true,
+      "hint": "no belt left to hold; the strap rotted off it long ago"
+    },
+    "sh_road_tally": {
+      "name": "a drover's tally-stick, notched",
+      "loc": "sh_west_road",
+      "takeable": true,
+      "hint": "one notch short of a full count; whoever kept it never finished"
     }
   }
 }

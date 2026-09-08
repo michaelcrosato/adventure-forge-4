@@ -211,7 +211,30 @@
           "name": "The Mill-Race",
           "desc": "The Old Mint's mill-race runs dry now, its wheel broken and canted half into the bed. A doorway stands open in the ruin behind it, and even here you can feel a warmth that has no business coming off cold stone.",
           "brief": "A dry race, a broken wheel, a warm doorway in.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "pw_race_wade",
+              "label": "wade toward the warmth (1hp on fail)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["addvar", "gold", 2],
+                    ["xp", 2],
+                    ["say", "The dry bed is slicker than it looks, but you keep your feet and come up under the ruin's lee with two coins someone else dropped chasing the same warmth."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "The canted wheel picks that moment to shift, and you go down hard avoiding it, no closer to whatever's warm in there."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 2],
@@ -263,6 +286,7 @@
           "name": "Millgate",
           "desc": "The bank gives way to a beaten road here, Pennywell's cold chimney and press-shed close now to the east. West, the willows close back over the water like the road was never cut through them at all.",
           "brief": "A beaten road; Pennywell close east.",
+          "items": ["pw_millgate_scrap"],
           "onEnterOnce": [["xp", 1]]
         },
         {
@@ -663,7 +687,57 @@
       }
     }
   ],
+  "items": {
+    "pw_millgate_scrap": {
+      "name": "a bent striking-die, scrapped",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "cracked partway through a strike; worth more melted than spent"
+    },
+    "pw_tower_castoff": {
+      "name": "a rusted toll-key",
+      "loc": "pw_toll_tower_base",
+      "takeable": true,
+      "hint": "fits a box that was pried open long before you got here"
+    },
+    "pw_adit_castoff": {
+      "name": "a snapped assay-spoon",
+      "loc": "pw_silver_adit_adit",
+      "takeable": true,
+      "hint": "the bowl's still bright; whatever it last weighed, it didn't finish weighing"
+    }
+  },
   "npcs": {
+    "pw_ferry_chapel_marek": {
+      "name": "Marek",
+      "room": "pw_ferry_chapel_porch",
+      "desc": "An old ferryman, tying off a skiff that has no business being this far from the water, in no hurry to explain why he's here instead.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who still ties up here",
+          "once": true,
+          "say": "Marek. Ferried this crossing forty years, give or take. I still tie up here on slow days, though I couldn't tell you the saint's name if you asked me twice.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask why he still ties up here",
+          "if": [["class", "envoy"], ["flag", "said_pw_ferry_chapel_marek_greet"]],
+          "once": true,
+          "say": "Habit outlives reason easier than people do, in my experience. I stopped needing a reason for this crossing years back.",
+          "fx": [["addvar", "or_envoy_words", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "wedge",
+          "label": "help him wedge the door true",
+          "if": [["class", "warden"], ["flag", "said_pw_ferry_chapel_marek_greet"]],
+          "once": true,
+          "say": "Between the two of you the door hangs true for the first time in years. Marek looks pleased in a way he doesn't trouble to explain.",
+          "fx": [["addvar", "or_warden_word", 1], ["score", 2], ["xp", 2]]
+        }
+      ]
+    },
     "pw_drowned": {
       "name": "drowned moneyer",
       "room": null,

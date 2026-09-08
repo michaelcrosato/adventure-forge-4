@@ -550,9 +550,87 @@
       "name": "a shard of warm black glass",
       "loc": "nowhere",
       "hint": "still faintly warm, however long it's been"
+    },
+    "em_cairn_castoff": {
+      "name": "a rust-seized digging iron",
+      "loc": "em_cairn_passage",
+      "takeable": true,
+      "hint": "left behind by whoever tried this barrow before you, and didn't finish"
+    },
+    "em_watch_castoff": {
+      "name": "a corroded bell-key",
+      "loc": "em_watch_base",
+      "takeable": true,
+      "hint": "fits no bell anyone in Glasswick still owns"
+    },
+    "em_sandmine_castoff": {
+      "name": "a cracked glass lamp",
+      "loc": "em_sandmine_adit",
+      "takeable": true,
+      "hint": "the wick's long gone; the glass still holds its shape"
     }
   },
   "npcs": {
+    "em_cairn_ossa": {
+      "name": "Ossa",
+      "room": "em_cairn_mouth",
+      "desc": "A Barrow-Keeper adherent, cross-legged in the doorstone's shadow, close enough to the dark to mind it and no closer.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who keeps watch here",
+          "once": true,
+          "say": "Ossa. A Keeper, for what that's worth this close to Glasswick's fire. Someone should sit with the mound, even if none of us will go past what's guarding it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask her plainly what's owed here",
+          "if": [["class", "envoy"], ["flag", "said_em_cairn_ossa_greet"]],
+          "once": true,
+          "say": "You want to know what a barrow owes the living. Nothing. It's what the living still owe it that keeps me sitting on this cold stone.",
+          "fx": [["addvar", "or_envoy_words", 1], ["addvar", "rep_keepers", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "stand",
+          "label": "offer to stand her watch a while",
+          "if": [["class", "warden"], ["flag", "said_em_cairn_ossa_greet"]],
+          "once": true,
+          "say": "She looks at you a long moment, then makes room without a word. Between the two of you, the cold at the mound's mouth is almost bearable.",
+          "fx": [["addvar", "or_warden_word", 1], ["score", 2], ["xp", 2]]
+        }
+      ]
+    },
+    "em_cinderrun_hurn": {
+      "name": "Hurn",
+      "room": "em_cinderrun_palisade",
+      "desc": "A charcoal-runner posted to the stakes, counting sacks under his breath and losing the count every time you're in earshot.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "why he's out at the stakes",
+          "once": true,
+          "say": "Hurn. Dray's got me watching the gap till the last sacks are counted. Long as you're not levy folk, I've got no quarrel with you standing here.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask what the run's really carrying",
+          "if": [["class", "envoy"], ["flag", "said_em_cinderrun_hurn_greet"]],
+          "once": true,
+          "say": "More than charcoal, if you're asking right. He says it slow, watching you the whole time, like the answer costs him something to give away free.",
+          "fx": [["addvar", "or_envoy_words", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "size",
+          "label": "size up the stakes with a soldier's eye",
+          "if": [["class", "warden"], ["flag", "said_em_cinderrun_hurn_greet"]],
+          "once": true,
+          "say": "You name the gap Hurn's been paid to mind without being told where it is. He goes a shade paler and starts watching it instead of you.",
+          "fx": [["addvar", "or_warden_word", 1], ["score", 2], ["xp", 2]]
+        }
+      ]
+    },
     "em_wraith": {
       "name": "glass-ash wraith",
       "room": null,

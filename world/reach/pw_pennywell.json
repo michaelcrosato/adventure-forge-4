@@ -194,6 +194,30 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "pw_ferry_watch",
+          "label": "watch the crossing a while",
+          "free": true,
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "The ferry rocks at its chain, empty, going nowhere until somebody wants it to. You could watch this crossing all day and it would tell you the same thing twice."]
+          ]
+        },
+        {
+          "id": "pw_ferry_envoy",
+          "label": "guess who crossed here last",
+          "free": true,
+          "once": true,
+          "if": [["class", "envoy"]],
+          "fx": [
+            ["addvar", "or_envoy_words", 1],
+            ["xp", 1],
+            ["say", "Two sets of prints end at the landing and don't come back east: whoever crossed last wasn't coming home to Pennywell, chain or no chain."]
+          ]
+        }
       ]
     }
   },
@@ -219,6 +243,12 @@
       "hit": 1,
       "dmg": 3,
       "hint": "struck coin-dies once; reweighted now for a plainer kind of striking"
+    },
+    "pw_causeway_staff": {
+      "name": "a toll-marked walking staff",
+      "loc": "pw_causeway",
+      "takeable": true,
+      "hint": "notched once for every crossing; someone stopped counting partway"
     }
   }
 }

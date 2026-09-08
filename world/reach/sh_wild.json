@@ -557,7 +557,111 @@
       }
     }
   ],
+  "items": {
+    "sh_horsebarrow_castoff": {
+      "name": "a snapped stirrup-leather",
+      "loc": "sh_horse_barrow_passage",
+      "takeable": true,
+      "hint": "the buckle's still good; whoever it threw didn't come back for it"
+    },
+    "sh_beacon_castoff": {
+      "name": "a coil of signal-rope, frayed through",
+      "loc": "sh_beacon_base",
+      "takeable": true,
+      "hint": "frayed clean through; whatever it was raising, it stopped partway"
+    }
+  },
   "npcs": {
+    "sh_horse_barrow_rathe": {
+      "name": "Rathe",
+      "room": "sh_horse_barrow_mouth",
+      "desc": "A farrier, kit bag over one shoulder, keeping the sort of distance from the doorstone that isn't quite fear and isn't quite respect either.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who keeps a horse near this mound",
+          "once": true,
+          "say": "Rathe. I shoe what few horses Harrowfield's got left. Something about this mound makes every one of them balk, so I come see for myself what they already know.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask what the mound still wants",
+          "if": [["class", "envoy"], ["flag", "said_sh_horse_barrow_rathe_greet"]],
+          "once": true,
+          "say": "Not shoes, and not prayers either. My guess is company. Whatever's down there hasn't had a living voice near it in longer than the ditch's been dug.",
+          "fx": [["addvar", "or_envoy_words", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "word",
+          "label": "offer a soldier's word over the tack",
+          "if": [["class", "warden"], ["flag", "said_sh_horse_barrow_rathe_greet"]],
+          "once": true,
+          "say": "You say what's said over a fallen mount, plain and short. Rathe doesn't ask where you learned it. Some words travel further than the unit that taught them.",
+          "fx": [["addvar", "or_warden_word", 1], ["score", 2], ["xp", 2]]
+        }
+      ]
+    },
+    "sh_bonehouse_sabin": {
+      "name": "Sabin",
+      "room": "sh_bonehouse_porch",
+      "desc": "A Harrowfield local with a small trowel and no particular hurry, tidying leaf-litter off a step nobody else troubles to clear.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who tends the older bone-house",
+          "once": true,
+          "say": "Sabin. My grandfather's bones are in there with the rest of the fever dead. Elgin tends the new chantry. Nobody tends this one, so I do, when I remember to.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask what Elgin never says",
+          "if": [["class", "envoy"], ["flag", "said_sh_bonehouse_sabin_greet"]],
+          "once": true,
+          "say": "Nothing, is the trouble. Forty years of nothing said is its own kind of answer, if you know how to listen for the shape of it.",
+          "fx": [["addvar", "or_envoy_words", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "stack",
+          "label": "read the stacking for who was last",
+          "if": [["class", "scout"], ["flag", "said_sh_bonehouse_sabin_greet"]],
+          "once": true,
+          "say": "You read the courses the way you'd read a season's growth rings: the newest bones sit apart, stacked by a hand in less of a hurry than the ones before it.",
+          "fx": [["addvar", "or_scout_marks", 1], ["score", 2], ["xp", 2]]
+        }
+      ]
+    },
+    "sh_founders_camp_corin": {
+      "name": "Corin",
+      "room": "sh_founders_camp_palisade",
+      "desc": "A recruiting officer's aide at the stakes, tally-slate under one arm, watching the gap in the fire-ring's smoke more than he watches you.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "why he's posted at the founders' stakes",
+          "once": true,
+          "say": "Corin. Recruiting officer's aide. I mind the stakes and the tally; she minds the fire and the terms. Long as you're not here for trouble, neither of us minds you.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask what terms she's really offering",
+          "if": [["class", "envoy"], ["flag", "said_sh_founders_camp_corin_greet"]],
+          "once": true,
+          "say": "He gives it up slower than you'd like: fewer names sign than the founding charter needs, and every season the terms get a little more generous.",
+          "fx": [["addvar", "or_envoy_words", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "trade",
+          "label": "trade watch-craft at the stakes",
+          "if": [["class", "warden"], ["flag", "said_sh_founders_camp_corin_greet"]],
+          "once": true,
+          "say": "He listens closer than he lets on, and moves the nearest stake a half-foot before you're even done talking. Old habits, he says, when you notice.",
+          "fx": [["addvar", "or_warden_word", 1], ["score", 2], ["xp", 2]]
+        }
+      ]
+    },
     "sh_levy": {
       "name": "field-wight",
       "room": null,

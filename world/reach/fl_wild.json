@@ -42,7 +42,22 @@
           "name": "The Sheep Walk",
           "desc": "A worn path shows where sheep once went to water and back, twice a day, for longer than anyone living remembers. Nothing walks it now but whatever the wind moves.",
           "brief": "A worn, empty sheep-path.",
-          "onEnterOnce": [["xp", 1]]
+          "items": ["fl_sheep_bell"],
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_sheepwalk_envoy",
+              "label": "count how many kept this path last",
+              "free": true,
+              "once": true,
+              "if": [["class", "envoy"]],
+              "fx": [
+                ["addvar", "or_envoy_words", 1],
+                ["xp", 1],
+                ["say", "One set of wear, not three or four: whoever grazed here last had already lost every neighbor who once shared this path with them."]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 0],
@@ -188,7 +203,30 @@
           "name": "The Mill Race",
           "desc": "A dry mill-race runs east, weed-choked, toward the low grind of a wheel that shouldn't still be turning and isn't quite still either. The sound carries further than it has any right to.",
           "brief": "A dry race. East: a mill's low sound.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_race_wade",
+              "label": "wade toward the sound (1hp on fail)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["addvar", "gold", 2],
+                    ["xp", 2],
+                    ["say", "The race is drier than it looks until it isn't. You come up on the far side with wet boots and two coins someone dropped chasing the same sound before you."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "The weed-choked bed gives out from under you a stride from the wheel, and you go down hard on old stone."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [5, 1],
@@ -330,6 +368,7 @@
           "name": "The East Bank",
           "desc": "A shallow dike-bank marks the fallow ground's true edge, water on the far side of it dark and unhurried. Nothing moves out there worth naming, most days.",
           "brief": "A dike-bank, dark water beyond.",
+          "items": ["fl_bank_line"],
           "onEnterOnce": [
             ["xp", 1],
             [
@@ -637,6 +676,18 @@
               ],
               []
             ]
+          ],
+          "actions": [
+            {
+              "id": "fl_dikes_look",
+              "label": "look toward what holds the line south",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "The earthworks keep running after the reed gives out, raised by hands with a different grief to answer than the Fallows'. Nobody here has walked that line in years."]
+              ]
+            }
           ]
         }
       ],
@@ -787,9 +838,117 @@
       "loc": "nowhere",
       "takeable": true,
       "hint": "worn nearly smooth, wedged in the split long before you found it"
+    },
+    "fl_sheep_bell": {
+      "name": "a rusted sheep-bell",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "the clapper still swings; nothing answers it now"
+    },
+    "fl_bank_line": {
+      "name": "a length of waxed fishing line, still hooked",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "somebody meant to come back for this catch"
+    },
+    "fl_forebarrow_castoff": {
+      "name": "a corroded pair of shears",
+      "loc": "fl_forebarrow_passage",
+      "takeable": true,
+      "hint": "dropped by someone who came this far into the older dark and no further"
     }
   },
   "npcs": {
+    "fl_chapel_petra": {
+      "name": "Petra",
+      "room": "fl_chapel_stamp_porch",
+      "desc": "A Wickstead woman with a candle-stub she never lights, sitting where the porch step is worn smoothest.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who keeps the porch now",
+          "once": true,
+          "say": "Petra. My grandmother swore this bell rang the fever in, not out. I still can't decide if that's why I keep coming, or despite it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask what the chapel still owes",
+          "if": [["class", "envoy"], ["flag", "said_fl_chapel_petra_greet"]],
+          "once": true,
+          "say": "Nothing owed, or nothing collected. Whatever's past that door, none of us has gone in to settle it in longer than I've been alive.",
+          "fx": [["addvar", "or_envoy_words", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "wear",
+          "label": "count the wear before the door",
+          "if": [["class", "scout"], ["flag", "said_fl_chapel_petra_greet"]],
+          "once": true,
+          "say": "You read the wear in the stone like a trail: one set of feet, always the same size, always stopping at the same flagstone. Never past it.",
+          "fx": [["addvar", "or_scout_marks", 1], ["score", 2], ["xp", 2]]
+        }
+      ]
+    },
+    "fl_forebarrow_alder": {
+      "name": "Alder",
+      "room": "fl_forebarrow_mouth",
+      "desc": "An old boundary-watcher, keeping well back from the doorstone, close enough only to be sure it's still shut.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who minds the old stones",
+          "once": true,
+          "say": "Alder. I mind the old boundary-stones, for what little that's worth. This mound was old when the ones your Furrow keeps were still standing.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask what this ground is owed",
+          "if": [["class", "envoy"], ["flag", "said_fl_forebarrow_alder_greet"]],
+          "once": true,
+          "say": "Older debts than the Fallows can pay, is my guess. Whatever's inside, it isn't waiting on us to settle it.",
+          "fx": [["addvar", "or_envoy_words", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "read",
+          "label": "read the ground he won't walk",
+          "if": [["class", "scout"], ["flag", "said_fl_forebarrow_alder_greet"]],
+          "once": true,
+          "say": "You see it before he says it: no path worn toward the doorstone, not even his. Whatever kept people off this mound outlasted the reason for it.",
+          "fx": [["addvar", "or_scout_marks", 1], ["score", 2], ["xp", 2]]
+        }
+      ]
+    },
+    "fl_sump_camp_coth": {
+      "name": "Coth",
+      "room": "fl_sump_camp_palisade",
+      "desc": "A recruiting picket at the stakes, cloak pinned tight against the sump's damp, tally-stick tapping his own knee.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "why he's posted at the stakes",
+          "once": true,
+          "say": "Coth. Sergeant's got me on the stakes till the tally's done. Recruiting's slow work in a hold this empty, slower still if you're not here to sign.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "ask",
+          "label": "ask what the tally's counting",
+          "if": [["class", "envoy"], ["flag", "said_fl_sump_camp_coth_greet"]],
+          "once": true,
+          "say": "He gives it up slower than the rounds did: fewer names than Coel wants, and every one of them a returner, not a recruit.",
+          "fx": [["addvar", "or_envoy_words", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "trade",
+          "label": "trade a soldier's read on the stakes",
+          "if": [["class", "warden"], ["flag", "said_fl_sump_camp_coth_greet"]],
+          "once": true,
+          "say": "He straightens without meaning to when you talk terrain like it's yours to judge too. \"Fair point,\" he allows, and fixes the gap you named.",
+          "fx": [["addvar", "or_warden_word", 1], ["score", 2], ["xp", 2]]
+        }
+      ]
+    },
     "fl_walker": {
       "name": "fallow-walker",
       "room": null,

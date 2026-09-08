@@ -10,6 +10,20 @@
       "onEnterOnce": [
         ["xp", 3],
         ["say", "This is the sound Glasswick doesn't talk about at the glassworks: layered voices, unhurried, more felt than heard, coming down off the ridge with the wind."]
+      ],
+      "actions": [
+        {
+          "id": "em_approach_prints",
+          "label": "read whose steps turn back here",
+          "free": true,
+          "once": true,
+          "if": [["class", "envoy"]],
+          "fx": [
+            ["addvar", "or_envoy_words", 1],
+            ["xp", 1],
+            ["say", "Two sets of prints climb through the ash; only one set climbs back down. Glasswick has a name for everyone who has tried this path and not finished it, and says none of them aloud."]
+          ]
+        }
       ]
     },
     "em_choir_nave": {
@@ -279,6 +293,12 @@
     }
   },
   "items": {
+    "em_turned_cord": {
+      "name": "an ash-stiffened prayer cord",
+      "loc": "em_choir_approach",
+      "takeable": true,
+      "hint": "someone climbed this far and went back down without it"
+    },
     "em_chapel_bell": {
       "name": "the chapel's recovered bell",
       "loc": "nowhere",
