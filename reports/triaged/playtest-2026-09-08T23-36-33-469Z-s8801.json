@@ -1,0 +1,46 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 618,
+  "receipt": "reach.8801.618.570.reach_at_rest.c6251c2c",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "A one-time dialogue offer (the gray priest's 'a blessing for the barrow') permanently vanished from the menu after being side-stepped once by picking other topics first, with no way to return to it even after re-entering the room and re-initiating conversation multiple times.",
+      "where": "Gray Chapel / talking with gray priest"
+    },
+    {
+      "sev": "P2",
+      "what": "Pacifying a hostile creature with 'name it' (barrow-wight, honour guard) sets it to 'stood down' but the blocked passage still requires a second explicit interaction (attack/slip past/rite) to actually open — the stand-down message implies the path is clear when it isn't.",
+      "where": "Barrow Crypt (Vale) and The Old Crypts (Marrowgate)"
+    },
+    {
+      "sev": "P2",
+      "what": "Buying an item (oilskin cloak) and picking up many quest-flavor trinkets never had a clear payoff or callback — most carried items (sea-glass, tent-peg, tally-sticks, etc.) were flavor-only with no use surfaced during play.",
+      "where": "general inventory"
+    }
+  ],
+  "confusions": [
+    "Early on, navigating the procedurally-generated Ashwood/Thornwold forest by cardinal directions was disorienting — many rooms looked similar and it took repeated 'get your bearings' calls to find named landmarks (Gallows Glade, the Understory, Hollow Gallery) buried several hops deep.",
+    "The game never signals when a side NPC's one-time gift/topic is gone for good vs. still pending, so it's easy to accidentally lock yourself out of content (see priest's blessing bug) without knowing until you look for it again.",
+    "It wasn't always clear which of many similar 'grief' resolution options (verse vs rite vs bargain vs burn) would actually count toward the 'hollows rested' tally versus just being flavor — status had to be checked repeatedly to confirm progress."
+  ],
+  "suggestions": [
+    "Let 'status'/'look' flag any one-time NPC offer that's about to be permanently missed (e.g., 'Ask now or this offer is gone') so exploratory dialogue choices aren't silently punishing.",
+    "When a pacified hostile still blocks a passage, say so explicitly in the same message ('it stands down, but still bars the way — go north again to test it') rather than implying the path is now open.",
+    "Give a few of the many collectible flavor items a small mechanical or narrative payoff so carrying 20+ keepsakes doesn't feel purely cosmetic.",
+    "A quick 'nearby landmarks' compass (like the free 'get your bearings') could be offered automatically on first entering any new hold, since it was the single most useful navigation tool in the game."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-08T23-36-33-469Z",
+  "seed": 8801,
+  "build": {
+    "rev": "764435d",
+    "world": "7fc517aa"
+  },
+  "cost_usd": 27.90120979999998,
+  "verified": true
+}
