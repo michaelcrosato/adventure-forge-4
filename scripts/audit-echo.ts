@@ -38,6 +38,13 @@ const world: World = loadWorld(path);
 // is the point of a template, not a defect. Its ids all begin `<stamp id>_`.
 const stampPrefixes = (world.stamps ?? []).map((st) => `${st.id}_`);
 const stamped = (where: string) => stampPrefixes.some((p) => where.startsWith(p));
+/**
+ * A realm-wide convention is not an echo. Every wilderness cell carries a
+ * "get your bearings" action naming the same landmarks from that cell, so the
+ * lines differ only in their directions and are SUPPOSED to: they are a
+ * compass, not prose. Counted separately, like a template's copies.
+ */
+const conventional = (where: string) => /bearings/.test(where);
 
 type Line = { where: string; text: string; words: string[]; shingles: Set<string> };
 const lines: Line[] = [];
@@ -89,17 +96,23 @@ for (const bucket of index.values()) {
 type Pair = { a: Line; b: Line; score: number };
 const pairs: Pair[] = [];
 let templateEchoes = 0;
+let conventionEchoes = 0;
 for (const [key, common] of shared) {
   const [ai, bi] = key.split(",").map(Number) as [number, number];
   const a = lines[ai]!, b = lines[bi]!;
   const jaccard = common / (a.shingles.size + b.shingles.size - common);
   if (jaccard < MIN) continue;
   if (stamped(a.where) || stamped(b.where)) { templateEchoes += 1; continue; }
+  if (conventional(a.where) && conventional(b.where)) { conventionEchoes += 1; continue; }
   pairs.push({ a, b, score: jaccard });
 }
 pairs.sort((x, y) => y.score - x.score);
 
 const clip = (s: string, n = 150) => (s.length > n ? `${s.slice(0, n)}…` : s);
+if (conventionEchoes) {
+  console.log(`${conventionEchoes} echoes are two cells' "get your bearings" compass lines, which differ only in their directions — a convention, not prose. Not counted below.`);
+  console.log();
+}
 if (templateEchoes) {
   const byTemplate = new Map<string, number>();
   for (const st of world.stamps ?? []) byTemplate.set(st.template, (byTemplate.get(st.template) ?? 0) + 1);
