@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByLabel, actionLabel, inTravelMode, journal, legalActions, newState, roomView, step, travelAvailable } from "../src/engine.ts";
+import { actionByLabel, actionLabel, inTravelMode, journal, legalActions, newState, oddsHint, roomView, step, travelAvailable } from "../src/engine.ts";
 import { render, renderStatus } from "../src/format.ts";
 import { validateWorld } from "../src/validate.ts";
 import { EPILOGUE_CAP, MENU_CAP } from "../src/types.ts";
@@ -379,16 +379,34 @@ test("the first time fast travel is on the menu, one hint says so — and never 
   assert.ok(state.flags["_seenTravel"]);
 });
 
-test("the first unexplored side-trip exit earns a one-time legend for the * marker", () => {
+test("an unexplored side trip says so on the option itself, and needs no legend", () => {
+  // It used to be a "*" on the exits line plus a one-time legend explaining the
+  // symbol, once per region. The exits line is gone (it restated the menu under
+  // it) and the marker moved onto the `go` option in words, so the legend now
+  // explained a symbol nobody would ever see.
   const world = line(3);
   world.rooms["r1"]!.exits!["north"] = { to: "r2", sideTrip: true };
   let { state } = newState(world, 1);
   const first = step(world, state, actionByLabel(world, state, "go east")!);
-  assert.match(first.events.join(" "), /\* marks an optional side path not yet visited/);
+  assert.doesNotMatch(first.events.join(" "), /marks an optional side path/);
   state = first.state;
+  const shown = (s: State) => legalActions(world, s).map((a) => `${actionLabel(world, a, s)}${oddsHint(world, s, a)}`);
+  // r2 carries a landmark, so the option names where it goes and that nobody has been
+  assert.ok(shown(state).includes("go north (toward place 2, not yet walked)"), shown(state).join(" | "));
+  // and once walked, it reads as an ordinary exit again
+  state = doLabel(world, state, "go north");
   state = doLabel(world, state, "go west");
-  const again = step(world, state, actionByLabel(world, state, "go east")!);
-  assert.doesNotMatch(again.events.join(" "), /side path/);
+  assert.ok(shown(state).includes("go north (toward place 2)"), shown(state).join(" | "));
+
+  // an unwalked side trip into a room with no landmark of its own still says so
+  const plain = line(3);
+  plain.rooms["r2"]!.landmark = undefined;
+  plain.rooms["r1"]!.exits!["north"] = { to: "r2", sideTrip: true };
+  let p = newState(plain, 1).state;
+  p = step(plain, p, actionByLabel(plain, p, "go east")!).state;
+  assert.ok(
+    legalActions(plain, p).map((a) => `${actionLabel(plain, a, p)}${oddsHint(plain, p, a)}`).includes("go north (a way not yet walked)"),
+  );
 });
 
 test("a travel list past the cap turns pages: 'more places' is free and wraps, 'stay here' stays on every page", () => {

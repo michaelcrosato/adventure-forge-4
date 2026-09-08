@@ -1908,17 +1908,6 @@ export function step(world: World, prev: State, action: Action): StepOut {
     s.flags[endKey] = true;
     events.push("(An ending waits in this room. What you have left undone elsewhere stays undone.)");
   }
-  // Once per region, the first time the exits line there would carry a * (an
-  // unexplored side trip): locked exits explain themselves inline, this marker
-  // did not, and a player who met it in the Vale had forgotten it by Thornwold.
-  const seenKey = `_seenSideTrip_${world.rooms[s.room]?.region ?? ""}`;
-  if (!s.ended && !s.flags[seenKey]) {
-    const exits = world.rooms[s.room]?.exits ?? {};
-    if (Object.values(exits).some((ex) => ex.sideTrip && !s.visited.includes(ex.to))) {
-      s.flags[seenKey] = true;
-      events.push("(* marks an optional side path not yet visited.)");
-    }
-  }
   // Once, the first time something that strikes through armor stands in the
   // room: the "armor useless" tag was read by armored players as an afterthought
   // to the first blow, not the warning before it that it is.

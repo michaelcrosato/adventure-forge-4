@@ -22,6 +22,10 @@ import type { State, World } from "../src/types.ts";
 // and the test is the one that decides
 const AVG_MAX = 450, MAX_MAX = 1100, INTRO_MAX = 1400;
 
+// piping to `head` closes stdout mid-write, which node turns into an unhandled
+// EPIPE and a stack trace over the numbers you were reading. Authors pipe.
+process.stdout.on("error", (e: NodeJS.ErrnoException) => { if (e.code === "EPIPE") process.exit(0); });
+
 const [path, ...rest] = process.argv.slice(2);
 if (!path) { console.error("usage: node --import tsx scripts/budget.ts <world.json> [--top N] [--terse]"); process.exit(2); }
 const top = rest.includes("--top") ? Number(rest[rest.indexOf("--top") + 1]) : 5;
