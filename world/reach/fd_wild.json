@@ -42,7 +42,10 @@
               "label": "read the ground",
               "free": true,
               "once": true,
-              "fx": [["xp", 1], ["say", "Bootprints press deep here, then vanish onto the dike's stone. Someone crosses this way often, and lightly."]]
+              "fx": [
+                ["xp", 1],
+                ["say", "Bootprints press deep here, then vanish onto the dike's stone. Someone crosses this way often, and lightly."]
+              ]
             }
           ]
         },
@@ -89,7 +92,10 @@
               "label": "read the drag-marks",
               "free": true,
               "once": true,
-              "fx": [["xp", 1], ["say", "Reed is crushed flat in a line from the doorway, out and back, more than once. Whatever uses this door, it comes and goes."]]
+              "fx": [
+                ["xp", 1],
+                ["say", "Reed is crushed flat in a line from the doorway, out and back, more than once. Whatever uses this door, it comes and goes."]
+              ]
             }
           ]
         },
@@ -114,7 +120,10 @@
               "label": "count the reed-stacks",
               "free": true,
               "once": true,
-              "fx": [["xp", 1], ["say", "More reed cut and bundled than one hut could use in a year. Whoever lives here doesn't stop, or doesn't sleep much."]]
+              "fx": [
+                ["xp", 1],
+                ["say", "More reed cut and bundled than one hut could use in a year. Whoever lives here doesn't stop, or doesn't sleep much."]
+              ]
             }
           ]
         },
@@ -134,8 +143,15 @@
                   "check",
                   "grace",
                   9,
-                  [["score", 2], ["xp", 2], ["say", "You lift a fat eel clean out of a heron's beak before it knows you're there. It does not forgive you for it."]],
-                  [["hp", -1], ["say", "A heron's beak finds your knuckles before your fingers find the fish. The whole line takes wing, screaming."]]
+                  [
+                    ["score", 2],
+                    ["xp", 2],
+                    ["say", "You lift a fat eel clean out of a heron's beak before it knows you're there. It does not forgive you for it."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "A heron's beak finds your knuckles before your fingers find the fish. The whole line takes wing, screaming."]
+                  ]
                 ]
               ]
             }
@@ -165,8 +181,15 @@
                   "check",
                   "wits",
                   9,
-                  [["addvar", "gold", 2], ["score", 1], ["xp", 2], ["say", "One set of prints doubles back on itself, pressed deeper than the rest. Someone dropped a purse here, and never came back for it."]],
-                  [["say", "The footprints lead everywhere and nowhere. Whatever this crossing has seen, it isn't giving it up today."]]
+                  [
+                    ["addvar", "gold", 2],
+                    ["score", 1],
+                    ["xp", 2],
+                    ["say", "One set of prints doubles back on itself, pressed deeper than the rest. Someone dropped a purse here, and never came back for it."]
+                  ],
+                  [
+                    ["say", "The footprints lead everywhere and nowhere. Whatever this crossing has seen, it isn't giving it up today."]
+                  ]
                 ]
               ]
             }
@@ -184,7 +207,10 @@
               "label": "listen to the roof",
               "free": true,
               "once": true,
-              "fx": [["xp", 1], ["say", "The hum comes up through the slates, felt in your teeth more than heard. It doesn't stop when you do."]]
+              "fx": [
+                ["xp", 1],
+                ["say", "The hum comes up through the slates, felt in your teeth more than heard. It doesn't stop when you do."]
+              ]
             }
           ]
         },
@@ -244,7 +270,11 @@
                   "check",
                   "grace",
                   9,
-                  [["score", 2], ["xp", 2], ["say", "The door swings on its one hinge and you're through before it decides to fall."]],
+                  [
+                    ["score", 2],
+                    ["xp", 2],
+                    ["say", "The door swings on its one hinge and you're through before it decides to fall."]
+                  ],
                   [["hp", -1], ["say", "The door picks its moment and swings hard into your shoulder as you pass."]]
                 ]
               ]
@@ -263,7 +293,10 @@
               "label": "look for what made this gap",
               "free": true,
               "once": true,
-              "fx": [["xp", 1], ["say", "Reed is torn out by the root in a line too straight for wind or water. Something heavy came through here, and not long ago."]]
+              "fx": [
+                ["xp", 1],
+                ["say", "Reed is torn out by the root in a line too straight for wind or water. Something heavy came through here, and not long ago."]
+              ]
             }
           ]
         },
@@ -279,7 +312,10 @@
               "label": "listen at the bank",
               "free": true,
               "once": true,
-              "fx": [["xp", 1], ["say", "Something breathes, slow and even, just past where the dark starts. It hasn't noticed you yet, or doesn't care to."]]
+              "fx": [
+                ["xp", 1],
+                ["say", "Something breathes, slow and even, just past where the dark starts. It hasn't noticed you yet, or doesn't care to."]
+              ]
             }
           ]
         },
@@ -314,7 +350,10 @@
               "label": "trace the worn carving",
               "free": true,
               "once": true,
-              "fx": [["xp", 1], ["say", "Half a word survives under your fingers, more guess than reading. It might have once said REEDHOLM. It might have said something older."]]
+              "fx": [
+                ["xp", 1],
+                ["say", "Half a word survives under your fingers, more guess than reading. It might have once said REEDHOLM. It might have said something older."]
+              ]
             }
           ]
         },
@@ -342,7 +381,11 @@
                   "check",
                   "grace",
                   9,
-                  [["addvar", "gold", 2], ["xp", 2], ["say", "You catch a glint before the next wave takes it back, and come up with coin, cold and green with age."]],
+                  [
+                    ["addvar", "gold", 2],
+                    ["xp", 2],
+                    ["say", "You catch a glint before the next wave takes it back, and come up with coin, cold and green with age."]
+                  ],
                   [["hp", -1], ["say", "A wave takes your footing along with whatever you were reaching for."]]
                 ]
               ]
@@ -366,7 +409,7 @@
             [
               [
                 "if",
-                [["!npcDead", "fd_bog_thing"]],
+                [["!npcDead", "fd_bog_thing"], ["!flag", "watch_trusted"], ["!flag", "crown_trusted"]],
                 [
                   ["npcgo", "fd_bog_thing", "here"],
                   ["say", "Something surfaces beside you, gray and dripping, before you've even heard it move."]

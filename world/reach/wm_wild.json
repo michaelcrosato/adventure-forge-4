@@ -588,7 +588,12 @@
             [
               [
                 "if",
-                [["!npcDead", "wm_lost_sentry"], ["!flag", "wm_wight_known"], ["!flag", "watch_trusted"]],
+                [
+                  ["!npcDead", "wm_lost_sentry"],
+                  ["!flag", "wm_wight_known"],
+                  ["!flag", "watch_trusted"],
+                  ["!flag", "crown_trusted"]
+                ],
                 [
                   ["npcgo", "wm_lost_sentry", "here"],
                   ["say", "The mist thickens, and boots fall into step behind you — in time, unhurried, and not yours."]
