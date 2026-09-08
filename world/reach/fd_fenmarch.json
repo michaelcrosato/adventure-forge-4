@@ -795,6 +795,16 @@
       "owner": "fd_prior",
       "hint": "Church wax, meant for the drowned nave's altar"
     },
+    "fd_priors_rite": {
+      "name": "the Prior's rite",
+      "loc": "nowhere",
+      "hint": "Church-sealed; said to ease even a barrow's grief, once, wherever it's carried"
+    },
+    "fd_bell_of_reach": {
+      "name": "the Bell of the Reach",
+      "loc": "nowhere",
+      "hint": "the mark of an office, not a trophy — every gray house between here and Coldpass should know it"
+    },
     "fd_trader_scale": {
       "name": "a set of brass scale-weights",
       "loc": "fd_eel_market",
@@ -1060,6 +1070,34 @@
           "once": true,
           "say": "You quote the rite he should have rung the bell over, word for word, in the tongue it was cut in. He flinches. \"You read it as I was taught it,\" he says. \"Not as I've let it become.\"",
           "fx": [["set", "or_scholar_fd_halm"], ["xp", 2], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "fd_prior_trusted_offer",
+          "label": "ask to be trusted by the Church",
+          "if": [["var", "rep_church", ">=", 5], ["!flag", "church_trusted"]],
+          "once": true,
+          "say": "Halm weighs you a long moment, then presses something sealed into your hand. 'The Priory's rite,' he says. 'You've done more for grieving houses than most who wear the gray. Carry it. You're one of ours now.'",
+          "fx": [["set", "church_trusted"], ["move", "fd_priors_rite", "inv"], ["score", 5], ["xp", 3]]
+        },
+        {
+          "id": "fd_prior_trusted_refuse",
+          "label": "ask to be trusted by the Church",
+          "if": [["var", "rep_church", "<", 5], ["!flag", "church_trusted"]],
+          "say": "'Trust isn't a rite I say over one good turn.' Halm's hands go still, for once. 'Do more, across more water than mine, and ask me again.'"
+        },
+        {
+          "id": "fd_prior_sworn_offer",
+          "label": "ask to be sworn to the Church",
+          "if": [["var", "rep_church", ">=", 9], ["!flag", "church_sworn"]],
+          "once": true,
+          "say": "Halm doesn't smile. 'Sworn isn't a reward, whatever titles mean to the Ironbound. It means the next grief needing air is yours to give, wherever found, ready or not.' He waits. 'If you still want it, you're sworn.'",
+          "fx": [["set", "church_sworn"], ["move", "fd_bell_of_reach", "inv"], ["addvar", "rep_iron", -3], ["score", 8], ["xp", 4]]
+        },
+        {
+          "id": "fd_prior_sworn_refuse",
+          "label": "ask to be sworn to the Church",
+          "if": [["var", "rep_church", "<", 9], ["!flag", "church_sworn"], ["flag", "church_trusted"]],
+          "say": "'Sworn is a heavier water than trusted.' Halm shakes his head, not unkindly. 'I won't hand you an office you'll only ever carry through one hold. Earn it wider. Then ask.'"
         }
       ]
     },
@@ -1795,6 +1833,25 @@
       "if": [["flag", "or_scout_fd_netkeep_wary"]],
       "text": "The net-hall's keeper still counts his tools twice when a certain quiet sort passes through, and won't say why.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "church_sworn"]],
+      "text": "The Bell of the Reach rings in whatever hand carries it now. Halm never explains what that costs the one sworn to it, and neither do you.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "church_trusted"], ["!flag", "church_sworn"]],
+      "text": "The Priory's rite still rides in a stranger's coat, sealed and unspent. Halm says that's exactly how it should sit until it's needed.",
+      "weight": 1
+    }
+  ],
+  "statusPaths": [
+    {
+      "label": "your standing with the Gray Church",
+      "states": [
+        { "if": [["flag", "church_sworn"]], "text": "sworn to the Church" },
+        { "if": [["flag", "church_trusted"]], "text": "trusted by the Priory" }
+      ]
     }
   ],
   "quests": {

@@ -1,4 +1,7 @@
 {
+  "conditions": {
+    "mg_flanked": { "name": "flanked by hired steel", "armor": -3, "hint": "a Free Company blade at her back" }
+  },
   "rooms": {
     "mg_south_gate": {
       "name": "Marrowgate, South Gate",
@@ -869,7 +872,16 @@
           [["flag", "mg_admitted"]],
           [
             ["npcgo", "mg_regent", "here"],
-            ["say", "Footsteps on the stair behind you: Regent Ysolde Ashreeve, alone, with a lamp. 'So,' she says. 'Someone finally came down.'"]
+            ["say", "Footsteps on the stair behind you: Regent Ysolde Ashreeve, alone, with a lamp. 'So,' she says. 'Someone finally came down.'"],
+            [
+              "if",
+              [["flag", "free_sworn"]],
+              [
+                ["npccond", "mg_regent", "mg_flanked", 30],
+                ["say", "She isn't as alone as she thinks. Company steel came down with you and holds the stair at your back — she clocks them a beat too late to like it."]
+              ],
+              []
+            ]
           ],
           []
         ]
@@ -1084,7 +1096,26 @@
           "fx": [
             ["set", "mg_throne_resolved"],
             ["score", 30],
-            ["end", "win", "regent_deposed", "You read the first Reeve's own hand aloud, and Quill's people come out of the smugglers' cut with knives and a grin. The Regent leaves Marrowgate in a barrel-cart, alive, which was the bargain. The Free Companies hold the palace for a season and then, to everyone's surprise, hold an election."]
+            [
+              "if",
+              [["flag", "free_sworn"]],
+              [
+                [
+                  "end",
+                  "win",
+                  "regent_deposed",
+                  "You read the first Reeve's own hand aloud, and it's your own company that comes out of the smugglers' cut first, knives and a grin you taught them. The Regent leaves Marrowgate in a barrel-cart, alive, which was the bargain. The Free Companies hold the palace for a season and then, to everyone's surprise, hold an election."
+                ]
+              ],
+              [
+                [
+                  "end",
+                  "win",
+                  "regent_deposed",
+                  "You read the first Reeve's own hand aloud, and Quill's people come out of the smugglers' cut with knives and a grin. The Regent leaves Marrowgate in a barrel-cart, alive, which was the bargain. The Free Companies hold the palace for a season and then, to everyone's surprise, hold an election."
+                ]
+              ]
+            ]
           ]
         },
         {
@@ -1409,6 +1440,11 @@
       "hint": "eat them to heal",
       "use": [{ "fx": [["hp", 4], ["move", "mg_herbs", "nowhere"], ["say", "Bitter. The gray thread you spit out."]] }]
     },
+    "mg_regent_seal": {
+      "name": "the Regent's own seal-ring",
+      "loc": "nowhere",
+      "hint": "marks Crown business wherever the writ alone wouldn't reach"
+    },
     "mg_founding_ledger": {
       "name": "the founding ledger",
       "loc": "nowhere",
@@ -1473,7 +1509,26 @@
         ["addvar", "rep_crown", -3],
         ["addvar", "rep_watch", -2],
         ["score", 15],
-        ["end", "win", "regent_deposed", "The Regent dies with the stag under her. The Watch comes running and finds you standing over the House of Ashreeve; what they do next depends on who you have been to them. The Reach has no Regent by morning, and the gray does not care either way."]
+        [
+          "if",
+          [["flag", "free_sworn"], ["flag", "mg_at_throne"]],
+          [
+            [
+              "end",
+              "win",
+              "regent_deposed",
+              "The Regent dies with the stag under her, Company steel closing around the stair before her own guard can reach it. The Watch finds hired swords already holding the room, and no great mystery whose banner they answered to. The Reach has no Regent by morning, and the gray does not care either way."
+            ]
+          ],
+          [
+            [
+              "end",
+              "win",
+              "regent_deposed",
+              "The Regent dies with the stag under her. The Watch comes running and finds you standing over the House of Ashreeve; what they do next depends on who you have been to them. The Reach has no Regent by morning, and the gray does not care either way."
+            ]
+          ]
+        ]
       ],
       "topics": [
         {
@@ -2155,6 +2210,63 @@
               []
             ]
           ]
+        },
+        {
+          "id": "mg_regent_trusted_offer",
+          "label": "ask to be trusted with Crown business",
+          "if": [["var", "rep_crown", ">=", 5], ["!flag", "crown_trusted"]],
+          "once": true,
+          "say": "She studies you the way she studies a column that finally balances. 'You've been useful to more than one hand of mine now. That isn't loyalty, but it totals the same on my ledger.' She nods, once, like signing something.",
+          "fx": [
+            ["set", "crown_trusted"],
+            [
+              "if",
+              [["!flag", "regent_writ"]],
+              [
+                ["set", "regent_writ"],
+                ["say", "A writ is drawn while you wait, her own seal pressed into the wax before it cools. 'The gate will know you now. So will my purse, when you need it to.'"]
+              ],
+              []
+            ],
+            ["addvar", "gold", 6],
+            ["score", 5],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "mg_regent_trusted_refuse",
+          "label": "ask to be trusted with Crown business",
+          "if": [["var", "rep_crown", "<", 5], ["!flag", "crown_trusted"]],
+          "say": "'Trust from this chair isn't a toll paid once.' She doesn't look up from the window. 'Be useful to more than one hand of mine, then ask me again.'"
+        },
+        {
+          "id": "mg_regent_sworn_offer",
+          "label": "ask to be sworn as the Regent's hand",
+          "if": [["var", "rep_crown", ">=", 9], ["!flag", "crown_sworn"]],
+          "once": true,
+          "say": "She turns from the window. 'Sworn. Not a title for the merely useful.' A pause. 'You know what this house stands on. Sworn to me, you help it stay forgotten — quietly, as everything here gets done. That's the office.'",
+          "fx": [
+            ["set", "crown_sworn"],
+            [
+              "if",
+              [["!flag", "mg_admitted"]],
+              [
+                ["set", "mg_admitted"],
+                ["say", "'You won't be shown to the gate again,' she says. 'You won't need to be.'"]
+              ],
+              []
+            ],
+            ["move", "mg_regent_seal", "inv"],
+            ["addvar", "rep_free", -3],
+            ["score", 8],
+            ["xp", 4]
+          ]
+        },
+        {
+          "id": "mg_regent_sworn_refuse",
+          "label": "ask to be sworn as the Regent's hand",
+          "if": [["var", "rep_crown", "<", 9], ["!flag", "crown_sworn"], ["flag", "crown_trusted"]],
+          "say": "'Sworn is a different debt than trusted, and I don't extend it for one hand's work.' She turns back to the window. 'Earn it from more of this city than my own chamber. Then ask me again.'"
         }
       ]
     },
@@ -3464,7 +3576,7 @@
           "if": [
             [
               "any",
-              [["flag", "sv_ir_rested_stone_hall"], ["flag", "sv_ir_rested_broker"], ["flag", "sv_ir_rested_unmarked"]]
+              [["flag", "sv_ir_rested_broker"], ["flag", "sv_ir_rested_stone_hall"], ["flag", "sv_ir_rested_unmarked"]]
             ]
           ],
           "once": true,
@@ -3473,27 +3585,29 @@
             ["xp", 2],
             [
               "if",
-              [["flag", "sv_ir_rested_stone_hall"]],
-              [
-                ["say", "\"The miners' hall cut the names in, rough, and the company has written to complain,\" she says. \"I have filed the complaint under the names.\""]
-              ],
-              []
-            ],
-            [
-              "if",
               [["flag", "sv_ir_rested_broker"]],
               [
-                ["say", "\"The company paid for the cutting itself, once someone talked it round,\" she says. \"Its ledger calls that a gift. Mine calls it the least it owed.\""]
+                ["say", "\"The company paid for the cutting itself, once someone talked it round,\" he says. \"Its ledger calls that a gift. Mine calls it the least it owed.\""]
               ],
-              []
-            ],
-            [
-              "if",
-              [["flag", "sv_ir_rested_unmarked"]],
               [
-                ["say", "\"The scratches stand uncut under the company's sign,\" she says. \"A ledger keeps a name four hundred years. A scratch lasts till the next rain. I wish you'd chosen the stone.\""]
-              ],
-              []
+                [
+                  "if",
+                  [["flag", "sv_ir_rested_stone_hall"]],
+                  [
+                    ["say", "\"The miners' hall cut the names in, rough, and the company has written to complain,\" he says. \"I have filed the complaint under the names.\""]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["flag", "sv_ir_rested_unmarked"]],
+                      [
+                        ["say", "\"The scratches stand uncut under the company's sign,\" he says. \"A ledger keeps a name four hundred years. A scratch lasts till the next rain. I wish you'd chosen the stone.\""]
+                      ],
+                      []
+                    ]
+                  ]
+                ]
+              ]
             ]
           ]
         },
@@ -4201,6 +4315,15 @@
       ]
     }
   },
+  "statusPaths": [
+    {
+      "label": "your standing with the Crown",
+      "states": [
+        { "if": [["flag", "crown_sworn"]], "text": "sworn as the Regent's hand" },
+        { "if": [["flag", "crown_trusted"]], "text": "trusted with Crown business" }
+      ]
+    }
+  ],
   "epilogue": [
     {
       "if": [["flag", "mg_regent_shaken"]],
@@ -4280,6 +4403,21 @@
       "if": [["flag", "mg_hand_marks_known"]],
       "text": "Someone is still cutting the raised hand into Marrowgate's stone, cellar door and stair alike. Nobody official has explained it.",
       "weight": 0
+    },
+    {
+      "if": [["flag", "crown_sworn"]],
+      "text": "The Reach knows whose hand serves the Regent now, quiet as everything that matters here gets done. The house stands exactly as founded.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "crown_trusted"], ["!flag", "crown_sworn"]],
+      "text": "The palace gate knows your face without a writ shown twice. The Regent's coin bought the loyalty it paid for, and both know the price.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "free_sworn"], ["flag", "mg_at_throne"]],
+      "text": "Company steel came down into the dark with you, to the Hollow Throne. Whatever the Ashreeve line became, the Companies say they were there.",
+      "weight": 1
     }
   ],
   "stamps": [
