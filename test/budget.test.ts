@@ -42,23 +42,24 @@ const INTRO_CHARS_MAX = 1400;
  * what it costs and why.
  */
 const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
-  "reach:crowned_hollow": { avg: 434, max: 926 },
-  "reach:hollow_reach": { avg: 442, max: 1042 },
-  "reach:regent_deposed": { avg: 455, max: 1171 },
-  "reach:reach_burned": { avg: 445, max: 1244 },
-  "reach:gray_crown": { avg: 482, max: 1129 },
-  "reach:reach_at_rest": { avg: 449, max: 1076 },
-  "reach:reach_at_rest#warden": { avg: 447, max: 1239 },
-  "reach:regent_deposed#warden_crown": { avg: 454, max: 1142 },
-  // The full-party road: four companions travelling, which is what makes it
-  // the most expensive proof in the realm — and the ratchet turned down twice
-  // on the day it was written. It arrived at 506 average and a 1,489-character
-  // screen at mc_north_road; dropping the "with you" line where the company
-  // entry already names everyone, and giving each event its own line, took it
-  // to 481 and 1,448. What is left is a hold's arrival text plus all four
-  // companions answering it in the same breath, which is content worth having
-  // and a wall of text as delivered — tracked as its own defect.
-  "reach:reach_at_rest#devoted": { avg: 481, max: 1448 },
+  // Only the roads that are over, and only in the dimension they are over: an
+  // allowance in the other dimension is the real ceiling, so a road cannot
+  // trade one for the other. crowned_hollow, hollow_reach and reach_at_rest
+  // are not here at all — they meet the real bar, and hollow_reach came back
+  // under it (1,042 to 982) when quest stage changes learned to collapse.
+  "reach:regent_deposed": { avg: 453, max: 1171 },
+  "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1244 },
+  "reach:gray_crown": { avg: 480, max: 1129 },
+  "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1239 },
+  "reach:regent_deposed#warden_crown": { avg: AVG_CHARS_MAX, max: 1142 },
+  // The full-party road: four companions travelling, the most expensive proof
+  // in the realm, and the ratchet turned down three times on the day it was
+  // written. It arrived at 506 average and a 1,489-character screen at
+  // mc_north_road; not repeating the company entry, giving each event its own
+  // line, and collapsing quest stage changes took it to 478 and 1,448. What is
+  // left is a hold's arrival text plus all four companions answering it in the
+  // same breath — content worth having, delivered as a wall, and its own task.
+  "reach:reach_at_rest#devoted": { avg: 478, max: 1448 },
 };
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));

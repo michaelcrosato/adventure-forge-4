@@ -496,15 +496,28 @@ function journalEvents(world: World, before: State, after: State, events: string
   if (!world.quests) return;
   const prev = new Map(journal(world, before).map((q) => [q.id, q]));
   const now = journal(world, after);
-  // entering a hold can begin several quests at once; one line names them all
-  // and the journal (status) carries their text, so the screen stays readable
-  const begun = now.filter((q) => !prev.has(q.id) && q.status !== "done" && q.status !== "failed" && q.text);
-  const collapse = begun.length >= 2;
-  if (collapse) events.push(`Journal: ${begun.map((q) => q.name).join("; ")} — see status.`);
+  // Entering a hold can move several quests at once — begin them, or turn each
+  // of them to a new stage — and one line names them all while the journal
+  // (status) carries their text, so the screen stays readable.
+  //
+  // Beginnings collapsed from the start; stage changes did not, and the
+  // difference was invisible until a quest's start moved earlier. Then arriving
+  // at Marrowgate's south gate turned two quests to their next stage in the
+  // same breath and printed both in full, 250 characters of a 1,159-character
+  // screen. To a player they are the same wall of text either way, so both
+  // collapse now, and a mix of the two collapses together.
+  const moved = now.filter((q) => {
+    const p = prev.get(q.id);
+    if (q.status === "done" || q.status === "failed") return false;
+    if (!q.text) return false;
+    return !p || p.text !== q.text || p.status !== q.status;
+  });
+  const collapse = moved.length >= 2;
+  if (collapse) events.push(`Journal: ${moved.map((q) => q.name).join("; ")} — see status.`);
   for (const q of now) {
     const p = prev.get(q.id);
     if (p && p.status === q.status && p.text === q.text) continue;
-    if (collapse && !p && q.status !== "done" && q.status !== "failed") continue;
+    if (collapse && q.status !== "done" && q.status !== "failed") continue;
     // a quest that first appears already closed (its start and its end came
     // together, or its end came first) was never the player's to finish: no announcement
     if (!p && (q.status === "done" || q.status === "failed")) continue;
