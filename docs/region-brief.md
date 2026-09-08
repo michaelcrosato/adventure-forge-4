@@ -109,11 +109,26 @@ ones written first at 44-60%. **Your region ships under 15%.** Check it:
 node --import tsx scripts/audit-shape.ts world/reach.json --prefix <code>
 ```
 
+**Every open cell of your grid gets its own named scene.** A cell with no
+`scene` or `spot` falls back to a generated name and one generic line — "the
+Warrens 1,2", "Alleys stacked on alleys" — and every such cell in a grid
+reads identically. Two regions shipped with this hole (the Saltkerns, 24 open
+cells and 5 authored; Marrowgate's warrens, 9 and 3), so count them before
+you hand in: open cells = `w × h − walls`, and `scenes + spots` must reach it.
+
 A wilderness cell earns its keep with a one-turn find, a check with a real
 price, a free beat that weighs what you are looking at, or a `variant` that
 reads a choice made elsewhere. Vary the shapes; do not put an npc on every
 cell. Emptiness can be the subject of a room without being its whole content:
 give the player something to *do about* what they are looking at.
+
+**Do not write a sentence the realm already has.** Two Ironbound lay-brothers
+in two different holds open with the same line ("cheerful in the way of
+someone who has made his peace with fire being the answer to most things"),
+and two holds carry a quest named "The Child at the Wall". `audit-echo.ts`
+compares every authored line against every other and prints the pairs that
+are effectively the same sentence; a stamped place matching its own template
+is expected and counted separately. Run it before you hand in.
 
 **A number you move must be read back at the height it can reach.** The realm
 moves faction standing in about twelve hundred places and reads it at six
@@ -153,6 +168,7 @@ node --import tsx src/crawl.ts world/reach.json         # must be clean; note ro
 node --import tsx scripts/lint-world.ts world/reach.json    # text budgets, per-region counts
 node --import tsx scripts/audit-shape.ts world/reach.json --prefix <code>    # bare rooms, the shape of the hold
 node --import tsx scripts/audit-choices.ts world/reach.json --prefix <code>  # what is read back, and what is forgotten
+node --import tsx scripts/audit-echo.ts world/reach.json --prefix <code>     # sentences the realm has already written once
 ```
 
 Run them from the repo root. Fix every line that names one of your ids. If
