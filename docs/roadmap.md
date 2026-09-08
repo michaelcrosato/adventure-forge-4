@@ -204,6 +204,37 @@ not a reason to stop authoring today.
 - **Every `gen` grid now covers every open cell** — the two that shipped
   unwritten (the Saltkerns 24/5, Marrowgate's warrens 9/3) are authored.
 
+## Read the winner's trace, not just the report
+
+A playtest report gives a verdict and a list of complaints. The **trace** it
+leaves in `runs/` replays through the real engine and gives everything else,
+and it is cheap — the wave already paid for it:
+
+```bash
+node --import tsx -e "
+import {newState, step} from './src/engine.ts';
+import {loadWorld} from './src/validate.ts';
+import {readFileSync} from 'node:fs';
+const w = loadWorld('world/reach.json');
+const t = JSON.parse(readFileSync('runs/<trace>.json','utf8'));
+let { state } = newState(w, t.seed);
+for (const a of t.actions) { state = step(w, state, a).state; if (state.ended) break; }
+console.log(state.ended?.id, state.turn, state.score, state.classId, state.party, state.vars);"
+```
+
+One replay of the first winning run (seed 8802, `reach_at_rest`, turn 397)
+paid for itself three times over:
+
+- The player finished **with all four companions**, which is exactly the
+  configuration that renders 1,444 characters against the 1,100 cap. A latent
+  bug became a confirmed live one.
+- They entered Thornwold at **turn 148** — 37% of the run inside the Vale
+  before leaving it, then six regions in the remaining 250 turns.
+- They ended at **Keepers +16, Church +11**, so both of the standing tiers
+  being built would have fired for them. The +5/+9 calibration is right.
+
+None of that was in the report they wrote.
+
 ## The order
 
 1. **Corridors and echoes** — the density and freshness of what already
