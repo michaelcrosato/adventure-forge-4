@@ -480,12 +480,12 @@
           "label": "the old rite for them",
           "if": [["flag", "hb_heard_warden_lore"]],
           "once": true,
-          "say": "Three verses were cut for that court, same custom as everywhere once: the ring-ditch, the king's causeway, and the mere-stone. Read them right and the old kings lie back down.",
+          "say": "No rite anyone still knows — the eldest doesn't even keep his own name anymore. The causeway, the ring-ditch, and the mere-stone might, between them, if you can trust what they say.",
           "fx": [["xp", 2]]
         },
         {
           "id": "key",
-          "label": "a shorter road than three verses",
+          "label": "a shorter road than working it out",
           "if": [["flag", "hb_heard_warden_lore"], ["!flag", "stole_hb_warden_seal"]],
           "once": true,
           "say": "There's talk of a key cut for that mound once, before the doors were sealed proper. Keeper Wren would know, if she still trusts anyone that far.",
@@ -1021,6 +1021,49 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "react_named_true",
+          "label": "about the name that did",
+          "if": [["flag", "hb_named_true"]],
+          "once": true,
+          "say": "\"Caelrin.\" Wren says it like she's tasting a word she never thought to hear aloud again. \"Nobody's spoken that plainly in four hundred years. Not even in this Hall.\"",
+          "fx": [
+            ["addvar", "rep_keepers", 1],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "appr_vell", 1],
+            ["addvar", "appr_osk", 1],
+            ["score", 2]
+          ]
+        },
+        {
+          "id": "react_named_wrong",
+          "label": "about the name that didn't take",
+          "if": [["flag", "hb_named_wrong"]],
+          "once": true,
+          "say": "\"Word travels fast on a mere this size.\" Wren doesn't soften it. \"You gave that court a name and it wasn't the one written. Give the dead a false one again, and I'll hear of that too.\"",
+          "fx": [["addvar", "rep_keepers", -1]]
+        },
+        {
+          "id": "wren_envoy_names",
+          "label": "press her gently on which name is true",
+          "if": [
+            ["class", "envoy"],
+            ["flag", "hb_heard_grievance"],
+            ["flag", "said_hb_keeper_wren_order"],
+            ["!flag", "or_envoy_hb_names"]
+          ],
+          "once": true,
+          "say": "You don't ask her to confirm anything. You just let her talk until she answers her own question.",
+          "fx": [
+            ["set", "or_envoy_hb_names"],
+            ["set", "hb_belief_caelrin"],
+            ["clear", "hb_belief_roderic"],
+            ["clear", "hb_belief_ossian"],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "\"Roderic's the name the living kept saying, so the living believe it,\" she says, half to herself. \"Caelrin's the name the ground kept. I know which one I'd trust, if it were mine to say.\""]
+          ]
+        },
+        {
           "id": "hb_ask_ledger",
           "label": "ask Wren about the exile's ledger (will)",
           "if": [["flag", "said_hb_keeper_wren_ledger_hint"], ["!flag", "vell_ledger_found"]],
@@ -1251,7 +1294,7 @@
           "fx": [
             ["xp", 2],
             ["score", 2],
-            ["say", "It isn't one of the three the downs give up to anyone patient enough. This one's for the Hall's own dead — and now, she says, for yours too, when that day comes."]
+            ["say", "It isn't something the downs will teach a stranger, whatever they weigh. This one's for the Hall's own dead — and now, she says, for yours too, when that day comes."]
           ]
         },
         {
@@ -1269,7 +1312,7 @@
                 ["move", "hb_covenant_stone", "inv"],
                 ["score", 10],
                 ["xp", 5],
-                ["say", "\"Then you'll have the Rite whole, not scraped from three stones.\" Wren presses a small cut stone into your hand. \"Say it wherever this Reach still grieves. I only meant to teach that to another Keeper.\""],
+                ["say", "\"Then you'll have the Rite whole — no name to puzzle out, no evidence to weigh.\" Wren presses a small cut stone into your hand. \"Say it wherever this Reach grieves. I meant to teach that to another Keeper.\""],
                 [
                   "if",
                   [["inParty", "vell"]],
@@ -1582,6 +1625,16 @@
       "weight": 0
     },
     {
+      "if": [["flag", "or_envoy_hb_names"]],
+      "text": "Keeper Wren still swears she never told a soul which king was which — an Envoy just let her keep believing that.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scout_hb_merestone"]],
+      "text": "A Scout worked out how young the mere's custom really was, and never once let the water hear it said aloud.",
+      "weight": 0
+    },
+    {
       "if": [["flag", "hb_curio_clasp_gone"]],
       "text": "The stag-clasp found an honest buyer at Barrowmere, for once, and left no argument behind it.",
       "weight": 0
@@ -1603,7 +1656,7 @@
     },
     {
       "if": [["flag", "hb_kingsrest_rite_spoken"]],
-      "text": "The old court needed no found verse and no key in the end. Spoken properly, the Rite alone was already enough.",
+      "text": "The old court needed no name puzzled out and no key in the end. Spoken properly, the Rite alone was already enough.",
       "weight": 1
     },
     {

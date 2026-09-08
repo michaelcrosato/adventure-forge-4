@@ -101,35 +101,35 @@
               []
             ]
           ],
-          "variants": [{ "if": [["flag", "hb_verse_causeway"]], "brief": "The causeway south. This verse is yours." }],
+          "variants": [{ "if": [["flag", "hb_evidence_causeway"]], "brief": "The causeway south. This stone's evidence is yours." }],
           "actions": [
             {
               "id": "hb_causeway_read",
-              "label": "read the causeway verse",
-              "if": [["class", "scholar"], ["!flag", "hb_verse_causeway"]],
+              "label": "read the causeway stone",
+              "if": [["class", "scholar"], ["!flag", "hb_evidence_causeway"]],
               "fx": [
-                ["set", "hb_verse_causeway"],
-                ["addvar", "hb_verses_known", 1],
+                ["set", "hb_evidence_causeway"],
+                ["addvar", "hb_evidence_known", 1],
                 ["score", 3],
                 ["xp", 2],
-                ["say", "'Let the road remember the feet that wore it; lay down, and rest.' It comes back whole, a scholar's ease. Causeway verse: known."]
+                ["say", "Half the slab carries a comfort-verse worn soft: 'lay down, and rest.' The other half is cut harder — a date no later stone repeats, and one name cut first of all of them: Caelrin's."]
               ]
             },
             {
               "id": "hb_causeway_trace",
               "label": "trace the worn slab (grace)",
-              "if": [["!class", "scholar"], ["!flag", "hb_verse_causeway"]],
+              "if": [["!class", "scholar"], ["!flag", "hb_evidence_causeway"]],
               "fx": [
                 [
                   "check",
                   "grace",
                   9,
                   [
-                    ["set", "hb_verse_causeway"],
-                    ["addvar", "hb_verses_known", 1],
+                    ["set", "hb_evidence_causeway"],
+                    ["addvar", "hb_evidence_known", 1],
                     ["score", 3],
                     ["xp", 2],
-                    ["say", "Your fingers find the worn cuts and follow them true. 'Let the road remember the feet that wore it; lay down, and rest.' Causeway verse: known."]
+                    ["say", "Your fingers find the worn cuts and follow them true: a comfort-verse first, then, cut deeper, a date no later stone repeats — and one name first of all of them: Caelrin's."]
                   ],
                   [["say", "The stone has worn past where touch alone can follow. It can be tried again."]]
                 ]
@@ -138,18 +138,18 @@
             {
               "id": "hb_causeway_might",
               "label": "dig the buried slab-end free (might)",
-              "if": [["!class", "scholar"], ["!flag", "hb_verse_causeway"]],
+              "if": [["!class", "scholar"], ["!flag", "hb_evidence_causeway"]],
               "fx": [
                 [
                   "check",
                   "might",
                   10,
                   [
-                    ["set", "hb_verse_causeway"],
-                    ["addvar", "hb_verses_known", 1],
+                    ["set", "hb_evidence_causeway"],
+                    ["addvar", "hb_evidence_known", 1],
                     ["score", 3],
                     ["xp", 2],
-                    ["say", "You clear the buried half of the slab by main effort, turf and all. 'Let the road remember the feet that wore it; lay down, and rest.' Causeway verse: known."]
+                    ["say", "You clear the buried half of the slab by main effort, turf and all: a comfort-verse, then a date no later stone repeats, and one name cut first of all of them: Caelrin's."]
                   ],
                   [["say", "The turf won't give, and the slab stays half-buried. It can be tried again."]]
                 ]
@@ -157,21 +157,21 @@
             },
             {
               "id": "hb_causeway_will",
-              "label": "trust the shape, speak the guess (will)",
-              "if": [["!class", "scholar"], ["!flag", "hb_verse_causeway"]],
+              "label": "trust the shape, read it aloud (will)",
+              "if": [["!class", "scholar"], ["!flag", "hb_evidence_causeway"]],
               "fx": [
                 [
                   "check",
                   "will",
                   10,
                   [
-                    ["set", "hb_verse_causeway"],
-                    ["addvar", "hb_verses_known", 1],
+                    ["set", "hb_evidence_causeway"],
+                    ["addvar", "hb_evidence_known", 1],
                     ["score", 3],
                     ["xp", 2],
-                    ["say", "You don't wait to be sure of every cut. You speak the shape of it aloud, and the verse comes true as you say it: 'Let the road remember the feet that wore it; lay down, and rest.' Causeway verse: known."]
+                    ["say", "You don't wait to be sure of every cut. You speak the shape of it aloud and trust it true: a date no later stone here repeats, and one name cut first of all of them — Caelrin's."]
                   ],
-                  [["say", "The guess comes out wrong, a stranger's words in a stranger's mouth. It can be tried again."]]
+                  [["say", "The guess comes out wrong, a stranger's reading in a stranger's mouth. It can be tried again."]]
                 ]
               ]
             }
@@ -199,7 +199,9 @@
                     ["xp", 1],
                     ["say", "The rooks scream and do not move. Under the biggest root, wedged where a beak can't reach: a scatter of old coin, someone's forgotten toll."]
                   ],
-                  [["say", "The rooks scream loud enough to walk your nerve back a step. Whatever's under the roots can wait for steadier hands."]]
+                  [
+                    ["say", "The rooks scream loud enough to walk your nerve back a step. Whatever's under the roots can wait for steadier hands."]
+                  ]
                 ]
               ]
             }
@@ -341,8 +343,14 @@
           "brief": "The crow-post.",
           "onEnterOnce": [["xp", 1]],
           "variants": [
-            { "if": [["flag", "hb_hollow_rested"]], "brief": "The crow-post. Whatever it warned of, it can stand down now." },
-            { "if": [["flag", "hb_hollow_burned"]], "brief": "The crow-post. The warning it carved for came true after all." }
+            {
+              "if": [["flag", "hb_hollow_rested"]],
+              "brief": "The crow-post. Whatever it warned of, it can stand down now."
+            },
+            {
+              "if": [["flag", "hb_hollow_burned"]],
+              "brief": "The crow-post. The warning it carved for came true after all."
+            }
           ],
           "actions": [
             {
@@ -553,7 +561,9 @@
                     ["xp", 1],
                     ["say", "A hollow behind the roots, packed with moss to hide the gap: someone's coin, left here rather than carried through the chandler's shop and its questions."]
                   ],
-                  [["say", "The root-wall is a good place to hide something and an equally good place to hide nothing. This looks like the latter."]]
+                  [
+                    ["say", "The root-wall is a good place to hide something and an equally good place to hide nothing. This looks like the latter."]
+                  ]
                 ]
               ]
             }
@@ -566,35 +576,35 @@
           "brief": "The ring-ditch, cut with script.",
           "landmark": "the ring-ditch",
           "onEnterOnce": [["xp", 1]],
-          "variants": [{ "if": [["flag", "hb_verse_ringditch"]], "brief": "The ring-ditch. This verse is yours." }],
+          "variants": [{ "if": [["flag", "hb_evidence_ringditch"]], "brief": "The ring-ditch. This roll's evidence is yours." }],
           "actions": [
             {
               "id": "hb_ring_read",
               "label": "read the ring-ditch script",
-              "if": [["class", "scholar"], ["!flag", "hb_verse_ringditch"]],
+              "if": [["class", "scholar"], ["!flag", "hb_evidence_ringditch"]],
               "fx": [
-                ["set", "hb_verse_ringditch"],
-                ["addvar", "hb_verses_known", 1],
+                ["set", "hb_evidence_ringditch"],
+                ["addvar", "hb_evidence_known", 1],
                 ["score", 3],
                 ["xp", 2],
-                ["say", "'Let the circle remember what the line forgets; lay down, and rest.' It reads plainly, a scholar's ease. Ring-ditch verse: known."]
+                ["say", "The circling script isn't verse — it's a roll. 'Caelrin, first of the ring, laid down before the rest.' The later names crowd in after his. Ring-ditch roll: read."]
               ]
             },
             {
               "id": "hb_ring_puzzle",
               "label": "puzzle out the script (wits)",
-              "if": [["!class", "scholar"], ["!flag", "hb_verse_ringditch"]],
+              "if": [["!class", "scholar"], ["!flag", "hb_evidence_ringditch"]],
               "fx": [
                 [
                   "check",
                   "wits",
                   9,
                   [
-                    ["set", "hb_verse_ringditch"],
-                    ["addvar", "hb_verses_known", 1],
+                    ["set", "hb_evidence_ringditch"],
+                    ["addvar", "hb_evidence_known", 1],
                     ["score", 3],
                     ["xp", 2],
-                    ["say", "The circling lines give up their sense at last. 'Let the circle remember what the line forgets; lay down, and rest.' Ring-ditch verse: known."]
+                    ["say", "The circling lines give up their sense at last — not verse, a burial roll. 'Caelrin, first of the ring, laid down before the rest.' Ring-ditch roll: read."]
                   ],
                   [["say", "The script runs in on itself and loses you halfway round. It can be tried again."]]
                 ]
@@ -603,18 +613,18 @@
             {
               "id": "hb_ring_might",
               "label": "clear the choked script by hand (might)",
-              "if": [["!class", "scholar"], ["!flag", "hb_verse_ringditch"]],
+              "if": [["!class", "scholar"], ["!flag", "hb_evidence_ringditch"]],
               "fx": [
                 [
                   "check",
                   "might",
                   10,
                   [
-                    ["set", "hb_verse_ringditch"],
-                    ["addvar", "hb_verses_known", 1],
+                    ["set", "hb_evidence_ringditch"],
+                    ["addvar", "hb_evidence_known", 1],
                     ["score", 3],
                     ["xp", 2],
-                    ["say", "You scrape a season's growth of turf and chalk-silt out of the cut by hand until the lines run clear. 'Let the circle remember what the line forgets; lay down, and rest.' Ring-ditch verse: known."]
+                    ["say", "You scrape a season's growth of turf and chalk-silt out of the cut by hand until the lines run clear: a burial roll, not verse. 'Caelrin, first of the ring, laid down before the rest.'"]
                   ],
                   [["say", "You clear one stretch and the wind fills the next. It can be tried again."]]
                 ]
@@ -623,18 +633,18 @@
             {
               "id": "hb_ring_will",
               "label": "walk the circle and speak it (will)",
-              "if": [["!class", "scholar"], ["!flag", "hb_verse_ringditch"]],
+              "if": [["!class", "scholar"], ["!flag", "hb_evidence_ringditch"]],
               "fx": [
                 [
                   "check",
                   "will",
                   10,
                   [
-                    ["set", "hb_verse_ringditch"],
-                    ["addvar", "hb_verses_known", 1],
+                    ["set", "hb_evidence_ringditch"],
+                    ["addvar", "hb_evidence_known", 1],
                     ["score", 3],
                     ["xp", 2],
-                    ["say", "You walk the ring once, slow, and let the rhythm of your own feet carry the words up before your eyes are sure of them. 'Let the circle remember what the line forgets; lay down, and rest.' Ring-ditch verse: known."]
+                    ["say", "You walk the ring once, slow, and the order of it comes clear before your eyes do: a roll of names, oldest first. 'Caelrin, first of the ring, laid down before the rest.'"]
                   ],
                   [["say", "You lose the rhythm halfway round and the words won't come. It can be tried again."]]
                 ]
@@ -681,36 +691,41 @@
           "brief": "The stone in the shallows.",
           "landmark": "the mere-stone",
           "onEnterOnce": [["xp", 1]],
-          "variants": [{ "if": [["flag", "hb_verse_merestone"]], "brief": "The mere-stone. This verse is yours." }],
+          "variants": [
+            {
+              "if": [["flag", "hb_evidence_merestone"]],
+              "brief": "The mere-stone. Its answer is yours, for what it's worth."
+            }
+          ],
           "actions": [
             {
               "id": "hb_merestone_offer",
-              "label": "offer the mere three gold for its verse",
-              "if": [["!flag", "hb_verse_merestone"], ["var", "gold", ">=", 3]],
+              "label": "offer the mere three gold for an answer",
+              "if": [["!flag", "hb_evidence_merestone"], ["var", "gold", ">=", 3]],
               "fx": [
                 ["addvar", "gold", -3],
-                ["set", "hb_verse_merestone"],
-                ["addvar", "hb_verses_known", 1],
+                ["set", "hb_evidence_merestone"],
+                ["addvar", "hb_evidence_known", 1],
                 ["score", 3],
                 ["xp", 2],
-                ["say", "The coins go under without a ripple. What comes back is not a voice, exactly — more a certainty, settling into words: 'Let the water remember what the ground gives up; lay down, and rest.' Mere-stone verse: known."]
+                ["say", "The coins go under without a ripple. What comes back isn't quite a voice: 'Roderic.' Sure of itself, the way anything repeated long enough gets to sound. Mere-stone answer: heard."]
               ]
             },
             {
               "id": "hb_merestone_might",
               "label": "wade in and outlast the cold (might)",
-              "if": [["!flag", "hb_verse_merestone"]],
+              "if": [["!flag", "hb_evidence_merestone"]],
               "fx": [
                 [
                   "check",
                   "might",
                   10,
                   [
-                    ["set", "hb_verse_merestone"],
-                    ["addvar", "hb_verses_known", 1],
+                    ["set", "hb_evidence_merestone"],
+                    ["addvar", "hb_evidence_known", 1],
                     ["score", 3],
                     ["xp", 2],
-                    ["say", "You wade out and stay past when the cold should have driven you back. What answers isn't a voice, exactly: 'Let the water remember what the ground gives up; lay down, and rest.' Mere-stone verse: known."]
+                    ["say", "You wade out and stay past when the cold should have driven you back. What answers isn't quite a voice: 'Roderic.' Sure of itself, the way anything repeated long enough gets to sound."]
                   ],
                   [["say", "The cold wins first. You're back on the bank, teeth chattering, no wiser for it."]]
                 ]
@@ -719,21 +734,34 @@
             {
               "id": "hb_merestone_wits",
               "label": "puzzle out the old custom (wits)",
-              "if": [["!flag", "hb_verse_merestone"]],
+              "if": [["!flag", "hb_evidence_merestone"]],
               "fx": [
                 [
                   "check",
                   "wits",
                   9,
                   [
-                    ["set", "hb_verse_merestone"],
-                    ["addvar", "hb_verses_known", 1],
+                    ["set", "hb_evidence_merestone"],
+                    ["addvar", "hb_evidence_known", 1],
                     ["score", 3],
                     ["xp", 2],
-                    ["say", "Gold was never the point, only the giving. You set a stone of your own in its place, and the water answers just the same: 'Let the water remember what the ground gives up; lay down, and rest.' Mere-stone verse: known."]
+                    ["say", "Gold was never the point, only the giving. You set a stone of your own in its place, and it answers just the same: 'Roderic.' Sure of itself, the way anything repeated long enough gets to sound."]
                   ],
                   [["say", "Whatever the old custom actually wants, you haven't puzzled it out yet."]]
                 ]
+              ]
+            },
+            {
+              "id": "hb_scout_merestone_tell",
+              "label": "read the offerings' age",
+              "if": [["class", "scout"], ["!flag", "or_scout_hb_merestone"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["set", "or_scout_hb_merestone"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "The coin in the shallows is old, but the habit of asking isn't — the grooves worn into the stone go back a generation, not four hundred years. Whatever the mere tells you, it learned the answer recently."]
               ]
             }
           ]
@@ -796,9 +824,18 @@
           "brief": "The processional way's gate.",
           "onEnterOnce": [["xp", 1]],
           "variants": [
-            { "if": [["flag", "hb_hollow_rested"]], "brief": "The gate stones. Nothing walks this way anymore, and nothing needs to." },
-            { "if": [["flag", "hb_hollow_burned"]], "brief": "The gate stones stand black at their feet, soot to a man's height." },
-            { "if": [["flag", "hb_hollow_bargained"]], "brief": "The gate stones. Someone left flowers wilting against the near one." }
+            {
+              "if": [["flag", "hb_hollow_rested"]],
+              "brief": "The gate stones. Nothing walks this way anymore, and nothing needs to."
+            },
+            {
+              "if": [["flag", "hb_hollow_burned"]],
+              "brief": "The gate stones stand black at their feet, soot to a man's height."
+            },
+            {
+              "if": [["flag", "hb_hollow_bargained"]],
+              "brief": "The gate stones. Someone left flowers wilting against the near one."
+            }
           ],
           "actions": [
             {
