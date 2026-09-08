@@ -112,9 +112,12 @@ Unchanged, and two parts of it need care:
   design is wrong, not the test. `reach_burned`'s proof, on the other hand,
   *should* change — it is the route that invites the march — and its replay
   must be updated in the same change.
-- **The budget.** One clock line per turn, and only while a march is running.
-  Measure `npm run measure` before and after; the realm sits near 417 chars
-  against a ceiling of 450.
+- **The budget.** One clock line per turn, and only while a march is running
+  — which is the whole reason for the one-entry-per-turn rule. The realm sits
+  at **449.9 characters against a ceiling of 450**, so there is nothing to
+  spend: a march's lines must fall on turns the walkthrough and the ending
+  proofs never take, and the covenant road never invites the march, so they
+  do. Measure before and after; the walkthrough's average must not move.
 
 New ops need validator coverage and tests in the same change: an unknown key
 in a clock entry, a `turn` condition with a bad op, a clock `fx` naming an
