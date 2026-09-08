@@ -18,6 +18,19 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "sk_track_scout",
+          "label": "read the track for boot-sign",
+          "if": [["class", "scout"], ["!flag", "sk_track_scout_done"]],
+          "free": true,
+          "fx": [
+            ["set", "sk_track_scout_done"],
+            ["xp", 1],
+            ["say", "Boot-prints press deep and steady, Thornwold-ward and back, worn by feet that never once stopped in the village between. Whoever walks this isn't selling firewood."]
+          ]
+        }
       ]
     },
     "sk_coast_road": {
@@ -42,6 +55,30 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "sk_road_cairn",
+          "label": "search the roadside cairn (wits)",
+          "if": [["!flag", "sk_road_cairn_searched"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "sk_road_cairn_searched"],
+                ["addvar", "gold", 2],
+                ["score", 1],
+                ["xp", 2],
+                ["say", "Someone's stacked more than luck into this cairn: a hollow near the base, a few coins wedged in old cloth. Watch and Free Company patrols both leave this stretch alone — now you know one reason why."]
+              ],
+              [
+                ["say", "Stone and moss, stacked by hands with better things to hoard than secrets. Or this cairn's honest, for once."]
+              ]
+            ]
+          ]
+        }
       ]
     },
     "sk_smugglers_stair": {
@@ -64,6 +101,20 @@
         ["set", "sk_entered"],
         ["xp", 2],
         ["say", "This stair goes under the pass to Coldpass, past every hold between. Nothing closes behind you, but a companion's grief left in those holds stays unfinished unless you walk back for it."]
+      ],
+      "actions": [
+        {
+          "id": "sk_stair_tamsin",
+          "label": "ask what Tamsin makes of the stair",
+          "if": [["inParty", "tamsin"], ["!flag", "sk_stair_tamsin_done"]],
+          "free": true,
+          "fx": [
+            ["set", "sk_stair_tamsin_done"],
+            ["xp", 1],
+            ["addvar", "appr_tamsin", 1],
+            ["say", "Tamsin runs a hand along the worn stone. 'Coin, no masters, no questions asked at the door,' she says. 'My brother would have liked this stair.' She doesn't sound entirely comfortable admitting it."]
+          ]
+        }
       ]
     },
     "sk_settlement": {
@@ -959,6 +1010,14 @@
           "fx": [["xp", 1], ["addvar", "rep_watch", 1]]
         },
         {
+          "id": "sk_cache_told",
+          "label": "the cache under the watch cairn",
+          "if": [["flag", "sk_found_cache"]],
+          "once": true,
+          "say": "Brann's mouth goes thin. 'Half of Rennick's coin never sees a manifest. I'm not surprised it's buried under a cairn wearing my own title as a joke.' She doesn't ask for a cut, but she remembers.",
+          "fx": [["addvar", "rep_watch", 1], ["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave the post to its ledgers",
           "say": "Straight roads, stranger. Fewer questions that way.",
@@ -1031,6 +1090,14 @@
           "if": [["flag", "sk_nets_amends"]],
           "once": true,
           "say": "\"Paid honest, after the fact, is still paid honest,\" Marta says, not quite smiling. \"I'll not forget you made it right, at least.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sk_shingle_told",
+          "label": "the drag-marks on the shingle",
+          "if": [["flag", "sk_shingle_searched"]],
+          "once": true,
+          "say": "Marta's jaw sets. \"That's my knot on that netting, or near enough. Wreckers again, working the shingle same as they worked my own racks.\" She doesn't ask for it back. She already knows where it went.",
           "fx": [["xp", 1]]
         },
         {
@@ -1418,6 +1485,11 @@
     {
       "if": [["any", [["flag", "sk_helped_free"], ["flag", "sk_sided_watch"]]]],
       "text": "Gullhaven's taverns argue for years after whether the Free Companies or the Watch came out ahead across the Reach; nobody settles it."
+    },
+    {
+      "if": [["flag", "sk_found_cache"]],
+      "text": "The coin under the Watch Cairn stopped being a joke the day Sergeant Brann heard where it came from.",
+      "weight": 0
     },
     {
       "if": [["flag", "rb_ir_sk_home"]],
