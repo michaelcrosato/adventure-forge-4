@@ -328,6 +328,12 @@
               11,
               [
                 ["set", "pw_paymaster_refused"],
+                [
+                  "if",
+                  [["flag", "pw_paymaster_errand"], ["!flag", "pw_paymaster_errand_done"]],
+                  [["set", "pw_paymaster_errand_failed"]],
+                  []
+                ],
                 ["say", "He turns a coin over twice, thinking, then pockets it. \"...Fine. Sealed silver's no silver at all. We'll find our chest elsewhere.\""]
               ],
               [
@@ -356,7 +362,17 @@
           ],
           "once": true,
           "say": "He goes flat, then flatter. 'Watch to watch, then. The chest stays chained and the vault's not my business. Don't make me say it twice.'",
-          "fx": [["set", "pw_paymaster_refused"], ["xp", 2], ["score", 2]]
+          "fx": [
+            ["set", "pw_paymaster_refused"],
+            [
+              "if",
+              [["flag", "pw_paymaster_errand"], ["!flag", "pw_paymaster_errand_done"]],
+              [["set", "pw_paymaster_errand_failed"]],
+              []
+            ],
+            ["xp", 2],
+            ["score", 2]
+          ]
         },
         {
           "id": "pw_coin_free",
