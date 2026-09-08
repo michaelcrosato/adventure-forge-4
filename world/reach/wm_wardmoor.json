@@ -1129,7 +1129,7 @@
         {
           "id": "wm_sworn_offer",
           "label": "ask to be made Serjeant",
-          "if": [["flag", "said_wm_captain_general_founding"], ["!flag", "watch_sworn"]],
+          "if": [["flag", "said_wm_captain_general_founding"], ["!flag", "watch_sworn"], ["!flag", "wm_oathsworn"]],
           "say": "You ask her plainly what it would take to hold a rank here, not just a stranger's welcome.",
           "fx": [
             [
@@ -1146,6 +1146,14 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "wm_sworn_offer_bound",
+          "label": "ask to be made Serjeant",
+          "if": [["flag", "said_wm_captain_general_founding"], ["!flag", "watch_sworn"], ["flag", "wm_oathsworn"]],
+          "once": true,
+          "say": "She looks up before you finish asking. \"You already hold a commission older than mine, out on that moor,\" she says. \"I won't put my seal on the first Reeve's. Wear the one you've got.\" She means it plainly.",
+          "fx": [["xp", 1]]
         },
         {
           "id": "unseal",
@@ -1818,9 +1826,13 @@
     {
       "label": "Your rank with the Watch",
       "var": "rep_watch",
-      "if": [["any", [["flag", "watch_trusted"], ["flag", "watch_sworn"]]]],
+      "if": [["any", [["flag", "watch_trusted"], ["flag", "watch_sworn"], ["flag", "wm_oathsworn"]]]],
       "states": [
         { "if": [["flag", "watch_sworn"]], "text": "Serjeant of the Reach — commissioned, a command yours to give" },
+        {
+          "if": [["flag", "wm_oathsworn"]],
+          "text": "sworn to the old oath yourself, out on the moor — bound for good, past any commission now"
+        },
         { "if": [["flag", "watch_trusted"]], "text": "trusted with the Watch's own road" }
       ]
     }

@@ -54,7 +54,7 @@
       "actions": [
         {
           "id": "wm_oath_wits",
-          "label": "puzzle out the old oath (wits)",
+          "label": "puzzle out the oath, and swear it (wits)",
           "if": [["flag", "wm_oath_heard"], ["!flag", "wm_oath_resolved"]],
           "fx": [
             [
@@ -64,15 +64,44 @@
               [
                 ["set", "wm_oath_resolved"],
                 ["set", "wm_hollow_rested"],
+                ["set", "wm_oathsworn"],
                 ["addvar", "hollows_rested", 1],
                 ["score", 25],
                 ["xp", 8],
                 ["addvar", "rep_watch", 2],
                 ["addvar", "rep_keepers", 2],
                 ["addvar", "appr_tamsin", 1],
-                ["addvar", "appr_vell", 1],
+                ["addvar", "appr_osk", -1],
+                ["addvar", "appr_vell", -2],
                 ["npcgo", "wm_oath_captain", null],
-                ["say", "The cuts resolve under a patient eye: not a hero's oath but a soldier's, plain and overdue. You speak it back to the ring, word for word, and the captain finally, fully, stands down."]
+                ["say", "The cuts resolve under a patient eye: a soldier's oath, plain and overdue. You don't just read it back — you speak it as your own, and the ring stands down, relieved at last by someone who meant it."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["set", "wm_vell_oath_left"],
+                    ["party", "vell", "leave"],
+                    ["set", "vell_left"],
+                    ["say", "Vell: \"You've written yourself into somebody else's ledger, forever, and signed it yourself. I can't stand this close to that right now.\" They go before you can answer."]
+                  ],
+                  []
+                ],
+                [
+                  "if",
+                  [["inParty", "osk"]],
+                  [
+                    ["say", "Brother Osk: \"That's not rest. That's a grief with a new face on it. I don't know yet if that's mercy or just a longer dying.\""]
+                  ],
+                  []
+                ],
+                [
+                  "if",
+                  [["inParty", "tamsin"]],
+                  [
+                    ["say", "Tamsin: \"A debt paid out of your own hide, not somebody else's ledger. I've little patience for people who won't do that. You just did.\""]
+                  ],
+                  []
+                ]
               ],
               [["say", "The old cuts run together, worn past a quick reading. It can be tried again."]]
             ]
@@ -80,34 +109,63 @@
         },
         {
           "id": "wm_oath_record",
-          "label": "read the true founding record aloud",
+          "label": "read the true record, and swear it",
           "if": [["flag", "wm_oath_heard"], ["has", "wm_founding_record"], ["!flag", "wm_oath_resolved"]],
           "fx": [
             ["set", "wm_oath_resolved"],
             ["set", "wm_hollow_rested"],
+            ["set", "wm_oathsworn"],
             ["addvar", "hollows_rested", 1],
             ["score", 25],
             ["xp", 8],
             ["addvar", "rep_watch", 2],
             ["addvar", "rep_keepers", 2],
             ["addvar", "appr_tamsin", 1],
-            ["addvar", "appr_vell", 1],
+            ["addvar", "appr_osk", -1],
+            ["addvar", "appr_vell", -2],
             ["npcgo", "wm_oath_captain", null],
             [
               "if",
               [["flag", "wm_record_stolen"]],
               [
-                ["say", "You read the stolen record aloud anyway, and the truth in it doesn't care how it got here. The ring hears its own name spoken honestly, and stands down."]
+                ["say", "You read the stolen record aloud anyway, and the truth in it doesn't care how it got here. Then you say the oath as your own — the ring hears itself relieved, and stands down."]
               ],
               [
-                ["say", "You read the record aloud, properly given, properly heard. 'Hold the road till I send word.' No word was ever sent. Now, at least, one was."]
+                ["say", "You read the record aloud, properly given, properly heard. 'Hold the road till I send word.' No word was ever sent — so you send yourself instead, and swear to hold it in their place."]
               ]
+            ],
+            [
+              "if",
+              [["inParty", "vell"]],
+              [
+                ["set", "wm_vell_oath_left"],
+                ["party", "vell", "leave"],
+                ["set", "vell_left"],
+                ["say", "Vell: \"You've written yourself into somebody else's ledger, forever, and signed it yourself. I can't stand this close to that right now.\" They go before you can answer."]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Brother Osk: \"That's not rest. That's a grief with a new face on it. I don't know yet if that's mercy or just a longer dying.\""]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["inParty", "tamsin"]],
+              [
+                ["say", "Tamsin: \"A debt paid out of your own hide, not somebody else's ledger. I've little patience for people who won't do that. You just did.\""]
+              ],
+              []
             ]
           ]
         },
         {
           "id": "wm_oath_bargain",
-          "label": "swear a new oath over the stone (will)",
+          "label": "bring a living oath to the stone (will)",
           "if": [["flag", "wm_oath_heard"], ["var", "rep_watch", ">=", 1], ["!flag", "wm_oath_resolved"]],
           "fx": [
             [
@@ -125,7 +183,7 @@
                 ["addvar", "rep_iron", -2],
                 ["addvar", "appr_tamsin", 1],
                 ["npcgo", "wm_oath_captain", null],
-                ["say", "You swear a new oath in the old one's place, plain and meant. The ring lowers its standards together, and files off into wherever soldiers go when the watch finally changes."]
+                ["say", "You bring the Captain-General's own promise to the stone: the living Watch keeps this road now, in its own name, no one person standing in dead men's boots. The ring lowers its standards, and files off."]
               ],
               [
                 [
@@ -244,19 +302,22 @@
                 [
                   "if",
                   [["has", "wm_founding_record"]],
-                  [["say", "The rest can be read clean: the true founding record is yours — speak it to the ring."]],
                   [
-                    ["say", "The rest can be puzzled out by wits alone — or read clean from the true founding record, which Wynne might unseal at the record-house."]
+                    ["say", "The rest can be read clean: speak the true founding record to the ring, and swear the old oath yourself, in their place."]
+                  ],
+                  [
+                    ["say", "The rest can be puzzled out by wits alone, or read clean from the true founding record Wynne might unseal — either way, you swear the old oath yourself, in their place."]
                   ]
                 ],
+                ["say", "Know the price before you speak it: whoever swears it stands in it from then on. Highward will never commission that person Serjeant after — one oath doesn't stack on another."],
                 [
                   "if",
                   [["var", "rep_watch", ">=", 1]],
                   [
-                    ["say", "The bargain stands ready: the Watch trusts you enough (standing 1) to swear a new oath here (will)."]
+                    ["say", "The bargain stands ready instead: the Watch trusts you enough (standing 1) to bring its own living oath to the stone (will) — a lesser peace, and nobody's but the Watch's."]
                   ],
                   [
-                    ["say", "The bargain wants the Watch's trust (standing 1) — or plead the ring down on nerve alone (will), risking Highward's opinion."]
+                    ["say", "The bargain wants the Watch's trust (standing 1) instead — or plead the ring down on nerve alone (will) — the living Watch's oath, never your own."]
                   ]
                 ],
                 [
@@ -352,6 +413,14 @@
           "if": [["flag", "wm_oath_heard"]],
           "once": true,
           "say": "His own blood, we heard after, though by then we'd stopped hearing much of anything new. A theft dressed as an inheritance. We held the road for it anyway. That was the oath, not the reason.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "price",
+          "label": "what if I swore it myself",
+          "if": [["flag", "wm_oath_heard"]],
+          "once": true,
+          "say": "Then you hold it. Not a story told after — a post kept. Four hundred years, and I couldn't tell you the day it stopped being a duty and started being the whole of what I was. Be sure, first.",
           "fx": [["xp", 2]]
         },
         {
@@ -462,6 +531,16 @@
       "if": [["flag", "wm_hollow_bargained"]],
       "text": "The Watch swore a new oath over the old stone. The dead stood down; the living took their place, plainly.",
       "weight": 2
+    },
+    {
+      "if": [["flag", "wm_oathsworn"]],
+      "text": "You swore the old oath yourself, out on the moor. Highward calls you friend for it now — never Serjeant. One oath doesn't stack on another.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "wm_vell_oath_left"]],
+      "text": "Vell walked off the moor alone that day, and didn't wait to see how it ended. Some ledgers, they said, they'd rather not be named in.",
+      "weight": 1
     },
     {
       "if": [["flag", "wm_hollow_burned"]],
