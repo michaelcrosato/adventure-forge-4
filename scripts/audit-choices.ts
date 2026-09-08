@@ -99,7 +99,12 @@ for (const [nid, n] of Object.entries(world.npcs)) {
     walkFx(t.fx, o, true);
   }
   walkFx(n.onDeath, { kind: "death", container: nid, label: n.name }, false);
-  for (const rm of n.companion?.remarks ?? []) walkCond(rm.if, { kind: "remark", container: nid, label: `${n.name} remarks` });
+  for (const rm of n.companion?.remarks ?? []) {
+    const o = { kind: "remark", container: nid, label: `${n.name} remarks` };
+    walkCond(rm.if, o);
+    // a remark's own effects set flags (every quarrel_* in the realm is set here)
+    walkFx((rm as { fx?: Fx[] }).fx, o, true);
+  }
   for (const lv of n.companion?.leaves ?? []) walkCond(lv.if, { kind: "leaves", container: nid, label: `${n.name} leaves` });
 }
 for (const [iid, it] of Object.entries(world.items)) {
@@ -199,6 +204,32 @@ if (forgotten.length) {
   console.log(`gates read only where they stand (${gates.length}) — one flag opened by several routes, a fork's done-marker, or a single path; fine unless it was meant to matter:`);
   for (const r of gates) show(r);
 } else console.log("every choice is remembered somewhere");
+
+/**
+ * Content nobody can reach: a flag read by a condition that nothing ever sets.
+ * The mirror image of a forgotten choice, and a worse bug — a forgotten choice
+ * happened and was ignored, this one cannot happen at all. The engine writes
+ * several flags itself, so those are not holes; anything else read and never
+ * written is a gate with no key.
+ */
+{
+  const written = new Set<string>(setters.map((s) => s.flag));
+  // flags the ENGINE sets for itself — see docs/authoring.md's auto-flag list
+  const engineWritten = (f: string) =>
+    // `left_<npc>` (a wide berth given) and `<companion>_left` (a companion walking out) are both the engine's
+    /^(did_|said_|remarked_|clocked_|calm_|down_|fell_|laid_|stole_|left_|_)/.test(f) || /_(lit|left)$/.test(f);
+  const unreachable = [...readers.entries()]
+    .filter(([flag]) => !written.has(flag) && !engineWritten(flag) && want(flag))
+    .sort(([a], [b]) => a.localeCompare(b));
+  if (unreachable.length) {
+    console.log();
+    console.log(`gates with no key (${unreachable.length}) — a flag read by a condition that nothing in the world ever sets:`);
+    for (const [flag, where] of unreachable) {
+      const places = [...new Set(where.map((o) => `${o.kind} "${o.label}"`))];
+      console.log(`  ${flag}  <- read by ${places.slice(0, 3).join("; ")}${places.length > 3 ? ` (+${places.length - 3} more)` : ""}`);
+    }
+  }
+}
 
 /**
  * The other half of "choice matters": a standing or tally the world moves but
