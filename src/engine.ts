@@ -14,6 +14,7 @@ import type {
   CustomAction,
   Fx,
   PerkDef,
+  QuestDef,
   RemarkDef,
   State,
   StepOut,
@@ -53,12 +54,81 @@ function d100(s: State): number {
 }
 
 // ---------- canonical hash ----------
+/**
+ * `JSON.stringify(k)` for a key, remembered. The keys canon walks are field
+ * names, flag names and item and npc ids — a few hundred strings, asked for
+ * again on every hash of every turn, each time allocating the same quoted
+ * copy.
+ */
+const quotedKeys = new Map<string, string>();
+function quotedKey(k: string): string {
+  let q = quotedKeys.get(k);
+  if (q === undefined) {
+    q = JSON.stringify(k);
+    quotedKeys.set(k, q);
+  }
+  return q;
+}
+
+/**
+ * Canonical JSON: keys sorted, so the same state hashes the same however it was
+ * built. A receipt is only worth something if it is reproducible, so this
+ * function's output is a format — the two fast paths below and the loops in
+ * place of `map`/`join` were written to leave it byte for byte unchanged
+ * (`Number.isFinite` mirrors what JSON.stringify does with NaN and infinities),
+ * because a faster hash that hashes differently is a broken hash.
+ */
 function canon(v: unknown): string {
+  if (typeof v === "number") return Number.isFinite(v) ? String(v) : "null";
+  if (typeof v === "boolean") return v ? "true" : "false";
   if (v === null || typeof v !== "object") return JSON.stringify(v);
-  if (Array.isArray(v)) return `[${v.map(canon).join(",")}]`;
+  if (Array.isArray(v)) {
+    let out = "[";
+    for (let i = 0; i < v.length; i++) out += (i ? "," : "") + canon(v[i]);
+    return out + "]";
+  }
   const o = v as Record<string, unknown>;
   const keys = Object.keys(o).sort();
-  return `{${keys.map((k) => `${JSON.stringify(k)}:${canon(o[k])}`).join(",")}}`;
+  let out = "{";
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i]!;
+    out += (i ? "," : "") + quotedKey(k) + ":" + canon(o[k]);
+  }
+  return out + "}";
+}
+
+/**
+ * Two states carrying the same values, whatever order their keys went in.
+ *
+ * This is what the crawler's determinism check wants — it takes one step twice
+ * from one state and asks whether the results agree — and it walks the objects
+ * themselves rather than a list of fields, so a field added to State cannot
+ * quietly fall outside the comparison. It is also exact where two truncated
+ * hashes were only very probably exact, and it stops at the first difference
+ * instead of serializing two whole states to find one.
+ */
+export function sameState(a: State, b: State): boolean {
+  return sameValue(a, b);
+}
+function sameValue(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  if (a === null || b === null || typeof a !== "object" || typeof b !== "object") return false;
+  const aArr = Array.isArray(a);
+  if (aArr !== Array.isArray(b)) return false;
+  if (aArr) {
+    const x = a as unknown[], y = b as unknown[];
+    if (x.length !== y.length) return false;
+    for (let i = 0; i < x.length; i++) if (!sameValue(x[i], y[i])) return false;
+    return true;
+  }
+  const x = a as Record<string, unknown>, y = b as Record<string, unknown>;
+  const keys = Object.keys(x);
+  if (keys.length !== Object.keys(y).length) return false;
+  for (const k of keys) {
+    if (!(k in y)) return false;
+    if (!sameValue(x[k], y[k])) return false;
+  }
+  return true;
 }
 
 /** Actions that turn a menu page rather than the world: free, and no time for anyone to speak. */
@@ -410,7 +480,7 @@ export type QuestLine = { id: string; name: string; status: "active" | "done" | 
 /** Every quest that has started, with the line the player should read for it right now. */
 export function journal(world: World, s: State): QuestLine[] {
   const out: QuestLine[] = [];
-  for (const [id, q] of Object.entries(world.quests ?? {})) {
+  for (const [id, q] of indexOf(world).quests) {
     if (!condsOk(world, s, q.start)) continue;
     // a quest once done stays done: its asker's wish was met, whatever came after
     if (q.done && condsOk(world, s, q.done)) { out.push({ id, name: q.name, status: "done", text: "" }); continue; }
@@ -480,9 +550,69 @@ const fightGoingBadly = (s: State): boolean => s.hp * 2 <= s.maxHp;
  */
 const canSlipAway = (world: World, s: State): boolean => s.classId === "scout" && (s.vars["res_scout"] ?? 0) >= 1;
 
+/**
+ * Lists that cannot change once a world is loaded, built on first ask and kept
+ * against the world object itself.
+ *
+ * The room menu asks the same questions every turn — who here could fight, what
+ * here could be picked up, what here strikes through armor — and each was
+ * answered by walking every npc or every item in the realm. The answer can only
+ * ever come from a fixed subset, so the subset is what gets walked: in the
+ * Reach, 67 npcs instead of 265 and 161 items instead of 321. Order is the
+ * insertion order of `world.npcs`/`world.items`, exactly what the
+ * `Object.keys(...).filter(...)` these replace produced, so every menu still
+ * lists in the order it did.
+ *
+ * Nothing about which of them is *here* is cached. That is state, it moves, and
+ * a wrong answer would be a bug the tests could not see.
+ */
+type WorldIndex = {
+  /** Npcs a `hostile`/`aggressive` def could ever make an enemy of — content may still have calmed them. */
+  maybeHostile: string[];
+  /** Npcs whose blow ignores armor. */
+  piercers: string[];
+  /** Items that can be picked up at all. */
+  takeable: string[];
+  /** `world.quests` as entries, so the journal does not rebuild the pair array twice a turn. */
+  quests: [string, QuestDef][];
+};
+const worldIndexes = new WeakMap<World, WorldIndex>();
+
+/**
+ * Answers `legalActions` asks over and over while building one menu.
+ *
+ * "Is anything hostile standing here?" is asked once by `attack`, once per
+ * combat ability, and again by every `horrorHere`/`holdsGround` condition on
+ * every action and topic in the room — dozens of times, for one answer.
+ * `legalActions` does not touch the state, so an answer computed inside one
+ * call holds for the whole call.
+ *
+ * Outside `legalActions` the memo is null and every question is answered from
+ * the state as it stands, because `step` mutates as it goes — an npc dies, a
+ * flag calms one, the player walks out — and a remembered answer would be a
+ * lie. `legalActions` saves and restores whatever it found here, so a nested
+ * call cannot leave a stale answer behind either.
+ */
+let menuMemo: { hostiles?: string[]; here?: string[]; takeables?: string[] } | null = null;
+function indexOf(world: World): WorldIndex {
+  let idx = worldIndexes.get(world);
+  if (!idx) {
+    const npcs = Object.keys(world.npcs);
+    idx = {
+      maybeHostile: npcs.filter((id) => world.npcs[id]!.hostile || world.npcs[id]!.aggressive),
+      piercers: npcs.filter((id) => world.npcs[id]!.pierce),
+      takeable: Object.keys(world.items).filter((id) => world.items[id]!.takeable),
+      quests: Object.entries(world.quests ?? {}),
+    };
+    worldIndexes.set(world, idx);
+  }
+  return idx;
+}
+
 /** Npcs attackable and hostile, standing alive in the player's room right now — the same test `attack` uses to decide it should be offered. */
 function hostilesHere(world: World, s: State): string[] {
-  return Object.keys(world.npcs).filter(
+  if (menuMemo?.hostiles) return menuMemo.hostiles;
+  const out = indexOf(world).maybeHostile.filter(
     (id) =>
       world.npcs[id]?.hp !== undefined &&
       !s.party.includes(id) &&
@@ -490,12 +620,14 @@ function hostilesHere(world: World, s: State): string[] {
       s.npcRoom[id] === s.room &&
       (s.npcHp[id] ?? world.npcs[id]!.hp ?? 1) > 0,
   );
+  if (menuMemo) menuMemo.hostiles = out;
+  return out;
 }
 
 export function travelAvailable(world: World, s: State): boolean {
   if (world.rooms[s.room]?.noTravel) return false;
   if (!knownLandmarks(world, s).length) return false;
-  for (const id of Object.keys(world.npcs)) {
+  for (const id of indexOf(world).maybeHostile) {
     if (hostileNow(world, s, id) && s.npcRoom[id] === s.room && !npcDead(world, s, id) && !s.party.includes(id) && !s.flags[`left_${id}`]) return false;
   }
   return true;
@@ -1322,13 +1454,22 @@ export function newState(world: World, seed: number): StepOut {
 
 // ---------- legal actions ----------
 function npcsHere(world: World, s: State): string[] {
-  return Object.keys(world.npcs).filter(
-    (id) => s.npcRoom[id] === s.room && !npcDead(world, s, id),
-  );
+  // `for...in` over the same object rather than Object.keys().filter(): the
+  // order is identical and the throwaway array of every npc in the realm is not
+  // built once per menu.
+  if (menuMemo?.here) return menuMemo.here;
+  const out: string[] = [];
+  for (const id in world.npcs) if (s.npcRoom[id] === s.room && !npcDead(world, s, id)) out.push(id);
+  if (menuMemo) menuMemo.here = out;
+  return out;
 }
 
-function itemsHere(world: World, s: State): string[] {
-  return Object.keys(world.items).filter((id) => s.itemLoc[id] === s.room);
+/** Items lying here that a player could pick up — the only question the menu asks of an item's whereabouts. */
+function takeablesHere(world: World, s: State): string[] {
+  if (menuMemo?.takeables) return menuMemo.takeables;
+  const out = indexOf(world).takeable.filter((id) => s.itemLoc[id] === s.room);
+  if (menuMemo) menuMemo.takeables = out;
+  return out;
 }
 
 function customVisible(world: World, s: State, a: CustomAction): boolean {
@@ -1547,7 +1688,18 @@ function spokenWith(s: State, npc: string): boolean {
   return false;
 }
 
+/** The menu, with the per-call memo above open for the duration and closed again after. */
 export function legalActions(world: World, s: State): Action[] {
+  const outer = menuMemo;
+  menuMemo = {};
+  try {
+    return buildMenu(world, s);
+  } finally {
+    menuMemo = outer;
+  }
+}
+
+function buildMenu(world: World, s: State): Action[] {
   if (s.ended) return [];
   // class first: nothing else is legal until the player picks who they are
   if (inClassPhase(world, s))
@@ -1600,8 +1752,7 @@ export function legalActions(world: World, s: State): Action[] {
   if (travelAvailable(world, s)) out.push({ kind: "travel" });
   for (const a of room.actions ?? [])
     if (customVisible(world, s, a)) out.push({ kind: "custom", room: s.room, id: a.id });
-  for (const id of itemsHere(world, s))
-    if (world.items[id]?.takeable) out.push({ kind: "take", item: id });
+  for (const id of takeablesHere(world, s)) out.push({ kind: "take", item: id });
   for (const npc of npcsHere(world, s)) {
     const def = world.npcs[npc]!;
     if (folded.has(npc)) {
@@ -1923,13 +2074,65 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   return "";
 }
 
+/**
+ * A fresh State carrying the same values as this one — every step works on a
+ * copy so a caller keeps the state it handed in, and so the crawler can take
+ * the same step twice from one state and compare the results.
+ *
+ * `structuredClone` did this and was a fifth of every turn in the Reach: it is
+ * a general serializer, and it pays for cycles, Maps, Dates and typed arrays
+ * that a State (plain JSON by contract — see the type) will never contain. This
+ * copies the shape by hand instead, and costs about a sixth as much.
+ *
+ * The object literal is exhaustive on purpose: State has no optional fields, so
+ * a field added to it and not added here fails the typecheck rather than
+ * silently sharing one mutable object between two turns.
+ */
+function cloneState(s: State): State {
+  const npcConds: Record<string, Record<string, number>> = {};
+  for (const id in s.npcConds) npcConds[id] = { ...s.npcConds[id]! };
+  return {
+    seed: s.seed,
+    rngA: s.rngA,
+    turn: s.turn,
+    room: s.room,
+    hp: s.hp,
+    maxHp: s.maxHp,
+    score: s.score,
+    classId: s.classId,
+    attrs: { ...s.attrs },
+    perks: [...s.perks],
+    xp: s.xp,
+    level: s.level,
+    perkPicks: s.perkPicks,
+    inv: [...s.inv],
+    flags: { ...s.flags },
+    vars: { ...s.vars },
+    itemLoc: { ...s.itemLoc },
+    npcHp: { ...s.npcHp },
+    npcRoom: { ...s.npcRoom },
+    conds: { ...s.conds },
+    npcConds,
+    checkAttempts: { ...s.checkAttempts },
+    flagTurn: { ...s.flagTurn },
+    visited: [...s.visited],
+    party: [...s.party],
+    talking: s.talking,
+    travelMenu: s.travelMenu,
+    companyMenu: s.companyMenu,
+    talkPage: s.talkPage,
+    travelPage: s.travelPage,
+    ended: s.ended && { ...s.ended },
+  };
+}
+
 export function step(world: World, prev: State, action: Action): StepOut {
   const legal = legalActions(world, prev);
   const key = canon(action);
   if (!legal.some((a) => canon(a) === key)) {
     return { state: prev, events: ["Illegal action — pick a number from the menu."] };
   }
-  const s: State = structuredClone(prev);
+  const s: State = cloneState(prev);
   const events: string[] = [];
   // opening the travel menu, picking a region, or backing out is browsing, not a turn;
   // only the journey itself (travelto) and everything else costs one
@@ -2183,8 +2386,8 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // room: the "armor useless" tag was read by armored players as an afterthought
   // to the first blow, not the warning before it that it is.
   if (!s.ended && !s.flags["_seenPierce"]) {
-    const piercer = Object.keys(world.npcs).find(
-      (id) => world.npcs[id]!.pierce && s.npcRoom[id] === s.room && !s.party.includes(id) && !npcDead(world, s, id),
+    const piercer = indexOf(world).piercers.find(
+      (id) => s.npcRoom[id] === s.room && !s.party.includes(id) && !npcDead(world, s, id),
     );
     if (piercer) {
       setFlag(s, "_seenPierce");

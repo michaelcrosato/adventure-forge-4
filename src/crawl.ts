@@ -40,7 +40,7 @@
  * prints its receipt (used to verify playtest reports).
  */
 import { readFileSync, readdirSync } from "node:fs";
-import { hashState, legalActions, newState, receipt, step } from "./engine.ts";
+import { legalActions, newState, receipt, sameState, step } from "./engine.ts";
 import { render, renderStatus } from "./format.ts";
 import { MENU_CAP } from "./types.ts";
 import { loadWorld, replayWalkthrough } from "./validate.ts";
@@ -92,7 +92,7 @@ export function crawl(world: World, walks: number, maxSteps: number): {
         out = step(world, state, a);
         // purity check: same state + same action twice must be identical
         const again = step(world, state, a);
-        if (hashState(out.state) !== hashState(again.state)) {
+        if (!sameState(out.state, again.state)) {
           findings.push(`DESYNC walk ${w} turn ${state.turn} action ${JSON.stringify(a)}`);
           break;
         }
