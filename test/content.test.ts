@@ -73,3 +73,55 @@ test("vale: asking the elder about the coffer early rewards xp once, and the clu
   go("ask elder: the sealed coffer");
   assert.equal(state.xp, before + 1);
 });
+
+/**
+ * A corridor: a room with no action, nobody standing there, and nothing to
+ * take, so the only choice is which way to walk. Counted PER CLASS, because
+ * that is what a player experiences — an action gated on one class is not an
+ * action for the other three, and the class-blind count is the flattering one.
+ *
+ * The realm went from 211 corridors (23%) to 15 (2%) across ten regions and
+ * the seven shared templates, and every region is now under 10% for every
+ * class. That held by nobody's arithmetic until this test. `docs/region-brief.md`
+ * sets the bar at 15%; this asserts it, with the realm's actual worst region
+ * at 6% so the margin is real rather than a number tuned to today.
+ */
+const CORRIDOR_PCT_MAX = 15;
+
+test("no region is a corridor maze, for any class (region-brief's 15% bar)", () => {
+  const reach = worlds.find((w) => w.id === "reach");
+  assert.ok(reach, "the realm is in world/");
+  const classes = Object.keys(reach.classes ?? {});
+  assert.ok(classes.length >= 4, "four classes to count against");
+
+  const peopled = new Set<string>();
+  for (const n of Object.values(reach.npcs)) if (n.room) peopled.add(n.room);
+  const stocked = new Set<string>();
+  for (const it of Object.values(reach.items)) if (it.loc && reach.rooms[it.loc]) stocked.add(it.loc);
+  // an action gated on another class is not on offer to this one
+  const offeredTo = (a: { if?: unknown[] }, c: string) =>
+    ((a.if ?? []) as unknown[]).every(
+      (cond) => !Array.isArray(cond) || !((cond[0] === "class" && cond[1] !== c) || (cond[0] === "!class" && cond[1] === c)),
+    );
+
+  const worst: { region: string; cls: string; pct: number } = { region: "", cls: "", pct: 0 };
+  const rooms = new Map<string, { total: number; bare: Record<string, number> }>();
+  for (const [id, room] of Object.entries(reach.rooms)) {
+    const r = room.region ?? id.split("_")[0]!;
+    const e = rooms.get(r) ?? rooms.set(r, { total: 0, bare: Object.fromEntries(classes.map((c) => [c, 0])) }).get(r)!;
+    e.total++;
+    for (const c of classes)
+      if (!(room.actions ?? []).some((a) => offeredTo(a, c)) && !peopled.has(id) && !stocked.has(id)) e.bare[c]!++;
+  }
+  for (const [r, e] of rooms) {
+    if (e.total < 10) continue; // "party" and "realm" buckets, not places
+    for (const c of classes) {
+      const pct = (100 * e.bare[c]!) / e.total;
+      if (pct > worst.pct) Object.assign(worst, { region: r, cls: c, pct });
+    }
+  }
+  assert.ok(
+    worst.pct <= CORRIDOR_PCT_MAX,
+    `${worst.region} is ${worst.pct.toFixed(1)}% corridors for a ${worst.cls}, over the brief's ${CORRIDOR_PCT_MAX}% — run scripts/audit-shape.ts --bare`,
+  );
+});
