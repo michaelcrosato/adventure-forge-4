@@ -45,6 +45,13 @@
           ]
         },
         {
+          "id": "mc_toast_church_sworn",
+          "label": "ask for it as one sworn to the Church",
+          "if": [["flag", "mc_aldith_bg"], ["flag", "church_sworn"], ["!flag", "mc_toast_church"]],
+          "say": "Sworn to my own Church, are you. Then there's no case to make and no waiting on me for it — an oath already kept between us is argument enough.",
+          "fx": [["set", "mc_toast_church"], ["addvar", "mc_toasts_known", 1], ["score", 4], ["xp", 3]]
+        },
+        {
           "id": "mc_scholar_chantry_free",
           "label": "read the rite for the table outright",
           "free": true,

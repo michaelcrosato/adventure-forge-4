@@ -6,124 +6,58 @@
       "brief": "Wax-sealed doors; the old bar still holds.",
       "region": "mc",
       "landmark": "the Long Table",
-      "exits": {
-        "down": {
-          "to": "mc_hall_gate"
-        },
-        "in": {
-          "to": "mc_screens_passage"
-        }
-      },
+      "exits": { "down": { "to": "mc_hall_gate" }, "in": { "to": "mc_screens_passage" } },
       "onEnterOnce": [
-        [
-          "set",
-          "mc_hollow_grievance"
-        ],
-        [
-          "score",
-          2
-        ],
-        [
-          "xp",
-          3
-        ],
-        [
-          "say",
-          "This is the Long Table: the Feast of Wax's guests, still seated behind these doors, unrested because the third toast — the one that lets a moot rise — was never drunk."
-        ],
+        ["set", "mc_hollow_grievance"],
+        ["score", 2],
+        ["xp", 3],
+        ["say", "This is the Long Table: the Feast of Wax's guests, still seated behind these doors, unrested because the third toast — the one that lets a moot rise — was never drunk."],
         [
           "if",
+          [["inParty", "vell"]],
           [
-            [
-              "inParty",
-              "vell"
-            ]
-          ],
-          [
-            [
-              "say",
-              "Vell: \"The safe-conduct was my ancestor's own word, given at that table. My house tore the page out rather than read what he did with it. I'd like to read the rest, now.\""
-            ]
+            ["say", "Vell: \"The safe-conduct was my ancestor's own word, given at that table. My house tore the page out rather than read what he did with it. I'd like to read the rest, now.\""]
           ],
           []
         ],
         [
           "if",
+          [["inParty", "osk"]],
           [
-            [
-              "inParty",
-              "osk"
-            ]
-          ],
-          [
-            [
-              "say",
-              "Brother Osk: \"Four hundred years of a fast, and no one left who remembers why, only that it's owed. I mean to learn the words this rite was never let finish.\""
-            ]
+            ["say", "Brother Osk: \"Four hundred years of a fast, and no one left who remembers why, only that it's owed. I mean to learn the words this rite was never let finish.\""]
           ],
           []
         ],
         [
           "if",
+          [["inParty", "tamsin"]],
           [
-            [
-              "inParty",
-              "tamsin"
-            ]
-          ],
-          [
-            [
-              "say",
-              "Tamsin: \"A word given at a table, and broken before the second course was cleared. That's exactly the kind of thing the Watch was raised to stand between people and.\""
-            ]
+            ["say", "Tamsin: \"A word given at a table, and broken before the second course was cleared. That's exactly the kind of thing the Watch was raised to stand between people and.\""]
           ],
           []
         ],
         [
           "if",
+          [["inParty", "lys"]],
           [
-            [
-              "inParty",
-              "lys"
-            ]
-          ],
-          [
-            [
-              "say",
-              "Lys: \"An orchard nobody picks, hives nobody robs, all so a hold can go on starving itself a little every year for guests who can't taste it. That's not honoring the dead. That's going hungry with them.\""
-            ]
+            ["say", "Lys: \"An orchard nobody picks, hives nobody robs, all so a hold can go on starving itself a little every year for guests who can't taste it. That's not honoring the dead. That's going hungry with them.\""]
           ],
           []
         ]
       ],
       "variants": [
         {
-          "if": [
-            [
-              "flag",
-              "mc_hollow_rested"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_rested"]],
           "desc": "The doors stand as wax-run as ever, but the seal along the seam has cracked and settled, like something that finally let out a held breath.",
           "brief": "The doors, wax-cracked; something exhaled."
         },
         {
-          "if": [
-            [
-              "flag",
-              "mc_hollow_bargained"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_bargained"]],
           "desc": "The doors stand whole, wax renewed fresh every feast-day now instead of merely enduring. Mootcombe tends this seal on purpose, these days.",
           "brief": "The doors, wax renewed on purpose now."
         },
         {
-          "if": [
-            [
-              "flag",
-              "mc_hollow_burned"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_burned"]],
           "desc": "A black, ragged gap stands where the doors used to be, cinder-oil scored deep into the frame. The wax is long gone, burned away with everything else.",
           "brief": "A burned gap; the wax long gone."
         }
@@ -132,114 +66,42 @@
         {
           "id": "mc_burn_hollow",
           "label": "burn the barred doors (might, 1hp fail)",
-          "if": [
-            [
-              "has",
-              "mc_cinder_oil"
-            ],
-            [
-              "!flag",
-              "mc_hollow_done"
-            ]
-          ],
+          "if": [["any", [["has", "mc_cinder_oil"], ["flag", "iron_trusted"]]], ["!flag", "mc_hollow_done"]],
           "fx": [
             [
               "check",
               "might",
               9,
               [
-                [
-                  "move",
-                  "mc_cinder_oil",
-                  "nowhere"
-                ],
-                [
-                  "set",
-                  "mc_hollow_burned"
-                ],
-                [
-                  "set",
-                  "mc_hollow_done"
-                ],
-                [
-                  "addvar",
-                  "hollows_burned",
-                  1
-                ],
-                [
-                  "addvar",
-                  "rep_iron",
-                  2
-                ],
-                [
-                  "addvar",
-                  "rep_church",
-                  -2
-                ],
-                [
-                  "addvar",
-                  "appr_vell",
-                  -1
-                ],
-                [
-                  "addvar",
-                  "appr_osk",
-                  -1
-                ],
-                [
-                  "score",
-                  15
-                ],
-                [
-                  "xp",
-                  8
-                ],
-                [
-                  "say",
-                  "The cinder-oil eats through four hundred years of wax and bar in a night. By morning the doors are a black gap, and whatever the guests were waiting on is only ash and old wax now."
-                ],
+                ["if", [["has", "mc_cinder_oil"]], [["move", "mc_cinder_oil", "nowhere"]], []],
+                ["set", "mc_hollow_burned"],
+                ["set", "mc_hollow_done"],
+                ["addvar", "hollows_burned", 1],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_church", -2],
+                ["addvar", "appr_vell", -1],
+                ["addvar", "appr_osk", -1],
+                ["score", 15],
+                ["xp", 8],
+                ["say", "The cinder-oil eats through four hundred years of wax and bar in a night. By morning the doors are a black gap, and whatever the guests were waiting on is only ash and old wax now."],
                 [
                   "if",
-                  [
-                    [
-                      "inParty",
-                      "tamsin"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "Tamsin: \"Quick, and clean enough. I won't pretend I'm sorry for it.\""
-                    ]
-                  ],
+                  [["inParty", "tamsin"]],
+                  [["say", "Tamsin: \"Quick, and clean enough. I won't pretend I'm sorry for it.\""]],
                   []
                 ],
                 [
                   "if",
+                  [["inParty", "vell"]],
                   [
-                    [
-                      "inParty",
-                      "vell"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "Vell: \"My ancestor's own guests, and my ancestor's own fire, four hundred years apart. I keep thinking someone should have asked them first. Nobody did, either time.\""
-                    ]
+                    ["say", "Vell: \"My ancestor's own guests, and my ancestor's own fire, four hundred years apart. I keep thinking someone should have asked them first. Nobody did, either time.\""]
                   ],
                   []
                 ]
               ],
               [
-                [
-                  "hp",
-                  -1
-                ],
-                [
-                  "say",
-                  "The oil catches wrong on the wax-slick wood and flares back short. You're driven off a step, singed, the doors untouched."
-                ]
+                ["hp", -1],
+                ["say", "The oil catches wrong on the wax-slick wood and flares back short. You're driven off a step, singed, the doors untouched."]
               ]
             ]
           ]
@@ -251,103 +113,44 @@
       "desc": "A narrow passage behind the doors, where servers once carried dishes between kitchen and hall. Trays lean stacked against one wall, an iron-strapped chest jammed shut against the other — both set down mid-errand, and never taken up again.",
       "brief": "A server's passage; trays stacked and stilled.",
       "region": "mc",
-      "exits": {
-        "out": {
-          "to": "mc_hall_doors"
-        },
-        "in": {
-          "to": "mc_hall"
-        }
-      },
+      "exits": { "out": { "to": "mc_hall_doors" }, "in": { "to": "mc_hall" } },
       "actions": [
         {
           "id": "mc_search_trays",
           "label": "search among the stacked trays (wits)",
-          "if": [
-            [
-              "!flag",
-              "mc_trays_searched"
-            ]
-          ],
+          "if": [["!flag", "mc_trays_searched"]],
           "fx": [
             [
               "check",
               "wits",
               9,
               [
-                [
-                  "set",
-                  "mc_trays_searched"
-                ],
-                [
-                  "addvar",
-                  "gold",
-                  4
-                ],
-                [
-                  "score",
-                  3
-                ],
-                [
-                  "xp",
-                  2
-                ],
-                [
-                  "say",
-                  "Wedged behind the trays, a handful of coin dropped and never missed in the scramble to bar the doors, that night four hundred years gone."
-                ]
+                ["set", "mc_trays_searched"],
+                ["addvar", "gold", 4],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "Wedged behind the trays, a handful of coin dropped and never missed in the scramble to bar the doors, that night four hundred years gone."]
               ],
-              [
-                [
-                  "say",
-                  "Whatever's back there, the trays are stacked too tight to search blind. It can be tried again."
-                ]
-              ]
+              [["say", "Whatever's back there, the trays are stacked too tight to search blind. It can be tried again."]]
             ]
           ]
         },
         {
           "id": "mc_force_chest",
           "label": "force the chest (might, 1hp fail)",
-          "if": [
-            [
-              "!flag",
-              "mc_order_known"
-            ]
-          ],
+          "if": [["!flag", "mc_order_known"]],
           "fx": [
             [
               "check",
               "might",
               9,
               [
-                [
-                  "set",
-                  "mc_order_known"
-                ],
-                [
-                  "score",
-                  3
-                ],
-                [
-                  "xp",
-                  3
-                ],
-                [
-                  "say",
-                  "The strap gives all at once. Inside, a seating-captain's cue-card, water-stained but whole: king's toast, Church's, the second course, then the wassail — the order a server was meant to call it in."
-                ]
+                ["set", "mc_order_known"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "The strap gives all at once. Inside, a seating-captain's cue-card, water-stained but whole: king's toast, Church's, the second course, then the wassail — the order a server was meant to call it in."]
               ],
-              [
-                [
-                  "hp",
-                  -1
-                ],
-                [
-                  "say",
-                  "The strap holds and your shoulder doesn't thank you for it. It can be forced again."
-                ]
-              ]
+              [["hp", -1], ["say", "The strap holds and your shoulder doesn't thank you for it. It can be forced again."]]
             ]
           ]
         }
@@ -358,31 +161,14 @@
       "desc": "The hall proper, and the table down its center exactly as it was left: cups set down mid-toast, plates still laid, wax pooled thick beneath candles that burned to nothing hours, or centuries, after the doors went shut. Nobody at the table has moved.",
       "brief": "The long table, set and untouched; nobody moved.",
       "region": "mc",
-      "exits": {
-        "out": {
-          "to": "mc_screens_passage"
-        },
-        "in": {
-          "to": "mc_table_head"
-        }
-      },
+      "exits": { "out": { "to": "mc_screens_passage" }, "in": { "to": "mc_table_head" } },
       "variants": [
         {
-          "if": [
-            [
-              "flag",
-              "mc_hollow_rested"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_rested"]],
           "desc": "The table stands exactly where it always did, but the cups have been lifted and set down again, empty now instead of merely waiting. The seats look, at last, like seats someone finished with."
         },
         {
-          "if": [
-            [
-              "flag",
-              "mc_hollow_burned"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_burned"]],
           "desc": "Char and fallen roof-beam where the table used to run, wax burned to black glass in long streaks down what's left of the boards."
         }
       ],
@@ -392,69 +178,28 @@
           "label": "look closer at the place-settings",
           "free": true,
           "once": true,
-          "if": [
-            [
-              "flag",
-              "mc_marl_known"
-            ],
-            [
-              "!flag",
-              "mc_hollow_burned"
-            ]
-          ],
+          "if": [["flag", "mc_marl_known"], ["!flag", "mc_hollow_burned"]],
           "fx": [
-            [
-              "xp",
-              1
-            ],
-            [
-              "say",
-              "One setting near the foot of the table doesn't match the rest: a plainer cup, a chair pulled slightly apart from its neighbors, as if whoever sat there was never quite one of the invited."
-            ]
+            ["xp", 1],
+            ["say", "One setting near the foot of the table doesn't match the rest: a plainer cup, a chair pulled slightly apart from its neighbors, as if whoever sat there was never quite one of the invited."]
           ]
         },
         {
           "id": "mc_read_candles",
           "label": "read the candle-stubs' order (wits)",
-          "if": [
-            [
-              "!flag",
-              "mc_order_known"
-            ],
-            [
-              "!flag",
-              "mc_hollow_burned"
-            ]
-          ],
+          "if": [["!flag", "mc_order_known"], ["!flag", "mc_hollow_burned"]],
           "fx": [
             [
               "check",
               "wits",
               9,
               [
-                [
-                  "set",
-                  "mc_order_known"
-                ],
-                [
-                  "score",
-                  3
-                ],
-                [
-                  "xp",
-                  3
-                ],
-                [
-                  "say",
-                  "Four stubs, four different lengths: longest burned longest, so it was lit first. Read them out and the night reads back — king, Church, a course, then the guests' own cups, burned to nothing together."
-                ]
+                ["set", "mc_order_known"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "Four stubs, four different lengths: longest burned longest, so it was lit first. Read them out and the night reads back — king, Church, a course, then the guests' own cups, burned to nothing together."]
               ],
-              [
-                [
-                  "say",
-                  "The stubs all look much the same length in this poor light. It can be read again."
-                ]
-              ]
+              [["say", "The stubs all look much the same length in this poor light. It can be read again."]]
             ]
           ]
         },
@@ -463,49 +208,18 @@
           "label": "read the candle-stubs at a glance",
           "free": true,
           "if": [
-            [
-              "class",
-              "scout"
-            ],
-            [
-              "!flag",
-              "mc_order_known"
-            ],
-            [
-              "!flag",
-              "mc_hollow_burned"
-            ],
-            [
-              "!flag",
-              "or_scout_mc_candles"
-            ]
+            ["class", "scout"],
+            ["!flag", "mc_order_known"],
+            ["!flag", "mc_hollow_burned"],
+            ["!flag", "or_scout_mc_candles"]
           ],
           "fx": [
-            [
-              "set",
-              "or_scout_mc_candles"
-            ],
-            [
-              "addvar",
-              "or_scout_marks",
-              1
-            ],
-            [
-              "set",
-              "mc_order_known"
-            ],
-            [
-              "score",
-              3
-            ],
-            [
-              "xp",
-              3
-            ],
-            [
-              "say",
-              "Wax-lengths read like spoor to you: longest lit first, shortest last. King, Church, a course, the guests' wassail — in that order, plain as a track in mud."
-            ]
+            ["set", "or_scout_mc_candles"],
+            ["addvar", "or_scout_marks", 1],
+            ["set", "mc_order_known"],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "Wax-lengths read like spoor to you: longest lit first, shortest last. King, Church, a course, the guests' wassail — in that order, plain as a track in mud."]
           ]
         }
       ]
@@ -515,28 +229,14 @@
       "desc": "The Reeve's own chair stands empty at the table's head, pushed back at an angle, as if whoever last touched it meant to return before the doors went up. Everything here has waited exactly this long for exactly one thing.",
       "brief": "The Reeve's chair, empty, pushed back and waiting.",
       "region": "mc",
-      "exits": {
-        "out": {
-          "to": "mc_hall"
-        }
-      },
+      "exits": { "out": { "to": "mc_hall" } },
       "variants": [
         {
-          "if": [
-            [
-              "flag",
-              "mc_hollow_rested"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_rested"]],
           "desc": "The Reeve's chair stands empty still, but a single cup rests clean and dry at its place now, set down on purpose rather than left mid-toast."
         },
         {
-          "if": [
-            [
-              "flag",
-              "mc_hollow_burned"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_burned"]],
           "desc": "Where the chair stood is only a shape burned into the floor, darker than the char around it, and a scatter of wax gone hard and black."
         }
       ],
@@ -545,212 +245,67 @@
           "id": "mc_weigh_grief",
           "label": "weigh what this grief asks",
           "free": true,
-          "if": [
-            [
-              "!flag",
-              "mc_hollow_done"
-            ]
-          ],
+          "if": [["!flag", "mc_hollow_done"]],
           "fx": [
+            ["say", "The rite wants the feast served through, in the order it broke off in: three toasts and a course, ending at the guests' own cup."],
+            ["if", [["var", "mc_toasts_known", ">=", 3]], [["say", "All three toasts are known."]], []],
             [
-              "say",
-              "The rite wants the feast served through, in the order it broke off in: three toasts and a course, ending at the guests' own cup."
+              "if",
+              [["!flag", "mc_toast_king"]],
+              [["say", "One toast is still wanted: the king's, from Ingrith's guest-list at the recorder's loft."]],
+              []
             ],
             [
               "if",
+              [["!flag", "mc_toast_church"]],
+              [["say", "One toast is still wanted: the Church's, from Aldith's rite at the chantry."]],
+              []
+            ],
+            [
+              "if",
+              [["!flag", "mc_toast_guests"]],
               [
-                [
-                  "var",
-                  "mc_toasts_known",
-                  ">=",
-                  3
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "All three toasts are known."
-                ]
+                ["say", "One toast is still wanted: the guests', from Hedda's wassail at the Press Hearth (asked of her, not read)."]
               ],
               []
             ],
             [
               "if",
+              [["flag", "mc_last_course"]],
+              [["say", "The last course is ready."]],
               [
-                [
-                  "!flag",
-                  "mc_toast_king"
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "One toast is still wanted: the king's, from Ingrith's guest-list at the recorder's loft."
-                ]
-              ],
-              []
-            ],
-            [
-              "if",
-              [
-                [
-                  "!flag",
-                  "mc_toast_church"
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "One toast is still wanted: the Church's, from Aldith's rite at the chantry."
-                ]
-              ],
-              []
-            ],
-            [
-              "if",
-              [
-                [
-                  "!flag",
-                  "mc_toast_guests"
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "One toast is still wanted: the guests', from Hedda's wassail at the Press Hearth (asked of her, not read)."
-                ]
-              ],
-              []
-            ],
-            [
-              "if",
-              [
-                [
-                  "flag",
-                  "mc_last_course"
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "The last course is ready."
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "The last course is still wanted: Hedda persuaded, the press worked yourself, or a jar bought from Fulk."
-                ]
+                ["say", "The last course is still wanted: Hedda persuaded, the press worked yourself, or a jar bought from Fulk."]
               ]
             ],
             [
               "if",
-              [
-                [
-                  "var",
-                  "mc_toasts_known",
-                  ">=",
-                  3
-                ],
-                [
-                  "flag",
-                  "mc_last_course"
-                ]
-              ],
+              [["var", "mc_toasts_known", ">=", 3], ["flag", "mc_last_course"]],
               [
                 [
                   "if",
+                  [["flag", "mc_order_known"]],
+                  [["say", "You know the order it should run in now, if you trust what you were told."]],
                   [
-                    [
-                      "flag",
-                      "mc_order_known"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "You know the order it should run in now, if you trust what you were told."
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "Nobody living recites the order whole — but Ingrith, Aldith, Oswin, Hedda, and Nell each hold a piece of it, and the table itself might tell a patient eye or a strong enough hand."
-                    ]
+                    ["say", "Nobody living recites the order whole — but Ingrith, Aldith, Oswin, Hedda, and Nell each hold a piece of it, and the table itself might tell a patient eye or a strong enough hand."]
                   ]
                 ],
                 [
                   "if",
-                  [
-                    [
-                      "var",
-                      "mc_course_step",
-                      ">=",
-                      3
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "Three of the four have gone rightly here. One remains."
-                    ]
-                  ],
+                  [["var", "mc_course_step", ">=", 3]],
+                  [["say", "Three of the four have gone rightly here. One remains."]],
                   [
                     [
                       "if",
-                      [
-                        [
-                          "var",
-                          "mc_course_step",
-                          ">=",
-                          2
-                        ]
-                      ],
-                      [
-                        [
-                          "say",
-                          "Two of the four have gone rightly here so far."
-                        ]
-                      ],
-                      [
-                        [
-                          "if",
-                          [
-                            [
-                              "var",
-                              "mc_course_step",
-                              ">=",
-                              1
-                            ]
-                          ],
-                          [
-                            [
-                              "say",
-                              "One of the four has gone rightly here so far."
-                            ]
-                          ],
-                          []
-                        ]
-                      ]
+                      [["var", "mc_course_step", ">=", 2]],
+                      [["say", "Two of the four have gone rightly here so far."]],
+                      [["if", [["var", "mc_course_step", ">=", 1]], [["say", "One of the four has gone rightly here so far."]], []]]
                     ]
                   ]
                 ],
                 [
                   "if",
-                  [
-                    [
-                      "var",
-                      "mc_courses_wrong",
-                      ">=",
-                      3
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "The table has borne wrong turns already. It will bear more, but not without cost."
-                    ]
-                  ],
+                  [["var", "mc_courses_wrong", ">=", 3]],
+                  [["say", "The table has borne wrong turns already. It will bear more, but not without cost."]],
                   []
                 ]
               ],
@@ -758,216 +313,66 @@
             ],
             [
               "if",
+              [["flag", "mc_osric_refused"], ["flag", "mc_fulk_refused"], ["flag", "mc_rendel_refused"]],
+              [["say", "The bargain stands ready: tell Oswin, at the hall-gate, the hall stays shut."]],
               [
+                ["say", "The bargain wants three claims refused, in Mootcombe:"],
                 [
-                  "flag",
-                  "mc_osric_refused"
-                ],
-                [
-                  "flag",
-                  "mc_fulk_refused"
-                ],
-                [
-                  "flag",
-                  "mc_rendel_refused"
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "The bargain stands ready: tell Oswin, at the hall-gate, the hall stays shut."
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "The bargain wants three claims refused, in Mootcombe:"
+                  "if",
+                  [["!flag", "mc_osric_refused"]],
+                  [["say", "the levy-reeve's warrant (Osric, at the tally-house);"]],
+                  [["say", "the levy-reeve's warrant — refused already;"]]
                 ],
                 [
                   "if",
-                  [
-                    [
-                      "!flag",
-                      "mc_osric_refused"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "the levy-reeve's warrant (Osric, at the tally-house);"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "the levy-reeve's warrant — refused already;"
-                    ]
-                  ]
+                  [["!flag", "mc_fulk_refused"]],
+                  [["say", "the victualler's contract (Fulk, at the cask-yard);"]],
+                  [["say", "the victualler's contract — refused already;"]]
                 ],
                 [
                   "if",
-                  [
-                    [
-                      "!flag",
-                      "mc_fulk_refused"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "the victualler's contract (Fulk, at the cask-yard);"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "the victualler's contract — refused already;"
-                    ]
-                  ]
-                ],
-                [
-                  "if",
-                  [
-                    [
-                      "!flag",
-                      "mc_rendel_refused"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "the cooper's timber (Rendel, at the cooper's shop)."
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "the cooper's timber — refused already."
-                    ]
-                  ]
+                  [["!flag", "mc_rendel_refused"]],
+                  [["say", "the cooper's timber (Rendel, at the cooper's shop)."]],
+                  [["say", "the cooper's timber — refused already."]]
                 ]
               ]
             ],
             [
               "if",
+              [["any", [["has", "mc_cinder_oil"], ["flag", "iron_trusted"]]]],
               [
-                [
-                  "has",
-                  "mc_cinder_oil"
-                ]
+                ["say", "The burn stands ready: cinder-oil is yours — burn the barred doors, back at the entrance (might; a failed try costs 1 hp)."]
               ],
-              [
-                [
-                  "say",
-                  "The burn stands ready: cinder-oil is yours — burn the barred doors, back at the entrance (might; a failed try costs 1 hp)."
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "The burn wants cinder-oil — Rendel, at the cooper's shop, gives it gladly once his want is known."
-                ]
-              ]
+              [["say", "The burn wants cinder-oil — Rendel, at the cooper's shop, gives it gladly once his want is known."]]
             ]
           ]
         },
         {
           "id": "mc_serve_king",
           "label": "toast the king",
-          "if": [
-            [
-              "flag",
-              "mc_toast_king"
-            ],
-            [
-              "!flag",
-              "mc_king_served"
-            ],
-            [
-              "!flag",
-              "mc_hollow_done"
-            ]
-          ],
+          "if": [["flag", "mc_toast_king"], ["!flag", "mc_king_served"], ["!flag", "mc_hollow_done"]],
           "fx": [
             [
               "if",
+              [["var", "mc_course_step", "=", 0]],
               [
-                [
-                  "var",
-                  "mc_course_step",
-                  "=",
-                  0
-                ]
+                ["set", "mc_king_served"],
+                ["addvar", "mc_course_step", 1],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "You raise a cup to a king four hundred years dead and speak the toast from Ingrith's own hand. Nobody drinks. It is, at least, the first word rightly spoken here since the doors went up."]
               ],
               [
-                [
-                  "set",
-                  "mc_king_served"
-                ],
-                [
-                  "addvar",
-                  "mc_course_step",
-                  1
-                ],
-                [
-                  "score",
-                  3
-                ],
-                [
-                  "xp",
-                  2
-                ],
-                [
-                  "say",
-                  "You raise a cup to a king four hundred years dead and speak the toast from Ingrith's own hand. Nobody drinks. It is, at least, the first word rightly spoken here since the doors went up."
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "A toast to the king doesn't belong yet. Something about the wrongness of it lingers after you set the cup back down."
-                ],
+                ["say", "A toast to the king doesn't belong yet. Something about the wrongness of it lingers after you set the cup back down."],
                 [
                   "if",
+                  [["var", "mc_courses_wrong", "<", 3]],
+                  [["cond", "grayfever", 2], ["addvar", "mc_courses_wrong", 1]],
                   [
-                    [
-                      "var",
-                      "mc_courses_wrong",
-                      "<",
-                      3
-                    ]
-                  ],
-                  [
-                    [
-                      "cond",
-                      "grayfever",
-                      2
-                    ],
-                    [
-                      "addvar",
-                      "mc_courses_wrong",
-                      1
-                    ]
-                  ],
-                  [
-                    [
-                      "cond",
-                      "grayfever",
-                      4
-                    ],
-                    [
-                      "hp",
-                      -1
-                    ],
-                    [
-                      "addvar",
-                      "mc_courses_wrong",
-                      1
-                    ],
-                    [
-                      "say",
-                      "The table's patience is thinning."
-                    ]
+                    ["cond", "grayfever", 4],
+                    ["hp", -1],
+                    ["addvar", "mc_courses_wrong", 1],
+                    ["say", "The table's patience is thinning."]
                   ]
                 ]
               ]
@@ -977,100 +382,29 @@
         {
           "id": "mc_serve_church",
           "label": "speak the Church's toast",
-          "if": [
-            [
-              "flag",
-              "mc_toast_church"
-            ],
-            [
-              "!flag",
-              "mc_church_served"
-            ],
-            [
-              "!flag",
-              "mc_hollow_done"
-            ]
-          ],
+          "if": [["flag", "mc_toast_church"], ["!flag", "mc_church_served"], ["!flag", "mc_hollow_done"]],
           "fx": [
             [
               "if",
+              [["var", "mc_course_step", "=", 1]],
               [
-                [
-                  "var",
-                  "mc_course_step",
-                  "=",
-                  1
-                ]
+                ["set", "mc_church_served"],
+                ["addvar", "mc_course_step", 1],
+                ["score", 3],
+                ["xp", 2],
+                ["say", "Aldith's own words, spoken over a table with no living congregation left to hear them. The second toast, finished at last, four hundred years late."]
               ],
               [
-                [
-                  "set",
-                  "mc_church_served"
-                ],
-                [
-                  "addvar",
-                  "mc_course_step",
-                  1
-                ],
-                [
-                  "score",
-                  3
-                ],
-                [
-                  "xp",
-                  2
-                ],
-                [
-                  "say",
-                  "Aldith's own words, spoken over a table with no living congregation left to hear them. The second toast, finished at last, four hundred years late."
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "Aldith's toast comes out of order, flat and wrong-shaped for the moment. Something about the table's stillness sharpens."
-                ],
+                ["say", "Aldith's toast comes out of order, flat and wrong-shaped for the moment. Something about the table's stillness sharpens."],
                 [
                   "if",
+                  [["var", "mc_courses_wrong", "<", 3]],
+                  [["cond", "grayfever", 2], ["addvar", "mc_courses_wrong", 1]],
                   [
-                    [
-                      "var",
-                      "mc_courses_wrong",
-                      "<",
-                      3
-                    ]
-                  ],
-                  [
-                    [
-                      "cond",
-                      "grayfever",
-                      2
-                    ],
-                    [
-                      "addvar",
-                      "mc_courses_wrong",
-                      1
-                    ]
-                  ],
-                  [
-                    [
-                      "cond",
-                      "grayfever",
-                      4
-                    ],
-                    [
-                      "hp",
-                      -1
-                    ],
-                    [
-                      "addvar",
-                      "mc_courses_wrong",
-                      1
-                    ],
-                    [
-                      "say",
-                      "The table's patience is thinning."
-                    ]
+                    ["cond", "grayfever", 4],
+                    ["hp", -1],
+                    ["addvar", "mc_courses_wrong", 1],
+                    ["say", "The table's patience is thinning."]
                   ]
                 ]
               ]
@@ -1080,134 +414,47 @@
         {
           "id": "mc_serve_course",
           "label": "serve the second course",
-          "if": [
-            [
-              "flag",
-              "mc_last_course"
-            ],
-            [
-              "!flag",
-              "mc_course_served"
-            ],
-            [
-              "!flag",
-              "mc_hollow_done"
-            ]
-          ],
+          "if": [["flag", "mc_last_course"], ["!flag", "mc_course_served"], ["!flag", "mc_hollow_done"]],
           "fx": [
             [
               "if",
+              [["var", "mc_course_step", "=", 2]],
               [
-                [
-                  "var",
-                  "mc_course_step",
-                  "=",
-                  2
-                ]
-              ],
-              [
-                [
-                  "set",
-                  "mc_course_served"
-                ],
-                [
-                  "addvar",
-                  "mc_course_step",
-                  1
-                ],
-                [
-                  "score",
-                  3
-                ],
-                [
-                  "xp",
-                  2
-                ],
+                ["set", "mc_course_served"],
+                ["addvar", "mc_course_step", 1],
+                ["score", 3],
+                ["xp", 2],
                 [
                   "if",
+                  [["flag", "mc_apples_hedda"]],
                   [
-                    [
-                      "flag",
-                      "mc_apples_hedda"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "You serve the second course — Hedda's own, pressed with hands that hadn't broken this fast in four hundred years. It goes down the table's center, four hundred years overdue."
-                    ]
+                    ["say", "You serve the second course — Hedda's own, pressed with hands that hadn't broken this fast in four hundred years. It goes down the table's center, four hundred years overdue."]
                   ],
                   [
                     [
                       "if",
+                      [["flag", "mc_apples_self"]],
                       [
-                        [
-                          "flag",
-                          "mc_apples_self"
-                        ]
+                        ["say", "You serve the second course — pressed at the wheel yourself, apples gathered under the oak's own branches. It goes down the table's center, four hundred years overdue."]
                       ],
                       [
-                        [
-                          "say",
-                          "You serve the second course — pressed at the wheel yourself, apples gathered under the oak's own branches. It goes down the table's center, four hundred years overdue."
-                        ]
-                      ],
-                      [
-                        [
-                          "say",
-                          "You serve the second course — a jar from Fulk's stock, pressed for coin and not for grief. It goes down the table's center, four hundred years overdue."
-                        ]
+                        ["say", "You serve the second course — a jar from Fulk's stock, pressed for coin and not for grief. It goes down the table's center, four hundred years overdue."]
                       ]
                     ]
                   ]
                 ]
               ],
               [
-                [
-                  "say",
-                  "You set the course down out of its turn. It sits there untouched, and the wrongness of the timing follows you back out."
-                ],
+                ["say", "You set the course down out of its turn. It sits there untouched, and the wrongness of the timing follows you back out."],
                 [
                   "if",
+                  [["var", "mc_courses_wrong", "<", 3]],
+                  [["cond", "grayfever", 2], ["addvar", "mc_courses_wrong", 1]],
                   [
-                    [
-                      "var",
-                      "mc_courses_wrong",
-                      "<",
-                      3
-                    ]
-                  ],
-                  [
-                    [
-                      "cond",
-                      "grayfever",
-                      2
-                    ],
-                    [
-                      "addvar",
-                      "mc_courses_wrong",
-                      1
-                    ]
-                  ],
-                  [
-                    [
-                      "cond",
-                      "grayfever",
-                      4
-                    ],
-                    [
-                      "hp",
-                      -1
-                    ],
-                    [
-                      "addvar",
-                      "mc_courses_wrong",
-                      1
-                    ],
-                    [
-                      "say",
-                      "The table's patience is thinning."
-                    ]
+                    ["cond", "grayfever", 4],
+                    ["hp", -1],
+                    ["addvar", "mc_courses_wrong", 1],
+                    ["say", "The table's patience is thinning."]
                   ]
                 ]
               ]
@@ -1217,174 +464,62 @@
         {
           "id": "mc_serve_guests",
           "label": "raise the cup (will, 1hp fail)",
-          "if": [
-            [
-              "flag",
-              "mc_toast_guests"
-            ],
-            [
-              "!flag",
-              "mc_hollow_done"
-            ]
-          ],
+          "if": [["flag", "mc_toast_guests"], ["!flag", "mc_hollow_done"]],
           "fx": [
             [
               "if",
-              [
-                [
-                  "var",
-                  "mc_course_step",
-                  "=",
-                  3
-                ]
-              ],
+              [["var", "mc_course_step", "=", 3]],
               [
                 [
                   "check",
                   "will",
                   10,
                   [
-                    [
-                      "set",
-                      "mc_hollow_rested"
-                    ],
-                    [
-                      "set",
-                      "mc_hollow_done"
-                    ],
-                    [
-                      "addvar",
-                      "hollows_rested",
-                      1
-                    ],
-                    [
-                      "addvar",
-                      "rep_keepers",
-                      2
-                    ],
-                    [
-                      "addvar",
-                      "rep_church",
-                      2
-                    ],
-                    [
-                      "addvar",
-                      "appr_vell",
-                      1
-                    ],
-                    [
-                      "addvar",
-                      "appr_osk",
-                      1
-                    ],
-                    [
-                      "score",
-                      25
-                    ],
-                    [
-                      "xp",
-                      8
-                    ],
-                    [
-                      "addvar",
-                      "mc_course_step",
-                      1
-                    ],
-                    [
-                      "say",
-                      "You raise the cup and speak the guests' own wassail last of all, the toast that lets a moot rise. Down the table's length, four hundred years of stillness finally breaks."
-                    ],
+                    ["set", "mc_hollow_rested"],
+                    ["set", "mc_hollow_done"],
+                    ["addvar", "hollows_rested", 1],
+                    ["addvar", "rep_keepers", 2],
+                    ["addvar", "rep_church", 2],
+                    ["addvar", "appr_vell", 1],
+                    ["addvar", "appr_osk", 1],
+                    ["score", 25],
+                    ["xp", 8],
+                    ["addvar", "mc_course_step", 1],
+                    ["say", "You raise the cup and speak the guests' own wassail last of all, the toast that lets a moot rise. Down the table's length, four hundred years of stillness finally breaks."],
                     [
                       "if",
+                      [["inParty", "vell"]],
                       [
-                        [
-                          "inParty",
-                          "vell"
-                        ]
-                      ],
-                      [
-                        [
-                          "say",
-                          "Vell: \"Finished. Not forgiven, maybe, but finished. I didn't know until just now how much I needed those to be different things.\""
-                        ]
+                        ["say", "Vell: \"Finished. Not forgiven, maybe, but finished. I didn't know until just now how much I needed those to be different things.\""]
                       ],
                       []
                     ],
                     [
                       "if",
+                      [["inParty", "osk"]],
                       [
-                        [
-                          "inParty",
-                          "osk"
-                        ]
-                      ],
-                      [
-                        [
-                          "say",
-                          "Brother Osk: \"The rite ends. I've never spoken words that felt more like they'd been waiting for me specifically to say them.\""
-                        ]
+                        ["say", "Brother Osk: \"The rite ends. I've never spoken words that felt more like they'd been waiting for me specifically to say them.\""]
                       ],
                       []
                     ]
                   ],
                   [
-                    [
-                      "hp",
-                      -1
-                    ],
-                    [
-                      "say",
-                      "A word catches wrong in your throat, and the cup nearly goes with it, a wax-brittle shard opening your palm as you steady it. The table stays exactly as still as it was. It can be tried again."
-                    ]
+                    ["hp", -1],
+                    ["say", "A word catches wrong in your throat, and the cup nearly goes with it, a wax-brittle shard opening your palm as you steady it. The table stays exactly as still as it was. It can be tried again."]
                   ]
                 ]
               ],
               [
-                [
-                  "say",
-                  "You raise the cup too soon. The wassail dies in your throat — a toast that isn't owed a table to rise from yet. The wrongness of it stays with you."
-                ],
+                ["say", "You raise the cup too soon. The wassail dies in your throat — a toast that isn't owed a table to rise from yet. The wrongness of it stays with you."],
                 [
                   "if",
+                  [["var", "mc_courses_wrong", "<", 3]],
+                  [["cond", "grayfever", 2], ["addvar", "mc_courses_wrong", 1]],
                   [
-                    [
-                      "var",
-                      "mc_courses_wrong",
-                      "<",
-                      3
-                    ]
-                  ],
-                  [
-                    [
-                      "cond",
-                      "grayfever",
-                      2
-                    ],
-                    [
-                      "addvar",
-                      "mc_courses_wrong",
-                      1
-                    ]
-                  ],
-                  [
-                    [
-                      "cond",
-                      "grayfever",
-                      4
-                    ],
-                    [
-                      "hp",
-                      -1
-                    ],
-                    [
-                      "addvar",
-                      "mc_courses_wrong",
-                      1
-                    ],
-                    [
-                      "say",
-                      "The table's patience is thinning."
-                    ]
+                    ["cond", "grayfever", 4],
+                    ["hp", -1],
+                    ["addvar", "mc_courses_wrong", 1],
+                    ["say", "The table's patience is thinning."]
                   ]
                 ]
               ]
@@ -1392,38 +527,30 @@
           ]
         },
         {
+          "id": "mc_speak_great_rite",
+          "label": "speak the Great Rite over the table",
+          "if": [["flag", "keepers_sworn"], ["!flag", "mc_hollow_done"]],
+          "fx": [
+            ["set", "mc_hollow_rested"],
+            ["set", "mc_hollow_done"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no toast learned and no course served in its turn. The table rises anyway, wax cracking loose from doors that swing open on their own."]
+          ]
+        },
+        {
           "id": "mc_search_ashes",
           "label": "search where the table's head burned",
           "once": true,
-          "if": [
-            [
-              "flag",
-              "mc_hollow_burned"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_burned"]],
           "fx": [
-            [
-              "move",
-              "mc_wax_lump",
-              "inv"
-            ],
-            [
-              "score",
-              3
-            ],
-            [
-              "xp",
-              2
-            ],
-            [
-              "addvar",
-              "gold",
-              6
-            ],
-            [
-              "say",
-              "Fused into the char where the Reeve's chair stood: a lump of candle-wax, four hundred years of separate flames melted into one. You take it, and try not to look too long at the rest of the table."
-            ]
+            ["move", "mc_wax_lump", "inv"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "gold", 6],
+            ["say", "Fused into the char where the Reeve's chair stood: a lump of candle-wax, four hundred years of separate flames melted into one. You take it, and try not to look too long at the rest of the table."]
           ]
         }
       ]
@@ -1444,52 +571,19 @@
   "quests": {
     "mc_q_prepare": {
       "name": "Setting the Feast",
-      "start": [
-        [
-          "flag",
-          "mc_hollow_grievance"
-        ]
-      ],
-      "done": [
-        [
-          "var",
-          "mc_toasts_known",
-          ">=",
-          3
-        ],
-        [
-          "flag",
-          "mc_last_course"
-        ]
-      ],
+      "start": [["flag", "mc_hollow_grievance"]],
+      "done": [["var", "mc_toasts_known", ">=", 3], ["flag", "mc_last_course"]],
       "stages": [
         {
-          "if": [
-            [
-              "var",
-              "mc_toasts_known",
-              ">=",
-              3
-            ]
-          ],
+          "if": [["var", "mc_toasts_known", ">=", 3]],
           "text": "All three toasts are known. The last course remains: persuade Hedda, work the press yourself, or buy a jar from Fulk."
         },
         {
-          "if": [
-            [
-              "flag",
-              "mc_last_course"
-            ]
-          ],
+          "if": [["flag", "mc_last_course"]],
           "text": "The last course is ready. Toasts remain: Ingrith's, Aldith's, and Hedda's — the loft, the chantry, the hearth."
         },
         {
-          "if": [
-            [
-              "has",
-              "mc_oak_apples"
-            ]
-          ],
+          "if": [["has", "mc_oak_apples"]],
           "text": "Apples are gathered. Press them yourself at the cider-press and wheel, out in the orchard rows."
         },
         {
@@ -1497,175 +591,61 @@
           "text": "The Feast of Wax broke off unfinished. Wanted: the king's, Church's, and guests' toasts, and a last course."
         }
       ],
-      "failed": [
-        [
-          "flag",
-          "mc_hollow_done"
-        ],
-        [
-          "!flag",
-          "mc_hollow_rested"
-        ]
-      ]
+      "failed": [["flag", "mc_hollow_done"], ["!flag", "mc_hollow_rested"]]
     },
     "mc_q_order": {
       "name": "The Feast's Order",
-      "start": [
-        [
-          "var",
-          "mc_toasts_known",
-          ">=",
-          3
-        ],
-        [
-          "flag",
-          "mc_last_course"
-        ]
-      ],
-      "done": [
-        [
-          "flag",
-          "mc_hollow_rested"
-        ]
-      ],
+      "start": [["var", "mc_toasts_known", ">=", 3], ["flag", "mc_last_course"]],
+      "done": [["flag", "mc_hollow_rested"]],
       "stages": [
         {
-          "if": [
-            [
-              "var",
-              "mc_course_step",
-              ">=",
-              3
-            ]
-          ],
+          "if": [["var", "mc_course_step", ">=", 3]],
           "text": "Three of the four have gone rightly. One remains — the table has borne enough wrong turns for one night."
         },
-        {
-          "if": [
-            [
-              "var",
-              "mc_course_step",
-              ">=",
-              2
-            ]
-          ],
-          "text": "Two of the four have gone rightly here so far."
-        },
-        {
-          "if": [
-            [
-              "var",
-              "mc_course_step",
-              ">=",
-              1
-            ]
-          ],
-          "text": "One of the four has gone rightly here so far."
-        },
+        { "if": [["var", "mc_course_step", ">=", 2]], "text": "Two of the four have gone rightly here so far." },
+        { "if": [["var", "mc_course_step", ">=", 1]], "text": "One of the four has gone rightly here so far." },
         {
           "if": [],
           "text": "Everything's ready. Set the feast right, in order, at the table's head — Mootcombe half-remembers it, in pieces."
         }
       ],
-      "failed": [
-        [
-          "flag",
-          "mc_hollow_done"
-        ],
-        [
-          "!flag",
-          "mc_hollow_rested"
-        ]
-      ]
+      "failed": [["flag", "mc_hollow_done"], ["!flag", "mc_hollow_rested"]]
     },
     "mc_q_orchard": {
       "name": "The Orchard Question",
-      "start": [
-        [
-          "flag",
-          "mc_hollow_grievance"
-        ]
-      ],
-      "done": [
-        [
-          "flag",
-          "mc_orchard_settled"
-        ]
-      ],
+      "start": [["flag", "mc_hollow_grievance"]],
+      "done": [["flag", "mc_orchard_settled"]],
       "stages": [
         {
-          "if": [
-            [
-              "flag",
-              "mc_orchard_crown"
-            ]
-          ],
+          "if": [["flag", "mc_orchard_crown"]],
           "text": "Mootcombe's orchards answer to the Crown's levy now, counted row by row from the tally-house."
         },
         {
-          "if": [
-            [
-              "flag",
-              "mc_orchard_free"
-            ]
-          ],
+          "if": [["flag", "mc_orchard_free"]],
           "text": "Mootcombe's orchards fill Free Company casks now, out of the cask-yard."
         },
         {
-          "if": [
-            [
-              "flag",
-              "mc_orchard_common"
-            ]
-          ],
+          "if": [["flag", "mc_orchard_common"]],
           "text": "Mootcombe's orchards are the moot's own commons now, the first pressing the dead's."
         },
         {
-          "if": [
-            [
-              "flag",
-              "mc_orchard_broker"
-            ]
-          ],
+          "if": [["flag", "mc_orchard_broker"]],
           "text": "An Envoy's lease binds the Crown and the Companies to the same orchard now."
         },
         {
-          "if": [
-            [
-              "flag",
-              "mc_hollow_done"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_done"]],
           "text": "The hall's fate is settled. The orchard question is still open: declare it under the moot-oak, at the green."
         },
-        {
-          "if": [],
-          "text": "Whose the orchards answer to waits on the Long Table's own fate being settled first."
-        }
+        { "if": [], "text": "Whose the orchards answer to waits on the Long Table's own fate being settled first." }
       ]
     },
     "mc_q_errand": {
       "name": "The Victualler's Errand",
-      "start": [
-        [
-          "flag",
-          "mc_fulk_errand"
-        ]
-      ],
-      "done": [
-        [
-          "flag",
-          "mc_fulk_errand_done"
-        ]
-      ],
+      "start": [["flag", "mc_fulk_errand"]],
+      "done": [["flag", "mc_fulk_errand_done"]],
       "stages": [
         {
-          "if": [
-            [
-              "flag",
-              "mc_lane_known"
-            ]
-          ],
+          "if": [["flag", "mc_lane_known"]],
           "text": "The sunken lane's line is known. Carry Fulk's cask north, up the cairn-track, past where he walks."
         },
         {
@@ -1676,27 +656,8 @@
     },
     "mc_q_child": {
       "name": "The Knock in the Wall",
-      "start": [
-        [
-          "flag",
-          "mc_nell_bg"
-        ]
-      ],
-      "done": [
-        [
-          "any",
-          [
-            [
-              "flag",
-              "mc_nell_stop"
-            ],
-            [
-              "flag",
-              "mc_nell_keep"
-            ]
-          ]
-        ]
-      ],
+      "start": [["flag", "mc_nell_bg"]],
+      "done": [["any", [["flag", "mc_nell_stop"], ["flag", "mc_nell_keep"]]]],
       "stages": [
         {
           "if": [],
@@ -1706,66 +667,22 @@
     },
     "mc_q_after": {
       "name": "Mootcombe, After",
-      "start": [
-        [
-          "flag",
-          "sv_mc_back"
-        ]
-      ],
-      "done": [
-        [
-          "flag",
-          "sv_mc_after_done"
-        ]
-      ],
+      "start": [["flag", "sv_mc_back"]],
+      "done": [["flag", "sv_mc_after_done"]],
       "stages": [
         {
-          "if": [
-            [
-              "flag",
-              "mc_hollow_bargained"
-            ],
-            [
-              "!flag",
-              "said_mc_levy_reeve_sv_mc_bargain_ask"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_bargained"], ["!flag", "said_mc_levy_reeve_sv_mc_bargain_ask"]],
           "text": "The bargain's come due. Osric, at the tally-house, has news you won't like."
         },
         {
-          "if": [
-            [
-              "flag",
-              "mc_hollow_rested"
-            ],
-            [
-              "!flag",
-              "said_mc_steward_sv_mc_rested_ask"
-            ],
-            [
-              "has",
-              "mc_hall_key"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_rested"], ["!flag", "said_mc_steward_sv_mc_rested_ask"], ["has", "mc_hall_key"]],
           "text": "The rite is settled. Oswin, at the hall-gate, wonders what becomes of the key now."
         },
         {
-          "if": [
-            [
-              "flag",
-              "mc_hollow_burned"
-            ],
-            [
-              "!flag",
-              "said_mc_cooper_sv_mc_burn_ask"
-            ]
-          ],
+          "if": [["flag", "mc_hollow_burned"], ["!flag", "said_mc_cooper_sv_mc_burn_ask"]],
           "text": "The hall is ash. Rendel, at the cooper's shop, wants to know where the timber goes."
         },
-        {
-          "if": [],
-          "text": "Mootcombe settles back into itself, whatever the Long Table's fate cost it."
-        }
+        { "if": [], "text": "Mootcombe settles back into itself, whatever the Long Table's fate cost it." }
       ]
     }
   },
@@ -1775,258 +692,106 @@
       "label": "The three toasts",
       "max": 3,
       "remaining": [
-        {
-          "flag": "mc_toast_king",
-          "label": "Ingrith's guest-list"
-        },
-        {
-          "flag": "mc_toast_church",
-          "label": "Aldith's rite"
-        },
-        {
-          "flag": "mc_toast_guests",
-          "label": "Hedda's wassail"
-        }
+        { "flag": "mc_toast_king", "label": "Ingrith's guest-list" },
+        { "flag": "mc_toast_church", "label": "Aldith's rite" },
+        { "flag": "mc_toast_guests", "label": "Hedda's wassail" }
       ],
-      "if": [
-        [
-          "flag",
-          "mc_hollow_grievance"
-        ]
-      ]
+      "if": [["flag", "mc_hollow_grievance"]]
     },
     {
       "var": "mc_course_step",
       "label": "The feast, set right",
       "max": 4,
       "remaining": [
-        {
-          "flag": "mc_king_served",
-          "label": "the king's toast"
-        },
-        {
-          "flag": "mc_church_served",
-          "label": "the Church's toast"
-        },
-        {
-          "flag": "mc_course_served",
-          "label": "the second course"
-        },
-        {
-          "flag": "mc_hollow_rested",
-          "label": "the guests' wassail"
-        }
+        { "flag": "mc_king_served", "label": "the king's toast" },
+        { "flag": "mc_church_served", "label": "the Church's toast" },
+        { "flag": "mc_course_served", "label": "the second course" },
+        { "flag": "mc_hollow_rested", "label": "the guests' wassail" }
       ],
-      "if": [
-        [
-          "var",
-          "mc_toasts_known",
-          ">=",
-          3
-        ],
-        [
-          "flag",
-          "mc_last_course"
-        ]
-      ]
+      "if": [["var", "mc_toasts_known", ">=", 3], ["flag", "mc_last_course"]]
     }
   ],
   "epilogue": [
     {
-      "if": [
-        [
-          "flag",
-          "mc_hollow_rested"
-        ]
-      ],
+      "if": [["flag", "mc_hollow_rested"]],
       "text": "The king's toast, the Church's, the course, and the guests' wassail were set right, each in turn, and the Long Table's guests finally rose.",
       "weight": 2
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_hollow_bargained"
-        ]
-      ],
+      "if": [["flag", "mc_hollow_bargained"]],
       "text": "Mootcombe's hall stays barred, and its first pressing goes to that door every feast-day now — a promise kept instead of a rite finished.",
       "weight": 2
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_hollow_burned"
-        ]
-      ],
+      "if": [["flag", "mc_hollow_burned"]],
       "text": "Ironbound cinder-oil ate through four hundred years of barred wax in a night, and the Long Table's guests went up with the hall around them.",
       "weight": 2
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_entered"
-        ],
-        [
-          "!flag",
-          "mc_hollow_done"
-        ]
-      ],
+      "if": [["flag", "mc_entered"], ["!flag", "mc_hollow_done"]],
       "text": "Mootcombe's hall stands barred still. The cider turns sour on the day nobody presses, and the cups still get set down on quiet nights.",
       "weight": 1
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_orchard_crown"
-        ]
-      ],
+      "if": [["flag", "mc_orchard_crown"]],
       "text": "Mootcombe's orchards answer to the Crown's levy now, counted row by row out of the tally-house.",
       "weight": 1
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_orchard_free"
-        ]
-      ],
+      "if": [["flag", "mc_orchard_free"]],
       "text": "Mootcombe's orchards fill Free Company casks now, more of them each year than the hold drinks itself."
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_orchard_common"
-        ]
-      ],
+      "if": [["flag", "mc_orchard_common"]],
       "text": "Mootcombe's orchards are the moot's own again, and the first pressing goes to the dead before it goes to anyone living."
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_orchard_broker"
-        ]
-      ],
+      "if": [["flag", "mc_orchard_broker"]],
       "text": "An Envoy talked Mootcombe's levy-reeve and victualler into signing the same lease. Neither has stopped watching the other since."
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_bargain_broken"
-        ]
-      ],
+      "if": [["flag", "mc_bargain_broken"]],
       "text": "The promise Mootcombe struck over its own hall was broken again, later, by someone who had the choosing of it."
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_marl_known"
-        ]
-      ],
+      "if": [["flag", "mc_marl_known"]],
       "text": "It's known now that the Feast of Wax had a guest nobody invited, seated among the moot's own elders in ink laid down after the rest was dry."
     },
     {
-      "if": [
-        [
-          "flag",
-          "free_passage"
-        ],
-        [
-          "flag",
-          "mc_fulk_errand_done"
-        ]
-      ],
+      "if": [["flag", "free_passage"], ["flag", "mc_fulk_errand_done"]],
       "text": "Mootcombe's cask errand bought the Free Companies' road under the pass, same as Gullhaven's fog and Pennywell's ford did."
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_nell_stop"
-        ]
-      ],
+      "if": [["flag", "mc_nell_stop"]],
       "text": "Nell stopped answering the knocks on the hall wall. She still listens, most days, just quieter about it now."
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_nell_keep"
-        ]
-      ],
+      "if": [["flag", "mc_nell_keep"]],
       "text": "Nell still answers the knocks on the hall wall, the only one in Mootcombe who ever has."
     },
     {
       "if": [
         [
           "any",
-          [
-            [
-              "flag",
-              "sv_mc_bargained_paid"
-            ],
-            [
-              "flag",
-              "sv_mc_bargained_kept"
-            ],
-            [
-              "flag",
-              "sv_mc_bargained_broken"
-            ]
-          ]
+          [["flag", "sv_mc_bargained_paid"], ["flag", "sv_mc_bargained_kept"], ["flag", "sv_mc_bargained_broken"]]
         ]
       ],
       "text": "The Crown came back for Mootcombe's first pressing. What it found depended on who had been asked to keep the promise."
     },
     {
-      "if": [
-        [
-          "flag",
-          "mc_warden_osric_done"
-        ]
-      ],
+      "if": [["flag", "mc_warden_osric_done"]],
       "text": "A Warden's bearing got Osric to name the whole shape of the bargain before anyone else in Mootcombe would say it aloud."
     },
     {
-      "if": [
-        [
-          "flag",
-          "or_warden_mc_cold"
-        ]
-      ],
+      "if": [["flag", "or_warden_mc_cold"]],
       "text": "A Warden found Mootcombe's Free Companies close ranks the moment Watch training showed, same as everywhere else the Companies run casks."
     },
     {
-      "if": [
-        [
-          "any",
-          [
-            [
-              "flag",
-              "sv_mc_rested_hung"
-            ],
-            [
-              "flag",
-              "sv_mc_rested_given"
-            ]
-          ]
-        ]
-      ],
+      "if": [["any", [["flag", "sv_mc_rested_hung"], ["flag", "sv_mc_rested_given"]]]],
       "text": "The key that never had to turn hangs over the moot-oak now, or rests with the guest-list at the recorder's loft, however it was let go of."
     },
     {
-      "if": [
-        [
-          "flag",
-          "or_envoy_mc_broker"
-        ]
-      ],
+      "if": [["flag", "or_envoy_mc_broker"]],
       "text": "One lease, two lines, the levy and the contract on the same page. Mootcombe presses for both and neither can call it a loss."
     }
   ]

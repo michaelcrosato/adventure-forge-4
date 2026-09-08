@@ -100,7 +100,13 @@
         {
           "id": "me_witness_ask_lys",
           "label": "ask Lys to stand witness",
-          "if": [["inParty", "lys"], ["!flag", "down_lys"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"], ["!flag", "me_witness_lys"]],
+          "if": [
+            ["inParty", "lys"],
+            ["!flag", "down_lys"],
+            ["flag", "me_hollow_grievance"],
+            ["!flag", "me_hollow_done"],
+            ["!flag", "me_witness_lys"]
+          ],
           "fx": [
             ["npccond", "lys", "winded", 2],
             ["set", "me_witness_lys"],
@@ -121,7 +127,13 @@
         {
           "id": "me_witness_ask_osk",
           "label": "ask Brother Osk to stand witness",
-          "if": [["inParty", "osk"], ["!flag", "down_osk"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"], ["!flag", "me_witness_osk"]],
+          "if": [
+            ["inParty", "osk"],
+            ["!flag", "down_osk"],
+            ["flag", "me_hollow_grievance"],
+            ["!flag", "me_hollow_done"],
+            ["!flag", "me_witness_osk"]
+          ],
           "fx": [
             ["npccond", "osk", "winded", 2],
             ["set", "me_witness_osk"],
@@ -142,7 +154,13 @@
         {
           "id": "me_witness_ask_tamsin",
           "label": "ask Tamsin to stand witness",
-          "if": [["inParty", "tamsin"], ["!flag", "down_tamsin"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"], ["!flag", "me_witness_tamsin"]],
+          "if": [
+            ["inParty", "tamsin"],
+            ["!flag", "down_tamsin"],
+            ["flag", "me_hollow_grievance"],
+            ["!flag", "me_hollow_done"],
+            ["!flag", "me_witness_tamsin"]
+          ],
           "once": true,
           "fx": [
             ["set", "me_witness_tamsin_refused"],
@@ -152,7 +170,13 @@
         {
           "id": "me_witness_tamsin_debt",
           "label": "tell her it's a debt, not a ceremony",
-          "if": [["inParty", "tamsin"], ["!flag", "down_tamsin"], ["flag", "me_witness_tamsin_refused"], ["!flag", "me_witness_tamsin"], ["!flag", "me_hollow_done"]],
+          "if": [
+            ["inParty", "tamsin"],
+            ["!flag", "down_tamsin"],
+            ["flag", "me_witness_tamsin_refused"],
+            ["!flag", "me_witness_tamsin"],
+            ["!flag", "me_hollow_done"]
+          ],
           "fx": [
             [
               "check",
@@ -174,16 +198,20 @@
                 ["xp", 8],
                 ["say", "\"A debt's a debt,\" Tamsin says, \"four hundred years running or four days. Fine. I'll stand for it.\" She hears the covenant through without complaint. Maren lies back down."]
               ],
-              [
-                ["say", "\"Still words,\" she says, arms crossed. \"Try again if you've got a better reason than that.\""]
-              ]
+              [["say", "\"Still words,\" she says, arms crossed. \"Try again if you've got a better reason than that.\""]]
             ]
           ]
         },
         {
           "id": "me_witness_ask_vell",
           "label": "ask Vell to stand witness",
-          "if": [["inParty", "vell"], ["!flag", "down_vell"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"], ["!flag", "me_witness_vell"]],
+          "if": [
+            ["inParty", "vell"],
+            ["!flag", "down_vell"],
+            ["flag", "me_hollow_grievance"],
+            ["!flag", "me_hollow_done"],
+            ["!flag", "me_witness_vell"]
+          ],
           "fx": [
             ["npccond", "vell", "winded", 2],
             ["set", "me_witness_vell"],
@@ -241,6 +269,42 @@
           ]
         },
         {
+          "id": "me_speak_great_rite",
+          "label": "speak the Great Rite over the covenant",
+          "if": [["flag", "keepers_sworn"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"]],
+          "fx": [
+            ["set", "me_hollow_rested"],
+            ["set", "me_hollow_done"],
+            ["set", "me_covenant_carried"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["move", "me_covenant_stone", "inv"],
+            ["npcgo", "me_maren", null],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no witness sworn beside you. Maren hears it as if a hundred stood here, and finally lies back down."]
+          ]
+        },
+        {
+          "id": "me_church_bargain",
+          "label": "swear it plain, Church oath behind you",
+          "if": [["flag", "church_sworn"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"]],
+          "fx": [
+            ["set", "me_hollow_bargained"],
+            ["set", "me_hollow_done"],
+            ["set", "me_covenant_sworn"],
+            ["set", "me_covenant_carried"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "hollows_bargained", 1],
+            ["addvar", "rep_church", 2],
+            ["addvar", "rep_crown", -2],
+            ["move", "me_covenant_stone", "inv"],
+            ["score", 20],
+            ["xp", 8],
+            ["say", "You swear it plain, and this time it's the Church's own weight behind the oath, not a stranger's word alone. Maren yields the stone without a second look, and stays on her feet, watching to see if you'll keep it."]
+          ]
+        },
+        {
           "id": "me_burn_hollow",
           "label": "break the charges here (1hp on fail)",
           "if": [["has", "me_dam_charges"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"]],
@@ -295,15 +359,30 @@
               [
                 [
                   "if",
-                  [["any", [["flag", "me_witness_sael"], ["flag", "me_witness_lys"], ["flag", "me_witness_osk"], ["flag", "me_witness_tamsin"], ["flag", "me_witness_vell"]]]],
+                  [
+                    [
+                      "any",
+                      [
+                        ["flag", "me_witness_sael"],
+                        ["flag", "me_witness_lys"],
+                        ["flag", "me_witness_osk"],
+                        ["flag", "me_witness_tamsin"],
+                        ["flag", "me_witness_vell"]
+                      ]
+                    ]
+                  ],
                   [["say", "A witness is ready and waiting. Speak the covenant to them, at the stone table."]],
-                  [["say", "The rest wants a living witness: ask a companion travelling with you, or win Sael's trust at the Divers' Platform."]]
+                  [
+                    ["say", "The rest wants a living witness: ask a companion travelling with you, or win Sael's trust at the Divers' Platform."]
+                  ]
                 ],
                 ["say", "The bargain stands ready regardless: swear to carry the covenant to Marrowgate yourself (will)."],
                 [
                   "if",
                   [["has", "me_dam_charges"]],
-                  [["say", "The burn stands ready: Hodd's charges are yours — break them here (might; a failed try costs 1 hp)."]],
+                  [
+                    ["say", "The burn stands ready: Hodd's charges are yours — break them here (might; a failed try costs 1 hp)."]
+                  ],
                   [["say", "The burn wants Ironbound charges — Hodd, the dam-wright, gives you a keg for the asking."]]
                 ]
               ]
@@ -441,7 +520,19 @@
           "text": "You hold Ironbound charges. Break them over the covenant table to burn the Hall, if that's an answer you'll live with."
         },
         {
-          "if": [["any", [["flag", "me_witness_sael"], ["flag", "me_witness_lys"], ["flag", "me_witness_osk"], ["flag", "me_witness_tamsin"], ["flag", "me_witness_vell"]]], ["flag", "me_hollow_grievance"]],
+          "if": [
+            [
+              "any",
+              [
+                ["flag", "me_witness_sael"],
+                ["flag", "me_witness_lys"],
+                ["flag", "me_witness_osk"],
+                ["flag", "me_witness_tamsin"],
+                ["flag", "me_witness_vell"]
+              ]
+            ],
+            ["flag", "me_hollow_grievance"]
+          ],
           "text": "A witness is ready. Speak the covenant to them, at the stone table in the covenant chamber."
         },
         {

@@ -110,11 +110,43 @@
             ["score", 25],
             ["xp", 8],
             ["say", "You lay the debt down on the threshing floor and speak the order over it, name by name — the crofters' due paid and their due named in the same breath."],
-            ["if", [["flag", "hl_due_source_hauled"]], [["say", "Grain hauled openly off the Crown's own steps, short now by exactly what four sacks in ten once cost them."]], []],
-            ["if", [["flag", "hl_due_source_almonry"]], [["say", "Grain that sat forgotten behind the almonry's older page, the same page that once marked them unworthy."]], []],
-            ["if", [["flag", "hl_due_source_skim"]], [["say", "Grain turned back at the hedge-gap before it ever left, the count made honest for once."]], []],
-            ["if", [["flag", "hl_due_source_persuaded"]], [["say", "Coin enough to answer for it, and a bailiff's own hand behind the paying."]], []],
-            ["if", [["has", "hl_crofter_token"]], [["say", "You leave the carved token from the grain pit atop the rest — small, but it was theirs, and you have no better use for it than giving it back."], ["move", "hl_crofter_token", "nowhere"]], []],
+            [
+              "if",
+              [["flag", "hl_due_source_hauled"]],
+              [
+                ["say", "Grain hauled openly off the Crown's own steps, short now by exactly what four sacks in ten once cost them."]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_due_source_almonry"]],
+              [
+                ["say", "Grain that sat forgotten behind the almonry's older page, the same page that once marked them unworthy."]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_due_source_skim"]],
+              [["say", "Grain turned back at the hedge-gap before it ever left, the count made honest for once."]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_due_source_persuaded"]],
+              [["say", "Coin enough to answer for it, and a bailiff's own hand behind the paying."]],
+              []
+            ],
+            [
+              "if",
+              [["has", "hl_crofter_token"]],
+              [
+                ["say", "You leave the carved token from the grain pit atop the rest — small, but it was theirs, and you have no better use for it than giving it back."],
+                ["move", "hl_crofter_token", "nowhere"]
+              ],
+              []
+            ],
             [
               "if",
               [["inParty", "vell"]],
@@ -136,14 +168,14 @@
         {
           "id": "hl_burn_hollow",
           "label": "burn it with cinder-oil (1hp on fail)",
-          "if": [["has", "hl_cinder_oil"], ["!flag", "hl_hollow_done"]],
+          "if": [["any", [["has", "hl_cinder_oil"], ["flag", "iron_trusted"]]], ["!flag", "hl_hollow_done"]],
           "fx": [
             [
               "check",
               "might",
               9,
               [
-                ["move", "hl_cinder_oil", "nowhere"],
+                ["if", [["has", "hl_cinder_oil"]], [["move", "hl_cinder_oil", "nowhere"]], []],
                 ["set", "hl_hollow_burned"],
                 ["addvar", "appr_osk", -1],
                 ["set", "hl_hollow_done"],
@@ -202,7 +234,7 @@
             ["say", "The bargain stands ready either way, back in Tithing: persuade the bailiff (will), force his strongbox (might), alter the almoner's ledger (wits), or simply pay the tithe yourself, at the granary steps."],
             [
               "if",
-              [["has", "hl_cinder_oil"]],
+              [["any", [["has", "hl_cinder_oil"], ["flag", "iron_trusted"]]]],
               [
                 ["say", "The burn stands ready: Ironbound cinder-oil is yours — burn it here (might; a failed try costs 1 hp)."]
               ],
@@ -210,6 +242,20 @@
                 ["say", "The burn wants Ironbound cinder-oil — Lay-brother Emmet, at the back lane, gives it for the asking."]
               ]
             ]
+          ]
+        },
+        {
+          "id": "hl_speak_great_rite",
+          "label": "speak the Great Rite over the barn",
+          "if": [["flag", "keepers_sworn"], ["!flag", "hl_hollow_done"]],
+          "fx": [
+            ["set", "hl_hollow_rested"],
+            ["set", "hl_hollow_done"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no due paid and no order found. The scoring on the doors stops mattering; whatever scratched it has finally stopped listening for a latch."]
           ]
         }
       ]
@@ -443,7 +489,10 @@
       "label": "The Hunger Barn's due",
       "if": [["flag", "hl_hollow_grievance"], ["!flag", "hl_hollow_done"]],
       "states": [
-        { "if": [["flag", "hl_due_paid"], ["flag", "hl_order_known"]], "text": "the due is paid and the order is known — ready to give both back at once" },
+        {
+          "if": [["flag", "hl_due_paid"], ["flag", "hl_order_known"]],
+          "text": "the due is paid and the order is known — ready to give both back at once"
+        },
         { "if": [["flag", "hl_due_paid"]], "text": "the due is paid; the barn-reeve's order still wants finding" },
         { "if": [["flag", "hl_order_known"]], "text": "the order is known; the due itself still wants paying" }
       ],
