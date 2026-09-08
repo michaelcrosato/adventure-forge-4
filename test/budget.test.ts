@@ -74,10 +74,12 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // in the realm, and the ratchet turned down three times on the day it was
   // written. It arrived at 506 average and a 1,489-character screen at
   // mc_north_road; not repeating the company entry, giving each event its own
-  // line, and collapsing quest stage changes took it to 478 and 1,448. What is
-  // left is a hold's arrival text plus all four companions answering it in the
-  // same breath — content worth having, delivered as a wall, and its own task.
-  "reach:reach_at_rest#devoted": { avg: 478, max: 1448 },
+  // line, and collapsing quest stage changes took it to 478 and 1,448. The last
+  // 293 came off when a hold's arrival stopped being a chorus: the four
+  // companions' answers moved out of one `onEnterOnce` and into region-gated
+  // remarks of their own, which the engine has always spoken one a turn. The
+  // average barely moved, which is the point — the words are all still there.
+  "reach:reach_at_rest#devoted": { avg: 478, max: 1155 },
 };
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));

@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByLabel, actionLabel, inTravelMode, journal, legalActions, newState, oddsHint, roomView, step, travelAvailable } from "../src/engine.ts";
+import { actionByLabel, actionLabel, condOk, inTravelMode, journal, legalActions, newState, oddsHint, roomView, step, travelAvailable } from "../src/engine.ts";
 import { render, renderStatus } from "../src/format.ts";
 import { validateWorld } from "../src/validate.ts";
 import { EPILOGUE_CAP, MENU_CAP } from "../src/types.ts";
@@ -99,6 +99,47 @@ test("travel inside a mapped region reaches plain rooms, and names them by name 
   assert.equal(out.state.room, "r1");
   assert.match(out.events.join(" "), /You travel to Room 1\./);
   assert.doesNotMatch(out.events.join(" "), /\br1\b/, "a room id must never reach the player");
+});
+
+/**
+ * `region` — where you are, not what you carry.
+ *
+ * A hold's arrival was authored as a chain of `if inParty` says inside one
+ * `onEnterOnce`, so a full party answered it all in the same breath: 1,448
+ * characters at Mootcombe's Cairn-Track, one companion speaking twice. The
+ * engine has always spoken at most one companion remark a turn, in rotation —
+ * what a remark could not say was "while we are here", so the lines had nowhere
+ * to move to. Now they do.
+ */
+test("region: reads the room's own region, has its negated twin, and the validator knows the codes", () => {
+  const world = line(3, (i) => (i === 0 ? "west" : "east"));
+  world.regions = { west: { name: "the West" }, east: { name: "the East" } };
+  let { state } = newState(world, 1);
+  assert.ok(condOk(world, state, ["region", "west"]), "r0 is in the west");
+  assert.ok(!condOk(world, state, ["region", "east"]));
+  assert.ok(condOk(world, state, ["!region", "east"]), "and the twin disagrees, like every other op in the DSL");
+  assert.ok(!condOk(world, state, ["!region", "west"]));
+  state = doLabel(world, state, "go east");
+  assert.ok(condOk(world, state, ["region", "east"]), "walking there changes the answer");
+  assert.ok(condOk(world, state, ["!region", "west"]));
+
+  // a room with no region at all is in no region, rather than in every one
+  const nowhere = line(2);
+  const s2 = newState(nowhere, 1).state;
+  assert.ok(!condOk(nowhere, s2, ["region", "west"]));
+  assert.ok(condOk(nowhere, s2, ["!region", "west"]));
+
+  // a typo reads as "nowhere" and would simply never fire, so the validator catches it
+  const bad = line(2, () => "west");
+  bad.regions = { west: { name: "the West" } };
+  bad.rooms["r0"]!.actions = [{ id: "x", label: "x", if: [["region", "wset"]], fx: [["say", "ok"]] }];
+  assert.ok(
+    validateWorld(bad).some((e) => e.includes("unknown region wset")),
+    validateWorld(bad).join("\n"),
+  );
+  bad.regions = { west: { name: "the West" }, east: { name: "the East" } };
+  bad.rooms["r0"]!.actions = [{ id: "x", label: "x", if: [["region", "west"], ["!region", "east"]], fx: [["say", "ok"]] }];
+  assert.deepEqual(validateWorld(bad).filter((e) => /region/.test(e)), [], "and a real code, negated or not, is accepted");
 });
 
 test("with more known landmarks than the menu holds, travel groups them by region, and 'back' steps out", () => {

@@ -22,7 +22,7 @@ import type { Cond, Fx, State, WalkStep, World } from "./types.ts";
 export { MENU_CAP };
 
 const COND_OPS = new Set([
-  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "cond", "!cond", "npccond", "!npccond", "turn", "since", "horrorHere", "!horrorHere", "holdsGround", "!holdsGround", "companionDown", "!companionDown", "checkHere", "!checkHere", "lowHp", "!lowHp", "any",
+  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "cond", "!cond", "npccond", "!npccond", "turn", "since", "horrorHere", "!horrorHere", "holdsGround", "!holdsGround", "companionDown", "!companionDown", "checkHere", "!checkHere", "lowHp", "!lowHp", "region", "!region", "any",
 ]);
 const FX_OPS = new Set([
   "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "calm", "calmhostile", "cond", "npccond", "condhostile", "uncond", "unnpccond", "harm", "harmhostile", "revive", "sayunvisited", "end",
@@ -160,6 +160,8 @@ export function validateWorld(world: World): string[] {
         if (!checkNameOk(c[1])) err(`${where}: unknown skill ${c[1]}`);
         if (typeof c[2] !== "number") err(`${where}: checkHere dc must be a number`);
       }
+      else if ((c[0] === "region" || c[0] === "!region") && !(c[1] in (world.regions ?? {})))
+        err(`${where}: unknown region ${c[1]} — a typo here reads as "nowhere" and the condition simply never fires`);
       else if (c[0] === "any") {
         if (!Array.isArray(c[1]) || !c[1].length) err(`${where}: any needs a non-empty list of conditions`);
         else checkConds(`${where}.any`, c[1]);

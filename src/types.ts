@@ -36,6 +36,7 @@ export type Cond =
   | ["companionDown"] | ["!companionDown"] // a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up)
   | ["checkHere", string, number] | ["!checkHere", string, number] // a currently-visible room action or npc topic previews a `check` of this skill at dc >= n (see checkHere in engine.ts)
   | ["lowHp"] | ["!lowHp"] // the player's hp is at half or less of maxHp — the same "a fight is going badly" threshold the disengage gate uses
+  | ["region", string] | ["!region", string] // the player stands in a room of this region (world.regions' code). A companion's line about a hold, said while you are in that hold.
   | ["any", Cond[]]; // passes when at least one of the listed conditions passes (the one OR in an all-of list)
 
 // ---------- effects ----------

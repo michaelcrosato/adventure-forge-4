@@ -305,6 +305,16 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return fightGoingBadly(s);
     case "!lowHp":
       return !fightGoingBadly(s);
+    // Where you are, not what you carry. A hold's arrival used to be authored as
+    // a chain of `if inParty` says inside one `onEnterOnce`, and with a full
+    // party that put four companions' answers on one screen — 1,448 characters
+    // at Mootcombe's Cairn-Track, one speaker twice. The engine already speaks
+    // at most one companion remark a turn, in rotation; what a remark could not
+    // say was "while we are here", so the lines could not move there.
+    case "region":
+      return world.rooms[s.room]?.region === c[1];
+    case "!region":
+      return world.rooms[s.room]?.region !== c[1];
     case "any":
       return c[1].some((x) => condOk(world, s, x));
   }
