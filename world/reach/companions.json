@@ -86,6 +86,11 @@
             "say": "Thin air, thin trail. Watch your footing more than the view up here."
           },
           {
+            "id": "r_settled",
+            "if": [["var", "appr_lys", ">=", 2], ["flag", "cp_entered"]],
+            "say": "This is about as far from the Vale as I've ever walked. Didn't think I'd mind it this little."
+          },
+          {
             "id": "r_em_entered",
             "if": [["flag", "em_entered"]],
             "say": "Glass underfoot instead of ground. Whatever this valley learned, it learned it the hard way, same as the rest of us."
@@ -119,6 +124,18 @@
             "id": "r_appr_neg",
             "if": [["var", "appr_lys", "<=", -2]],
             "say": "I'm starting to wonder why I still walk beside you. Give me a reason before I stop wondering."
+          },
+          {
+            "id": "r_hardened",
+            "if": [["var", "appr_lys", "<=", -3]],
+            "say": "I've started keeping a step of my own instead of yours. Don't ask why. You already know.",
+            "fx": [["set", "lys_hardened"]]
+          },
+          {
+            "id": "r_devoted",
+            "if": [["var", "appr_lys", ">=", 8], ["lowHp"], ["!flag", "lys_hardened"]],
+            "say": "Don't think about it. Just hit where I'm already looking.",
+            "fx": [["cond", "honed", 2], ["set", "lys_devoted"]]
           },
           {
             "id": "r_th_hollow_rested",
@@ -726,7 +743,7 @@
             "say": "He was still in there, and you knew it, and you did it anyway. I watched Thornwold burn from the ridge. I'm done."
           },
           {
-            "if": [["var", "appr_lys", "<=", -3]],
+            "if": [["var", "appr_lys", "<=", -5]],
             "say": "I've watched you long enough to know what you are. I won't watch anymore."
           },
           {
@@ -877,7 +894,7 @@
         {
           "id": "trust1",
           "label": "ask why she never went herself",
-          "if": [["var", "appr_lys", ">=", 4], ["flag", "said_lys_confide"]],
+          "if": [["var", "appr_lys", ">=", 4], ["flag", "said_lys_confide"], ["!flag", "lys_hardened"]],
           "once": true,
           "say": "I got as far as the Thornwold treeline once, a year before you ever came. Heard the Company's fires through the trees, and turned back. Told myself it was the wood. It wasn't.",
           "fx": [["xp", 2]]
@@ -1144,7 +1161,7 @@
         },
         {
           "id": "quarrel_lys_tamsin_camp_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the toll (will)",
           "if": [["flag", "quarrel_lys_tamsin_camp"], ["!flag", "quarrel_lys_tamsin_camp_done"]],
           "once": true,
           "say": "You tell them plainly what Camp Gallows charges on the road isn't yours to referee between them.",
@@ -1170,7 +1187,7 @@
         },
         {
           "id": "quarrel_lys_osk_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the sexton's roll (will)",
           "if": [["flag", "quarrel_lys_osk"], ["!flag", "quarrel_lys_osk_done"]],
           "once": true,
           "say": "You tell them plainly the sexton's roll isn't a fight for you to referee.",
@@ -1196,7 +1213,7 @@
         },
         {
           "id": "quarrel_lys_osk_covenant_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the covenant (will)",
           "if": [["flag", "quarrel_lys_osk_covenant"], ["!flag", "quarrel_lys_osk_covenant_done"]],
           "once": true,
           "say": "You tell them plainly what the covenant is worth now isn't a fight for you to settle between them.",
@@ -1261,7 +1278,7 @@
         },
         {
           "id": "quarrel_lys_vell_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the bargain (will)",
           "if": [["flag", "quarrel_lys_vell"], ["!flag", "quarrel_lys_vell_done"]],
           "once": true,
           "say": "You tell them plainly the broken bargain isn't a fight for you to settle between them.",
@@ -1455,6 +1472,12 @@
             "id": "r_appr_neg",
             "if": [["var", "appr_osk", "<=", -2]],
             "say": "I keep telling myself there's a reason for what you do. I'm running out of ways to believe it."
+          },
+          {
+            "id": "r_hardened",
+            "if": [["var", "appr_osk", "<=", -3]],
+            "say": "I still say the words over what you do. I've stopped asking you to explain yourself to me first. That isn't forgiveness — I've just given up on the question.",
+            "fx": [["set", "osk_hardened"]]
           },
           {
             "id": "r_fd_hollow_rested",
@@ -1914,7 +1937,7 @@
             "say": "You burned it. My family, the nave, all of it. I have nothing left to say to you."
           },
           {
-            "if": [["var", "appr_osk", "<=", -3]],
+            "if": [["var", "appr_osk", "<=", -5]],
             "say": "I came to this Church to be better than my worst assumptions about people. Standing next to you keeps proving them right. I'm done."
           },
           {
@@ -2046,7 +2069,7 @@
         {
           "id": "trust1",
           "label": "ask what he really remembers of that day",
-          "if": [["var", "appr_osk", ">=", 4], ["flag", "said_osk_confide"]],
+          "if": [["var", "appr_osk", ">=", 4], ["flag", "said_osk_confide"], ["!flag", "osk_hardened"]],
           "once": true,
           "say": "I wasn't there when the water took them. Sent off for dry wood on some errand nobody even remembers giving me now. I have never told a living soul I sometimes wonder if that's the only reason I'm still here.",
           "fx": [["xp", 2]]
@@ -2091,6 +2114,14 @@
           "once": true,
           "say": "I didn't ask you to cross the Priory for me. You did it anyway, plain and public, and they'll remember whose voice said it. That costs you something I can't give back to you.",
           "fx": [["addvar", "rep_church", -1], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "devoted",
+          "label": "tell him to skip the rite, just once",
+          "if": [["var", "appr_osk", ">=", 8], ["!flag", "osk_hardened"]],
+          "once": true,
+          "say": "\"No.\" He says it plainly, for once, and doesn't soften it after. He says the rite anyway, low and steady, over whatever you told him to leave unspoken — and something in you settles that wasn't, until then.",
+          "fx": [["cond", "resolved", 3], ["set", "osk_devoted"], ["xp", 3]]
         },
         {
           "id": "quarrel_lys_osk_side_osk",
@@ -2430,7 +2461,7 @@
         },
         {
           "id": "quarrel_osk_tamsin_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the fire (will)",
           "if": [["flag", "quarrel_osk_tamsin"], ["!flag", "quarrel_osk_tamsin_done"]],
           "once": true,
           "say": "You tell them plainly this fire isn't yours to referee.",
@@ -2456,7 +2487,7 @@
         },
         {
           "id": "quarrel_osk_vell_nave_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the nave (will)",
           "if": [["flag", "quarrel_osk_vell_nave"], ["!flag", "quarrel_osk_vell_nave_done"]],
           "once": true,
           "say": "You tell them plainly the drowned nave isn't a fight for you to settle between them.",
@@ -2640,6 +2671,18 @@
             "id": "r_appr_neg",
             "if": [["var", "appr_tamsin", "<=", -2]],
             "say": "I don't waste time on people I don't trust. I'm starting to wonder why I'm still wasting it on you."
+          },
+          {
+            "id": "r_hardened",
+            "if": [["var", "appr_tamsin", "<=", -3]],
+            "say": "I've stopped telling you what I'm thinking before I do something about it. For someone who counts blows out loud, that's the whole warning you're getting now.",
+            "fx": [["set", "tamsin_hardened"]]
+          },
+          {
+            "id": "r_devoted",
+            "if": [["var", "appr_tamsin", ">=", 8], ["lowHp"], ["!flag", "tamsin_hardened"]],
+            "say": "Move. I've got this one.",
+            "fx": [["cond", "braced", 2], ["set", "tamsin_devoted"]]
           },
           {
             "id": "r_ir_hollow_rested",
@@ -3107,7 +3150,7 @@
             "say": "You sold out the miners. The same mine that killed my mother, and you sold out the men still working it for coin. We're done."
           },
           {
-            "if": [["var", "appr_tamsin", "<=", -3]],
+            "if": [["var", "appr_tamsin", "<=", -5]],
             "say": "I don't fight beside people I can't trust at my back. That's you now. Find someone else."
           },
           {
@@ -3239,7 +3282,7 @@
         {
           "id": "trust1",
           "label": "ask what she still expects, some days",
-          "if": [["var", "appr_tamsin", ">=", 4], ["flag", "said_tamsin_confide"]],
+          "if": [["var", "appr_tamsin", ">=", 4], ["flag", "said_tamsin_confide"], ["!flag", "tamsin_hardened"]],
           "once": true,
           "say": "Some mornings I still listen for her boots on the forge steps. Twenty years gone and some fool part of me hasn't caught up with the rest. Never told the smith that. Never told anyone.",
           "fx": [["xp", 2]]
@@ -3540,7 +3583,7 @@
         },
         {
           "id": "quarrel_lys_tamsin_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the rope (will)",
           "if": [["flag", "quarrel_lys_tamsin"], ["!flag", "quarrel_lys_tamsin_done"]],
           "once": true,
           "say": "You tell them plainly the glade's rope isn't a fight for you to settle between them.",
@@ -3566,7 +3609,7 @@
         },
         {
           "id": "quarrel_osk_tamsin_doors_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the door (will)",
           "if": [["flag", "quarrel_osk_tamsin_doors"], ["!flag", "quarrel_osk_tamsin_doors_done"]],
           "once": true,
           "say": "You tell them plainly the barrow door isn't yours to fight over between them.",
@@ -3592,7 +3635,7 @@
         },
         {
           "id": "quarrel_osk_tamsin_aldous_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle Aldous's due (will)",
           "if": [["flag", "quarrel_osk_tamsin_aldous"], ["!flag", "quarrel_osk_tamsin_aldous_done"]],
           "once": true,
           "say": "You tell them plainly what Aldous deserves isn't a verdict for you to hand down between them.",
@@ -3819,6 +3862,12 @@
             "id": "r_appr_neg",
             "if": [["var", "appr_vell", "<=", -2]],
             "say": "I am reconsidering several earlier assessments of your character. None of the revisions favor you."
+          },
+          {
+            "id": "r_hardened",
+            "if": [["var", "appr_vell", "<=", -3]],
+            "say": "I've stopped correcting you when you get the details wrong. That isn't generosity. It means I've stopped expecting you to get anything right.",
+            "fx": [["set", "vell_hardened"]]
           },
           {
             "id": "r_hb_hollow_rested",
@@ -4259,7 +4308,7 @@
             "say": "You swore to keep my name out of it. You named it anyway, the first time it paid. I don't forget a broken oath. I'm gone."
           },
           {
-            "if": [["var", "appr_vell", "<=", -3]],
+            "if": [["var", "appr_vell", "<=", -5]],
             "say": "I've reconsidered the wisdom of this arrangement entirely. Goodbye."
           },
           {
@@ -4377,7 +4426,7 @@
         {
           "id": "trust1",
           "label": "ask if they've ever been to Marrowgate",
-          "if": [["var", "appr_vell", ">=", 4], ["flag", "said_vell_confide"]],
+          "if": [["var", "appr_vell", ">=", 4], ["flag", "said_vell_confide"], ["!flag", "vell_hardened"]],
           "once": true,
           "say": "Once. Years before I met you, plain gray, nobody looking twice. I stood in the market square, looked up at the palace, and did not go in. I have never told anyone that either.",
           "fx": [["xp", 2]]
@@ -4420,6 +4469,14 @@
           "once": true,
           "say": "You gave your word, plainly, that whatever that ledger says stays between the two of us unless I choose otherwise. I don't extend trust for free, remember. Consider this noted. And remembered.",
           "fx": [["set", "vell_kept_secret"], ["addvar", "appr_vell", 1]]
+        },
+        {
+          "id": "devoted",
+          "label": "ask what Vell actually wants from you",
+          "if": [["var", "appr_vell", ">=", 8], ["!flag", "vell_hardened"]],
+          "once": true,
+          "say": "For once, Vell asks instead of deflecting: keep this safe, and never let it decide anything for you. They press a leaf torn from a ledger into your hand — the first thing they've handed over instead of guarded.",
+          "fx": [["move", "vell_ledger_leaf", "inv"], ["set", "vell_devoted"], ["xp", 3]]
         },
         {
           "id": "quarrel_osk_vell_side_vell",
@@ -4634,7 +4691,7 @@
         },
         {
           "id": "quarrel_lys_vell_crown_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the crown (will)",
           "if": [["flag", "quarrel_lys_vell_crown"], ["!flag", "quarrel_lys_vell_crown_done"]],
           "once": true,
           "say": "You tell them plainly the crown isn't yours to fight over between them.",
@@ -4660,7 +4717,7 @@
         },
         {
           "id": "quarrel_lys_vell_pride_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the Pride (will)",
           "if": [["flag", "quarrel_lys_vell_pride"], ["!flag", "quarrel_lys_vell_pride_done"]],
           "once": true,
           "say": "You tell them plainly what's left of the Reeve's Pride isn't yours to fight over between them.",
@@ -4686,7 +4743,7 @@
         },
         {
           "id": "quarrel_tamsin_vell_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the founding (will)",
           "if": [["flag", "quarrel_tamsin_vell"], ["!flag", "quarrel_tamsin_vell_done"]],
           "once": true,
           "say": "You tell them plainly the fort's founding isn't a fight for you to settle between them.",
@@ -4712,7 +4769,7 @@
         },
         {
           "id": "quarrel_tamsin_vell_goods_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the grave-goods (will)",
           "if": [["flag", "quarrel_tamsin_vell_goods"], ["!flag", "quarrel_tamsin_vell_goods_done"]],
           "once": true,
           "say": "You tell them plainly what leaves the barrows isn't a fight for you to settle between them.",
@@ -4738,7 +4795,7 @@
         },
         {
           "id": "quarrel_osk_vell_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the confession (will)",
           "if": [["flag", "quarrel_osk_vell"], ["!flag", "quarrel_osk_vell_done"]],
           "once": true,
           "say": "You tell them plainly the prior's confession isn't a fight for you to settle between them.",
@@ -4879,6 +4936,11 @@
       "name": "a strip of vellum, a cipher in hand",
       "loc": "nowhere",
       "hint": "notes in Vell's own hand — might unlock more of theirs, if you find any."
+    },
+    "vell_ledger_leaf": {
+      "name": "a single leaf, torn from a ledger",
+      "loc": "nowhere",
+      "hint": "not the Church's copy, not the Keepers'. Theirs. They asked you to keep it safe."
     }
   },
   "quests": {
@@ -5013,13 +5075,23 @@
       "weight": 1
     },
     {
-      "if": [["var", "appr_lys", ">=", 4], ["!flag", "lys_left"], ["!flag", "lys_dead"]],
+      "if": [["var", "appr_lys", ">=", 4], ["!flag", "lys_left"], ["!flag", "lys_dead"], ["!flag", "lys_devoted"]],
       "text": "By the end Lys called you the steadiest thing on a road she never expected to walk this far down.",
       "weight": 1
     },
     {
-      "if": [["var", "appr_lys", "<=", -2], ["!flag", "lys_left"], ["!flag", "lys_dead"]],
+      "if": [["var", "appr_lys", "<=", -2], ["!flag", "lys_left"], ["!flag", "lys_dead"], ["!flag", "lys_hardened"]],
       "text": "Lys still walks beside you, but she watches you now the way she watches strange ground — carefully, from a distance.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "lys_devoted"], ["!flag", "lys_left"], ["!flag", "lys_dead"]],
+      "text": "Lys never says what changed. She just stopped waiting to be asked before she read a fight for you, and never went back to waiting.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "lys_hardened"], ["!flag", "lys_left"], ["!flag", "lys_dead"]],
+      "text": "Lys kept walking beside you after the worst of it, but she never closed that half-step of distance again. Some things don't undo.",
       "weight": 1
     },
     {
@@ -5058,12 +5130,22 @@
       "weight": 1
     },
     {
-      "if": [["var", "appr_osk", ">=", 4], ["!flag", "osk_left"], ["!flag", "osk_dead"]],
+      "if": [["var", "appr_osk", ">=", 4], ["!flag", "osk_left"], ["!flag", "osk_dead"], ["!flag", "osk_devoted"]],
       "text": "Brother Osk stopped calling himself a novice somewhere around you, though the Church never made it official.",
       "weight": 1
     },
     {
-      "if": [["var", "appr_osk", "<=", -2], ["!flag", "osk_left"], ["!flag", "osk_dead"]],
+      "if": [["flag", "osk_devoted"], ["!flag", "osk_left"], ["!flag", "osk_dead"]],
+      "text": "Once, you told Brother Osk to leave a grief unspoken. He refused, said the rite anyway, and never once made you regret asking.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "osk_hardened"], ["!flag", "osk_left"], ["!flag", "osk_dead"]],
+      "text": "Brother Osk still says the rites over what you do. He stopped asking you to explain yourself first, and never started again.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "appr_osk", "<=", -2], ["!flag", "osk_left"], ["!flag", "osk_dead"], ["!flag", "osk_hardened"]],
       "text": "Osk still says the rites when you ask him to, but he has stopped explaining them to you, and you have stopped asking why.",
       "weight": 1
     },
@@ -5108,12 +5190,32 @@
       "weight": 1
     },
     {
-      "if": [["var", "appr_tamsin", ">=", 4], ["!flag", "tamsin_left"], ["!flag", "tamsin_dead"]],
+      "if": [
+        ["var", "appr_tamsin", ">=", 4],
+        ["!flag", "tamsin_left"],
+        ["!flag", "tamsin_dead"],
+        ["!flag", "tamsin_devoted"]
+      ],
       "text": "Tamsin swings her hammer easier with you at her back than she'd ever admit to the smith.",
       "weight": 1
     },
     {
-      "if": [["var", "appr_tamsin", "<=", -2], ["!flag", "tamsin_left"], ["!flag", "tamsin_dead"]],
+      "if": [["flag", "tamsin_devoted"], ["!flag", "tamsin_left"], ["!flag", "tamsin_dead"]],
+      "text": "Nobody had to tell Tamsin to step in front of the blow meant for you. She just did, once, and never mentioned it again.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "tamsin_hardened"], ["!flag", "tamsin_left"], ["!flag", "tamsin_dead"]],
+      "text": "Tamsin stopped telling you what she was thinking before she acted on it. For a warden who counts blows out loud, that silence never lifted.",
+      "weight": 1
+    },
+    {
+      "if": [
+        ["var", "appr_tamsin", "<=", -2],
+        ["!flag", "tamsin_left"],
+        ["!flag", "tamsin_dead"],
+        ["!flag", "tamsin_hardened"]
+      ],
       "text": "Tamsin still marches with you, but she counts your blows now the way she counts an enemy's, out of old habit.",
       "weight": 1
     },
@@ -5153,12 +5255,22 @@
       "weight": 1
     },
     {
-      "if": [["var", "appr_vell", ">=", 4], ["!flag", "vell_left"], ["!flag", "vell_dead"]],
+      "if": [["var", "appr_vell", ">=", 4], ["!flag", "vell_left"], ["!flag", "vell_dead"], ["!flag", "vell_devoted"]],
       "text": "Vell stopped being careful with you somewhere along the road, and started being honest instead.",
       "weight": 1
     },
     {
-      "if": [["var", "appr_vell", "<=", -2], ["!flag", "vell_left"], ["!flag", "vell_dead"]],
+      "if": [["flag", "vell_devoted"], ["!flag", "vell_left"], ["!flag", "vell_dead"]],
+      "text": "Vell handed you a leaf torn from a ledger, once, and asked you to keep it safe — the first thing they ever gave instead of guarded.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "vell_hardened"], ["!flag", "vell_left"], ["!flag", "vell_dead"]],
+      "text": "Vell stopped correcting your mistakes somewhere along the road. Not generosity — they'd simply stopped expecting better.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "appr_vell", "<=", -2], ["!flag", "vell_left"], ["!flag", "vell_dead"], ["!flag", "vell_hardened"]],
       "text": "Vell still travels with you, notebook closed more often than open now, and asks you fewer questions than before.",
       "weight": 1
     },
@@ -5818,5 +5930,47 @@
       "require": { "level": 99 },
       "bonus": { "check": { "will": 1 } }
     }
-  }
+  },
+  "statusPaths": [
+    {
+      "label": "how Lys has come to see you",
+      "states": [
+        {
+          "if": [["flag", "lys_devoted"]],
+          "text": "she reads a fight before you do, and won't wait to be asked again"
+        },
+        { "if": [["flag", "lys_hardened"]], "text": "she keeps a half-step of distance now, and hasn't said why" }
+      ]
+    },
+    {
+      "label": "where you and Brother Osk stand",
+      "states": [
+        {
+          "if": [["flag", "osk_devoted"]],
+          "text": "he'll refuse you outright when he's sure of it, and say the rite anyway"
+        },
+        {
+          "if": [["flag", "osk_hardened"]],
+          "text": "he still says the words over what you do, but stopped asking you to explain first"
+        }
+      ]
+    },
+    {
+      "label": "what Tamsin will do for you now",
+      "states": [
+        { "if": [["flag", "tamsin_devoted"]], "text": "she'll step in front of a blow meant for you, unasked" },
+        {
+          "if": [["flag", "tamsin_hardened"]],
+          "text": "she's stopped telling you what she's thinking before she acts on it"
+        }
+      ]
+    },
+    {
+      "label": "how much of themself Vell has shown you",
+      "states": [
+        { "if": [["flag", "vell_devoted"]], "text": "they handed you the one page they never let out of their sight" },
+        { "if": [["flag", "vell_hardened"]], "text": "they've stopped correcting you when you get the details wrong" }
+      ]
+    }
+  ]
 }
