@@ -42,11 +42,11 @@
  * prints its receipt (used to verify playtest reports).
  */
 import { readFileSync, readdirSync } from "node:fs";
-import { legalActions, menuLoad, newState, receipt, sameState, step } from "./engine.ts";
+import { actionLabel, allActions, legalActions, menuLoad, newState, receipt, sameState, step } from "./engine.ts";
 import { render, renderStatus } from "./format.ts";
 import { MENU_CAP } from "./types.ts";
 import { loadWorld, replayWalkthrough } from "./validate.ts";
-import type { Trace, World } from "./types.ts";
+import type { Action, State, Trace, World } from "./types.ts";
 
 const HOLE = /\b(?:undefined|null|NaN|\[object Object\])\b/;
 
@@ -60,20 +60,47 @@ function walkRng(seed: number): () => number {
   };
 }
 
-export function crawl(world: World, walks: number, maxSteps: number): {
+/**
+ * A walk that prefers somewhere it has not been.
+ *
+ * The uniform random walk is the right instrument for finding a bad *state* —
+ * it wanders into combinations nobody would author — but it is a poor one for
+ * finding a bad *room*, because in a realm of 905 rooms it keeps re-treading
+ * the ones near the start. Measured: 145 rooms at the default depth and 332 at
+ * `--deep`, which leaves two thirds of the realm never rendered by any
+ * automated check at all.
+ *
+ * So `--sweep` biases the same walk toward what it has not seen: an exit into
+ * an unvisited room, or a travel entry to an unvisited landmark, is taken over
+ * anything else. Everything the crawler checks — crashes, desyncs, holes,
+ * empty menus, over-cap loads, screen width — then gets applied to far more of
+ * the realm for the same number of steps. It does not replace the uniform
+ * walks; a room reached only by a beeline has never been stress-tested, and a
+ * state reached only by wandering has never been rendered.
+ */
+function prefersNew(world: World, s: State, legal: Action[], seen: Set<string>): Action[] {
+  const fresh = legal.filter((a) => {
+    if (a.kind === "go") { const to = world.rooms[s.room]?.exits?.[a.dir]?.to; return !!to && !seen.has(to); }
+    if (a.kind === "travelto") return !seen.has(a.room);
+    return false;
+  });
+  return fresh.length ? fresh : legal;
+}
+
+export function crawl(world: World, walks: number, maxSteps: number, sweep = false): {
   findings: string[];
   roomsSeen: Set<string>;
   endingsSeen: Set<string>;
   steps: number;
   worst: { chars: number; room: string; turn: number };
-  overCap: { count: number; worstN: number; room: string };
+  overCap: { count: number; worstN: number; room: string; menu: string };
 } {
   const findings: string[] = [];
   const roomsSeen = new Set<string>();
   const endingsSeen = new Set<string>();
   let steps = 0;
   let worst = { chars: 0, room: "", turn: 0 };
-  const overCap = { count: 0, worstN: 0, room: "" };
+  const overCap = { count: 0, worstN: 0, room: "", menu: "" };
 
   for (let w = 0; w < walks && findings.length < 20; w++) {
     const rnd = walkRng(1000 + w);
@@ -90,9 +117,17 @@ export function crawl(world: World, walks: number, maxSteps: number): {
       const load = menuLoad(world, state);
       if (load > MENU_CAP) {
         overCap.count++;
-        if (load > overCap.worstN) { overCap.worstN = load; overCap.room = state.room; }
+        if (load > overCap.worstN) {
+          overCap.worstN = load;
+          overCap.room = state.room;
+          // the labels, not just the count: an over-cap room reached only by a
+          // sweeping walk is awkward to reproduce by hand, and the author
+          // needs to know WHICH thirteen things the room was offering
+          overCap.menu = allActions(world, state).filter((a) => a.kind !== "ability" && a.kind !== "roommore").map((a) => actionLabel(world, a, state)).join(" | ");
+        }
       }
-      const a = legal[Math.floor(rnd() * legal.length)]!;
+      const pool = sweep ? prefersNew(world, state, legal, roomsSeen) : legal;
+      const a = pool[Math.floor(rnd() * pool.length)]!;
       let out;
       try {
         out = step(world, state, a);
@@ -153,13 +188,14 @@ if (process.argv[1]?.endsWith("crawl.ts")) {
     ? [explicit]
     : readdirSync("world").filter((f) => f.endsWith(".json")).map((f) => `world/${f}`);
   const deep = args.includes("--deep");
+  const sweep = args.includes("--sweep");
   const walks = deep ? 400 : 60;
   const maxSteps = deep ? 300 : 120;
   let bad = 0;
   for (const p of paths) {
     const world = loadWorld(p);
     const t0 = Date.now();
-    const r = crawl(world, walks, maxSteps);
+    const r = crawl(world, walks, maxSteps, sweep);
     const wt = replayWalkthrough(world, 1);
     if (wt.error) r.findings.push(`WALKTHROUGH ${wt.error}`);
     // a hard finding, not just a number, at this default depth — the one
@@ -169,7 +205,7 @@ if (process.argv[1]?.endsWith("crawl.ts")) {
     // never failing, until that is closed too. biggest-screen stays a printed
     // number at every depth until reach's off-walkthrough screens are also
     // brought under 1100.
-    if (r.overCap.count && !deep) r.findings.push(`OVERCAP ${world.id}: ${r.overCap.count} steps over cap, worst ${r.overCap.worstN} in ${r.overCap.room}`);
+    if (r.overCap.count && !deep) r.findings.push(`OVERCAP ${world.id}: ${r.overCap.count} steps over cap, worst ${r.overCap.worstN} in ${r.overCap.room}\n      ${r.overCap.menu}`);
     const rooms = Object.keys(world.rooms).length;
     console.log(
       `crawl ${world.id}: ${walks} walks, ${r.steps} steps, ${Date.now() - t0}ms | rooms ${r.roomsSeen.size}/${rooms} | endings seen: ${[...r.endingsSeen].join(",") || "none"} | biggest screen ${r.worst.chars} (${r.worst.room || "-"}) | over-cap menus ${r.overCap.count}${r.overCap.count ? ` (worst ${r.overCap.worstN} in ${r.overCap.room})` : ""} | walkthrough: ${wt.error ?? `win in ${wt.turns}t`}`,
