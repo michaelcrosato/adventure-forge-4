@@ -22,6 +22,15 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "fd_causeway_marker",
+          "label": "read the boundary marker",
+          "free": true,
+          "once": true,
+          "fx": [["xp", 1], ["say", "A stone marks where the Vale's dry road ends. Someone has scratched a line beneath the old carving, newer: THE CHURCH'S WATER STARTS HERE."]]
+        }
       ]
     },
     "fd_north_dike": {
@@ -46,6 +55,22 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "fd_dike_shore",
+          "label": "shore the dike — fail costs 1hp (might)",
+          "once": true,
+          "fx": [
+            [
+              "check",
+              "might",
+              9,
+              [["score", 2], ["xp", 2], ["say", "You wedge stone and turf back into the slump before the fen can widen it. It'll hold another season."]],
+              [["hp", -1], ["say", "The stone shifts wrong and takes your footing with it. You climb out muddy and short a season's patience."]]
+            ]
+          ]
+        }
       ]
     },
     "fd_coast_road": {
@@ -722,6 +747,12 @@
     }
   },
   "items": {
+    "fd_tide_glass": {
+      "name": "a knot of sea-glass",
+      "loc": "fd_coast_road",
+      "takeable": true,
+      "hint": "smoothed by years in the tide; a small thing to keep"
+    },
     "fd_eel_spear": { "name": "eel-spear", "loc": "nowhere", "hit": 1, "dmg": 4 },
     "fd_oilskin_cloak": { "name": "oilskin cloak", "loc": "nowhere", "armor": 1 },
     "fd_smoked_eel": {
@@ -1035,6 +1066,7 @@
     "fd_sexton": {
       "name": "old sexton",
       "room": "fd_priory_cloister",
+      "dialogue": true,
       "desc": "Bent low over the one clear tablet, scraping moss that keeps coming back.",
       "topics": [
         {
@@ -1087,12 +1119,19 @@
             ["addvar", "rep_church", -1],
             ["addvar", "appr_osk", -1]
           ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his scraping",
+          "say": "Someone has to be here when you're not. Go on, then.",
+          "end": true
         }
       ]
     },
     "fd_netkeep": {
       "name": "netkeep",
       "room": "fd_net_hall",
+      "dialogue": true,
       "desc": "Mending net by firelight, fingers quick despite the poor light.",
       "topics": [
         {
@@ -1161,12 +1200,19 @@
           "once": true,
           "say": "He doesn't answer right away. \"Funny,\" he says at last, counting his tools without quite looking at them. \"Most folk don't notice what I'm not saying.\"",
           "fx": [["set", "or_scout_fd_netkeep_wary"], ["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his nets",
+          "say": "Mind the third plank past the door. It's softer than it looks.",
+          "end": true
         }
       ]
     },
     "fd_eel_trader": {
       "name": "eel-trader",
       "room": "fd_eel_market",
+      "dialogue": true,
       "desc": "Two fingers gone at the second knuckle, and quick enough with the rest not to miss them.",
       "topics": [
         {
@@ -1302,6 +1348,12 @@
           "once": true,
           "say": "\"Because you'd have talked me down to less if I'd let you keep going,\" she says. \"I know when to stop losing.\"",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to her eels",
+          "say": "Watch your footing on the ramp. Everyone loses a boot there eventually.",
+          "end": true
         }
       ]
     },
@@ -1501,6 +1553,7 @@
     "fd_perrins_mother": {
       "name": "Perrin's mother",
       "room": "fd_settlement",
+      "dialogue": true,
       "desc": "Watches the causeway more than the water, a boy's bedding still folded on the shelf.",
       "topics": [
         {
@@ -1618,6 +1671,12 @@
             ["!flag", "rb_fd_wm_reported"]
           ],
           "say": "She only nods, the way she's nodded every evening for two winters. \"Bed's still made,\" she says."
+        },
+        {
+          "id": "bye",
+          "label": "leave her to her vigil",
+          "say": "Mind the water on your way out. She's watched enough people go.",
+          "end": true
         }
       ]
     }
