@@ -56,7 +56,7 @@
           "label": "the Hunger Barn, now it's rested",
           "if": [["flag", "hl_hollow_rested"]],
           "once": true,
-          "say": "Names and an order, spoken together at last. I've stood these steps ten years without once hearing either. Feels lighter, standing here today.",
+          "say": "The debt paid, and an order read over it, at last. I've stood these steps ten years without once seeing either done. Feels lighter, standing here today.",
           "fx": [["xp", 1]]
         },
         {
@@ -73,6 +73,14 @@
           "if": [["flag", "hl_hollow_burned"]],
           "once": true,
           "say": "Ash instead of a beam. Quicker than an argument, I'll grant it that. Doesn't make the standing here any easier, some mornings.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_due_hauled",
+          "label": "the sacks that went missing",
+          "if": [["flag", "hl_due_source_hauled"]],
+          "once": true,
+          "say": "Still not sure how you got past my pike with an armful of sacks. I've decided not to lose sleep wondering.",
           "fx": [["xp", 1]]
         },
         {
@@ -114,8 +122,8 @@
         },
         {
           "id": "hl_read_ledger_check",
-          "label": "read the ledger's older tally (wits)",
-          "if": [["flag", "hl_almoner_bg"], ["!flag", "hl_tick_almonry"]],
+          "label": "search the ledger for the surplus (wits)",
+          "if": [["flag", "hl_almoner_bg"], ["!flag", "hl_hollow_done"], ["!flag", "hl_due_paid"]],
           "say": "Go on, then. It's held up to worse eyes than yours.",
           "fx": [
             [
@@ -123,12 +131,22 @@
               "wits",
               10,
               [
-                ["set", "hl_tick_almonry"],
-                ["addvar", "hl_ticks_known", 1],
+                ["set", "hl_almonry_read"],
+                ["set", "hl_due_paid"],
+                ["set", "hl_due_source_almonry"],
+                ["addvar", "rep_church", -3],
+                ["addvar", "appr_osk", -1],
                 ["score", 3],
                 ["xp", 3],
-                ["addvar", "rep_church", 1],
-                ["say", "Behind the current tally, an older page: names, sacks, dates from that first winter, kept because nobody had the nerve to burn what a ledger recorded."]
+                ["say", "Behind the current tally, an older page: grain held back that first winter and never once redistributed, kept because nobody had the nerve to burn what a ledger recorded — or to spend it."],
+                [
+                  "if",
+                  [["inParty", "osk"]],
+                  [
+                    ["say", "Brother Osk: \"Another ledger, quietly thinned for mercy's sake. I am starting to wonder if any of you can leave one alone.\""]
+                  ],
+                  []
+                ]
               ],
               [["say", "The old ink has run past easy reading in the damp. It can be tried again."]]
             ]
@@ -137,7 +155,7 @@
         {
           "id": "hl_ask_unworthy",
           "label": "ask who was written unworthy that winter",
-          "if": [["flag", "hl_tick_almonry"], ["!flag", "hl_ledger_unworthy_known"]],
+          "if": [["flag", "hl_almonry_read"], ["!flag", "hl_ledger_unworthy_known"]],
           "say": "There's a column for it, if you want to see it. I'd rather you didn't want to.",
           "fx": [
             ["set", "hl_ledger_unworthy_known"],
@@ -170,15 +188,25 @@
         {
           "id": "hl_read_ledger_scholar",
           "label": "read the older tally outright",
-          "if": [["class", "scholar"], ["!flag", "hl_tick_almonry"], ["flag", "hl_almoner_bg"]],
+          "if": [["class", "scholar"], ["!flag", "hl_hollow_done"], ["!flag", "hl_due_paid"], ["flag", "hl_almoner_bg"]],
           "say": "Winnow barely looks up from her own work as you reach past her for the older pages yourself.",
           "fx": [
-            ["set", "hl_tick_almonry"],
-            ["addvar", "hl_ticks_known", 1],
+            ["set", "hl_almonry_read"],
+            ["set", "hl_due_paid"],
+            ["set", "hl_due_source_almonry"],
+            ["addvar", "rep_church", -3],
+            ["addvar", "appr_osk", -1],
             ["score", 3],
             ["xp", 3],
-            ["addvar", "rep_church", 1],
-            ["say", "You have the older page read before Winnow finishes offering to fetch a candle: names, sacks, dates, kept whole since the first winter, because nobody had the nerve to burn what a ledger recorded."]
+            ["say", "You have the older page read before Winnow finishes offering to fetch a candle: grain held back since that first winter, never redistributed, sitting apart in the accounts under a word nobody chose to read closely."],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Brother Osk: \"Another ledger, quietly thinned for mercy's sake. I am starting to wonder if any of you can leave one alone.\""]
+              ],
+              []
+            ]
           ]
         },
         {
@@ -306,25 +334,19 @@
           "fx": [["set", "hl_tallykeeper_bg"], ["xp", 2]]
         },
         {
-          "id": "hl_tick_keeper_ask",
-          "label": "ask her to read the tally-sticks",
-          "if": [["flag", "hl_tallykeeper_bg"], ["!flag", "hl_tick_keeper"]],
-          "say": "You're the first to ask outright in forty generations of keeping. Sit, then. This takes as long as it takes.",
-          "fx": [
-            ["set", "hl_tick_keeper"],
-            ["addvar", "hl_ticks_known", 1],
-            ["score", 3],
-            ["xp", 3],
-            ["addvar", "rep_keepers", 1],
-            ["say", "She reads them stick by stick, name by name, in the flat, unhurried voice of someone who has said this exact list to herself a thousand times and never once aloud to another living person."]
-          ]
+          "id": "hl_reckon_debt",
+          "label": "ask her to reckon what's owed",
+          "if": [["flag", "hl_tallykeeper_bg"], ["!flag", "hl_hollow_done"]],
+          "once": true,
+          "say": "Every household's tally, every sack that never got chalked to their name. It was never words that were owed. It was their share.",
+          "fx": [["score", 2], ["xp", 2]]
         },
         {
           "id": "react_hollow_rested",
           "label": "the Hunger Barn, now it's rested",
           "if": [["flag", "hl_hollow_rested"]],
           "once": true,
-          "say": "Read at last, and not only to myself. I'll keep the sticks anyway. Reading them once doesn't unteach the habit of forty generations.",
+          "say": "Paid, not merely spoken. I'll keep the sticks anyway — counting doesn't stop just because the debt's settled.",
           "fx": [["xp", 1]]
         },
         {
@@ -332,7 +354,7 @@
           "label": "the Hunger Barn, now it's bargained",
           "if": [["flag", "hl_hollow_bargained"]],
           "once": true,
-          "say": "A bargain isn't a reading. The sticks stay unread, whatever else got settled. I notice the difference, even if nobody else does.",
+          "say": "A bargain isn't a paying-back. The sticks stay exactly as they were, whatever else got settled. I notice the difference, even if nobody else does.",
           "fx": [["xp", 1]]
         },
         {
@@ -345,10 +367,10 @@
         },
         {
           "id": "sv_hl_rested_ask",
-          "label": "ask what becomes of the read sticks",
+          "label": "ask what becomes of the settled account",
           "if": [["flag", "hl_hollow_rested"], ["flag", "sv_hl_back"], ["!flag", "sv_hl_after_done"]],
           "once": true,
-          "say": "They're read now, but they're still just sticks in a cottage. Someone ought to decide what that means for the keeping of them, going forward.",
+          "say": "The debt's paid now, but the sticks are still just sticks in a cottage. Someone ought to decide what that means for the keeping of them, going forward.",
           "fx": [["xp", 2]]
         },
         {
@@ -356,7 +378,7 @@
           "label": "tell her to hang the sticks up plain",
           "if": [["flag", "said_hl_tallykeeper_sv_hl_rested_ask"], ["!flag", "sv_hl_after_done"]],
           "once": true,
-          "say": "She nods, and hangs the read sticks along the cottage wall in plain sight, no longer bundled away from asking eyes. \"About time somebody could see them without needing to ask first,\" she says.",
+          "say": "She nods, and hangs the sticks along the cottage wall in plain sight, marked paid, no longer bundled away from asking eyes. \"About time somebody could see them without needing to ask first,\" she says.",
           "fx": [
             ["set", "sv_hl_rested_kept"],
             ["set", "sv_hl_after_done"],
@@ -370,7 +392,7 @@
           "label": "send the names on to Barrowmere",
           "if": [["flag", "said_hl_tallykeeper_sv_hl_rested_ask"], ["!flag", "sv_hl_after_done"]],
           "once": true,
-          "say": "\"The Keepers' Hall, then,\" she says, already reaching for a courier's satchel. \"So it isn't only Tithing that remembers, if Tithing ever forgets again.\"",
+          "say": "\"The Keepers' Hall, then,\" she says, already reaching for a courier's satchel. \"So it isn't only Tithing that remembers the debt was paid, if Tithing ever forgets again.\"",
           "fx": [
             ["set", "sv_hl_rested_sent"],
             ["set", "sv_hl_after_done"],
@@ -410,19 +432,6 @@
           "fx": [["set", "hl_widow_heard"], ["xp", 2]]
         },
         {
-          "id": "hl_tick_widow_ask",
-          "label": "ask for her family's tally-stick",
-          "if": [["flag", "hl_widow_heard"], ["!flag", "hl_tick_widow"]],
-          "say": "My husband's people, back to the winter itself. I've kept it because nobody ever asked for it back.",
-          "fx": [
-            ["set", "hl_tick_widow"],
-            ["addvar", "hl_ticks_known", 1],
-            ["score", 3],
-            ["xp", 3],
-            ["say", "She brings out a stick worn smooth by handling, notched with names going back further than the croft's own deed. She reads it to you plain, and doesn't ask why you wanted it."]
-          ]
-        },
-        {
           "id": "react_widow_paid",
           "label": "ask how the croft's faring",
           "if": [["flag", "hl_widow_paid"]],
@@ -451,7 +460,7 @@
           "label": "the Hunger Barn, now it's rested",
           "if": [["flag", "hl_hollow_rested"]],
           "once": true,
-          "say": "My husband's people are in that count now, spoken properly. Whatever else this year costs me, that much is paid in full.",
+          "say": "My husband's people are owed for at last, not just spoken of. Whatever else this year costs me, that much's paid in full.",
           "fx": [["xp", 1]]
         },
         {
@@ -678,6 +687,14 @@
           ]
         },
         {
+          "id": "react_due_skim",
+          "label": "the count, since it went missing a night",
+          "if": [["flag", "hl_due_source_skim"]],
+          "once": true,
+          "say": "The count's been off since, and I know whose doing that is. I don't much care to prove it to anyone but you.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "react_free_passage",
           "label": "ask about the Companies' pass",
           "if": [["flag", "free_passage"], ["flag", "hl_grainrun_done"]],
@@ -870,38 +887,18 @@
     }
   },
   "quests": {
-    "hl_q_ticks": {
-      "name": "The Tally-Sticks",
+    "hl_q_due": {
+      "name": "The Crofters' Due",
       "start": [["flag", "hl_hollow_grievance"]],
-      "done": [["var", "hl_ticks_known", ">=", 3]],
+      "done": [["flag", "hl_due_paid"]],
       "stages": [
         {
-          "if": [["flag", "hl_tick_keeper"], ["flag", "hl_tick_widow"], ["!flag", "hl_tick_almonry"]],
-          "text": "Brida's stick and the widow's are yours. The last is the almonry's ledger, or Saint Garner's chapel, in the fields."
-        },
-        {
-          "if": [["flag", "hl_tick_keeper"], ["flag", "hl_tick_almonry"], ["!flag", "hl_tick_widow"]],
-          "text": "Brida's stick and the almonry's tally are yours. The last waits at the widow's croft, out past the boundary hedge."
-        },
-        {
-          "if": [["flag", "hl_tick_widow"], ["flag", "hl_tick_almonry"], ["!flag", "hl_tick_keeper"]],
-          "text": "The widow's stick and the almonry's tally are yours. The last is Brida's, at the tally-keeper's cottage."
-        },
-        {
-          "if": [["flag", "hl_tick_keeper"], ["!flag", "hl_tick_widow"], ["!flag", "hl_tick_almonry"]],
-          "text": "Brida's stick is yours. Two remain: the widow's croft, and the almonry's ledger (or the chapel)."
-        },
-        {
-          "if": [["flag", "hl_tick_widow"], ["!flag", "hl_tick_keeper"], ["!flag", "hl_tick_almonry"]],
-          "text": "The widow's stick is yours. Two remain: Brida's cottage, and the almonry's ledger (or the chapel)."
-        },
-        {
-          "if": [["flag", "hl_tick_almonry"], ["!flag", "hl_tick_keeper"], ["!flag", "hl_tick_widow"]],
-          "text": "The almonry's tally is yours. Two remain: Brida's cottage, and the widow's croft."
+          "if": [["flag", "hl_due_paid"]],
+          "text": "The due is paid. Speak it with the barn-reeve's order, at the threshing floor, to rest the barn."
         },
         {
           "if": [],
-          "text": "The rite wants three sticks: the tally-keeper Brida's, the widow's croft, and the almonry's ledger (or the chapel)."
+          "text": "Not sticks — a debt. Haul it from the granary (might), find it hidden (grace/wits), or buy it (will)."
         }
       ]
     },
@@ -953,7 +950,7 @@
           "text": "The ledger names who was written unworthy that winter. Press Sister Winnow, at the almonry, on whose hand wrote it."
         },
         {
-          "if": [["flag", "hl_tick_almonry"]],
+          "if": [["flag", "hl_almonry_read"]],
           "text": "The almonry's older tally is read. Ask Sister Winnow who was written unworthy that winter."
         },
         {

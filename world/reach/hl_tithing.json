@@ -212,6 +212,40 @@
               []
             ]
           ]
+        },
+        {
+          "id": "hl_haul_due",
+          "label": "haul the debt from the granary (might)",
+          "if": [["flag", "hl_hollow_grievance"], ["!flag", "hl_hollow_done"], ["!flag", "hl_due_paid"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "hl_due_paid"],
+                ["set", "hl_due_source_hauled"],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "rep_watch", -1],
+                ["cond", "winded", 4],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "You shoulder past the queue and Rook's grounded pike both, and carry sacks straight off the Crown's own scales before anyone quite decides to stop you. Your arms and back will know it for days."],
+                [
+                  "if",
+                  [["inParty", "tamsin"]],
+                  [
+                    ["say", "Tamsin: \"Arithmetic, settled with your shoulders instead of a ledger. I can't say I mind the method.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["hp", -2],
+                ["say", "Rook's pike is level before you've got a second sack up, and the queue closes around you besides. You're driven back down the steps empty-handed."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -406,6 +440,32 @@
             ["xp", 2],
             ["say", "Boot-scuffs favoring one wall, a chalk-tally rubbed thin in exactly the spot a nervous thumb would rub it: two sacks a week leave uncounted, same as the hedge-gap already told you."]
           ]
+        },
+        {
+          "id": "hl_claim_backlane_slack",
+          "label": "intercept the skimmed sacks (grace)",
+          "if": [
+            ["flag", "hl_hollow_grievance"],
+            ["!flag", "hl_hollow_done"],
+            ["!flag", "hl_due_paid"],
+            ["any", [["flag", "hl_child_count_known"], ["flag", "hl_found_hedge_gap"]]]
+          ],
+          "fx": [
+            [
+              "check",
+              "grace",
+              10,
+              [
+                ["set", "hl_due_paid"],
+                ["set", "hl_due_source_skim"],
+                ["addvar", "rep_free", -2],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "You know the gap's own rhythm well enough now to beat the next load to it — two sacks that were never going to be chalked on any board, turned back the way they should have gone."]
+              ],
+              [["say", "Whoever's running the lane tonight isn't careless enough. The sacks move on schedule, without you. It can be tried again."]]
+            ]
+          ]
         }
       ]
     }
@@ -579,6 +639,44 @@
           ]
         },
         {
+          "id": "hl_persuade_due",
+          "label": "persuade him to release the due (will)",
+          "if": [
+            ["flag", "hl_bailiff_bg"],
+            ["flag", "hl_hollow_grievance"],
+            ["!flag", "hl_hollow_done"],
+            ["!flag", "hl_due_paid"],
+            ["var", "gold", ">=", 12]
+          ],
+          "say": "Give grain away on top of the tithe itself? Convince me the dead outrank the Regent's ledger — and back it with coin, not only words.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["addvar", "gold", -12],
+                ["set", "hl_due_paid"],
+                ["set", "hl_due_source_persuaded"],
+                ["addvar", "rep_crown", -1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "You make the case, and back it with coin enough that his columns still close clean when Marrowgate checks them. Vance counts it twice, and writes the release himself."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["say", "Vell: \"Bought again. Coin where a reckoning should stand. I begin to see the pattern in you — and I am not yet certain I mind it.\""],
+                    ["addvar", "appr_vell", -1]
+                  ],
+                  []
+                ]
+              ],
+              [["say", "\"Not today,\" he says, and goes back to his columns like the matter's closed. It can be tried again."]]
+            ]
+          ]
+        },
+        {
           "id": "hl_broker_tithe",
           "label": "broker a tithe both sides sign",
           "if": [
@@ -686,7 +784,7 @@
           "label": "the Hunger Barn, now it's rested",
           "if": [["flag", "hl_hollow_rested"]],
           "once": true,
-          "say": "Names and an order, both read aloud at once. My ledgers don't have a column for that, and for once I'm not sure I want them to.",
+          "say": "Grain returned, and an order read over it. My ledgers don't have a column for that, and for once I'm not sure I want them to.",
           "fx": [["xp", 1]]
         },
         {
