@@ -102,6 +102,38 @@
           []
         ]
       ],
+      "onEnter": [
+        [
+          "if",
+          [
+            [
+              "var",
+              "kw_ridings_worked",
+              ">=",
+              3
+            ],
+            [
+              "!flag",
+              "kw_hollow_done"
+            ],
+            [
+              "!flag",
+              "kw_round_felt"
+            ]
+          ],
+          [
+            [
+              "set",
+              "kw_round_felt"
+            ],
+            [
+              "say",
+              "The court feels different, come back to it now: the morning's round is finally ridden, beat and stand and cast alike, and whatever has waited here four hundred years is, for the first time, only waiting on you."
+            ]
+          ],
+          []
+        ]
+      ],
       "variants": [
         {
           "if": [
@@ -137,11 +169,11 @@
       "actions": [
         {
           "id": "kw_rest_hollow",
-          "label": "sound the recall whole at the horn-post",
+          "label": "sound the recall home at the horn-post",
           "if": [
             [
               "var",
-              "kw_notes_known",
+              "kw_ridings_worked",
               ">=",
               3
             ],
@@ -198,7 +230,7 @@
             ],
             [
               "say",
-              "You set the horn to your lips and sound the three notes whole. It carries a long way, and for the first time in four hundred years, nothing rides out to meet it."
+              "You set the horn to your lips and sound it plain. It was never the notes that mattered — it's that a hunt finally stands behind them: a covert beaten, a stand held, a line cast true. Nothing rides out to meet the horn."
             ],
             [
               "if",
@@ -227,7 +259,7 @@
               [
                 [
                   "say",
-                  "Lys: \"That's a rest-call, not a hunting-call. Whoever wrote it knew exactly what they were asking the horn to say. Well done.\""
+                  "Lys: \"No dogs, same as the morning we came. But it doesn't feel empty anymore. That's the whole of the difference.\""
                 ]
               ],
               []
@@ -330,14 +362,14 @@
           "fx": [
             [
               "say",
-              "The recall wants three notes and the horn itself, sounded together here at the post."
+              "The recall wants the morning finished, not sung: a covert beaten, a stand held, a line cast, out in the ridings — and the horn itself, sounded here at the post once all three are done."
             ],
             [
               "if",
               [
                 [
                   "var",
-                  "kw_notes_known",
+                  "kw_ridings_worked",
                   ">=",
                   3
                 ]
@@ -345,7 +377,7 @@
               [
                 [
                   "say",
-                  "All three notes are known: the woodward's call, the hunt's own roll, and the burners' rhyme."
+                  "All three ridings are worked: the brake beaten, the stand held, the line cast true."
                 ]
               ],
               []
@@ -355,13 +387,13 @@
               [
                 [
                   "!flag",
-                  "kw_note_woodward"
+                  "kw_riding_beat"
                 ]
               ],
               [
                 [
                   "say",
-                  "One note is missing still: coax the old call from Hollis, at the woodward's cot in Hornhallow."
+                  "One riding stands untouched still: Fern Brake, south of Hornhallow's gate, wants beating."
                 ]
               ],
               []
@@ -371,13 +403,13 @@
               [
                 [
                   "!flag",
-                  "kw_note_roll"
+                  "kw_riding_stand"
                 ]
               ],
               [
                 [
                   "say",
-                  "One note is missing still: read the cadence from the hunt's roll, here in the lodge hall."
+                  "One riding stands untouched still: Windbreak Thicket, the wood's northeast corner, wants a stand held."
                 ]
               ],
               []
@@ -387,13 +419,13 @@
               [
                 [
                   "!flag",
-                  "kw_note_rhyme"
+                  "kw_riding_cast"
                 ]
               ],
               [
                 [
                   "say",
-                  "One note is missing still: ask Fry, the child at Hornhallow's ride-gate, for the burners' rhyme."
+                  "One riding stands untouched still: the Bridle Crossing, further south of the gate than the brake, wants its line cast."
                 ]
               ],
               []
@@ -424,7 +456,7 @@
               [
                 [
                   "var",
-                  "kw_notes_known",
+                  "kw_ridings_worked",
                   ">=",
                   3
                 ],
@@ -634,11 +666,11 @@
       "actions": [
         {
           "id": "kw_read_roll",
-          "label": "read the roll's cadence (wits)",
+          "label": "read the roll's duty-roster (wits)",
           "if": [
             [
               "!flag",
-              "kw_note_roll"
+              "kw_roll_read"
             ]
           ],
           "fx": [
@@ -649,12 +681,7 @@
               [
                 [
                   "set",
-                  "kw_note_roll"
-                ],
-                [
-                  "addvar",
-                  "kw_notes_known",
-                  1
+                  "kw_roll_read"
                 ],
                 [
                   "score",
@@ -666,7 +693,7 @@
                 ],
                 [
                   "say",
-                  "The names are read out in a fixed order, master of hounds first to the horn-boy last, and the order itself has a rhythm to it — three notes, rising, the shape of a call rather than a list."
+                  "The names aren't only names: each is chalked with its morning's own duty, three to a line — beat, stand, cast — master of hounds down to horn-boy, the same three any hunt divides its work into. This one included."
                 ]
               ],
               [
@@ -689,7 +716,7 @@
             ],
             [
               "!flag",
-              "kw_note_roll"
+              "kw_roll_read"
             ],
             [
               "!flag",
@@ -708,12 +735,7 @@
             ],
             [
               "set",
-              "kw_note_roll"
-            ],
-            [
-              "addvar",
-              "kw_notes_known",
-              1
+              "kw_roll_read"
             ],
             [
               "score",
@@ -725,7 +747,7 @@
             ],
             [
               "say",
-              "You have the roll's order before the dust settles from touching it: master of hounds first to horn-boy last, and the naming-order is itself a call, three notes rising, cut into the reading like a verse."
+              "You have the roll's scheme before the dust settles from touching it: master of hounds down to horn-boy, each name chalked with its duty — beat, stand, cast — the same three any hunt's morning ever divides into."
             ]
           ]
         },
@@ -779,6 +801,18 @@
           "to": "kw_muster_court"
         }
       },
+      "variants": [
+        {
+          "if": [
+            [
+              "flag",
+              "kw_hollow_rested"
+            ]
+          ],
+          "desc": "A narrow stair climbs to what was once a bell-cote, open to the weather now, the boards still worn soft by a boy's hurrying feet. The stair itself is quiet, for the first time in four hundred years.",
+          "brief": "The stair, worn soft, and quiet at last."
+        }
+      ],
       "actions": [
         {
           "id": "kw_hear_notes",
@@ -886,7 +920,7 @@
             ]
           ],
           "once": true,
-          "say": "A horn calls a hunt out. Only a horn can call it home. Nobody living taught the boy the notes properly before he rode, and nobody has sounded them since. So: we wait.",
+          "say": "A horn calls a hunt out. Only a horn can call it home. But a hunt that never rode its round has nothing to come home from. Ours never did — not a covert beaten, not a stand held, not a line cast. So: we wait.",
           "fx": [
             [
               "xp",
@@ -904,7 +938,7 @@
             ]
           ],
           "once": true,
-          "say": "Youngest of us, and proudest of the horn for it. He sounded two notes clear as a bell that morning and lost the third to nerves. We have all been listening for it since.",
+          "say": "Youngest of us, and proudest of the horn for it. He sounded two notes clear as a bell that morning and lost the third to nerves. None of us ever told him the horn was never what we were waiting on.",
           "fx": [
             [
               "xp",
@@ -922,7 +956,7 @@
             ]
           ],
           "once": true,
-          "say": "All three notes, whole, at last. The boy's third note in there somewhere, however you came by it. Tell him, if you ever meet him properly, that nobody blamed him. We just couldn't say so until now.",
+          "say": "The round, ridden at last — beaten, stood, cast, same as any morning's hunt ever should have been. The boy's third note never mattered a damn, in the end. Tell him, if you ever meet him properly, that nobody blamed him.",
           "fx": [
             [
               "xp",
@@ -984,7 +1018,7 @@
     "kw_horn": {
       "name": "the huntsman's horn",
       "loc": "nowhere",
-      "hint": "sound it whole at the Hunt's Stand's horn-post, once all three notes are known",
+      "hint": "sound it whole at the Hunt's Stand's horn-post, once the morning's round is ridden",
       "variants": [
         {
           "if": [
@@ -1107,8 +1141,8 @@
         }
       ]
     },
-    "kw_q_notes": {
-      "name": "The Recall's Three Notes",
+    "kw_q_round": {
+      "name": "The Hunt's Unfinished Round",
       "start": [
         [
           "flag",
@@ -1118,7 +1152,7 @@
       "done": [
         [
           "var",
-          "kw_notes_known",
+          "kw_ridings_worked",
           ">=",
           3
         ]
@@ -1128,27 +1162,27 @@
           "if": [
             [
               "var",
-              "kw_notes_known",
+              "kw_ridings_worked",
               ">=",
               2
             ]
           ],
-          "text": "Two notes known; each source keeps its own. The last waits with Hollis, the lodge roll or Fry — whichever is untried."
+          "text": "Two ridings are worked. Whichever's left waits untouched, out in the wood — the brake, the thicket, or the crossing."
         },
         {
           "if": [
             [
               "var",
-              "kw_notes_known",
+              "kw_ridings_worked",
               ">=",
               1
             ]
           ],
-          "text": "One note is known. Two remain: the woodward's call, the hunt's roll, and the burners' rhyme a child keeps."
+          "text": "One riding is worked. Two remain: a covert beaten, a stand held, a line cast — do whichever you haven't."
         },
         {
           "if": [],
-          "text": "The recall wants three notes: the woodward's call, the hunt's roll in the lodge hall, and the burners' rhyme."
+          "text": "The hunt's morning was never finished. Three ridings want real work: brake beaten, thicket stood, crossing cast."
         }
       ]
     },
@@ -1236,21 +1270,21 @@
   },
   "statusTracks": [
     {
-      "var": "kw_notes_known",
-      "label": "The Kingswood's recall-notes",
+      "var": "kw_ridings_worked",
+      "label": "The Hunt's Unfinished Round",
       "max": 3,
       "remaining": [
         {
-          "flag": "kw_note_woodward",
-          "label": "the woodward's half-remembered call"
+          "flag": "kw_riding_beat",
+          "label": "Fern Brake, unbeaten"
         },
         {
-          "flag": "kw_note_roll",
-          "label": "the hunt's roll in the lodge hall"
+          "flag": "kw_riding_stand",
+          "label": "Windbreak Thicket, no stand held"
         },
         {
-          "flag": "kw_note_rhyme",
-          "label": "the burners' children's rhyme"
+          "flag": "kw_riding_cast",
+          "label": "the Bridle Crossing, the line uncast"
         }
       ],
       "if": [
@@ -1269,7 +1303,7 @@
           "kw_hollow_rested"
         ]
       ],
-      "text": "The Hunt's Stand rests at last: three notes sounded whole, and nothing has ridden out of the Kingswood since.",
+      "text": "The Hunt's Stand rests at last: the morning's round finally ridden, and nothing has ridden out of the Kingswood since.",
       "weight": 2
     },
     {
@@ -1388,6 +1422,15 @@
         ]
       ],
       "text": "A plain marker stands over the Hunt's Stand's ash now, Father Twyne's doing."
+    },
+    {
+      "if": [
+        [
+          "flag",
+          "kw_woodward_hummed"
+        ]
+      ],
+      "text": "Hollis still walks the old rides mornings, but he no longer listens for a third note. He knows now it was never the one missing."
     },
     {
       "if": [

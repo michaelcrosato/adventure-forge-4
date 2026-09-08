@@ -114,12 +114,102 @@
           "desc": "Thorn and holly grow knotted together at the wood's northeast corner, dense enough to break the wind off the Spine before it reaches the ridings proper.",
           "brief": "A dense thorn thicket, breaking the wind.",
           "onEnterOnce": [["xp", 1]],
+          "variants": [
+            {
+              "if": [["flag", "kw_riding_stand"]],
+              "desc": "Thorn and holly still knot together at the wood's northeast corner, but one gap now opens clean toward the ridings below: a stand held, downwind, the way a hunt would actually hold one.",
+              "brief": "The thicket, one clean stand held downwind."
+            }
+          ],
           "actions": [
             {
               "id": "kw_bearings_5_0",
               "label": "get your bearings",
               "free": true,
               "fx": [["say", "As the rides run, Hornhallow is 1 south and 4 west. The Hunt's Stand: 4 south and 1 west."]]
+            },
+            {
+              "id": "kw_stand_thicket_force",
+              "label": "clear a sightline by force (might)",
+              "if": [["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_stand"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  9,
+                  [
+                    ["set", "kw_riding_stand"],
+                    ["addvar", "kw_ridings_worked", 1],
+                    ["cond", "winded", 2],
+                    ["score", 3],
+                    ["xp", 3],
+                    ["say", "You wrestle a gap open through thorn and holly by main strength, until the ridings below open out clean in front of you — a proper stand, the wind at your back and nothing between you and a clear shot."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "The holly gives up nothing without drawing blood for it, and you're driven back with the gap only half opened. It can be forced again."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "kw_stand_thicket_craft",
+              "label": "find the true stand downwind (grace)",
+              "if": [["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_stand"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  10,
+                  [
+                    ["set", "kw_riding_stand"],
+                    ["addvar", "kw_ridings_worked", 1],
+                    ["score", 3],
+                    ["xp", 3],
+                    ["say", "You read the wind off the Spine and find the one gap the thicket already offers a patient eye, a few strides on — downwind, sheltered, and never once needing to be cleared."]
+                  ],
+                  [
+                    ["say", "You misjudge the wind and the spot you pick gives you away twice over. It can be tried again once you've felt it more carefully."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "kw_stand_thicket_words",
+              "label": "hold your nerve through the wait (will)",
+              "if": [["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_stand"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "kw_riding_stand"],
+                    ["addvar", "kw_ridings_worked", 1],
+                    ["score", 3],
+                    ["xp", 3],
+                    ["say", "You plant yourself at the thicket's edge and simply outlast it — cold, cramped, and dead still, for exactly as long as a stand actually asks. Nothing about it is clever. It works anyway."]
+                  ],
+                  [
+                    ["say", "Your nerve breaks first, a shifted foot, a caught breath, and whatever the wait was for is gone before you'd have seen it. It can be tried again."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "kw_stand_thicket_warden",
+              "label": "hold the stand like you were trained to",
+              "free": true,
+              "if": [["class", "warden"], ["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_stand"], ["!flag", "or_warden_kw_stand"]],
+              "fx": [
+                ["set", "or_warden_kw_stand"],
+                ["addvar", "or_warden_word", 1],
+                ["set", "kw_riding_stand"],
+                ["addvar", "kw_ridings_worked", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "Holding a post downwind and dead quiet is half of what the Watch ever trained into you. You're settled into the gap before you've had to think about it, and whatever passed, passed unaware of you."]
+              ]
             }
           ]
         },
@@ -286,12 +376,102 @@
           "desc": "Bracken grows chest-high and undisturbed, the only sound the small business of things moving through it that would rather not be seen. The riding here is more suggestion than path.",
           "brief": "Chest-high bracken, a riding half-lost in it.",
           "onEnterOnce": [["xp", 1]],
+          "variants": [
+            {
+              "if": [["flag", "kw_riding_beat"]],
+              "desc": "Bracken lies parted and flattened in a driven line clear across the brake, the way a beater actually leaves it behind — not trampled, worked. Whatever denned in here this morning is long gone, and the brake looks better for it.",
+              "brief": "The brake beaten clean, bracken parted in a line."
+            }
+          ],
           "actions": [
             {
               "id": "kw_bearings_1_2",
               "label": "get your bearings",
               "free": true,
               "fx": [["say", "As the rides run, Hornhallow is 1 north. The Hunt's Stand: 2 south and 3 east."]]
+            },
+            {
+              "id": "kw_beat_brake_force",
+              "label": "beat the brake through by force (might)",
+              "if": [["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_beat"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  9,
+                  [
+                    ["set", "kw_riding_beat"],
+                    ["addvar", "kw_ridings_worked", 1],
+                    ["cond", "winded", 2],
+                    ["score", 3],
+                    ["xp", 3],
+                    ["say", "You wade in shoulder-first and drive it through by main strength. Something unseen breaks from the far side before you see it — which is exactly a beater's job: not to see it, to move it."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "The brake fights back, thorn first, and you're driven out gasping before you've cleared a third of it. It can be beaten again."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "kw_beat_brake_craft",
+              "label": "quarter the brake like a beater (wits)",
+              "if": [["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_beat"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "kw_riding_beat"],
+                    ["addvar", "kw_ridings_worked", 1],
+                    ["score", 3],
+                    ["xp", 3],
+                    ["say", "You work it in strips instead, downwind edge first, driving inward the patient way instead of just wading in. Whatever was denned here goes without you ever laying eyes on it, which is the job done properly."]
+                  ],
+                  [
+                    ["say", "You lose the pattern halfway through and end up just thrashing after all, no better for it. It can be tried again with a clearer head."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "kw_beat_brake_words",
+              "label": "call it out, huntsman-fashion (will)",
+              "if": [["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_beat"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["set", "kw_riding_beat"],
+                    ["addvar", "kw_ridings_worked", 1],
+                    ["score", 3],
+                    ["xp", 3],
+                    ["say", "You call it out the old way, voice pitched to carry, working the brake's edge as you go — the way a huntsman drives a line without needing to see what moves ahead of the noise. It breaks and is gone."]
+                  ],
+                  [
+                    ["say", "Your call comes out more shout than art, and whatever was in there simply goes to ground and waits you out. It can be tried again."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "kw_beat_brake_scout",
+              "label": "read the brake's trails before you start",
+              "free": true,
+              "if": [["class", "scout"], ["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_beat"], ["!flag", "or_scout_kw_beat"]],
+              "fx": [
+                ["set", "or_scout_kw_beat"],
+                ["addvar", "or_scout_marks", 1],
+                ["set", "kw_riding_beat"],
+                ["addvar", "kw_ridings_worked", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "You read the deer-paths threading the bracken before you've taken three steps in, and drive along them instead of against them. Whatever was denned here is gone before it knows you've arrived."]
+              ]
             }
           ]
         },
@@ -346,12 +526,102 @@
           "desc": "Two ridings cross here at an old bridle-post, iron ring still bolted fast though no bridle has hung from it in longer than Hornhallow has kept count.",
           "brief": "A crossing, an old iron bridle-ring.",
           "onEnterOnce": [["xp", 1]],
+          "variants": [
+            {
+              "if": [["flag", "kw_riding_cast"]],
+              "desc": "Two ridings still cross at the old bridle-post, but the ring no longer hangs merely idle: a fresh cut low on the post marks the line the hunt would have cast and followed, found at last.",
+              "brief": "The crossing, a fresh cut marking the cast line."
+            }
+          ],
           "actions": [
             {
               "id": "kw_bearings_1_3",
               "label": "get your bearings",
               "free": true,
               "fx": [["say", "As the rides run, Hornhallow is 2 north. The Hunt's Stand: 1 south and 3 east."]]
+            },
+            {
+              "id": "kw_cast_crossing_force",
+              "label": "walk every branch till one gives (might)",
+              "if": [["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_cast"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  9,
+                  [
+                    ["set", "kw_riding_cast"],
+                    ["addvar", "kw_ridings_worked", 1],
+                    ["cond", "winded", 2],
+                    ["score", 3],
+                    ["xp", 3],
+                    ["say", "You quarter the crossing on foot, riding by riding, covering ground rather than reading it, until one stretch simply feels walked before — worn the way a line that was cast and followed wears, not merely cut."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "The light goes before your legs do, and you turn an ankle on an old rut you'd already crossed twice. It can be walked again."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "kw_cast_crossing_craft",
+              "label": "read the old ruts and the ring (wits)",
+              "if": [["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_cast"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "kw_riding_cast"],
+                    ["addvar", "kw_ridings_worked", 1],
+                    ["score", 3],
+                    ["xp", 3],
+                    ["say", "You read the bridle-ring's own wear and the ruts fanning from it, and the ground tells you plainly enough which branch the hunt would have cast toward first. You walk it yourself, the way the hounds never got to."]
+                  ],
+                  [
+                    ["say", "The ruts read three ways at once and you can't settle which is oldest. It can be read again with fresher eyes."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "kw_cast_crossing_words",
+              "label": "reason the cast through aloud (will)",
+              "if": [["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_cast"]],
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  11,
+                  [
+                    ["set", "kw_riding_cast"],
+                    ["addvar", "kw_ridings_worked", 1],
+                    ["score", 3],
+                    ["xp", 3],
+                    ["say", "You talk it through out loud, the way a huntsman argues a cold line into sense before trusting the pack to it, walking each guess out and back till only one holds up. Slower than reading sign. It works the same."]
+                  ],
+                  [
+                    ["say", "You talk yourself in a circle, literally, and end up back at the bridle-ring no surer than you started. It can be tried again."]
+                  ]
+                ]
+              ]
+            },
+            {
+              "id": "kw_cast_crossing_scholar",
+              "label": "read the crossing like an old page",
+              "free": true,
+              "if": [["class", "scholar"], ["flag", "kw_hollow_grievance"], ["!flag", "kw_riding_cast"], ["!flag", "or_scholar_kw_cast"]],
+              "fx": [
+                ["set", "or_scholar_kw_cast"],
+                ["addvar", "or_scholar_read", 1],
+                ["set", "kw_riding_cast"],
+                ["addvar", "kw_ridings_worked", 1],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "Old ground reads like an old manuscript to you: the ring's wear, the ruts' relative age, the answer sitting plain in the layering the moment you actually look for it that way."]
+              ]
             }
           ]
         },
