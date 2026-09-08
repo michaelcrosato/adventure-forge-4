@@ -136,6 +136,33 @@ twice a step and live play calls once a *game*, so a real turn costs ~1.4 ms
 seconds) and a **scaling trend** that bites well before Skyrim's size. It is
 not a reason to stop authoring today.
 
+## What has landed since (2026-09-08)
+
+- **Two engine layers.** Timed conditions (`cond`/`npccond`/`uncond`/`harm`, a
+  `conditions` record, modifiers folding into the same functions the menu
+  preview and `status` already read) and the realm's own turn (`["turn", op,
+  n]` and `world.clock`, at most one scheduled line a turn). 182 tests → 227.
+  No shipped world declares a clock yet, so all three walkthroughs still
+  render byte-identically.
+- **Six regions refilled.** Corridors 211 → 94 (23% → 10%): the Vale 10 → **0**,
+  Marrowgate 14 → **0**, the Saltkerns 27 → 1, Fenmarch 27 → 3, the Fallows
+  29 → 5, Thornwold 25 → 6. Hollowbrook and Coldpass are the last two over
+  the bar. Every author held the budget by gating additions on walkthrough
+  rooms behind state the proven runs never reach — the walkthrough's rendered
+  text is byte-identical through all of it.
+- **The Vale remembers.** Its forgotten choices went 15 → 0: every choice a
+  new player makes in the first half-hour is now read back by a later topic,
+  a room that changes, or a line in their ending.
+- **Prose echoes 66 → 2** in 3,613 authored lines, and `audit-echo` learned
+  three distinctions so its signal is trustworthy: a stamped place matching
+  its template, a wilderness cell's bearings compass, and a room's own
+  variants are none of them echoes. It also reports **names used twice** now;
+  four collisions fixed, including two that broke the travel list.
+- **The free recap reads as lines**, not as one 2,354-character sentence
+  naming fifteen holds.
+- **Every `gen` grid now covers every open cell** — the two that shipped
+  unwritten (the Saltkerns 24/5, Marrowgate's warrens 9/3) are authored.
+
 ## The order
 
 1. **Corridors and echoes** — the density and freshness of what already
