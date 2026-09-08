@@ -2609,7 +2609,7 @@
     },
     {
       "id": "iron_march_warned",
-      "if": [["flag", "iron_march"], ["turn", ">=", 40], ["!flag", "iron_march_stopped"]],
+      "if": [["flag", "iron_march"], ["since", "iron_march", ">=", 10], ["!flag", "iron_march_stopped"]],
       "once": true,
       "fx": [["say", "Word on the road: an Ironbound column is moving west, and it is not stopping at Cinderhall."]]
     },
@@ -2617,7 +2617,7 @@
       "id": "iron_march_burn_th",
       "if": [
         ["flag", "iron_march"],
-        ["turn", ">=", 540],
+        ["since", "iron_march", ">=", 500],
         ["!flag", "iron_march_stopped"],
         ["!flag", "th_hollow_done"],
         ["!flag", "ir_march_spare_th"]
@@ -2632,7 +2632,12 @@
     },
     {
       "id": "iron_march_burn_wm",
-      "if": [["flag", "iron_march"], ["turn", ">=", 620], ["!flag", "iron_march_stopped"], ["!flag", "wm_oath_resolved"]],
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 580],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "wm_oath_resolved"]
+      ],
       "once": true,
       "fx": [
         ["set", "wm_hollow_burned"],
@@ -2643,7 +2648,12 @@
     },
     {
       "id": "iron_march_burn_kw",
-      "if": [["flag", "iron_march"], ["turn", ">=", 100], ["!flag", "iron_march_stopped"], ["!flag", "kw_hollow_done"]],
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 60],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "kw_hollow_done"]
+      ],
       "once": true,
       "fx": [
         ["set", "kw_hollow_burned"],
@@ -2654,7 +2664,12 @@
     },
     {
       "id": "iron_march_burn_mc",
-      "if": [["flag", "iron_march"], ["turn", ">=", 140], ["!flag", "iron_march_stopped"], ["!flag", "mc_hollow_done"]],
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 100],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "mc_hollow_done"]
+      ],
       "once": true,
       "fx": [
         ["set", "mc_hollow_burned"],
@@ -2665,7 +2680,12 @@
     },
     {
       "id": "iron_march_burn_em",
-      "if": [["flag", "iron_march"], ["turn", ">=", 180], ["!flag", "iron_march_stopped"], ["!flag", "em_hollow_done"]],
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 140],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "em_hollow_done"]
+      ],
       "once": true,
       "fx": [
         ["set", "em_hollow_burned"],
@@ -2678,7 +2698,7 @@
       "id": "iron_march_burn_hb",
       "if": [
         ["flag", "iron_march"],
-        ["turn", ">=", 220],
+        ["since", "iron_march", ">=", 180],
         ["!flag", "iron_march_stopped"],
         ["!flag", "hb_kingsrest_resolved"]
       ],
@@ -2694,7 +2714,7 @@
       "id": "iron_march_burn_sk",
       "if": [
         ["flag", "iron_march"],
-        ["turn", ">=", 580],
+        ["since", "iron_march", ">=", 540],
         ["!flag", "iron_march_stopped"],
         ["!flag", "sk_hollow_resolved"]
       ],
@@ -2708,7 +2728,12 @@
     },
     {
       "id": "iron_march_burn_hl",
-      "if": [["flag", "iron_march"], ["turn", ">=", 500], ["!flag", "iron_march_stopped"], ["!flag", "hl_hollow_done"]],
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 460],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "hl_hollow_done"]
+      ],
       "once": true,
       "fx": [
         ["set", "hl_hollow_burned"],
@@ -2719,7 +2744,12 @@
     },
     {
       "id": "iron_march_burn_fd",
-      "if": [["flag", "iron_march"], ["turn", ">=", 260], ["!flag", "iron_march_stopped"], ["!flag", "fd_hollow_done"]],
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 220],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "fd_hollow_done"]
+      ],
       "once": true,
       "fx": [
         ["set", "fd_hollow_burned"],
@@ -2730,7 +2760,12 @@
     },
     {
       "id": "iron_march_burn_fl",
-      "if": [["flag", "iron_march"], ["turn", ">=", 300], ["!flag", "iron_march_stopped"], ["!flag", "fl_hollow_done"]],
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 260],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "fl_hollow_done"]
+      ],
       "once": true,
       "fx": [
         ["set", "fl_hollow_burned"],
@@ -2741,7 +2776,12 @@
     },
     {
       "id": "iron_march_burn_me",
-      "if": [["flag", "iron_march"], ["turn", ">=", 340], ["!flag", "iron_march_stopped"], ["!flag", "me_hollow_done"]],
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 300],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "me_hollow_done"]
+      ],
       "once": true,
       "fx": [
         ["set", "me_hollow_burned"],
@@ -2752,7 +2792,12 @@
     },
     {
       "id": "iron_march_burn_sh",
-      "if": [["flag", "iron_march"], ["turn", ">=", 380], ["!flag", "iron_march_stopped"], ["!flag", "sh_hollow_done"]],
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 340],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "sh_hollow_done"]
+      ],
       "once": true,
       "fx": [
         ["set", "sh_hollow_burned"],
@@ -2763,7 +2808,12 @@
     },
     {
       "id": "iron_march_burn_pw",
-      "if": [["flag", "iron_march"], ["turn", ">=", 420], ["!flag", "iron_march_stopped"], ["!flag", "pw_hollow_done"]],
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 380],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "pw_hollow_done"]
+      ],
       "once": true,
       "fx": [
         ["set", "pw_hollow_burned"],
@@ -2774,7 +2824,12 @@
     },
     {
       "id": "iron_march_burn_ff",
-      "if": [["flag", "iron_march"], ["turn", ">=", 460], ["!flag", "iron_march_stopped"], ["!flag", "ff_hollow_done"]],
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 420],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "ff_hollow_done"]
+      ],
       "once": true,
       "fx": [
         ["set", "ff_hollow_burned"],
