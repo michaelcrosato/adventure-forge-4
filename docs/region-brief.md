@@ -208,6 +208,7 @@ node --import tsx scripts/lint-world.ts world/reach.json    # text budgets, per-
 node --import tsx scripts/audit-shape.ts world/reach.json --prefix <code>    # bare rooms, the shape of the hold
 node --import tsx scripts/audit-choices.ts world/reach.json --prefix <code>  # what is read back, and what is forgotten
 node --import tsx scripts/audit-echo.ts world/reach.json --prefix <code>     # sentences the realm has already written once
+node --import tsx scripts/audit-bearings.ts world/reach.json --prefix <code>  # walks your wilderness bearings; they are wrong more often than not
 ```
 
 Run them from the repo root. Fix every line that names one of your ids. If

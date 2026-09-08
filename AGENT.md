@@ -47,7 +47,8 @@ this file. The driver reverts any cycle that tries.
   class, each hold's fingerprint, and `--rites` for how its grief is rested),
   `scripts/audit-choices.ts` (what the world reads back, what it forgets, and
   gates with no key), `scripts/audit-echo.ts` (sentences and names the realm
-  has written twice), `scripts/walk.ts` (turn a label list into a
+  has written twice), `scripts/audit-bearings.ts` (walks every wilderness
+  bearing and reports the ones that do not lead where they say), `scripts/walk.ts` (turn a label list into a
   walkthrough, inserting perk picks), `scripts/fmt-json.mjs` (compact content
   formatting — only on files you actually edited), `npm run turn` (play one
   command at a time from a shell).

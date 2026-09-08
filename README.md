@@ -177,6 +177,7 @@ node --import tsx scripts/budget.ts world/reach.json         # the token budget 
 node --import tsx scripts/audit-choices.ts world/reach.json  # what the world reads back, what it forgets, and gates with no key
 node --import tsx scripts/audit-shape.ts world/reach.json    # corridors per class, each hold's fingerprint, and how its grief is rested
 node --import tsx scripts/audit-echo.ts world/reach.json     # sentences the realm has written twice, and names it uses twice
+node --import tsx scripts/audit-bearings.ts world/reach.json # walks every "get your bearings" and says which ones lie
 node --import tsx scripts/walk.ts world/reach.json steps.json  # label list -> walkthrough, perk picks inserted
 node scripts/fmt-json.mjs world/reach/*.json                  # compact, stable content formatting
 ```
