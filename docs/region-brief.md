@@ -162,6 +162,37 @@ always, ≤ 8 typically — gate topics and actions on state. No check labelled
 safe if failure costs hp; state the cost in the label. Every check you want
 previewed goes FIRST in its effect list.
 
+**Above those, one budget for the whole realm**: the average `act` response
+along the proven walkthrough must stay under 450 characters, and no single
+response may pass 1,100. Measure it — do not estimate it:
+
+```bash
+node --import tsx scripts/budget.ts world/reach.json          # slack left, and the biggest screens
+node --import tsx scripts/budget.ts world/reach.json --terse   # one line, to diff before against after
+```
+
+Three things about that number, each of which has already cost someone a
+day's work:
+
+- **"It did not move the budget" is not evidence your content is fine.** The
+  measurement walks the *proven walkthrough*. A screen it never reaches costs
+  nothing there and is measured by nothing else. A byte-identical result
+  means your content is off the proven path — which may be exactly right, and
+  is never on its own a pass.
+- **Narrowing a gate until an addition stops costing budget is deleting it,
+  done less honestly.** An ability shipped gated on a DC-13 wits check when
+  the hardest wits check in eighteen regions is DC 12: it could never appear
+  for anybody, and the budget read "unchanged" because nothing had been
+  added. Before you gate on anything, count what satisfies it.
+- **A menu line is the most expensive thing you can add**, because it prints
+  on every screen the room renders. The menu is 34.5% of the realm's whole
+  budget; prose is 28%.
+
+And run the linter on **the world you touched**, not only the one you had in
+mind. 197 over-budget strings sat in `world/vale.json` for months — including
+a 2,376-character notice board, the first thing a new player reads — because
+CI and everyone's habit pointed at `world/reach.json` alone.
+
 ## Validate before you hand in (mandatory)
 
 Your file is validated as part of the whole draft realm:
@@ -169,6 +200,7 @@ Your file is validated as part of the whole draft realm:
 ```bash
 node --import tsx src/validate.ts world/reach.json      # must print ✓ for the realm
 node --import tsx src/crawl.ts world/reach.json         # must be clean; note rooms seen
+node --import tsx src/crawl.ts world/reach.json --deep  # 400 walks x 300 steps: the numbers move with depth
 ```
 
 ```bash
