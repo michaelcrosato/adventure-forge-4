@@ -12,7 +12,9 @@
  * Also replays the walkthrough and prints coverage (rooms seen, endings seen),
  * plus two numbers in every summary line:
  *
- *   over-cap menus  rooms offering more than MENU_CAP options. The validator
+ *   over-cap menus  rooms whose own options (all of them, across the pages a
+ *                   crowded room now turns, but not the class abilities that
+ *                   ride on top of every room) exceed MENU_CAP. The validator
  *                   already errors on this ("walkthrough: menu hit N > cap"),
  *                   so it is a hard contract — but it could only see the
  *                   walkthrough, and off it `world/vale.json` used to reach
@@ -40,7 +42,7 @@
  * prints its receipt (used to verify playtest reports).
  */
 import { readFileSync, readdirSync } from "node:fs";
-import { legalActions, newState, receipt, sameState, step } from "./engine.ts";
+import { legalActions, menuLoad, newState, receipt, sameState, step } from "./engine.ts";
 import { render, renderStatus } from "./format.ts";
 import { MENU_CAP } from "./types.ts";
 import { loadWorld, replayWalkthrough } from "./validate.ts";
@@ -82,9 +84,13 @@ export function crawl(world: World, walks: number, maxSteps: number): {
       if (state.ended) { endingsSeen.add(state.ended.id); break; }
       const legal = legalActions(world, state);
       if (!legal.length) { findings.push(`EMPTYMENU walk ${w} turn ${state.turn} room ${state.room}`); break; }
-      if (legal.length > MENU_CAP) {
+      // the room's own load, not the page showing — a crowded room now turns
+      // pages rather than hiding its tail, so the page is always within the cap
+      // and it is the load that says whether the room got too crowded to read
+      const load = menuLoad(world, state);
+      if (load > MENU_CAP) {
         overCap.count++;
-        if (legal.length > overCap.worstN) { overCap.worstN = legal.length; overCap.room = state.room; }
+        if (load > overCap.worstN) { overCap.worstN = load; overCap.room = state.room; }
       }
       const a = legal[Math.floor(rnd() * legal.length)]!;
       let out;

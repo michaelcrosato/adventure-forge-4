@@ -48,6 +48,7 @@ const sample = (): State => ({
   travelMenu: null,
   companyMenu: false,
   talkPage: 0,
+  roomPage: 0,
   travelPage: 0,
   ended: null,
 });
@@ -58,12 +59,15 @@ const sample = (): State => ({
  * A receipt is a promise that a reported ending can be replayed and checked
  * (src/player.ts verifies one against a fresh replay). Change how a state
  * canonicalizes and every receipt ever quoted in a report stops verifying —
- * so if this hash changes, that was a decision, not a refactor. (This value was
- * taken from the canonicalizer that predates the faster one, so it pins the
- * format across that change and not merely to itself.)
+ * so if this hash changes, that was a decision, not a refactor. It has changed
+ * once on purpose since it was pinned: State gained `roomPage` when crowded
+ * rooms learned to turn pages, and a field the game needs is worth the receipts
+ * quoted in older reports no longer replaying. The value is computed under both
+ * the canonicalizer in src/engine.ts and the one it replaced, so it pins the
+ * format and not merely itself.
  */
 test("a state hashes to the same eight characters it always has", () => {
-  assert.equal(hashState(sample()), "21ab45cf");
+  assert.equal(hashState(sample()), "3166cbba");
 });
 
 /**

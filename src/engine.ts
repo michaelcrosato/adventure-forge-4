@@ -132,7 +132,7 @@ function sameValue(a: unknown, b: unknown): boolean {
 }
 
 /** Actions that turn a menu page rather than the world: free, and no time for anyone to speak. */
-const MENU_KINDS = new Set(["travel", "travelregion", "travelmore", "traveldone", "company", "companydone", "talkmore"]);
+const MENU_KINDS = new Set(["travel", "travelregion", "travelmore", "traveldone", "company", "companydone", "talkmore", "roommore"]);
 
 /** Flags a quarrel sets that are outcomes, not the quarrel itself. */
 const QUARREL_TAILS = new Set(["done", "peace", "sour", "lys", "osk", "tamsin", "vell"]);
@@ -1092,6 +1092,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
 
 function enterRoom(world: World, s: State, roomId: string, events: string[]): void {
   s.room = roomId;
+  s.roomPage = 0; // a new room opens on its first page
   // the party keeps pace: every living companion arrives with the player
   for (const id of s.party) if (!npcDead(world, s, id)) s.npcRoom[id] = roomId;
   const room = world.rooms[roomId];
@@ -1441,6 +1442,7 @@ export function newState(world: World, seed: number): StepOut {
     travelMenu: null,
     companyMenu: false,
     talkPage: 0,
+    roomPage: 0,
     travelPage: 0,
     ended: null,
   };
@@ -1688,26 +1690,76 @@ function spokenWith(s: State, npc: string): boolean {
   return false;
 }
 
-/** The menu, with the per-call memo above open for the duration and closed again after. */
+/**
+ * The menu as the player sees it: at most MENU_CAP entries, a crowded room's
+ * later options behind "more here".
+ *
+ * Numbering is by position in this list, so paging has to happen here rather
+ * than in the renderer — but what a room *offers* is not a matter of which page
+ * is showing, so `allActions` is the list `step` and `actionByLabel` judge
+ * against. Turning a page changes what you can see, never what you could do.
+ */
 export function legalActions(world: World, s: State): Action[] {
+  const { all, ways } = withMenuMemo(() => roomMenu(world, s));
+  return pageRoom(s, all, ways);
+}
+
+/**
+ * Everything legal here, whichever page is showing — every option the room
+ * offers plus, when it has more than one page, the way to the next. This is
+ * what `step` and `actionByLabel` judge an action against: turning a page
+ * changes what you can see, never what you could do, so a walkthrough written
+ * before a room grew crowded keeps working.
+ */
+export function allActions(world: World, s: State): Action[] {
+  const { all, ways } = withMenuMemo(() => roomMenu(world, s));
+  return roomPages(all, ways) ? [...all, { kind: "roommore" }] : all;
+}
+
+/**
+ * A room's own load: everything it offers except the class abilities, which are
+ * not the room's and not the author's to budget for. This is the number
+ * MENU_CAP is a cap on, and what the validator and the crawler hold to it.
+ *
+ * The cap is a reading bar — twelve options is about as much as a turn can be
+ * and still be a choice rather than a search — and the author can only answer
+ * for the part of it they wrote. A Warden with a full pool carries three or
+ * four abilities into every room in the realm; holding rooms to twelve
+ * *including* those would tax every room for a class the author cannot see.
+ *
+ * So: the room's own content is capped, and whatever the abilities bring on top
+ * turns a page. Before paging, that tail was simply dropped at the cap, which
+ * is how three rooms sat one over it without the crawler ever noticing — the
+ * engine was hiding the thirteenth option from the count as well as the player.
+ */
+export function menuLoad(world: World, s: State): number {
+  return withMenuMemo(() => roomMenu(world, s)).all.filter((a) => a.kind !== "ability").length;
+}
+
+/** Runs one menu build with the per-call memo above open for the duration and closed again after. */
+function withMenuMemo<T>(build: () => T): T {
   const outer = menuMemo;
   menuMemo = {};
   try {
-    return buildMenu(world, s);
+    return build();
   } finally {
     menuMemo = outer;
   }
 }
 
-function buildMenu(world: World, s: State): Action[] {
-  if (s.ended) return [];
+function roomMenu(world: World, s: State): { all: Action[]; ways: number } {
+  // The menus below are not a room's own: each already holds itself within the
+  // cap (a conversation and a travel list turn their own pages), so none of
+  // them has a sticky head and pageRoom's length guard leaves them alone.
+  const whole = (all: Action[]) => ({ all, ways: 0 });
+  if (s.ended) return whole([]);
   // class first: nothing else is legal until the player picks who they are
   if (inClassPhase(world, s))
-    return Object.keys(world.classes!).map((id) => ({ kind: "classpick", id }));
+    return whole(Object.keys(world.classes!).map((id) => ({ kind: "classpick", id })));
   // a pending level-up perk choice blocks the menu until spent
   if (s.perkPicks > 0) {
     const picks = eligiblePerks(world, s).sort();
-    if (picks.length) return picks.slice(0, MENU_CAP).map((id) => ({ kind: "perkpick", id }));
+    if (picks.length) return whole(picks.slice(0, MENU_CAP).map((id) => ({ kind: "perkpick", id })));
   }
   // an open conversation: only its topics, and the way out of it
   if (inTalkMode(world, s)) {
@@ -1733,23 +1785,26 @@ function buildMenu(world: World, s: State): Action[] {
     const shown = paging ? rest.slice(page * pageSize, (page + 1) * pageSize) : rest;
     const out: Action[] = shown.map((t): Action => ({ kind: "talk", npc, topic: t.id }));
     if (paging) out.push({ kind: "talkmore" });
-    return [...out, ...outro];
+    return whole([...out, ...outro]);
   }
   // the travel menu: destinations (or regions), and the way out of it
-  if (inTravelMode(world, s)) return travelActions(world, s);
+  if (inTravelMode(world, s)) return whole(travelActions(world, s));
   // the company list: the companions to speak with, and the way out of it
-  if (inCompanyMode(world, s)) return [...companyHere(world, s).map((npc): Action => ({ kind: "talkto", npc })), { kind: "companydone" }];
+  if (inCompanyMode(world, s)) return whole([...companyHere(world, s).map((npc): Action => ({ kind: "talkto", npc })), { kind: "companydone" }]);
   const out: Action[] = [];
   const room = world.rooms[s.room];
-  if (!room) return out;
+  if (!room) return whole(out);
   // two or more companions to speak with fold into one entry, listed where the first of them would have been
   const company = companyHere(world, s);
   const folded = new Set(company.length >= 2 ? company : []);
   let companyListed = false;
   const late: Action[] = []; // attacks on the peaceable, listed after everything else
   for (const dir of Object.keys(room.exits ?? {})) out.push({ kind: "go", dir });
-  if (roomIsDark(world, s)) return out; // in the dark you can only feel for exits
+  if (roomIsDark(world, s)) return whole(out); // in the dark you can only feel for exits
   if (travelAvailable(world, s)) out.push({ kind: "travel" });
+  // everything above is the way out, and stays on every page of a crowded room:
+  // whatever else is going on, a player can always leave.
+  const ways = out.length;
   for (const a of room.actions ?? [])
     if (customVisible(world, s, a)) out.push({ kind: "custom", room: s.room, id: a.id });
   for (const id of takeablesHere(world, s)) out.push({ kind: "take", item: id });
@@ -1799,11 +1854,37 @@ function buildMenu(world: World, s: State): Action[] {
   // here: a room already crowded (a big story choice, a full party's "speak with the company")
   // gets first claim on the cap; an ability that would push the menu past it quietly does not show,
   // rather than the room ever offering more than MENU_CAP entries.
-  for (const [id, a] of Object.entries(world.abilities ?? {})) {
-    if (out.length >= MENU_CAP) break;
+  for (const [id, a] of Object.entries(world.abilities ?? {}))
     if (abilityVisible(world, s, id, a)) out.push({ kind: "ability", id });
-  }
-  return out;
+  return { all: out, ways };
+}
+
+/**
+ * A room with more to do than the menu holds turns pages, the way a long
+ * conversation and a long travel list already do.
+ *
+ * Before this, a crowded room dropped whatever came last — abilities, silently.
+ * A menu that hides an option a player has earned is worse than a long menu: it
+ * makes the room lie about what is possible in it, and the player cannot even
+ * tell there is something to look for. So nothing is dropped now; it moves to
+ * the next page, and "more here" (free, no turn) turns to it.
+ *
+ * The exits and the travel entry stay on every page. Whatever else a room has
+ * become, walking out of it is never on another page.
+ *
+ * A room whose exits alone crowd the menu cannot be helped by paging — there
+ * would be no room left for a page of anything else — so it is returned whole
+ * and the crawler's over-cap count says so honestly rather than the menu
+ * quietly swallowing the difference.
+ */
+const roomPages = (out: Action[], ways: number): boolean => out.length > MENU_CAP && ways + 2 <= MENU_CAP;
+function pageRoom(s: State, out: Action[], ways: number): Action[] {
+  if (!roomPages(out, ways)) return out;
+  const rest = out.slice(ways);
+  const pageSize = MENU_CAP - ways - 1; // one slot for "more here"
+  const pages = Math.ceil(rest.length / pageSize);
+  const page = s.roomPage % pages;
+  return [...out.slice(0, ways), ...rest.slice(page * pageSize, (page + 1) * pageSize), { kind: "roommore" }];
 }
 
 export function actionLabel(world: World, a: Action, s?: State): string {
@@ -1846,6 +1927,8 @@ export function actionLabel(world: World, a: Action, s?: State): string {
       return "back";
     case "talkmore":
       return "more to ask";
+    case "roommore":
+      return "more here";
     case "travelmore":
       return "more places";
     case "attack": {
@@ -1984,6 +2067,11 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   }
   if (a.kind === "company") return ` (${companyHere(world, s).map((id) => world.npcs[id]?.name ?? id).join(", ")})`;
   if (a.kind === "travelmore") return ` (${travelMore(world, s)} more)`;
+  if (a.kind === "roommore") {
+    // how much of the room is on the other pages
+    const shown = legalActions(world, s).length - 1; // this entry is not one of the things waiting
+    return ` (${Math.max(1, allActions(world, s).length - shown)} more)`;
+  }
   if (a.kind === "talkmore" && s.talking) {
     // how many topics wait on the other pages
     const rest = visibleTopics(world, s, s.talking).filter((t) => !t.end).length;
@@ -2121,13 +2209,14 @@ function cloneState(s: State): State {
     travelMenu: s.travelMenu,
     companyMenu: s.companyMenu,
     talkPage: s.talkPage,
+    roomPage: s.roomPage,
     travelPage: s.travelPage,
     ended: s.ended && { ...s.ended },
   };
 }
 
 export function step(world: World, prev: State, action: Action): StepOut {
-  const legal = legalActions(world, prev);
+  const legal = allActions(world, prev);
   const key = canon(action);
   if (!legal.some((a) => canon(a) === key)) {
     return { state: prev, events: ["Illegal action — pick a number from the menu."] };
@@ -2140,7 +2229,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
     (action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free) ||
     (action.kind === "ability" && !!world.abilities?.[action.id]?.free);
   const spentTurn =
-    !freeCustom && action.kind !== "leave" && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore" && action.kind !== "travelmore";
+    !freeCustom && action.kind !== "leave" && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore" && action.kind !== "travelmore" && action.kind !== "roommore";
   if (spentTurn) s.turn += 1;
   let attacked: string | null = null; // the npc that already struck back this turn
 
@@ -2209,6 +2298,9 @@ export function step(world: World, prev: State, action: Action): StepOut {
       break;
     case "talkmore":
       s.talkPage += 1;
+      break;
+    case "roommore":
+      s.roomPage += 1;
       break;
     case "company":
       s.companyMenu = true;
@@ -2402,7 +2494,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
 /** Find a legal action by its rendered label (used by walkthroughs and the CLI). */
 export function actionByLabel(world: World, s: State, label: string): Action | null {
   const want = label.trim().toLowerCase();
-  for (const a of legalActions(world, s))
+  for (const a of allActions(world, s))
     if (actionLabel(world, a, s).toLowerCase() === want) return a;
   return null;
 }

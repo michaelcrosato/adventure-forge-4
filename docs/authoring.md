@@ -667,13 +667,26 @@ DSL shape:
 | `free` | costs no turn and reads `(free)` in the menu, exactly like a room action's |
 
 Abilities are checked **after** a room's own actions and everything else in
-it — a room's content always reads first — and are dropped, quietly, past
-the menu cap (§15's 12): a room already crowded (a big story choice, a full
-party's "speak with the company") keeps its own content whole rather than
-ever running past the cap for an ability's sake. Gate a combat ability
-tightly where you can (`checkHere`, `horrorHere`, `holdsGround`, `lowHp`, §3)
-— an ability offered where it does nothing useful is still a line on every
-screen it appears on, and the budget (§15) does not forgive that.
+it — a room's content always reads first. Where the two together run past the
+menu cap (§15's 12), the room turns pages: the exits stay put and `more here`
+(free, no turn) shows the rest. Nothing is dropped. It used to be: abilities
+past the cap simply did not appear, which meant a Warden could stand in a
+crowded room with a full pool and never be offered the thing they had earned.
+
+**The cap is on a room's own content, not on that plus your abilities.** A
+class carries three or four abilities into every room in the realm, so taxing
+every room for them would be taxing it for a class its author cannot see. The
+validator and the crawler measure a room's own load — exits, travel, actions,
+items, people — and hold *that* to 12. Whatever the abilities add on top is
+what paging is for. Keep the room's own load under the cap anyway: paging is
+the safety net, not permission to write a twenty-option room.
+
+Gate a combat ability tightly where you can (`checkHere`, `horrorHere`,
+`holdsGround`, `lowHp`, §3) — an ability offered where it does nothing useful
+is still a line on every screen it appears on, and the budget (§15) does not
+forgive that. `["!horrorHere"]` is required of any ability that buys armor:
+offering it against something that strikes through armor charges a point of
+the pool for nothing (there is a test).
 
 An ability's cost is an ordinary `var` (`res_warden`, `res_scout`, …) — no new
 state, tested with `["var", v, ">=", n]` like any other. `world.resources`

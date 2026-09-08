@@ -11,6 +11,7 @@ import {
   actionByLabel,
   condOk,
   legalActions,
+  menuLoad,
   newState,
   step,
 } from "./engine.ts";
@@ -540,7 +541,9 @@ export function replayWalkthrough(
   let { state } = newState(world, seed);
   let maxMenu = 0;
   const doLabel = (label: string): string | null => {
-    maxMenu = Math.max(maxMenu, legalActions(world, state).length);
+    // the room's whole load, not the page showing: paging is the safety net that
+    // keeps a crowded room from hiding an option, and the cap is still the bar
+    maxMenu = Math.max(maxMenu, menuLoad(world, state));
     const a = actionByLabel(world, state, label);
     if (!a) return `no legal action labeled "${label}" at ${state.room} (turn ${state.turn})`;
     state = step(world, state, a).state;
