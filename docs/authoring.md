@@ -482,13 +482,17 @@ left and its hint, under "Conditions:".
   reachability check will tell you.
 - **Mark a handful of cells `landmark`.** They do two jobs: they become
   fast-travel destinations once seen, and they anchor the breadcrumb the
-  engine prints in every other cell of the region — "two south and one east
-  of the north lane", counted from the nearest landmark the player has stood
-  in. That line is what makes a bearing given as a hop count ("the drowned
-  nave, two stands west") followable without counting in your head; three
-  playtest reports asked for it. Roughly one landmark per six cells is right:
-  the realm runs 77 across 445 cells. Too few and there is nothing to count
-  from; too many and the anchor changes under the player's feet mid-leg.
+  engine prints in every other cell of the region — "the north lane: two
+  north, then three west", the way back to the nearest landmark the player
+  has already stood in. That line is what makes a bearing given as a hop
+  count ("the drowned nave, two stands west") followable without counting in
+  your head; three playtest reports asked for it. It is a real path,
+  breadth-first through your actual exits, because the first version printed
+  the coordinate offset and a player rightly reported that a quarter of those
+  cannot be walked in a straight line — **your walls are why**. Roughly one
+  landmark per six cells is right: the realm runs 77 across 445 cells. Too few
+  and there is nothing to steer by; too many and the anchor changes under the
+  player's feet mid-leg.
 
 ## 10. Templates and stamps
 

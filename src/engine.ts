@@ -532,60 +532,76 @@ const COUNT_WORDS = ["", "one", "two", "three", "four", "five", "six", "seven", 
 const countWord = (n: number) => COUNT_WORDS[n] ?? String(n);
 
 /**
- * Where you stand in a generated wilderness, counted from the nearest named
- * place you have already been: "two north and one east of the Rope Larder".
+ * The way back to the nearest place you know, walked rather than measured.
  *
- * Three separate playtest reports asked for this in three different words — a
- * breadcrumb while following a multi-hop direction, a mini-map for the
- * hex-crawl regions, and help reaching named sub-locations. All three are the
- * same complaint: the bearings a wilderness npc gives are correct now (every
- * one of the realm's 322 legs was recomputed), but following "three north,
- * then two east" still means counting hops in your head, and losing count
- * means starting over.
+ * Three playtest reports asked for a breadcrumb: the realm's bearings are
+ * given as hop counts ("From Stilt-Shadow: the drowned nave, two stands
+ * west"), and following one meant counting in your head. The first version of
+ * this line answered with the *coordinate offset* to the nearest landmark —
+ * "two south and one east of the north lane" — and a player in the next wave
+ * reported that those directions "don't always match actual movement outcomes
+ * 1:1".
  *
- * The anchors are the places the realm itself names — a `spot` inside the grid
- * and a `link`'s landmark on its edge, which are exactly what a bearing is
- * given from — and only ones the player has actually stood in.
+ * They were right, and by a lot. The grids have walls, so a coordinate offset
+ * is not a route: measured across the realm, **466 of 2,056 cell-to-landmark
+ * offsets (23%) cannot be walked in a straight line at all**. A line that
+ * reads as a route and is not one is worse than no line.
  *
- * The anchors are landmarks — the places the realm's own bearings are given
- * from and about ("From Stilt-Shadow: the drowned nave, two stands west") —
- * and only ones the player has already stood in. Measured on the realm: 77 of
- * them across 445 generated cells, one per six, which is sparse enough that
- * the anchor holds still while you walk a leg and close enough that there is
- * always one to count from.
- *
- * Two narrower rules were tried against the realm and abandoned, both because
- * of the same measurement. Silencing the line "within two hops of anywhere
- * known" printed on nothing at all: the grids are five and six cells square
- * and named cells are dense in them. Silencing it in a *named* cell printed on
- * nothing either — 442 of the 445 cells carry their own name, so there are no
- * anonymous cells to help in. Naming the cell is not the problem the reports
- * describe; counting the hops from where the bearing was given is.
+ * So it is a real path now, breadth-first through the actual exits, to the
+ * nearest landmark the player has already stood in — shortest by walking
+ * rather than by arithmetic, phrased the way the realm's own bearings are
+ * phrased, and every step of it is an exit that exists.
  */
 export function wildBearing(world: World, s: State): string | null {
   for (const g of world.gen ?? []) {
-    const m = new RegExp(`^${g.id}_(\\d+)_(\\d+)$`).exec(s.room);
-    if (!m) continue;
-    const x = Number(m[1]), y = Number(m[2]);
-    let best: { d: number; dx: number; dy: number; name: string } | null = null;
-    const consider = (cell: [number, number], name: string | undefined, roomId: string) => {
-      if (!name || !s.visited.includes(roomId)) return;
-      const dx = x - cell[0], dy = y - cell[1], d = Math.abs(dx) + Math.abs(dy);
-      if (!d || (best && d >= best.d)) return; // ties keep the first in authored order
-      best = { d, dx, dy, name };
-    };
-    for (const spot of g.spots ?? [])
-      if (spot.landmark) consider(spot.cell, spot.landmark, `${g.id}_${spot.cell[0]}_${spot.cell[1]}`);
-    for (const link of g.links) consider(link.cell, link.landmark, link.to);
-    const near = best as { d: number; dx: number; dy: number; name: string } | null;
-    if (!near) return null;
-    const { dx, dy, name } = near;
+    const cell = new RegExp(`^${g.id}_(\\d+)_(\\d+)$`);
+    if (!cell.test(s.room)) continue;
+    // where a bearing is given from and about: a landmark spot inside the grid,
+    // or a link's landmark on its edge — and only ones already stood in
+    const anchors = new Map<string, string>();
+    for (const spot of g.spots ?? []) {
+      if (!spot.landmark) continue;
+      const id = `${g.id}_${spot.cell[0]}_${spot.cell[1]}`;
+      if (s.visited.includes(id)) anchors.set(id, spot.landmark);
+    }
+    for (const link of g.links) {
+      if (!link.landmark || !s.visited.includes(link.to)) continue;
+      const id = `${g.id}_${link.cell[0]}_${link.cell[1]}`;
+      if (!anchors.has(id)) anchors.set(id, link.landmark);
+    }
+    if (!anchors.size || anchors.has(s.room)) return null; // nothing known, or standing on it
+    // breadth-first over real exits, inside this region's cells
+    const from = new Map<string, [string, string]>();
+    const queue = [s.room];
+    let found: string | null = null;
+    for (let head = 0; head < queue.length && !found; head++) {
+      const at = queue[head]!;
+      for (const [dir, ex] of Object.entries(world.rooms[at]?.exits ?? {})) {
+        const to = ex.to;
+        if (!cell.test(to) || from.has(to) || to === s.room) continue;
+        from.set(to, [at, dir]);
+        if (anchors.has(to)) { found = to; break; }
+        queue.push(to);
+      }
+    }
+    if (!found) return null;
+    // the path back, as legs: consecutive steps the same way count as one
+    const dirs: string[] = [];
+    for (let at = found; at !== s.room; ) {
+      const step = from.get(at)!;
+      dirs.push(step[1]);
+      at = step[0];
+    }
+    dirs.reverse();
     const legs: string[] = [];
-    if (dy) legs.push(`${countWord(Math.abs(dy))} ${dy < 0 ? "north" : "south"}`);
-    if (dx) legs.push(`${countWord(Math.abs(dx))} ${dx > 0 ? "east" : "west"}`);
-    // "of The Hedge Gap" mid-sentence: a name that carries its own article
-    // lowercases it here, the way theName does everywhere else
-    return `${legs.join(" and ")} of ${name.replace(/^The /, "the ")}`;
+    for (let i = 0; i < dirs.length; ) {
+      let n = 1;
+      while (dirs[i + n] === dirs[i]) n++;
+      legs.push(`${countWord(n)} ${dirs[i]}`);
+      i += n;
+    }
+    const name = anchors.get(found)!.replace(/^The /, "the ");
+    return `${name}: ${legs.join(", then ")}`;
   }
   return null;
 }

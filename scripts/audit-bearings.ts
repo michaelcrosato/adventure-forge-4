@@ -85,8 +85,98 @@ for (const [rid, room] of Object.entries(world.rooms)) {
   }
 }
 
+// ---------- the other grammar: a place located from somewhere else ----------
+/**
+ * "the slag-hound's den is three north of the head-frame, three east".
+ *
+ * The check above walks bearings a `get your bearings` action gives from the
+ * room you stand in. Two blind players in wave five reported wrong directions
+ * anyway, and both were this other shape: an npc naming where a place is
+ * *relative to a third place*. Nothing walked those, in any file, so a
+ * hand-authored hop count in dialogue was never checked at all.
+ *
+ * The anchor is the named place; the walk starts there. What cannot be checked
+ * this way is where it *ends* — the sentence's subject is the destination and
+ * pulling that out of prose is guesswork — so this reports only that the walk
+ * is impossible: an exit the grid does not have. That is what "didn't match
+ * the actual room graph" means, and it is the half worth catching.
+ */
+const OF = new RegExp(`${N}\\s+${DIR}(?:\\s*,?\\s*(?:and\\s+)?${N}\\s+${DIR})?\\s+of\\s+([^.,;:!?"]{3,44})`, "gi");
+const byName = new Map<string, string>();
+for (const [rid, r] of Object.entries(world.rooms)) {
+  for (const key of [r.name, r.landmark]) {
+    if (!key) continue;
+    const k = String(key).toLowerCase().replace(/^the\s+/, "");
+    if (!byName.has(k)) byName.set(k, rid);
+  }
+}
+const anchorOf = (phrase: string): string | undefined => {
+  const p = phrase.toLowerCase().replace(/^(the|a|an)\s+/, "").replace(/[^a-z' -]/g, "").trim();
+  if (byName.has(p)) return byName.get(p);
+  const words = keyWords(p);
+  if (!words.length) return undefined;
+  for (const [name, rid] of byName) if (words.every((w) => name.includes(w))) return rid;
+  return undefined;
+};
+type Said = { where: string; text: string };
+const said: Said[] = [];
+const walkFx = (where: string, fxs: unknown): void => {
+  if (!Array.isArray(fxs)) return;
+  for (const f of fxs as unknown[]) {
+    if (!Array.isArray(f)) continue;
+    if (f[0] === "say" && typeof f[1] === "string") said.push({ where, text: f[1] });
+    else if (f[0] === "if") { walkFx(where, f[2]); walkFx(where, f[3]); }
+    else if (f[0] === "check") { walkFx(where, f[3]); walkFx(where, f[4]); }
+    else if (f[0] === "chance") { walkFx(where, f[2]); walkFx(where, f[3]); }
+  }
+};
+for (const [rid, room] of Object.entries(world.rooms)) {
+  if (only && !rid.startsWith(`${only}_`)) continue;
+  walkFx(`room ${rid} onEnter`, room.onEnter);
+  walkFx(`room ${rid} onEnterOnce`, room.onEnterOnce);
+  for (const a of room.actions ?? []) walkFx(`room ${rid}/${a.id}`, a.fx);
+}
+for (const [nid, npc] of Object.entries(world.npcs)) {
+  if (only && !nid.startsWith(`${only}_`)) continue;
+  for (const t of npc.topics ?? []) {
+    if (t.say) said.push({ where: `npc ${nid}/${t.id}`, text: String(t.say) });
+    walkFx(`npc ${nid}/${t.id}`, t.fx);
+  }
+  for (const r of npc.companion?.remarks ?? []) {
+    if (r.say) said.push({ where: `npc ${nid} remark ${r.id}`, text: String(r.say) });
+    walkFx(`npc ${nid} remark ${r.id}`, r.fx);
+  }
+}
+let ofLegs = 0, ofUnanchored = 0;
+const ofBad: Bad[] = [];
+for (const { where, text } of said) {
+  for (const m of text.matchAll(OF)) {
+    const [whole, n1, d1, n2, d2, place] = m;
+    const anchor = anchorOf(place!);
+    if (!anchor) { ofUnanchored++; continue; }
+    ofLegs++;
+    const steps: [number, string][] = [[count(n1!), d1!]];
+    if (n2 && d2) steps.push([count(n2), d2]);
+    let at = anchor, failed = "";
+    outer2: for (const [n, d] of steps) {
+      for (let i = 0; i < n; i++) {
+        const to = world.rooms[at]?.exits?.[d]?.to;
+        if (!to || !world.rooms[to]) { failed = `no ${d} exit from ${at} (step ${i + 1} of ${n})`; break outer2; }
+        at = to;
+      }
+    }
+    if (failed) ofBad.push({ room: where, dest: place!.trim(), leg: whole!.trim(), why: `NO EXIT — ${failed}` });
+  }
+}
+
 console.log(`${rooms} rooms offer bearings; ${legs} legs carry a count and were walked, ${prose} say a direction only and cannot be checked.`);
-console.log(`${bad.length} legs do not lead where they say (${legs ? Math.round((100 * bad.length) / legs) : 0}%).\n`);
+console.log(`${bad.length} legs do not lead where they say (${legs ? Math.round((100 * bad.length) / legs) : 0}%).`);
+console.log(
+  `Said elsewhere, "N <dir> of <place>": ${ofLegs} legs anchored to a room and walked, ${ofUnanchored} naming somewhere this tool could not place. ` +
+    `${ofBad.length} cannot be walked at all.\n`,
+);
+for (const b of ofBad) console.log(`  ${b.room.padEnd(30)} "${b.leg}"\n      ${b.why}`);
+if (ofBad.length) console.log();
 
 // by region, because one region's grid with its compass inverted looks exactly
 // like a realm-wide problem until you count
