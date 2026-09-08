@@ -926,6 +926,12 @@
             ],
             [
               "if",
+              [["var", "hollows_burned", ">=", 3]],
+              [["say", "The burn road stands ready: three holds already gone to the torch."]],
+              [["say", "The burn road still wants more holds burned — three, and you are short of it."]]
+            ],
+            [
+              "if",
               [
                 [
                   "any",
@@ -1029,6 +1035,7 @@
           "id": "mg_burn_throne",
           "label": "burn the throne with the oil you carry",
           "if": [
+            ["var", "hollows_burned", ">=", 3],
             [
               "any",
               [
@@ -1061,7 +1068,7 @@
             ["if", [["has", "mc_cinder_oil"]], [["move", "mc_cinder_oil", "nowhere"]], []],
             ["if", [["has", "ff_cinder_oil"]], [["move", "ff_cinder_oil", "nowhere"]], []],
             ["if", [["has", "mg_ironbound_oil"]], [["move", "mg_ironbound_oil", "nowhere"]], []],
-            ["end", "win", "reach_burned", "You break the casks over the seat and put the torch to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace, and mostly mean it."]
+            ["end", "win", "reach_burned", "Hold after hold has already gone to the torch; this is only the last of them. You break the casks over the seat and put fire to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace. Most of them mean it."]
           ]
         },
         {
