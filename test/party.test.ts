@@ -209,7 +209,7 @@ test("in a conversation, a line that sends a companion away is listed last, neve
   assert.equal(menu.indexOf("wait here (leaves the party for now)"), menu.length - 2, "sending her away sits last, just before the way out");
 });
 
-test("a free room action costs no turn and says so; a scripted end reads 'at rest', not 'dead'; the score ceiling lives in status", () => {
+test("a free room action costs no turn and says so; a scripted end reads 'at rest', not 'dead'; score has no ceiling and status says what one route pays", () => {
   const world = mini({
     items: { sword: { name: "sword", loc: "inv", hit: 0, dmg: 2 }, coat: { name: "tarred coat", loc: "inv", armor: 2 }, mail: { name: "mail shirt", loc: "inv", armor: 1 } },
     npcs: { saint: { name: "St. Mara", room: "a", hp: 3, desc: "A figure at the altar." } },
@@ -226,9 +226,12 @@ test("a free room action costs no turn and says so; a scripted end reads 'at res
   // had changed. Both live in status; a turn that earns something says "(+N)".
   assert.doesNotMatch(header, /score/, `the turn header carries no score: ${header}`);
   assert.match(header, /hp\d+\/\d+( L\d+)? t\d+/, `it carries what a turn can change: ${header}`);
-  // the ceiling and what it means: two blind players read "198/366" as a share
-  // of the realm, so the note says what the denominator actually is
-  assert.match(renderStatus(world, state), /Score: 0\/\d+ \(deeds and discoveries; \d+ is one whole route's worth/, "status names the ceiling and what the score is");
+  // Score has no ceiling — maxScore is what one whole route pays, and the realm
+  // authors twenty times that across 1,395 sites — so status says what the
+  // number means rather than dividing by it. Two blind players read "198/366"
+  // as a share of the realm; three more hit 366 and played on for two hundred
+  // turns earning nothing.
+  assert.match(renderStatus(world, state), /Score: 0 \(deeds and discoveries; \d+ is what one whole route pays/, "status says what the number means, without a denominator");
   assert.ok(labels(world, state).includes("attack St. Mara with sword"));
   const menu = renderMenu(world, state).text;
   assert.match(menu, /get your bearings \(free\)/);
@@ -933,4 +936,45 @@ test("a remark that opens a quarrel says where the sides are", () => {
   const joined = step(world, state, actionByLabel(world, state, "ask Lys: come with me")!).state;
   const out = step(world, joined, actionByLabel(world, joined, "do the thing")!);
   assert.match(out.events.join(" "), /Lys: "They both look at you\." \(Speak with Lys or Osk to take a side, or to tell them to settle it\.\)/);
+});
+
+/**
+ * Score has no ceiling.
+ *
+ * `world.maxScore` is what one whole route pays — the walkthrough must reach
+ * exactly it, which is how the validator proves the score economy sound — but
+ * it was also a hard clamp in applyFx, and the Gray Reach authors 7,608 points
+ * across 1,395 sites. Five per cent of what it offers was payable. Three blind
+ * players hit 366 and played on for another two hundred turns earning nothing,
+ * having seen eight of the realm's eighteen regions between them: a tally that
+ * stops moving tells a player to stop looking.
+ */
+test("score passes what one route pays, and keeps counting", () => {
+  const world = mini({});
+  world.rooms["a"]!.actions = [
+    { id: "again", label: "find another small thing", fx: [["score", 4]] },
+    { id: "win", label: "win", fx: [["end", "win", "done", "Done."]] },
+  ];
+  world.maxScore = 10;
+  let { state } = newState(world, 1);
+  const gains: string[] = [];
+  for (let i = 0; i < 5; i++) {
+    const out = step(world, state, actionByLabel(world, state, "find another small thing")!);
+    state = out.state;
+    gains.push(out.events.join(" "));
+  }
+  assert.equal(state.score, 20, "five finds at four points each, none of them swallowed by a ceiling");
+  assert.ok(
+    gains.every((g) => g.includes("(+4)")),
+    `every one of them said so: ${gains.join(" | ")}`,
+  );
+  assert.match(renderStatus(world, state), /Score: 20 \(deeds and discoveries; 10 is what one whole route pays/);
+});
+
+test("score still cannot go below nothing", () => {
+  const world = mini({});
+  world.rooms["a"]!.actions = [{ id: "lose", label: "lose it", fx: [["score", -5]] }, { id: "win", label: "win", fx: [["end", "win", "done", "Done."]] }];
+  let { state } = newState(world, 1);
+  state = step(world, state, actionByLabel(world, state, "lose it")!).state;
+  assert.equal(state.score, 0);
 });

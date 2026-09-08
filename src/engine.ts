@@ -928,8 +928,16 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
         delete s.flagTurn?.[fx[1]];
         break;
       case "score": {
+        // No ceiling. `world.maxScore` is what one whole route pays — the
+        // walkthrough must reach exactly it, which is how the score economy is
+        // proven sound — but it was also a clamp, and the realm authors 7,608
+        // points across 1,395 sites. Five per cent of what it offers was
+        // payable. Three blind players hit 366 and played on for two hundred
+        // more turns earning nothing, having seen eight of eighteen regions:
+        // a tally that stops moving tells a player to stop looking, in a realm
+        // whose whole point is that there is more of it.
         const before = s.score;
-        s.score = clamp(s.score + fx[1], 0, world.maxScore);
+        s.score = Math.max(0, s.score + fx[1]);
         if (s.score > before) events.push(`(+${s.score - before})`);
         break;
       }

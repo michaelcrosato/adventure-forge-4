@@ -242,7 +242,7 @@ export function renderStatus(world: World, s: State): string {
     // the tally "can fill long before the tale ends", which is not true of any
     // proven route — the walkthrough reaches 366 on its last turn — so it
     // misled twice over. Say what the denominator actually is.
-    lines.push(`Score: ${s.score}/${world.maxScore} (deeds and discoveries; ${world.maxScore} is one whole route's worth, not a share of the realm)`);
+    lines.push(`Score: ${s.score} (deeds and discoveries; ${world.maxScore} is what one whole route pays, and there is more realm than one route)`);
   if (s.ended) {
     // the ending screen fits six lines; here the whole telling is free
     const told = (world.epilogue ?? []).filter((ep) => ep.if.every((c) => condOk(world, s, c))).map((ep) => `- ${ep.text}`);

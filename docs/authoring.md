@@ -87,7 +87,7 @@ Effects run in order and stop the moment the game ends.
 |---|---|
 | `["say", text]` | prints text |
 | `["set", f]` / `["clear", f]` | flag on / off |
-| `["score", n]` | add score (clamped 0..maxScore); prints `(+n)` |
+| `["score", n]` | add score (never below 0, and with no ceiling); prints `(+n)` |
 | `["hp", n]` | heal or hurt (clamped 0..maxHp); 0 hp is the engine's `dead` loss |
 | `["xp", n]` | grant xp; levels apply themselves (+2 max hp, a perk pick) |
 | `["perk", p]` | grant a perk outright (a trainer) |
@@ -578,7 +578,12 @@ it standing somewhere.
 Only the root world (act 1 and act 3 files) ends the game. A region file
 never uses `end`. Every ending id used anywhere needs `proofs.<id>`: a list of
 menu labels that replays (seed 1) to exactly that ending. The root
-`walkthrough` must replay to a **win with score === maxScore**. Labels are the
+`walkthrough` must replay to a **win with score === maxScore** — which is what
+`maxScore` means: **what one whole route pays**, not a ceiling. Score is not
+clamped to it (a realm authors far more than one route's worth; the Gray Reach
+authors 7,608 points across 1,395 sites), so a player who sees more of the
+realm keeps being paid for it, and `status` says what the number means rather
+than dividing by it. Labels are the
 canonical text without the display hints: `go east`, `talk to Prior Halm`,
 `the saint's bell`, `end conversation`, `travel to a known place`, `to
 Reedholm`, `attack bog-thing with belt knife`, `perk: Iron Skin (+1 armor)`,

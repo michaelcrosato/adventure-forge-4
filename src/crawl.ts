@@ -112,7 +112,9 @@ export function crawl(world: World, walks: number, maxSteps: number): {
       seenThisWalk.add(state.room);
       roomsSeen.add(state.room);
       if (state.hp < 0 || state.hp > state.maxHp) findings.push(`BOUNDS hp=${state.hp}/${state.maxHp} walk ${w}`);
-      if (state.score < 0 || state.score > world.maxScore) findings.push(`BOUNDS score=${state.score} walk ${w}`);
+      // score has no ceiling: maxScore is what one whole route pays, not a cap
+      // (see applyFx's `score` case), so only a negative one is out of bounds
+      if (state.score < 0) findings.push(`BOUNDS score=${state.score} walk ${w}`);
       // `full: true` for the hole check, so a first-visit-only desc is searched too
       const full = render(world, state, out.events, { full: true }).text;
       const hole = HOLE.exec(`${full}\n${renderStatus(world, state)}`);
