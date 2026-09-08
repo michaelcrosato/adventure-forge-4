@@ -207,6 +207,29 @@
             ["hp", 10],
             ["say", "You sleep in someone else's bedroll, boots paired at the foot of it, and wake steadier."]
           ]
+        },
+        {
+          "id": "wm_heave_pell",
+          "label": "heave the pell off its post, 2hp risk",
+          "if": [["!flag", "wm_pell_heaved"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              15,
+              [
+                ["set", "wm_pell_heaved"],
+                ["score", 5],
+                ["xp", 4],
+                ["addvar", "rep_watch", 1],
+                ["say", "Out back a practice-pell stands chalked with a dare-line nobody's beaten this season. You get under it, plant, and put it flat on the ground before your breath gives out. Word reaches the parade before you do."]
+              ],
+              [
+                ["hp", -2],
+                ["say", "You get the pell to a lean and no further, and it comes back down where you were standing half a breath ago. The dare-line stays chalked. It can be tried again."]
+              ]
+            ]
+          ]
         }
       ],
       "variants": [
@@ -1724,6 +1747,11 @@
     {
       "if": [["flag", "regent_writ"]],
       "text": "Highward's record-house keeps a fresh shelf for what came loose from other holds' old, sealed truths."
+    },
+    {
+      "if": [["flag", "wm_pell_heaved"]],
+      "text": "Word reached the parade of a stranger who beat the barracks' dare-line. The chalk's been redrawn higher twice since.",
+      "weight": 0
     },
     {
       "if": [["flag", "rb_fd_wm_home"]],

@@ -29,7 +29,10 @@
           "label": "read the boundary marker",
           "free": true,
           "once": true,
-          "fx": [["xp", 1], ["say", "A stone marks where the Vale's dry road ends. Someone has scratched a line beneath the old carving, newer: THE CHURCH'S WATER STARTS HERE."]]
+          "fx": [
+            ["xp", 1],
+            ["say", "A stone marks where the Vale's dry road ends. Someone has scratched a line beneath the old carving, newer: THE CHURCH'S WATER STARTS HERE."]
+          ]
         }
       ]
     },
@@ -66,8 +69,15 @@
               "check",
               "might",
               9,
-              [["score", 2], ["xp", 2], ["say", "You wedge stone and turf back into the slump before the fen can widen it. It'll hold another season."]],
-              [["hp", -1], ["say", "The stone shifts wrong and takes your footing with it. You climb out muddy and short a season's patience."]]
+              [
+                ["score", 2],
+                ["xp", 2],
+                ["say", "You wedge stone and turf back into the slump before the fen can widen it. It'll hold another season."]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The stone shifts wrong and takes your footing with it. You climb out muddy and short a season's patience."]
+              ]
             ]
           ]
         }
@@ -494,6 +504,35 @@
           "if": [["flag", "fd_ironbound_gone"]],
           "desc": "The netshed stands empty, the iron sun taken down. Ash from the brazier is the only sign they were ever here.",
           "brief": "Empty netshed, cold ash."
+        }
+      ],
+      "actions": [
+        {
+          "id": "fd_free_skiff",
+          "label": "drag the skiff free — fail costs 1hp",
+          "if": [
+            ["flag", "said_fd_ironbound_warder_greet"],
+            ["!flag", "fd_ironbound_skiff_freed"],
+            ["!flag", "fd_ironbound_gone"]
+          ],
+          "fx": [
+            [
+              "check",
+              "might",
+              14,
+              [
+                ["set", "fd_ironbound_skiff_freed"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_iron", 1],
+                ["say", "Their skiff sank a rung into the mud sometime before you came, and neither zealot's said a word about it — pride, probably. You get a shoulder under the hull and walk it out yourself, mud to the knee."]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The mud holds the skiff harder than it holds your footing, and you go down in it before the hull comes free. It can be tried again."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -1091,7 +1130,13 @@
           "if": [["var", "rep_church", ">=", 9], ["!flag", "church_sworn"]],
           "once": true,
           "say": "Halm doesn't smile. 'Sworn isn't a reward, whatever titles mean to the Ironbound. It means the next grief needing air is yours to give, wherever found, ready or not.' He waits. 'If you still want it, you're sworn.'",
-          "fx": [["set", "church_sworn"], ["move", "fd_bell_of_reach", "inv"], ["addvar", "rep_iron", -3], ["score", 8], ["xp", 4]]
+          "fx": [
+            ["set", "church_sworn"],
+            ["move", "fd_bell_of_reach", "inv"],
+            ["addvar", "rep_iron", -3],
+            ["score", 8],
+            ["xp", 4]
+          ]
         },
         {
           "id": "fd_prior_sworn_refuse",
@@ -1565,6 +1610,14 @@
             ["score", 4],
             ["xp", 3]
           ]
+        },
+        {
+          "id": "fd_skiff_thanks",
+          "label": "the skiff, since",
+          "if": [["flag", "fd_ironbound_skiff_freed"]],
+          "once": true,
+          "say": "\"Didn't ask for that,\" Iss says, \"but I'll not pretend it wasn't needed. Iron's iron, however it's carried.\"",
+          "fx": [["xp", 1]]
         },
         {
           "id": "bye",

@@ -987,6 +987,28 @@
             ["xp", 2],
             ["say", "Five old coins and a muster-roll page gone soft, one name ringed twice in fading ink — a rival officer's, not one of the hanged. Whoever wrote that ring knew more than they ever said."]
           ]
+        },
+        {
+          "id": "th_roll_second_hand",
+          "label": "puzzle out the roll's second hand (wits)",
+          "if": [["flag", "did_th_search_tin"], ["!flag", "th_roll_solved"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              15,
+              [
+                ["set", "th_roll_solved"],
+                ["score", 5],
+                ["xp", 4],
+                ["addvar", "rep_free", 1],
+                ["say", "The ringed name matches a hand in three other ledgers since — always present when the Company's luck turned, never once when it mattered whose fault that was. Whoever fell that day, the muster-roll lies about why."]
+              ],
+              [
+                ["say", "Forty years has softened the ink more than it's softened the mold. Whatever that ring meant, it isn't giving it up tonight."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -3342,6 +3364,11 @@
     }
   ],
   "epilogue": [
+    {
+      "if": [["flag", "th_roll_solved"]],
+      "text": "The Fallen Muster's ringed name finally has a story. Nobody left alive would care to hear it.",
+      "weight": 0
+    },
     {
       "if": [["flag", "th_hollow_rested"]],
       "text": "The gallows glade grows green again, slow but sure, and Camp Gallows keeps a quiet toast to the Company each year it turns.",

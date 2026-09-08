@@ -265,6 +265,27 @@
             ["xp", 2],
             ["say", "You lift the flagstone and read them where they lie: a rite for a throne under a palace, not a chapel — words meant for a rest no living Church has spoken in generations."]
           ]
+        },
+        {
+          "id": "cp_marginalia_wits",
+          "label": "puzzle out Fost's marginalia (wits)",
+          "if": [["flag", "did_cp_lift_flagstone"], ["!flag", "cp_marginalia_read"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              14,
+              [
+                ["set", "cp_marginalia_read"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "Fost's hand is cramped even by his own lights, but one name recurs in the margins with no ledger entry to match: a toll waived for pilgrims too poor to pay it. He's done it for years, off every book but his own."]
+              ],
+              [
+                ["say", "Whatever Fost is marking in these margins, it isn't meant to be read by anyone who wasn't taught his hand. The pages keep their own counsel tonight."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -1810,6 +1831,11 @@
     }
   },
   "epilogue": [
+    {
+      "if": [["flag", "cp_marginalia_read"]],
+      "text": "Brother Fost has been quietly waiving tolls for the poorest pilgrims for years, off every book but his own.",
+      "weight": 0
+    },
     {
       "if": [["flag", "cp_came_by_stair"]],
       "text": "You crossed into Marrowgate by the Keepers' old pilgrim stair, past St. Ashwyn's Perch, the quiet way.",

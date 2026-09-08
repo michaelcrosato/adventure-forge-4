@@ -324,7 +324,30 @@
       "desc": "A narrow office smelling of tallow and old paper. Sergeant Ilsa Brann counts a manifest twice before she trusts it, and trusts fewer things than that. The high street lies north.",
       "brief": "Tallow, paper, and a careful sergeant.",
       "region": "sk",
-      "exits": { "north": { "to": "sk_high_street" } }
+      "exits": { "north": { "to": "sk_high_street" } },
+      "actions": [
+        {
+          "id": "sk_read_manifest",
+          "label": "cross-check the manifest yourself (wits)",
+          "if": [["!flag", "sk_heard_customs"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              14,
+              [
+                ["set", "sk_heard_customs"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "The tallies read clean until you check the cellar-stair crates against the harbor rolls twice: same hand, same ink, a count that doesn't match what's stacked. Someone's skimming a toll the crown never sees."]
+              ],
+              [
+                ["say", "Brann's manifests are neat enough to hide a great deal from anyone not already looking for it. Nothing here gives itself up on a first read."]
+              ]
+            ]
+          ]
+        }
+      ]
     },
     "sk_widows_house": {
       "name": "Widow Kestrel's House",
