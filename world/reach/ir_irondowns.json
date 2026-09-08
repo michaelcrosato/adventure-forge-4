@@ -605,6 +605,20 @@
           ]
         },
         {
+          "id": "ir_hundred_great_rite",
+          "label": "speak the Great Rite over the Hundred",
+          "if": [["flag", "keepers_sworn"], ["!flag", "ir_hollow_resolved"]],
+          "fx": [
+            ["set", "ir_hollow_rested"],
+            ["set", "ir_hollow_resolved"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no confession dragged out of the collapse. The gray goes out of the deep like a breath let go. The chapterhouse notes the office, and says nothing more about it."]
+          ]
+        },
+        {
           "id": "ir_hundred_bargain",
           "label": "declare the miners' hall's claim (will)",
           "if": [["flag", "ir_hall_backing"], ["!flag", "ir_hollow_resolved"]],

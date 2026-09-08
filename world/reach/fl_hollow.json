@@ -118,6 +118,20 @@
           ]
         },
         {
+          "id": "fl_speak_great_rite",
+          "label": "speak the Great Rite over the furrow",
+          "if": [["flag", "keepers_sworn"], ["!flag", "fl_hollow_done"]],
+          "fx": [
+            ["set", "fl_hollow_rested"],
+            ["set", "fl_hollow_done"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no two hundred names and no rite begged from Fenmarch. The furrow settles at last; the cairn needs no other stone."]
+          ]
+        },
+        {
           "id": "fl_bargain_vow",
           "label": "swear the land stays theirs (will)",
           "if": [["flag", "fl_hollow_grievance"], ["!flag", "fl_hollow_done"]],
@@ -218,14 +232,14 @@
         {
           "id": "fl_burn_furrow",
           "label": "burn it with cinder-oil (1hp on fail)",
-          "if": [["has", "fl_cinder_oil"], ["!flag", "fl_hollow_done"]],
+          "if": [["any", [["has", "fl_cinder_oil"], ["flag", "iron_trusted"]]], ["!flag", "fl_hollow_done"]],
           "fx": [
             [
               "check",
               "might",
               9,
               [
-                ["move", "fl_cinder_oil", "nowhere"],
+                ["if", [["has", "fl_cinder_oil"]], [["move", "fl_cinder_oil", "nowhere"]], []],
                 ["set", "fl_hollow_burned"],
                 ["set", "fl_hollow_done"],
                 ["addvar", "hollows_burned", 1],
@@ -295,7 +309,7 @@
             ["say", "The bargain stands ready either way: swear the land stays theirs (will), or raise stones the whole length (might)."],
             [
               "if",
-              [["has", "fl_cinder_oil"]],
+              [["any", [["has", "fl_cinder_oil"], ["flag", "iron_trusted"]]]],
               [["say", "The burn stands ready: Ironbound cinder-oil is yours (might; a failed try costs 1 hp)."]],
               [
                 ["say", "The burn wants Ironbound cinder-oil — Lay-brother Cobb will give it, at the cart lot, for the asking."]

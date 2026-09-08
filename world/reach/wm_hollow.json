@@ -108,6 +108,21 @@
           ]
         },
         {
+          "id": "wm_speak_great_rite",
+          "label": "speak the Great Rite over the ring",
+          "if": [["flag", "keepers_sworn"], ["!flag", "wm_oath_resolved"]],
+          "fx": [
+            ["set", "wm_oath_resolved"],
+            ["set", "wm_hollow_rested"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["npcgo", "wm_oath_captain", null],
+            ["say", "You speak the Rite whole, swearing nothing of your own into it. The ring stands down all the same — settled by a Keeper's word, not a stranger's borrowed oath."]
+          ]
+        },
+        {
           "id": "wm_oath_record",
           "label": "read the true record, and swear it",
           "if": [["flag", "wm_oath_heard"], ["has", "wm_founding_record"], ["!flag", "wm_oath_resolved"]],

@@ -637,13 +637,19 @@
             [
               "if",
               [["var", "rep_keepers", ">=", 3]],
-              [["say", "Your own hands know these knots now -- you've traced enough of them, other places, to read this one without trying."]],
+              [
+                ["say", "Your own hands know these knots now -- you've traced enough of them, other places, to read this one without trying."]
+              ],
               [
                 [
                   "if",
                   [["var", "rep_keepers", ">=", 1]],
-                  [["say", "The same pattern as every Keeper-cut stair: a ward, then a count, then a ward again. You're starting to recognize the shape of it."]],
-                  [["say", "Cut deep and old, the same knot-pattern as the Vale's barrow stair. Whoever kept this door believed in wards that outlast doors."]]
+                  [
+                    ["say", "The same pattern as every Keeper-cut stair: a ward, then a count, then a ward again. You're starting to recognize the shape of it."]
+                  ],
+                  [
+                    ["say", "Cut deep and old, the same knot-pattern as the Vale's barrow stair. Whoever kept this door believed in wards that outlast doors."]
+                  ]
                 ]
               ]
             ]
@@ -670,7 +676,9 @@
             [
               "if",
               [["flag", "mg_hand_marks_known"]],
-              [["say", "The same raised hand as Tallow Court's cellar door. Someone is still cutting this mark, capital-wide."]],
+              [
+                ["say", "The same raised hand as Tallow Court's cellar door. Someone is still cutting this mark, capital-wide."]
+              ],
               [
                 ["set", "mg_hand_marks_known"],
                 ["say", "Not a warning -- a ward. The Keepers used to cut this mark over doors they meant to come back to. Someone still believes they will."]
@@ -923,6 +931,7 @@
                   "any",
                   [
                     ["flag", "mg_has_oil"],
+                    ["flag", "iron_trusted"],
                     ["has", "ir_oil"],
                     ["has", "em_cinder_oil"],
                     ["has", "hl_cinder_oil"],
@@ -1024,6 +1033,7 @@
               "any",
               [
                 ["flag", "mg_has_oil"],
+                ["flag", "iron_trusted"],
                 ["has", "ir_oil"],
                 ["has", "em_cinder_oil"],
                 ["has", "hl_cinder_oil"],
@@ -1100,20 +1110,10 @@
               "if",
               [["flag", "free_sworn"]],
               [
-                [
-                  "end",
-                  "win",
-                  "regent_deposed",
-                  "You read the first Reeve's own hand aloud, and it's your own company that comes out of the smugglers' cut first, knives and a grin you taught them. The Regent leaves Marrowgate in a barrel-cart, alive, which was the bargain. The Free Companies hold the palace for a season and then, to everyone's surprise, hold an election."
-                ]
+                ["end", "win", "regent_deposed", "You read the first Reeve's own hand aloud, and it's your own company that comes out of the smugglers' cut first, knives and a grin you taught them. The Regent leaves Marrowgate in a barrel-cart, alive, which was the bargain. The Free Companies hold the palace for a season and then, to everyone's surprise, hold an election."]
               ],
               [
-                [
-                  "end",
-                  "win",
-                  "regent_deposed",
-                  "You read the first Reeve's own hand aloud, and Quill's people come out of the smugglers' cut with knives and a grin. The Regent leaves Marrowgate in a barrel-cart, alive, which was the bargain. The Free Companies hold the palace for a season and then, to everyone's surprise, hold an election."
-                ]
+                ["end", "win", "regent_deposed", "You read the first Reeve's own hand aloud, and Quill's people come out of the smugglers' cut with knives and a grin. The Regent leaves Marrowgate in a barrel-cart, alive, which was the bargain. The Free Companies hold the palace for a season and then, to everyone's surprise, hold an election."]
               ]
             ]
           ]
@@ -1129,9 +1129,31 @@
           ]
         },
         {
+          "id": "mg_sit_throne_devoted",
+          "label": "sit the throne, wearing the Vale's crown",
+          "if": [
+            ["has", "va_crown"],
+            ["!flag", "mg_throne_resolved"],
+            ["inParty", "vell"],
+            ["flag", "vell_devoted"],
+            ["var", "appr_vell", ">", -2]
+          ],
+          "fx": [
+            ["set", "mg_throne_resolved"],
+            ["score", 20],
+            ["end", "win", "gray_crown", "You set the Hollow King's crown on your own head. Vell watches you do it, one hand closed on the leaf they gave you, and says nothing at all — but it is not the worst thing Vell has ever said. The gray thins across the Reach, and settles behind your eyes. You are Regent by dawn."]
+          ]
+        },
+        {
           "id": "mg_sit_throne_vell",
           "label": "sit the throne, wearing the Vale's crown",
-          "if": [["has", "va_crown"], ["!flag", "mg_throne_resolved"], ["inParty", "vell"], ["var", "appr_vell", ">", -2]],
+          "if": [
+            ["has", "va_crown"],
+            ["!flag", "mg_throne_resolved"],
+            ["inParty", "vell"],
+            ["var", "appr_vell", ">", -2],
+            ["!flag", "vell_devoted"]
+          ],
           "fx": [
             ["set", "mg_throne_resolved"],
             ["score", 20],
@@ -1260,13 +1282,19 @@
                 [
                   "if",
                   [["var", "rep_free", ">=", 4]],
-                  [["say", "Your own mark is in it somewhere, if you knew which scratch to look for -- you're deep enough in the Companies' ledgers now to be counted theirs."]],
+                  [
+                    ["say", "Your own mark is in it somewhere, if you knew which scratch to look for -- you're deep enough in the Companies' ledgers now to be counted theirs."]
+                  ],
                   [
                     [
                       "if",
                       [["var", "rep_free", ">=", 1]],
-                      [["say", "A running count of favors owed, mostly. A few of the scratches look recent enough to be about you."]],
-                      [["say", "A running count of favors owed, none of them yours yet. Whatever ledger this is, you're not in it."]]
+                      [
+                        ["say", "A running count of favors owed, mostly. A few of the scratches look recent enough to be about you."]
+                      ],
+                      [
+                        ["say", "A running count of favors owed, none of them yours yet. Whatever ledger this is, you're not in it."]
+                      ]
                     ]
                   ]
                 ]
@@ -1291,12 +1319,16 @@
                 [
                   "if",
                   [["var", "hollows_burned", ">=", 1]],
-                  [["say", "More candles than usual, and half of them black tallow -- mourning wax, for holds put to the torch."]],
+                  [
+                    ["say", "More candles than usual, and half of them black tallow -- mourning wax, for holds put to the torch."]
+                  ],
                   [
                     [
                       "if",
                       [["var", "hollows_rested", ">=", 1]],
-                      [["say", "Fresh candles, ordinary wax. Word of a rite well-kept travels slower than word of a fire, but it travels."]],
+                      [
+                        ["say", "Fresh candles, ordinary wax. Word of a rite well-kept travels slower than word of a fire, but it travels."]
+                      ],
                       [["say", "The stubs are old, half-melted, the ordinary kind. Nobody's heard news enough yet to ask harder."]]
                     ]
                   ]
@@ -1326,7 +1358,10 @@
                     ["addvar", "gold", 2],
                     ["say", "You lean into it with them. The coil comes up clean, and for one stretch of rope the shed is just a shed, not a symptom of anything."]
                   ],
-                  [["hp", -1], ["say", "You throw your weight in wrong and the coil throws it back. The old women don't stop twisting to check if you're hurt."]]
+                  [
+                    ["hp", -1],
+                    ["say", "You throw your weight in wrong and the coil throws it back. The old women don't stop twisting to check if you're hurt."]
+                  ]
                 ]
               ]
             }
@@ -1513,20 +1548,10 @@
           "if",
           [["flag", "free_sworn"], ["flag", "mg_at_throne"]],
           [
-            [
-              "end",
-              "win",
-              "regent_deposed",
-              "The Regent dies with the stag under her, Company steel closing around the stair before her own guard can reach it. The Watch finds hired swords already holding the room, and no great mystery whose banner they answered to. The Reach has no Regent by morning, and the gray does not care either way."
-            ]
+            ["end", "win", "regent_deposed", "The Regent dies with the stag under her, Company steel closing around the stair before her own guard can reach it. The Watch finds hired swords already holding the room, and no great mystery whose banner they answered to. The Reach has no Regent by morning, and the gray does not care either way."]
           ],
           [
-            [
-              "end",
-              "win",
-              "regent_deposed",
-              "The Regent dies with the stag under her. The Watch comes running and finds you standing over the House of Ashreeve; what they do next depends on who you have been to them. The Reach has no Regent by morning, and the gray does not care either way."
-            ]
+            ["end", "win", "regent_deposed", "The Regent dies with the stag under her. The Watch comes running and finds you standing over the House of Ashreeve; what they do next depends on who you have been to them. The Reach has no Regent by morning, and the gray does not care either way."]
           ]
         ]
       ],
@@ -2250,10 +2275,7 @@
             [
               "if",
               [["!flag", "mg_admitted"]],
-              [
-                ["set", "mg_admitted"],
-                ["say", "'You won't be shown to the gate again,' she says. 'You won't need to be.'"]
-              ],
+              [["set", "mg_admitted"], ["say", "'You won't be shown to the gate again,' she says. 'You won't need to be.'"]],
               []
             ],
             ["move", "mg_regent_seal", "inv"],

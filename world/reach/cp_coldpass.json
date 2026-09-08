@@ -56,7 +56,7 @@
           "id": "cp_gate_dual_ways",
           "label": "weigh the writ against the stair",
           "if": [
-            ["any", [["var", "hollows_rested", ">=", 3], ["flag", "hb_keepers_key_found"]]],
+            ["any", [["var", "hollows_rested", ">=", 3], ["flag", "hb_keepers_key_found"], ["flag", "keepers_trusted"]]],
             ["flag", "regent_writ"],
             ["!flag", "cp_came_by_stair"],
             ["!flag", "cp_came_by_writ"],
@@ -75,12 +75,26 @@
           "if": [
             [
               "any",
-              [["var", "hollows_rested", ">=", 3], ["flag", "hb_keepers_key_found"], ["flag", "me_covenant_carried"]]
+              [
+                ["var", "hollows_rested", ">=", 3],
+                ["flag", "hb_keepers_key_found"],
+                ["flag", "me_covenant_carried"],
+                ["flag", "keepers_trusted"]
+              ]
             ]
           ],
           "fx": [
             ["set", "cp_came_by_stair"],
-            ["say", "A narrow stair the guard doesn't see opens behind the grate. The Keepers still keep this door, quiet as they've always been."],
+            [
+              "if",
+              [["flag", "keepers_trusted"], ["!has", "hb_keepers_key"], ["var", "hollows_rested", "<", 3]],
+              [
+                ["say", "A narrow stair the guard doesn't see opens behind the grate. You've never carried the Key, but the Keepers' own trust in you is warrant enough."]
+              ],
+              [
+                ["say", "A narrow stair the guard doesn't see opens behind the grate. The Keepers still keep this door, quiet as they've always been."]
+              ]
+            ],
             ["score", 5],
             ["xp", 3],
             ["goto", "mg_south_gate"]
@@ -89,12 +103,24 @@
         {
           "id": "cp_door_writ",
           "label": "show the Regent's writ at the gate",
-          "if": [["flag", "regent_writ"]],
+          "if": [["flag", "regent_writ"], ["!has", "mg_regent_seal"]],
           "fx": [
             ["set", "cp_came_by_writ"],
             ["addvar", "rep_church", -1],
             ["addvar", "rep_keepers", -1],
             ["say", "The guard reads the writ twice, then a third time, and swings the grate wide without another word for you."],
+            ["score", 5],
+            ["xp", 3],
+            ["goto", "mg_south_gate"]
+          ]
+        },
+        {
+          "id": "cp_door_seal",
+          "label": "show the Regent's own seal at the gate",
+          "if": [["has", "mg_regent_seal"]],
+          "fx": [
+            ["set", "cp_came_by_writ"],
+            ["say", "The guard doesn't read this one twice. She knows the Regent's own mark on sight, and swings the grate wide before you've finished drawing it out."],
             ["score", 5],
             ["xp", 3],
             ["goto", "mg_south_gate"]

@@ -98,6 +98,22 @@
           ]
         },
         {
+          "id": "sk_speak_great_rite",
+          "label": "speak the Great Rite over the wreck",
+          "if": [["flag", "keepers_sworn"], ["!flag", "sk_hollow_resolved"]],
+          "fx": [
+            ["set", "sk_hollow_rested"],
+            ["set", "sk_hollow_good"],
+            ["set", "sk_hollow_resolved"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["npcgo", "sk_admiral", null],
+            ["say", "You speak the Rite whole, needing no verse learned and no lighthouse lit. The oars go still at last, and the Pride settles without waiting for the Farlight's beam to find it."]
+          ]
+        },
+        {
           "id": "sk_bargain_fleet",
           "label": "pay the wreck-right (6 gold)",
           "if": [["flag", "sk_bribe_admitted"], ["var", "gold", ">=", 6], ["!flag", "sk_hollow_resolved"]],

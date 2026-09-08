@@ -612,6 +612,19 @@
           ]
         },
         {
+          "id": "wm_checkpoint_seal",
+          "label": "show the Regent's own seal",
+          "if": [["has", "mg_regent_seal"], ["!flag", "wm_checkpoint_resolved"]],
+          "free": true,
+          "fx": [
+            ["set", "wm_checkpoint_resolved"],
+            ["addvar", "rep_watch", 1],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "The nearer one goes still at the seal, then straightens further than she ever did for a writ. \"That's not the Regent's hand. That's the Regent's own mark.\" She waves you through herself."]
+          ]
+        },
+        {
           "id": "wm_checkpoint_command",
           "label": "post the checkpoint watch yourself",
           "if": [["flag", "watch_sworn"], ["!flag", "wm_checkpoint_commanded"]],

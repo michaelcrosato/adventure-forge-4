@@ -117,6 +117,20 @@
           ]
         },
         {
+          "id": "em_choir_great_rite",
+          "label": "speak the Great Rite over the Choir",
+          "if": [["flag", "keepers_sworn"], ["!flag", "em_hollow_done"]],
+          "fx": [
+            ["set", "em_hollow_rested"],
+            ["set", "em_hollow_done"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no true date and no bargain struck. The ash-choir does not argue with it. Four hundred years of singing goes quiet at last."]
+          ]
+        },
+        {
           "id": "em_choir_agree_grace",
           "label": "chip the date off the stone (grace)",
           "if": [["has", "em_true_date"], ["!flag", "em_hollow_done"]],
@@ -195,14 +209,14 @@
         {
           "id": "em_burn_choir",
           "label": "burn it with cinder-oil (1hp on fail)",
-          "if": [["has", "em_cinder_oil"], ["!flag", "em_hollow_done"]],
+          "if": [["any", [["has", "em_cinder_oil"], ["flag", "iron_trusted"]]], ["!flag", "em_hollow_done"]],
           "fx": [
             [
               "check",
               "might",
               9,
               [
-                ["move", "em_cinder_oil", "nowhere"],
+                ["if", [["has", "em_cinder_oil"]], [["move", "em_cinder_oil", "nowhere"]], []],
                 ["set", "em_hollow_burned"],
                 ["set", "em_hollow_done"],
                 ["addvar", "hollows_burned", 1],
@@ -240,7 +254,7 @@
             ],
             [
               "if",
-              [["has", "em_cinder_oil"]],
+              [["any", [["has", "em_cinder_oil"], ["flag", "iron_trusted"]]]],
               [["say", "The burn stands ready: a cask of cinder-oil is yours (might; a failed try costs 1 hp)."]],
               [
                 ["say", "The burn wants cinder-oil — Factor Corrin will give it, bound by doctrine, at the Ironbound Scale-House."]

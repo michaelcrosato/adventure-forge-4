@@ -665,6 +665,18 @@
               [["say", "He hears you out and does not move. Whatever he's waiting to hear, that wasn't it."]]
             ]
           ]
+        },
+        {
+          "id": "th_sergeant_rite",
+          "label": "show him the Priory's sealed rite",
+          "if": [["!flag", "th_gate_passed"], ["any", [["flag", "church_trusted"], ["has", "fd_priors_rite"]]]],
+          "fx": [
+            ["set", "th_gate_passed"],
+            ["npcgo", "th_sergeant", null],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "You hold up the Priory's sealed rite. He studies it a long moment — the first thing in forty years that isn't the bough — and steps from the path."]
+          ]
         }
       ]
     },
@@ -716,6 +728,20 @@
             ["addvar", "appr_lys", 1],
             ["addvar", "appr_osk", 1],
             ["say", "You read the pardon whole, forty years late, every name on it spoken aloud. The turning stops. One by one they settle, and the tree is only a tree."]
+          ]
+        },
+        {
+          "id": "th_speak_great_rite",
+          "label": "speak the Great Rite over the glade",
+          "if": [["flag", "keepers_sworn"], ["!flag", "th_hollow_done"]],
+          "fx": [
+            ["set", "th_hollow_done"],
+            ["set", "th_hollow_rested"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no pardon found and none read. The turning stops anyway. One by one they settle, and the tree is only a tree."]
           ]
         },
         {
@@ -3063,7 +3089,7 @@
             [
               [
                 "if",
-                [["!npcDead", "th_boar"]],
+                [["!npcDead", "th_boar"], ["!flag", "watch_trusted"], ["!flag", "crown_trusted"]],
                 [
                   ["npcgo", "th_boar", "here"],
                   ["say", "A gray boar breaks from the brush, tusks first, heavier than any boar has a right to be."]

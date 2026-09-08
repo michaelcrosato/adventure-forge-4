@@ -101,6 +101,17 @@
             ["move", "va_keeper_token", "inv"],
             ["say", "Right where the tally said: the stone lifts, and the gap beneath is worn smooth by years of someone's knees. Wedged in it, a worn half-token."]
           ]
+        },
+        {
+          "id": "va_prior_rite",
+          "label": "press the Priory's rite to the doors",
+          "if": [["!flag", "va_barrow_open"], ["any", [["flag", "church_trusted"], ["has", "fd_priors_rite"]]]],
+          "fx": [
+            ["set", "va_barrow_open"],
+            ["set", "va_barrow_blessed"],
+            ["xp", 2],
+            ["say", "You need no local blessing: the Priory's own seal is warrant enough. The doors give without a sound, the way they might for a bishop, or Halm himself."]
+          ]
         }
       ]
     },

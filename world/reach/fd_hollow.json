@@ -17,7 +17,10 @@
           "label": "listen before going in",
           "free": true,
           "once": true,
-          "fx": [["xp", 1], ["say", "Whatever keeps time down there, it doesn't hurry. You could stand here all day and it still wouldn't rush on your account."]]
+          "fx": [
+            ["xp", 1],
+            ["say", "Whatever keeps time down there, it doesn't hurry. You could stand here all day and it still wouldn't rush on your account."]
+          ]
         }
       ]
     },
@@ -129,6 +132,21 @@
             ["score", 25],
             ["xp", 8],
             ["say", "The bell's note goes out over the water and doesn't come back the way it went. The singing under the pews rises once, gently, and then simply isn't there anymore."]
+          ]
+        },
+        {
+          "id": "fd_speak_great_rite",
+          "label": "speak the Great Rite over the nave",
+          "if": [["flag", "keepers_sworn"], ["!flag", "fd_hollow_done"]],
+          "fx": [
+            ["set", "fd_hollow_rested"],
+            ["set", "fd_hollow_done"],
+            ["set", "osk_family_rested"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no bell found and none rung. The drowned congregation rises once beneath the black water, and does not sing again."]
           ]
         },
         {
