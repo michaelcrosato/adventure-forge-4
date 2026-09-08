@@ -512,12 +512,22 @@ export function validateWorld(world: World): string[] {
     if (id === primaryEnd || id === "dead") continue;
     if (!world.proofs?.[id]) err(`ending ${id}: no proof — add proofs.${id} or it is a claim, not a fact`);
   }
-  for (const [id, steps] of Object.entries(world.proofs ?? {})) {
-    if (!endIds.has(id)) { err(`proofs.${id}: no ["end", ..] in content uses this id`); continue; }
+  // An ending may carry more than one witness: `"regent_deposed#warden"` is a
+  // second proof of the same ending by a different road. Everything from the
+  // first "#" is a label for people; the ending id is what precedes it.
+  //
+  // This exists because the bar could otherwise only ever prove ONE
+  // playthrough shape. `proofs` held exactly one array per ending id, all six
+  // of the realm's endings were claimed by a Scholar route, and a verified
+  // Warden win — full score, 258 turns — had nowhere to be recorded. A proof
+  // that cannot be stored is not a proof.
+  for (const [key, steps] of Object.entries(world.proofs ?? {})) {
+    const id = key.split("#")[0]!;
+    if (!endIds.has(id)) { err(`proofs.${key}: no ["end", ..] in content uses the id "${id}"`); continue; }
     const r = replayWalkthrough(world, 1, steps);
-    if (r.error) err(`proofs.${id}: ${r.error}`);
+    if (r.error) err(`proofs.${key}: ${r.error}`);
     else if (r.state?.ended?.id !== id)
-      err(`proofs.${id}: ended as ${r.state?.ended?.id ?? "still open"}, not ${id}`);
+      err(`proofs.${key}: ended as ${r.state?.ended?.id ?? "still open"}, not ${id}`);
   }
   return errs;
 }

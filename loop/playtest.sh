@@ -7,7 +7,14 @@
 #
 # Env: TF_PLAYER_MODEL (claude model id; default = CLI default)
 #      TF_SEED_BASE (default: epoch seconds)
-#      TF_MAX_GAME_TURNS (in-game turn budget told to the player, default 300)
+#      TF_MAX_GAME_TURNS (in-game turn budget told to the player, default 600).
+#        Advisory: the engine has no turn cap, the prompt just tells the player
+#        when to stop. It was 300, and the Reach's own proven walkthrough is
+#        255 turns — 45 turns of slack in a 905-room world. A wave at 480 had
+#        two of three players stop one room short of the ending. The realm's
+#        objectives text says a hold seen whole is 40-70 turns and an ending
+#        wants three of them plus the Vale and the capital, so budget for that
+#        arithmetic, not for the critical path.
 #      TF_MAX_TURNS (agent turns; default = MAX_GAME_TURNS * 3/2 + 60). A player
 #        spends more than one agent turn per game turn — it reads `status`, it
 #        thinks — so an agent budget close to the game budget kills the run
@@ -33,7 +40,7 @@ COUNT="${1:-1}"; [[ "$COUNT" == --* ]] && COUNT=1
 MOCK=0; for a in "$@"; do [[ "$a" == "--mock" ]] && MOCK=1; done
 SEED_BASE="${TF_SEED_BASE:-$(date +%s)}"
 SEED_BASE=$((SEED_BASE % 100000))
-MAX_GAME_TURNS="${TF_MAX_GAME_TURNS:-300}"
+MAX_GAME_TURNS="${TF_MAX_GAME_TURNS:-600}"
 MAX_TURNS="${TF_MAX_TURNS:-$((MAX_GAME_TURNS * 3 / 2 + 60))}"
 PARALLEL="${TF_PARALLEL:-2}"
 WAVE_DIR="runs/playtest/$(date +%Y%m%dT%H%M%S)"

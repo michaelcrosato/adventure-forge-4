@@ -222,7 +222,9 @@ test("a free room action costs no turn and says so; a scripted end reads 'at res
   const header = render(world, state, []).text.split("\n")[0]!;
   assert.match(header, /score0 t0/, "the turn header shows the tally without a ceiling");
   assert.doesNotMatch(header, /score0\//);
-  assert.match(renderStatus(world, state), /Score: 0\/\d+ \(a bonus tally/, "status names the ceiling and what the score is");
+  // the ceiling and what it means: two blind players read "198/366" as a share
+  // of the realm, so the note says what the denominator actually is
+  assert.match(renderStatus(world, state), /Score: 0\/\d+ \(deeds and discoveries; \d+ is one whole route's worth/, "status names the ceiling and what the score is");
   assert.ok(labels(world, state).includes("attack St. Mara with sword"));
   const menu = renderMenu(world, state).text;
   assert.match(menu, /get your bearings \(free\)/);

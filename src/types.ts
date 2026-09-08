@@ -460,7 +460,13 @@ export type World = {
   }[];
   /** Authored proof: must reach a win ending with score === maxScore (validator replays it). */
   walkthrough: WalkStep[];
-  /** Ending proofs: each must replay (seed 1) to a game ended with exactly that ending id. */
+  /**
+   * Ending proofs: each must replay (seed 1) to a game ended with exactly that
+   * ending id. The key is the ending id, optionally followed by "#" and a label
+   * naming this particular witness — `"regent_deposed#warden"` is a second
+   * proof of the same ending by a different road, and an ending may carry as
+   * many as anyone can write.
+   */
   proofs?: Record<string, WalkStep[]>;
 };
 

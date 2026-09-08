@@ -216,7 +216,12 @@ export function renderStatus(world: World, s: State): string {
   // the turn, so a player counting a budget need not cross-reference the last screen's header
   if (s.turn > 0) lines.push(`Turn ${s.turn}.`);
   if (world.maxScore !== undefined)
-    lines.push(`Score: ${s.score}/${world.maxScore} (a bonus tally of discoveries and choices; it can fill long before the tale ends)`);
+    // Two blind players in one wave read "198/366" as how much of the realm
+    // they had seen and concluded they were two-thirds done. The old note said
+    // the tally "can fill long before the tale ends", which is not true of any
+    // proven route — the walkthrough reaches 366 on its last turn — so it
+    // misled twice over. Say what the denominator actually is.
+    lines.push(`Score: ${s.score}/${world.maxScore} (deeds and discoveries; ${world.maxScore} is one whole route's worth, not a share of the realm)`);
   if (s.ended) {
     // the ending screen fits six lines; here the whole telling is free
     const told = (world.epilogue ?? []).filter((ep) => ep.if.every((c) => condOk(world, s, c))).map((ep) => `- ${ep.text}`);
