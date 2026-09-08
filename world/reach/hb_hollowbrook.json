@@ -20,6 +20,18 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "hb_road_wardstone",
+          "label": "read the boundary ward-stone",
+          "once": true,
+          "free": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "Every mound-country marks its border: a stone cut with a ward against carrying grief in that isn't already yours. You leave it exactly as you found it."]
+          ]
+        }
       ]
     },
     "hb_south_dike": {
@@ -43,6 +55,31 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "hb_dike_wade",
+          "label": "wade the reeds — 1hp risk (grace)",
+          "if": [["!flag", "hb_dike_waded"]],
+          "fx": [
+            [
+              "check",
+              "grace",
+              9,
+              [
+                ["set", "hb_dike_waded"],
+                ["addvar", "gold", 3],
+                ["xp", 1],
+                ["say", "The reeds give up what the water's carried down from the fens: a scatter of old coin, greened but sound, wedged where the current stopped pushing it."]
+              ],
+              [
+                ["set", "hb_dike_waded"],
+                ["hp", -1],
+                ["say", "The mud takes your footing before you take anything from it. Whatever the water's holding, it holds a while longer."]
+              ]
+            ]
+          ]
+        }
       ]
     },
     "hb_mere_shore": {
@@ -75,6 +112,10 @@
         { "if": [["flag", "hb_hollow_burned"]], "brief": "Skiffs on the mud. Smoke stands over the downs." },
         { "if": [["flag", "hb_hollow_rested"]], "brief": "Skiffs on the mud. The mounds are only mounds now." },
         { "if": [["flag", "hb_hollow_bargained"]], "brief": "Skiffs on the mud. The downs have gone quiet, mostly." },
+        {
+          "if": [["flag", "hb_kingsrest_open"], ["!flag", "hb_kingsrest_resolved"]],
+          "brief": "Skiffs on the mud. Cold air breathes off the great mound's open door."
+        },
         {
           "if": [["any", [["flag", "rb_sk_hb_wren"], ["flag", "rb_sk_hb_sold"], ["flag", "rb_sk_hb_mound"]]]],
           "brief": "Skiffs on the mud. A coastal bell found its way here."
@@ -560,6 +601,14 @@
           "if": [["flag", "hb_chandler_brokered"]],
           "once": true,
           "say": "'Word says you talked him into a code instead of a fight.' The warden allows himself something close to approval. 'Half a solution's still more than most manage out here.'",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "hb_warden_ring_gone",
+          "label": "about the queen's ring, since",
+          "if": [["flag", "hb_grave_good_gone"]],
+          "once": true,
+          "say": "\"Rings don't grow legs on their own,\" the warden says, not quite a question. \"I keep a fair idea who's owed a word about that debt now, whichever way it left his shelf.\"",
           "fx": [["xp", 1]]
         },
         {
@@ -1129,6 +1178,14 @@
           ]
         },
         {
+          "id": "hb_wren_chantry_answered",
+          "label": "tell her the fallen chantry is answered",
+          "if": [["flag", "said_hb_keeper_wren_hb_rumor_chantry"], ["flag", "hb_chantry_done"]],
+          "once": true,
+          "say": "\"You went and finished the accounting yourself.\" Wren is quiet a moment. \"I should have gone years ago. Thank you for not asking why I didn't.\"",
+          "fx": [["xp", 2], ["addvar", "rep_keepers", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave her to the ledgers",
           "say": "Go carefully among the mounds. They notice who does.",
@@ -1404,6 +1461,11 @@
     {
       "if": [["flag", "or_envoy_hb_haggle"]],
       "text": "Barrowmere's chandler still tells the story of the one ring he let go for half its asking price.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "hb_curio_clasp_gone"]],
+      "text": "The stag-clasp found an honest buyer at Barrowmere, for once, and left no argument behind it.",
       "weight": 0
     }
   ],
