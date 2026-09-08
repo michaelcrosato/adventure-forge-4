@@ -317,6 +317,22 @@
           "fx": [["set", "pw_paymaster_errand"], ["move", "pw_paymaster_chest", "inv"], ["xp", 2]]
         },
         {
+          "id": "pw_shieldings_debt",
+          "label": "ask why the vault waits on Harrowfield",
+          "if": [["flag", "pw_paymaster_bg"], ["!flag", "sh_hollow_done"], ["!flag", "pw_hollow_done"]],
+          "once": true,
+          "say": "Same night, near enough. My Companies were signed for at the Shieldings, on a truce that broke before it was spoken. This vault and that field went unrested together. I don't believe one settles first.",
+          "fx": [["set", "pw_knows_sh_debt"], ["xp", 2]]
+        },
+        {
+          "id": "pw_shieldings_debt_answered",
+          "label": "the Shieldings, now it's answered",
+          "if": [["flag", "pw_knows_sh_debt"], ["flag", "sh_hollow_done"], ["!flag", "pw_hollow_done"]],
+          "once": true,
+          "say": "Word's come down from Harrowfield. Whatever's true there now, it's decided — and decided is apparently all this vault needed to hear. Go on, then.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "pw_paymaster_refused",
           "label": "ask him to drop the claim (will)",
           "if": [["flag", "pw_paymaster_bg"], ["!flag", "pw_paymaster_refused"], ["!flag", "pw_hollow_done"]],
