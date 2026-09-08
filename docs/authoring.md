@@ -785,6 +785,8 @@ along the walkthrough exceeds 450 characters or any single one exceeds 1100.
 
 ```bash
 npm run validate world/reach.json   # every reference, every proof, the menu cap, every gate's key
+npm run crawl -- world/reach.json --fork      # 438 rooms, six endings, gates open
+npm run crawl -- world/reach.json --sweep     # 268 rooms, wandering toward the unseen
 npm run crawl world/reach.json      # random walks: crashes, empty menus, "undefined" holes
 npm run test                        # budget, content rules, determinism
 ```

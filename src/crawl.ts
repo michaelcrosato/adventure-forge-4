@@ -12,6 +12,27 @@
  * Also replays the walkthrough and prints coverage (rooms seen, endings seen),
  * plus two numbers in every summary line:
  *
+ * Four ways to walk it, and coverage is why there is more than one:
+ *
+ *   (default)         60 uniform random walks from turn zero. 145 of the
+ *                     Reach's 905 rooms. The right instrument for a bad
+ *                     *state*: it wanders into combinations nobody authored.
+ *   --sweep           the same walks, biased toward somewhere they have not
+ *                     been. 268 rooms for the same 13 seconds.
+ *   --fork            walks forked off the proven routes every twelfth step,
+ *                     so the gates those routes opened stay open. **438
+ *                     rooms in 20 seconds**, and the only mode that reaches
+ *                     real endings — six of them at --deep, where every other
+ *                     mode has only ever reached "dead". In `npm run verify`.
+ *   --deep            400 walks of 300 steps, or forks every fifth step of
+ *                     80: 541 rooms in 87 seconds with --fork. A diagnostic,
+ *                     not part of verify.
+ *
+ * A room the sweeping walk cannot reach is usually behind a gate — a locked
+ * door, a flag, an item, a landmark you must have stood in before travel will
+ * take you there. A random walk cannot play well enough to open those and
+ * never will; the proven routes already did, which is what --fork is for.
+ *
  *   over-cap menus  rooms whose own options (all of them, across the pages a
  *                   crowded room now turns, but not the class abilities that
  *                   ride on top of every room) exceed MENU_CAP. The validator
@@ -42,7 +63,7 @@
  * prints its receipt (used to verify playtest reports).
  */
 import { readFileSync, readdirSync } from "node:fs";
-import { actionLabel, allActions, legalActions, menuLoad, newState, receipt, sameState, step } from "./engine.ts";
+import { actionByLabel, actionLabel, allActions, condOk, legalActions, menuLoad, newState, receipt, sameState, step } from "./engine.ts";
 import { render, renderStatus } from "./format.ts";
 import { MENU_CAP } from "./types.ts";
 import { loadWorld, replayWalkthrough } from "./validate.ts";
@@ -87,24 +108,36 @@ function prefersNew(world: World, s: State, legal: Action[], seen: Set<string>):
   return fresh.length ? fresh : legal;
 }
 
-export function crawl(world: World, walks: number, maxSteps: number, sweep = false): {
+export type CrawlResult = {
   findings: string[];
   roomsSeen: Set<string>;
   endingsSeen: Set<string>;
   steps: number;
   worst: { chars: number; room: string; turn: number };
   overCap: { count: number; worstN: number; room: string; menu: string };
-} {
-  const findings: string[] = [];
-  const roomsSeen = new Set<string>();
-  const endingsSeen = new Set<string>();
-  let steps = 0;
-  let worst = { chars: 0, room: "", turn: 0 };
-  const overCap = { count: 0, worstN: 0, room: "", menu: "" };
+};
+const emptyResult = (): CrawlResult => ({
+  findings: [],
+  roomsSeen: new Set<string>(),
+  endingsSeen: new Set<string>(),
+  steps: 0,
+  worst: { chars: 0, room: "", turn: 0 },
+  overCap: { count: 0, worstN: 0, room: "", menu: "" },
+});
 
-  for (let w = 0; w < walks && findings.length < 20; w++) {
-    const rnd = walkRng(1000 + w);
-    let { state } = newState(world, w + 1);
+/**
+ * One walk, from wherever it is handed, with every check applied at every step.
+ *
+ * Split out from `crawl` so a walk can begin somewhere other than turn zero:
+ * `--fork` starts them from states the proven routes have already reached,
+ * which is the only way an automated check ever sees content behind a gate the
+ * route opened.
+ */
+function walkFrom(world: World, start: State, seed: number, maxSteps: number, sweep: boolean, r: CrawlResult, w: string): void {
+  const { findings, roomsSeen, endingsSeen, overCap } = r;
+  const rnd = walkRng(seed);
+  let state = start;
+  {
     const seenThisWalk = new Set<string>([state.room]);
     roomsSeen.add(state.room);
     for (let i = 0; i < maxSteps; i++) {
@@ -143,7 +176,7 @@ export function crawl(world: World, walks: number, maxSteps: number, sweep = fal
       }
       const firstHere = !seenThisWalk.has(out.state.room);
       state = out.state;
-      steps++;
+      r.steps++;
       seenThisWalk.add(state.room);
       roomsSeen.add(state.room);
       if (state.hp < 0 || state.hp > state.maxHp) findings.push(`BOUNDS hp=${state.hp}/${state.maxHp} walk ${w}`);
@@ -157,10 +190,61 @@ export function crawl(world: World, walks: number, maxSteps: number, sweep = fal
       // ...and the honest render for the size, the way a player would see it:
       // the long desc only the first time this walk reached the room
       const asPlayed = firstHere ? full : render(world, state, out.events, {}).text;
-      if (asPlayed.length > worst.chars) worst = { chars: asPlayed.length, room: state.room, turn: state.turn };
+      if (asPlayed.length > r.worst.chars) r.worst = { chars: asPlayed.length, room: state.room, turn: state.turn };
     }
   }
-  return { findings, roomsSeen, endingsSeen, steps, worst, overCap };
+}
+
+export function crawl(world: World, walks: number, maxSteps: number, sweep = false): CrawlResult {
+  const r = emptyResult();
+  for (let w = 0; w < walks && r.findings.length < 20; w++) {
+    walkFrom(world, newState(world, w + 1).state, 1000 + w, maxSteps, sweep, r, String(w));
+  }
+  return r;
+}
+
+/**
+ * Walks forked off the proven routes.
+ *
+ * Even a sweeping walk from turn zero reaches 479 of 905 rooms, because most of
+ * what is left sits behind a gate — a locked door, a flag, an item, a landmark
+ * you must have stood in before travel will take you there. A random walk
+ * cannot play well enough to open those, and never will.
+ *
+ * The proven routes already opened them. So: replay each of them, and every
+ * `every` steps fork a short walk off the state it has reached. Everything the
+ * crawler checks then gets applied to the content those routes pass *near*
+ * rather than only the rooms they step in, with the gates already open.
+ */
+export function crawlForks(world: World, every: number, forkSteps: number, sweep = true): CrawlResult {
+  const r = emptyResult();
+  const routes: [string, World["walkthrough"]][] = [
+    ["walkthrough", world.walkthrough],
+    ...Object.entries(world.proofs ?? {}).map(([k, v]) => [k, v] as [string, World["walkthrough"]]),
+  ];
+  let forks = 0;
+  for (const [name, steps] of routes) {
+    let { state } = newState(world, 1);
+    let n = 0;
+    const doLabel = (label: string): boolean => {
+      const a = actionByLabel(world, state, label);
+      if (!a) { r.findings.push(`FORKROUTE ${name}: no action "${label}" in ${state.room}`); return false; }
+      state = step(world, state, a).state;
+      r.roomsSeen.add(state.room);
+      if (++n % every === 0 && !state.ended && r.findings.length < 20) {
+        walkFrom(world, state, 7000 + forks, forkSteps, sweep, r, `${name}+${n}`);
+        forks++;
+      }
+      return true;
+    };
+    for (const w of steps) {
+      if (typeof w === "string") { if (!doLabel(w)) break; }
+      else { let k = 0; while (!condOk(world, state, w.until) && k++ < w.max && !state.ended) if (!doLabel(w.repeat)) break; }
+      if (state.ended) break;
+    }
+  }
+  r.steps += forks; // the forks themselves are counted inside walkFrom
+  return r;
 }
 
 export function replayTrace(world: World, trace: Trace): string {
@@ -189,13 +273,14 @@ if (process.argv[1]?.endsWith("crawl.ts")) {
     : readdirSync("world").filter((f) => f.endsWith(".json")).map((f) => `world/${f}`);
   const deep = args.includes("--deep");
   const sweep = args.includes("--sweep");
+  const fork = args.includes("--fork");
   const walks = deep ? 400 : 60;
   const maxSteps = deep ? 300 : 120;
   let bad = 0;
   for (const p of paths) {
     const world = loadWorld(p);
     const t0 = Date.now();
-    const r = crawl(world, walks, maxSteps, sweep);
+    const r = fork ? crawlForks(world, deep ? 5 : 12, deep ? 80 : 40) : crawl(world, walks, maxSteps, sweep);
     const wt = replayWalkthrough(world, 1);
     if (wt.error) r.findings.push(`WALKTHROUGH ${wt.error}`);
     // a hard finding, not just a number, at this default depth — the one
@@ -208,7 +293,7 @@ if (process.argv[1]?.endsWith("crawl.ts")) {
     if (r.overCap.count && !deep) r.findings.push(`OVERCAP ${world.id}: ${r.overCap.count} steps over cap, worst ${r.overCap.worstN} in ${r.overCap.room}\n      ${r.overCap.menu}`);
     const rooms = Object.keys(world.rooms).length;
     console.log(
-      `crawl ${world.id}: ${walks} walks, ${r.steps} steps, ${Date.now() - t0}ms | rooms ${r.roomsSeen.size}/${rooms} | endings seen: ${[...r.endingsSeen].join(",") || "none"} | biggest screen ${r.worst.chars} (${r.worst.room || "-"}) | over-cap menus ${r.overCap.count}${r.overCap.count ? ` (worst ${r.overCap.worstN} in ${r.overCap.room})` : ""} | walkthrough: ${wt.error ?? `win in ${wt.turns}t`}`,
+      `crawl ${world.id}${fork ? " (forked off the proven routes)" : sweep ? " (sweeping)" : ""}: ${fork ? "" : `${walks} walks, `}${r.steps} steps, ${Date.now() - t0}ms | rooms ${r.roomsSeen.size}/${rooms} | endings seen: ${[...r.endingsSeen].join(",") || "none"} | biggest screen ${r.worst.chars} (${r.worst.room || "-"}) | over-cap menus ${r.overCap.count}${r.overCap.count ? ` (worst ${r.overCap.worstN} in ${r.overCap.room})` : ""} | walkthrough: ${wt.error ?? `win in ${wt.turns}t`}`,
     );
     if (r.findings.length) {
       bad++;

@@ -15,12 +15,13 @@
     "test": "node --import tsx --test test/*.test.ts",
     "validate": "tsx src/validate.ts world/lighthouse.json world/vale.json world/reach.json",
     "crawl": "tsx src/crawl.ts",
-    "verify": "npm run -s typecheck && npm run -s test && npm run -s validate && npm run -s crawl",
+    "verify": "npm run -s typecheck && npm run -s test && npm run -s validate && npm run -s crawl && npm run -s crawl:fork",
     "mock": "node loop/mock-player.mjs",
     "measure": "node loop/mock-player.mjs --measure",
     "playtest": "bash loop/playtest.sh",
     "fleet": "tsx src/player.ts",
-    "devloop": "bash loop/dev.sh"
+    "devloop": "bash loop/dev.sh",
+    "crawl:fork": "tsx src/crawl.ts --fork"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
