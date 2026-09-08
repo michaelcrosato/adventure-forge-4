@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, companyHere, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomPageOf, roomView , wildBearing} from "./engine.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, companyHere, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, menuNumbers, oddsHint, receipt, roomIsDark, roomPageOf, roomView , wildBearing} from "./engine.ts";
 import { ATTRS, EPILOGUE_CAP, EPILOGUE_CHARS } from "./types.ts";
 import type { Action, Cond, State, World } from "./types.ts";
 
@@ -19,12 +19,16 @@ const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 export const VISITED_FULL = 12;
 export const VISITED_RECENT = 5;
 
-export function renderMenu(world: World, s: State, opts: { itemHints?: boolean } = {}): { text: string; actions: Action[] } {
+export function renderMenu(world: World, s: State, opts: { itemHints?: boolean } = {}): { text: string; actions: Action[]; numbers: number[] } {
   const actions = legalActions(world, s);
+  // the number is the entry's place in the room's whole option list, not on
+  // the page showing — see menuNumbers, and the two players who pressed a
+  // number that had meant something else a page ago
+  const numbers = menuNumbers(world, s);
   const text = actions
-    .map((a, i) => `${i + 1} ${actionLabel(world, a, s)}${oddsHint(world, s, a, opts)}`)
+    .map((a, i) => `${numbers[i]} ${actionLabel(world, a, s)}${oddsHint(world, s, a, opts)}`)
     .join("\n");
-  return { text, actions };
+  return { text, actions, numbers };
 }
 
 /**
@@ -48,7 +52,7 @@ export function render(
   s: State,
   events: string[],
   opts: { full?: boolean } = {},
-): { text: string; actions: Action[] } {
+): { text: string; actions: Action[]; numbers: number[] } {
   if (s.ended) {
     const e = s.ended;
     // how the world remembers what you did: every epilogue line whose
@@ -77,7 +81,7 @@ export function render(
       `(score is a bonus tally of discoveries and choices; status tells the rest of the tale)`,
       `receipt:${receipt(world, s)}`,
     ];
-    return { text: lines.join("\n"), actions: [] };
+    return { text: lines.join("\n"), actions: [], numbers: [] };
   }
 
   if (inClassPhase(world, s)) {
@@ -91,7 +95,7 @@ export function render(
     }
     const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push(menu.text);
-    return { text: lines.join("\n"), actions: menu.actions };
+    return { text: lines.join("\n"), actions: menu.actions, numbers: menu.numbers };
   }
 
   const room = world.rooms[s.room];
@@ -139,7 +143,7 @@ export function render(
     const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push("Level up. Pick 1 perk/lvl for fights & checks (perm).");
     lines.push(menu.text);
-    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions, numbers: menu.numbers };
   }
 
   // an open conversation: the npc's line is in the events; the room waits
@@ -147,7 +151,7 @@ export function render(
     const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push(`talking with ${world.npcs[s.talking!]?.name ?? s.talking}`);
     lines.push(menu.text);
-    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions, numbers: menu.numbers };
   }
 
   // the travel menu: known places, nothing else
@@ -155,14 +159,14 @@ export function render(
     const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push("Travel — places you know:");
     lines.push(menu.text);
-    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions, numbers: menu.numbers };
   }
   // the company list: who is with you, nothing else
   if (inCompanyMode(world, s)) {
     const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push("Your company:");
     lines.push(menu.text);
-    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions, numbers: menu.numbers };
   }
 
   if (dark) {
@@ -233,7 +237,7 @@ export function render(
 
   const menu = renderMenu(world, s, { itemHints: !!opts.full });
   lines.push(menu.text);
-  return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+  return { text: lines.filter(Boolean).join("\n"), actions: menu.actions, numbers: menu.numbers };
 }
 
 /**
@@ -484,12 +488,12 @@ export function renderIntro(
   world: World,
   s: State,
   events: string[],
-): { text: string; actions: Action[] } {
+): { text: string; actions: Action[]; numbers: number[] } {
   const body = render(world, s, events, { full: true });
   const head = [
     `${world.title} (seed ${s.seed})`,
     world.intro,
     `Goal: reach an ending. hp0 = death. One action per turn: act(s, n) with a menu number. look(s)/status(s): free scene/quest/items recap incl. every path, no turn spent. hash ${hashState(s)}.`,
   ].join("\n");
-  return { text: `${head}\n${body.text}`, actions: body.actions };
+  return { text: `${head}\n${body.text}`, actions: body.actions, numbers: body.numbers };
 }

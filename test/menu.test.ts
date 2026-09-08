@@ -12,7 +12,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionLabel, allActions, legalActions, menuLoad, newState, step } from "../src/engine.ts";
+import { actionLabel, allActions, legalActions, menuLoad, menuNumbers, newState, step } from "../src/engine.ts";
 import { render } from "../src/format.ts";
 import { MENU_CAP } from "../src/types.ts";
 import type { Action, State, World } from "../src/types.ts";
@@ -174,4 +174,51 @@ test("the cap holds the room's own content, and does not tax it for the abilitie
   const { state } = newState(world, 1);
   assert.equal(menuLoad(world, state), 13, "one exit and twelve things — abilities not counted");
   assert.equal(allActions(world, state).filter((a) => a.kind === "ability").length, 1, "the ability is legal all the same");
+});
+
+/**
+ * A number means one thing per room.
+ *
+ * Two blind players in one wave took actions they had not meant to. "'use
+ * dried herbs' silently consumed the item on a page where I meant to pick a
+ * different numbered option." "'use a sealed letter' occupied the same
+ * numbered slot a movement option had held on a previous page." Numbering each
+ * page from 1 meant a number stood for two things in one room, and a player
+ * who had just pressed 7 pressed 7 again.
+ */
+test("an option keeps its number on whatever page it is showing", () => {
+  const world = crowded(24);
+  const numbered = (s: State) => {
+    const acts = legalActions(world, s), nums = menuNumbers(world, s);
+    return new Map(acts.map((a, i) => [actionLabel(world, a, s), nums[i]!]));
+  };
+  let s = newState(world, 1).state;
+  const pages = [numbered(s)];
+  for (let p = 0; p < 2; p++) {
+    s = step(world, s, pick(world, s, "more in this room")).state;
+    pages.push(numbered(s));
+  }
+  // the ways out keep 1 and 2 wherever you are: they are first in the whole list too
+  for (const [i, page] of pages.entries()) {
+    assert.equal(page.get("go north"), 1, `page ${i + 1}`);
+    assert.equal(page.get("go south"), 2, `page ${i + 1}`);
+    assert.equal(page.get("more in this room"), 27, `page ${i + 1}: the way on is one past everything`);
+  }
+  // and no label ever carries two different numbers, nor two labels one number
+  const seen = new Map<string, number>();
+  for (const page of pages)
+    for (const [label, n] of page) {
+      const had = seen.get(label);
+      if (had !== undefined) assert.equal(n, had, `"${label}" carried ${had} and then ${n}`);
+      seen.set(label, n);
+    }
+  const byNumber = new Map<number, string>();
+  for (const [label, n] of seen) {
+    const had = byNumber.get(n);
+    assert.ok(had === undefined || had === label, `number ${n} meant "${had}" and also "${label}"`);
+    byNumber.set(n, label);
+  }
+  // page two picks up where page one stopped, rather than starting again at 1
+  assert.equal(pages[0]!.get("thing 8"), 11);
+  assert.equal(pages[1]!.get("thing 9"), 12);
 });

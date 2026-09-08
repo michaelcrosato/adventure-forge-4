@@ -1789,6 +1789,32 @@ export function legalActions(world: World, s: State): Action[] {
 }
 
 /**
+ * The number each entry of `legalActions` shows, which is its place in the
+ * room's whole option list rather than its place on the page.
+ *
+ * Two blind players took actions they did not mean to because of this. "'use
+ * dried herbs' silently consumed the item on a page where I meant to pick a
+ * different numbered option"; "'use a sealed letter' occupied the same
+ * numbered slot a movement option had held on a previous page". Numbering each
+ * page from 1 meant a number stood for two different things in one room, and
+ * a player who had just pressed 7 pressed 7 again.
+ *
+ * Numbering off the whole list fixes it outright: the ways out keep 1, 2, 3 on
+ * every page because they are first in the whole list too, and the room's own
+ * options carry the same number wherever they are showing — page two starts at
+ * 10 or 13 or wherever page one stopped. A number means one thing per room.
+ *
+ * (The conversation and travel menus page by their own older rules and still
+ * number from 1. Neither has been reported, and both replace the list rather
+ * than keeping a sticky head, so a number there at least means one thing per
+ * page. Worth the same treatment when one of them is.)
+ */
+export function menuNumbers(world: World, s: State): number[] {
+  const all = allActions(world, s).map(canon);
+  return legalActions(world, s).map((a) => all.indexOf(canon(a)) + 1);
+}
+
+/**
  * Everything legal here, whichever page is showing — every option the room
  * offers plus, when it has more than one page, the way to the next. This is
  * what `step` and `actionByLabel` judge an action against: turning a page
