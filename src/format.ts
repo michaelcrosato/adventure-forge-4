@@ -103,8 +103,15 @@ export function render(
   // active conditions, compact: " [winded 2 braced 1]" — costs nothing when none are active
   const condTxt = Object.keys(s.conds).sort().map((id) => `${world.conditions?.[id]?.name ?? id} ${s.conds[id]}`).join(" ");
   const conds = condTxt ? ` [${condTxt}]` : "";
+  // No running score in the turn header. The tally moved to `status`, where the
+  // line that says what the denominator means lives (two blind players read
+  // "198/366" as a share of the realm), and the turn a deed earns anything says
+  // so itself — applyFx pushes "(+3)" as an event. A total restated on every
+  // screen in between was 2,328 characters along the realm's walkthrough, on a
+  // budget with a thousand to spare, to tell a player something no turn of
+  // theirs had changed.
   lines.push(
-    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} score${s.score} t${s.turn}${hud}${conds}`,
+    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} t${s.turn}${hud}${conds}`,
   );
   if (events.length) lines.push(`[${events.join(" ")}]`);
   if (world.progress) {

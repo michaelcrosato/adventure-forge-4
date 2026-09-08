@@ -220,8 +220,12 @@ test("a free room action costs no turn and says so; a scripted end reads 'at res
   ];
   let { state } = newState(world, 1);
   const header = render(world, state, []).text.split("\n")[0]!;
-  assert.match(header, /score0 t0/, "the turn header shows the tally without a ceiling");
-  assert.doesNotMatch(header, /score0\//);
+  // the turn header carries no score at all: not the ceiling (two blind players
+  // read "198/366" as a share of the realm) and not the bare tally either,
+  // which restated on every screen told a player something no turn of theirs
+  // had changed. Both live in status; a turn that earns something says "(+N)".
+  assert.doesNotMatch(header, /score/, `the turn header carries no score: ${header}`);
+  assert.match(header, /hp\d+\/\d+( L\d+)? t\d+/, `it carries what a turn can change: ${header}`);
   // the ceiling and what it means: two blind players read "198/366" as a share
   // of the realm, so the note says what the denominator actually is
   assert.match(renderStatus(world, state), /Score: 0\/\d+ \(deeds and discoveries; \d+ is one whole route's worth/, "status names the ceiling and what the score is");
