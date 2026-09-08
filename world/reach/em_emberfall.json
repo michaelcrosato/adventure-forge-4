@@ -622,7 +622,7 @@
           "label": "the singing's quieter",
           "if": [["flag", "em_hollow_bargained"]],
           "once": true,
-          "say": "Quieter, not rested. I said the words and the world did not end for my saying them. Small mercy, but I've had smaller.",
+          "say": "Quieter, not rested. Someone struck our own worst evidence off a stone, at its asking, and I still don't know if that was mercy or one more year of the same lie.",
           "fx": [["xp", 2], ["addvar", "rep_church", 1]]
         },
         {
@@ -638,7 +638,7 @@
           "label": "word from the mother-house",
           "if": [["flag", "em_hollow_bargained"], ["!flag", "sv_em_bargained_asked"]],
           "once": true,
-          "say": "The mother-house has heard what I said, or heard the bell, and sent word: I'm to answer for one or the other. I could recant it all as grief talking loose, and keep my collar. I find I don't want to lie a second time.",
+          "say": "Word's reached the mother-house that the ridge went quiet, and how. I'm to answer for it. I could call it grief talking loose and keep my collar. I find I don't want to lie a second time.",
           "fx": [["set", "sv_em_bargained_asked"], ["xp", 2]]
         },
         {
@@ -1002,8 +1002,19 @@
           "label": "the valley, now it's rested",
           "if": [["flag", "em_hollow_rested"]],
           "once": true,
-          "say": "The valley finally used the verse for what it was kept for. I can stop hiding, if I want to. I find I don't quite know how, after this long.",
-          "fx": [["xp", 2], ["addvar", "appr_vell", 1]]
+          "say": "The valley's finally rested. I can stop hiding, if I want to. I find I don't quite know how, after this long.",
+          "fx": [
+            ["xp", 2],
+            ["addvar", "appr_vell", 1],
+            [
+              "if",
+              [["flag", "em_verse_known"]],
+              [
+                ["say", "And you gave it my verse besides, in your refusal — not the way I meant it taught, but into the truth all the same."]
+              ],
+              []
+            ]
+          ]
         },
         {
           "id": "after_bargained",
@@ -1288,7 +1299,7 @@
       "stages": [
         {
           "if": [["flag", "em_prior_confessed"]],
-          "text": "Wenlock admitted it. The chapel above town may need to hear it too."
+          "text": "Wenlock admitted it, plainly, to you. Word of it will travel on its own now."
         },
         {
           "if": [["flag", "em_priory_clue"]],
@@ -1348,7 +1359,7 @@
       "stages": [
         {
           "if": [["flag", "em_verse_known"]],
-          "text": "Brenna's rest-verse is yours. Carry it to the roofless chapel with Wenlock's confession."
+          "text": "Brenna's rest-verse is yours. It can ease a refusal at the roofless chapel, though it isn't required."
         },
         {
           "if": [["flag", "em_heard_brenna"]],
