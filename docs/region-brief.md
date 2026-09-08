@@ -103,7 +103,14 @@ something other than which way to walk. Across the realm, 220 of 905 rooms
 (24%) offer no action, no one to speak to, and nothing to take. They are the
 best-written rooms in the game and they are corridors. The split is by
 authoring age, not design: the regions written last sit at 4-7% bare, the
-ones written first at 44-60%. **Your region ships under 15%.** Check it:
+ones written first at 44-60%. **Count it per class, not once.** An action gated on one class is not an
+action for the other three, so a room whose only content is a Scout's find is
+a corridor to a Warden — the class-blind figure is the optimistic one. Across
+the realm the blind count is 94 and the per-class counts are 124 to 141, and
+the gap is entirely made of class-gated finds. Filling a room for everybody
+beats filling it for a quarter of players; where you do gate, gate four ways.
+
+**Your region ships under 15%, for every class.** Check it:
 
 ```bash
 node --import tsx scripts/audit-shape.ts world/reach.json --prefix <code>
