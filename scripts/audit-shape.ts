@@ -25,6 +25,7 @@ const [path, ...rest] = process.argv.slice(2);
 if (!path) { console.error("usage: node --import tsx scripts/audit-shape.ts <world.json> [--prefix xx] [--bare]"); process.exit(2); }
 const only = rest.includes("--prefix") ? rest[rest.indexOf("--prefix") + 1]! : null;
 const listBare = rest.includes("--bare");
+const listRites = rest.includes("--rites");
 const world: World = loadWorld(path);
 
 const prefixOf = (id: string) => id.split("_")[0] ?? "";
@@ -48,13 +49,57 @@ const offeredTo = (a: { if?: unknown[] }, c: string): boolean => {
   return true;
 };
 
+/**
+ * How a hold's grief is actually RESTED, which the `fates` column cannot show:
+ * every hold must offer rest/bargain/burn by contract, so that column reads the
+ * same for all fifteen forever. What varies — and what the seven-rites work is
+ * changing — is the shape of the asking. Read off the conditions guarding
+ * whichever effect sets `<code>_hollow_rested`, including the `if`, `check` and
+ * `chance` branches it is nested inside (Mootcombe's sequence lives three deep):
+ *   witness someone living has to be standing there
+ *   order   a sequence var, taken in its right order
+ *   count   a tally of gathered things ("three verses", "three names")
+ *   carry   a specific thing has to be in hand
+ *   plain   flags alone — the shape the seven-rites work is replacing
+ *
+ * Flags never classify. Every rite is flag-gated (`<code>_hollow_grievance`,
+ * `!<code>_hollow_done`), so counting them would print `plain` for all fifteen
+ * and see nothing; `plain` is the verdict only for a setter guarded by nothing
+ * else. Every distinct shape a region offers is printed, not the most
+ * flattering one: a rest reachable two ways is two shapes, and hiding the
+ * duller road is how a tool starts lying to its author.
+ *
+ * This reads gates, not intent, and cannot do better: the Meres' second road
+ * asks a villager to wade in with you and then gates on the flag that records
+ * she agreed, so it reads `plain` beside its four `witness` siblings. That is
+ * why `--rites` names every setter and its verdict — the column says look
+ * here, and the author is the one who reads.
+ */
+type Rite = "witness" | "order" | "count" | "carry" | "plain";
+const riteOrder: Rite[] = ["witness", "order", "count", "carry", "plain"];
+const riteOf = (conds: unknown[]): Rite[] => {
+  const seen = new Set<Rite>();
+  const walk = (cs: unknown[]) => {
+    for (const c of cs) {
+      if (!Array.isArray(c)) continue;
+      if (c[0] === "npcHere" || c[0] === "inParty") seen.add("witness");
+      else if (c[0] === "var" && /_(step|order|stage)$/.test(String(c[1]))) seen.add("order");
+      else if (c[0] === "var" && typeof c[3] === "number" && c[3] > 1) seen.add("count");
+      else if (c[0] === "has") seen.add("carry");
+      else if (c[0] === "any") walk((c[1] ?? []) as unknown[]);
+    }
+  };
+  walk(conds);
+  return seen.size ? riteOrder.filter((r) => seen.has(r)) : ["plain"];
+};
+
 type Shape = {
-  rooms: number; bare: number; bareIds: string[]; perClass: Record<string, number>;
+  rooms: number; bare: number; bareIds: string[]; perClass: Record<string, number>; rite: Set<Rite>;
   landmarks: number; actions: number; variants: number; sideTrips: number;
   npcs: number; talkers: number; topics: number; items: number; quests: number;
   epilogue: number; fates: Set<string>;
 };
-const blank = (): Shape => ({ rooms: 0, bare: 0, bareIds: [], perClass: Object.fromEntries(classes.map((c) => [c, 0])), landmarks: 0, actions: 0, variants: 0, sideTrips: 0, npcs: 0, talkers: 0, topics: 0, items: 0, quests: 0, epilogue: 0, fates: new Set() });
+const blank = (): Shape => ({ rooms: 0, bare: 0, bareIds: [], perClass: Object.fromEntries(classes.map((c) => [c, 0])), rite: new Set(), landmarks: 0, actions: 0, variants: 0, sideTrips: 0, npcs: 0, talkers: 0, topics: 0, items: 0, quests: 0, epilogue: 0, fates: new Set() });
 const shapes = new Map<string, Shape>();
 const shape = (r: string) => shapes.get(r) ?? shapes.set(r, blank()).get(r)!;
 
@@ -82,6 +127,26 @@ const bucket = (r: string) => (companionIds.has(r) ? "party" : (shapes.get(r)?.r
 for (const id of Object.keys(world.quests ?? {})) shape(bucket(prefixOf(id))).quests += 1;
 
 // the three fates a hold's grief can meet: which does this region actually offer?
+const riteRoads = new Map<string, { id: string; rites: Rite[] }[]>();
+const restSetter = (fx: unknown, conds: unknown[], region: string, id: string): void => {
+  if (!Array.isArray(fx)) return;
+  for (const f of fx as unknown[]) {
+    if (!Array.isArray(f)) continue;
+    if (f[0] === "set" && /_hollow_rested$/.test(String(f[1]))) {
+      const rites = riteOf(conds);
+      for (const r of rites) shape(region).rite.add(r);
+      const roads = riteRoads.get(region) ?? riteRoads.set(region, []).get(region)!;
+      if (!roads.some((r) => r.id === id)) roads.push({ id, rites });
+    } else if (f[0] === "if") {
+      // the then-branch is guarded by these conditions too; the else-branch by their failure
+      restSetter(f[2], [...conds, ...(Array.isArray(f[1]) ? (f[1] as unknown[]) : [])], region, id);
+      restSetter(f[3], conds, region, id);
+    } else if (f[0] === "check" || f[0] === "chance") {
+      restSetter(f[3], conds, region, id); restSetter(f[4], conds, region, id);
+    }
+  }
+};
+
 const fateOf = (flag: string) => /_hollow_rested$/.test(flag) ? "rest" : /_hollow_burned$/.test(flag) ? "burn" : /_hollow_bargained$/.test(flag) ? "bargain" : null;
 const scanFx = (fxs: unknown, region: string): void => {
   if (!Array.isArray(fxs)) return;
@@ -94,11 +159,11 @@ const scanFx = (fxs: unknown, region: string): void => {
 for (const [id, room] of Object.entries(world.rooms)) {
   const r = regionOf(id);
   scanFx(room.onEnter, r); scanFx(room.onEnterOnce, r);
-  for (const a of room.actions ?? []) scanFx(a.fx, r);
+  for (const a of room.actions ?? []) { scanFx(a.fx, r); restSetter(a.fx, (a.if ?? []) as unknown[], r, a.id); }
 }
 for (const [id, n] of Object.entries(world.npcs)) {
   const r = n.room ? regionOf(n.room) : prefixOf(id);
-  for (const t of n.topics ?? []) scanFx(t.fx, r);
+  for (const t of n.topics ?? []) { scanFx(t.fx, r); restSetter(t.fx, (t.if ?? []) as unknown[], r, `${id}/${t.id}`); }
   scanFx(n.onDeath, r);
 }
 for (const ep of world.epilogue ?? []) {
@@ -124,7 +189,7 @@ if (!rows.length) { console.error(`no region ${only}`); process.exit(1); }
 
 const pad = (v: string | number, n: number) => String(v).padStart(n);
 const classCols = classes.map((c) => c.slice(0, 4).padStart(5)).join("");
-console.log(`region  rooms  corridors${classCols}   lmk  acts  varis  npcs  talk  topics  items  quests  epil  fates`);
+console.log(`region  rooms  corridors${classCols}   lmk  acts  varis  npcs  talk  topics  items  quests  epil  fates                rite`);
 let bareAll = 0, roomsAll = 0;
 for (const [r, s] of rows) {
   bareAll += s.bare; roomsAll += s.rooms;
@@ -132,12 +197,28 @@ for (const [r, s] of rows) {
   const pct = s.rooms ? Math.round((100 * s.bare) / s.rooms) : 0;
   const flag = pct >= 15 ? " <" : "";
   console.log(
-    `${r.padEnd(6)} ${pad(s.rooms, 6)}  ${pad(`${s.bare} (${pct}%)`, 9)}${flag.padEnd(2)}${classes.map((c) => pad(s.perClass[c] ?? 0, 5)).join("")} ${pad(s.landmarks, 4)} ${pad(s.actions, 5)} ${pad(s.variants, 6)} ${pad(s.npcs, 5)} ${pad(s.talkers, 5)} ${pad(s.topics, 7)} ${pad(s.items, 6)} ${pad(s.quests, 7)} ${pad(s.epilogue, 5)}  ${[...s.fates].sort().join("/") || "—"}`,
+    `${r.padEnd(6)} ${pad(s.rooms, 6)}  ${pad(`${s.bare} (${pct}%)`, 9)}${flag.padEnd(2)}${classes.map((c) => pad(s.perClass[c] ?? 0, 5)).join("")} ${pad(s.landmarks, 4)} ${pad(s.actions, 5)} ${pad(s.variants, 6)} ${pad(s.npcs, 5)} ${pad(s.talkers, 5)} ${pad(s.topics, 7)} ${pad(s.items, 6)} ${pad(s.quests, 7)} ${pad(s.epilogue, 5)}  ${(([...s.fates].sort().join("/") || "—") + "").padEnd(20)} ${riteOrder.filter((r) => s.rite.has(r)).join("+") || "—"}`,
   );
 }
 const pctAll = roomsAll ? Math.round((100 * bareAll) / roomsAll) : 0;
 console.log(`${"all".padEnd(6)} ${pad(roomsAll, 6)}  ${pad(`${bareAll} (${pctAll}%)`, 9)}`);
 console.log();
+console.log("rite: how the hold's grief is RESTED, which `fates` cannot show — every hold offers");
+console.log("rest/bargain/burn by contract, so that column reads the same for all fifteen forever.");
+console.log("witness = someone living has to be there; order = a sequence taken in its right order;");
+console.log("count = a tally of gathered things; carry = a thing in hand; plain = flags alone, the");
+console.log("shape the seven-rites work is replacing. It reads gates, not intent: `--rites` names");
+console.log("every road to rest and its verdict, so a `plain` can be looked at rather than trusted.");
+console.log();
+if (listRites) {
+  for (const [r] of rows) {
+    const roads = riteRoads.get(r);
+    if (!roads?.length) continue;
+    console.log(`${r}:`);
+    for (const road of roads) console.log(`  ${road.rites.join("+").padEnd(14)} ${road.id}`);
+  }
+  console.log();
+}
 console.log("corridors: rooms with no action, nobody standing there, and nothing to take —");
 console.log("a player can only walk out. '<' marks a region over the brief's 15% bar.");
 if (classes.length) {
