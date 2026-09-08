@@ -21,11 +21,13 @@ import type { Cond, Fx, State, WalkStep, World } from "./types.ts";
 export { MENU_CAP };
 
 const COND_OPS = new Set([
-  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "any",
+  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "cond", "!cond", "npccond", "!npccond", "any",
 ]);
 const FX_OPS = new Set([
-  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "calm", "end",
+  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "calm", "cond", "npccond", "uncond", "unnpccond", "harm", "end",
 ]);
+/** Fields a `conditions` entry may carry — `name` required, everything else optional. Closed, like the rest of the DSL. */
+const CONDITION_FIELDS = new Set(["name", "hit", "dmg", "armor", "checks", "hpPerTurn", "hint"]);
 
 /**
  * The files a world is made of: the root, then every part its `include` list
@@ -56,7 +58,7 @@ export function worldFiles(path: string): string[] {
 // Which top-level fields a part file may carry. A part is a slice of one world:
 // it adds records and list entries, never the world's identity or its proof.
 const ROOT_ONLY = new Set(["id", "title", "intro", "objectives", "start", "hp", "maxScore", "walkthrough", "progress", "include"]);
-const RECORD_FIELDS = new Set(["rooms", "items", "npcs", "classes", "perks", "regions", "quests", "proofs", "templates", "skills", "factions"]);
+const RECORD_FIELDS = new Set(["rooms", "items", "npcs", "classes", "perks", "regions", "quests", "proofs", "templates", "skills", "factions", "conditions"]);
 const LIST_FIELDS = new Set(["gen", "stamps", "epilogue", "statusTracks", "statusPaths", "hud"]);
 
 /**
@@ -105,6 +107,7 @@ export function validateWorld(world: World): string[] {
   const npcOk = (id: string) => !!world.npcs[id];
   const classOk = (id: string) => !!world.classes?.[id];
   const perkOk = (id: string) => !!world.perks?.[id];
+  const conditionOk = (id: string) => !!world.conditions?.[id];
   const locOk = (l: string) => l === "inv" || l === "nowhere" || roomOk(l);
   const moveOk = (l: string) => l === "here" || locOk(l); // "here" only makes sense inside an effect
   const attrSet = new Set<string>(ATTRS);
@@ -119,6 +122,11 @@ export function validateWorld(world: World): string[] {
       else if (c[0] === "var" && !["<", ">", "=", ">=", "<="].includes(c[2])) err(`${where}: bad var comparator ${String(c[2])}`);
       else if ((c[0] === "class" || c[0] === "!class") && !classOk(c[1])) err(`${where}: unknown class ${c[1]}`);
       else if ((c[0] === "perk" || c[0] === "!perk") && !perkOk(c[1])) err(`${where}: unknown perk ${c[1]}`);
+      else if ((c[0] === "cond" || c[0] === "!cond") && !conditionOk(c[1])) err(`${where}: unknown condition ${c[1]}`);
+      else if (c[0] === "npccond" || c[0] === "!npccond") {
+        if (!npcOk(c[1])) err(`${where}: unknown npc ${c[1]}`);
+        if (!conditionOk(c[2])) err(`${where}: unknown condition ${c[2]}`);
+      }
       else if (c[0] === "any") {
         if (!Array.isArray(c[1]) || !c[1].length) err(`${where}: any needs a non-empty list of conditions`);
         else checkConds(`${where}.any`, c[1]);
@@ -137,6 +145,24 @@ export function validateWorld(world: World): string[] {
       if (op === "npcgo" && fx[2] !== null && fx[2] !== "here" && !roomOk(fx[2])) err(`${where}: unknown room ${fx[2]}`);
       if (op === "slay" && !npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
       if (op === "calm" && !npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
+      if (op === "cond") {
+        if (!conditionOk(fx[1])) err(`${where}: unknown condition ${fx[1]}`);
+        if (typeof fx[2] !== "number") err(`${where}: cond turns must be a number`);
+      }
+      if (op === "npccond") {
+        if (!npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
+        if (!conditionOk(fx[2])) err(`${where}: unknown condition ${fx[2]}`);
+        if (typeof fx[3] !== "number") err(`${where}: npccond turns must be a number`);
+      }
+      if (op === "uncond" && !conditionOk(fx[1])) err(`${where}: unknown condition ${fx[1]}`);
+      if (op === "unnpccond") {
+        if (!npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
+        if (!conditionOk(fx[2])) err(`${where}: unknown condition ${fx[2]}`);
+      }
+      if (op === "harm") {
+        if (!npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
+        if (typeof fx[2] !== "number") err(`${where}: harm amount must be a number`);
+      }
       if (op === "if") {
         checkConds(`${where}.if`, fx[1]);
         checkFx(`${where}.if.then`, fx[2]);
@@ -209,6 +235,26 @@ export function validateWorld(world: World): string[] {
       err(`perk ${pid}: unknown attribute ${perk.require.attr[0]}`);
     for (const n of Object.keys(perk.bonus?.check ?? {}))
       if (!checkNameOk(n)) err(`perk ${pid}: unknown check name ${n}`);
+  }
+
+  // ---------- conditions ----------
+  // Small and closed, like the rest of the DSL: `name` required, every other
+  // field whitelisted, and `checks` keyed only by real skill/attribute names.
+  for (const [cid, cond] of Object.entries(world.conditions ?? {})) {
+    need(`condition ${cid}`, cond, [["name", "string"]]);
+    for (const k of Object.keys(cond)) if (!CONDITION_FIELDS.has(k)) err(`condition ${cid}: unknown field ${k}`);
+    for (const f of ["hit", "dmg", "armor", "hpPerTurn"] as const) {
+      if (cond[f] !== undefined && typeof cond[f] !== "number") err(`condition ${cid}: "${f}" must be a number`);
+    }
+    if (cond.hint !== undefined && typeof cond.hint !== "string") err(`condition ${cid}: "hint" must be a string`);
+    if (cond.checks !== undefined) {
+      if (typeof cond.checks !== "object" || cond.checks === null || Array.isArray(cond.checks)) err(`condition ${cid}: "checks" must be an object`);
+      else
+        for (const [n, v] of Object.entries(cond.checks)) {
+          if (!checkNameOk(n)) err(`condition ${cid}: unknown check name ${n}`);
+          if (typeof v !== "number") err(`condition ${cid}: checks.${n} must be a number`);
+        }
+    }
   }
 
   for (const p of world.statusPaths ?? []) {

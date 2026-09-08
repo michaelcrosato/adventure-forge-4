@@ -142,6 +142,7 @@ test("renderStatus: totals check and combat modifiers for worlds with a characte
     inv: ["sword"],
     perks: ["keen_edge", "old_lore"],
     attrs: { might: 2, wits: 1 },
+    conds: {},
   } as unknown as State;
   assert.equal(
     renderStatus(world, state),

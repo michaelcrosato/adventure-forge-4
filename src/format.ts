@@ -118,8 +118,11 @@ export function render(
   const lines: string[] = [];
   const lvl = world.classes ? ` L${s.level}` : "";
   const hud = (world.hud ?? []).map((h) => ` ${h.label}${s.vars[h.var] ?? 0}`).join("");
+  // active conditions, compact: " [winded 2 braced 1]" — costs nothing when none are active
+  const condTxt = Object.keys(s.conds).sort().map((id) => `${world.conditions?.[id]?.name ?? id} ${s.conds[id]}`).join(" ");
+  const conds = condTxt ? ` [${condTxt}]` : "";
   lines.push(
-    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} score${s.score} t${s.turn}${hud}`,
+    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} score${s.score} t${s.turn}${hud}${conds}`,
   );
   if (events.length) lines.push(`[${events.join(" ")}]`);
   if (world.progress) {
@@ -184,12 +187,15 @@ export function render(
         const tail = opts.full && d.desc ? ` — ${d.desc}` : "";
         if (hp <= 0) return `${d.name} (${s.flags[`laid_${id}`] ? "at rest" : "dead"})`;
         const pierce = d.pierce ? ", armor useless" : "";
+        // active conditions, folded into the existing parenthetical (or a new one, if it carried none) — empty when it holds none
+        const condTag = Object.keys(s.npcConds[id] ?? {}).sort().map((cid) => `${world.conditions?.[cid]?.name ?? cid} ${s.npcConds[id]![cid]}`).join(", ");
+        const withCond = condTag ? `, ${condTag}` : "";
         // a standoff content has ended (`calm`) reads as the peace it is
-        if ((d.aggressive || d.hostile) && s.flags[`calm_${id}`]) return `${d.name} is here (stood down)${tail}`;
-        if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1}${pierce})${tail}`;
+        if ((d.aggressive || d.hostile) && s.flags[`calm_${id}`]) return `${d.name} is here (stood down${withCond})${tail}`;
+        if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1}${pierce}${withCond})${tail}`;
         // a hostile that is not aggressive never strikes first: say so, so walking past reads as the choice it is
-        if (d.hostile) return `${d.name} (hostile, holds its ground, hp${hp}/${d.hp ?? 1}${pierce}${talks.has(id) ? ", will hear you out" : ""})${tail}`;
-        return `${d.name} is here${tail}`;
+        if (d.hostile) return `${d.name} (hostile, holds its ground, hp${hp}/${d.hp ?? 1}${pierce}${talks.has(id) ? ", will hear you out" : ""}${withCond})${tail}`;
+        return condTag ? `${d.name} is here (${condTag})${tail}` : `${d.name} is here${tail}`;
       });
     if (npcs.length) lines.push(npcs.join("; "));
     const party = s.party.map((id) => world.npcs[id]?.name ?? id);
@@ -314,6 +320,19 @@ export function renderStatus(world: World, s: State): string {
       return p ? `${p.name} (${p.desc})` : id;
     });
     lines.push(`Perks: ${perks.join(", ")}`);
+  }
+  // optional-chained like party/perks above: a caller that predates this field stays valid
+  if (Object.keys(s.conds ?? {}).length) {
+    // remaining turns, plus the condition's own hint if it carries one — the
+    // same numbers the HUD tag and the Checks/Combat totals below already count
+    const conds = Object.keys(s.conds)
+      .sort()
+      .map((id) => {
+        const def = world.conditions?.[id];
+        const n = s.conds[id]!;
+        return `${def?.name ?? id} (${n} turn${n === 1 ? "" : "s"} left)${def?.hint ? ` — ${def.hint}` : ""}`;
+      });
+    lines.push(`Conditions: ${conds.join("; ")}`);
   }
   // Only worlds with a character system carry attrs/perks worth summing; a
   // classless world's s.attrs stays empty all game, so this would be an

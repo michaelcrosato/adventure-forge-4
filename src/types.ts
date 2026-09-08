@@ -22,6 +22,10 @@ export type Cond =
   | ["!inParty", string]
   | ["npcHere", string] // npc stands alive in the player's room (a companion's warning before a fight, a line only said in someone's presence)
   | ["!npcHere", string]
+  | ["cond", string] // the player currently holds this timed condition
+  | ["!cond", string]
+  | ["npccond", string, string] // an npc currently holds this timed condition
+  | ["!npccond", string, string]
   | ["any", Cond[]]; // passes when at least one of the listed conditions passes (the one OR in an all-of list)
 
 // ---------- effects ----------
@@ -44,6 +48,11 @@ export type Fx =
   | ["perk", string] // grant a perk directly (a trainer teaches you)
   | ["chance", number, Fx[], Fx[]] // pct 0..100 from the state's PRNG: okFx if the roll lands, else failFx
   | ["party", string, "join" | "leave"] // npc joins the player's company (follows room to room, fights beside them) or leaves it
+  | ["cond", string, number] // put a timed condition on the player for N spent turns; re-applying refreshes to the longer remaining duration
+  | ["npccond", string, string, number] // same, on an npc: npc, conditionId, turns
+  | ["uncond", string] // clear a timed condition from the player before it would expire on its own
+  | ["unnpccond", string, string] // clear a timed condition from an npc: npc, conditionId
+  | ["harm", string, number] // n damage to an npc with no attack roll; runs onDeath if it drops, like a killing attack. Safe if the npc is absent or already dead
   | ["end", "win" | "lose", string, string]; // kind, endingId, text
 
 // ---------- content ----------
@@ -214,6 +223,23 @@ export type PerkDef = {
   };
 };
 
+/**
+ * A named, timed status effect — put on the player with `["cond", id, turns]`
+ * or on an npc with `["npccond", npc, id, turns]`. Small and closed: every
+ * field but `name` is optional, and the validator rejects any other key.
+ * Player conditions fold into attackBonus/combatMods/armorOf/checkMod; an
+ * npc condition's `hit` folds into its strike and `armor` raises its df.
+ */
+export type ConditionDef = {
+  name: string; // shown wherever the condition is listed (HUD, room line, status)
+  hit?: number; // attack-roll modifier
+  dmg?: number; // damage modifier
+  armor?: number; // armor modifier (raises an npc's df; adds to the player's armor)
+  checks?: Partial<Record<string, number>>; // +N to named checks (player only — npcs don't roll checks)
+  hpPerTurn?: number; // hp applied at the end of each spent turn while it holds; negative hurts, positive heals (player only)
+  hint?: string; // short clause the menu/HUD/status may show, e.g. "your guard is down"
+};
+
 // ---------- overworld generation ----------
 export type GenSpot = {
   cell: [number, number];
@@ -318,6 +344,8 @@ export type World = {
   skills?: Record<string, number>; // name -> modifier for ["check", ...]
   classes?: Record<string, ClassDef>; // if present, the game starts with a class menu
   perks?: Record<string, PerkDef>;
+  /** Named timed status effects (see ConditionDef) — put on the player or an npc by id, merged like perks. */
+  conditions?: Record<string, ConditionDef>;
   /** Part files merged into this one at load (paths or `dir/*.json` globs, relative to this file). Root-only fields stay in the root. */
   include?: string[];
   gen?: GenDef[]; // regions expanded into rooms at load, before validation
@@ -413,6 +441,8 @@ export type State = {
   itemLoc: Record<string, string>;
   npcHp: Record<string, number>;
   npcRoom: Record<string, string | null>;
+  conds: Record<string, number>; // condition id -> spent turns remaining, on the player
+  npcConds: Record<string, Record<string, number>>; // npc id -> (condition id -> turns remaining)
   visited: string[];
   party: string[]; // companions travelling with the player, in join order
   talking: string | null; // npc id while a conversation is open (conversation mode)

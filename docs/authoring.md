@@ -20,8 +20,8 @@ A world is one root file, plus part files it `include`s:
 A **part file** is a slice of the same world. It may carry only:
 
 - records that merge by id — `rooms`, `items`, `npcs`, `classes`, `perks`,
-  `regions`, `quests`, `proofs`, `templates`, `skills`. Two files defining the
-  same id is a load error that names both files.
+  `conditions`, `regions`, `quests`, `proofs`, `templates`, `skills`. Two
+  files defining the same id is a load error that names both files.
 - lists that concatenate — `gen`, `stamps`, `epilogue`, `statusTracks`,
   `statusPaths`, `hud`.
 A path may name a `var`; its value then prints after the text ("the Watch:
@@ -65,6 +65,8 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["perk", p]` / `["!perk", p]` | the player owns the perk |
 | `["inParty", npc]` / `["!inParty", npc]` | companion travels with the player |
 | `["npcHere", id]` / `["!npcHere", id]` | the npc stands alive in the player's room — a companion's warning before a fight, a line said only in someone's presence |
+| `["cond", id]` / `["!cond", id]` | the player currently holds / does not hold this timed condition — see §8 |
+| `["npccond", npc, id]` / `["!npccond", npc, id]` | an npc currently holds / does not hold this timed condition |
 | `["any", [cond, cond, ...]]` | passes when at least one listed condition passes — the one OR inside an all-of list |
 
 ## 4. Effects
@@ -89,7 +91,12 @@ Effects run in order and stop the moment the game ends.
 | `["party", npc, "join"]` / `["party", npc, "leave"]` | companion joins / leaves (npc needs a `companion` block) |
 | `["slay", npc]` | scripted death: no fight, no onDeath |
 | `["calm", npc]` | a hostile stands down for good: no longer blocks fast travel, reads "is here (stood down)", and attacking them is listed last — for a words route that ends a standoff without the npc leaving |
-| `["end", "win"|"lose", endingId, text]` | ends the game (every ending id needs a proof — see §10) |
+| `["cond", id, turns]` | put a timed condition on the player for `turns` spent turns; re-applying refreshes to the longer of the current and new remaining duration — see §8 |
+| `["npccond", npc, id, turns]` | the same, on an npc |
+| `["uncond", id]` | clear a timed condition from the player before it would expire on its own |
+| `["unnpccond", npc, id]` | clear a timed condition from an npc |
+| `["harm", npc, n]` | `n` damage to an npc with no attack roll; runs `onDeath` if it drops, exactly like a killing `attack`. Safe if the npc is absent or already dead |
+| `["end", "win"|"lose", endingId, text]` | ends the game (every ending id needs a proof — see §12) |
 
 `check` skills are the four attributes `might`, `grace`, `wits`, `will`, or a
 name in `world.skills`. Put the `check` **first** in an action's or topic's
@@ -301,7 +308,68 @@ for a remark or an epilogue line to recall it. `status` shows each
 companion's hp beside their regard. Nobody dies of it — a companion's death,
 if a story wants one, is written with `slay` or a `leaves` line.
 
-## 8. Wilderness regions (`gen`)
+## 8. Conditions (status effects)
+
+A **condition** is a named, timed modifier — winded, braced, bleeding — put
+on the player or on an npc for a number of spent turns. The catalog is a
+root-mergeable record, like `perks`:
+
+```json
+"conditions": {
+  "winded":   { "name": "winded",   "hit": -2, "hint": "your guard is down" },
+  "braced":   { "name": "braced",   "armor": 2 },
+  "bleeding": { "name": "bleeding", "hpPerTurn": -1 },
+  "steady":   { "name": "steady",   "checks": { "grace": 2 } }
+}
+```
+
+Every field but `name` is optional, and the set is closed — an unknown key
+is a validator error, exactly like an unknown DSL op:
+
+| field | does |
+|---|---|
+| `name` | shown in the HUD, a room's npc line, and `status` |
+| `hit` | attack-roll modifier — on the player, the roll; on an npc (no roll of its own), the damage its strike lands |
+| `dmg` | damage modifier (player only — see below) |
+| `armor` | armor modifier — on the player, damage taken; on an npc, its `df` |
+| `checks` | a record of attribute/skill name -> modifier, applied to `check` (player only — npcs don't roll checks) |
+| `hpPerTurn` | hp applied at the end of each spent turn while it holds (player only): negative hurts, positive heals |
+| `hint` | a short clause the menu/HUD/status may show, e.g. "your guard is down" |
+
+Put one on with `["cond", id, turns]` (the player) or `["npccond", npc, id,
+turns]` (an npc); re-applying refreshes to the **longer** of the current and
+new remaining duration, so a fresh dose never cuts a longer one short.
+`["uncond", id]` and `["unnpccond", npc, id]` clear one early — content that
+grants the cure, or a scene that ends the fight it came from. Test for one in
+an `if` with `["cond", id]` / `["!cond", id]` (the player) or `["npccond",
+npc, id]` / `["!npccond", npc, id]`. `["harm", npc, n]` deals `n` damage to
+an npc with no attack roll — a trap, a curse, a fire that spreads — and runs
+`onDeath` exactly once if it drops, just like a killing `attack`; it does
+nothing if the npc is absent or already dead.
+
+A player condition folds into the numbers a check or an `attack` actually
+uses: `hit`/`dmg`/`armor` stack into combat, `checks` into the matching
+`check` — all of it already counted in the odds a menu previews and in
+`status`'s "Checks:"/"Combat:" totals, nothing to re-derive by hand. An npc's
+condition has no roll of its own to modify, so it folds in differently:
+`hit` sharpens or dulls the damage its strike lands (whether it strikes every
+turn or only strikes back after a failed kill), and `armor` raises its `df`
+— so a player weighing whether to press an attack sees the true number, not
+the authored one.
+
+Every condition ticks down by one at the end of each **spent** turn — a free
+action (menu paging, `look`, `leave`) ticks nothing. The player's
+`hpPerTurn` applies first, through the same hp path a fight or a trap would
+use, so it can end the run exactly like any other loss of hp. A condition
+that reaches zero turns is dropped and prints one short event ("winded
+passes."), folded into that turn's line like any other. The HUD line appends
+active player conditions only when there are any — `[winded 2]`,
+space-separated if several — costing nothing on a turn without one; an npc
+that carries one shows it the same way, in its room line's own parenthetical.
+The free `status` check lists every active player condition with its turns
+left and its hint, under "Conditions:".
+
+## 9. Wilderness regions (`gen`)
 
 ```json
 "gen": [{
@@ -342,7 +410,7 @@ if a story wants one, is written with `slay` or a `leaves` line.
 - The region must stay connected (walls cannot cut it in two): the
   reachability check will tell you.
 
-## 9. Templates and stamps
+## 10. Templates and stamps
 
 A template is a place written once with placeholders; a stamp is one copy of
 it standing somewhere.
@@ -378,7 +446,7 @@ it standing somewhere.
   Give each copy a distinct `NAME` and a distinct inhabitant; vary which
   class-favored solution works.
 
-## 10. Quests, journal, epilogue, hud
+## 11. Quests, journal, epilogue, hud
 
 ```json
 "quests": {
@@ -425,7 +493,7 @@ it standing somewhere.
   "disapproves." when that companion is in the party or the room. Choices
   are legible without the player calling `status`.
 
-## 11. Endings and proofs
+## 12. Endings and proofs
 
 Only the root world (act 1 and act 3 files) ends the game. A region file
 never uses `end`. Every ending id used anywhere needs `proofs.<id>`: a list of
@@ -440,7 +508,7 @@ Reedholm`, `attack bog-thing with belt knife`, `perk: Iron Skin (+1 armor)`,
 To record labels instead of writing them: play with `npm run turn -- new 1`,
 `act <id> <n>`…, then `npm run turn -- labels <id>`.
 
-## 12. Style and budget
+## 13. Style and budget
 
 The player is a language model reading one screen per turn. Every screen is
 paid for. `test/budget.test.ts` fails the build if the average `act` response
@@ -468,7 +536,7 @@ along the walkthrough exceeds 450 characters or any single one exceeds 1100.
   (might / a fight), craft (grace / wits), and words (will / an item / a
   favor). No class is ever locked out of a region's hollow.
 
-## 13. Before you hand it in
+## 14. Before you hand it in
 
 ```bash
 npm run validate world/reach.json   # every reference, every proof, the menu cap

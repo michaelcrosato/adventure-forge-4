@@ -137,6 +137,14 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return s.party.includes(c[1]);
     case "!inParty":
       return !s.party.includes(c[1]);
+    case "cond":
+      return !!s.conds[c[1]];
+    case "!cond":
+      return !s.conds[c[1]];
+    case "npccond":
+      return !!s.npcConds[c[1]]?.[c[2]];
+    case "!npccond":
+      return !s.npcConds[c[1]]?.[c[2]];
     case "any":
       return c[1].some((x) => condOk(world, s, x));
   }
@@ -156,19 +164,42 @@ function perkBonus(world: World, s: State, key: "hit" | "dmg" | "armor" | "maxhp
   return n;
 }
 
-/** Modifier for a named check: world skill + attribute + perk check bonuses. */
+/** Sum a numeric field ("hit" | "dmg" | "armor") over the player's active conditions. */
+function condBonus(world: World, s: State, key: "hit" | "dmg" | "armor"): number {
+  let n = 0;
+  for (const id of Object.keys(s.conds)) n += world.conditions?.[id]?.[key] ?? 0;
+  return n;
+}
+
+/** Sum a numeric field over one npc's active conditions — its `hit` folds into a strike, `armor` raises its df. */
+function npcCondBonus(world: World, s: State, npcId: string, key: "hit" | "dmg" | "armor"): number {
+  const conds = s.npcConds[npcId];
+  if (!conds) return 0;
+  let n = 0;
+  for (const id of Object.keys(conds)) n += world.conditions?.[id]?.[key] ?? 0;
+  return n;
+}
+
+/** An npc's df as it stands now: authored base, raised by any `armor` condition it carries. */
+function npcDf(world: World, s: State, npcId: string): number {
+  return (world.npcs[npcId]?.df ?? 10) + npcCondBonus(world, s, npcId, "armor");
+}
+
+/** Modifier for a named check: world skill + attribute + perk check bonuses + the player's active condition bonuses. */
 export function checkMod(world: World, s: State, name: string): number {
   let n = (world.skills?.[name] ?? 0) + (s.attrs[name] ?? 0);
   for (const id of s.perks) n += world.perks?.[id]?.bonus?.check?.[name] ?? 0;
+  for (const id of Object.keys(s.conds)) n += world.conditions?.[id]?.checks?.[name] ?? 0;
   return n;
 }
 
 /**
  * Named parts behind a check's modifier (base skill+attribute, then each
- * contributing perk), for a breakdown shown when more than one thing stacks
- * into it — a player who sees only the final total has no way to tell how
- * much a given perk (e.g. Fleetfoot) is actually adding. Used both by the
- * post-roll check event below and by status's "Checks:" summary.
+ * contributing perk, then each contributing condition), for a breakdown shown
+ * when more than one thing stacks into it — a player who sees only the final
+ * total has no way to tell how much a given perk (e.g. Fleetfoot) or
+ * condition (e.g. Steady) is actually adding. Used both by the post-roll
+ * check event below and by status's "Checks:" summary.
  */
 export function checkModParts(world: World, s: State, name: string): { label: string; n: number }[] {
   const parts: { label: string; n: number }[] = [];
@@ -177,6 +208,10 @@ export function checkModParts(world: World, s: State, name: string): { label: st
   for (const id of s.perks) {
     const n = world.perks?.[id]?.bonus?.check?.[name] ?? 0;
     if (n) parts.push({ label: world.perks![id]!.name, n });
+  }
+  for (const id of Object.keys(s.conds)) {
+    const n = world.conditions?.[id]?.checks?.[name] ?? 0;
+    if (n) parts.push({ label: world.conditions![id]!.name, n });
   }
   return parts;
 }
@@ -191,14 +226,14 @@ function bestArmor(world: World, s: State): { armor: number; item: string | null
   return best;
 }
 
-/** Damage reduction: best carried armor item + perk armor. */
+/** Damage reduction: best carried armor item + perk armor + active condition armor. */
 export function armorOf(world: World, s: State): number {
-  return bestArmor(world, s).armor + perkBonus(world, s, "armor");
+  return bestArmor(world, s).armor + perkBonus(world, s, "armor") + condBonus(world, s, "armor");
 }
 
-/** Attack-roll bonus: best weapon's hit + might + perk hit bonuses. The one place this sum is defined. */
+/** Attack-roll bonus: best weapon's hit + might + perk hit bonuses + active condition hit bonuses. The one place this sum is defined. */
 function attackBonus(world: World, s: State, w = bestWeapon(world, s)): number {
-  return w.hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit");
+  return w.hit + (s.attrs["might"] ?? 0) + perkBonus(world, s, "hit") + condBonus(world, s, "hit");
 }
 
 /** Attack-roll and damage totals an `attack` action would actually use, for the free `status` check. */
@@ -209,7 +244,7 @@ export function combatMods(
   const w = bestWeapon(world, s);
   return {
     hit: attackBonus(world, s, w),
-    dmg: w.dmg + perkBonus(world, s, "dmg"),
+    dmg: w.dmg + perkBonus(world, s, "dmg") + condBonus(world, s, "dmg"),
     armor: armorOf(world, s),
     weapon: w.item, // the weapon and armor that count: the best carried, not the sum
     armorItem: bestArmor(world, s).item,
@@ -588,6 +623,30 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         }
         break;
       }
+      // Applying and clearing a condition are silent by themselves — the HUD
+      // tag and status's Conditions line carry it from here on, so an
+      // authored `say` right beside the effect is the narration, not a
+      // second automatic line saying the same thing.
+      case "cond": {
+        const [, id, turns] = fx;
+        s.conds[id] = Math.max(s.conds[id] ?? 0, turns); // re-applying refreshes to the longer remaining duration
+        break;
+      }
+      case "npccond": {
+        const [, npc, id, turns] = fx;
+        const conds = (s.npcConds[npc] ??= {});
+        conds[id] = Math.max(conds[id] ?? 0, turns);
+        break;
+      }
+      case "uncond":
+        delete s.conds[fx[1]];
+        break;
+      case "unnpccond":
+        if (s.npcConds[fx[1]]) delete s.npcConds[fx[1]]![fx[2]];
+        break;
+      case "harm":
+        harmNpc(world, s, fx[1], fx[2], events);
+        break;
       case "end":
         s.ended = { kind: fx[1], id: fx[2], text: fx[3] };
         break;
@@ -697,6 +756,30 @@ function recoverDowned(world: World, s: State, events: string[], attacked: strin
   }
 }
 
+/**
+ * n damage to an npc outside a roll — the `harm` effect. Runs onDeath exactly
+ * once when hp drops to 0 or below, just like a killing attack; safe when the
+ * npc is absent or already dead (no double death, no further loss on a
+ * corpse). A negative n heals instead.
+ */
+function harmNpc(world: World, s: State, npcId: string, n: number, events: string[]): void {
+  const def = world.npcs[npcId];
+  if (!def || npcDead(world, s, npcId)) return;
+  const before = s.npcHp[npcId] ?? def.hp ?? 1;
+  const after = before - n;
+  s.npcHp[npcId] = after;
+  if (n > 0) {
+    const leftText = after > 0 ? `, ${after}/${def.hp ?? 1}hp left` : "";
+    events.push(`${TheName(def.name)} takes ${n} damage${leftText}.`);
+  } else if (n < 0) {
+    events.push(`${TheName(def.name)} recovers ${-n} hp.`);
+  }
+  if (after <= 0) {
+    events.push(`${TheName(def.name)} is destroyed.`);
+    if (def.onDeath) applyFx(world, s, def.onDeath, events);
+  }
+}
+
 function npcStrike(world: World, s: State, npcId: string, events: string[], verb: string): void {
   const def = world.npcs[npcId];
   if (!def?.atk) return;
@@ -710,9 +793,11 @@ function npcStrike(world: World, s: State, npcId: string, events: string[], verb
     companionStruck(world, s, def, standing[pick - 1]!, events, verb);
     return;
   }
+  // a condition it carries (e.g. "braced") can sharpen or dull the blow itself
+  const atk = def.atk + npcCondBonus(world, s, npcId, "hit");
   const armor = def.pierce ? 0 : armorOf(world, s);
-  const taken = Math.max(1, def.atk - armor);
-  const absorbed = def.atk - taken;
+  const taken = Math.max(1, atk - armor);
+  const absorbed = atk - taken;
   events.push(
     absorbed > 0
       ? `${TheName(def.name)} ${verb} — your armor takes ${absorbed} of it.`
@@ -739,6 +824,49 @@ function aggressivePass(world: World, s: State, events: string[], except: string
   }
 }
 
+/**
+ * Every condition — the player's, every npc's — ticks down by one at the end
+ * of a spent turn (step() calls this only when spentTurn: a free look, a menu
+ * page, or a wide berth given ticks nothing). The player's hpPerTurn applies
+ * first, through the same "hp" effect a fight or a trap would use, so it can
+ * end the game exactly like any other loss of hp; once that happens nothing
+ * else here runs. A condition that reaches zero turns is dropped and prints
+ * one short event — render() wraps it in its usual brackets, so a quiet turn
+ * reads exactly as "[winded passes.]".
+ */
+function tickConditions(world: World, s: State, events: string[]): void {
+  if (s.ended) return; // already over this turn (a fight, a trap): nothing more to tick
+  let hpDelta = 0;
+  for (const id of Object.keys(s.conds)) hpDelta += world.conditions?.[id]?.hpPerTurn ?? 0;
+  if (hpDelta) applyFx(world, s, [["hp", hpDelta]], events);
+  if (s.ended) return; // hpPerTurn just killed the player: no more ticking this turn
+  for (const id of Object.keys(s.conds)) {
+    const left = (s.conds[id] ?? 0) - 1;
+    if (left <= 0) {
+      delete s.conds[id];
+      events.push(`${world.conditions?.[id]?.name ?? id} passes.`);
+    } else {
+      s.conds[id] = left;
+    }
+  }
+  for (const npcId of Object.keys(s.npcConds)) {
+    const conds = s.npcConds[npcId];
+    if (!conds) continue;
+    const dead = npcDead(world, s, npcId);
+    for (const id of Object.keys(conds)) {
+      const left = (conds[id] ?? 0) - 1;
+      if (left <= 0) {
+        delete conds[id];
+        const npc = world.npcs[npcId];
+        if (npc && !dead) events.push(`${world.conditions?.[id]?.name ?? id} fades from ${theName(npc.name)}.`);
+      } else {
+        conds[id] = left;
+      }
+    }
+    if (!Object.keys(conds).length) delete s.npcConds[npcId];
+  }
+}
+
 // ---------- initial state ----------
 export function newState(world: World, seed: number): StepOut {
   const s: State = {
@@ -761,6 +889,8 @@ export function newState(world: World, seed: number): StepOut {
     itemLoc: Object.fromEntries(Object.entries(world.items).map(([id, d]) => [id, d.loc])),
     npcHp: Object.fromEntries(Object.entries(world.npcs).map(([id, d]) => [id, d.hp ?? 1])),
     npcRoom: Object.fromEntries(Object.entries(world.npcs).map(([id, d]) => [id, d.room])),
+    conds: {},
+    npcConds: {},
     visited: [],
     party: [],
     talking: null,
@@ -1222,7 +1352,7 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   if (a.kind === "attack") {
     const def = world.npcs[a.npc];
     if (!def) return "";
-    const need = Math.max(1, (def.df ?? 10) - attackBonus(world, s));
+    const need = Math.max(1, npcDf(world, s, a.npc) - attackBonus(world, s));
     // a kill that costs regard or standing is said before the blow, like a check's miss — a player
     // who lost Lys's regard over two wolves the menu called fair game had no way to know
     const kill = killCostHint(world, s, def.onDeath);
@@ -1396,10 +1526,10 @@ export function step(world: World, prev: State, action: Action): StepOut {
       const w = bestWeapon(world, s);
       const hit = attackBonus(world, s, w);
       const roll = d20(s);
-      const df = def.df ?? 10;
+      const df = npcDf(world, s, action.npc);
       const total = roll + hit;
       if (total >= df) {
-        const dmg = (roll === 20 ? w.dmg * 2 : w.dmg) + perkBonus(world, s, "dmg");
+        const dmg = (roll === 20 ? w.dmg * 2 : w.dmg) + perkBonus(world, s, "dmg") + condBonus(world, s, "dmg");
         s.npcHp[action.npc] = (s.npcHp[action.npc] ?? 1) - dmg;
         const left = s.npcHp[action.npc]!;
         const leftText = left > 0 ? `, ${left}/${def.hp ?? 1}hp left` : "";
@@ -1504,6 +1634,8 @@ export function step(world: World, prev: State, action: Action): StepOut {
     // a free look, a menu turned, a wide berth given: no turn passes, so nothing gets its strike
     if (spentTurn) aggressivePass(world, s, events, attacked);
     recoverDowned(world, s, events, attacked);
+    // conditions tick on the same clock as everything else in the world's turn
+    if (spentTurn) tickConditions(world, s, events);
     // the company speaks on a turn of the world, not while a menu is being turned
     if (!MENU_KINDS.has(action.kind)) partyRemarks(world, s, events);
   }
