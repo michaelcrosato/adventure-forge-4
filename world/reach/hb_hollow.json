@@ -157,6 +157,21 @@
               [["say", "It does not move, and neither, this time, does your nerve hold long enough to matter."]]
             ]
           ]
+        },
+        {
+          "id": "hb_wight_key",
+          "label": "show the Keeper's Key to the grave-wight",
+          "if": [
+            ["flag", "keepers_trusted"],
+            ["has", "hb_keepers_key"],
+            ["!flag", "hb_wights_passed"],
+            ["!npcDead", "hb_grave_wight"]
+          ],
+          "fx": [
+            ["set", "hb_wights_passed"],
+            ["xp", 2],
+            ["say", "The wight's blind stare finds the Key before you've raised it all the way. Whatever it was set to watch for, a Keeper's own trust isn't it. It steps aside, unhurried, and lets you through."]
+          ]
         }
       ]
     },
@@ -309,6 +324,25 @@
               ],
               [["say", "The hearth-stone is older and harder than you are tonight. It doesn't so much as chip."]]
             ]
+          ]
+        },
+        {
+          "id": "hb_speak_great_rite",
+          "label": "speak the Great Rite over the court",
+          "if": [["flag", "keepers_sworn"], ["flag", "hb_heard_grievance"], ["!flag", "hb_kingsrest_resolved"]],
+          "fx": [
+            ["set", "hb_hollow_rested"],
+            ["set", "hb_kingsrest_resolved"],
+            ["set", "hb_kingsrest_rite_spoken"],
+            ["addvar", "hollows_rested", 1],
+            ["score", 25],
+            ["xp", 8],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "appr_vell", 1],
+            ["addvar", "appr_osk", 1],
+            ["npcgo", "hb_eldest_king", null],
+            ["say", "You speak the Rite whole, the way Wren taught it, needing no found verse and no borrowed key. The eldest king rises once, to bow to the office and not to you, before he lies back down for good."]
           ]
         },
         {

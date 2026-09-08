@@ -295,6 +295,14 @@
       "exits": { "up": { "to": "hb_mere_shore" } },
       "variants": [
         {
+          "if": [["flag", "keepers_sworn"]],
+          "brief": "A roofless hall, kept for the covenant now — and, she says, for you."
+        },
+        {
+          "if": [["flag", "keepers_trusted"]],
+          "brief": "A roofless hall. The chest stands open, and so does everything else."
+        },
+        {
           "if": [["flag", "hb_keepers_key_found"], ["flag", "vell_ledger_found"]],
           "brief": "A roofless hall. The chest stands open; the shelves, gone through."
         }
@@ -438,6 +446,11 @@
       "takeable": true,
       "owner": "hb_warden",
       "hint": "presses a raised hand into wax"
+    },
+    "hb_covenant_stone": {
+      "name": "a covenant-stone, Keeper-cut",
+      "loc": "nowhere",
+      "hint": "proof you were sworn Keeper of the Covenant, however far from this Hall you carry it"
     }
   },
   "npcs": {
@@ -1186,6 +1199,111 @@
           "fx": [["xp", 2], ["addvar", "rep_keepers", 1]]
         },
         {
+          "id": "hb_wren_trust_offer",
+          "label": "ask to be trusted with the Hall",
+          "if": [["flag", "said_hb_keeper_wren_order"], ["!flag", "keepers_trusted"]],
+          "say": "You ask her plainly what it would take to be trusted with this Hall, not just shown through it.",
+          "fx": [
+            [
+              "if",
+              [["var", "rep_keepers", ">=", 5]],
+              [
+                ["set", "keepers_trusted"],
+                [
+                  "if",
+                  [["!has", "hb_keepers_key"]],
+                  [
+                    ["set", "hb_keepers_key_found"],
+                    ["move", "hb_keepers_key", "inv"],
+                    ["say", "\"Take it, then. You've more claim on it than some who've held it.\" She fetches the Key herself."]
+                  ],
+                  []
+                ],
+                ["score", 6],
+                ["xp", 3],
+                ["say", "\"Trusted,\" Wren says, like the word costs her something to spend. \"The Key was never only the Kings' Rest's. Neither is this Hall, where you're concerned.\""],
+                ["if", [["inParty", "vell"]], [["say", "Vell: \"She doesn't say that to just anyone. I'd know.\""]], []]
+              ],
+              [
+                ["say", "\"Not yet.\" Wren doesn't soften it. \"Trust isn't a door I open twice for the same knock. Earn more of it, and ask again.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "hb_wren_records",
+          "label": "ask what happened to the first Hall",
+          "if": [["flag", "keepers_trusted"]],
+          "once": true,
+          "say": "\"You want the true history, not the version strangers get.\" Wren sets down her ledger.",
+          "fx": [
+            ["xp", 2],
+            ["score", 2],
+            ["say", "\"There was a Hall before this one, nearer the water. A King wanted what we kept. We wouldn't yield it, so we opened the sluices ourselves rather than hand it over. I'd pay that price again.\""]
+          ]
+        },
+        {
+          "id": "hb_wren_verse",
+          "label": "ask for a verse no stranger hears",
+          "if": [["flag", "keepers_trusted"]],
+          "once": true,
+          "say": "\"There's a keeping-verse we don't teach outside the Hall.\" Wren says it once, plain, and doesn't repeat herself.",
+          "fx": [
+            ["xp", 2],
+            ["score", 2],
+            ["say", "It isn't one of the three the downs give up to anyone patient enough. This one's for the Hall's own dead — and now, she says, for yours too, when that day comes."]
+          ]
+        },
+        {
+          "id": "hb_wren_sworn_offer",
+          "label": "ask to swear the Covenant",
+          "if": [["flag", "said_hb_keeper_wren_order"], ["!flag", "keepers_sworn"]],
+          "say": "You ask what it would take to be sworn to the covenant itself, not just trusted with its Hall.",
+          "fx": [
+            [
+              "if",
+              [["var", "rep_keepers", ">=", 9]],
+              [
+                ["set", "keepers_sworn"],
+                ["addvar", "rep_iron", -3],
+                ["move", "hb_covenant_stone", "inv"],
+                ["score", 10],
+                ["xp", 5],
+                ["say", "\"Then you'll have the Rite whole, not scraped from three stones.\" Wren presses a small cut stone into your hand. \"Say it wherever this Reach still grieves. I only meant to teach that to another Keeper.\""],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [["say", "Vell: \"A stranger, keeping the covenant. Wren hates that phrase. Watch her not say it again.\""]],
+                  []
+                ]
+              ],
+              [
+                ["say", "\"Sworn is a different debt than trusted.\" Wren doesn't dress it up. \"The whole covenant has to agree you've earned that, not just me. Not yet.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "hb_wren_duty",
+          "label": "ask what the office asks of you now",
+          "if": [["flag", "keepers_sworn"]],
+          "once": true,
+          "say": "You ask her, plainly, what a Keeper of the Covenant is actually for.",
+          "fx": [
+            ["xp", 2],
+            [
+              "if",
+              [["any", [["!flag", "hb_kingsrest_resolved"], ["!flag", "hb_cairn_done"]]]],
+              [
+                ["say", "\"Whatever's still unquiet in this hold is yours to settle now — the old court, the weeping cairn, wherever you find it waiting. Nobody speaks the Rite for them but you.\""]
+              ],
+              [
+                ["say", "\"Today? Nothing left in this hold that wants it.\" Wren almost smiles. \"That won't last. The Reach makes more of these than we keep up with.\""]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "bye",
           "label": "leave her to the ledgers",
           "say": "Go carefully among the mounds. They notice who does.",
@@ -1467,6 +1585,42 @@
       "if": [["flag", "hb_curio_clasp_gone"]],
       "text": "The stag-clasp found an honest buyer at Barrowmere, for once, and left no argument behind it.",
       "weight": 0
+    },
+    {
+      "if": [["flag", "keepers_sworn"]],
+      "text": "Barrowmere calls you Keeper of the Covenant. Wren taught the Great Rite to a stranger once, and doesn't call it a mistake.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "keepers_trusted"], ["!flag", "keepers_sworn"]],
+      "text": "Wren still calls you trusted at the Hall. The Key that once opened only the Kings' Rest knows you at the weeping cairn too.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "keepers_sworn"]],
+      "text": "The Ironbound mark a Keeper sworn the way they mark any door closed to them now — plainly, no surprise in it.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "hb_kingsrest_rite_spoken"]],
+      "text": "The old court needed no found verse and no key in the end. Spoken properly, the Rite alone was already enough.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "hb_cairn_rite_spoken"]],
+      "text": "The weeping cairn went quiet with no blade drawn there at all. Wren's Rite reached it from outside the Hall itself.",
+      "weight": 0
+    }
+  ],
+  "statusPaths": [
+    {
+      "label": "your rank with the Barrow-Keepers",
+      "var": "rep_keepers",
+      "if": [["any", [["flag", "keepers_trusted"], ["flag", "keepers_sworn"]]]],
+      "states": [
+        { "if": [["flag", "keepers_sworn"]], "text": "Keeper of the Covenant — the Great Rite is yours to speak" },
+        { "if": [["flag", "keepers_trusted"]], "text": "trusted with the Hall, and the Key besides" }
+      ]
     }
   ],
   "perks": {

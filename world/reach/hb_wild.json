@@ -35,6 +35,31 @@
                 ["xp", 1],
                 ["say", "Old habit, for anyone who passes a weeping mound: a fingertip of the rust-water, tasted and not swallowed. It tastes exactly like iron, and you feel no different for it, which is rather the point."]
               ]
+            },
+            {
+              "id": "hb_cairn_key_touch",
+              "label": "lay the Key against the weeping capstone",
+              "if": [["flag", "keepers_trusted"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Old iron finds old stone. It was never only the Kings' Rest that answered to the Key — Wren said as much, and the capstone, in its own way, agrees."]
+              ]
+            },
+            {
+              "id": "hb_cairn_great_rite",
+              "label": "speak the Great Rite over the cairn",
+              "if": [["flag", "keepers_sworn"], ["!flag", "hb_cairn_done"]],
+              "fx": [
+                ["set", "hb_cairn_done"],
+                ["set", "hb_cairn_rite_spoken"],
+                ["slay", "hb_cairn_wight"],
+                ["score", 6],
+                ["xp", 5],
+                ["addvar", "rep_keepers", 1],
+                ["say", "You don't go in. You don't need to. The Rite carries through stone as sure as it ever carried through a stranger's careful reading, and whatever kept its watch in there finally lies down."]
+              ]
             }
           ]
         },
