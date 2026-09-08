@@ -178,6 +178,23 @@ for (const [id, n] of Object.entries(world.npcs)) {
   for (const t of n.topics ?? []) { scanFx(t.fx, r); restSetter(t.fx, (t.if ?? []) as unknown[], r, `${id}/${t.id}`); }
   scanFx(n.onDeath, r);
 }
+// the clock settles holds too: the Ironbound march burns fourteen of them on a
+// schedule, and until this walk existed none of that showed in the fates
+// column. A clock entry belongs to whichever hold its own flags name.
+for (const entry of world.clock ?? []) {
+  const scanClock = (fxs: unknown): void => {
+    if (!Array.isArray(fxs)) return;
+    for (const fx of fxs as unknown[]) {
+      if (!Array.isArray(fx)) continue;
+      if (fx[0] === "set" && typeof fx[1] === "string") {
+        const f = fateOf(fx[1]);
+        if (f) shape(bucket(prefixOf(fx[1]))).fates.add(f);
+      }
+      for (const part of fx) if (Array.isArray(part)) scanClock(part);
+    }
+  };
+  scanClock(entry.fx);
+}
 for (const ep of world.epilogue ?? []) {
   // an epilogue line belongs to whichever region's flags it reads
   const seen = new Set<string>();

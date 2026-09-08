@@ -120,6 +120,16 @@ for (const [qid, q] of Object.entries(world.quests ?? {})) {
   walkCond(q.start, o); walkCond(q.done, o); walkCond(q.failed, o);
   for (const st of q.stages ?? []) walkCond(st.if, o);
 }
+// `world.clock` concatenates from the part files, so a scheduled event is a
+// region author's content — and it both reads flags and sets them. Missing it
+// made the Ironbound march's own `iron_march` report as a gate with no key on
+// the very day the march landed: the flag is set by a clock entry and nothing
+// else, which this walk could not see.
+for (const entry of world.clock ?? []) {
+  const o = { kind: "clock", container: "clock", label: entry.id };
+  walkCond(entry.if, o);
+  walkFx(entry.fx, o, true);
+}
 for (const ep of world.epilogue ?? []) walkCond(ep.if, { kind: "epilogue", container: "epilogue", label: ep.text.slice(0, 40) });
 for (const tr of world.statusTracks ?? []) {
   walkCond(tr.if, { kind: "status", container: "status", label: tr.label });

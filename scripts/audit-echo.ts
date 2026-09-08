@@ -83,6 +83,8 @@ for (const [id, it] of Object.entries(world.items)) {
   add(`${id} hint`, it.hint);
   for (const u of it.use ?? []) for (const fx of u.fx ?? []) if (fx[0] === "say") add(`${id} use.say`, fx[1]);
 }
+// the clock's own lines: prose the player reads on a turn they did not ask for
+for (const entry of world.clock ?? []) for (const fx of entry.fx ?? []) if (fx[0] === "say") add(`clock:${entry.id} say`, fx[1]);
 for (const [i, ep] of (world.epilogue ?? []).entries()) add(`epilogue[${i}]`, ep.text);
 
 // candidate pairs share at least one shingle; the inverted index keeps this
