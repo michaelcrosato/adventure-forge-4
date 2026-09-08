@@ -288,9 +288,12 @@ nobody's business but the player's.
   is unchanged by any of this: always free, never a strike.
 - A remark may carry `fx`, run when it is spoken — a companion who says what
   they think of a theft can also think less of you (`["addvar", "appr_lys", -1]`).
-  One remark a companion a turn, but a remark carrying `fx` is never held
-  behind a plain one, and none speak while a menu is being turned (the
-  travel list, the company list, a conversation's next page).
+  One remark a turn, for the whole party — not one each, so a full company
+  never floods a screen — but a remark carrying `fx` is never held behind a
+  plain one, and none speak while a menu is being turned (the travel list,
+  the company list, a conversation's next page). A companion who has had
+  enough (`leaves`) is not a remark and is never held back this way: every
+  farewell is heard the turn it is earned, however many that is.
   An action or topic whose top-level `fx` moves a companion's regard shows it in
   its hint ("Lys +2, Osk -2"), so a side taken is taken knowingly.
   A remark whose `fx` sets a quarrel flag (`quarrel_<a>_<b>` or

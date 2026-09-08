@@ -14,6 +14,7 @@ import type {
   CustomAction,
   Fx,
   PerkDef,
+  RemarkDef,
   State,
   StepOut,
   TopicDef,
@@ -744,43 +745,59 @@ function enterRoom(world: World, s: State, roomId: string, events: string[]): vo
 }
 
 /**
- * One companion remark per party member per turn: the first remark whose
- * conditions pass and that hasn't been spoken yet. Runs after the turn's own
- * effects, so a remark can react to the very choice just made.
+ * The company's turn to speak. Farewells are never capped: a companion who
+ * has had enough always says so and walks, in party order, however many that
+ * is this turn — a desertion held back a turn would read as a companion who
+ * changed their mind. Remarks are: one for the whole party a turn, not one
+ * each, so a five- (soon more) companion screen never floods with banter. A
+ * remark that moves regard (or anything else) still cuts ahead of a plain
+ * one; among same-tier candidates, a rotating start — advanced once a turn,
+ * never touching the dice, so combat and checks replay unchanged — decides
+ * who speaks, so the same voice doesn't win the slot every time. Runs after
+ * the turn's own effects, so a remark can react to the very choice just made.
  */
 function partyRemarks(world: World, s: State, events: string[]): void {
   for (const id of [...s.party]) {
     if (s.ended) return;
     const def = world.npcs[id];
     if (!def || npcDead(world, s, id)) continue;
-    // a companion who has had enough walks out before saying anything else
+    // a companion who has had enough walks out before anyone gets a remark in
     const gone = def.companion?.leaves?.find((l) => condsOk(world, s, l.if));
-    if (gone) {
-      events.push(`${def.name}: "${gone.say}"`);
-      s.party = s.party.filter((x) => x !== id);
-      s.flags[`${id}_left`] = true;
-      events.push(`${def.name} leaves your company.`);
-      continue;
-    }
-    // one remark a turn — but a remark that moves regard (or anything else)
-    // is never held back behind a plain one, so a cost lands the turn it is earned
+    if (!gone) continue;
+    events.push(`${def.name}: "${gone.say}"`);
+    s.party = s.party.filter((x) => x !== id);
+    s.flags[`${id}_left`] = true;
+    events.push(`${def.name} leaves your company.`);
+  }
+  if (s.ended || s.party.length === 0) return;
+
+  // one remark a turn, for the whole company: gather each companion's own
+  // top pick (their own fx-first priority, same as always), starting the
+  // scan from a rotating index so no single companion has first claim every
+  // turn, then let any fx-carrying pick win over every plain one
+  const order = s.party;
+  const start = (s.vars["_remarkRot"] = ((s.vars["_remarkRot"] ?? 0) + 1) % order.length);
+  const candidates: { id: string; def: NpcDef; r: RemarkDef }[] = [];
+  for (let i = 0; i < order.length; i++) {
+    const id = order[(start + i) % order.length]!;
+    const def = world.npcs[id];
+    if (!def || npcDead(world, s, id)) continue;
     const ready = (def.companion?.remarks ?? []).filter((r) => !s.flags[`remarked_${id}_${r.id}`] && condsOk(world, s, r.if));
-    const ordered = [...ready.filter((r) => r.fx?.length), ...ready.filter((r) => !r.fx?.length)];
-    for (const r of ordered) {
-      const flag = `remarked_${id}_${r.id}`;
-      s.flags[flag] = true;
-      events.push(`${def.name}: "${r.say}"`);
-      if (r.fx) applyFx(world, s, r.fx, events);
-      // a remark that opens a quarrel between two companions says where the
-      // answer is: the sides and the settling live in their conversations
-      for (const fx of r.fx ?? []) {
-        const m = fx[0] === "set" ? /^quarrel_([a-z]+)_([a-z]+)(?:_([a-z]+))?$/.exec(fx[1]) : null;
-        if (!m || QUARREL_TAILS.has(m[3] ?? "")) continue;
-        const a = world.npcs[m[1]!]?.name, b = world.npcs[m[2]!]?.name;
-        if (a && b) events.push(`(Speak with ${a} or ${b} to take a side, or to tell them to settle it.)`);
-      }
-      break;
-    }
+    const top = [...ready.filter((r) => r.fx?.length), ...ready.filter((r) => !r.fx?.length)][0];
+    if (top) candidates.push({ id, def, r: top });
+  }
+  const win = candidates.find((c) => c.r.fx?.length) ?? candidates[0];
+  if (!win) return;
+  s.flags[`remarked_${win.id}_${win.r.id}`] = true;
+  events.push(`${win.def.name}: "${win.r.say}"`);
+  if (win.r.fx) applyFx(world, s, win.r.fx, events);
+  // a remark that opens a quarrel between two companions says where the
+  // answer is: the sides and the settling live in their conversations
+  for (const fx of win.r.fx ?? []) {
+    const m = fx[0] === "set" ? /^quarrel_([a-z]+)_([a-z]+)(?:_([a-z]+))?$/.exec(fx[1]) : null;
+    if (!m || QUARREL_TAILS.has(m[3] ?? "")) continue;
+    const a = world.npcs[m[1]!]?.name, b = world.npcs[m[2]!]?.name;
+    if (a && b) events.push(`(Speak with ${a} or ${b} to take a side, or to tell them to settle it.)`);
   }
 }
 

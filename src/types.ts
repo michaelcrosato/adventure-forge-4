@@ -148,8 +148,10 @@ export type TopicDef = {
 };
 
 /**
- * A companion's one-line reaction. Checked after every turn for each party
- * member; the first remark whose conditions pass is spoken, once ever
+ * A companion's one-line reaction. Checked after every turn, across the whole
+ * party at once — at most one remark reaches the screen a turn, not one per
+ * companion — for the first ready candidate (fx-carrying ones win the slot
+ * over plain ones; a rotating start decides among ties), spoken once ever
  * (flag `remarked_<npc>_<id>`). This is how a companion notices where you are
  * and what you just chose.
  */
