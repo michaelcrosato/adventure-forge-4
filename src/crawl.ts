@@ -71,6 +71,29 @@ import type { Action, State, Trace, World } from "./types.ts";
 
 const HOLE = /\b(?:undefined|null|NaN|\[object Object\])\b/;
 
+/**
+ * Rooms allowed to offer more than MENU_CAP, and how many — a named list of
+ * exceptions that may only ever shrink, like test/budget.test.ts's PROOF_BUDGET.
+ *
+ * The cap exists so a turn stays a choice rather than a search, and paging now
+ * guarantees that much: a player never sees more than twelve entries whatever
+ * the room holds. What the cap is still *for* is stopping an ordinary room
+ * from quietly growing to twenty options. A climax where every ending the
+ * place offers is chosen is not an ordinary room, and holding it to twelve
+ * would be holding the game's depth against it.
+ *
+ * So a room over the cap has to be argued for here, by name, with its number.
+ * Anything not listed is a finding.
+ */
+const CROWDED: Record<string, number> = {
+  // The Vale's barrow throne: two exits, a way back to the village, and every
+  // ending the Vale has — the verses, the crown returned, the crown broken,
+  // both together, kneeling, walking away with it — each in the variant your
+  // oath and your crown have earned. Ten of them can stand at once. Found by
+  // the forked crawl, which is the only mode that ever stood there.
+  "vale:throne": 13,
+};
+
 function walkRng(seed: number): () => number {
   let a = seed | 0;
   return () => {
@@ -148,7 +171,7 @@ function walkFrom(world: World, start: State, seed: number, maxSteps: number, sw
       // pages rather than hiding its tail, so the page is always within the cap
       // and it is the load that says whether the room got too crowded to read
       const load = menuLoad(world, state);
-      if (load > MENU_CAP) {
+      if (load > (CROWDED[`${world.id}:${state.room}`] ?? MENU_CAP)) {
         overCap.count++;
         if (load > overCap.worstN) {
           overCap.worstN = load;
