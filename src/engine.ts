@@ -566,9 +566,29 @@ function checkSourceId(a: Action): string | undefined {
  * before spending a turn and the number the roll is actually compared against
  * can never disagree (see oddsHint's comment on that history). A check with
  * no sourceId never escalates: it reads its authored DC unchanged.
+ *
+ * Capped so the die can always land it. The design is "you can always keep
+ * trying, it just gets worse" — without the cap that stops being true: ten
+ * failures on a DC 11 check with no modifier previewed "roll 21+ on the die",
+ * which no d20 rolls, while the option stayed on the menu and each further
+ * press still charged the standing its own miss branch costs. That is worse
+ * than the flat DC it replaced: a preview that had been merely decorative
+ * became actively false, and a guaranteed failure kept taking payment. The
+ * escalation therefore stops at a natural 20 — still the worst odds in the
+ * game at 5%, still possible, and the number shown is still the number rolled
+ * against, which is the property the whole preview rests on.
  */
-function escalatedDc(s: State, sourceId: string | undefined, baseDc: number): number {
-  return sourceId ? baseDc + (s.checkAttempts[sourceId] ?? 0) : baseDc;
+function escalatedDc(s: State, sourceId: string | undefined, baseDc: number, mod = 0): number {
+  if (!sourceId) return baseDc;
+  const raised = baseDc + (s.checkAttempts[sourceId] ?? 0);
+  // the highest DC this player's die can still meet, on a natural 20
+  const reachable = mod + 20;
+  // The rule is narrow on purpose: escalation must never carry a check ACROSS
+  // the line from reachable to unreachable. A DC the author already put past
+  // that line is their deliberate "not without help" and is left alone — this
+  // function's job is not to soften an authored number, only to keep its own
+  // rise from turning "worse odds" into "no odds".
+  return baseDc > reachable ? raised : Math.min(raised, reachable);
 }
 
 /**
@@ -580,34 +600,36 @@ function escalatedDc(s: State, sourceId: string | undefined, baseDc: number): nu
  * rather than guessing, and for a source whose leading effect is no longer a
  * `check` at all — the label would be honest but the DC would not be.
  */
-function checkSource(world: World, sourceId: string): { label: string; baseDc: number } | undefined {
+function checkSource(world: World, sourceId: string): { label: string; baseDc: number; skill: string } | undefined {
   const i = sourceId.indexOf(":");
   const kind = sourceId.slice(0, i);
   const rest = sourceId.slice(i + 1);
-  const leading = (fx: Fx[] | undefined): number | undefined => {
+  // the DC and the skill both: the escalation cap needs the modifier, and the
+  // modifier needs to know which attribute the check reads
+  const leading = (fx: Fx[] | undefined): { dc: number; skill: string } | undefined => {
     const c = fx?.[0];
-    return c && c[0] === "check" ? c[2] : undefined;
+    return c && c[0] === "check" ? { dc: c[2], skill: c[1] } : undefined;
   };
   switch (kind) {
     case "act":
       for (const room of Object.values(world.rooms))
         for (const a of room.actions ?? []) {
           if (a.id !== rest) continue;
-          const dc = leading(a.fx);
-          return dc === undefined ? undefined : { label: a.label, baseDc: dc };
+          const c = leading(a.fx);
+          return c === undefined ? undefined : { label: a.label, baseDc: c.dc, skill: c.skill };
         }
       return undefined;
     case "ab": {
       const a = world.abilities?.[rest];
-      const dc = leading(a?.fx);
-      return a && dc !== undefined ? { label: a.label, baseDc: dc } : undefined;
+      const c = leading(a?.fx);
+      return a && c ? { label: a.label, baseDc: c.dc, skill: c.skill } : undefined;
     }
     case "tp": {
       const j = rest.indexOf(":");
       const npc = world.npcs[rest.slice(0, j)];
       const topic = npc?.topics?.find((t) => t.id === rest.slice(j + 1));
-      const dc = leading(topic?.fx);
-      return npc && topic && dc !== undefined ? { label: `${npc.name}: ${topic.label}`, baseDc: dc } : undefined;
+      const c = leading(topic?.fx);
+      return npc && topic && c ? { label: `${npc.name}: ${topic.label}`, baseDc: c.dc, skill: c.skill } : undefined;
     }
     case "use": {
       const j = rest.indexOf(":");
@@ -615,8 +637,8 @@ function checkSource(world: World, sourceId: string): { label: string; baseDc: n
       const target = j === -1 ? undefined : rest.slice(j + 1) || undefined;
       const item = world.items[itemId];
       const use = item?.use?.find((d) => d.target === target && leading(d.fx) !== undefined);
-      const dc = leading(use?.fx);
-      return item && dc !== undefined ? { label: `use ${item.name}`, baseDc: dc } : undefined;
+      const c = leading(use?.fx);
+      return item && c ? { label: `use ${item.name}`, baseDc: c.dc, skill: c.skill } : undefined;
     }
     default:
       return undefined;
@@ -640,7 +662,7 @@ export function failedChecks(world: World, s: State): { label: string; dc: numbe
   for (const [id, attempts] of Object.entries(s.checkAttempts ?? {})) {
     if (!attempts) continue;
     const found = checkSource(world, id);
-    if (found) out.push({ label: found.label, dc: escalatedDc(s, id, found.baseDc), attempts });
+    if (found) out.push({ label: found.label, dc: escalatedDc(s, id, found.baseDc, checkMod(world, s, found.skill)), attempts });
   }
   return out.sort((a, b) => b.attempts - a.attempts);
 }
@@ -757,7 +779,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
         // harder for every failed attempt already logged against it, so the
         // second try at the same obstacle is never the freebie the first was.
         // Un-keyed checks (no sourceId) never escalate and just use baseDc.
-        const dc = escalatedDc(s, sourceId, baseDc);
+        const dc = escalatedDc(s, sourceId, baseDc, checkMod(world, s, String(fx[1])));
         const mod = checkMod(world, s, skill);
         const roll = d20(s);
         const total = roll + mod;
@@ -1285,7 +1307,7 @@ function checkHereNow(world: World, s: State, skill: string, min: number): boole
   // failed attempt already escalated it, and a check hard enough only because
   // of that is still, honestly, hard enough
   const firstIsHardCheck = (fx: Fx[] | undefined, sourceId: string | undefined) =>
-    !!fx?.[0] && fx[0][0] === "check" && fx[0][1] === skill && escalatedDc(s, sourceId, fx[0][2]) >= min;
+    !!fx?.[0] && fx[0][0] === "check" && fx[0][1] === skill && escalatedDc(s, sourceId, fx[0][2], checkMod(world, s, String(fx[0][1]))) >= min;
   for (const a of world.rooms[s.room]?.actions ?? [])
     if (customVisible(world, s, a) && firstIsHardCheck(a.fx, `act:${a.id}`)) return true;
   for (const npc of npcsHere(world, s))
@@ -1793,7 +1815,7 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     // it, and the preview has to say so before the turn is spent, or it is
     // the very promise-the-roll-then-breaks bug this file has paid for once
     // (see oddsHint's own comment above and applyFx's `check` case)
-    const dc = escalatedDc(s, checkSourceId(a), chk[2]);
+    const dc = escalatedDc(s, checkSourceId(a), chk[2], checkMod(world, s, chk[1]));
     // all three numbers, so neither frame can be misread: the DC the total must
     // reach, the modifier, and the die roll that gets there
     const mod = checkMod(world, s, chk[1]);

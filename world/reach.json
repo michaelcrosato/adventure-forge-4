@@ -191,7 +191,12 @@
       "label": "break them",
       "context": "combat",
       "if": [["class", "warden"], ["var", "res_warden", ">=", 1]],
-      "fx": [["addvar", "res_warden", -1], ["harmhostile", 3], ["condhostile", "winded", 2], ["say", "You break their guard open."]]
+      "fx": [
+        ["addvar", "res_warden", -1],
+        ["harmhostile", 3],
+        ["condhostile", "winded", 2],
+        ["say", "You break their guard open."]
+      ]
     },
     "warden_weight": {
       "label": "take the weight",
@@ -205,17 +210,16 @@
       "if": [["class", "scout"], ["var", "res_scout", ">=", 1]],
       "fx": [["addvar", "res_scout", -1], ["cond", "honed", 2], ["say", "You mark the spot before you move."]]
     },
-    "scout_ground": {
-      "label": "read the ground",
-      "free": true,
-      "if": [["class", "scout"]],
-      "fx": [["sayunvisited"]]
-    },
+    "scout_ground": { "label": "read the ground", "free": true, "if": [["class", "scout"]], "fx": [["sayunvisited"]] },
     "scholar_name": {
       "label": "name it",
       "context": "combat",
       "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["horrorHere"], ["holdsGround"], ["lowHp"]],
-      "fx": [["addvar", "res_scholar", -1], ["calmhostile"], ["say", "You speak its true name, and it remembers what it was."]]
+      "fx": [
+        ["addvar", "res_scholar", -1],
+        ["calmhostile"],
+        ["say", "You speak its true name, and it remembers what it was."]
+      ]
     },
     "envoy_parley": {
       "label": "parley",
@@ -2014,7 +2018,7 @@
       "use king's seal",
       "go west",
       "go north",
-      { "repeat": "work out the stone verse (wits)", "until": ["flag", "va_verse_stone"], "max": 6 },
+      { "repeat": "work out the stone verse (wits)", "until": ["flag", "va_verse_stone"], "max": 14 },
       "go up",
       "talk to hollow king",
       "why do you grieve",
@@ -2042,7 +2046,7 @@
       "go west",
       "go south",
       "go east",
-      { "repeat": "work out the water verse (wits)", "until": ["flag", "va_verse_water"], "max": 6 },
+      { "repeat": "work out the water verse (wits)", "until": ["flag", "va_verse_water"], "max": 14 },
       "perk: Strong Arm (+1 might checks)",
       "travel to a known place",
       "to the barrow field",
@@ -2280,7 +2284,7 @@
       "use king's seal",
       "go west",
       "go north",
-      { "repeat": "work out the stone verse (wits)", "until": ["flag", "va_verse_stone"], "max": 6 },
+      { "repeat": "work out the stone verse (wits)", "until": ["flag", "va_verse_stone"], "max": 14 },
       "go up",
       "talk to hollow king",
       "why do you grieve",
@@ -2308,7 +2312,7 @@
       "go west",
       "go south",
       "go east",
-      { "repeat": "work out the water verse (wits)", "until": ["flag", "va_verse_water"], "max": 6 },
+      { "repeat": "work out the water verse (wits)", "until": ["flag", "va_verse_water"], "max": 14 },
       "perk: Strong Arm (+1 might checks)",
       "travel to a known place",
       "to the barrow field",

@@ -31,7 +31,10 @@ const mini = (over: Partial<World> = {}): World => ({
   ...over,
 });
 
-const riddleWorld = (dc = 21) =>
+// DC 30: high enough that every attempt fails deterministically at any seed,
+// AND high enough that the escalation cap (a natural 20, or the authored DC if
+// that is already higher) leaves room for the rise these tests are about.
+const riddleWorld = (dc = 30) =>
   mini({
     rooms: {
       a: {
@@ -47,7 +50,7 @@ test("a failed attempt raises the DC of the next try on the same check — previ
   let { state } = newState(world, 1);
   const a = { kind: "custom", room: "a", id: "riddle" } as Action;
   for (let n = 0; n < 3; n++) {
-    const dc = 21 + n; // n prior failures already logged
+    const dc = 30 + n; // n prior failures already logged
     assert.equal(oddsHint(world, state, a), ` (DC ${dc}, wits: roll ${dc}+ on the die)`, `attempt ${n + 1} preview`);
     const out = step(world, state, a);
     const line = out.events.find((e) => e.startsWith("WITS d20:"))!;
@@ -154,16 +157,40 @@ test("a retried check's history shows up on the free status check, DC included",
   assert.doesNotMatch(renderStatus(world, state), /Failed before/, "nothing to report before any attempt");
   state = step(world, state, a).state;
   state = step(world, state, a).state;
-  assert.match(renderStatus(world, state), /Failed before: riddle \(2x, now DC 23\)/);
+  assert.match(renderStatus(world, state), /Failed before: riddle \(2x, now DC 32\)/);
 });
 
 test("the rendered menu line itself carries the escalated DC (renderMenu, not just oddsHint in isolation)", () => {
   const world = riddleWorld();
   let { state } = newState(world, 1);
   const first = renderMenu(world, state).text;
-  assert.match(first, /^1 riddle \(DC 21, wits: roll 21\+ on the die\)$/m);
+  assert.match(first, /^1 riddle \(DC 30, wits: roll 30\+ on the die\)$/m);
   state = step(world, state, { kind: "custom", room: "a", id: "riddle" }).state;
   state = step(world, state, { kind: "custom", room: "a", id: "riddle" }).state;
   const afterTwoFails = renderMenu(world, state).text;
-  assert.match(afterTwoFails, /^1 riddle \(DC 23, wits: roll 23\+ on the die\)$/m);
+  assert.match(afterTwoFails, /^1 riddle \(DC 32, wits: roll 32\+ on the die\)$/m);
+});
+
+test("escalation stops where the die can still land it, and never lowers an authored DC", () => {
+  // The design is "you can always keep trying, it just gets worse". Uncapped it
+  // stopped being true: ten failures on a DC 11 check with no modifier previewed
+  // "roll 21+ on the die", which no d20 rolls — while the option stayed on the
+  // menu and each further press still charged the standing its miss branch costs.
+  const world = riddleWorld(11);
+  let { state } = newState(world, 1);
+  const a = { kind: "custom", room: "a", id: "riddle" } as Action;
+  const dcOf = () => Number(/DC (\d+)/.exec(oddsHint(world, state, a))![1]);
+  const seen: number[] = [];
+  for (let n = 0; n < 15; n++) { seen.push(dcOf()); state = step(world, state, a).state; }
+  assert.equal(seen[0], 11, "the authored DC on the first try");
+  assert.equal(Math.max(...seen), 20, `the rise stops at a natural 20, saw ${Math.max(...seen)}`);
+  // and it is still possible there: the preview and the roll both say 20+
+  assert.equal(oddsHint(world, state, a), " (DC 20, wits: roll 20+ on the die)");
+
+  // an authored DC already past 20 is left exactly as written
+  const hard = riddleWorld(30);
+  let h = newState(hard, 1).state;
+  assert.match(oddsHint(hard, h, a), /DC 30, wits: roll 30\+/);
+  h = step(hard, h, a).state;
+  assert.match(oddsHint(hard, h, a), /DC 31, wits: roll 31\+/, "the author's own number still escalates from where they put it");
 });
