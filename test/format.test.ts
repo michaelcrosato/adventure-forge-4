@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { matchesMenuLabel, renderStatus } from "../src/format.ts";
+import { newState } from "../src/engine.ts";
+import { matchesMenuLabel, render, renderStatus } from "../src/format.ts";
 import type { State, World } from "../src/types.ts";
 
 test("matchesMenuLabel: a rendered menu line is its canonical label, alone or with one trailing display hint", () => {
@@ -216,4 +217,47 @@ test("renderStatus: omits a statusPaths line when nothing matches and there is n
     statusPaths: [{ label: "Barrow", states: [{ if: [["flag", "promised_seal"]], text: "promised" }] }],
   } as unknown as World;
   assert.equal(renderStatus(world, stateWithVars({})), "No progress to report.");
+});
+
+/**
+ * A turn's numbers fold onto one line, and add up.
+ *
+ * One action can earn score twice and xp twice, and each pushes its own event.
+ * Once every event got its own line — which is what made four companions
+ * answering a hold's arrival legible — that read as "(+5)", "(+3xp)",
+ * "(+5xp)", "(+5)" straight down the screen: four lines to say two numbers.
+ */
+const noticeWorld = (): World =>
+  ({
+    id: "n",
+    title: "N",
+    intro: "x",
+    start: "a",
+    hp: 10,
+    maxScore: 5,
+    rooms: { a: { name: "A", desc: "A room.", actions: [{ id: "win", label: "win", fx: [["score", 5], ["end", "win", "done", "Done."]] }] } },
+    items: {},
+    npcs: {},
+    walkthrough: ["win"],
+  }) as unknown as World;
+
+test("a run of bare notices reads as one line, with score and xp summed", () => {
+  const world = noticeWorld();
+  const line = (events: string[]) => render(world, newState(world, 1).state, events).text.split("\n")[1]!;
+  assert.equal(line(["(+5)", "(+3xp)", "(+5xp)", "(+5)"]), "[(+10, +8xp)]");
+  assert.equal(line(["(+5)"]), "[(+5)]", "one notice reads exactly as it always did");
+  assert.equal(
+    line(["(+5)", "(+4xp)", "(the Gray Church -2)", "(the Crown +1)"]),
+    "[(+5, +4xp, the Gray Church -2, the Crown +1)]",
+    "anything that names its subject keeps its own words, in the order it was pushed",
+  );
+});
+
+test("prose between two notices keeps them apart — a number belongs to what earned it", () => {
+  const world = noticeWorld();
+  const text = render(world, newState(world, 1).state, ["(+5)", "The stair lets out behind the guards.", "(+3xp)", "(+2)"]).text;
+  const block = text.split("\n").slice(1, 5);
+  // and the sums read in a fixed order — score, then xp, then whatever names
+  // its own subject — however the effects happened to push them
+  assert.deepEqual(block, ["[(+5)", "The stair lets out behind the guards.", "(+2, +3xp)]"], text);
 });
