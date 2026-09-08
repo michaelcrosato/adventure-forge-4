@@ -26,6 +26,7 @@ export type Cond =
   | ["!cond", string]
   | ["npccond", string, string] // an npc currently holds this timed condition
   | ["!npccond", string, string]
+  | ["turn", "<" | ">" | "=" | ">=" | "<=", number] // the turn counter so far — deterministic state, read-only (never mirrored into vars, so content can't write it)
   | ["any", Cond[]]; // passes when at least one of the listed conditions passes (the one OR in an all-of list)
 
 // ---------- effects ----------
@@ -240,6 +241,19 @@ export type ConditionDef = {
   hint?: string; // short clause the menu/HUD/status may show, e.g. "your guard is down"
 };
 
+/**
+ * One scheduled effect in `world.clock` — the realm's own turn. Checked in
+ * file order once per spent turn; the first entry whose `if` passes (and,
+ * for a `once` entry, has not already fired) runs its `fx`, and the rest
+ * wait for a later turn. At most one entry fires per turn — see World.clock.
+ */
+export type ClockEntry = {
+  id: string; // unique; a `once` entry sets flag `clocked_<id>` the turn it fires
+  if?: Cond[]; // all must pass; default always
+  once?: boolean; // fires at most once ever (auto-flag `clocked_<id>`); omitted, it may fire again on any later turn its `if` still holds
+  fx: Fx[]; // ordinary effects, run through the same applyFx as everything else — no new effect vocabulary
+};
+
 // ---------- overworld generation ----------
 export type GenSpot = {
   cell: [number, number];
@@ -364,6 +378,16 @@ export type World = {
    * (default 0), ties in file order — and the survivors read in file order.
    */
   epilogue?: { if: Cond[]; text: string; weight?: number }[];
+  /**
+   * The realm's own turn: scheduled effects evaluated once per **spent**
+   * turn, after the player's action, the world's aggressive pass, and
+   * conditions have ticked. Checked in file order; the first entry whose
+   * `if` passes (and is not already spent) fires and the rest wait for a
+   * later turn — at most one entry fires per turn, which is what keeps a
+   * turn's clock line to at most one sentence, never a digest. Root-only,
+   * like `walkthrough` — a part file carrying it is a load error.
+   */
+  clock?: ClockEntry[];
   /** Extra counters shown compactly in the per-turn status line (e.g. gold). */
   hud?: { var: string; label: string }[];
   /** Reputation vars by display name (e.g. rep_church -> "the Gray Church"): a change to one prints "(the Gray Church -1)" the turn it happens. */

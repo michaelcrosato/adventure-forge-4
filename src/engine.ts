@@ -145,6 +145,10 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return !!s.npcConds[c[1]]?.[c[2]];
     case "!npccond":
       return !s.npcConds[c[1]]?.[c[2]];
+    case "turn": {
+      const v = s.turn;
+      return c[1] === "<" ? v < c[2] : c[1] === ">" ? v > c[2] : c[1] === ">=" ? v >= c[2] : c[1] === "<=" ? v <= c[2] : v === c[2];
+    }
     case "any":
       return c[1].some((x) => condOk(world, s, x));
   }
@@ -864,6 +868,31 @@ function tickConditions(world: World, s: State, events: string[]): void {
       }
     }
     if (!Object.keys(conds).length) delete s.npcConds[npcId];
+  }
+}
+
+/**
+ * The realm's own turn: `world.clock` runs once per spent turn, after the
+ * player's action, the aggressive pass, and conditions have ticked (step()
+ * calls this only when spentTurn, exactly like tickConditions). Entries are
+ * checked in file order; the first whose `if` passes — and, if it carries
+ * `once`, has not already fired — runs its `fx` and the rest wait for a
+ * later turn. At most one entry fires per turn: that single rule is what
+ * keeps a turn's clock line to at most one sentence, never a digest. A
+ * `once` entry sets `clocked_<id>`, exactly like a room action's `did_<id>`.
+ * `fx` are ordinary effects run through the same applyFx as everything else
+ * — no new effect vocabulary, so a clock entry can `say`, `set`, `addvar`,
+ * `npcgo`, `goto`, branch on `if`, draw from `chance` (the state's PRNG
+ * cursor, replay-safe like every other roll), or `end` the game outright.
+ */
+function tickClock(world: World, s: State, events: string[]): void {
+  if (s.ended) return; // the turn already ended (a fight, hpPerTurn, a trap): the realm does not also get a turn
+  for (const entry of world.clock ?? []) {
+    if (entry.once && s.flags[`clocked_${entry.id}`]) continue;
+    if (!condsOk(world, s, entry.if)) continue;
+    if (entry.once) s.flags[`clocked_${entry.id}`] = true;
+    applyFx(world, s, entry.fx, events);
+    break; // at most one clock entry fires per turn, whatever else was eligible
   }
 }
 
@@ -1636,6 +1665,9 @@ export function step(world: World, prev: State, action: Action): StepOut {
     recoverDowned(world, s, events, attacked);
     // conditions tick on the same clock as everything else in the world's turn
     if (spentTurn) tickConditions(world, s, events);
+    // the realm gets its own turn last: after the player's action, the aggressive
+    // pass, and conditions — so a clock entry can react to anything any of them just did
+    if (spentTurn) tickClock(world, s, events);
     // the company speaks on a turn of the world, not while a menu is being turned
     if (!MENU_KINDS.has(action.kind)) partyRemarks(world, s, events);
   }

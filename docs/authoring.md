@@ -30,8 +30,8 @@ label still reads as having moved. `status` shows each companion's regard from
 the day they join, and "near leaving" once it reaches −2.
 
 Root-only fields (`id`, `title`, `intro`, `objectives`, `start`, `hp`,
-`maxScore`, `walkthrough`, `progress`) in a part are a load error. Anything
-else at the top level is too.
+`maxScore`, `walkthrough`, `progress`, `clock`) in a part are a load error.
+Anything else at the top level is too.
 
 Load order: root, then parts in `include` order (globs sort by file name);
 then `gen` regions expand into rooms; then `stamps` expand templates into
@@ -48,8 +48,9 @@ content is checked exactly like authored content.
   `use ... on`).
 - Auto-flags the engine sets for you: `did_<actionId>` (an action with
   `once`), `said_<npc>_<topicId>` (a topic with `once`),
-  `remarked_<npc>_<remarkId>`, `<itemId>_lit`, and the engine's own
-  `_seenCheck`. You can read them in conditions.
+  `remarked_<npc>_<remarkId>`, `<itemId>_lit`, `clocked_<id>` (a `world.clock`
+  entry with `once`, see §13), and the engine's own `_seenCheck`. You can read
+  them in conditions.
 
 ## 3. Conditions
 
@@ -67,6 +68,7 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["npcHere", id]` / `["!npcHere", id]` | the npc stands alive in the player's room — a companion's warning before a fight, a line said only in someone's presence |
 | `["cond", id]` / `["!cond", id]` | the player currently holds / does not hold this timed condition — see §8 |
 | `["npccond", npc, id]` / `["!npccond", npc, id]` | an npc currently holds / does not hold this timed condition |
+| `["turn", op, n]` | same `op`s as `var`; the turn counter so far — deterministic state, read-only (content cannot set it) — see §13 |
 | `["any", [cond, cond, ...]]` | passes when at least one listed condition passes — the one OR inside an all-of list |
 
 ## 4. Effects
@@ -508,7 +510,46 @@ Reedholm`, `attack bog-thing with belt knife`, `perk: Iron Skin (+1 armor)`,
 To record labels instead of writing them: play with `npm run turn -- new 1`,
 `act <id> <n>`…, then `npm run turn -- labels <id>`.
 
-## 13. Style and budget
+## 13. The world clock
+
+Nothing in the world moves unless the player does — until `world.clock`.
+It is a **root-only** list of scheduled effects, evaluated once per **spent**
+turn, after the player's action, the world's aggressive pass, and conditions
+have ticked:
+
+```json
+"clock": [
+  { "id": "iron_march_warned",
+    "if": [["flag", "iron_march"], ["turn", ">=", 40]],
+    "once": true,
+    "fx": [["say", "Word on the road: an Ironbound column is moving west, and it is not stopping at Cinderhall."]] }
+]
+```
+
+- Entries are checked **in file order**, and **at most one fires per turn** —
+  the first whose `if` passes (and, for a `once` entry, has not already
+  fired) runs its `fx`; the rest wait for a later turn. This is the whole
+  budget story: a turn's clock line is either absent or one sentence, never a
+  digest.
+- `once: true` marks an entry that fires at most once ever, and sets the
+  auto-flag `clocked_<id>` the turn it fires — read it back exactly like
+  `did_<id>`. Without `once`, an entry may fire again on any later turn its
+  `if` still holds: a recurring pressure, still subject to the one-per-turn
+  rule.
+- `fx` are ordinary effects, run through the same path as everything else —
+  `say`, `set`, `addvar`, `npcgo`, `goto`, `if`, `chance`, `end`, all of it.
+  No new effect vocabulary: a clock entry that wants to end the game just
+  uses `end` like any other effect list, and one that wants to roll the dice
+  uses `chance` like any other — still replay-safe, since it draws from the
+  same seeded PRNG cursor.
+- It runs on spent turns only: a look, a menu page, a wide berth given ticks
+  nothing, exactly like conditions (§8). If the game has already ended this
+  turn — a fight, a trap, a condition's `hpPerTurn` — the clock does not run.
+- `world.clock` is root-only, like `walkthrough` and `maxScore`: a part file
+  carrying it is a load error (§1). Read the turn counter it is checked
+  against with `["turn", op, n]` (§3) in any `if`, anywhere — not just here.
+
+## 14. Style and budget
 
 The player is a language model reading one screen per turn. Every screen is
 paid for. `test/budget.test.ts` fails the build if the average `act` response
@@ -536,7 +577,7 @@ along the walkthrough exceeds 450 characters or any single one exceeds 1100.
   (might / a fight), craft (grace / wits), and words (will / an item / a
   favor). No class is ever locked out of a region's hollow.
 
-## 14. Before you hand it in
+## 15. Before you hand it in
 
 ```bash
 npm run validate world/reach.json   # every reference, every proof, the menu cap

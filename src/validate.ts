@@ -21,13 +21,15 @@ import type { Cond, Fx, State, WalkStep, World } from "./types.ts";
 export { MENU_CAP };
 
 const COND_OPS = new Set([
-  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "cond", "!cond", "npccond", "!npccond", "any",
+  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "cond", "!cond", "npccond", "!npccond", "turn", "any",
 ]);
 const FX_OPS = new Set([
   "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "calm", "cond", "npccond", "uncond", "unnpccond", "harm", "end",
 ]);
 /** Fields a `conditions` entry may carry — `name` required, everything else optional. Closed, like the rest of the DSL. */
 const CONDITION_FIELDS = new Set(["name", "hit", "dmg", "armor", "checks", "hpPerTurn", "hint"]);
+/** Fields a `world.clock` entry may carry — `id` and `fx` required, `if`/`once` optional. Closed, like the rest of the DSL. */
+const CLOCK_FIELDS = new Set(["id", "if", "once", "fx"]);
 
 /**
  * The files a world is made of: the root, then every part its `include` list
@@ -57,7 +59,7 @@ export function worldFiles(path: string): string[] {
 
 // Which top-level fields a part file may carry. A part is a slice of one world:
 // it adds records and list entries, never the world's identity or its proof.
-const ROOT_ONLY = new Set(["id", "title", "intro", "objectives", "start", "hp", "maxScore", "walkthrough", "progress", "include"]);
+const ROOT_ONLY = new Set(["id", "title", "intro", "objectives", "start", "hp", "maxScore", "walkthrough", "progress", "include", "clock"]);
 const RECORD_FIELDS = new Set(["rooms", "items", "npcs", "classes", "perks", "regions", "quests", "proofs", "templates", "skills", "factions", "conditions"]);
 const LIST_FIELDS = new Set(["gen", "stamps", "epilogue", "statusTracks", "statusPaths", "hud"]);
 
@@ -127,6 +129,7 @@ export function validateWorld(world: World): string[] {
         if (!npcOk(c[1])) err(`${where}: unknown npc ${c[1]}`);
         if (!conditionOk(c[2])) err(`${where}: unknown condition ${c[2]}`);
       }
+      else if (c[0] === "turn" && !["<", ">", "=", ">=", "<="].includes(c[1])) err(`${where}: bad turn comparator ${String(c[1])}`);
       else if (c[0] === "any") {
         if (!Array.isArray(c[1]) || !c[1].length) err(`${where}: any needs a non-empty list of conditions`);
         else checkConds(`${where}.any`, c[1]);
@@ -257,6 +260,29 @@ export function validateWorld(world: World): string[] {
     }
   }
 
+  // ---------- clock ----------
+  // Root-only (enforced above via ROOT_ONLY), so this is just one list in one
+  // file: ids need to be unique against each other, not merged across parts
+  // like a RECORD_FIELDS catalog would be. `if` and `fx` run through the same
+  // checkConds/checkFx as everywhere else — an unknown room in a `goto`, an
+  // unknown npc in `npcgo`/`harm`, an unknown condition — no special-casing.
+  {
+    const seen = new Set<string>();
+    for (const [i, entry] of (world.clock ?? []).entries()) {
+      const where = `clock ${entry?.id ?? i}`;
+      need(where, entry, [["id", "string"], ["fx", "array"]]);
+      for (const k of Object.keys(entry ?? {})) if (!CLOCK_FIELDS.has(k)) err(`${where}: unknown field ${k}`);
+      if (typeof entry?.id === "string") {
+        if (seen.has(entry.id)) err(`clock: duplicate id ${entry.id}`);
+        seen.add(entry.id);
+      }
+      if (entry?.once !== undefined && typeof entry.once !== "boolean") err(`${where}: "once" must be a boolean`);
+      if (entry?.if !== undefined && !Array.isArray(entry.if)) err(`${where}: "if" must be an array`);
+      checkConds(`${where} if`, entry?.if);
+      checkFx(`${where} fx`, entry?.fx);
+    }
+  }
+
   for (const p of world.statusPaths ?? []) {
     for (const st of p.states) checkConds(`statusPaths ${p.label}`, st.if);
   }
@@ -377,6 +403,7 @@ export function validateWorld(world: World): string[] {
       collectGotos(npc.onDeath);
       for (const t of npc.topics ?? []) collectGotos(t.fx);
     }
+    for (const entry of world.clock ?? []) collectGotos(entry.fx);
     const seen = new Set<string>();
     const queue = [world.start, ...gotos].filter(roomOk);
     while (queue.length) {
