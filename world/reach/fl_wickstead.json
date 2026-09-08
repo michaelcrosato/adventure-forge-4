@@ -92,9 +92,7 @@
         "north": { "to": "fl_common", "landmark": "the staked common" },
         "east": { "to": "fl_chapel", "landmark": "the chapel" },
         "out": { "to": "fl_muster_barn", "landmark": "the muster barn" },
-        "in": { "to": "fl_hearth" },
-        "up": { "to": "fl_wicker_house", "landmark": "Ede's house" },
-        "down": { "to": "fl_trade_counter" }
+        "in": { "to": "fl_hearth" }
       },
       "variants": [
         {
@@ -151,7 +149,7 @@
       "brief": "The common, staked and drilled both.",
       "region": "fl",
       "landmark": "the staked common",
-      "exits": { "south": { "to": "fl_wickstead_cross" } },
+      "exits": { "south": { "to": "fl_wickstead_cross" }, "east": { "to": "fl_trade_counter" } },
       "variants": [
         {
           "if": [["flag", "fl_stakes_pulled"]],
@@ -287,7 +285,7 @@
       "desc": "The one house in Wickstead big enough to call communal: a long hearth, benches worn by more people than currently live here, and a pot that is never quite empty because nobody will let it be. Returners, refugees, and the merely lost all sleep here some nights.",
       "brief": "The Cross House, hearth and long benches.",
       "region": "fl",
-      "exits": { "out": { "to": "fl_wickstead_cross" } },
+      "exits": { "out": { "to": "fl_wickstead_cross" }, "up": { "to": "fl_wicker_house", "landmark": "Ede's house" } },
       "onEnter": [["if", [["flag", "fl_hollow_done"], ["!flag", "sv_fl_back"]], [["set", "sv_fl_back"]], []]],
       "actions": [
         {
@@ -306,14 +304,14 @@
       "brief": "Ede's round wicker house.",
       "region": "fl",
       "landmark": "Ede's house",
-      "exits": { "down": { "to": "fl_wickstead_cross" } }
+      "exits": { "down": { "to": "fl_hearth" } }
     },
     "fl_trade_counter": {
       "name": "The Trade Counter",
-      "desc": "A plank counter across an old cattle-byre, stacked with what a returner can spare and a refugee can use: seed, tools, a little cloth. A returner keeps the count in chalk and does not pretend it always comes out fair.",
+      "desc": "A plank counter across an old cattle-byre, stacked with what a returner can spare and a refugee can use: seed, tools, a little cloth. West, the staked common. A returner keeps the count in chalk and does not pretend it always comes out fair.",
       "brief": "A plank counter, chalk tallies.",
       "region": "fl",
-      "exits": { "up": { "to": "fl_wickstead_cross" } },
+      "exits": { "west": { "to": "fl_common", "landmark": "the staked common" } },
       "actions": [
         {
           "id": "fl_buy_bread",
