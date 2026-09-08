@@ -262,3 +262,75 @@ test("odds text does not appear in actionByLabel matching (walkthroughs stay sta
   const found = actionByLabel(world, state, "force it");
   assert.ok(found, "the plain label still resolves — no odds suffix baked in");
 });
+
+/**
+ * The check an option will actually roll is not always its leading effect.
+ * "run the sacks past the tithe (will)" rolls a DC 10 will check *unless* you
+ * have already read the gap's own rhythm, in which case it does not roll at
+ * all — and both cases previewed nothing, so the label said "(will)" and named
+ * no DC, and said the same to a player who could no longer fail. Six of the
+ * realm's 581 checks sit at the head of a leading `if` like that.
+ */
+test("a check at the head of a live if-branch is previewed, and a branch with no check previews none", () => {
+  const world = mini({
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        actions: [
+          {
+            id: "run",
+            label: "run the sacks past the tithe",
+            fx: [
+              [
+                "if",
+                [["flag", "knows_the_gap"]],
+                [["say", "You already know its rhythm, and the run goes smooth."]],
+                [["check", "will", 10, [["say", "ok"]], [["addvar", "rep_free", -1], ["say", "caught"]]]],
+              ],
+            ],
+          },
+          // and one where the branch that holds now is the one with the check
+          {
+            id: "other",
+            label: "the other way",
+            fx: [["if", [["!flag", "knows_the_gap"]], [["check", "might", 14, [["say", "ok"]], [["say", "no"]]]], []]],
+          },
+        ],
+      },
+    },
+  });
+  const { state } = newState(world, 1);
+  const run = { kind: "custom", room: "a", id: "run" } as Action;
+  const other = { kind: "custom", room: "a", id: "other" } as Action;
+
+  // the gap unread: the roll is real, so its DC, its modifier and the cost of a miss all show
+  assert.match(oddsHint(world, state, run), /^ \(DC 10, will: roll 10\+ on the die; a miss costs standing/, oddsHint(world, state, run));
+  assert.match(oddsHint(world, state, other), /DC 14, might: roll 14\+/);
+
+  // the gap read: that branch holds no check, so nothing is promised about a roll
+  const known: State = { ...state, flags: { ...state.flags, knows_the_gap: true } };
+  assert.equal(oddsHint(world, known, run), "", oddsHint(world, known, run));
+  assert.equal(oddsHint(world, known, other), "", "the branch that would roll is not the one that runs");
+});
+
+test("a check behind a die is not previewed — a guess about the roll is worse than nothing", () => {
+  const world = mini({
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        actions: [
+          { id: "gamble", label: "turn on the charm", fx: [["chance", 50, [["check", "will", 12, [["say", "ok"]], [["say", "no"]]]], []]] },
+          { id: "second", label: "press on", fx: [["check", "will", 9, [["check", "might", 18, [["say", "ok"]], [["say", "no"]]]], []]] },
+        ],
+      },
+    },
+  });
+  const { state } = newState(world, 1);
+  assert.equal(oddsHint(world, state, { kind: "custom", room: "a", id: "gamble" } as Action), "", "behind a chance: no preview");
+  // the leading check is previewed and the one inside its branch is not: one roll at a time
+  const second = oddsHint(world, state, { kind: "custom", room: "a", id: "second" } as Action);
+  assert.match(second, /DC 9, will/);
+  assert.doesNotMatch(second, /DC 18/, "the second roll is not this turn's choice");
+});

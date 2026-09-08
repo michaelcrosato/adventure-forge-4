@@ -1652,8 +1652,13 @@ function checkHereNow(world: World, s: State, skill: string, min: number): boole
   // dc >= min is asked of the check as it actually stands right now — a prior
   // failed attempt already escalated it, and a check hard enough only because
   // of that is still, honestly, hard enough
-  const firstIsHardCheck = (fx: Fx[] | undefined, sourceId: string | undefined) =>
-    !!fx?.[0] && fx[0][0] === "check" && fx[0][1] === skill && escalatedDc(s, sourceId, fx[0][2], checkMod(world, s, String(fx[0][1]))) >= min;
+  // the same check the menu previews (see leadingCheck): the one this option
+  // will actually roll, whether it leads the effect list or heads the branch of
+  // a leading `if` that holds now
+  const firstIsHardCheck = (fx: Fx[] | undefined, sourceId: string | undefined) => {
+    const chk = leadingCheck(world, s, fx);
+    return !!chk && chk[1] === skill && escalatedDc(s, sourceId, chk[2], checkMod(world, s, String(chk[1]))) >= min;
+  };
   for (const a of world.rooms[s.room]?.actions ?? [])
     if (customVisible(world, s, a) && firstIsHardCheck(a.fx, `act:${a.id}`)) return true;
   for (const npc of npcsHere(world, s))
@@ -1722,6 +1727,31 @@ function fxCostsStanding(fxs: Fx[] | undefined): boolean {
 }
 
 /** The standing vars (`rep_*`, `appr_*`) an effect list can lower, in order of appearance. */
+/**
+ * The check this option will actually roll first, or undefined.
+ *
+ * Usually the option's leading effect, and for 575 of the realm's 581 checks
+ * that is the whole story. Six sit at the head of a leading `if` instead —
+ * "run the sacks past the tithe (will)" rolls a DC 10 will check unless you
+ * have already read the gap's own rhythm, in which case it does not roll at
+ * all — and those previewed nothing, so the option said "(will)" in its label
+ * and named no DC, and said "(will)" just the same to a player who could no
+ * longer fail.
+ *
+ * Followed the way `regardMoves` and `partyLeaves` follow one: down the branch
+ * whose conditions hold *now*, so the preview is what will happen and not what
+ * might. Never into a `check`'s or a `chance`'s own branches — those are past
+ * the first roll, and a preview that is sometimes wrong is worse than none.
+ */
+type CheckFx = ["check", string, number, Fx[], Fx[]];
+function leadingCheck(world: World, s: State, fxs: Fx[] | undefined): CheckFx | undefined {
+  const head = fxs?.[0];
+  if (!head) return undefined;
+  if (head[0] === "check") return head as CheckFx;
+  if (head[0] === "if") return leadingCheck(world, s, (condsOk(world, s, head[1]) ? head[2] : head[3]) ?? []);
+  return undefined;
+}
+
 function standingAtRisk(fxs: Fx[] | undefined): string[] {
   const out: string[] = [];
   for (const fx of fxs ?? []) {
@@ -2392,7 +2422,7 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     return aside ? " (a way not yet walked)" : "";
   }
   const fx = fxFor(world, s, a);
-  const chk = fx?.[0];
+  const chk = leadingCheck(world, s, fx);
   const parts: string[] = [];
   if (chk && chk[0] === "check") {
     // the DC quoted here is the one applyFx's `check` case will actually roll
