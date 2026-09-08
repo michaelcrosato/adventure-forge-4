@@ -95,6 +95,16 @@ player's action and after the world's aggressive pass:
   absent or one sentence, never a digest.
 - Its `fx` are ordinary effects, so the march can `say`, `set`, `addvar`,
   `npcgo`, `goto` and `if` like anything else. No new effect vocabulary.
+- **It shipped root-only, and that was my mistake.** A clock entry is
+  per-place content — like `epilogue`, `statusPaths`, `gen` and `stamps`, all
+  of which concatenate from part files — not a root fact like `maxScore`.
+  Root-only means one author can schedule events in an eighteen-region realm,
+  which blocks the clock's most obvious first use: four holds promise in
+  prose a bargain that comes due (Mootcombe's feast-day pressing, the
+  Hearthlands' common store, the Kingswood's one night a year, the
+  Shieldings' unploughed field) and each wants its own entry written by
+  whoever owns that hold. It should concatenate, with the duplicate-id check
+  widened to see across parts.
 - Determinism is untouched: a pure function of state, and any chance goes
   through the existing seeded `chance` op.
 
