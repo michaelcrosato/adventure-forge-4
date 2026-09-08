@@ -26,21 +26,16 @@
           "label": "the old song she's known to keep",
           "if": [["flag", "said_me_yarrow_bg_holm"]],
           "once": true,
-          "say": "Every headwoman learns it from the last, word for word, and never asks why until she's old enough to be asked it herself. It's a covenant-word, near as I've worked out. I've never had proper reason to say it aloud.",
+          "say": "Every headwoman learns it from the last, word for word, and never asks why until she's old enough to be asked it herself. Old as the Hall itself, near as I've worked out. I've never had proper reason to sing it through.",
           "fx": [["xp", 2]]
         },
         {
           "id": "me_ask_song",
           "label": "ask her to sing the old song",
-          "if": [["flag", "said_me_yarrow_bg_song"], ["!flag", "me_word_song"]],
+          "if": [["flag", "said_me_yarrow_bg_song"]],
+          "once": true,
           "say": "Reason enough is reason enough. She sings it low, once, not for performance, and it settles into memory like it was always meant to be carried, not sung twice.",
-          "fx": [
-            ["set", "me_word_song"],
-            ["addvar", "me_covenant_words", 1],
-            ["score", 3],
-            ["xp", 3],
-            ["addvar", "rep_keepers", 1]
-          ]
+          "fx": [["score", 3], ["xp", 3], ["addvar", "rep_keepers", 1]]
         },
         {
           "id": "me_dams_folk_declare",
@@ -219,7 +214,7 @@
         {
           "id": "me_read_shrine",
           "label": "read the birth-plaque yourself (wits)",
-          "if": [["flag", "said_me_loach_bg_shrine"], ["!flag", "me_word_saint"]],
+          "if": [["flag", "said_me_loach_bg_shrine"], ["!flag", "me_shrine_read"]],
           "say": "Go on, then. It's held up to worse eyes than yours.",
           "fx": [
             [
@@ -227,12 +222,11 @@
               "wits",
               10,
               [
-                ["set", "me_word_saint"],
-                ["addvar", "me_covenant_words", 1],
+                ["set", "me_shrine_read"],
                 ["score", 3],
                 ["xp", 3],
                 ["addvar", "rep_church", 1],
-                ["say", "The old cutting gives up its shared line at last, plain once you have it: the covenant's second word, worn into a saint's own plaque long before anyone thought to hide it there on purpose."]
+                ["say", "The old cutting gives up its shared line at last: the same phrase the covenant itself carries, plain once you have it. Not coincidence, then."]
               ],
               [["say", "The plaque's cut too shallow in places to trust by eye alone. It can be tried again."]]
             ]
@@ -241,14 +235,14 @@
         {
           "id": "me_saint_declare_church",
           "label": "declare the shrine proof enough",
-          "if": [["flag", "me_word_saint"], ["!flag", "me_saint_church"], ["!flag", "me_saint_shared"]],
+          "if": [["flag", "me_shrine_read"], ["!flag", "me_saint_church"], ["!flag", "me_saint_shared"]],
           "say": "You tell him the plaque settles it as far as you're concerned. He doesn't smile, exactly, but something in him unclenches that's plainly been clenched a long while.",
           "fx": [["set", "me_saint_church"], ["score", 5], ["xp", 3], ["addvar", "rep_church", 2], ["addvar", "appr_osk", 1]]
         },
         {
           "id": "me_saint_declare_shared",
           "label": "broker a shared saint",
-          "if": [["class", "envoy"], ["flag", "me_word_saint"], ["!flag", "me_saint_church"], ["!flag", "me_saint_shared"]],
+          "if": [["class", "envoy"], ["flag", "me_shrine_read"], ["!flag", "me_saint_church"], ["!flag", "me_saint_shared"]],
           "say": "You put it to him plainly: two shrines, one saint, neither side loses standing by admitting the other's half is also true. He turns it over like a coin he's not sure is counterfeit, then nods, slow.",
           "fx": [
             ["set", "me_saint_shared"],
@@ -310,45 +304,99 @@
           "label": "what she dives for",
           "if": [["flag", "said_me_sael_greet"]],
           "once": true,
-          "say": "Stones off the Hall's own walls, one at a time, over years — my mother did it, and hers before that. Some of what we bring up still carries a covenant-word, if you know to look past the weed on it.",
+          "say": "Stones off the Hall's own walls, one at a time, over years — my mother did it, and hers before that. We've never once dived past the outer wall. That's a line my whole line keeps, on purpose.",
           "fx": [["xp", 2]]
         },
         {
-          "id": "me_dive_check",
-          "label": "dive for a covenant-stone (grace)",
-          "if": [["flag", "said_me_sael_bg_dive"], ["!flag", "me_word_divers"]],
-          "say": "Line's here if you want it. Mind the cold takes your breath faster than you think down there.",
+          "id": "me_ask_witness",
+          "label": "ask her to stand witness",
+          "if": [["flag", "said_me_sael_bg_dive"], ["flag", "me_hollow_grievance"], ["!flag", "me_witness_sael"]],
+          "once": true,
+          "say": "No. Three generations of my line have dived to that wall and stopped there on purpose. Keeper-trained doesn't make me Keeper enough to go where they chose to drown. Ask someone it costs less.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "me_witness_might",
+          "label": "clear the way in for her (1hp on fail)",
+          "if": [["flag", "said_me_sael_me_ask_witness"], ["!flag", "me_witness_sael"]],
+          "say": "You want to go first? Fine. Show me it's survivable and I'll follow — I'm not asking you to prove I'm brave, just that it's possible.",
           "fx": [
             [
               "check",
-              "grace",
-              10,
+              "might",
+              9,
               [
-                ["set", "me_word_divers"],
-                ["addvar", "me_covenant_words", 1],
-                ["score", 3],
-                ["xp", 3],
-                ["addvar", "rep_keepers", 1],
-                ["say", "Your hand finds a weed-clogged stone on the third pass, and the word cut into it comes clear the moment you're back on the platform, breath ragged and hands shaking with cold."]
+                ["set", "me_witness_sael"],
+                ["cond", "braced", 2],
+                ["npcgo", "me_sael", "me_hollow_chamber"],
+                ["say", "You wade in ahead of her, haul a fallen beam clear of the deep water, and come back for her with your feet still under you. She follows without another word, jaw set."]
               ],
               [
-                ["say", "The cold beats you back before your hand finds anything worth surfacing with. It can be tried again, once you've warmed through."]
+                ["hp", -1],
+                ["say", "The beam doesn't move, and you go down under it for a bad second before it lets go. She hauls you out herself. 'That's not the part I'm afraid of,' she says. It can be tried again."]
               ]
             ]
           ]
         },
         {
-          "id": "me_pay_dive",
-          "label": "pay Sael to bring one up (5 gold)",
-          "if": [["flag", "said_me_sael_bg_dive"], ["!flag", "me_word_divers"], ["var", "gold", ">=", 5]],
-          "say": "Coin works too, if your lungs don't. Everyone's welcome to their own way down.",
+          "id": "me_witness_wits",
+          "label": "tell her about the low-water hour",
+          "if": [["flag", "said_me_sael_me_ask_witness"], ["!flag", "me_witness_sael"]],
+          "say": "The stones show dry at low water. I've seen it happen, same as you have. Tell me you actually know when that hour falls, and I'll believe you enough to try it.",
           "fx": [
-            ["addvar", "gold", -5],
-            ["set", "me_word_divers"],
-            ["addvar", "me_covenant_words", 1],
-            ["score", 3],
-            ["xp", 2],
-            ["say", "She's under and back before you've finished counting your own breath held in sympathy, a weed-clogged stone in hand and the word on it plain to a diver's practiced eye."]
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["set", "me_witness_sael"],
+                ["npcgo", "me_sael", "me_hollow_chamber"],
+                ["say", "You reason it out from the causeway's own waterline and name the hour to the turn. She checks it against her own sense of the tide, finds you right, and goes to fetch her coat."]
+              ],
+              [
+                ["say", "You guess wrong, and she catches it. 'That's not low water, that's just less water.' It can be tried again once you're surer."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "me_witness_will",
+          "label": "make the case to her plainly",
+          "if": [["flag", "said_me_sael_me_ask_witness"], ["!flag", "me_witness_sael"]],
+          "say": "Then hear it plain, since going first or timing the tide won't be what moves you.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "me_witness_sael"],
+                ["npcgo", "me_sael", "me_hollow_chamber"],
+                ["cond", "winded", 2],
+                ["say", "You tell her straight: a promise kept quiet from the living isn't kept at all. She goes still, then wades in beside you, breath catching at the cold. 'Talk to me the whole way,' she says. 'Don't stop.'"]
+              ],
+              [
+                ["say", "She hears you out and shakes her head anyway. 'Not yet,' she says. 'Try again when you mean it harder than that.'"]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "me_speak_covenant",
+          "label": "speak the covenant to her",
+          "if": [["flag", "me_witness_sael"], ["!flag", "me_hollow_done"]],
+          "say": "Sael stands at the table's edge, the water she's avoided her whole life closed around her knees. You speak the covenant whole. She breathes out, long, like something's finally let her go. Maren lies back down.",
+          "fx": [
+            ["set", "me_hollow_rested"],
+            ["set", "me_hollow_done"],
+            ["set", "me_covenant_carried"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            ["move", "me_covenant_stone", "inv"],
+            ["npcgo", "me_maren", null],
+            ["score", 25],
+            ["xp", 8]
           ]
         },
         {
@@ -989,7 +1037,7 @@
           "text": "The saint is shared now, between both shrines. Neither Church house lost anything saying so."
         },
         {
-          "if": [["flag", "me_word_saint"]],
+          "if": [["flag", "me_shrine_read"]],
           "text": "The birth-plaque is read. Declare it proof at the chapel, or leave the claim exactly as contested as it was."
         },
         {

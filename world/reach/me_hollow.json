@@ -98,10 +98,95 @@
           ]
         },
         {
-          "id": "me_rest_hollow",
-          "label": "speak the covenant's three words whole",
-          "if": [["var", "me_covenant_words", ">=", 3], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"]],
+          "id": "me_witness_ask_lys",
+          "label": "ask Lys to stand witness",
+          "if": [["inParty", "lys"], ["!flag", "down_lys"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"], ["!flag", "me_witness_lys"]],
           "fx": [
+            ["npccond", "lys", "winded", 2],
+            ["set", "me_witness_lys"],
+            ["set", "me_hollow_rested"],
+            ["set", "me_hollow_done"],
+            ["set", "me_covenant_carried"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "appr_lys", 1],
+            ["move", "me_covenant_stone", "inv"],
+            ["npcgo", "me_maren", null],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "\"Never been anybody's witness before,\" Lys says, catching her breath from the crossing. \"Didn't figure it'd be this wet.\" She hears the covenant through, steady. Maren finally lies back down."]
+          ]
+        },
+        {
+          "id": "me_witness_ask_osk",
+          "label": "ask Brother Osk to stand witness",
+          "if": [["inParty", "osk"], ["!flag", "down_osk"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"], ["!flag", "me_witness_osk"]],
+          "fx": [
+            ["npccond", "osk", "winded", 2],
+            ["set", "me_witness_osk"],
+            ["set", "me_hollow_rested"],
+            ["set", "me_hollow_done"],
+            ["set", "me_covenant_carried"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "appr_osk", 1],
+            ["move", "me_covenant_stone", "inv"],
+            ["npcgo", "me_maren", null],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "Brother Osk hears it out bareheaded, like a rite nobody ever taught him for this one. \"Four hundred years, no Church rite reached this far,\" he says. \"Let this be the one that did.\" Maren lies back down."]
+          ]
+        },
+        {
+          "id": "me_witness_ask_tamsin",
+          "label": "ask Tamsin to stand witness",
+          "if": [["inParty", "tamsin"], ["!flag", "down_tamsin"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"], ["!flag", "me_witness_tamsin"]],
+          "once": true,
+          "fx": [
+            ["set", "me_witness_tamsin_refused"],
+            ["say", "\"I don't stand around for words,\" Tamsin says. \"I fix what's broken, or I leave it be. Ask me to do something — don't ask me to just say one.\""]
+          ]
+        },
+        {
+          "id": "me_witness_tamsin_debt",
+          "label": "tell her it's a debt, not a ceremony",
+          "if": [["inParty", "tamsin"], ["!flag", "down_tamsin"], ["flag", "me_witness_tamsin_refused"], ["!flag", "me_witness_tamsin"], ["!flag", "me_hollow_done"]],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["npccond", "tamsin", "winded", 2],
+                ["set", "me_witness_tamsin"],
+                ["set", "me_hollow_rested"],
+                ["set", "me_hollow_done"],
+                ["set", "me_covenant_carried"],
+                ["addvar", "hollows_rested", 1],
+                ["addvar", "rep_keepers", 2],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "appr_tamsin", 1],
+                ["move", "me_covenant_stone", "inv"],
+                ["npcgo", "me_maren", null],
+                ["score", 25],
+                ["xp", 8],
+                ["say", "\"A debt's a debt,\" Tamsin says, \"four hundred years running or four days. Fine. I'll stand for it.\" She hears the covenant through without complaint. Maren lies back down."]
+              ],
+              [
+                ["say", "\"Still words,\" she says, arms crossed. \"Try again if you've got a better reason than that.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "me_witness_ask_vell",
+          "label": "ask Vell to stand witness",
+          "if": [["inParty", "vell"], ["!flag", "down_vell"], ["flag", "me_hollow_grievance"], ["!flag", "me_hollow_done"], ["!flag", "me_witness_vell"]],
+          "fx": [
+            ["npccond", "vell", "winded", 2],
+            ["set", "me_witness_vell"],
             ["set", "me_hollow_rested"],
             ["set", "me_hollow_done"],
             ["set", "me_covenant_carried"],
@@ -109,20 +194,11 @@
             ["addvar", "rep_keepers", 2],
             ["addvar", "rep_crown", -2],
             ["addvar", "appr_vell", 1],
-            ["addvar", "appr_osk", 1],
             ["move", "me_covenant_stone", "inv"],
             ["npcgo", "me_maren", null],
             ["score", 25],
             ["xp", 8],
-            ["say", "You speak the divers' word, the shrine's word, and the warden's song together over the stone. Maren closes her eyes like someone finally allowed to. The water in the chamber does not rise again."],
-            [
-              "if",
-              [["inParty", "vell"]],
-              [
-                ["say", "Vell: \"Spoken back to them at last. I did not expect to feel anything about a stone. I was wrong.\""]
-              ],
-              []
-            ]
+            ["say", "Vell goes quiet in a way that has nothing to do with the cold. \"I record these things. I don't usually end up inside them.\" They hear it through anyway, and mean it. Maren lies back down."]
           ]
         },
         {
@@ -219,65 +295,15 @@
               [
                 [
                   "if",
-                  [["var", "me_covenant_words", ">=", 3]],
-                  [["say", "The rest stands ready: all three covenant words are yours — speak them whole, over the stone."]],
-                  [
-                    [
-                      "if",
-                      [["flag", "me_word_divers"], ["flag", "me_word_saint"]],
-                      [
-                        ["say", "The divers' word and the shrine's word are yours. The last is Yarrow's old song, at the lantern-tower."]
-                      ],
-                      [
-                        [
-                          "if",
-                          [["flag", "me_word_divers"], ["flag", "me_word_song"]],
-                          [
-                            ["say", "The divers' word and the warden's song are yours. The last waits at the shrine, in the eel-priest's chapel."]
-                          ],
-                          [
-                            [
-                              "if",
-                              [["flag", "me_word_saint"], ["flag", "me_word_song"]],
-                              [["say", "The shrine's word and the warden's song are yours. The last is Sael's, at the divers' platform."]],
-                              [
-                                [
-                                  "if",
-                                  [["flag", "me_word_divers"]],
-                                  [["say", "The divers' word is yours. Two remain: the shrine at the chapel, and Yarrow's song at the tower."]],
-                                  [
-                                    [
-                                      "if",
-                                      [["flag", "me_word_saint"]],
-                                      [["say", "The shrine's word is yours. Two remain: Sael's at the platform, and Yarrow's song at the tower."]],
-                                      [
-                                        [
-                                          "if",
-                                          [["flag", "me_word_song"]],
-                                          [["say", "The warden's song is yours. Two remain: Sael's at the platform, and the shrine at the chapel."]],
-                                          [
-                                            ["say", "The rest wants three words: the divers' stones, the saint's shrine, and the lantern-warden's old song."]
-                                          ]
-                                        ]
-                                      ]
-                                    ]
-                                  ]
-                                ]
-                              ]
-                            ]
-                          ]
-                        ]
-                      ]
-                    ]
-                  ]
+                  [["any", [["flag", "me_witness_sael"], ["flag", "me_witness_lys"], ["flag", "me_witness_osk"], ["flag", "me_witness_tamsin"], ["flag", "me_witness_vell"]]]],
+                  [["say", "A witness is ready and waiting. Speak the covenant to them, at the stone table."]],
+                  [["say", "The rest wants a living witness: ask a companion travelling with you, or win Sael's trust at the Divers' Platform."]]
                 ],
                 ["say", "The bargain stands ready regardless: swear to carry the covenant to Marrowgate yourself (will)."],
                 [
                   "if",
                   [["has", "me_dam_charges"]],
-                  [
-                    ["say", "The burn stands ready: Hodd's charges are yours — break them here (might; a failed try costs 1 hp)."]
-                  ],
+                  [["say", "The burn stands ready: Hodd's charges are yours — break them here (might; a failed try costs 1 hp)."]],
                   [["say", "The burn wants Ironbound charges — Hodd, the dam-wright, gives you a keg for the asking."]]
                 ]
               ]
@@ -322,11 +348,11 @@
           "fx": [["set", "me_hollow_grievance"], ["score", 3], ["xp", 3]]
         },
         {
-          "id": "about_words",
+          "id": "about_witness",
           "label": "what the covenant needs",
-          "if": [["flag", "me_hollow_grievance"], ["var", "me_covenant_words", "<", 3]],
+          "if": [["flag", "me_hollow_grievance"]],
           "once": true,
-          "say": "Three words, cut apart on purpose so no one hand could carry the whole of it: one from what the divers bring up, one from the saint's own shrine, one from the warden's old song. Find all three, and speak them here.",
+          "say": "The covenant was spoken between people once, and it was never meant to end up spoken to empty water. Bring someone living down here who'll actually hear it, and it's still kept.",
           "fx": [["xp", 1]]
         },
         {
@@ -385,38 +411,23 @@
     }
   },
   "quests": {
-    "me_q_words": {
-      "name": "The Covenant's Three Words",
+    "me_q_witness": {
+      "name": "The Covenant's Witness",
       "start": [["flag", "me_hollow_grievance"]],
-      "done": [["var", "me_covenant_words", ">=", 3]],
+      "done": [["flag", "me_hollow_rested"]],
+      "failed": [["any", [["flag", "me_hollow_bargained"], ["flag", "me_hollow_burned"]]]],
       "stages": [
         {
-          "if": [["flag", "me_word_divers"], ["flag", "me_word_saint"], ["!flag", "me_word_song"]],
-          "text": "The divers' word and the shrine's word are yours. The last is Yarrow's old song, at the lantern-tower."
+          "if": [["flag", "me_witness_sael"]],
+          "text": "Sael's made her way to the covenant chamber. Speak the covenant to her there."
         },
         {
-          "if": [["flag", "me_word_divers"], ["flag", "me_word_song"], ["!flag", "me_word_saint"]],
-          "text": "The divers' word and the warden's song are yours. The last waits at the shrine in the eel-priest's chapel."
-        },
-        {
-          "if": [["flag", "me_word_saint"], ["flag", "me_word_song"], ["!flag", "me_word_divers"]],
-          "text": "The shrine's word and the warden's song are yours. The last is Sael's, at the divers' platform."
-        },
-        {
-          "if": [["flag", "me_word_divers"], ["!flag", "me_word_saint"], ["!flag", "me_word_song"]],
-          "text": "The divers' word is yours. Two remain: the shrine at the chapel, and Yarrow's song at the tower."
-        },
-        {
-          "if": [["flag", "me_word_saint"], ["!flag", "me_word_divers"], ["!flag", "me_word_song"]],
-          "text": "The shrine's word is yours. Two remain: Sael's at the divers' platform, and Yarrow's song at the tower."
-        },
-        {
-          "if": [["flag", "me_word_song"], ["!flag", "me_word_divers"], ["!flag", "me_word_saint"]],
-          "text": "The warden's song is yours. Two remain: Sael's at the divers' platform, and the shrine at the chapel."
+          "if": [["flag", "me_witness_tamsin_refused"], ["!flag", "me_witness_tamsin"]],
+          "text": "Tamsin won't stand for a ceremony as it stands. Give her a better reason, or ask someone else."
         },
         {
           "if": [],
-          "text": "The covenant needs three words: the divers' stones, the saint's shrine, and the lantern-warden's old song."
+          "text": "The covenant needs someone living to hear it. Ask a companion at your side, or win Sael's trust at the Divers' Platform."
         }
       ]
     },
@@ -430,12 +441,12 @@
           "text": "You hold Ironbound charges. Break them over the covenant table to burn the Hall, if that's an answer you'll live with."
         },
         {
-          "if": [["var", "me_covenant_words", ">=", 3], ["flag", "me_hollow_grievance"]],
-          "text": "The three words are whole. Speak the covenant over the stone table in the covenant chamber to rest the Hall outright."
+          "if": [["any", [["flag", "me_witness_sael"], ["flag", "me_witness_lys"], ["flag", "me_witness_osk"], ["flag", "me_witness_tamsin"], ["flag", "me_witness_vell"]]], ["flag", "me_hollow_grievance"]],
+          "text": "A witness is ready. Speak the covenant to them, at the stone table in the covenant chamber."
         },
         {
           "if": [["flag", "me_hollow_grievance"]],
-          "text": "Rest it (three words spoken), bargain it (an oath to Marrowgate), or burn it — all at the stone table."
+          "text": "Rest it (a living witness), bargain it (an oath to Marrowgate), or burn it — all at the stone table."
         },
         {
           "if": [["flag", "me_hollow_found"]],
@@ -468,19 +479,6 @@
       ]
     }
   },
-  "statusTracks": [
-    {
-      "var": "me_covenant_words",
-      "label": "The Covenant's Three Words",
-      "max": 3,
-      "remaining": [
-        { "flag": "me_word_divers", "label": "the divers' stones" },
-        { "flag": "me_word_saint", "label": "the saint's shrine" },
-        { "flag": "me_word_song", "label": "the lantern-warden's song" }
-      ],
-      "if": [["flag", "me_hollow_grievance"]]
-    }
-  ],
   "epilogue": [
     {
       "if": [["flag", "me_hollow_rested"]],
@@ -500,6 +498,11 @@
     {
       "if": [["!flag", "me_hollow_done"], ["flag", "me_entered"]],
       "text": "The Drowned Hall still waits under the Meres, its causeway breaking the surface only at low water."
+    },
+    {
+      "if": [["flag", "me_witness_sael"]],
+      "text": "Sael crossed the Hall's threshold for the first time in her life, and kept diving after. She just stopped avoiding that one wall.",
+      "weight": 1
     },
     {
       "if": [["flag", "me_dams_crown"]],
