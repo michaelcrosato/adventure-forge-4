@@ -525,6 +525,7 @@
       "name": "The Hunt's Unfinished Round",
       "start": [["flag", "kw_hollow_grievance"]],
       "done": [["var", "kw_ridings_worked", ">=", 3]],
+      "failed": [["flag", "kw_hollow_done"], ["var", "kw_ridings_worked", "<", 3]],
       "stages": [
         {
           "if": [["var", "kw_ridings_worked", ">=", 2]],
@@ -544,6 +545,7 @@
       "name": "The Huntsman's Horn",
       "start": [["flag", "kw_hollow_grievance"]],
       "done": [["flag", "kw_horn_known"]],
+      "failed": [["flag", "kw_hollow_done"], ["!flag", "kw_horn_known"]],
       "stages": [
         {
           "if": [],

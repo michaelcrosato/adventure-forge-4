@@ -368,6 +368,7 @@
       "name": "Names for the Rite",
       "start": [["flag", "fl_heard_winter"]],
       "done": [["var", "fl_names_known", ">=", 3]],
+      "failed": [["flag", "fl_hollow_done"], ["var", "fl_names_known", "<", 3]],
       "stages": [
         {
           "if": [["flag", "fl_names_ede"], ["flag", "fl_names_roll"], ["!flag", "fl_names_markers"]],
