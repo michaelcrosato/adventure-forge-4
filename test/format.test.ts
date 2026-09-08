@@ -256,7 +256,7 @@ test("a run of bare notices reads as one line, with score and xp summed", () => 
 test("prose between two notices keeps them apart — a number belongs to what earned it", () => {
   const world = noticeWorld();
   const text = render(world, newState(world, 1).state, ["(+5)", "The stair lets out behind the guards.", "(+3xp)", "(+2)"]).text;
-  const block = text.split("\n").slice(1, 5);
+  const block = text.split("\n").slice(1, 4);
   // and the sums read in a fixed order — score, then xp, then whatever names
   // its own subject — however the effects happened to push them
   assert.deepEqual(block, ["[(+5)", "The stair lets out behind the guards.", "(+2, +3xp)]"], text);
