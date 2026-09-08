@@ -1817,7 +1817,19 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   if (a.kind === "take") {
     const owner = world.items[a.item]?.owner;
     const w = owner ? ownerWatching(world, s, owner) : null;
-    return w ? ` (${w.name} is watching: taking it is theft)` : "";
+    if (!w) return "";
+    // A theft is counted against every companion standing there (`thefts_with_<id>`
+    // in the take case), and it is their own remarks that charge regard for it — so
+    // the price lands a turn later than the choice. A blind player took the
+    // headframe lantern, lost regard, and filed that as unwarned: "no warning that
+    // it's treated as real theft rather than minor scavenging". The warning was
+    // there; the part that costs was not. Name who will remember it, here, where
+    // every other price in this game is stated before the turn is spent.
+    const seen = s.party.map((id) => world.npcs[id]?.name).filter((n): n is string => !!n);
+    const also = seen.length > 1 ? `${seen.slice(0, -1).join(", ")} and ${seen[seen.length - 1]}` : seen[0];
+    return also
+      ? ` (${w.name} is watching: taking it is theft, and ${also} will remember it)`
+      : ` (${w.name} is watching: taking it is theft)`;
   }
   if (a.kind === "company") return ` (${companyHere(world, s).map((id) => world.npcs[id]?.name ?? id).join(", ")})`;
   if (a.kind === "travelmore") return ` (${travelMore(world, s)} more)`;

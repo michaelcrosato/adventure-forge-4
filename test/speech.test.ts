@@ -13,7 +13,7 @@ import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { newState, speaks } from "../src/engine.ts";
+import { legalActions, newState, oddsHint, speaks } from "../src/engine.ts";
 import { renderStatus } from "../src/format.ts";
 import { loadWorld } from "../src/validate.ts";
 import type { World } from "../src/types.ts";
@@ -68,4 +68,37 @@ test("status says how much of an ability pool is left, and only the player's own
   assert.doesNotMatch(seen["scholar"]!, /Warden|Scout|Envoy/);
   // and before a class is chosen there is nothing to report
   assert.ok(!renderStatus(world, newState(world, 1).state).includes("Ready to spend"));
+});
+
+test("the theft preview names the companions who will remember it", () => {
+  // A blind player took a watched lantern, lost a companion's regard, and filed
+  // it as unwarned. The warning was there — "Ness is watching: taking it is
+  // theft" — but the part that costs was not: a theft is counted against every
+  // companion standing there, and their own remarks charge the regard a turn
+  // later. Every other price in this game is stated before the turn is spent.
+  const world = loadWorld(fileURLToPath(new URL("../world/reach.json", import.meta.url)));
+  const owned = Object.entries(world.items).find(([, it]) => it.owner);
+  assert.ok(owned, "the realm has owned items");
+  const [iid, def] = owned;
+  const ownerRoom = world.npcs[def.owner!]?.room;
+  assert.ok(ownerRoom, "its owner stands somewhere");
+  const base = newState(world, 1).state;
+  const at = (party: string[]) => {
+    const s = {
+      ...base, classId: "warden", room: ownerRoom, party,
+      itemLoc: { ...base.itemLoc, [iid]: ownerRoom },
+      npcRoom: { ...base.npcRoom, [def.owner!]: ownerRoom },
+    };
+    const a = legalActions(world, s).find((x) => x.kind === "take" && x.item === iid);
+    assert.ok(a, "the item can be taken");
+    return oddsHint(world, s, a);
+  };
+  // alone: the warning, unchanged
+  assert.match(at([]), /is watching: taking it is theft\)$/);
+  assert.doesNotMatch(at([]), /remember/);
+  // with company: who will remember it, by name
+  const one = at(["lys"]);
+  assert.match(one, /theft, and Lys will remember it\)$/);
+  const three = at(["lys", "osk", "tamsin"]);
+  assert.match(three, /Lys, Brother Osk and Tamsin will remember it\)$/, three);
 });
