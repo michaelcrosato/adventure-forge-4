@@ -43,24 +43,6 @@ export function matchesMenuLabel(line: string, canonical: string): boolean {
   return a === b || (a.startsWith(`${b} (`) && a.endsWith(")"));
 }
 
-// Compass abbreviations for the "exits:" orientation line — every direction
-// word a world actually uses (see world/*.json); anything else falls back to
-// its capitalized self.
-const DIR_ABBR: Record<string, string> = {
-  north: "N",
-  south: "S",
-  east: "E",
-  west: "W",
-  up: "U",
-  down: "D",
-  in: "In",
-  out: "Out",
-};
-
-function exitAbbr(dir: string): string {
-  return DIR_ABBR[dir] ?? dir.charAt(0).toUpperCase() + dir.slice(1);
-}
-
 export function render(
   world: World,
   s: State,
@@ -202,15 +184,12 @@ export function render(
     if (party.length) lines.push(`with you: ${party.join(", ")}`);
   }
 
-  const exitDirs = Object.keys(room?.exits ?? {});
-  if (exitDirs.length) {
-    const marked = exitDirs.map((dir) => {
-      const ex = room!.exits![dir]!;
-      const unexplored = ex.sideTrip && !s.visited.includes(ex.to);
-      return exitAbbr(dir) + (unexplored ? "*" : "");
-    });
-    lines.push(`exits: ${marked.join(" ")}`);
-  }
+  // No "exits: N W E S" line. legalActions offers every exit as its own numbered
+  // `go <dir>` — locked ones included — so the line restated the menu directly
+  // under it, at 2,569 characters along the realm's walkthrough, on a budget with
+  // twenty to spare. Its one piece of its own, the "*" on an unwalked side trip,
+  // moved into the `go` line, where it says what it means: two playtest reports
+  // asked what the asterisk was and nothing on the screen ever answered.
 
   const menu = renderMenu(world, s, { itemHints: !!opts.full });
   lines.push(menu.text);

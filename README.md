@@ -54,8 +54,7 @@ One tool call, one plain-text block:
 [reeve: "It kills slow. Crops first, then cattle..." (+5) (+3xp)]
 The dry well.
 reeve is here
-exits: N W E S
-1 go north
+1 go north (toward Last Light gate)
 2 go west
 3 go east
 4 go south

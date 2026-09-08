@@ -1571,7 +1571,12 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     // an unlabelled exit into a landmark room borrows the landmark's name, so a
     // gateway's "go in" says where it goes like every authored exit around it
     const toward = exit?.landmark ?? (exit ? world.rooms[exit.to]?.landmark : undefined);
-    return toward ? ` (toward ${toward})` : "";
+    // a side trip nobody has walked yet: this used to be a bare "*" on the "exits:"
+    // line, which nothing on the screen explained (two playtest reports asked). It
+    // says so in words now, on the option it belongs to
+    const aside = !!exit?.sideTrip && !s.visited.includes(exit.to);
+    if (toward) return aside ? ` (toward ${toward}, not yet walked)` : ` (toward ${toward})`;
+    return aside ? " (a way not yet walked)" : "";
   }
   const fx = fxFor(world, s, a);
   const chk = fx?.[0];
