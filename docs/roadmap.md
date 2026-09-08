@@ -9,79 +9,92 @@ and choice-consequence of Baldur's Gate 3.
 
 ## Where the realm actually stands
 
-The sprawl is done. 18 regions, 905 rooms, 886 distinct room names, 251 npcs,
-258 items, 128 quests, 68 stamped places, 5 companions with 45-47 topics
-each, 7 endings every one replay-proven, 269 tests green. Skyrim has about
-340 named places. **Adding a nineteenth region is not the work.** These are:
+The sprawl is done. 18 regions, 905 rooms, 265 npcs, 321 items, 129 quests,
+68 stamped places, 5 companions, 6 endings and 9 replay-proofs, 325 tests
+green. Skyrim has about 340 named places. **Adding a nineteenth region is not
+the work** — three blind players just walked eight of the eighteen that
+exist. These are:
 
 ## 1. The realm's breadth does not pay
 
-A winning walkthrough visits **97 of 905 rooms and 6 of 18 regions**. So 89%
-of the world is invisible in a playthrough, and no hold argues for being the
-seventh you visit. Two blind playtesters each settled exactly the minimum
-three hollows and stopped, and the objectives text spells the choice out
-("choose your holds rather than counting them"), so being told is not enough.
+Measured on real play, not on the walkthrough. The fourth blind wave's three
+traces, replayed (`runs/g1-71*.json`, and the script that reads them is worth
+rewriting — it is four lines against `replayWalkthrough`):
 
-**Correction to an earlier draft of this section**, which said the score
-tally caps at 5% of what is authored and a player who explores gets no
-signal. The realm does hold 7,047 points of authored `score` against a
-`maxScore` of 366, and `score` is hard-clamped, so I expected routes to fill
-the meter early and play on for nothing. Measured, they do not:
+    seed 716  won   turn 542  envoy    113 rooms  8 of 18 regions
+    seed 717  stuck turn 650  scholar  151 rooms  8 of 18 regions
+    seed 718  won   turn 613  envoy    136 rooms  8 of 18 regions
 
-    walkthrough      269 turns, 366/366, cap reached on the last turn
-    regent_deposed   271 turns, 366/366, cap reached on the last turn
-    hollow_reach     270 turns, 326/366, never capped
-    reach_burned     279 turns, 345/366, never capped
-    gray_crown       261 turns, 311/366, never capped
+All three walked **the same eight regions** — cp, fd, hb, ir, mg, th, va, wm
+— and no player touched em, ff, fl, hl, kw, mc, me, pw, sh or sk. Ten
+regions, more than half the realm, unseen by any of three complete runs. The
+earlier reading of this section used the walkthrough (97 rooms, 6 regions);
+players do better than that and still walk one road.
 
-`maxScore` is well calibrated to a full route. The 19x supply is just fifteen
-holds each authoring ~350 points for a run that visits three or four, which
-is what makes two playthroughs differ. Not a defect — and the blind player's
-brief never tells them to maximise score either, so score is not why they
-stop at three.
+**Correcting a correction.** An earlier draft said the score cap was fine,
+having measured every proven route and found none of them capped before the
+last turn. That was true of the routes and false of the players: a proof is
+an efficient road, and a player wanders. Replayed against an uncapped engine,
+the same three runs would have scored **511, 491 and 567** against a
+`maxScore` of 366 — so the clamp was swallowing 125 to 201 points from each
+of them and, worse, flattening three quite different runs into the identical
+number. The realm authors 7,608 points across 1,395 sites; five per cent was
+payable. `score` is no longer clamped (a `maxScore` is what one whole route
+pays, and the walkthrough must still land on it exactly), and `status` says
+what the number means instead of dividing by it.
 
-Of the two written answers, standing with height has **landed for all six
-factions**; the Ironbound march (`2026-09-08-the-realm-moves.md`) is in
-flight. Judge this section on the first wave after the march lands: if
-players still settle exactly three and stop, the march did not work.
+That was the part of this section that was a one-line clamp. The rest of it
+is §2, which is where the reason lives.
 
-## 2. Choice-consequence is half-built
+## 2. Choice-consequence is half-built — and here is the half
 
 ```bash
-node --import tsx scripts/audit-choices.ts world/reach.json
+npx tsx scripts/audit-fates.ts world/reach.json
 ```
 
-Authored flags are in good shape: most regions have every choice remembered
-somewhere, several at 100%. The **numbers** were not. About twelve hundred
-places moved faction standing; six thresholds read it, all of them `>= 2`
-(the Crown's, once, at `>= 3`), so a player at +8 with the Barrow-Keepers
-read the same line, and met the same doors, as one at +2.
+Every hold can be rested, bargained with, or burned: three fates, authored
+three times over, fifteen holds, thirty routes behind the two that are not
+"rest". The wave chose **rest 24 times out of 24**. Not one bargain, not one
+burn, across three complete runs.
 
-**Done, for all six.** Each faction now offers a `trusted` tier at +5 and a
-`sworn` tier at +9, refuses plainly below it, and charges standing with
-whoever the tier crosses. The same audit now reads:
+The tool says why without argument. Score ranks the fates identically in all
+fifteen holds — rest +25, bargain +20, burn +15 — and rest also carries the
+friendliest standing and the only companion approvals, while burn costs
+church standing and regard in every hold that offers it. And only one of the
+six endings reads a hold's fate at all: `reach_at_rest` wants three
+**rested**. Bargaining and burning feed nothing, not even the ending called
+`reach_burned`, whose gate is cinder oil in hand rather than a burned realm.
 
-    var            moves  +total  reads  highest read
-    rep_keepers      251    +216      7  >=9
-    rep_church       261    +171     11  >=9
-    rep_watch        238    +171     19  >=9
-    rep_free         214    +161     32  >=9
-    rep_iron         125     +93      6  >=9
-    rep_crown        141     +80      8  >=9
+So two thirds of every hold's climax is strictly dominated, and nobody
+misjudged anything: three players read the odds line correctly and took the
+best option twenty-four times. **This is the largest gap between the game and
+its stated ambition**, and the fix is in two halves — score must stop ranking
+the fates, and something the realm wants must read each one. The second half
+is the real one, and re-gating `reach_burned` on a burned realm (with the
+proof that road has never had) is in flight.
 
-Calibration held: replaying every proven route, the road's favoured faction
-lands at +10 to +14 and a second at exactly +5, so the design needed no
-renumbering. What is left is the cross-region pass — a `keepers_sworn` who
-can speak the Great Rite anywhere still can only speak it in Hollowbrook,
-because no region author may write in another's files.
+### Standing, which is built and invisible
 
-The companion tallies are the same shape one layer down and not yet built:
-`appr_osk` moves 170 times and nothing reads it above `>= 4`.
+Each faction has a `trusted` tier at +5 and a `sworn` tier at +9, both
+refusing plainly below, and the payoffs are now wired across all sixteen
+regions. Calibration is fine — the wave reached keepers +25, church +13,
+watch +6 and free +5, every one past a threshold — and between them the three
+players collected **two ranks**.
 
-The same audit found the realm proves only one faction road: all five
-proven routes end deep with the Keepers and negative with the Ironbound —
-`reach_burned` included, the ending earned by burning the Hollow Throne with
-Ironbound oil, which finishes at `rep_iron -2`.
+Two reasons, both measured. Nothing showed a player their standing at all
+until `status` learned to (`world.factions` existed only to name a faction
+inside an event). And every rank is granted in exactly one place, by one npc,
+behind a topic that also wants a specific earlier conversation with that same
+npc — so standing is earned across the realm and collected in one hold, and
+nothing tells the player to walk back. The canonical walkthrough ends at
+church +5, exactly the trusted threshold, and never collects it.
+
+The companion tallies were the same shape one layer down and are now fixed:
+`appr_osk` reached +14, +17 and +14 in the wave against a previous ceiling of
++4, and `proofs["reach_at_rest#devoted"]` proves a companion reaching
+`devoted` on a normal run. That one took a correction too — the diagnosis
+"regard peaks at +1" had measured a road nobody travels: **the walkthrough
+recruits only Lys**, and the other three companions are never asked to join.
 
 ## 3. Half the game is walking, and a quarter of it is empty
 
@@ -228,18 +241,26 @@ The fix is proofs, not argument: a Warden route and an Envoy route to an
 ending, and a road that is not the Keepers'. `scripts/walk.ts` turns a label
 list into a walkthrough, so the work is playing them and capturing them.
 
-## 9. Per-turn cost scales with the world, not the player
+## 9. ~~Per-turn cost scales with the world, not the player~~ — done
 
-0.16 ms/step at 9 rooms, 0.27 at 31, **2.73 at 905** — tracking total content,
-not walk depth, because `step()` deep-clones a state carrying 760+ dictionary
-entries on a fresh game and several hot paths scan all 251 npcs or 258 items
-every turn regardless of room.
+It did: 0.16 ms/step at 9 rooms, 0.27 at 31, **2.73 at 905**, tracking total
+content rather than walk depth. A CPU profile said where, and four changes
+fixed it — a per-world index of the fixed subsets a menu can ever draw from
+(67 npcs a def could make hostile, not 265; 161 takeable items, not 321), a
+memo open only inside one `legalActions` call (the hostile question was asked
+dozens of times to get one answer), a hand-written state copy in place of
+`structuredClone` (a fifth of every turn paying for cycles, Maps and Dates a
+State never contains), and a crawler that compares two states outright rather
+than hashing both.
 
-Kept in proportion: about 42% of that is `hashState`, which the crawler calls
-twice a step and live play calls once a *game*, so a real turn costs ~1.4 ms
-— imperceptible. This is a **dev-loop** cost (reach is ~58% of `verify`'s 29
-seconds) and a **scaling trend** that bites well before Skyrim's size. It is
-not a reason to stop authoring today.
+The Reach now costs **0.378 ms a step**; `npm run verify` went 34s to 24s and
+its crawl of the realm 31s to 11s, with the deep crawl 7m26s to 3m07s. Every
+number the crawler reports is byte for byte what it reported before.
+
+What is left is one O(world) scan a turn: `npcsHere` still walks all 265
+npcs, about 12% of crawl time. A room-occupancy index would need
+write-guarded invalidation, and that hazard is not worth a dev-loop-only gain
+today.
 
 ## 10. The budget had twenty characters left, and it was shaping the work
 
@@ -389,28 +410,50 @@ instead of the game.
 
 ## The order
 
-1. ~~**Corridors and echoes**~~ — 211 corridors to 19, echoes 66 to 2, the
-   templates' own 1,939 pairs to 44. Four regions left, all four on the
-   proven walkthrough, in flight now that there is budget for them.
-2. **Standing with height, and the Ironbound march** — the reasons a fourth
-   hold is worth visiting at all. Standing has height for all six factions;
-   the march is in flight; the cross-region pass that lets a sworn rank mean
-   something outside its home region is not started.
-3. ~~**Conditions, then the clock, then abilities and disengage**~~ — all
-   four landed. The clock concatenates from part files, so a region owns its
-   own scheduled events.
-4. **Seven rites** — three replaced, two in flight, and the tool can see the
-   difference now. What is left after that: `ir`, `sk`, `th` and `wm`, three
-   of which the walkthrough walks, so they cost budget and proofs both.
-5. **The bar's gaps, then the scaling** — the density rules still hold by
-   luck rather than by test; the crawler still does not check the menu cap;
-   two ending proofs already render 1107 and 1148 characters against the
-   1100 the walkthrough is held to, because the budget test only ever walks
-   the primary walkthrough. Then make the loop cheap again.
-6. **Prove the other three classes** — the largest unproven claim in the
-   repo (§8), in flight.
-7. **A sixteenth hold, last** — and one whose problem is not a grief-hollow
-   at all.
+1. ~~**Corridors and echoes**~~ — 211 to 15, echoes 66 to 2, the templates'
+   1,939 pairs to 44.
+2. ~~**Standing with height, the Ironbound march, and the cross-region
+   pass**~~ — all three landed, all sixteen regions wired. The march keeps
+   its own clock now (`since`), so setting it moving late no longer drops ten
+   holds in ten turns. What that work revealed is item 3.
+3. **A rank a player earns and never collects.** Twelve ranks, each granted
+   by one npc in one hold behind a topic that also wants an earlier
+   conversation with that same npc. The wave crossed four thresholds and
+   collected two ranks. `status` shows standing now; the collecting is the
+   open half, and `world.clock` is the obvious instrument — it can notice a
+   crossing and say where the rank waits without throwing away the twelve
+   scenes where a faction's own voice tells you what you have become.
+4. ~~**Conditions, the clock, abilities, disengage, `since`, negated
+   conditions, room paging**~~ — landed. Rooms turn pages now, so the menu
+   cap stopped being a limit on how deep a room may go, and it caught three
+   rooms that were one option over while the engine was hiding the thirteenth
+   from the count as well as the player.
+5. ~~**Seven rites**~~ — all seven, each hold resting by a different road:
+   witness, trade, an act left undone, a sequence, a refusal, a sacrifice, a
+   name, and now substitution (Pennywell, chained to the Shieldings) and a
+   stand-down (the Shieldings, a real check where an auto-trigger was).
+6. **The fates.** §2. Two thirds of every hold's climax is strictly
+   dominated and three players proved it 24 times out of 24. Score must stop
+   ranking the fates, and something the realm wants must read each one.
+   Re-gating `reach_burned` on a burned realm — and capturing the proof that
+   road has never had — is in flight. Everything else in this list is
+   smaller than this.
+7. ~~**The bar's gaps**~~ — the validator now rejects a gate whose key the
+   world never cuts (it found one: a Kingswood quest stage that could never
+   clear, one letter wrong) and an ability spending a pool nobody declared;
+   the crawler holds a room's own option load to the cap; and the budget
+   walks **every** proven road, not just the walkthrough, which found five
+   over the ceiling and now ratchets each one down.
+8. **The four rooms still over the ceiling** — mc_north_road (1,448: a
+   hold's arrival text plus all four companions answering in the same
+   breath), th_wood_3_1 (1,243), mg_hollow_throne (1,170) and va_throne
+   (1,125). The last two are the story's climaxes and want careful cutting,
+   not gating.
+9. ~~**Prove the other three classes**~~ — proven, and the wave picked Envoy
+   twice of three unprompted, so the class skew has broken. The region skew
+   has not: see §1.
+10. **A sixteenth hold, last** — and one whose problem is not a grief-hollow
+    at all.
 
 ## The bar, unchanged
 
