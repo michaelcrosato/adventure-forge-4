@@ -170,14 +170,25 @@ not a reason to stop authoring today.
   n]` and `world.clock`, at most one scheduled line a turn). 182 tests → 227.
   No shipped world declares a clock yet, so all three walkthroughs still
   render byte-identically.
-- **Six regions refilled.** Corridors 211 → 94 class-blind (23% → 10%): the
-  Vale 10 → **0**, Marrowgate 14 → **0**, the Saltkerns 27 → 1, Fenmarch
-  27 → 3, the Fallows 29 → 5, Thornwold 25 → 6. Hollowbrook and Coldpass are
-  the last two over the bar. **Counted per class — which is what a player
-  walks through — it is 245/233/223/245 down to 141/127/124/140** for
-  warden/scout/scholar/envoy: a real 43% cut, not the 55% the class-blind
-  figure claims. The gap is class-gated finds, which serve a quarter of
-  players each; `audit-shape` now prints both. Every author held the budget by gating additions on walkthrough
+- **Eight regions refilled — every region is now under the bar.** Corridors
+  211 → **61** class-blind (23% → 7%), and counted per class, which is what a
+  player walks through, **245/233/223/245 → 112/98/97/111** for
+  warden/scout/scholar/envoy. Per region: the Vale 10 → **0**, Marrowgate
+  14 → **0**, Hollowbrook 20 → 1, Coldpass 16 → 2, the Saltkerns 27 → 1,
+  Fenmarch 27 → 3, the Fallows 29 → 5, Thornwold 25 → 6. What is left is
+  mostly the shared templates' own connective rooms, which no region author
+  owns — see the templates item below.
+  Every author held the walkthrough **byte-identical** against a budget with
+  27 characters of slack, by gating additions on walkthrough-crossed rooms
+  behind classes the proven runs never play. That discipline is the reusable
+  result and is now in the region brief.
+- **Forgotten forks to zero** in the Vale (from 15), Fenmarch (3) and
+  Hollowbrook (3); Fenmarch's talkative npcs 3 → 7.
+- **The first faction has height.** The Free Companies' `trusted` (+5) and
+  `sworn` (+9) tiers landed with granting scenes that refuse plainly when the
+  standing is short, and `rep_free` is now read at `>= 9` by 32 conditions
+  instead of at `>= 2` by 25. They also lend a **fifth companion** — Doss, a
+  hired sergeant, the strongest fighter in the game and not a friend. Every author held the budget by gating additions on walkthrough
   rooms behind state the proven runs never reach — the walkthrough's rendered
   text is byte-identical through all of it.
 - **The Vale remembers.** Its forgotten choices went 15 → 0: every choice a
