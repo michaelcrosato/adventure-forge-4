@@ -47,11 +47,11 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // trade one for the other. crowned_hollow, hollow_reach and reach_at_rest
   // are not here at all — they meet the real bar, and hollow_reach came back
   // under it (1,042 to 982) when quest stage changes learned to collapse.
-  "reach:regent_deposed": { avg: 453, max: 1171 },
-  "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1244 },
-  "reach:gray_crown": { avg: 480, max: 1129 },
-  "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1239 },
-  "reach:regent_deposed#warden_crown": { avg: AVG_CHARS_MAX, max: 1142 },
+  "reach:regent_deposed": { avg: 452, max: 1170 },
+  "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1243 },
+  "reach:gray_crown": { avg: 480, max: 1125 },
+  "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1238 },
+  "reach:regent_deposed#warden_crown": { avg: AVG_CHARS_MAX, max: 1141 },
   // The full-party road: four companions travelling, the most expensive proof
   // in the realm, and the ratchet turned down three times on the day it was
   // written. It arrived at 506 average and a 1,489-character screen at

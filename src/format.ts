@@ -123,7 +123,7 @@ export function render(
   // 1,043-character bracket at the Cairn-Track, the widest screen on any proven
   // road. A newline where a space was costs nothing and gives each voice its
   // own line; with one event it reads exactly as it did.
-  if (events.length) lines.push(`[${events.join("\n")}]`);
+  if (events.length) lines.push(`[${foldNotices(events).join("\n")}]`);
   if (world.progress) {
     const v = s.vars[world.progress.var] ?? 0;
     lines.push(`${world.progress.label}: ${v}/${world.progress.max}`);
@@ -244,6 +244,52 @@ export function render(
  * check/combat modifier totals, so a player can confirm their build right
  * before committing to a major choice instead of re-summing perks by hand.
  */
+/** A bare mechanical notice: "(+5)", "(-2)", "(+3xp)", "(the Watch +2)", "(Lys -1)". */
+const NOTICE = /^\((?:[+-]\d+(?:xp)?|.{1,28} [+-]\d+)\)$/;
+
+/**
+ * A turn's mechanical notices fold onto one line, and its score and xp add up.
+ *
+ * One action can earn score twice and xp twice, and each pushed its own event.
+ * Given a line each (which is what makes four companions answering a hold
+ * legible) that became "(+5)", "(+3xp)", "(+5xp)", "(+5)" down the screen —
+ * four lines to say two numbers. A run of them now reads "(+10, +8xp)".
+ *
+ * Only adjacent runs fold. A notice sits directly after the thing that earned
+ * it, and prose between two of them means they belong to different moments;
+ * merging across that would move a number away from its cause.
+ */
+function foldNotices(events: string[]): string[] {
+  const out: string[] = [];
+  let run: string[] = [];
+  const flush = () => {
+    if (!run.length) return;
+    if (run.length === 1) out.push(run[0]!);
+    else {
+      let score = 0, xp = 0;
+      const named: string[] = [];
+      for (const e of run) {
+        const body = e.slice(1, -1);
+        const num = /^([+-]\d+)(xp)?$/.exec(body);
+        if (num) { if (num[2]) xp += Number(num[1]); else score += Number(num[1]); continue; }
+        named.push(body);
+      }
+      const parts: string[] = [];
+      if (score) parts.push(`${score > 0 ? "+" : ""}${score}`);
+      if (xp) parts.push(`${xp > 0 ? "+" : ""}${xp}xp`);
+      parts.push(...named);
+      out.push(`(${parts.join(", ")})`);
+    }
+    run = [];
+  };
+  for (const e of events) {
+    if (NOTICE.test(e)) run.push(e);
+    else { flush(); out.push(e); }
+  }
+  flush();
+  return out;
+}
+
 export function renderStatus(world: World, s: State): string {
   const lines: string[] = [];
   // the recap follows the story: a staged objectives list shows its first entry whose conditions hold
