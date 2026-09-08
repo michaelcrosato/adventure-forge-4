@@ -73,8 +73,12 @@ whole 34-turn session is ~18k chars (~4.7k tokens) of game text.
 - **Classes.** Warden (fight), Scout (move and notice), Scholar (know),
   Envoy (talk). The first menu of every game is the class choice. Class gates
   content everywhere: a scholar reads the verses outright, a scout finds the
-  crack in the barrow doors, an envoy talks the coffer open. Every obstacle
-  has a force, a craft, and a words route, so no class is ever locked out.
+  crack in the barrow doors, an envoy talks the coffer open. Every obstacle is
+  meant to have a force, a craft, and a words route, so no class is ever
+  locked out — and by this repo's own standard that is a promise, not a proof:
+  all six of the Reach's replay-proven routes play a Scholar, so nothing yet
+  checks that a Warden, a Scout or an Envoy can finish. Proofs for the others
+  are owed.
 - **Dice.** One die, the d20. Checks roll d20 + attribute + perk bonuses
   against a difficulty, and the menu previews the odds before you spend the
   turn. Attacks roll d20 + weapon + might against defense. Armor reduces
