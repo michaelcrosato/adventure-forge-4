@@ -29,6 +29,19 @@
             ]
           ]
         ]
+      ],
+      "actions": [
+        {
+          "id": "mg_gate_burn_tally",
+          "label": "read the gate clerk's burn tally",
+          "free": true,
+          "once": true,
+          "if": [["var", "hollows_burned", ">=", 3]],
+          "fx": [
+            ["xp", 1],
+            ["say", "Chalked under the toll rates, a running count of hollows burned, updated whenever word reaches the gate -- three now, and the clerk has started a second column. Nothing chalked for rested or bargained."]
+          ]
+        }
       ]
     },
     "mg_lower_town": {
@@ -202,7 +215,20 @@
         "east": { "to": "mg_watch_house", "landmark": "the Watch House" },
         "west": { "to": "mg_ironbound_hall", "landmark": "the Ironbound hall" }
       },
-      "onEnterOnce": [["xp", 2]]
+      "onEnterOnce": [["xp", 2]],
+      "actions": [
+        {
+          "id": "mg_way_cave_notice",
+          "label": "read the hanging-offense notice",
+          "free": true,
+          "once": true,
+          "if": [["flag", "cp_came_by_cave"]],
+          "fx": [
+            ["xp", 1],
+            ["say", "Freshly posted: the smugglers' stair under Coldpass is a hanging offense now, dated just after word of Gullhaven's traffic reached the city. Someone talked, or something showed."]
+          ]
+        }
+      ]
     },
     "mg_watch_house": {
       "name": "The Watch House",
@@ -596,7 +622,31 @@
       "brief": "The knee-worn stair.",
       "region": "mg",
       "exits": { "up": { "to": "mg_chapel_of_ash" }, "down": { "to": "mg_cistern" } },
-      "onEnterOnce": [["xp", 2], ["score", 2], ["addvar", "rep_keepers", 1]]
+      "onEnterOnce": [["xp", 2], ["score", 2], ["addvar", "rep_keepers", 1]],
+      "actions": [
+        {
+          "id": "mg_trace_knots",
+          "label": "trace the Keeper-knots in the wall",
+          "free": true,
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["var", "rep_keepers", ">=", 3]],
+              [["say", "Your own hands know these knots now -- you've traced enough of them, other places, to read this one without trying."]],
+              [
+                [
+                  "if",
+                  [["var", "rep_keepers", ">=", 1]],
+                  [["say", "The same pattern as every Keeper-cut stair: a ward, then a count, then a ward again. You're starting to recognize the shape of it."]],
+                  [["say", "Cut deep and old, the same knot-pattern as the Vale's barrow stair. Whoever kept this door believed in wards that outlast doors."]]
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
     },
     "mg_undercity_stair": {
       "name": "The Barred Stair",
@@ -604,7 +654,28 @@
       "brief": "Iron-shod steps into fog.",
       "region": "mg",
       "exits": { "up": { "to": "mg_palace_court" }, "down": { "to": "mg_cistern" } },
-      "onEnterOnce": [["xp", 2]]
+      "onEnterOnce": [["xp", 2]],
+      "actions": [
+        {
+          "id": "mg_stair_hand",
+          "label": "read the raised hand on the wall",
+          "free": true,
+          "once": true,
+          "if": [["flag", "cp_came_by_writ"]],
+          "fx": [
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "mg_hand_marks_known"]],
+              [["say", "The same raised hand as Tallow Court's cellar door. Someone is still cutting this mark, capital-wide."]],
+              [
+                ["set", "mg_hand_marks_known"],
+                ["say", "Not a warning -- a ward. The Keepers used to cut this mark over doors they meant to come back to. Someone still believes they will."]
+              ]
+            ]
+          ]
+        }
+      ]
     },
     "mg_cistern": {
       "name": "The Undercity Cistern",
@@ -619,7 +690,20 @@
         "north": { "to": "mg_old_crypts", "landmark": "the old crypts" },
         "down": { "to": "mg_drowned_chapel" }
       },
-      "onEnterOnce": [["xp", 3], ["score", 5], ["say", "Whatever is under Marrowgate, the water knows where it is."]]
+      "onEnterOnce": [["xp", 3], ["score", 5], ["say", "Whatever is under Marrowgate, the water knows where it is."]],
+      "actions": [
+        {
+          "id": "mg_cistern_covenant",
+          "label": "hold the covenant stone to the water",
+          "free": true,
+          "once": true,
+          "if": [["flag", "me_covenant_carried"]],
+          "fx": [
+            ["xp", 2],
+            ["say", "You hold the Meres' covenant stone to the black water a moment. Nothing answers. Whatever kept that compact, it isn't the same dead that pool down here."]
+          ]
+        }
+      ]
     },
     "mg_smugglers_cut": {
       "name": "The Smugglers' Cut",
@@ -627,7 +711,20 @@
       "brief": "Barrels and a chalked mark.",
       "region": "mg",
       "exits": { "east": { "to": "mg_cistern" }, "up": { "to": "mg_free_den" } },
-      "onEnterOnce": [["xp", 2]]
+      "onEnterOnce": [["xp", 2]],
+      "actions": [
+        {
+          "id": "mg_cut_free_nod",
+          "label": "read the mark chalked underneath",
+          "free": true,
+          "once": true,
+          "if": [["var", "rep_free", ">=", 4]],
+          "fx": [
+            ["xp", 2],
+            ["say", "Someone's chalked a second mark under the Company's own: not a warning, a nod. Down here, at least, you're accounted a friend and not just a useful stranger."]
+          ]
+        }
+      ]
     },
     "mg_free_den": {
       "name": "Quill's Den",
@@ -1120,9 +1217,168 @@
             ["xp", 1],
             ["addvar", "gold", 2],
             ["say", "Two coins in the chalk circle, left as a dare. You take the dare."]
+          ],
+          "actions": [
+            {
+              "id": "mg_count_tally",
+              "label": "count the knife-scratch tally",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                [
+                  "if",
+                  [["var", "rep_free", ">=", 4]],
+                  [["say", "Your own mark is in it somewhere, if you knew which scratch to look for -- you're deep enough in the Companies' ledgers now to be counted theirs."]],
+                  [
+                    [
+                      "if",
+                      [["var", "rep_free", ">=", 1]],
+                      [["say", "A running count of favors owed, mostly. A few of the scratches look recent enough to be about you."]],
+                      [["say", "A running count of favors owed, none of them yours yet. Whatever ledger this is, you're not in it."]]
+                    ]
+                  ]
+                ]
+              ]
+            }
           ]
         },
-        { "cell": [2, 0], "npcs": ["mg_dyer"] }
+        { "cell": [2, 0], "npcs": ["mg_dyer"] },
+        {
+          "cell": [0, 0],
+          "name": "Saint's Alley",
+          "desc": "A niche with a stone saint whose face has been rubbed off by centuries of thumbs. Fresh candle-stubs at its feet: someone still asks.",
+          "brief": "The faceless saint.",
+          "actions": [
+            {
+              "id": "mg_saint_candles",
+              "label": "count the fresh candle-stubs",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                [
+                  "if",
+                  [["var", "hollows_burned", ">=", 1]],
+                  [["say", "More candles than usual, and half of them black tallow -- mourning wax, for holds put to the torch."]],
+                  [
+                    [
+                      "if",
+                      [["var", "hollows_rested", ">=", 1]],
+                      [["say", "Fresh candles, ordinary wax. Word of a rite well-kept travels slower than word of a fire, but it travels."]],
+                      [["say", "The stubs are old, half-melted, the ordinary kind. Nobody's heard news enough yet to ask harder."]]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [0, 1],
+          "name": "The Ropewalk",
+          "desc": "A long shed open at both ends where two old women walk backward twisting hemp, and have done since before the Regent's mother.",
+          "brief": "The long rope shed.",
+          "actions": [
+            {
+              "id": "mg_haul_coil",
+              "label": "haul the long coil -- a slip costs 1hp",
+              "if": [["!flag", "mg_coil_hauled"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  10,
+                  [
+                    ["set", "mg_coil_hauled"],
+                    ["xp", 2],
+                    ["addvar", "gold", 2],
+                    ["say", "You lean into it with them. The coil comes up clean, and for one stretch of rope the shed is just a shed, not a symptom of anything."]
+                  ],
+                  [["hp", -1], ["say", "You throw your weight in wrong and the coil throws it back. The old women don't stop twisting to check if you're hurt."]]
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [1, 1],
+          "name": "The Old Shambles",
+          "desc": "Butchers' hooks with nothing on them and a gutter that still runs red on wet days out of habit.",
+          "brief": "Empty hooks.",
+          "actions": [
+            {
+              "id": "mg_shambles_writ",
+              "label": "check the notice against your writ",
+              "free": true,
+              "once": true,
+              "if": [["flag", "regent_writ"]],
+              "fx": [
+                ["xp", 1],
+                ["say", "The Regent's burning order is nailed to the old hook-post, and under it, fresher: writ-holders exempt from search. Nobody in the Shambles reads that second line twice."]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [2, 1],
+          "name": "Tallow Court",
+          "desc": "A court of candle-makers, every sill greasy, the air thick enough to chew. Someone has scratched a raised hand beside a cellar door.",
+          "brief": "Greasy sills.",
+          "actions": [
+            {
+              "id": "mg_hand_tallow",
+              "label": "read the raised hand by the door",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                [
+                  "if",
+                  [["flag", "mg_hand_marks_known"]],
+                  [["say", "The same raised hand as the mark under the palace. Someone is still cutting it, capital-wide."]],
+                  [
+                    ["set", "mg_hand_marks_known"],
+                    ["say", "Not a warning -- a ward. The Keepers used to cut this mark over doors they meant to come back to. Someone still believes they will."]
+                  ]
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [1, 2],
+          "actions": [
+            {
+              "id": "mg_alley_writ_seal",
+              "label": "check the notice for the Regent's seal",
+              "free": true,
+              "once": true,
+              "if": [["flag", "cp_came_by_writ"]],
+              "fx": [
+                ["xp", 1],
+                ["say", "A fresh notice, pasted high where the rain can't reach it, carries the same stamped seal as your writ -- posted alley by alley since the decree went out."]
+              ]
+            }
+          ]
+        },
+        {
+          "cell": [2, 2],
+          "actions": [
+            {
+              "id": "mg_alley_cave_mark",
+              "label": "match the mark to your own road",
+              "free": true,
+              "once": true,
+              "if": [["flag", "cp_came_by_cave"]],
+              "fx": [
+                ["xp", 1],
+                ["addvar", "rep_free", 1],
+                ["say", "The same chalk mark turns up here too, half-hidden in the washing-line shadows. Whoever runs this route trusts the same hands twice, and now they've marked you as one of them."]
+              ]
+            }
+          ]
+        }
       ],
       "cellFx": {
         "onEnter": [
@@ -4018,6 +4274,11 @@
     {
       "if": [["flag", "or_scholar_mg_fane"]],
       "text": "Mother Ysme learned a hundred-year-old name from a Scholar, and lit a candle she hadn't meant to.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "mg_hand_marks_known"]],
+      "text": "Someone is still cutting the raised hand into Marrowgate's stone, cellar door and stair alike. Nobody official has explained it.",
       "weight": 0
     }
   ],

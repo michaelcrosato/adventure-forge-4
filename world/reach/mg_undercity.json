@@ -333,6 +333,35 @@
       "takeable": true,
       "owner": "mg_guild_elder",
       "hint": "guild-stamped, unlike the coil in the fens"
+    },
+    "mg_tower_roster": {
+      "name": "a courier's tally-slip",
+      "loc": "mg_tower1_base",
+      "takeable": true,
+      "hint": "names logged passing below -- read it",
+      "use": [
+        {
+          "if": [["!flag", "mg_roster_read"]],
+          "fx": [
+            ["set", "mg_roster_read"],
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "cp_came_by_writ"]],
+              [["say", "Your own passage is on it, logged plain, the writ's number beside a rough description. Someone above this tower knows exactly when you came through."]],
+              [
+                [
+                  "if",
+                  [["flag", "cp_came_by_cave"]],
+                  [["say", "Your passage isn't on it at all. Whatever door you used, it isn't one this tower is paid to watch."]],
+                  [["say", "Your passage isn't on it. The old pilgrim stair hasn't been a door this tower watches in a hundred years."]]
+                ]
+              ]
+            ]
+          ]
+        },
+        { "fx": [["say", "Names, dates, nothing new to find in it now."]] }
+      ]
     }
   },
   "npcs": {
