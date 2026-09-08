@@ -116,6 +116,42 @@ for (const [key, common] of shared) {
 }
 pairs.sort((x, y) => y.score - x.score);
 
+/**
+ * Names the realm uses twice. A room name is what the player sees in the
+ * header, in the travel list and in a bearings line, so two rooms sharing one
+ * inside a single region is a real confusion; across regions it is milder but
+ * still costs a distinctive place its distinctiveness. Ordinary road names
+ * ("The South Track" in three regions) are the honest exception, so the same
+ * region's collisions are called out first and separately.
+ */
+{
+  const regionOf = (id: string) => world.rooms[id]?.region ?? (id.split("_")[0] ?? "");
+  const group = <T,>(entries: [string, T][], nameOf: (v: T) => string) => {
+    const m = new Map<string, string[]>();
+    for (const [id, v] of entries) {
+      const n = nameOf(v);
+      if (!n) continue;
+      (m.get(n) ?? m.set(n, []).get(n)!).push(id);
+    }
+    return [...m.entries()].filter(([, ids]) => ids.length > 1).sort();
+  };
+  const rooms = group(Object.entries(world.rooms), (r) => r.name);
+  const sameRegion = rooms.filter(([, ids]) => new Set(ids.map(regionOf)).size < ids.length);
+  const across = rooms.filter(([, ids]) => new Set(ids.map(regionOf)).size === ids.length);
+  const npcs = group(Object.entries(world.npcs), (n) => n.name);
+  const quests = group(Object.entries(world.quests ?? {}), (q) => q.name);
+  const show = (label: string, rows: [string, string[]][]) => {
+    if (!rows.length) return;
+    console.log(`${label} (${rows.length}):`);
+    for (const [name, ids] of rows) console.log(`  "${name}" — ${ids.join(", ")}`);
+    console.log();
+  };
+  show("two rooms in ONE region share a name — the travel list cannot tell them apart", sameRegion);
+  show("a quest name used twice", quests);
+  show("an npc name used twice", npcs);
+  show("a room name reused across regions (a road name may be fine; a distinctive one is not)", across);
+}
+
 const clip = (s: string, n = 150) => (s.length > n ? `${s.slice(0, n)}…` : s);
 if (conventionEchoes) {
   console.log(`${conventionEchoes} echoes are two cells' "get your bearings" compass lines, which differ only in their directions — a convention, not prose. Not counted below.`);
