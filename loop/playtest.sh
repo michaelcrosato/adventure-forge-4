@@ -6,8 +6,14 @@
 #   loop/playtest.sh 3 --mock     zero-token wiring check (structural mock player)
 #
 # Env: TF_PLAYER_MODEL (claude model id; default = CLI default)
-#      TF_SEED_BASE (default: epoch seconds)   TF_MAX_TURNS (agent turns, default 340)
+#      TF_SEED_BASE (default: epoch seconds)
 #      TF_MAX_GAME_TURNS (in-game turn budget told to the player, default 300)
+#      TF_MAX_TURNS (agent turns; default = MAX_GAME_TURNS * 3/2 + 60). A player
+#        spends more than one agent turn per game turn — it reads `status`, it
+#        thinks — so an agent budget close to the game budget kills the run
+#        before it can write its report, and the wave files nothing while
+#        reporting only "claude exited nonzero". A wave at 520/480 lost three
+#        players that way. Raise the game budget and this follows it.
 #      TF_PARALLEL (players in flight, default 2)
 #      TF_WORLD (world file; default world/reach.json, same as the server)
 set -euo pipefail
@@ -27,8 +33,8 @@ COUNT="${1:-1}"; [[ "$COUNT" == --* ]] && COUNT=1
 MOCK=0; for a in "$@"; do [[ "$a" == "--mock" ]] && MOCK=1; done
 SEED_BASE="${TF_SEED_BASE:-$(date +%s)}"
 SEED_BASE=$((SEED_BASE % 100000))
-MAX_TURNS="${TF_MAX_TURNS:-340}"
 MAX_GAME_TURNS="${TF_MAX_GAME_TURNS:-300}"
+MAX_TURNS="${TF_MAX_TURNS:-$((MAX_GAME_TURNS * 3 / 2 + 60))}"
 PARALLEL="${TF_PARALLEL:-2}"
 WAVE_DIR="runs/playtest/$(date +%Y%m%dT%H%M%S)"
 mkdir -p "$WAVE_DIR" queue
@@ -77,7 +83,18 @@ run_player() {
     --allowedTools "mcp__tinyforge__new_game,mcp__tinyforge__act,mcp__tinyforge__look,mcp__tinyforge__status" \
     --output-format json --max-turns "$MAX_TURNS" \
     ${TF_PLAYER_MODEL:+--model "$TF_PLAYER_MODEL"} \
-    > "$out" 2> "$WAVE_DIR/player-$i.err" < /dev/null || { echo "  player $i: claude exited nonzero"; return 1; }
+    > "$out" 2> "$WAVE_DIR/player-$i.err" < /dev/null || {
+      # a nonzero exit is usually the agent turn limit, which is a knob, not a
+      # bug — say which so nobody goes looking for a crash that never happened
+      local why
+      why="$(node -e 'try{const d=require("fs").readFileSync(process.argv[1],"utf8");const j=JSON.parse(d);console.log([j.subtype,j.terminal_reason,(j.errors||[]).join("; ")].filter(Boolean).join(" | "))}catch{console.log("")}' "$out" 2>/dev/null)"
+      if [[ "$why" == *max_turns* ]]; then
+        echo "  player $i: hit the agent turn limit ($MAX_TURNS) before finishing — no report. Raise TF_MAX_TURNS, or lower TF_MAX_GAME_TURNS ($MAX_GAME_TURNS)."
+      else
+        echo "  player $i: claude exited nonzero${why:+ — $why}"
+      fi
+      return 1
+    }
   node loop/report-check.mjs "$out" --seed "$seed" || echo "  player $i: report rejected"
 }
 
