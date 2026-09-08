@@ -3795,6 +3795,14 @@
           "fx": [["xp", 3], ["score", 3], ["set", "mg_heard_reeve"]]
         },
         {
+          "id": "mg_reeve_wardmoor",
+          "label": "the order you never sent",
+          "if": [["has", "wm_founding_record"], ["flag", "mg_heard_reeve"]],
+          "once": true,
+          "say": "'Hold the road till I send word' — I wrote that once and never sent word. That is a captain's grief, and it is on paper. What I did to my father is a different theft, and I never once wrote it down.",
+          "fx": [["xp", 2]]
+        },
+        {
           "id": "mg_reeve_covenant",
           "label": "tell him the Meres' covenant is found",
           "if": [["any", [["flag", "me_covenant_carried"], ["flag", "me_covenant_cracked"]]], ["flag", "mg_heard_reeve"]],
@@ -4284,7 +4292,7 @@
   "quests": {
     "mg_throne": {
       "name": "The Hollow Throne",
-      "start": [["flag", "mg_entered"]],
+      "start": [["any", [["flag", "mg_entered"], ["var", "hollows_rested", ">=", 3]]]],
       "done": [["flag", "mg_throne_resolved"]],
       "stages": [
         {
@@ -4316,14 +4324,18 @@
           "text": "You are inside the palace. The archivist keeps the key to the barred stair; the Regent keeps her window."
         },
         {
-          "if": [],
+          "if": [["flag", "mg_entered"]],
           "text": "A seat under the palace takes a rite, fire, a crown, or the truth read aloud. Ways down: stair, chapel, Quill's cut."
+        },
+        {
+          "if": [],
+          "text": "Three hollows rest. The first Reeve's confession is said to wait under Marrowgate's palace, past Coldpass."
         }
       ]
     },
     "mg_ledger": {
       "name": "The Founding Ledger",
-      "start": [["flag", "mg_entered"]],
+      "start": [["any", [["flag", "mg_entered"], ["var", "hollows_rested", ">=", 3]]]],
       "done": [["flag", "mg_ledger_found"]],
       "stages": [
         {
