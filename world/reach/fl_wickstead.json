@@ -53,6 +53,32 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "fl_dike_bearings",
+          "label": "count the smoking chimneys",
+          "free": true,
+          "fx": [
+            [
+              "if",
+              [["flag", "fl_hollow_burned"]],
+              [
+                ["say", "Smoke enough for the whole hold today, and none of it from a chimney. It drifts up from the south instead."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "fl_hollow_rested"]],
+                  [
+                    ["say", "A handful of chimneys smoking below, same as always, and somehow the fields past them look less empty for it."]
+                  ],
+                  [["say", "A handful of chimneys smoking below, in a hold built for hundreds more roofs than that."]]
+                ]
+              ]
+            ]
+          ]
+        }
       ]
     },
     "fl_wickstead_cross": {

@@ -34,7 +34,8 @@
           "name": "The Fallow Verge",
           "desc": "The ground rises north toward a crossroads and its stone cross, the nearest thing to a living place this field has. South and every other way, fallow ground runs on past easy counting.",
           "brief": "Rising ground. North: the crossroads.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "items": ["fl_lost_purse"]
         },
         {
           "cell": [3, 0],
@@ -48,7 +49,19 @@
           "name": "Beggar's Stile",
           "desc": "A stone stile marks an old boundary that means nothing to anyone left to cross it. Someone has propped a second, smaller stone beside it, unexplained.",
           "brief": "An old boundary stile.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_read_second_stone",
+              "label": "look closely at the second stone",
+              "once": true,
+              "fx": [
+                ["score", 1],
+                ["xp", 1],
+                ["say", "No boundary mark at all: a name, badly cut by an unpracticed hand, for someone who had nothing else to leave them."]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 1],
@@ -63,21 +76,112 @@
           "name": "Nettle Court",
           "desc": "A hamlet of six houses, all standing, all empty, all thick with nettle to the sill. Whoever left last shut every door behind them, out of habit more than hope.",
           "brief": "An emptied hamlet, doors shut.",
-          "onEnterOnce": [["xp", 2]]
+          "onEnterOnce": [["xp", 2]],
+          "actions": [
+            {
+              "id": "fl_search_house",
+              "label": "search the nearest shut house",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  8,
+                  [
+                    ["addvar", "gold", 2],
+                    ["score", 1],
+                    ["xp", 2],
+                    ["say", "A tin box behind a loose hearthstone, coins still in it. Someone meant to come back for more than the nettle got to keep."]
+                  ],
+                  [
+                    ["xp", 1],
+                    ["say", "Dust, a fallen chair, nothing worth the door being shut over. Whatever this house kept, it isn't here."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 1],
           "name": "The Market Cross",
           "desc": "A market cross stands at the meeting of four cart-tracks, its steps swept bare by wind rather than trade. West, Nettle Court's chimneys show through the damp; east, a barn has folded in on itself entirely.",
           "brief": "A market cross. No market left to hold.",
-          "onEnterOnce": [["score", 1], ["xp", 2]]
+          "onEnterOnce": [["score", 1], ["xp", 2]],
+          "actions": [
+            {
+              "id": "fl_read_market",
+              "label": "stand where the market used to be",
+              "free": true,
+              "fx": [
+                [
+                  "if",
+                  [["flag", "fl_land_crown"]],
+                  [
+                    ["say", "Surveyor Pell's stakes glint pale in every field from here. The Crown has decided what this ground is for."]
+                  ],
+                  [
+                    [
+                      "if",
+                      [["flag", "fl_land_free"]],
+                      [
+                        ["say", "A recruit's boots have worn a fresh path past the cross, out toward the barn. That trade, at least, is brisk."]
+                      ],
+                      [
+                        [
+                          "if",
+                          [["flag", "fl_land_returners"]],
+                          [
+                            ["say", "A returner's cart stood here this morning, gone again by noon. Someone is using this crossing again, finally."]
+                          ],
+                          [
+                            [
+                              "if",
+                              [["flag", "fl_land_fallow"]],
+                              [
+                                ["say", "Nobody stakes this ground, nobody drills it. The steps stay swept by wind alone, same as they've been for years."]
+                              ],
+                              [
+                                ["say", "No market, no trade, nothing decided yet about what this crossing is for. The steps stay swept by wind alone."]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 1],
           "name": "Hollow Barn Field",
           "desc": "A barn has folded in on its own roof-beam, timbers stacked like a cairn nobody meant to build. Rope still hangs from what was a hay-loft, frayed to a thread at its end.",
           "brief": "A collapsed barn, rope still hanging.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_climb_hayloft",
+              "label": "climb the hayloft rope (1hp on fail)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["addvar", "gold", 2],
+                    ["score", 1],
+                    ["xp", 2],
+                    ["say", "The loft still holds a strongbox nobody came back to claim, its lock long since rusted through."]
+                  ],
+                  [["hp", -1], ["say", "The rope gives a foot from the top, and you land hard on the old stalls below."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 1],
@@ -91,35 +195,135 @@
           "name": "Longacre Rise",
           "desc": "The ground climbs slightly toward a stand of yew. East, past the field's true edge, a smaller chapel roof shows whole against the sky — whole, and entirely unattended.",
           "brief": "Rising ground. East: a second chapel.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "items": ["fl_yew_ribbon"]
         },
         {
           "cell": [0, 2],
           "name": "The Barrow Marches",
           "desc": "The fallow ground gives way west to older, harder land that was never farmed at all. A single standing stone marks the border, and past it, low against the horizon, a mound predates every furrow in sight.",
           "brief": "Old ground. West: a barrow-mound.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_read_boundary_stone",
+              "label": "puzzle out the standing stone (wits)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  10,
+                  [
+                    ["addvar", "rep_keepers", 1],
+                    ["score", 1],
+                    ["xp", 2],
+                    ["say", "Older than any furrow, older maybe than the barrow past it. Whatever it once marked, it wasn't a farm's edge."]
+                  ],
+                  [
+                    ["xp", 1],
+                    ["say", "The cuts are too old and too worn. Whatever this stone once said, it isn't saying it to you today."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 2],
           "name": "Sump's Edge",
           "desc": "The ground goes soft and dark east of here, swallowed by a sunken patch nothing solid crosses. A roofline shows past it regardless, a hut standing on whatever firm ground the sump left alone.",
           "brief": "Sunk ground. East: a hut beyond it.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_reach_sump",
+              "label": "reach into the sump for the glint (1hp)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  9,
+                  [
+                    ["addvar", "gold", 2],
+                    ["xp", 2],
+                    ["say", "A dropped coin-purse, silted but intact. You come up with it before the sump decides to keep your arm too."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "The mud has a grip of its own, and it does not let go easily. You come back with a bruise and nothing else."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 2],
           "name": "The Drill Ground Verge",
           "desc": "The ground softens and sinks just south, too wet to trust a boot on. Past it, out of sight, a raised voice keeps count of something — a drill, or a toll, or both.",
           "brief": "Sunk ground. South: a raised voice.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_listen_drilling",
+              "label": "listen to the voice on the wet ground",
+              "free": true,
+              "fx": [
+                [
+                  "if",
+                  [["any", [["flag", "fl_muster_broken"], ["flag", "fl_muster_off_common"]]]],
+                  [["say", "The voice is gone. Whatever counted cadence out here, nobody's answering it anymore."]],
+                  [
+                    [
+                      "if",
+                      [["flag", "fl_muster_brokered"]],
+                      [["say", "The voice still counts, steadier now, unhurried. Nobody out there is being pressed to it."]],
+                      [
+                        [
+                          "if",
+                          [["flag", "fl_muster_joined"]],
+                          [["say", "The voice counts sharper than it used to, and you know exactly why."]],
+                          [["say", "A raised voice keeps count of something, same as it has every day since you first heard it."]]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 2],
           "name": "Aldergate Mill",
           "desc": "A mill with its wheel still: not stopped, not silent — still there, turning slow and sure on water that should have long since silted its race shut. Nobody has ground grain here in forty years. Something keeps it moving anyway.",
           "brief": "A mill, its wheel still turning.",
-          "onEnterOnce": [["score", 1], ["xp", 2]]
+          "onEnterOnce": [["score", 1], ["xp", 2]],
+          "actions": [
+            {
+              "id": "fl_watch_wheel",
+              "label": "watch the wheel turn (1hp on fail)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "will",
+                  10,
+                  [
+                    ["score", 2],
+                    ["xp", 2],
+                    ["say", "No water drives it, no grain waits for it. It turns because forty years of nobody stopping it never gave it a reason to."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "The wheel's rhythm gets under your skin faster than you'd like, and you step back a good deal less steady."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [5, 2],
@@ -144,14 +348,60 @@
           "name": "Sunken Croft",
           "desc": "A second emptied hamlet, smaller than Nettle Court, its well capped with a flat stone someone troubled to fit exactly. Whoever did it meant the water kept clean for a return that never came.",
           "brief": "A second emptied hamlet.",
-          "onEnterOnce": [["xp", 2]]
+          "onEnterOnce": [["xp", 2]],
+          "actions": [
+            {
+              "id": "fl_open_well",
+              "label": "lift the well's fitted cap (1hp on fail)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  9,
+                  [
+                    ["addvar", "gold", 2],
+                    ["xp", 2],
+                    ["say", "Whoever fit that stone so carefully left something below it worth the trouble: a few coins, dropped for luck or safekeeping."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "The stone slips before you're ready for the weight of it, and it catches your hand on the way down."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 3],
           "name": "The Long Hedgerow",
           "desc": "A hedgerow gone wild and tall enough to lose a person, threading the field in a line that once marked somebody's careful boundary. Blackthorn has claimed most of it for itself.",
           "brief": "A wild, overgrown hedgerow.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_push_hedgerow",
+              "label": "force a way through the thorn (1hp)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["score", 1],
+                    ["xp", 2],
+                    ["say", "You find the one gap the thorns haven't quite closed, and come through with your skin mostly your own."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "The blackthorn does not care for careful, and takes its due before you're through the other side."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 3],
@@ -166,56 +416,157 @@
           "name": "The Toll Stone",
           "desc": "An old boundary stone, its carved toll-rates long since meaningless, one line freshly re-cut over the weathered original: a Crown mark, recent, and not yet answered by anyone else's mark beside it.",
           "brief": "A boundary stone, freshly re-marked.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_read_toll_mark",
+              "label": "read the fresh-cut mark",
+              "free": true,
+              "fx": [
+                [
+                  "if",
+                  [["flag", "fl_land_crown"]],
+                  [["say", "A second mark answers the first now: the Crown's claim, countersigned and made official."]],
+                  [
+                    [
+                      "if",
+                      [["flag", "fl_land_free"]],
+                      [["say", "A crude brand is cut crossways over the old rate-lines: the Companies' answer to whoever asks."]],
+                      [
+                        [
+                          "if",
+                          [["flag", "fl_land_returners"]],
+                          [
+                            ["say", "Plain initials are scratched in beside the Crown's mark, stubborn and unofficial and not going anywhere."]
+                          ],
+                          [
+                            [
+                              "if",
+                              [["flag", "fl_land_fallow"]],
+                              [
+                                ["say", "The fresh mark has been chiselled out and smoothed over. Nobody is claiming this stone, or the ground past it."]
+                              ],
+                              [["say", "A Crown mark, recent, and not yet answered by anyone else's mark beside it."]]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [5, 3],
           "name": "Reed Corner",
           "desc": "Reed has crept in from whatever fen lies beyond the region's edge, closing over what was cropland one patient season at a time. It will have the whole field back, eventually, if nobody stops it.",
           "brief": "Reed, creeping in from the fen.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "items": ["fl_drowned_boot"]
         },
         {
           "cell": [0, 4],
           "name": "The Scarecrow Line",
           "desc": "A row of scarecrows stands at drunken angles, straw long since spilled from most of them, one still upright enough to hold its shape against the sky at dusk.",
           "brief": "A row of leaning scarecrows.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_search_scarecrow",
+              "label": "search the one still standing",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 2],
+                ["xp", 1],
+                ["say", "Someone stuffed more than straw into this one: a few coins, sewn into the sacking where crows wouldn't think to look."]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 4],
           "name": "Dovecote Fallen",
           "desc": "A dovecote lies on its side, its hundred nesting-holes empty and dark, whatever birds once kept it long since gone to wilder roosts. Nobody has righted it, though it would not take much.",
           "brief": "A toppled, empty dovecote.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_right_dovecote",
+              "label": "right the fallen dovecote",
+              "once": true,
+              "fx": [
+                ["score", 2],
+                ["xp", 2],
+                ["addvar", "appr_lys", 1],
+                ["say", "It takes both arms and a bad angle, but it goes back up. Whether anything ever roosts in it again isn't yours to decide."]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 4],
           "name": "The Chalk Pit",
           "desc": "An old chalk quarry, walls gone soft and green, floor pooled with water the color of milk. Tool-marks still show near the top, abandoned mid-cut like the diggers meant to come back the following week.",
           "brief": "A quarry, walls gone soft.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "npcs": ["fl_cur"]
         },
         {
           "cell": [4, 4],
           "name": "The Lightning Oak",
           "desc": "A single oak, split clean down its trunk by some old strike, has kept growing anyway, half of it green and half of it bare bone-white wood. People used to leave small things wedged in the split. Some still do.",
           "brief": "A split, half-living oak.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_search_oak",
+              "label": "search the split in the oak",
+              "once": true,
+              "fx": [
+                ["move", "fl_oak_token", "inv"],
+                ["score", 1],
+                ["xp", 1],
+                ["say", "Among the coins and ribbons wedged into the living half, one carved token, older than the rest and worn nearly smooth."]
+              ]
+            }
+          ]
         },
         {
           "cell": [5, 4],
           "name": "The Last Dike",
           "desc": "A second dike, lower and older than the one at Hollowbrook, marks the fallow ground's furthest reach before the land gives way properly to fen. Whatever built it is long past caring whether it holds.",
           "brief": "A low, ancient dike.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fl_cross_dike",
+              "label": "cross the crumbling dike-top (1hp)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["addvar", "gold", 2],
+                    ["xp", 2],
+                    ["say", "A stash tucked into the old stonework, missed by whoever built this dike and everyone since."]
+                  ],
+                  [["hp", -1], ["say", "The stonework gives without warning, and you go down into cold water up to the knee."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 5],
           "name": "The Bone Road",
           "desc": "A straight track runs south, worn by forty years of the same short, grim errand. Nobody in Wickstead calls it by a kinder name than the one it earned the first winter. East, the headland, and the furrow past it.",
           "brief": "A straight, grim track south.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "items": ["fl_mourning_scrap"]
         },
         {
           "cell": [2, 5],
@@ -267,7 +618,8 @@
           "name": "Marker Field",
           "desc": "Smaller cairns scatter the ground east of the headland proper, each too small to hold what the long furrow holds, each still someone's. Some are recent enough that the stones haven't settled yet.",
           "brief": "Smaller cairns, some recent.",
-          "onEnterOnce": [["xp", 2]]
+          "onEnterOnce": [["xp", 2]],
+          "npcs": ["fl_wren"]
         },
         {
           "cell": [4, 5],
@@ -396,6 +748,45 @@
           ]
         }
       ]
+    },
+    "fl_lost_purse": {
+      "name": "a drawstring purse, still tied",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "someone's, once; a little coin left inside",
+      "use": [
+        {
+          "fx": [
+            ["addvar", "gold", 2],
+            ["move", "fl_lost_purse", "nowhere"],
+            ["say", "Whoever tied it off meant to come back for it. The coin spends the same regardless."]
+          ]
+        }
+      ]
+    },
+    "fl_yew_ribbon": {
+      "name": "a weather-faded ribbon",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "tied low on the yew, more recent than the rest of this ground"
+    },
+    "fl_drowned_boot": {
+      "name": "a single waterlogged boot",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "no pair anywhere near it; not worth much but the finding of it"
+    },
+    "fl_mourning_scrap": {
+      "name": "a scrap of black mourning-cloth",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "snagged on a bramble, dropped by someone walking this road for the same reason you are"
+    },
+    "fl_oak_token": {
+      "name": "a carved wooden token",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "worn nearly smooth, wedged in the split long before you found it"
     }
   },
   "npcs": {
@@ -412,6 +803,70 @@
         ["score", 3],
         ["xp", 4],
         ["say", "It goes down and stays down, folding back into the reed like it was never anything more than ground pretending otherwise."]
+      ]
+    },
+    "fl_cur": {
+      "name": "a lean cur",
+      "room": null,
+      "hostile": true,
+      "hp": 5,
+      "atk": 1,
+      "df": 8,
+      "desc": "Ribs showing, one ear torn, watching the quarry's rim like it half-expects the ground to give up more than water.",
+      "onDeath": [
+        ["score", 2],
+        ["xp", 2],
+        ["say", "It goes down fast, more starved than fierce. There was never much fight in it, only hunger."]
+      ]
+    },
+    "fl_wren": {
+      "name": "Wren",
+      "room": "fl_fallow_3_5",
+      "desc": "A returner kneeling at one of the newer cairns, straightening stones that don't need straightening.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who she's here for",
+          "once": true,
+          "say": "My uncle. He made it back before the ground took him too. At least he's under a stone I chose, not a furrow I didn't.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "fl_wren_sit",
+          "label": "sit with her a while",
+          "if": [
+            ["flag", "said_fl_wren_greet"],
+            ["!flag", "fl_wren_sat"],
+            ["!flag", "fl_wren_answered"],
+            ["!flag", "fl_wren_left"]
+          ],
+          "say": "She doesn't ask you to talk, and you don't. It's the kind of quiet that isn't empty.",
+          "fx": [["set", "fl_wren_sat"], ["score", 1], ["xp", 2], ["addvar", "appr_osk", 1]]
+        },
+        {
+          "id": "fl_wren_plain",
+          "label": "tell her plainly it gets easier",
+          "if": [
+            ["flag", "said_fl_wren_greet"],
+            ["!flag", "fl_wren_sat"],
+            ["!flag", "fl_wren_answered"],
+            ["!flag", "fl_wren_left"]
+          ],
+          "say": "\"Does it,\" she says, not quite a question, and goes back to the stones. It isn't unkindness. It's just not yet.",
+          "fx": [["set", "fl_wren_answered"], ["xp", 1], ["addvar", "appr_tamsin", 1]]
+        },
+        {
+          "id": "fl_wren_leave",
+          "label": "leave her to it, unremarked",
+          "if": [
+            ["flag", "said_fl_wren_greet"],
+            ["!flag", "fl_wren_sat"],
+            ["!flag", "fl_wren_answered"],
+            ["!flag", "fl_wren_left"]
+          ],
+          "say": "She doesn't look up. Whatever she needed from that, it wasn't company.",
+          "fx": [["set", "fl_wren_left"], ["xp", 1]]
+        }
       ]
     }
   }

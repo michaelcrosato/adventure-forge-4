@@ -18,6 +18,18 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "fl_search_bank",
+          "label": "search the bank at the road's end",
+          "once": true,
+          "fx": [
+            ["move", "fl_burying_spade", "inv"],
+            ["xp", 2],
+            ["say", "Half-sunk in the settled earth, a spade nobody came back to clean off. Whoever dug this furrow left everything here but themselves."]
+          ]
+        }
       ]
     },
     "fl_furrow_walk": {
@@ -32,6 +44,19 @@
           "if": [["flag", "fl_dain_father_seeking"], ["!flag", "fl_hollow_done"]],
           "desc": "Walking its length takes longer than it should. Near the southern end, the ground is newer than the rest by decades — grass only just taking hold. Someone's father, most likely, waiting on a name.",
           "brief": "The long walk. One newer stretch, at the south end."
+        }
+      ],
+      "actions": [
+        {
+          "id": "fl_mark_unmarked",
+          "label": "raise a marker over bare ground",
+          "once": true,
+          "fx": [
+            ["score", 1],
+            ["xp", 2],
+            ["addvar", "appr_osk", 1],
+            ["say", "You set a stone over one stretch that never got one, for whoever it was and whoever they had. It costs an afternoon and nothing else."]
+          ]
         }
       ]
     },
@@ -444,5 +469,13 @@
       "text": "Old Ede keeps her wicker house, watched now, and the dead man's cloak she kept forty years has gone to someone who'll grow into it.",
       "weight": 1
     }
-  ]
+  ],
+  "items": {
+    "fl_burying_spade": {
+      "name": "a grave-digger's spade, rusted through",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "half-sunk at the bank's foot, left by whoever cut this ground open forty years gone"
+    }
+  }
 }
