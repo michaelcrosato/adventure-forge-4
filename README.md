@@ -86,13 +86,26 @@ whole 34-turn session is ~18k chars (~4.7k tokens) of game text.
   voice. Topics gate on what you have heard, done, and carried.
 - **Companions.** Recruit them, and they follow you room to room, fight
   beside you, remark on where you are and what you just chose, say "Lys
-  disapproves." when they do, confide in you at high approval, and walk out
-  at low — or when you cross the one line each of them has.
+  disapproves." when they do, confide in you at high approval, quarrel with
+  each other until you take a side, and walk out at low — or when you cross
+  the one line each of them has. Four are met in the Vale; a fifth is a
+  sergeant the Free Companies lend to someone sworn to them, and he is a
+  hired sword rather than a friend.
 - **Choices that matter.** Promise the Reeve to seal the barrow and the
   priest's blessing is closed to you. Reputation with six factions prints the
-  turn it moves and opens or closes doors across the realm. Rooms change with
-  your choices; a burned village stays burned. Every ending appends the
-  epilogue lines your flags have earned, so no two playthroughs end alike.
+  turn it moves, and it has height: past **trusted** and **sworn** each
+  faction offers a rite you walk in and take, refuses you plainly when your
+  standing is short, and charges you standing with whoever it crosses — the
+  Ironbound brand the iron-sun into your hand and it costs you the Keepers
+  and the Church. Rooms change with your choices; a burned village stays
+  burned. Every ending appends the epilogue lines your flags have earned, so
+  no two playthroughs end alike.
+- **Conditions and the clock.** Named status effects with a turn count sit
+  on the player and on npcs, folding into the same numbers the menu preview
+  and the free `status` check already show, so a condition changes the odds
+  you are quoted before you spend the turn. And the realm has a turn of its
+  own: `world.clock` fires at most one scheduled line a turn, so a bargain
+  can come due and a road can close while you are somewhere else.
 - **The world.** Regions with fast travel between discovered landmarks
   (browsing the travel menu is free; only the journey costs a turn); a
   journal that prints "Quest — …" the turn a stage changes; wilderness
@@ -106,7 +119,7 @@ whole 34-turn session is ~18k chars (~4.7k tokens) of game text.
 `npm run verify` (~10s) enforces:
 
 - **Typecheck** — strict, no unchecked indexing.
-- **Tests** (182) — determinism (same seed = byte-identical run, and an engine
+- **Tests** (227) — determinism (same seed = byte-identical run, and an engine
   core that provably never reads the clock), the character layer,
   conversations and companions, travel and the journal, templates and
   stamps, worlds in parts, worldgen scale, triage promotion rules, the fleet
@@ -157,7 +170,9 @@ a region author works from.
 
 ```bash
 node --import tsx scripts/lint-world.ts world/reach.json      # text budgets, per-region counts
-node --import tsx scripts/audit-choices.ts world/reach.json  # which choices the world reads back, and which it forgets
+node --import tsx scripts/audit-choices.ts world/reach.json  # what the world reads back, what it forgets, and gates with no key
+node --import tsx scripts/audit-shape.ts world/reach.json    # corridors per class, and each hold's fingerprint side by side
+node --import tsx scripts/audit-echo.ts world/reach.json     # sentences the realm has written twice, and names it uses twice
 node --import tsx scripts/walk.ts world/reach.json steps.json  # label list -> walkthrough, perk picks inserted
 node scripts/fmt-json.mjs world/reach/*.json                  # compact, stable content formatting
 ```
@@ -180,7 +195,7 @@ world/reach/      its parts — the Vale rebuilt, companions, templates, and sev
 world/vale.json   The Vale of Ash, the original compact world
 world/lighthouse.json  the small regression world
 scripts/          author tools: lint, choice audit, walk, stubs, land, fmt
-test/             182 tests, including the token budget and determinism rules
+test/             227 tests, including the token budget and determinism rules
 loop/             playtest wave, dev cycle, mock player, report checker
 queue/ done/      the one inbox (issues) and its archive
 docs/             design specs, the authoring guide, review findings
