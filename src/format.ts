@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomView } from "./engine.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomView , wildBearing} from "./engine.ts";
 import { ATTRS, EPILOGUE_CAP, EPILOGUE_CHARS } from "./types.ts";
 import type { Action, Cond, State, World } from "./types.ts";
 
@@ -189,6 +189,16 @@ export function render(
     if (npcs.length) lines.push(npcs.join("; "));
     const party = s.party.map((id) => world.npcs[id]?.name ?? id);
     if (party.length) lines.push(`with you: ${party.join(", ")}`);
+  }
+
+  // Deep in a generated wilderness, where you stand counted from the nearest
+  // named place you have already been. Three playtest reports asked for this:
+  // the bearings are right, but following "three north, then two east" meant
+  // counting hops by hand. Nothing prints next door to a place you know, or
+  // where you have not yet stood in one.
+  if (!dark) {
+    const bearing = wildBearing(world, s);
+    if (bearing) lines.push(bearing);
   }
 
   // No "exits: N W E S" line. legalActions offers every exit as its own numbered

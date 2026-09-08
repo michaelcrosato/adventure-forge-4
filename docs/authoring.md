@@ -480,6 +480,15 @@ left and its hint, under "Conditions:".
   `here` while it lives — never spawn something unkillable or unavoidable.
 - The region must stay connected (walls cannot cut it in two): the
   reachability check will tell you.
+- **Mark a handful of cells `landmark`.** They do two jobs: they become
+  fast-travel destinations once seen, and they anchor the breadcrumb the
+  engine prints in every other cell of the region — "two south and one east
+  of the north lane", counted from the nearest landmark the player has stood
+  in. That line is what makes a bearing given as a hop count ("the drowned
+  nave, two stands west") followable without counting in your head; three
+  playtest reports asked for it. Roughly one landmark per six cells is right:
+  the realm runs 77 across 445 cells. Too few and there is nothing to count
+  from; too many and the anchor changes under the player's feet mid-leg.
 
 ## 10. Templates and stamps
 

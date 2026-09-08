@@ -1,0 +1,40 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 542,
+  "receipt": "reach.716.542.366.reach_at_rest.bcb21763",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "In a combat/interaction submenu opened via 'more here', selecting an item sometimes performed a different action than expected (e.g. picking a submenu entry at the Barrow Crypt caused an immediate 'go up' that exited the room instead of showing more combat options), forcing a re-entry to retry.",
+      "where": "Barrow Crypt (early Vale barrow) / 'more here' submenus generally"
+    },
+    {
+      "sev": "P2",
+      "what": "Some 'will-check to settle a companion dispute' prompts fail even at high investment (e.g. a +7 will bonus needing 11+ still failed once on a bad roll), which is fine as designed randomness, but the DC scaling after a failed narrative check (e.g. reading verses/tally marks) isn't clearly telegraphed as increasing each retry until you see it in the next menu.",
+      "where": "general dialogue/skill-check system"
+    }
+  ],
+  "confusions": [
+    "It was never fully clear where to find 'the first Reeve's confession' requirement for the Hollow Throne rite until stumbling into it naturally at Marrowgate's crypts — the Act 2 status text mentions it as a requirement well before the game surfaces where/how to get it, so a player could wander a long time looking for it.",
+    "The distinction between 'hollows rested' (counted toward the 3-needed ending gate) and smaller grief-sites like the Pilgrims' Shrine or individual NPC quests (which grant closure but don't increment the hollow counter) isn't explicit in the moment — only visible later via status."
+  ],
+  "suggestions": [
+    "Surface a stronger hint earlier (e.g. via the herald or a companion) pointing toward Marrowgate/the first Reeve's tomb as the source of the required 'confession', since it's a hard gate on the best ending.",
+    "Make the 'more here' submenu's action list persist/refresh identically to the main list so an accidental selection doesn't cause room-exit-like side effects.",
+    "Show a small inline marker (e.g. '[hollow]') on hold-defining grief locations so players can distinguish which resolutions count toward the 3-hollow ending gate versus flavor/companion-only quests.",
+    "Consider letting `status` show current DC-after-fail values inline next to 'Failed before' entries so players don't need to reopen the room menu to see the new odds."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-08T21-10-04-116Z",
+  "seed": 716,
+  "build": {
+    "rev": "097a769",
+    "world": "54a28d9d"
+  },
+  "cost_usd": 22.268145200000003,
+  "verified": true
+}

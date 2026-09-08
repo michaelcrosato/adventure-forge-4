@@ -514,6 +514,69 @@ function journalEvents(world: World, before: State, after: State, events: string
   }
 }
 
+// ---------- where you stand in a wilderness ----------
+const COUNT_WORDS = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+const countWord = (n: number) => COUNT_WORDS[n] ?? String(n);
+
+/**
+ * Where you stand in a generated wilderness, counted from the nearest named
+ * place you have already been: "two north and one east of the Rope Larder".
+ *
+ * Three separate playtest reports asked for this in three different words — a
+ * breadcrumb while following a multi-hop direction, a mini-map for the
+ * hex-crawl regions, and help reaching named sub-locations. All three are the
+ * same complaint: the bearings a wilderness npc gives are correct now (every
+ * one of the realm's 322 legs was recomputed), but following "three north,
+ * then two east" still means counting hops in your head, and losing count
+ * means starting over.
+ *
+ * The anchors are the places the realm itself names — a `spot` inside the grid
+ * and a `link`'s landmark on its edge, which are exactly what a bearing is
+ * given from — and only ones the player has actually stood in.
+ *
+ * The anchors are landmarks — the places the realm's own bearings are given
+ * from and about ("From Stilt-Shadow: the drowned nave, two stands west") —
+ * and only ones the player has already stood in. Measured on the realm: 77 of
+ * them across 445 generated cells, one per six, which is sparse enough that
+ * the anchor holds still while you walk a leg and close enough that there is
+ * always one to count from.
+ *
+ * Two narrower rules were tried against the realm and abandoned, both because
+ * of the same measurement. Silencing the line "within two hops of anywhere
+ * known" printed on nothing at all: the grids are five and six cells square
+ * and named cells are dense in them. Silencing it in a *named* cell printed on
+ * nothing either — 442 of the 445 cells carry their own name, so there are no
+ * anonymous cells to help in. Naming the cell is not the problem the reports
+ * describe; counting the hops from where the bearing was given is.
+ */
+export function wildBearing(world: World, s: State): string | null {
+  for (const g of world.gen ?? []) {
+    const m = new RegExp(`^${g.id}_(\\d+)_(\\d+)$`).exec(s.room);
+    if (!m) continue;
+    const x = Number(m[1]), y = Number(m[2]);
+    let best: { d: number; dx: number; dy: number; name: string } | null = null;
+    const consider = (cell: [number, number], name: string | undefined, roomId: string) => {
+      if (!name || !s.visited.includes(roomId)) return;
+      const dx = x - cell[0], dy = y - cell[1], d = Math.abs(dx) + Math.abs(dy);
+      if (!d || (best && d >= best.d)) return; // ties keep the first in authored order
+      best = { d, dx, dy, name };
+    };
+    for (const spot of g.spots ?? [])
+      if (spot.landmark) consider(spot.cell, spot.landmark, `${g.id}_${spot.cell[0]}_${spot.cell[1]}`);
+    for (const link of g.links) consider(link.cell, link.landmark, link.to);
+    const near = best as { d: number; dx: number; dy: number; name: string } | null;
+    if (!near) return null;
+    const { dx, dy, name } = near;
+    const legs: string[] = [];
+    if (dy) legs.push(`${countWord(Math.abs(dy))} ${dy < 0 ? "north" : "south"}`);
+    if (dx) legs.push(`${countWord(Math.abs(dx))} ${dx > 0 ? "east" : "west"}`);
+    // "of The Hedge Gap" mid-sentence: a name that carries its own article
+    // lowercases it here, the way theName does everywhere else
+    return `${legs.join(" and ")} of ${name.replace(/^The /, "the ")}`;
+  }
+  return null;
+}
+
 // ---------- fast travel ----------
 /** Landmark rooms the player has stood in, other than the one they stand in now. */
 export function knownLandmarks(world: World, s: State): string[] {

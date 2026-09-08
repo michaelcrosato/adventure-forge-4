@@ -1,0 +1,42 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 613,
+  "receipt": "reach.718.613.366.reach_at_rest.a7cad6cc",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "Selecting 'wait here (leaves the party for now)' in a companion dialogue menu actually removes them from the party mid-conversation, which reads as a continuation option rather than a dismissal — cost a wasted turn re-recruiting Tamsin.",
+      "where": "companion dialogue menus, e.g. The Forge / Tamsin"
+    },
+    {
+      "sev": "P2",
+      "what": "'Call it a draw' style will-checks to defuse companion disputes carry real fail chance and visibly worse consequences (both companions disapprove) than simply picking a side, making the 'neutral' option a trap roughly half the time.",
+      "where": "post-hold companion dispute prompts"
+    }
+  ],
+  "confusions": [
+    "The game never states party size limits; I recruited all 4 companions without any pushback or warning, so it's unclear if a cap exists or matters.",
+    "Locating specific named sub-areas (e.g. the Hundred Gallery, the drowned nave, the Hollow Throne stair) sometimes required blind directional wandering even after 'get your bearings' — bearings gave partial info that didn't always cover the quest target, forcing trial-and-error room-hopping.",
+    "It was never fully clear whether 'a bargain' vs a full 'rest' for a hold both count toward the '3 hollows rested' threshold the same way, though the status screen eventually clarified this.",
+    "The distinction between 'the true founding record' (Wardmoor) and 'the first Reeve's confession' (needed for the throne) wasn't obvious until actually reaching the tomb — the journal text implied they might be the same document."
+  ],
+  "suggestions": [
+    "Rename 'wait here (leaves the party for now)' to something less like a benign pause option, or add a confirmation, since it reads as reversible small talk.",
+    "Show the DC and running success odds more consistently before a will/wits gamble against companions, not just after failing once.",
+    "Add a lightweight 'quest waypoint' hint (e.g. distance/direction) once a location is named in dialogue, similar to what 'get your bearings' already does, so late-game long treks (Iron Downs, Hollowbrook, Marrowgate) are less trial-and-error.",
+    "Surface party size/composition rules (if any) explicitly, since nothing ever indicated a limit despite recruiting 4 companions freely."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-08T21-12-47-809Z",
+  "seed": 718,
+  "build": {
+    "rev": "097a769",
+    "world": "54a28d9d"
+  },
+  "cost_usd": 28.350235,
+  "verified": true
+}
