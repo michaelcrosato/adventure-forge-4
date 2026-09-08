@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, companyHere, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, menuNumbers, oddsHint, receipt, roomIsDark, roomPageOf, roomView , wildBearing} from "./engine.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, companyHere, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, menuNumbers, oddsHint, pathTo, receipt, roomIsDark, roomPageOf, roomView , wildBearing} from "./engine.ts";
 import { ATTRS, EPILOGUE_CAP, EPILOGUE_CHARS } from "./types.ts";
 import type { Action, Cond, State, World } from "./types.ts";
 
@@ -339,14 +339,33 @@ export function renderStatus(world: World, s: State): string {
   if (world.quests) {
     const q = journal(world, s);
     const active = q.filter((x) => x.status === "active");
+    /**
+     * The way to where a stage points, walked through the real exits.
+     *
+     * Three blind players in one wave asked for exactly this and two of them
+     * put a number on its absence: 30-60 turns each spent "wandering
+     * undifferentiated spoil/mound/reed rooms" and "blindly exploring
+     * Fenmarch's side-rooms". A third asked for it in the quest log itself,
+     * which is where this is — status costs no turn, so a line here costs
+     * nothing on the screens a player is actually reading.
+     *
+     * Only for a stage whose author gave it an `at`. There is no guessing from
+     * the stage text: hand-written directions are the thing this replaces.
+     */
+    const way = (x: (typeof active)[number]) => {
+      if (!x.at) return "";
+      const legs = pathTo(world, s, x.at);
+      if (legs === null) return ""; // nothing said rather than something wrong
+      return legs === "" ? " (you are standing there)" : ` (the way there: ${legs})`;
+    };
     // the road (quests marked main) reads first, apart from the side threads
     const road = active.filter((x) => world.quests?.[x.id]?.main);
     const side = active.filter((x) => !world.quests?.[x.id]?.main);
-    if (road.length) lines.push(`${s.ended ? "The road, as it ended" : "The road"}:\n${road.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
+    if (road.length) lines.push(`${s.ended ? "The road, as it ended" : "The road"}:\n${road.map((x) => `- ${x.name}: ${x.text}${way(x)}`).join("\n")}`);
     // a hold's grief — the quest that settles its hollow — is named as such, so
     // a town's side threads never read as the thing the hold is waiting on
     const grief = (id: string) => /_hollow_|hollows_|hollow_(resolved|done|good)/.test(JSON.stringify(world.quests?.[id]?.done ?? []));
-    if (side.length) lines.push(`${s.ended ? "Left undone" : "Quests"}:\n${side.map((x) => `- ${x.name}${grief(x.id) ? " (this hold's grief)" : ""}: ${x.text}`).join("\n")}`);
+    if (side.length) lines.push(`${s.ended ? "Left undone" : "Quests"}:\n${side.map((x) => `- ${x.name}${grief(x.id) ? " (this hold's grief)" : ""}: ${x.text}${way(x)}`).join("\n")}`);
     const done = q.filter((x) => x.status === "done").map((x) => x.name);
     if (done.length) lines.push(`Done: ${done.join(", ")}`);
     const failed = q.filter((x) => x.status === "failed").map((x) => x.name);

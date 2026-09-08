@@ -382,6 +382,11 @@ export function validateWorld(world: World): string[] {
     for (const [i, st] of (Array.isArray(q.stages) ? q.stages : []).entries()) {
       need(`quest ${qid} stage ${i}`, st, [["if", "array"], ["text", "string"]]);
       checkConds(`quest ${qid} stage ${i}`, st.if);
+      // `at` is what the status check walks to (see pathTo). A room id that does
+      // not exist would silently print nothing, which is the failure mode this
+      // field exists to end — 315 hand-written bearing strings and two waves of
+      // "the directions don't match the map".
+      if (st.at !== undefined && !world.rooms[st.at]) err(`quest ${qid} stage ${i}: at names no room (${String(st.at)})`);
     }
   }
   if (Array.isArray(world.objectives)) {

@@ -372,7 +372,17 @@ export type QuestDef = {
   start?: Cond[];
   done?: Cond[];
   failed?: Cond[];
-  stages: { if: Cond[]; text: string }[];
+  /**
+   * `at` is the room this stage points the player at. Written once, it replaces
+   * a hand-authored direction: the free status check walks the real exits to it
+   * and prints the legs (see `pathTo` / `renderStatus`).
+   *
+   * The realm carried 315 hand-written bearing strings — "Slatefold is 4 south
+   * and 1 east, then down" — and two playtest waves reported them not matching
+   * the map, because a wilderness grid has walls and a hop count is not a
+   * route. A room id cannot be wrong about the way there.
+   */
+  stages: { if: Cond[]; text: string; at?: string }[];
 };
 
 /** Most epilogue lines appended to an ending; the rest stay untold. */

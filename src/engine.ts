@@ -485,7 +485,7 @@ export function roomView(world: World, s: State, roomId = s.room): { name: strin
 }
 
 // ---------- journal ----------
-export type QuestLine = { id: string; name: string; status: "active" | "done" | "failed"; text: string };
+export type QuestLine = { id: string; name: string; status: "active" | "done" | "failed"; text: string; at?: string };
 
 /** Every quest that has started, with the line the player should read for it right now. */
 export function journal(world: World, s: State): QuestLine[] {
@@ -496,7 +496,7 @@ export function journal(world: World, s: State): QuestLine[] {
     if (q.done && condsOk(world, s, q.done)) { out.push({ id, name: q.name, status: "done", text: "" }); continue; }
     if (q.failed && condsOk(world, s, q.failed)) { out.push({ id, name: q.name, status: "failed", text: "" }); continue; }
     const stage = q.stages.find((st) => condsOk(world, s, st.if));
-    out.push({ id, name: q.name, status: "active", text: stage?.text ?? "" });
+    out.push({ id, name: q.name, status: "active", text: stage?.text ?? "", ...(stage?.at ? { at: stage.at } : {}) });
   }
   return out;
 }
@@ -562,6 +562,56 @@ const countWord = (n: number) => COUNT_WORDS[n] ?? String(n);
  * rather than by arithmetic, phrased the way the realm's own bearings are
  * phrased, and every step of it is an exit that exists.
  */
+/**
+ * The way to one named room, walked rather than measured: legs like "two
+ * north, then three west", or "" when the player is already standing there,
+ * or null when no chain of exits reaches it from here.
+ *
+ * Where `wildBearing` answers "where am I" — the way back to the nearest place
+ * you already know, inside one generated grid — this answers "where is the
+ * thing I am looking for", which is the question three blind players in one
+ * wave asked for and two of them lost 30-60 turns to. It walks the whole realm
+ * rather than one grid, and it walks to somewhere the player has *not* been,
+ * because that is the case that matters.
+ *
+ * Locked exits count as exits. A route that runs through a barred door is the
+ * route; the door is the quest. Pretending the place is unreachable would be
+ * the same lie the coordinate offsets told.
+ */
+export function pathTo(world: World, s: State, target: string): string | null {
+  if (target === s.room) return "";
+  if (!world.rooms[target]) return null;
+  const from = new Map<string, [string, string]>();
+  const queue = [s.room];
+  for (let head = 0; head < queue.length; head++) {
+    const at = queue[head]!;
+    for (const [dir, ex] of Object.entries(world.rooms[at]?.exits ?? {})) {
+      if (from.has(ex.to) || ex.to === s.room) continue;
+      from.set(ex.to, [at, dir]);
+      if (ex.to === target) {
+        // the path, as legs: consecutive steps the same way count as one
+        const dirs: string[] = [];
+        for (let cur = target; cur !== s.room; ) {
+          const step = from.get(cur)!;
+          dirs.push(step[1]);
+          cur = step[0];
+        }
+        dirs.reverse();
+        const legs: string[] = [];
+        for (let i = 0; i < dirs.length; ) {
+          let n = 1;
+          while (dirs[i + n] === dirs[i]) n++;
+          legs.push(`${countWord(n)} ${dirs[i]}`);
+          i += n;
+        }
+        return legs.join(", then ");
+      }
+      queue.push(ex.to);
+    }
+  }
+  return null;
+}
+
 export function wildBearing(world: World, s: State): string | null {
   for (const g of world.gen ?? []) {
     const cell = new RegExp(`^${g.id}_(\\d+)_(\\d+)$`);

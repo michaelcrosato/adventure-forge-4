@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByLabel, actionLabel, condOk, inTravelMode, journal, legalActions, newState, oddsHint, roomView, step, travelAvailable } from "../src/engine.ts";
+import { actionByLabel, actionLabel, condOk, inTravelMode, journal, legalActions, newState, oddsHint, pathTo, roomView, step, travelAvailable } from "../src/engine.ts";
 import { render, renderStatus } from "../src/format.ts";
 import { validateWorld } from "../src/validate.ts";
 import { EPILOGUE_CAP, MENU_CAP } from "../src/types.ts";
@@ -499,4 +499,72 @@ test("a travel list past the cap turns pages: 'more places' is free and wraps, '
   assert.equal(labels(world, state)[0], "toward Region 1", "the pages wrap");
   state = doLabel(world, state, "toward Region 3");
   assert.deepEqual(labels(world, state), ["to place 3", "back"]);
+});
+
+/**
+ * The way to where a quest points, walked rather than authored.
+ *
+ * All three players of wave seven asked for this, independently, and two put a
+ * number on its absence: 30-60 turns each lost "wandering undifferentiated
+ * spoil/mound/reed rooms" and "blindly exploring Fenmarch's side-rooms". A
+ * third reported the authored direction was simply wrong — "'two stands west,
+ * then in' didn't match the actual room-exit labels; the real path required
+ * going east" — which is the same failure as the coordinate bearings before
+ * them: a grid has walls, so a hop count is not a route. A room id cannot be
+ * wrong about the way there.
+ */
+test("pathTo walks the real exits, folds a straight run into one leg, and gives up rather than guess", () => {
+  const world = line(5);
+  // a branch off the line so the shortest walk is not the only walk
+  world.rooms["r0"]!.exits!["north"] = { to: "attic" };
+  world.rooms["attic"] = { name: "Attic", desc: "Up top.", exits: { south: { to: "r0" } } };
+  world.rooms["cellar"] = { name: "Cellar", desc: "No way in." }; // reachable from nowhere
+  const { state } = newState(world, 1);
+  assert.equal(pathTo(world, state, "r3"), "three east", "three steps the same way are one leg");
+  assert.equal(pathTo(world, state, "attic"), "one north");
+  assert.equal(pathTo(world, state, "r0"), "", "standing there already");
+  assert.equal(pathTo(world, state, "cellar"), null, "no chain of exits reaches it");
+  assert.equal(pathTo(world, state, "nowhere_at_all"), null, "and a room that does not exist is not a route either");
+  // two legs: east along the line, then north at the end
+  world.rooms["r4"]!.exits!["north"] = { to: "roof" };
+  world.rooms["roof"] = { name: "Roof", desc: "Sky.", exits: { south: { to: "r4" } } };
+  assert.equal(pathTo(world, state, "roof"), "four east, then one north");
+  // a locked door is still the way: the door is the quest, and pretending the
+  // place is unreachable would be the same lie the old directions told
+  world.rooms["r0"]!.exits!["east"] = { to: "r1", if: [["flag", "never"]], hint: "the door is barred" };
+  assert.equal(pathTo(world, state, "r3"), "three east");
+});
+
+test("a quest stage with a destination carries the way there into the status check", () => {
+  const world = line(4);
+  world.quests = {
+    q: {
+      name: "The Sunk Chapel",
+      start: [],
+      done: [["flag", "found"]],
+      stages: [{ if: [], text: "Something sings under the water.", at: "r3" }],
+    },
+  };
+  let { state } = newState(world, 1);
+  assert.match(renderStatus(world, state), /The Sunk Chapel: Something sings under the water\. \(the way there: three east\)/, renderStatus(world, state));
+  assert.equal(journal(world, state)[0]!.at, "r3", "the journal carries the destination, so any client can use it");
+  state = doLabel(world, state, "go east");
+  assert.match(renderStatus(world, state), /\(the way there: two east\)/, "and it shortens as you walk");
+  state = doLabel(world, state, "go east");
+  state = doLabel(world, state, "go east");
+  assert.match(renderStatus(world, state), /\(you are standing there\)/);
+
+  // a stage with no destination says nothing extra, and an unreachable one says
+  // nothing rather than something wrong
+  world.quests["q"]!.stages = [{ if: [], text: "Somewhere." }];
+  assert.doesNotMatch(renderStatus(world, state), /the way there/);
+  world.quests["q"]!.stages = [{ if: [], text: "Somewhere.", at: "r0" }];
+  world.rooms["r1"]!.exits = {}; // cut the line behind us
+  world.rooms["r2"]!.exits = {};
+  assert.doesNotMatch(renderStatus(world, state), /the way there/);
+
+  // and a destination that names no room is a validator error, not a silent nothing
+  const bad = line(2);
+  bad.quests = { q: { name: "Q", stages: [{ if: [], text: "t", at: "r7" }] } };
+  assert.ok(validateWorld(bad).some((e) => e.includes("at names no room (r7)")), validateWorld(bad).join("\n"));
 });
