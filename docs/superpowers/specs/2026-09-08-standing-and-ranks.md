@@ -50,10 +50,34 @@ aims cross it, so it is a choice and not an accumulation.
 | sworn | `>= 9` | a rank with a name, a route no one else has, and a line in the epilogue |
 
 Standing moves +1 a deed and +2 a hollow, so `known` is one hold's work,
-`trusted` about two, and `sworn` three or four. **Calibrate against a real
-replay before landing**: instrument a walkthrough and print each `rep_*` at
-the end. If a straight covenant road already reaches +9 with the Keepers, the
-top tier is too cheap and wants raising, not the design changing.
+`trusted` about two, and `sworn` three or four.
+
+**Calibrated** (2026-09-08) by replaying every proven route and reading each
+`rep_*` off the final state:
+
+| route | watch | church | iron | free | keepers | crown |
+|---|---|---|---|---|---|---|
+| walkthrough (`reach_at_rest`) | -1 | 5 | -3 | 3 | **14** | -1 |
+| `hollow_reach` | -1 | 5 | -3 | 3 | **14** | -1 |
+| `regent_deposed` | -1 | 5 | -3 | 3 | **13** | -1 |
+| `reach_burned` | -1 | 4 | -2 | 3 | **13** | 0 |
+| `gray_crown` | -1 | 0 | -3 | 3 | **10** | 1 |
+
+The thresholds land where the design wants them: a route's favoured faction
+reaches +10 to +14 (`sworn` at +9, with room over it), a second reaches +5
+(`trusted` exactly), and the rest sit at `known` or below. A player ends
+sworn to one, trusted to a second, and nothing much to the other four —
+which is the shape the design is for. No renumbering needed.
+
+**A second finding fell out of the calibration, and it is a real one.** All
+five proven routes are the same faction road. Every one of them ends deep
+with the Barrow-Keepers (+10 to +14) and negative with the Ironbound —
+including `reach_burned`, the ending earned by burning the Hollow Throne
+with the Ironbound's own oil, which finishes at **iron -2**. The realm
+claims six factions and proves one. Before the tiers are written, the
+Ironbound and the Crown need a road of their own that a proof replays, or
+their tiers will ship untested and unreachable in practice. Treat that as
+the work that comes first.
 
 ### What each tier gives
 
