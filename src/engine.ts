@@ -1944,10 +1944,28 @@ const roomPages = (out: Action[], ways: number): boolean => out.length > MENU_CA
 function pageRoom(s: State, out: Action[], ways: number): Action[] {
   if (!roomPages(out, ways)) return out;
   const rest = out.slice(ways);
-  const pageSize = MENU_CAP - ways - 1; // one slot for "more here"
+  const pageSize = MENU_CAP - ways - 1; // one slot for the way to the next page
   const pages = Math.ceil(rest.length / pageSize);
   const page = s.roomPage % pages;
   return [...out.slice(0, ways), ...rest.slice(page * pageSize, (page + 1) * pageSize), { kind: "roommore" }];
+}
+
+/**
+ * Which page of a crowded room is showing, and how many there are — null when
+ * the room fits on one and there are no pages to speak of.
+ *
+ * The screen has to say this. A playtester picked a number at the Barrow Crypt
+ * after turning the page and walked out of the room instead: the ways out stay
+ * on every page (so nobody is ever trapped behind a "more"), which means the
+ * numbers under them move when the page does, and a number remembered from the
+ * page before is a mis-pick waiting to happen. Saying "p2/3" in the header
+ * makes a remembered number visibly stale.
+ */
+export function roomPageOf(world: World, s: State): { page: number; pages: number } | null {
+  const { all, ways } = withMenuMemo(() => roomMenu(world, s));
+  if (!roomPages(all, ways)) return null;
+  const pages = Math.ceil((all.length - ways) / (MENU_CAP - ways - 1));
+  return { page: (s.roomPage % pages) + 1, pages };
 }
 
 export function actionLabel(world: World, a: Action, s?: State): string {
@@ -1991,7 +2009,9 @@ export function actionLabel(world: World, a: Action, s?: State): string {
     case "talkmore":
       return "more to ask";
     case "roommore":
-      return "more here";
+      // not "more here": a playtester read that as a submenu (which is what
+      // `travel` and `talk` are) and expected it to replace the list
+      return "more in this room";
     case "travelmore":
       return "more places";
     case "attack": {
@@ -2187,6 +2207,18 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     const mod = checkMod(world, s, chk[1]);
     const need = Math.max(1, dc - mod);
     parts.push(mod ? `DC ${dc}, ${mod > 0 ? "+" : ""}${mod} ${chk[1]}: roll ${need}+ on the die` : `DC ${dc}, ${chk[1]}: roll ${need}+ on the die`);
+    // A raised DC has to say it was raised, and that it stops. A playtester
+    // abandoned the King's Strongroom box because "the DC quietly goes up by 1
+    // after every failure with no visible cap, which can spiral a puzzle out of
+    // reach" — it cannot, escalatedDc holds it at modifier + 20, but nothing on
+    // the screen said so, and a player who thinks a lock is spiralling walks
+    // away from it. Only prints on a check already failed, which is exactly
+    // when it is worth the characters.
+    const tries = s.checkAttempts[checkSourceId(a) ?? ""] ?? 0;
+    if (tries > 0 && dc > chk[2]) {
+      const ceiling = mod + 20;
+      parts.push(chk[2] > ceiling ? `raised ${dc - chk[2]} by failed tries` : `raised ${dc - chk[2]} by failed tries, and stops at ${ceiling}`);
+    }
     // a miss that costs standing or regard is said before the die is thrown, like "fail costs 1hp" — and with whom;
     // so is a hit that costs it, so the warning never reads as "only a miss"
     const cost = costsStandingHint(world, chk[4], chk[3]);

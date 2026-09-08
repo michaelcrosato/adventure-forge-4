@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomView , wildBearing} from "./engine.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomPageOf, roomView , wildBearing} from "./engine.ts";
 import { ATTRS, EPILOGUE_CAP, EPILOGUE_CHARS } from "./types.ts";
 import type { Action, Cond, State, World } from "./types.ts";
 
@@ -110,8 +110,12 @@ export function render(
   // screen in between was 2,328 characters along the realm's walkthrough, on a
   // budget with a thousand to spare, to tell a player something no turn of
   // theirs had changed.
+  // which page of a crowded room is showing: the ways out stay on every page,
+  // so the numbers under them move when the page does
+  const pg = roomPageOf(world, s);
+  const page = pg ? ` p${pg.page}/${pg.pages}` : "";
   lines.push(
-    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} t${s.turn}${hud}${conds}`,
+    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} t${s.turn}${hud}${conds}${page}`,
   );
   if (events.length) lines.push(`[${events.join(" ")}]`);
   if (world.progress) {

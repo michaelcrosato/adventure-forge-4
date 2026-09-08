@@ -296,7 +296,7 @@ test("the HUD line carries active player conditions compactly, and costs nothing
   state = step(w, state, { kind: "custom", room: "c", id: "brace" }).state;
   const withConds = render(w, state, []).text.split("\n")[0]!;
   // sorted by id, so "braced" (b) prints before "winded" (w) regardless of application order
-  assert.match(withConds, /\[braced \d+ winded \d+\]$/);
+  assert.match(withConds, /\[braced \d+ winded \d+\](?: p\d+\/\d+)?$/);
 });
 
 test("status lists active player conditions with their remaining turns and hint", () => {

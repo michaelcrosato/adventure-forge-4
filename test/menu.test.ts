@@ -13,6 +13,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { actionLabel, allActions, legalActions, menuLoad, newState, step } from "../src/engine.ts";
+import { render } from "../src/format.ts";
 import { MENU_CAP } from "../src/types.ts";
 import type { Action, State, World } from "../src/types.ts";
 
@@ -51,7 +52,7 @@ test("a room within the cap does not page", () => {
   const { state } = newState(world, 1);
   const menu = labels(world, state);
   assert.equal(menu.length, 7, "two exits and five things");
-  assert.ok(!menu.includes("more here"), "nothing is hidden, so nothing offers to show it");
+  assert.ok(!menu.includes("more in this room"), "nothing is hidden, so nothing offers to show it");
 });
 
 test("a crowded room turns pages, and never hides the way out", () => {
@@ -63,9 +64,9 @@ test("a crowded room turns pages, and never hides the way out", () => {
     const menu = labels(world, s);
     assert.ok(menu.length <= MENU_CAP, `page ${page} stays within the cap, saw ${menu.length}`);
     assert.ok(menu.includes("go north") && menu.includes("go south"), `page ${page} still shows both ways out`);
-    assert.equal(menu[menu.length - 1], "more here", `page ${page} ends with the way to the next`);
+    assert.equal(menu[menu.length - 1], "more in this room", `page ${page} ends with the way to the next`);
     for (const l of menu) if (l.startsWith("thing ")) seen.add(l);
-    s = step(world, s, pick(world, s, "more here")).state;
+    s = step(world, s, pick(world, s, "more in this room")).state;
   }
   assert.equal(seen.size, 30, `every one of the room's thirty things is reachable, saw ${seen.size}`);
   // and the pages that are not the last one are full: paging does not waste the screen
@@ -76,7 +77,7 @@ test("a crowded room turns pages, and never hides the way out", () => {
 test("turning a page is free — it is browsing, not a turn", () => {
   const world = crowded(30);
   const { state } = newState(world, 1);
-  const after = step(world, state, pick(world, state, "more here")).state;
+  const after = step(world, state, pick(world, state, "more in this room")).state;
   assert.equal(after.turn, state.turn, "no time passes looking at the rest of a room");
 });
 
@@ -85,14 +86,14 @@ test("the pages wrap, so a player can never be stranded past the end", () => {
   const { state } = newState(world, 1);
   const first = labels(world, state);
   let s = state;
-  for (let i = 0; i < 4; i++) s = step(world, s, pick(world, s, "more here")).state;
+  for (let i = 0; i < 4; i++) s = step(world, s, pick(world, s, "more in this room")).state;
   assert.deepEqual(labels(world, s), first, "four pages of thirty things comes back to the first");
 });
 
 test("walking into a room opens it on its first page", () => {
   const world = crowded(30);
   const { state } = newState(world, 1);
-  let s = step(world, state, pick(world, state, "more here")).state;
+  let s = step(world, state, pick(world, state, "more in this room")).state;
   assert.equal(s.roomPage, 1);
   s = step(world, s, pick(world, s, "go north")).state; // to the yard
   s = step(world, s, pick(world, s, "go north")).state; // and back
@@ -100,15 +101,21 @@ test("walking into a room opens it on its first page", () => {
   assert.ok(labels(world, s).includes("thing 0"), "on its first page");
 });
 
-test("the way to the next page says how much is waiting", () => {
+test("the screen says which page it is showing, and how much of the room is waiting", () => {
   const world = crowded(30);
   const { state } = newState(world, 1);
-  const more = pick(world, state, "more here");
-  // nine of thirty are on this page; the label carries the rest
-  assert.match(actionLabel(world, more, state) + (legalActions(world, state).length ? "" : ""), /more here/);
   const menu = legalActions(world, state);
-  const shown = menu.filter((a) => a.kind === "custom").length;
-  assert.equal(shown, MENU_CAP - 3, "two exits, one 'more here', the rest of the page is the room");
+  assert.equal(menu.filter((a) => a.kind === "custom").length, MENU_CAP - 3, "two exits, one way to the next page, the rest of the page is the room");
+  assert.match(actionLabel(world, pick(world, state, "more in this room"), state), /more in this room/);
+  // the header carries the page, so a number remembered from the page before is
+  // visibly stale — a playtester picked one and walked out of the Barrow Crypt
+  const header = (st: State) => render(world, st, []).text.split("\n")[0]!;
+  assert.match(header(state), / p1\/4\b/, header(state));
+  const turned = step(world, state, pick(world, state, "more in this room")).state;
+  assert.match(header(turned), / p2\/4\b/, header(turned));
+  // a room within the cap says nothing about pages
+  const small = crowded(5);
+  assert.doesNotMatch(render(small, newState(small, 1).state, []).text.split("\n")[0]!, / p\d+\/\d+/);
 });
 
 /**
@@ -152,7 +159,7 @@ test("an ability is never dropped off the end of a crowded room's menu", () => {
   const seen = new Set(labels(world, s));
   let turns = 0;
   while (!seen.has("shout them down") && turns < 6) {
-    s = step(world, s, pick(world, s, "more here")).state;
+    s = step(world, s, pick(world, s, "more in this room")).state;
     for (const l of labels(world, s)) seen.add(l);
     turns++;
   }

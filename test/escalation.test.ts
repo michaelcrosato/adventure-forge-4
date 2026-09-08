@@ -52,7 +52,10 @@ test("a failed attempt raises the DC of the next try on the same check — previ
   const a = { kind: "custom", room: "a", id: "riddle" } as Action;
   for (let n = 0; n < 3; n++) {
     const dc = 30 + n; // n prior failures already logged
-    assert.equal(oddsHint(world, state, a), ` (DC ${dc}, wits: roll ${dc}+ on the die)`, `attempt ${n + 1} preview`);
+    // a DC already above what a d20 can reach carries no "and stops at" comfort: it is
+    // unreachable either way, and saying where it stops would be a false promise
+    const raised = n > 0 ? `; raised ${n} by failed tries` : "";
+    assert.equal(oddsHint(world, state, a), ` (DC ${dc}, wits: roll ${dc}+ on the die${raised})`, `attempt ${n + 1} preview`);
     const out = step(world, state, a);
     const line = out.events.find((e) => e.startsWith("WITS d20:"))!;
     assert.match(line, new RegExp(`vs DC ${dc} \\(${dc}\\+ succeeds\\) — fail\\.$`), `attempt ${n + 1} roll: "${line}"`);
@@ -100,7 +103,7 @@ test("a topic's check escalates too, keyed by npc and topic id, independent of a
   assert.equal(oddsHint(world, state, t), " (DC 21, wits: roll 21+ on the die)");
   state = step(world, state, t).state;
   assert.equal(state.checkAttempts["tp:sage:riddle"], 1);
-  assert.equal(oddsHint(world, state, t), " (DC 22, wits: roll 22+ on the die)", "the topic's own retry is now harder");
+  assert.equal(oddsHint(world, state, t), " (DC 22, wits: roll 22+ on the die; raised 1 by failed tries)", "the topic's own retry is now harder, and says why");
 });
 
 test("a check with no source id never escalates (a world.clock entry: not a menu action a player retries)", () => {
@@ -169,7 +172,7 @@ test("the rendered menu line itself carries the escalated DC (renderMenu, not ju
   state = step(world, state, { kind: "custom", room: "a", id: "riddle" }).state;
   state = step(world, state, { kind: "custom", room: "a", id: "riddle" }).state;
   const afterTwoFails = renderMenu(world, state).text;
-  assert.match(afterTwoFails, /^1 riddle \(DC 32, wits: roll 32\+ on the die\)$/m);
+  assert.match(afterTwoFails, /^1 riddle \(DC 32, wits: roll 32\+ on the die; raised 2 by failed tries\)$/m);
 });
 
 test("escalation stops where the die can still land it, and never lowers an authored DC", () => {
@@ -185,8 +188,10 @@ test("escalation stops where the die can still land it, and never lowers an auth
   for (let n = 0; n < 15; n++) { seen.push(dcOf()); state = step(world, state, a).state; }
   assert.equal(seen[0], 11, "the authored DC on the first try");
   assert.equal(Math.max(...seen), 20, `the rise stops at a natural 20, saw ${Math.max(...seen)}`);
-  // and it is still possible there: the preview and the roll both say 20+
-  assert.equal(oddsHint(world, state, a), " (DC 20, wits: roll 20+ on the die)");
+  // and it is still possible there: the preview and the roll both say 20+, and
+  // the line says where the rise stops — a playtester abandoned the King's
+  // Strongroom box believing the DC would spiral out of reach forever
+  assert.equal(oddsHint(world, state, a), " (DC 20, wits: roll 20+ on the die; raised 9 by failed tries, and stops at 20)");
 
   // an authored DC already past 20 is left exactly as written
   const hard = riddleWorld(30);
