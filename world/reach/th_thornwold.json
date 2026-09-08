@@ -979,6 +979,7 @@
           "fx": [
             ["addvar", "gold", -2],
             ["set", "th_toll_resolved"],
+            ["set", "th_toll_paid_coin"],
             ["npcgo", "th_toll_men", null],
             ["addvar", "rep_free", 1],
             ["score", 2],
@@ -1030,6 +1031,17 @@
             ["npcgo", "th_toll_men", null],
             ["xp", 1],
             ["say", "Neither of them reaches for the pole. \"Not worth the argument,\" the nearer one mutters, and waves you through without a coin changing hands."]
+          ]
+        },
+        {
+          "id": "th_toll_trusted",
+          "label": "show the Company's own mark",
+          "if": [["flag", "free_trusted"], ["!flag", "th_toll_resolved"]],
+          "free": true,
+          "fx": [
+            ["set", "th_toll_resolved"],
+            ["npcgo", "th_toll_men", null],
+            ["say", "The nearer one clocks the chit before it's half out of your coat and hauls the pole himself. \"Trusted,\" he says, like it settles an argument nobody was having."]
           ]
         }
       ]
@@ -1256,6 +1268,11 @@
       "loc": "th_tower1_base",
       "takeable": true,
       "hint": "half a name, half a number — the rest is water-lost"
+    },
+    "th_free_chit": {
+      "name": "a Free Company chit",
+      "loc": "nowhere",
+      "hint": "Company-marked; their own people know it on sight"
     }
   },
   "npcs": {
@@ -1579,7 +1596,170 @@
           "once": true,
           "say": "She doesn't ask if you served the Watch; she just talks like you did. \"Half my roster's owed wages I can't cover past the next contract.\" Her own men go quiet when they clock the same bearing.",
           "fx": [["set", "or_warden_th_vane"], ["xp", 2], ["addvar", "rep_watch", 1], ["addvar", "rep_free", -1]]
+        },
+        {
+          "id": "th_vane_trusted_offer",
+          "label": "ask to be trusted with the road",
+          "if": [["var", "rep_free", ">=", 5], ["!flag", "free_trusted"]],
+          "once": true,
+          "say": "Vane checks you the way she checks a tally that finally balances. \"You've paid your way in more than one of my camps. That's trust, not luck. Take the road — nobody at my gates troubles you twice.\"",
+          "fx": [
+            ["set", "free_trusted"],
+            [
+              "if",
+              [["!flag", "free_passage"]],
+              [
+                ["set", "free_passage"],
+                ["say", "\"The stair under Coldpass, too. Don't thank me for what's already yours.\""]
+              ],
+              []
+            ],
+            ["move", "th_free_chit", "inv"],
+            [
+              "if",
+              [["flag", "th_toll_paid_coin"]],
+              [["addvar", "gold", 2], ["say", "She flips back what you paid at her own gate, unasked."]],
+              []
+            ],
+            ["addvar", "rep_watch", -1],
+            ["score", 5],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "th_vane_trusted_refuse",
+          "label": "ask to be trusted with the road",
+          "if": [["var", "rep_free", "<", 5], ["!flag", "free_trusted"]],
+          "say": "\"Not yet.\" Vane doesn't look up from the tally. \"Trust isn't a toll I take once. Do right by more than one of my camps, then ask me again.\""
+        },
+        {
+          "id": "th_vane_sworn_offer",
+          "label": "ask to be sworn to the Companies",
+          "if": [["var", "rep_free", ">=", 9], ["!flag", "free_sworn"]],
+          "once": true,
+          "say": "Vane doesn't hesitate. \"Sworn, then. Not hired — ours.\" She tips her head toward the muster. \"Doss. Been waiting on someone worth the trouble. Try not to get them killed.\"",
+          "fx": [
+            ["set", "free_sworn"],
+            ["npcgo", "th_doss", "th_muster"],
+            ["addvar", "rep_crown", -3],
+            ["score", 8],
+            ["xp", 4]
+          ]
+        },
+        {
+          "id": "th_vane_sworn_refuse",
+          "label": "ask to be sworn to the Companies",
+          "if": [["var", "rep_free", "<", 9], ["!flag", "free_sworn"], ["flag", "free_trusted"]],
+          "say": "\"Sworn's a different debt than trusted.\" Vane doesn't soften it. \"Trusted, I hand out. Sworn, you earn from more of us than just me. Not yet.\""
         }
+      ]
+    },
+    "th_doss": {
+      "name": "Doss",
+      "room": null,
+      "dialogue": true,
+      "desc": "New to the muster, sizing up the yard the way a hired blade sizes up any room — for the exits, not the company.",
+      "hp": 14,
+      "atk": 4,
+      "df": 13,
+      "onDeath": [
+        ["set", "th_doss_dead"],
+        ["say", "Doss goes down before the oath is a day old, sword still half in its sheath. Vane will hear of this before you do the telling."],
+        ["addvar", "rep_free", -3],
+        ["addvar", "appr_lys", -1],
+        ["addvar", "appr_osk", -1],
+        ["addvar", "appr_tamsin", -1],
+        ["addvar", "appr_vell", -1]
+      ],
+      "companion": {
+        "hit": 3,
+        "dmg": 4,
+        "remarks": [
+          {
+            "id": "r_th_burned",
+            "if": [["flag", "th_hollow_burned"]],
+            "say": "My own camp's grief, and you burned it. Vane will have opinions. I'm keeping mine to myself, for now."
+          },
+          {
+            "id": "r_th_rested",
+            "if": [["flag", "th_hollow_rested"]],
+            "say": "Rested clean, no fire, no argument. Wish every contract closed that easy."
+          },
+          {
+            "id": "r_sk_entered",
+            "if": [["flag", "sk_entered"]],
+            "say": "Salt coast. Half the Company's second income comes off this stretch. Mind your footing on the stair."
+          },
+          {
+            "id": "r_king_forsaken",
+            "if": [["flag", "va_king_forsaken"]],
+            "say": "Left him neither settled nor answered. In my trade you finish the job, or you don't take the coin for it."
+          },
+          {
+            "id": "r_rites",
+            "if": [["flag", "hb_entered"]],
+            "say": "Rites, rest-verses, reading-stones. I've buried men with a shovel and a curse and it took just as well."
+          },
+          {
+            "id": "r_bargain_broken",
+            "if": [["flag", "th_bargain_broken"]],
+            "say": "You told Bray to walk from a debt the Company swore to pay. That's not clever, that's theft with better manners. I'll remember it.",
+            "fx": [["addvar", "appr_th_doss", -2]]
+          },
+          {
+            "id": "r_coin",
+            "if": [["var", "gold", ">=", 40]],
+            "say": "Coin in the purse, none of it spent proving a point to anybody. That's the only virtue I've ever trusted."
+          },
+          {
+            "id": "r_appr_pos",
+            "if": [["var", "appr_th_doss", ">=", 2]],
+            "say": "You pay what you owe and you don't waste my time. I've soldiered under worse, for better pay."
+          },
+          {
+            "id": "r_appr_neg",
+            "if": [["var", "appr_th_doss", "<=", -2]],
+            "say": "I took this contract on Vane's word, not yours. Don't make her wrong about you."
+          }
+        ],
+        "leaves": [
+          {
+            "if": [["var", "appr_th_doss", "<=", -3]],
+            "say": "Hired's hired, and paid's paid, but this isn't worth either anymore. Find someone else to watch your back."
+          }
+        ]
+      },
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Doss. Vane's word got me here; yours keeps me. I fight for coin and I fight well — the second part is why the first is worth paying.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what the Company actually believes",
+          "if": [["flag", "said_th_doss_greet"]],
+          "once": true,
+          "say": "Coin and no masters. That's the whole charter, near enough — signed the night we shot a herald asking truce. Nobody's proud of the start. Nobody's apologized either.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "recruit",
+          "label": "come with me",
+          "if": [["!inParty", "th_doss"], ["!flag", "th_doss_left"], ["flag", "said_th_doss_greet"]],
+          "say": "Pay's pay. Lead on.",
+          "fx": [["party", "th_doss", "join"], ["set", "th_doss_joined"]]
+        },
+        {
+          "id": "dismiss",
+          "label": "wait here (leaves the party for now)",
+          "if": [["inParty", "th_doss"]],
+          "say": "Fair enough. I don't work for free, but I don't chase, either.",
+          "fx": [["party", "th_doss", "leave"]]
+        },
+        { "id": "bye", "label": "leave it there", "say": "Mind your coin and your back. In that order.", "end": true }
       ]
     },
     "th_bray": {
@@ -3066,6 +3246,15 @@
       ]
     }
   },
+  "statusPaths": [
+    {
+      "label": "your rank with the Free Companies",
+      "states": [
+        { "if": [["flag", "free_sworn"]], "text": "sworn to the Companies" },
+        { "if": [["flag", "free_trusted"]], "text": "trusted on their roads" }
+      ]
+    }
+  ],
   "epilogue": [
     {
       "if": [["flag", "th_hollow_rested"]],
@@ -3203,6 +3392,31 @@
     {
       "if": [["any", [["flag", "th_rook_traded"], ["flag", "or_scout_th_rook"]]]],
       "text": "Rook still tells it as the one time a stranger settled his account with a nod, not a blade or a coin.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "free_sworn"]],
+      "text": "The Free Companies count you sworn, not hired — a rank the charter itself remembers, no coin needing to change hands again.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "free_trusted"], ["!flag", "free_sworn"]],
+      "text": "No toll camp between Thornwold and the Saltkerns stops you twice. The Free Companies call that trust, and mean it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "free_sworn"], ["flag", "th_doss_dead"]],
+      "text": "Doss didn't outlive the oath by a season. Camp Gallows still argues whether the fault was the contract's or the hire's.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "free_sworn"], ["!flag", "th_doss_dead"], ["flag", "th_doss_joined"]],
+      "text": "Doss is still Company, still sworn to your back specifically, and still says the pay was never really the point.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "free_sworn"], ["!flag", "th_doss_dead"], ["!flag", "th_doss_joined"]],
+      "text": "Doss still waits at the muster, sworn but never called on. Some contracts just sit unused, Vane says, and pays them anyway.",
       "weight": 1
     }
   ]

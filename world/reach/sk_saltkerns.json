@@ -766,6 +766,14 @@
           ]
         },
         {
+          "id": "sk_rennick_trusted",
+          "label": "the Company chit",
+          "if": [["flag", "free_trusted"]],
+          "once": true,
+          "say": "Rennick's thumb finds the stamp without needing to be shown where it is. \"Vane's mark. Company's own, then.\" He doesn't ask to see it twice.",
+          "fx": [["xp", 2], ["score", 2]]
+        },
+        {
           "id": "bye",
           "label": "leave him to his charts",
           "say": "Mind the tide going out. It doesn't wait on strangers.",
@@ -1429,6 +1437,14 @@
           "once": true,
           "say": "Otts doesn't say much, but he marks your face against the door now, same as he does for men who've run a tab and skipped it.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "sk_otts_trusted",
+          "label": "the Company chit, at the bar",
+          "if": [["flag", "free_trusted"]],
+          "once": true,
+          "say": "Otts glances at the chit and pours without being asked twice. \"Company's own drinks free in here. Rest of you pay same as always.\"",
+          "fx": [["hp", 4], ["xp", 1]]
         }
       ]
     },
@@ -1590,6 +1606,11 @@
       "if": [["flag", "or_scholar_sk_plate"]],
       "text": "A Scholar read the Reeve's Pride's own dedication plate: a marriage envoy, not a war fleet, sent to buy peace.",
       "weight": 0
+    },
+    {
+      "if": [["flag", "free_trusted"]],
+      "text": "Rennick still tells new hires about the stranger who walked into Gullhaven already carrying the Company's own mark.",
+      "weight": 1
     }
   ],
   "quests": {
