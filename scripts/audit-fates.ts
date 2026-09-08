@@ -81,14 +81,29 @@ for (const code of [...codes].sort()) {
   const rows: string[] = [];
   for (const fate of FATES) {
     const flag = `${code}_hollow_${fate}`;
+    // Rooms AND conversations. This scanned only room actions for its first
+    // three weeks, and five holds settle their grief in an npc's topic instead
+    // — so the tool printed "0 of 15 ranked" while those five still paid +20
+    // for a bargain against +25 for a rest, which is exactly the finding it
+    // exists to catch. A blind spot in a measuring tool is worse than no tool:
+    // it is a green bar over the thing you were checking for.
+    const offers: { label: string; fx: Fx[] | undefined }[] = [];
     for (const [rid, r] of Object.entries(world.rooms)) {
       if (!rid.startsWith(`${code}_`)) continue;
-      for (const a of r.actions ?? []) {
-        if (!setsFlag(a.fx, flag)) continue;
-        const p = payOf(a.fx);
-        best[fate] = Math.max(best[fate] ?? -Infinity, p.score);
-        rows.push(`    ${fate.padEnd(9)} ${String(a.label).slice(0, 42).padEnd(42)} ${words(p)}`);
+      for (const a of r.actions ?? []) offers.push({ label: a.label, fx: a.fx });
+    }
+    for (const [nid, npc] of Object.entries(world.npcs)) {
+      for (const t of npc.topics ?? []) {
+        if (!setsFlag(t.fx, flag)) continue; // the npc may live anywhere; the flag is what ties it to the hold
+        offers.push({ label: `${npc.name}: ${t.label}`, fx: t.fx });
+        void nid;
       }
+    }
+    for (const a of offers) {
+      if (!setsFlag(a.fx, flag)) continue;
+      const p = payOf(a.fx);
+      best[fate] = Math.max(best[fate] ?? -Infinity, p.score);
+      rows.push(`    ${fate.padEnd(9)} ${String(a.label).slice(0, 42).padEnd(42)} ${words(p)}`);
     }
   }
   const scores = FATES.map((f) => best[f]).filter((n): n is number => n !== undefined);
@@ -112,7 +127,9 @@ console.log(
         `A fate nobody would choose is not a choice, and three blind players chose "rest" 24 times out of 24.\n` +
         `Fates should differ in what they pay, not in how much — and something the realm wants should read each one.`
     : `\n0 of ${holds} holds rank their fates by score: the same deed pays the same whichever road you take it by.\n` +
-        `What is left is what each fate pays INSTEAD — standing, regard, and an ending that reads it. reach_at_rest\n` +
-        `wants three holds rested and reach_burned three burned; a bargained realm still has no seat of its own.`,
+        `What is left is what each fate pays INSTEAD — standing, regard, and an ending that reads it. All three\n` +
+        `fates now have a seat: reach_at_rest wants three holds rested, reach_burned three burned, reach_bargained\n` +
+        `three bargained, and each is proven by a route that actually does it. The open question is no longer\n` +
+        `whether a fate has a reader but whether a player can tell, before choosing, what it will cost them.`,
 );
 process.exit(0);

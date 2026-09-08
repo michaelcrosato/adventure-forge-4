@@ -178,6 +178,18 @@ test("a hold's fates pay the same score, whichever road the deed is done by", ()
           best[fate] = Math.max(best[fate] ?? -Infinity, scoreOf(a.fx));
         }
       }
+      // Conversations too. Both this test and scripts/audit-fates.ts scanned
+      // only room actions, and five holds settle their grief in an npc's topic
+      // instead — so both printed a clean bar while those five paid +20 for a
+      // bargain against +25 for a rest, which is the one thing they exist to
+      // catch. The flag is what ties a topic to its hold; the npc may stand
+      // anywhere.
+      for (const npc of Object.values(world.npcs)) {
+        for (const t of npc.topics ?? []) {
+          if (!setsFlag(t.fx, flag)) continue;
+          best[fate] = Math.max(best[fate] ?? -Infinity, scoreOf(t.fx));
+        }
+      }
     }
     const pays = Object.entries(best);
     if (pays.length < 2) continue;
