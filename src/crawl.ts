@@ -9,27 +9,33 @@
  *   HOLE      the rendered turn or status contains "undefined", "null", "NaN",
  *             or "[object Object]" — a missing content field the validator's
  *             reference checks cannot see, printed as-is to the player
- * Also replays the walkthrough and prints coverage (rooms seen, endings seen)
- * plus two NUMBERS that are deliberately not findings yet:
+ * Also replays the walkthrough and prints coverage (rooms seen, endings seen),
+ * plus two numbers in every summary line:
  *
  *   over-cap menus  rooms offering more than MENU_CAP options. The validator
  *                   already errors on this ("walkthrough: menu hit N > cap"),
- *                   so it is a hard contract — but it can only see the
- *                   walkthrough, and off it `world/vale.json` reaches 15 in
- *                   `square` and `throne`. Fixing that means folding the
- *                   Vale's npc topics behind `talk to X` the way the Reach
- *                   does, which re-captures its walkthrough and all seven
- *                   proofs. Until that lands this is a count, not a finding:
- *                   red here would block every author on the realm for a
- *                   defect none of them introduced.
+ *                   so it is a hard contract — but it could only see the
+ *                   walkthrough, and off it `world/vale.json` used to reach
+ *                   18 in `square` and 15 in `throne` (no npc there folded
+ *                   its topics behind `talk to X` the way the Reach does).
+ *                   That landed (vale, lighthouse and reach all read 0 at
+ *                   this crawl's default depth), so this is now a FINDING,
+ *                   not just a number: a walk that hits the cap fails the
+ *                   run. `--deep` still turns up a rare, deep combination in
+ *                   `throne` (several endings plus a few carried items'
+ *                   `use` entries can co-occur past the cap) — tracked, not
+ *                   yet a finding, since the default depth this crawl (and
+ *                   `npm run verify`) runs at is clean.
  *   biggest screen  the largest response a walk rendered, as a player would
  *                   see it. `test/budget.test.ts` holds each world to 1100
  *                   characters along its proven walkthrough only, so nothing
- *                   measures a screen off it — and two ending proofs already
- *                   render 1107 and 1148.
+ *                   measures a screen off it. `world/vale.json` is clean at
+ *                   this crawl's default depth (worst 1071, `crypt`) but
+ *                   `world/reach.json` is not (1104 in `hb_keepers_hall`,
+ *                   and two of its ending proofs already render 1107 and
+ *                   1148) — so this one stays a number, not a finding, until
+ *                   reach's screens are brought under the ceiling too.
  *
- * Both go in the summary line so the truth is in front of every `npm run
- * verify`, and both become findings the moment the shipped worlds are clean.
  * Exit 0 = green. `--replay <trace.json>` re-runs a recorded session and
  * prints its receipt (used to verify playtest reports).
  */
@@ -138,8 +144,9 @@ if (process.argv[1]?.endsWith("crawl.ts")) {
   const paths = explicit
     ? [explicit]
     : readdirSync("world").filter((f) => f.endsWith(".json")).map((f) => `world/${f}`);
-  const walks = args.includes("--deep") ? 400 : 60;
-  const maxSteps = args.includes("--deep") ? 300 : 120;
+  const deep = args.includes("--deep");
+  const walks = deep ? 400 : 60;
+  const maxSteps = deep ? 300 : 120;
   let bad = 0;
   for (const p of paths) {
     const world = loadWorld(p);
@@ -147,6 +154,14 @@ if (process.argv[1]?.endsWith("crawl.ts")) {
     const r = crawl(world, walks, maxSteps);
     const wt = replayWalkthrough(world, 1);
     if (wt.error) r.findings.push(`WALKTHROUGH ${wt.error}`);
+    // a hard finding, not just a number, at this default depth — the one
+    // `npm run verify` actually runs, and the one every shipped world is
+    // clean at. `--deep` still turns up a rare, deep `throne` combination in
+    // `world/vale.json` (see header), so it stays a diagnostic run: informing,
+    // never failing, until that is closed too. biggest-screen stays a printed
+    // number at every depth until reach's off-walkthrough screens are also
+    // brought under 1100.
+    if (r.overCap.count && !deep) r.findings.push(`OVERCAP ${world.id}: ${r.overCap.count} steps over cap, worst ${r.overCap.worstN} in ${r.overCap.room}`);
     const rooms = Object.keys(world.rooms).length;
     console.log(
       `crawl ${world.id}: ${walks} walks, ${r.steps} steps, ${Date.now() - t0}ms | rooms ${r.roomsSeen.size}/${rooms} | endings seen: ${[...r.endingsSeen].join(",") || "none"} | biggest screen ${r.worst.chars} (${r.worst.room || "-"}) | over-cap menus ${r.overCap.count}${r.overCap.count ? ` (worst ${r.overCap.worstN} in ${r.overCap.room})` : ""} | walkthrough: ${wt.error ?? `win in ${wt.turns}t`}`,

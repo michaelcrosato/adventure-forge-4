@@ -48,7 +48,9 @@ for (const world of worlds) {
 
 test("vale: asking the elder about the coffer early rewards xp once, and the clue stays available", () => {
   // Regression: both early-coffer topics granted 1 xp on every repeat, so a
-  // player could level up indefinitely without leaving the village.
+  // player could level up indefinitely without leaving the village. The elder
+  // now folds behind "talk to" (conversation mode), so the topic is reached
+  // by opening the conversation once and re-picking the topic inside it.
   const vale = worlds.find((w) => w.id === "vale");
   assert.ok(vale, "vale world present");
   let { state } = newState(vale, 1);
@@ -60,17 +62,18 @@ test("vale: asking the elder about the coffer early rewards xp once, and the clu
   };
   for (const l of ["go south", "go south", "go east"]) go(l);
   assert.equal(state.room, "elder_house");
+  go("talk to elder");
   const before = state.xp;
-  go("ask elder: the sealed coffer");
+  go("the sealed coffer");
   assert.equal(state.xp, before + 1, "the first ask is rewarded");
-  go("ask elder: the sealed coffer");
-  go("ask elder: the sealed coffer");
+  go("the sealed coffer");
+  go("the sealed coffer");
   assert.equal(state.xp, before + 1, "repeats are not");
-  assert.ok(actionByLabel(vale, state, "ask elder: the sealed coffer"), "the clue is still on the menu");
+  assert.ok(actionByLabel(vale, state, "the sealed coffer"), "the clue is still on the menu");
   // switching to the seal-in-hand variant does not re-arm the reward either
   state.inv.push("kings_seal");
   state.itemLoc["kings_seal"] = "inv";
-  go("ask elder: the sealed coffer");
+  go("the sealed coffer");
   assert.equal(state.xp, before + 1);
 });
 
