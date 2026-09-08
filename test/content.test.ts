@@ -128,3 +128,63 @@ test("no region is a corridor maze, for any class (region-brief's 15% bar)", () 
     `${worst.region} is ${worst.pct.toFixed(1)}% corridors for a ${worst.cls}, over the brief's ${CORRIDOR_PCT_MAX}% — run scripts/audit-shape.ts --bare`,
   );
 });
+
+/**
+ * No hold ranks its three fates by score.
+ *
+ * Every hold can be laid to rest, bargained with, or burned — thirty routes
+ * behind the two that are not "rest" — and three blind players ran the realm
+ * end to end and chose rest **24 times out of 24**. `scripts/audit-fates.ts`
+ * said why without needing an argument: score ranked the fates identically in
+ * all fifteen holds, rest +25, bargain +20, burn +15, and rest also carried
+ * the friendliest standing and the only companion approvals.
+ *
+ * A fate that pays less for the same deed is not a choice. What separates them
+ * now is what each pays *instead* — standing, regard, and an ending that reads
+ * it — and that is the part a test cannot check. This checks the part it can:
+ * the number is the same whichever road you take the deed by.
+ */
+test("a hold's fates pay the same score, whichever road the deed is done by", () => {
+  const world = loadWorld("world/reach.json");
+  const codes = new Set<string>();
+  for (const id of Object.keys(world.rooms)) { const m = /^([a-z]{2})_/.exec(id); if (m) codes.add(m[1]!); }
+  const setsFlag = (fxs: Fx[] | undefined, want: string): boolean => {
+    for (const f of fxs ?? []) {
+      if (f[0] === "set" && f[1] === want) return true;
+      if (f[0] === "if" && (setsFlag(f[2], want) || setsFlag(f[3], want))) return true;
+      if (f[0] === "check" && (setsFlag(f[3], want) || setsFlag(f[4], want))) return true;
+      if (f[0] === "chance" && (setsFlag(f[2], want) || setsFlag(f[3], want))) return true;
+    }
+    return false;
+  };
+  const scoreOf = (fxs: Fx[] | undefined, n = 0): number => {
+    for (const f of fxs ?? []) {
+      if (f[0] === "score") n += Number(f[1]);
+      else if (f[0] === "if") n = scoreOf(f[2], n);
+      else if (f[0] === "check") n = scoreOf(f[3], n);
+      else if (f[0] === "chance") n = scoreOf(f[2], n);
+    }
+    return n;
+  };
+  let holds = 0;
+  for (const code of [...codes].sort()) {
+    const best: Record<string, number> = {};
+    for (const fate of ["rested", "bargained", "burned"]) {
+      const flag = `${code}_hollow_${fate}`;
+      for (const [rid, r] of Object.entries(world.rooms)) {
+        if (!rid.startsWith(`${code}_`)) continue;
+        for (const a of r.actions ?? []) {
+          if (!setsFlag(a.fx, flag)) continue;
+          best[fate] = Math.max(best[fate] ?? -Infinity, scoreOf(a.fx));
+        }
+      }
+    }
+    const pays = Object.entries(best);
+    if (pays.length < 2) continue;
+    holds++;
+    const first = pays[0]![1];
+    for (const [fate, n] of pays)
+      assert.equal(n, first, `${code}: ${fate} pays ${n} where ${pays[0]![0]} pays ${first} — a fate that pays less for the same deed is not a choice (npx tsx scripts/audit-fates.ts world/reach.json)`);
+  }
+  assert.ok(holds >= 15, `the realm should have fifteen holds with more than one fate, found ${holds}`);
+});

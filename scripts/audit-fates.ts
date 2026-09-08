@@ -98,15 +98,21 @@ for (const code of [...codes].sort()) {
   // that makes the two lesser fates dead content: same deed, less reward
   const strictlyRanked = scores.every((n, i) => i === 0 || n < scores[i - 1]!);
   if (strictlyRanked) ranked++;
-  lines.push(`\n${code}: ${FATES.filter((f) => best[f] !== undefined).map((f) => `${f} ${best[f]}`).join("  >  ")}${strictlyRanked ? "   RANKED" : ""}`);
+  const shown = FATES.filter((f) => best[f] !== undefined);
+  const sep = shown.every((f) => best[f] === best[shown[0]!]) ? "  =  " : "  >  ";
+  lines.push(`\n${code}: ${shown.map((f) => `${f} ${best[f]}`).join(sep)}${strictlyRanked ? "   RANKED" : ""}`);
   if (!terse) lines.push(...rows);
 }
 
 if (!terse) console.log(lines.join("\n").trimStart());
 else for (const l of lines) if (l.trim()) console.log(l.trim());
 console.log(
-  `\n${ranked} of ${holds} holds rank their fates by score alone: the same deed pays less for taking the road less approved of.\n` +
-    `A fate nobody would choose is not a choice, and three blind players chose "rest" 24 times out of 24.\n` +
-    `Fates should differ in what they pay, not in how much — and something the realm wants should read each one.`,
+  ranked
+    ? `\n${ranked} of ${holds} holds rank their fates by score alone: the same deed pays less for taking the road less approved of.\n` +
+        `A fate nobody would choose is not a choice, and three blind players chose "rest" 24 times out of 24.\n` +
+        `Fates should differ in what they pay, not in how much — and something the realm wants should read each one.`
+    : `\n0 of ${holds} holds rank their fates by score: the same deed pays the same whichever road you take it by.\n` +
+        `What is left is what each fate pays INSTEAD — standing, regard, and an ending that reads it. reach_at_rest\n` +
+        `wants three holds rested and reach_burned three burned; a bargained realm still has no seat of its own.`,
 );
 process.exit(0);
