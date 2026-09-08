@@ -69,14 +69,14 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["cond", id]` / `["!cond", id]` | the player currently holds / does not hold this timed condition — see §8 |
 | `["npccond", npc, id]` / `["!npccond", npc, id]` | an npc currently holds / does not hold this timed condition |
 | `["turn", op, n]` | same `op`s as `var`; the turn counter so far — deterministic state, read-only (content cannot set it) — see §13 |
-| `["horrorHere"]` | a hostile npc with `pierce: true` (the realm's horrors, §7) stands alive in the player's room |
-| `["holdsGround"]` | a hostile npc that is **not** aggressive stands alive in the player's room — the same "leave … be" category |
-| `["companionDown"]` | a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up) |
-| `["checkHere", skill, dc]` | a room action or npc topic visible right now previews a `check` of `skill` at `dc` or higher, as its first effect (§4's preview rule) — `dc` here is the check's current, possibly-escalated one (§4), not always the authored number |
-| `["lowHp"]` | the player's hp is at half of maxHp or less — "a fight is going badly," the same threshold `leave` uses against an aggressive npc (§7) |
+| `["horrorHere"]` / `["!horrorHere"]` | a hostile npc with `pierce: true` (the realm's horrors, §7) stands alive in the player's room |
+| `["holdsGround"]` / `["!holdsGround"]` | a hostile npc that is **not** aggressive stands alive in the player's room — the same "leave … be" category |
+| `["companionDown"]` / `["!companionDown"]` | a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up) |
+| `["checkHere", skill, dc]` / `["!checkHere", skill, dc]` | a room action or npc topic visible right now previews a `check` of `skill` at `dc` or higher, as its first effect (§4's preview rule) — `dc` here is the check's current, possibly-escalated one (§4), not always the authored number |
+| `["lowHp"]` / `["!lowHp"]` | the player's hp is at half of maxHp or less — "a fight is going badly," the same threshold `leave` uses against an aggressive npc (§7) |
 | `["any", [cond, cond, ...]]` | passes when at least one listed condition passes — the one OR inside an all-of list |
 
-The last five are room- or player-scoped rather than naming an id: no target, so no unknown-id check — they read the room or the player as they stand, which is what an ability's `if` (§14) usually needs instead of a specific npc it cannot know in advance.
+These five are room- or player-scoped rather than naming an id: no target, so no unknown-id check — they read the room or the player as they stand, which is what an ability's `if` (§14) usually needs instead of a specific npc it cannot know in advance. Each has its negated twin, like every other op above; without them there is no way to say "only when nothing in this room ignores armor", which is exactly what a `brace for it` needs.
 
 ## 4. Effects
 

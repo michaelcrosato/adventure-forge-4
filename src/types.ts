@@ -27,11 +27,14 @@ export type Cond =
   | ["npccond", string, string] // an npc currently holds this timed condition
   | ["!npccond", string, string]
   | ["turn", "<" | ">" | "=" | ">=" | "<=", number] // the turn counter so far — deterministic state, read-only (never mirrored into vars, so content can't write it)
-  | ["horrorHere"] // a hostile npc with `pierce: true` (the realm's horrors — see docs §7) stands alive in the player's room
-  | ["holdsGround"] // a hostile npc that is not aggressive stands alive in the player's room (the "leave ... be" category)
-  | ["companionDown"] // a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up)
-  | ["checkHere", string, number] // a currently-visible room action or npc topic previews a `check` of this skill at dc >= n (see checkHere in engine.ts)
-  | ["lowHp"] // the player's hp is at half or less of maxHp — the same "a fight is going badly" threshold the disengage gate uses
+  // These five read the room or the player rather than naming an id. Each has
+  // its negated twin, like every other op here — without them there was no way
+  // to write "only when nothing in this room ignores armor".
+  | ["horrorHere"] | ["!horrorHere"] // a hostile npc with `pierce: true` (the realm's horrors — see docs §7) stands alive in the player's room
+  | ["holdsGround"] | ["!holdsGround"] // a hostile npc that is not aggressive stands alive in the player's room (the "leave ... be" category)
+  | ["companionDown"] | ["!companionDown"] // a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up)
+  | ["checkHere", string, number] | ["!checkHere", string, number] // a currently-visible room action or npc topic previews a `check` of this skill at dc >= n (see checkHere in engine.ts)
+  | ["lowHp"] | ["!lowHp"] // the player's hp is at half or less of maxHp — the same "a fight is going badly" threshold the disengage gate uses
   | ["any", Cond[]]; // passes when at least one of the listed conditions passes (the one OR in an all-of list)
 
 // ---------- effects ----------

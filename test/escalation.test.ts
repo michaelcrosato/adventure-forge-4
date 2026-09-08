@@ -12,10 +12,11 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { hashState, newState, oddsHint, receipt, step } from "../src/engine.ts";
+import { condOk, hashState, newState, oddsHint, receipt, step } from "../src/engine.ts";
+import { validateWorld } from "../src/validate.ts";
 import { replayTrace } from "../src/crawl.ts";
 import { renderMenu, renderStatus } from "../src/format.ts";
-import type { Action, World } from "../src/types.ts";
+import type { Cond, Action, World } from "../src/types.ts";
 
 const mini = (over: Partial<World> = {}): World => ({
   id: "mini",
@@ -193,4 +194,34 @@ test("escalation stops where the die can still land it, and never lowers an auth
   assert.match(oddsHint(hard, h, a), /DC 30, wits: roll 30\+/);
   h = step(hard, h, a).state;
   assert.match(oddsHint(hard, h, a), /DC 31, wits: roll 31\+/, "the author's own number still escalates from where they put it");
+});
+
+test("the five room-scoped conditions each have their negated twin", () => {
+  // They shipped without them, alone among every op in the DSL — so there was
+  // no way to write "only when nothing here ignores armor", which is exactly
+  // what the Warden's `brace for it` (armor +2) wants: it is offered against
+  // all eight `pierce` hostiles, in rooms whose own text says "armor useless".
+  const world = mini({
+    npcs: {
+      wight: { name: "wight", room: "a", hostile: true, pierce: true, hp: 5, atk: 1, df: 5 },
+    },
+    rooms: { a: { name: "A", desc: "A." } },
+  });
+  const { state } = newState(world, 1);
+  const pairs: [Cond, Cond][] = [
+    [["horrorHere"], ["!horrorHere"]],
+    [["holdsGround"], ["!holdsGround"]],
+    [["companionDown"], ["!companionDown"]],
+    [["checkHere", "wits", 5], ["!checkHere", "wits", 5]],
+    [["lowHp"], ["!lowHp"]],
+  ];
+  for (const [pos, neg] of pairs)
+    assert.notEqual(condOk(world, state, pos), condOk(world, state, neg), `${pos[0]} and ${neg[0]} must disagree`);
+  // and this room really does hold a horror, so the pair above is not both-false
+  assert.ok(condOk(world, state, ["horrorHere"]));
+  assert.ok(!condOk(world, state, ["!horrorHere"]));
+  // the validator accepts them: a closed DSL that rejects half a pair is a hole.
+  // (this fixture carries no walkthrough, so only condition errors are checked)
+  const w2 = mini({ rooms: { a: { name: "A", desc: "A.", actions: [{ id: "x", label: "x", if: [["!horrorHere"], ["!lowHp"], ["!checkHere", "wits", 9], ["!holdsGround"], ["!companionDown"]], fx: [["say", "ok"]] }] } } });
+  assert.deepEqual(validateWorld(w2).filter((e) => /cond|unknown op/i.test(e)), []);
 });

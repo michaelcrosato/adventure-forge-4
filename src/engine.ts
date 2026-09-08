@@ -178,16 +178,32 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       const v = s.turn;
       return c[1] === "<" ? v < c[2] : c[1] === ">" ? v > c[2] : c[1] === ">=" ? v >= c[2] : c[1] === "<=" ? v <= c[2] : v === c[2];
     }
+    // These five read the room or the player rather than naming an id, and they
+    // shipped without the negated twin every other op in this switch has. That
+    // is a hole, not a simplification: there was no way to write "offer this
+    // only when nothing here ignores armor", which is exactly what the Warden's
+    // `brace for it` (armor +2) needs — it is currently offered against all
+    // eight `pierce` hostiles, in rooms whose own text says "armor useless".
     case "horrorHere":
       return hostilesHere(world, s).some((id) => world.npcs[id]?.pierce);
+    case "!horrorHere":
+      return !hostilesHere(world, s).some((id) => world.npcs[id]?.pierce);
     case "holdsGround":
       return hostilesHere(world, s).some((id) => !aggressiveNow(world, s, id));
+    case "!holdsGround":
+      return !hostilesHere(world, s).some((id) => !aggressiveNow(world, s, id));
     case "companionDown":
       return s.party.some((id) => s.flags[`down_${id}`]);
+    case "!companionDown":
+      return !s.party.some((id) => s.flags[`down_${id}`]);
     case "checkHere":
       return checkHereNow(world, s, c[1], c[2]);
+    case "!checkHere":
+      return !checkHereNow(world, s, c[1], c[2]);
     case "lowHp":
       return fightGoingBadly(s);
+    case "!lowHp":
+      return !fightGoingBadly(s);
     case "any":
       return c[1].some((x) => condOk(world, s, x));
   }
