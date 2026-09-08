@@ -132,6 +132,24 @@ export function speaks(name: string, say: string): string {
   return typeof say === "string" && say.includes('"') ? `${name}: ${say}` : `${name}: "${say}"`;
 }
 
+/**
+ * Set a flag and remember the turn it happened on, for `["since", ...]` (§3).
+ * Every place this file sets a flag goes through here — a `set` effect, a
+ * `once` action's `did_`, a topic's `said_`, a theft's `stole_`, a companion
+ * walking out. The `_`-prefixed internal markers (`_seenTravel` and friends,
+ * which only stop a one-time explainer repeating) are recorded too rather than
+ * special-cased: one rule is worth more than the handful of entries it saves,
+ * and "when did the player first see the travel hint" is not a question worth
+ * making unanswerable. First write wins — a flag re-set keeps its original
+ * turn, because "since" means since it happened, not since it last happened.
+ */
+function setFlag(s: State, key: string): void {
+  if (!s.flags[key]) {
+    s.flags[key] = true;
+    (s.flagTurn ??= {})[key] = s.turn;
+  }
+}
+
 export function condOk(world: World, s: State, c: Cond): boolean {
   switch (c[0]) {
     case "has":
@@ -177,6 +195,19 @@ export function condOk(world: World, s: State, c: Cond): boolean {
     case "turn": {
       const v = s.turn;
       return c[1] === "<" ? v < c[2] : c[1] === ">" ? v > c[2] : c[1] === ">=" ? v >= c[2] : c[1] === "<=" ? v <= c[2] : v === c[2];
+    }
+    case "since": {
+      // "N turns after this happened". Nothing in the DSL could say it: `turn`
+      // reads the absolute counter and `setvar` takes a literal, so content had
+      // no way to record "now" — which is why the Ironbound march's fourteen
+      // burns were pinned to absolute turns and a player who set it moving at
+      // turn 470 lost eleven holds in forty turns instead of one every forty.
+      // Unset reads FALSE rather than 0, so an unfired flag is never "0 turns
+      // ago" and `["since", f, ">=", 0]` cannot pass before f happens.
+      const t0 = s.flagTurn?.[c[1]];
+      if (t0 === undefined) return false;
+      const v = s.turn - t0;
+      return c[2] === "<" ? v < c[3] : c[2] === ">" ? v > c[3] : c[2] === ">=" ? v >= c[3] : c[2] === "<=" ? v <= c[3] : v === c[3];
     }
     // These five read the room or the player rather than naming an id, and they
     // shipped without the negated twin every other op in this switch has. That
@@ -692,10 +723,14 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
         events.push(fx[1]);
         break;
       case "set":
-        s.flags[fx[1]] = true;
+        setFlag(s, fx[1]);
         break;
       case "clear":
         delete s.flags[fx[1]];
+        // and forget when it happened, so a flag cleared and set again is
+        // measured from the second time — which is what "since" should mean
+        // for something the world has undone
+        delete s.flagTurn?.[fx[1]];
         break;
       case "score": {
         const before = s.score;
@@ -754,7 +789,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
       case "slay":
         // a scripted end, not a fight: the room reads "(at rest)", not "(dead)"
         s.npcHp[fx[1]] = 0;
-        s.flags[`laid_${fx[1]}`] = true;
+        setFlag(s, `laid_${fx[1]}`);
         break;
       case "setvar":
         s.vars[fx[1]] = fx[2];
@@ -773,7 +808,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
             if (npc && (s.party.includes(id) || s.npcRoom[id] === s.room) && !npcDead(world, s, id)) {
               events.push(`${npc.name} ${Math.abs(d) > 1 ? "strongly " : ""}${d > 0 ? "approves" : "disapproves"} (${d > 0 ? "+" : ""}${d}).`);
               if (!s.flags["_seenApproval"]) {
-                s.flags["_seenApproval"] = true;
+                setFlag(s, "_seenApproval");
                 events.push("(Companions judge what you do: their regard opens and closes doors; at -2 they are near leaving, and the next thing they mind is the last.)");
               }
             } else if (npc && !npcDead(world, s, id) && (s.visited.includes(npc.room ?? "") || s.flags[`${id}_left`])) {
@@ -805,7 +840,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
         // of it — a separate leading line (not a prefix on that line) so it
         // can't perturb odds.test.ts's line-anchored regex on the roll event.
         if (!s.flags["_seenCheck"]) {
-          s.flags["_seenCheck"] = true;
+          setFlag(s, "_seenCheck");
           events.push("(First check: d20 is a 20-sided die roll; DC is the total — roll plus skill — that must reach it.)");
         }
         // States the total vs DC directly (the exact comparison `ok` runs) so
@@ -960,7 +995,7 @@ function partyRemarks(world: World, s: State, events: string[]): void {
     if (!gone) continue;
     events.push(speaks(def.name, gone.say));
     s.party = s.party.filter((x) => x !== id);
-    s.flags[`${id}_left`] = true;
+    setFlag(s, `${id}_left`);
     events.push(`${def.name} leaves your company.`);
   }
   if (s.ended || s.party.length === 0) return;
@@ -982,7 +1017,7 @@ function partyRemarks(world: World, s: State, events: string[]): void {
   }
   const win = candidates.find((c) => c.r.fx?.length) ?? candidates[0];
   if (!win) return;
-  s.flags[`remarked_${win.id}_${win.r.id}`] = true;
+  setFlag(s, `remarked_${win.id}_${win.r.id}`);
   events.push(speaks(win.def.name, win.r.say));
   // no sourceId: a remark is spoken once ever (the flag just above), so a
   // check inside its fx could never be retried anyway — escalation would
@@ -1019,8 +1054,8 @@ function companionStruck(world: World, s: State, def: NpcDef, id: string, events
   const hp = (s.npcHp[id] ?? max) - (def.atk ?? 1);
   if (hp <= 0) {
     s.npcHp[id] = 1;
-    s.flags[`down_${id}`] = true;
-    s.flags[`fell_${id}`] = true; // stays set: a remark or an epilogue line can recall the day they went down
+    setFlag(s, `down_${id}`);
+    setFlag(s, `fell_${id}`); // stays set: a remark or an epilogue line can recall the day they went down
     events.push(`${TheName(def.name)} ${verb} at ${c.name} — ${c.name} goes down, and crawls clear of the fight.`);
     return;
   }
@@ -1085,7 +1120,7 @@ function applyRest(world: World, s: State, fxs: Fx[], events: string[]): void {
 /** A hostile stands down for good — the `calm` effect. No longer blocks travel, reads "stood down", listed last as an attack target. */
 function calmNpc(world: World, s: State, npcId: string, events: string[]): void {
   if (s.flags[`calm_${npcId}`]) return;
-  s.flags[`calm_${npcId}`] = true;
+  setFlag(s, `calm_${npcId}`);
   const who = world.npcs[npcId];
   if (who && s.npcRoom[npcId] === s.room && !npcDead(world, s, npcId)) events.push(`${TheName(who.name)} stands down.`);
 }
@@ -1233,7 +1268,7 @@ function tickClock(world: World, s: State, events: string[]): void {
   for (const entry of world.clock ?? []) {
     if (entry.once && s.flags[`clocked_${entry.id}`]) continue;
     if (!condsOk(world, s, entry.if)) continue;
-    if (entry.once) s.flags[`clocked_${entry.id}`] = true;
+    if (entry.once) setFlag(s, `clocked_${entry.id}`);
     // no sourceId: the realm's own turn, not a menu choice a player retries —
     // a check here (none exist today) would escalate against the world's
     // clock, which is not what "you tried this and it got harder" means
@@ -1267,6 +1302,7 @@ export function newState(world: World, seed: number): StepOut {
     conds: {},
     npcConds: {},
     checkAttempts: {},
+    flagTurn: {},
     visited: [],
     party: [],
     talking: null,
@@ -1918,7 +1954,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
       // an owned thing taken under its owner's eyes is a theft the world can remember
       const owner = def?.owner ? ownerWatching(world, s, def.owner) : null;
       if (owner) {
-        s.flags[`stole_${action.item}`] = true;
+        setFlag(s, `stole_${action.item}`);
         s.vars["thefts"] = (s.vars["thefts"] ?? 0) + 1;
         // and a count per companion who was there for it, so nobody judges a theft they never saw
         for (const id of s.party) s.vars[`thefts_with_${id}`] = (s.vars[`thefts_with_${id}`] ?? 0) + 1;
@@ -1935,7 +1971,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
     case "talk": {
       const t = world.npcs[action.npc]?.topics?.find((x) => x.id === action.topic);
       if (!t) break;
-      if (t.once) s.flags[`said_${action.npc}_${t.id}`] = true;
+      if (t.once) setFlag(s, `said_${action.npc}_${t.id}`);
       events.push(speaks(world.npcs[action.npc]?.name ?? action.npc, t.say));
       if (t.fx) applyFx(world, s, t.fx, events, checkSourceId(action));
       // a conversation closes on its own when the line says so, or when the
@@ -2035,7 +2071,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
     case "custom": {
       const a = world.rooms[action.room]?.actions?.find((x) => x.id === action.id);
       if (!a) break;
-      if (a.once) s.flags[`did_${a.id}`] = true;
+      if (a.once) setFlag(s, `did_${a.id}`);
       applyFx(world, s, a.fx, events, checkSourceId(action));
       applyRest(world, s, a.fx, events);
       break;
@@ -2043,7 +2079,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
     case "ability": {
       const a = world.abilities?.[action.id];
       if (!a) break;
-      if (a.once) s.flags[`did_${action.id}`] = true;
+      if (a.once) setFlag(s, `did_${action.id}`);
       applyFx(world, s, a.fx, events, checkSourceId(action));
       applyRest(world, s, a.fx, events);
       break;
@@ -2066,7 +2102,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
     }
     case "leave": {
       const def = world.npcs[action.npc];
-      s.flags[`left_${action.npc}`] = true;
+      setFlag(s, `left_${action.npc}`);
       const name = def?.name ?? action.npc;
       if (aggressiveNow(world, s, action.npc)) {
         // the price oddsHint already named: one last blow as you break away,
@@ -2121,14 +2157,14 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // Once, the first time fast travel is on the menu: a playtester walked the
   // whole map on foot for ninety turns before noticing the entry.
   if (!s.ended && !s.flags["_seenTravel"] && travelAvailable(world, s)) {
-    s.flags["_seenTravel"] = true;
+    setFlag(s, "_seenTravel");
     events.push("(You know more than one place now: 'travel to a known place' moves you between the landmarks you have seen, not every room, in one turn.)");
   }
   // Once per room that holds an ending: a player three hollows in walked to the
   // seat and ended the tale on the next action with four threads still open.
   const endKey = `_warnedEnd_${s.room}`;
   if (!s.ended && !s.flags[endKey] && (world.rooms[s.room]?.actions ?? []).some((a) => fxEnds(a.fx))) {
-    s.flags[endKey] = true;
+    setFlag(s, endKey);
     events.push("(An ending waits in this room. What you have left undone elsewhere stays undone.)");
   }
   // Once, the first time something that strikes through armor stands in the
@@ -2139,7 +2175,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
       (id) => world.npcs[id]!.pierce && s.npcRoom[id] === s.room && !s.party.includes(id) && !npcDead(world, s, id),
     );
     if (piercer) {
-      s.flags["_seenPierce"] = true;
+      setFlag(s, "_seenPierce");
       events.push(
         `(${TheName(world.npcs[piercer]!.name)} strikes through armor: mail and shield count for nothing against it. Anything marked 'armor useless' in a room is such a thing — weigh it before you fight.)`,
       );

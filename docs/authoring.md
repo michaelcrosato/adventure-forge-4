@@ -69,6 +69,7 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["cond", id]` / `["!cond", id]` | the player currently holds / does not hold this timed condition — see §8 |
 | `["npccond", npc, id]` / `["!npccond", npc, id]` | an npc currently holds / does not hold this timed condition |
 | `["turn", op, n]` | same `op`s as `var`; the turn counter so far — deterministic state, read-only (content cannot set it) — see §13 |
+| `["since", flag, op, n]` | turns since `flag` was set — "N turns after this happened". **False while the flag is unset**, so an unfired flag is never "0 turns ago". A flag cleared and set again is measured from the second time |
 | `["horrorHere"]` / `["!horrorHere"]` | a hostile npc with `pierce: true` (the realm's horrors, §7) stands alive in the player's room |
 | `["holdsGround"]` / `["!holdsGround"]` | a hostile npc that is **not** aggressive stands alive in the player's room — the same "leave … be" category |
 | `["companionDown"]` / `["!companionDown"]` | a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up) |
@@ -613,6 +614,15 @@ have ticked:
 - It runs on spent turns only: a look, a menu page, a wide berth given ticks
   nothing, exactly like conditions (§8). If the game has already ended this
   turn — a fight, a trap, a condition's `hpPerTurn` — the clock does not run.
+- **Pace a schedule off its own trigger, not off the absolute turn.** Use
+  `["since", flag, ">=", n]` (§3), not `["turn", ">=", n]`, for anything that
+  should happen *n* turns after something the player did. The Ironbound march
+  shipped with fourteen burns pinned to absolute turns 100 through 620, which
+  gives one hold every forty turns to a player who sets it moving early — and
+  eleven holds in forty turns to one who sets it moving at turn 470, because
+  ten thresholds were already behind them. Measured, not guessed. An absolute
+  `turn` gate is right for something that happens on a calendar; almost
+  everything else is relative to a deed.
 - `world.clock` **concatenates from the part files**, like `epilogue` and
   `stamps` (§1): a scheduled event belongs to a place, and a region author owns
   their own hold's march the way they own its epilogue lines. Entries land in

@@ -12,9 +12,15 @@ import assert from "node:assert/strict";
 import { unlinkSync, writeFileSync } from "node:fs";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { condOk, hashState, newState, receipt, step } from "../src/engine.ts";
+import { actionByLabel, condOk, hashState, newState, receipt, step } from "../src/engine.ts";
 import { loadWorld, validateWorld } from "../src/validate.ts";
-import type { Action, ClockEntry, Cond, World } from "../src/types.ts";
+import type { Action, ClockEntry, Cond, State, World } from "../src/types.ts";
+
+const doLabel = (w: World, s: State, label: string): State => {
+  const a = actionByLabel(w, s, label);
+  assert.ok(a, `legal action "${label}" at ${s.room}`);
+  return step(w, s, a).state;
+};
 
 const world = (): World => ({
   id: "clock",
@@ -316,4 +322,61 @@ test("a clock id a part reuses is a load error naming the file that got there fi
     unlinkSync(partPath);
     unlinkSync(otherPath);
   }
+});
+
+test("`since` measures turns from when a flag was set, and reads false before it is", () => {
+  // The Ironbound march pinned its fourteen burns to absolute turn numbers,
+  // because nothing in the DSL could say "forty turns after this began":
+  // `turn` reads the absolute counter and `setvar` takes a literal. A player
+  // who set the march moving at turn 470 had already passed ten thresholds and
+  // lost eleven holds in forty turns — measured, not guessed.
+  const w = world();
+  w.rooms["c"]!.actions = [...(w.rooms["c"]!.actions ?? []), { id: "start", label: "start it", fx: [["set", "begun"]] }];
+  let { state } = newState(w, 1);
+  // unset reads false, so an unfired flag is never "0 turns ago"
+  assert.equal(condOk(w, state, ["since", "begun", ">=", 0] as Cond), false);
+  assert.equal(condOk(w, state, ["since", "begun", "<", 99] as Cond), false);
+
+  state = doLabel(w, state, "go north");
+  const at = state.turn;
+  state = doLabel(w, state, "start it");
+  assert.equal(state.flagTurn["begun"], at + 1, "the turn the flag was set is recorded");
+  assert.equal(condOk(w, state, ["since", "begun", ">=", 0] as Cond), true);
+  assert.equal(condOk(w, state, ["since", "begun", ">=", 1] as Cond), false);
+
+  for (let i = 0; i < 3; i++) state = doLabel(w, state, "wait");
+  assert.equal(condOk(w, state, ["since", "begun", ">=", 3] as Cond), true);
+  assert.equal(condOk(w, state, ["since", "begun", ">=", 4] as Cond), false);
+  assert.equal(condOk(w, state, ["since", "begun", "=", 3] as Cond), true);
+
+  // re-setting a flag keeps its original turn: "since" means since it happened
+  const t0 = state.flagTurn["begun"];
+  state = doLabel(w, state, "wait");
+  const again = { ...state, flags: { ...state.flags } };
+  assert.equal(again.flagTurn["begun"], t0, "a flag set twice keeps the first turn");
+});
+
+test("a clock entry can pace itself off its own trigger, not off the absolute turn", () => {
+  // the shape the march wanted: each step N turns after the one before, whenever
+  // the player set it going
+  const w = world();
+  w.rooms["c"]!.actions = [...(w.rooms["c"]!.actions ?? []), { id: "start", label: "start it", fx: [["set", "march"]] }];
+  w.clock = [
+    { id: "first", once: true, if: [["flag", "march"], ["since", "march", ">=", 2]], fx: [["say", "One falls."]] },
+    { id: "second", once: true, if: [["flag", "march"], ["since", "march", ">=", 5]], fx: [["say", "Another falls."]] },
+  ];
+  assert.deepEqual(validateWorld(w), []);
+  let { state } = newState(w, 1);
+  state = doLabel(w, state, "go north");
+  // start it late: an absolute-turn gate would fire both at once here
+  state = { ...state, turn: 400 };
+  state = doLabel(w, state, "start it");
+  const said: string[] = [];
+  for (let i = 0; i < 7; i++) {
+    const out = step(w, state, actionByLabel(w, state, "wait")!);
+    state = out.state;
+    said.push(out.events.find((e) => /falls\./.test(e)) ?? "");
+  }
+  const firedOn = said.map((x, i) => (x ? i + 1 : 0)).filter(Boolean);
+  assert.deepEqual(firedOn, [2, 5], `paced off its own trigger, not turn 400: fired on ${firedOn.join(",")}`);
 });

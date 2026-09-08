@@ -27,6 +27,7 @@ export type Cond =
   | ["npccond", string, string] // an npc currently holds this timed condition
   | ["!npccond", string, string]
   | ["turn", "<" | ">" | "=" | ">=" | "<=", number] // the turn counter so far — deterministic state, read-only (never mirrored into vars, so content can't write it)
+  | ["since", string, string, number] // turns since a flag was set: op/n as `var`. False while the flag is unset, so it never reads as "0 turns ago"
   // These five read the room or the player rather than naming an id. Each has
   // its negated twin, like every other op here — without them there was no way
   // to write "only when nothing in this room ignores armor".
@@ -529,6 +530,13 @@ export type State = {
    * per failure already logged — see docs/authoring.md §4.
    */
   checkAttempts: Record<string, number>;
+  /**
+   * The turn each flag was first set, for `["since", flag, op, n]` (§3) — "N
+   * turns after this happened", which nothing in the DSL could express: `turn`
+   * reads the absolute counter and `setvar` takes a literal, so content had no
+   * way to record "now". Internal `_`-prefixed markers are not recorded.
+   */
+  flagTurn: Record<string, number>;
   visited: string[];
   party: string[]; // companions travelling with the player, in join order
   talking: string | null; // npc id while a conversation is open (conversation mode)
