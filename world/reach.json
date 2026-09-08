@@ -177,6 +177,9 @@
     "grayfever": { "name": "grayfever", "hpPerTurn": -1, "hint": "the gray is in your blood" },
     "honed": { "name": "honed", "hit": 3, "hint": "you know just where to hit" },
     "resolved": { "name": "resolved", "checks": { "will": 4 }, "hint": "your case is set and will not bend" },
+    "shouldered": { "name": "shouldered", "checks": { "might": 4 }, "hint": "your shoulder is against it and your feet are set" },
+    "steadied": { "name": "steadied", "checks": { "grace": 4 }, "hint": "your hands have stopped shaking" },
+    "studied": { "name": "studied", "checks": { "wits": 4 }, "hint": "you have the shape of it now" },
     "disengaged": { "name": "wary", "hint": "it needs a moment to come back at you" }
   },
   "resources": { "res_warden": 2, "res_scout": 2, "res_scholar": 2, "res_envoy": 2 },
@@ -204,6 +207,11 @@
       "if": [["class", "warden"], ["var", "res_warden", ">=", 1], ["companionDown"]],
       "fx": [["addvar", "res_warden", -1], ["revive"], ["say", "You haul them up by the collar."]]
     },
+    "warden_set": {
+      "label": "shoulder it",
+      "if": [["class", "warden"], ["var", "res_warden", ">=", 1], ["checkHere", "might", 11]],
+      "fx": [["addvar", "res_warden", -1], ["cond", "shouldered", 2], ["say", "You find the seam, plant your boots, and put the whole of your weight behind it."]]
+    },
     "scout_mark": {
       "label": "mark him",
       "context": "combat",
@@ -211,15 +219,25 @@
       "fx": [["addvar", "res_scout", -1], ["cond", "honed", 2], ["say", "You mark the spot before you move."]]
     },
     "scout_ground": { "label": "read the ground", "free": true, "if": [["class", "scout"]], "fx": [["sayunvisited"]] },
+    "scout_hands": {
+      "label": "steady your hands",
+      "if": [["class", "scout"], ["var", "res_scout", ">=", 1], ["checkHere", "grace", 11]],
+      "fx": [["addvar", "res_scout", -1], ["cond", "steadied", 2], ["say", "You breathe out, once, and wait for your own hands to go quiet."]]
+    },
     "scholar_name": {
       "label": "name it",
       "context": "combat",
-      "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["horrorHere"], ["holdsGround"], ["lowHp"]],
+      "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["horrorHere"]],
       "fx": [
         ["addvar", "res_scholar", -1],
         ["calmhostile"],
         ["say", "You speak its true name, and it remembers what it was."]
       ]
+    },
+    "scholar_read": {
+      "label": "read it twice",
+      "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["checkHere", "wits", 11]],
+      "fx": [["addvar", "res_scholar", -1], ["cond", "studied", 2], ["say", "You stop hurrying it, and read from the top in the tongue it was written in."]]
     },
     "envoy_parley": {
       "label": "parley",

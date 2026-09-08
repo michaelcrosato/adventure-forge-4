@@ -151,8 +151,10 @@ for (const [id, a] of abilities) {
     continue;
   }
   const pct = (n: number) => `${((n / t.classTurns) * 100).toFixed(1)}%`;
+  // only for the ones that require a fight: dividing an out-of-combat ability's
+  // screens by the fight count reads like a share and is not one
   const fights = fightsByClass.get(classOf(a) ?? "-") ?? 0;
-  const ofFights = fights ? `, which is ${((t.all / fights) * 100).toFixed(0)}% of the ${fights} fights on that road` : "";
+  const ofFights = a.context === "combat" && fights ? `, which is ${((t.all / fights) * 100).toFixed(0)}% of the ${fights} fights on that road` : "";
   console.log(`${head}\n    ${t.classTurns} screens as a ${cls}; on the menu ${t.all} of them (${pct(t.all)})${ofFights}${t.all ? ` — ${[...t.routes].join(", ")}` : ""}`);
   const others = (a.if ?? []).filter((c) => !isClassClause(c));
   others.forEach((c, i) => {
