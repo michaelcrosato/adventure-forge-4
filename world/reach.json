@@ -174,7 +174,66 @@
   "conditions": {
     "winded": { "name": "winded", "hit": -2, "hint": "your guard is down" },
     "braced": { "name": "braced", "armor": 2, "hint": "you set your feet before the blow" },
-    "grayfever": { "name": "grayfever", "hpPerTurn": -1, "hint": "the gray is in your blood" }
+    "grayfever": { "name": "grayfever", "hpPerTurn": -1, "hint": "the gray is in your blood" },
+    "honed": { "name": "honed", "hit": 3, "hint": "you know just where to hit" },
+    "resolved": { "name": "resolved", "checks": { "will": 4 }, "hint": "your case is set and will not bend" },
+    "disengaged": { "name": "wary", "hint": "it needs a moment to come back at you" }
+  },
+  "resources": { "res_warden": 2, "res_scout": 2, "res_scholar": 2, "res_envoy": 2 },
+  "abilities": {
+    "warden_brace": {
+      "label": "brace for it",
+      "context": "combat",
+      "if": [["class", "warden"], ["var", "res_warden", ">=", 1]],
+      "fx": [["addvar", "res_warden", -1], ["cond", "braced", 2], ["say", "You set your feet."]]
+    },
+    "warden_break": {
+      "label": "break them",
+      "context": "combat",
+      "if": [["class", "warden"], ["var", "res_warden", ">=", 1]],
+      "fx": [["addvar", "res_warden", -1], ["harmhostile", 3], ["condhostile", "winded", 2], ["say", "You break their guard open."]]
+    },
+    "warden_weight": {
+      "label": "take the weight",
+      "context": "combat",
+      "if": [["class", "warden"], ["var", "res_warden", ">=", 1], ["companionDown"]],
+      "fx": [["addvar", "res_warden", -1], ["revive"], ["say", "You haul them up by the collar."]]
+    },
+    "scout_mark": {
+      "label": "mark him",
+      "context": "combat",
+      "if": [["class", "scout"], ["var", "res_scout", ">=", 1]],
+      "fx": [["addvar", "res_scout", -1], ["cond", "honed", 2], ["say", "You mark the spot before you move."]]
+    },
+    "scout_ground": {
+      "label": "read the ground",
+      "free": true,
+      "if": [["class", "scout"]],
+      "fx": [["sayunvisited"]]
+    },
+    "scholar_name": {
+      "label": "name it",
+      "context": "combat",
+      "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["horrorHere"], ["holdsGround"], ["lowHp"]],
+      "fx": [["addvar", "res_scholar", -1], ["calmhostile"], ["say", "You speak its true name, and it remembers what it was."]]
+    },
+    "envoy_parley": {
+      "label": "parley",
+      "context": "combat",
+      "if": [["class", "envoy"], ["var", "res_envoy", ">=", 1], ["holdsGround"]],
+      "fx": [["addvar", "res_envoy", -1], ["calmhostile"], ["say", "You talk it down, hands open."]]
+    },
+    "envoy_press": {
+      "label": "press him",
+      "if": [["class", "envoy"], ["var", "res_envoy", ">=", 1], ["checkHere", "will", 11]],
+      "fx": [["addvar", "res_envoy", -1], ["cond", "resolved", 2], ["say", "You press your case and do not blink."]]
+    },
+    "envoy_buy_off": {
+      "label": "buy him off",
+      "context": "combat",
+      "if": [["class", "envoy"], ["holdsGround"], ["var", "gold", ">=", 5]],
+      "fx": [["addvar", "gold", -5], ["calmhostile"], ["say", "You put coin in his hand and he lets you by."]]
+    }
   },
   "quests": {
     "main": {

@@ -9,6 +9,7 @@ import { createHash } from "node:crypto";
 import { MENU_CAP } from "./types.ts";
 import type {
   Action,
+  AbilityDef,
   Cond,
   CustomAction,
   Fx,
@@ -67,6 +68,16 @@ const QUARREL_TAILS = new Set(["done", "peace", "sour", "lys", "osk", "tamsin", 
 
 /** A fail within two of the DC says so — in one of a few voices, chosen by the roll, so the line doesn't wear out. */
 export const NEAR_MISS_CUES = ["So close — that one nearly landed.", "A hair short. It nearly went.", "Nearly; the margin was a breath."] as const;
+
+/**
+ * The condition id `leave` puts on an aggressive npc it just broke away from,
+ * and the number of turns it holds — a quiet spell so the very next step
+ * (walking out) is not struck too. Reusing the conditions layer (rather than
+ * a bespoke `disengaged_<npc>` flag) gets its countdown, cleanup, and room-line
+ * rendering for free: aggressivePass only has to check for it, not tick it.
+ */
+export const DISENGAGE_COND = "disengaged";
+const DISENGAGE_TURNS = 2;
 
 export function hashState(s: State): string {
   return createHash("sha256").update(canon(s)).digest("hex").slice(0, 8);
@@ -149,6 +160,16 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       const v = s.turn;
       return c[1] === "<" ? v < c[2] : c[1] === ">" ? v > c[2] : c[1] === ">=" ? v >= c[2] : c[1] === "<=" ? v <= c[2] : v === c[2];
     }
+    case "horrorHere":
+      return hostilesHere(world, s).some((id) => world.npcs[id]?.pierce);
+    case "holdsGround":
+      return hostilesHere(world, s).some((id) => !aggressiveNow(world, s, id));
+    case "companionDown":
+      return s.party.some((id) => s.flags[`down_${id}`]);
+    case "checkHere":
+      return checkHereNow(world, s, c[1], c[2]);
+    case "lowHp":
+      return fightGoingBadly(s);
     case "any":
       return c[1].some((x) => condOk(world, s, x));
   }
@@ -376,6 +397,36 @@ export const hostileNow = (world: World, s: State, id: string): boolean =>
 export const aggressiveNow = (world: World, s: State, id: string): boolean =>
   !!world.npcs[id]?.aggressive && !s.flags[`calm_${id}`];
 
+/**
+ * hp at half or less: the state a fight has to reach before breaking away
+ * from an aggressive npc is worth its price. Healthy, breaking off would only
+ * trade a strike for nothing the fight itself wasn't about to cost anyway —
+ * the option is for a fight actually going badly, not every skirmish.
+ */
+const fightGoingBadly = (s: State): boolean => s.hp * 2 <= s.maxHp;
+
+/**
+ * A Scout's "slip away": breaking off from an aggressive npc costs no parting
+ * strike, spending a point of `res_scout` instead — the same disengage the
+ * gate above offers everyone, just quieter. Not a `world.abilities` entry:
+ * it modifies the price of an already npc-targeted action (`leave` already
+ * knows which npc) rather than needing a target of its own, so it lives here
+ * instead of duplicating the disengage mechanics behind a second Action kind.
+ */
+const canSlipAway = (world: World, s: State): boolean => s.classId === "scout" && (s.vars["res_scout"] ?? 0) >= 1;
+
+/** Npcs attackable and hostile, standing alive in the player's room right now — the same test `attack` uses to decide it should be offered. */
+function hostilesHere(world: World, s: State): string[] {
+  return Object.keys(world.npcs).filter(
+    (id) =>
+      world.npcs[id]?.hp !== undefined &&
+      !s.party.includes(id) &&
+      hostileNow(world, s, id) &&
+      s.npcRoom[id] === s.room &&
+      (s.npcHp[id] ?? world.npcs[id]!.hp ?? 1) > 0,
+  );
+}
+
 export function travelAvailable(world: World, s: State): boolean {
   if (world.rooms[s.room]?.noTravel) return false;
   if (!knownLandmarks(world, s).length) return false;
@@ -512,15 +563,14 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
       case "if":
         applyFx(world, s, condsOk(world, s, fx[1]) ? fx[2] : fx[3], events);
         break;
-      case "calm": {
-        // a words route that ends a standoff: the npc stands down for the rest of the game
-        if (!s.flags[`calm_${fx[1]}`]) {
-          s.flags[`calm_${fx[1]}`] = true;
-          const who = world.npcs[fx[1]];
-          if (who && s.npcRoom[fx[1]] === s.room && !npcDead(world, s, fx[1])) events.push(`${TheName(who.name)} stands down.`);
-        }
+      case "calm":
+        calmNpc(world, s, fx[1], events);
         break;
-      }
+      case "calmhostile":
+        // usually exactly one hostile stands here (the realm's own convention — see docs §9), so this
+        // reads as "calm the room's hostile" while staying correct for the rare room with more than one
+        for (const id of hostilesHere(world, s)) calmNpc(world, s, id, events);
+        break;
       case "slay":
         // a scripted end, not a fight: the room reads "(at rest)", not "(dead)"
         s.npcHp[fx[1]] = 0;
@@ -638,8 +688,12 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
       }
       case "npccond": {
         const [, npc, id, turns] = fx;
-        const conds = (s.npcConds[npc] ??= {});
-        conds[id] = Math.max(conds[id] ?? 0, turns);
+        setNpcCond(s, npc, id, turns);
+        break;
+      }
+      case "condhostile": {
+        const [, id, turns] = fx;
+        for (const npc of hostilesHere(world, s)) setNpcCond(s, npc, id, turns);
         break;
       }
       case "uncond":
@@ -651,6 +705,25 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
       case "harm":
         harmNpc(world, s, fx[1], fx[2], events);
         break;
+      case "harmhostile":
+        for (const id of hostilesHere(world, s)) {
+          if (s.ended) break;
+          harmNpc(world, s, id, fx[1], events);
+        }
+        break;
+      case "revive":
+        reviveDowned(world, s, events);
+        break;
+      case "sayunvisited": {
+        const region = world.rooms[s.room]?.region;
+        const names = region
+          ? Object.entries(world.rooms)
+              .filter(([id, r]) => r.region === region && r.landmark && !s.visited.includes(id))
+              .map(([, r]) => r.landmark!)
+          : [];
+        events.push(names.length ? `Not yet seen near here: ${names.join(", ")}.` : "You have found every place marked hereabouts.");
+        break;
+      }
       case "end":
         s.ended = { kind: fx[1], id: fx[2], text: fx[3] };
         break;
@@ -751,6 +824,16 @@ function recoverDowned(world: World, s: State, events: string[], attacked: strin
     (id) => aggressiveNow(world, s, id) && !s.party.includes(id) && s.npcRoom[id] === s.room && !npcDead(world, s, id),
   );
   if (hostile || attacked) return;
+  reviveDowned(world, s, events);
+}
+
+/**
+ * Every party member currently down (flag `down_<id>`) gets back up, at half
+ * their max hp (never lower than they already sit at) — the shared math
+ * behind both `recoverDowned` (automatic, once nothing aggressive remains)
+ * and the `revive` effect (an ability that gets a companion up mid-fight).
+ */
+function reviveDowned(world: World, s: State, events: string[]): void {
   for (const id of s.party) {
     if (!s.flags[`down_${id}`]) continue;
     const c = world.npcs[id]!;
@@ -758,6 +841,44 @@ function recoverDowned(world: World, s: State, events: string[], attacked: strin
     s.npcHp[id] = Math.max(s.npcHp[id] ?? 1, Math.ceil((c.hp ?? 1) / 2));
     events.push(`${c.name} is back on their feet, shaken.`);
   }
+}
+
+/**
+ * A "rest": the first positive `hp` entry in an fx list heals the company
+ * (every living companion standing here) by the same measure, and refreshes
+ * every ability-resource pool to full — reused by any fx-running action, a
+ * room's or an ability's, so no inn needs separate authoring for the two.
+ * "Refresh" means set to full, not add.
+ */
+function applyRest(world: World, s: State, fxs: Fx[], events: string[]): void {
+  const rest = fxs.find((f) => f[0] === "hp" && f[1] > 0);
+  if (!rest || s.ended) return;
+  for (const id of s.party) {
+    const def = world.npcs[id];
+    if (!def?.companion || npcDead(world, s, id) || s.npcRoom[id] !== s.room) continue;
+    const max = def.hp ?? 1;
+    const before = s.npcHp[id] ?? max;
+    const after = Math.min(max, before + (rest[1] as number));
+    if (after > before) {
+      s.npcHp[id] = after;
+      events.push(`(${def.name} hp+${after - before}, ${after}/${max})`);
+    }
+  }
+  for (const [v, full] of Object.entries(world.resources ?? {})) s.vars[v] = full;
+}
+
+/** A hostile stands down for good — the `calm` effect. No longer blocks travel, reads "stood down", listed last as an attack target. */
+function calmNpc(world: World, s: State, npcId: string, events: string[]): void {
+  if (s.flags[`calm_${npcId}`]) return;
+  s.flags[`calm_${npcId}`] = true;
+  const who = world.npcs[npcId];
+  if (who && s.npcRoom[npcId] === s.room && !npcDead(world, s, npcId)) events.push(`${TheName(who.name)} stands down.`);
+}
+
+/** Put a timed condition on an npc — the `npccond` effect. Re-applying refreshes to the longer remaining duration. */
+function setNpcCond(s: State, npcId: string, condId: string, turns: number): void {
+  const conds = (s.npcConds[npcId] ??= {});
+  conds[condId] = Math.max(conds[condId] ?? 0, turns);
 }
 
 /**
@@ -824,6 +945,10 @@ function aggressivePass(world: World, s: State, events: string[], except: string
     const def = world.npcs[id]!;
     if (!aggressiveNow(world, s, id) || id === except || s.party.includes(id)) continue;
     if (s.npcRoom[id] !== s.room || npcDead(world, s, id)) continue;
+    // a player who just broke away from this one (the "leave" case's parting
+    // strike) bought a few quiet turns — DISENGAGE_COND, not a fresh flag, so
+    // it counts down and clears itself the same way every other condition does
+    if (s.npcConds[id]?.[DISENGAGE_COND]) continue;
     npcStrike(world, s, id, events, "attacks");
   }
 }
@@ -930,6 +1055,7 @@ export function newState(world: World, seed: number): StepOut {
     ended: null,
   };
   for (const id of Object.keys(world.items)) if (s.itemLoc[id] === "inv") s.inv.push(id);
+  for (const [v, full] of Object.entries(world.resources ?? {})) s.vars[v] = full; // ability pools start full
   const events: string[] = [];
   // with classes, the start room waits until the player picks who they are
   if (!inClassPhase(world, s)) enterRoom(world, s, world.start, events);
@@ -959,6 +1085,32 @@ function topicVisible(world: World, s: State, npc: string, t: TopicDef): boolean
 
 function visibleTopics(world: World, s: State, npc: string): TopicDef[] {
   return (world.npcs[npc]?.topics ?? []).filter((t) => topicVisible(world, s, npc, t));
+}
+
+/**
+ * True when a currently-visible room action or npc topic previews a `check`
+ * of this skill at dc >= min — the "checkHere" cond, for an ability that buys
+ * a check and should stay off the menu where there is nothing (hard enough)
+ * to spend it on. Scans room actions and topics directly, the same visibility
+ * rules legalActions uses, rather than calling legalActions itself, so an
+ * ability's own `if` can use this without recursing into the menu that offers
+ * abilities in the first place.
+ */
+function checkHereNow(world: World, s: State, skill: string, min: number): boolean {
+  const firstIsHardCheck = (fx: Fx[] | undefined) =>
+    !!fx?.[0] && fx[0][0] === "check" && fx[0][1] === skill && fx[0][2] >= min;
+  for (const a of world.rooms[s.room]?.actions ?? [])
+    if (customVisible(world, s, a) && firstIsHardCheck(a.fx)) return true;
+  for (const npc of npcsHere(world, s))
+    for (const t of visibleTopics(world, s, npc)) if (firstIsHardCheck(t.fx)) return true;
+  return false;
+}
+
+/** An ability from world.abilities is offered when its `if` holds and, for a combat one, only while a live hostile stands here — mirrors customVisible. */
+function abilityVisible(world: World, s: State, id: string, a: AbilityDef): boolean {
+  if (a.once && s.flags[`did_${id}`]) return false;
+  if (a.context === "combat" && !hostilesHere(world, s).length) return false;
+  return condsOk(world, s, a.if);
 }
 
 /**
@@ -1192,8 +1344,12 @@ export function legalActions(world: World, s: State): Action[] {
       else if (!def.dialogue || spokenWith(s, npc)) late.push({ kind: "attack", npc });
     }
     // a hostile that holds its ground can be left alone in so many words: free,
-    // so the peaceable road past it is a choice on the menu, not a guess
-    if (def.hp !== undefined && hostileNow(world, s, npc) && !aggressiveNow(world, s, npc) && !s.flags[`left_${npc}`]) out.push({ kind: "leave", npc });
+    // so the peaceable road past it is a choice on the menu, not a guess. An
+    // aggressive one can be broken away from too, once the fight is going
+    // badly (fightGoingBadly), at the price of one last strike (oddsHint says
+    // so) — a dead end and a losing fight both keep a way out.
+    if (def.hp !== undefined && hostileNow(world, s, npc) && !s.flags[`left_${npc}`] && (!aggressiveNow(world, s, npc) || fightGoingBadly(s)))
+      out.push({ kind: "leave", npc });
   }
   for (const id of s.inv) {
     for (const u of world.items[id]?.use ?? []) {
@@ -1208,6 +1364,15 @@ export function legalActions(world: World, s: State): Action[] {
     }
   }
   out.push(...late);
+  // abilities are not tied to this room, so they read last: a room's own content — its actions,
+  // its people, its things — always comes first. Checked last for the same reason it is capped
+  // here: a room already crowded (a big story choice, a full party's "speak with the company")
+  // gets first claim on the cap; an ability that would push the menu past it quietly does not show,
+  // rather than the room ever offering more than MENU_CAP entries.
+  for (const [id, a] of Object.entries(world.abilities ?? {})) {
+    if (out.length >= MENU_CAP) break;
+    if (abilityVisible(world, s, id, a)) out.push({ kind: "ability", id });
+  }
   return out;
 }
 
@@ -1261,6 +1426,8 @@ export function actionLabel(world: World, a: Action, s?: State): string {
     }
     case "custom":
       return world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.label ?? a.id;
+    case "ability":
+      return world.abilities?.[a.id]?.label ?? a.id;
     case "classpick": {
       const c = world.classes?.[a.id];
       return c ? `be ${article(c.name)} ${c.name} — ${c.desc}` : a.id;
@@ -1298,6 +1465,8 @@ function fxFor(world: World, s: State, a: Action): Fx[] | undefined {
   switch (a.kind) {
     case "custom":
       return world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.fx;
+    case "ability":
+      return world.abilities?.[a.id]?.fx;
     case "talk":
       return world.npcs[a.npc]?.topics?.find((x) => x.id === a.topic)?.fx;
     case "use":
@@ -1358,8 +1527,14 @@ function classTag(world: World, s: State, a: Action): string {
 export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: boolean } = {}): string {
   const who = classTag(world, s, a);
   // a free action still says what it costs in standing or regard: "free" is the turn, not the price
-  const isFree = a.kind === "custom" && !!world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.free;
-  if (a.kind === "leave") return " (free)";
+  const isFree =
+    (a.kind === "custom" && !!world.rooms[a.room]?.actions?.find((x) => x.id === a.id)?.free) ||
+    (a.kind === "ability" && !!world.abilities?.[a.id]?.free);
+  // breaking from an aggressive npc still costs no turn, but it is not free: it costs a strike, and the menu says so before it lands
+  if (a.kind === "leave") {
+    if (!aggressiveNow(world, s, a.npc)) return " (free)";
+    return canSlipAway(world, s) ? " (free: slip away)" : " (a strike)";
+  }
   if (a.kind === "take") {
     const owner = world.items[a.item]?.owner;
     const w = owner ? ownerWatching(world, s, owner) : null;
@@ -1449,7 +1624,8 @@ export function step(world: World, prev: State, action: Action): StepOut {
   // opening the travel menu, picking a region, or backing out is browsing, not a turn;
   // only the journey itself (travelto) and everything else costs one
   const freeCustom =
-    action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free;
+    (action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free) ||
+    (action.kind === "ability" && !!world.abilities?.[action.id]?.free);
   const spentTurn =
     !freeCustom && action.kind !== "leave" && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore" && action.kind !== "travelmore";
   if (spentTurn) s.turn += 1;
@@ -1599,23 +1775,15 @@ export function step(world: World, prev: State, action: Action): StepOut {
       if (!a) break;
       if (a.once) s.flags[`did_${a.id}`] = true;
       applyFx(world, s, a.fx, events);
-      // a rest is the company's, not the player's alone: a room action that
-      // heals (a hearth, a bunk) heals the companions standing here by the same
-      // measure — an item's use heals only whoever takes it
-      const rest = a.fx?.find((f) => f[0] === "hp" && f[1] > 0);
-      if (rest && !s.ended) {
-        for (const id of s.party) {
-          const def = world.npcs[id];
-          if (!def?.companion || npcDead(world, s, id) || s.npcRoom[id] !== s.room) continue;
-          const max = def.hp ?? 1;
-          const before = s.npcHp[id] ?? max;
-          const after = Math.min(max, before + (rest[1] as number));
-          if (after > before) {
-            s.npcHp[id] = after;
-            events.push(`(${def.name} hp+${after - before}, ${after}/${max})`);
-          }
-        }
-      }
+      applyRest(world, s, a.fx, events);
+      break;
+    }
+    case "ability": {
+      const a = world.abilities?.[action.id];
+      if (!a) break;
+      if (a.once) s.flags[`did_${action.id}`] = true;
+      applyFx(world, s, a.fx, events);
+      applyRest(world, s, a.fx, events);
       break;
     }
     case "classpick": {
@@ -1638,6 +1806,22 @@ export function step(world: World, prev: State, action: Action): StepOut {
       const def = world.npcs[action.npc];
       s.flags[`left_${action.npc}`] = true;
       const name = def?.name ?? action.npc;
+      if (aggressiveNow(world, s, action.npc)) {
+        // the price oddsHint already named: one last blow as you break away,
+        // then DISENGAGE_COND buys a few quiet turns so walking out isn't struck too.
+        // A Scout with the knack (and the res_scout to spend) slips away clean instead.
+        if (canSlipAway(world, s)) {
+          s.vars["res_scout"] = (s.vars["res_scout"] ?? 0) - 1;
+          events.push(`You slip away from ${name} without a sound.`);
+        } else {
+          npcStrike(world, s, action.npc, events, "strikes as you break away");
+        }
+        if (!s.ended) {
+          const conds = (s.npcConds[action.npc] ??= {});
+          conds[DISENGAGE_COND] = Math.max(conds[DISENGAGE_COND] ?? 0, DISENGAGE_TURNS);
+        }
+        break;
+      }
       // a company of men or a named person is "they"; a beast or a shade is "it"
       const plural = /^[A-Z]/.test(name) || (/(men|folk|s)$/.test(name) && !/ss$/.test(name));
       const holds = plural ? "They hold their ground" : "It holds its ground";

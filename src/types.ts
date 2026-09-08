@@ -27,6 +27,11 @@ export type Cond =
   | ["npccond", string, string] // an npc currently holds this timed condition
   | ["!npccond", string, string]
   | ["turn", "<" | ">" | "=" | ">=" | "<=", number] // the turn counter so far — deterministic state, read-only (never mirrored into vars, so content can't write it)
+  | ["horrorHere"] // a hostile npc with `pierce: true` (the realm's horrors — see docs §7) stands alive in the player's room
+  | ["holdsGround"] // a hostile npc that is not aggressive stands alive in the player's room (the "leave ... be" category)
+  | ["companionDown"] // a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up)
+  | ["checkHere", string, number] // a currently-visible room action or npc topic previews a `check` of this skill at dc >= n (see checkHere in engine.ts)
+  | ["lowHp"] // the player's hp is at half or less of maxHp — the same "a fight is going badly" threshold the disengage gate uses
   | ["any", Cond[]]; // passes when at least one of the listed conditions passes (the one OR in an all-of list)
 
 // ---------- effects ----------
@@ -54,6 +59,11 @@ export type Fx =
   | ["uncond", string] // clear a timed condition from the player before it would expire on its own
   | ["unnpccond", string, string] // clear a timed condition from an npc: npc, conditionId
   | ["harm", string, number] // n damage to an npc with no attack roll; runs onDeath if it drops, like a killing attack. Safe if the npc is absent or already dead
+  | ["harmhostile", number] // `harm` applied to every currently-hostile npc in the player's room (usually exactly one) instead of one named id
+  | ["condhostile", string, number] // `npccond` applied to every currently-hostile npc in the player's room
+  | ["calmhostile"] // `calm` applied to every currently-hostile npc in the player's room
+  | ["revive"] // every party member currently down (flag `down_<id>`) gets back up now, at half strength — the same recovery recoverDowned grants once a fight clears, just not waiting for that
+  | ["sayunvisited"] // names this room's region's landmarks not yet visited (or says there are none left) — for a free "what haven't I seen near here" ability
   | ["end", "win" | "lose", string, string]; // kind, endingId, text
 
 // ---------- content ----------
@@ -254,6 +264,23 @@ export type ClockEntry = {
   fx: Fx[]; // ordinary effects, run through the same applyFx as everything else — no new effect vocabulary
 };
 
+/**
+ * An action available generally, not tied to any one room — a class's active
+ * ability. Shaped like `CustomAction` minus the room: merged by id, like
+ * `perks`/`conditions`. `context: "combat"` offers it only while a live
+ * hostile stands in the player's room (the same test `attack` uses); `"any"`
+ * (the default) offers it wherever its `if` holds. Abilities are listed after
+ * a room's own actions, so a room's content always reads first.
+ */
+export type AbilityDef = {
+  label: string; // shown verbatim in the menu
+  if?: Cond[];
+  context?: "combat" | "any"; // default "any"
+  once?: boolean; // auto-flag `did_<id>` and hide after
+  free?: boolean; // costs no turn and says so in the menu
+  fx: Fx[];
+};
+
 // ---------- overworld generation ----------
 export type GenSpot = {
   cell: [number, number];
@@ -360,6 +387,21 @@ export type World = {
   perks?: Record<string, PerkDef>;
   /** Named timed status effects (see ConditionDef) — put on the player or an npc by id, merged like perks. */
   conditions?: Record<string, ConditionDef>;
+  /**
+   * Actions available generally, not tied to a room (see AbilityDef) — a
+   * class's active abilities, keyed by id like perks. Root-only, unlike
+   * `perks`/`conditions`: a part file declaring `abilities` is a load error,
+   * so every class's kit lives in one place.
+   */
+  abilities?: Record<string, AbilityDef>;
+  /**
+   * Full values for the vars an ability spends (`res_warden`, `res_scout`, …).
+   * Root-only, like `walkthrough`. A room action that heals the party (the
+   * "rest" a hearth or a bunk grants — see step()'s `custom` case) refreshes
+   * every entry here to its full value; `newState` starts a fresh game full.
+   * Refreshing means "set to full", not "add".
+   */
+  resources?: Record<string, number>;
   /** Part files merged into this one at load (paths or `dir/*.json` globs, relative to this file). Root-only fields stay in the root. */
   include?: string[];
   gen?: GenDef[]; // regions expanded into rooms at load, before validation
@@ -428,6 +470,7 @@ export type Action =
   | { kind: "talk"; npc: string; topic: string }
   | { kind: "attack"; npc: string }
   | { kind: "custom"; room: string; id: string }
+  | { kind: "ability"; id: string } // a class ability from world.abilities — not tied to any room
   | { kind: "classpick"; id: string } // choose who you are (first menu when a world has classes)
   | { kind: "perkpick"; id: string } // choose a perk after a level-up
   | { kind: "talkto"; npc: string }

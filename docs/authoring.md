@@ -69,7 +69,14 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["cond", id]` / `["!cond", id]` | the player currently holds / does not hold this timed condition — see §8 |
 | `["npccond", npc, id]` / `["!npccond", npc, id]` | an npc currently holds / does not hold this timed condition |
 | `["turn", op, n]` | same `op`s as `var`; the turn counter so far — deterministic state, read-only (content cannot set it) — see §13 |
+| `["horrorHere"]` | a hostile npc with `pierce: true` (the realm's horrors, §7) stands alive in the player's room |
+| `["holdsGround"]` | a hostile npc that is **not** aggressive stands alive in the player's room — the same "leave … be" category |
+| `["companionDown"]` | a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up) |
+| `["checkHere", skill, dc]` | a room action or npc topic visible right now previews a `check` of `skill` at `dc` or higher, as its first effect (§4's preview rule) |
+| `["lowHp"]` | the player's hp is at half of maxHp or less — "a fight is going badly," the same threshold `leave` uses against an aggressive npc (§7) |
 | `["any", [cond, cond, ...]]` | passes when at least one listed condition passes — the one OR inside an all-of list |
+
+The last five are room- or player-scoped rather than naming an id: no target, so no unknown-id check — they read the room or the player as they stand, which is what an ability's `if` (§14) usually needs instead of a specific npc it cannot know in advance.
 
 ## 4. Effects
 
@@ -98,7 +105,18 @@ Effects run in order and stop the moment the game ends.
 | `["uncond", id]` | clear a timed condition from the player before it would expire on its own |
 | `["unnpccond", npc, id]` | clear a timed condition from an npc |
 | `["harm", npc, n]` | `n` damage to an npc with no attack roll; runs `onDeath` if it drops, exactly like a killing `attack`. Safe if the npc is absent or already dead |
+| `["harmhostile", n]` | `harm` applied to every currently-hostile npc in the player's room instead of one named id — usually exactly one, since a room holds one hostile at a time by convention (§9), but correct if it ever holds more |
+| `["condhostile", id, turns]` | `npccond` applied to every currently-hostile npc in the room |
+| `["calmhostile"]` | `calm` applied to every currently-hostile npc in the room |
+| `["revive"]` | every party member currently down (flag `down_<id>`) gets back up now, at half their max hp — the same recovery a cleared fight grants on its own (§7), just not waiting for the room to clear |
+| `["sayunvisited"]` | names this room's region's landmarks not yet visited (or says there are none left) — for a free, informational ability |
 | `["end", "win"|"lose", endingId, text]` | ends the game (every ending id needs a proof — see §12) |
+
+The `hostile`-scoped trio (`harmhostile`, `condhostile`, `calmhostile`) exist for
+`world.abilities` (§14): an ability is not written for one room's specific npc,
+so it cannot name one the way a room action names its own. Reach for the
+named form (`harm`, `npccond`, `calm`) in ordinary room and topic content,
+where the npc is always known.
 
 `check` skills are the four attributes `might`, `grace`, `wits`, `will`, or a
 name in `world.skills`. Put the `check` **first** in an action's or topic's
@@ -253,8 +271,21 @@ nobody's business but the player's.
   free, sets `left_<npc>`, and lifts the standoff's hold on fast travel — so
   walking past it is a choice in so many words. The line says "they" of a
   company or a named person, and names any exit still locked in the room
-  instead of promising the way past. A free action spends no turn, so an
-  aggressive npc gets no strike for it.
+  instead of promising the way past.
+- **Breaking from an aggressive npc.** `leave <name> be` also appears against
+  an **aggressive** npc once the fight is going badly (hp at half of maxHp or
+  less) — a dead end and a losing fight both keep a way out. It still costs no
+  turn, but it is not free: the npc gets one last strike as you break away,
+  and the menu says so first (`(a strike)`, not `(free)`) — a price stated
+  before it lands, like every other costly action. The npc then carries the
+  `disengaged` condition for a couple of turns, so the very next step (walking
+  out) is not struck too; it wears off on its own, exactly like any other
+  timed condition (§8). A Scout with a point of `res_scout` to spend breaks
+  away clean instead — no strike, same suppression, the menu reading
+  `(free: slip away)` — spent directly in the `leave` case rather than through
+  `world.abilities` (§14), since the disengage it prices is already
+  npc-specific and abilities are not. A **non-aggressive** hostile's `leave`
+  is unchanged by any of this: always free, never a strike.
 - A remark may carry `fx`, run when it is spoken — a companion who says what
   they think of a theft can also think less of you (`["addvar", "appr_lys", -1]`).
   One remark a companion a turn, but a remark carrying `fx` is never held
@@ -549,7 +580,99 @@ have ticked:
   carrying it is a load error (§1). Read the turn counter it is checked
   against with `["turn", op, n]` (§3) in any `if`, anywhere — not just here.
 
-## 14. Style and budget
+## 14. Abilities and resources
+
+Every custom action so far lives in one room's `actions[]`. An **ability** is
+the same shape, minus the room: available wherever its `if` holds, not tied
+to any one place — a class's active kit.
+
+```json
+"abilities": {
+  "warden_brace": {
+    "label": "brace for it",
+    "context": "combat",
+    "if": [["class", "warden"], ["var", "res_warden", ">=", 1]],
+    "fx": [["addvar", "res_warden", -1], ["cond", "braced", 2], ["say", "You set your feet."]]
+  }
+}
+```
+
+`world.abilities` is a root-mergeable-by-id record like `perks` and
+`conditions` **in storage shape**, but root-**only** in where it may be
+authored: a part file carrying `abilities` is a load error, like `clock`
+(§13), so a class's whole kit lives in one place. Fields, closed like every
+DSL shape:
+
+| field | does |
+|---|---|
+| `label` | shown verbatim in the menu (required) |
+| `fx` | ordinary effects, run through the same path as a room action's (required) |
+| `if` | all must pass; default always |
+| `context` | `"combat"`: offered only while a live hostile stands in the player's room, the same test `attack` uses — `"any"` (default): offered wherever `if` holds |
+| `once` | auto-flag `did_<id>` and hide after, exactly like a room action's |
+| `free` | costs no turn and reads `(free)` in the menu, exactly like a room action's |
+
+Abilities are checked **after** a room's own actions and everything else in
+it — a room's content always reads first — and are dropped, quietly, past
+the menu cap (§15's 12): a room already crowded (a big story choice, a full
+party's "speak with the company") keeps its own content whole rather than
+ever running past the cap for an ability's sake. Gate a combat ability
+tightly where you can (`checkHere`, `horrorHere`, `holdsGround`, `lowHp`, §3)
+— an ability offered where it does nothing useful is still a line on every
+screen it appears on, and the budget (§15) does not forgive that.
+
+An ability's cost is an ordinary `var` (`res_warden`, `res_scout`, …) — no new
+state, tested with `["var", v, ">=", n]` like any other. `world.resources`
+(root-only, like `abilities`) names each pool's full value:
+
+```json
+"resources": { "res_warden": 2, "res_scout": 2, "res_scholar": 2, "res_envoy": 2 }
+```
+
+Every entry must be a positive number. A fresh game starts every pool at its
+full value; a **rest** — the same room action (a hearth, a bunk) whose
+positive `hp` already heals the standing company (§7) — refreshes every pool
+to full in the same turn, whether the rest came from a room action or from an
+ability's own `fx`. Refreshing means *set to full*, not *add*: spend a pool
+down, then rest, and it reads the same as a fresh game, never overfilled by
+resting twice.
+
+A handful of DSL primitives (§3, §4) exist only to serve an ability that
+cannot name one room's npc, or one party member, in advance: the
+`hostile`-scoped fx trio (`harmhostile`, `condhostile`, `calmhostile`),
+`revive` (every downed party member, not one named companion), and the
+room- or player-scoped conds (`horrorHere`, `holdsGround`, `companionDown`,
+`checkHere`, `lowHp`). Reach for the named forms (`harm`, `npccond`, `calm`,
+`npcHere`) in ordinary room and topic content, where the npc is always
+known — the unnamed forms are for `world.abilities` specifically, not a
+shortcut to reach for elsewhere.
+
+**A gate the realm cannot satisfy is not a tight ability, it is a dead one.**
+An ability's cost is paid on every screen it appears on, and the budget (§15)
+is unforgiving, so the tempting move is to narrow the `if` until it stops
+showing up. That is the same move as deleting it, done less honestly: the
+realm shipped a Scholar ability gated on `["checkHere", "wits", 13]` when the
+hardest wits check anywhere in eighteen regions is DC 12, so it could never
+appear for anybody, and the budget was "unchanged" because nothing had been
+added. Before narrowing a gate, count what satisfies it:
+
+```bash
+# does anything in the realm actually offer a wits check this hard?
+node --import tsx -e 'import{loadWorld}from"./src/validate.ts";
+const w=loadWorld("world/reach.json");let n=0;const s=(f:any)=>{if(!Array.isArray(f))return;
+for(const e of f){if(!Array.isArray(e))continue;if(e[0]==="check"&&e[1]==="wits"&&e[2]>=13)n++;
+if(e[0]==="check"||e[0]==="if"||e[0]==="chance"){s(e[e[0]==="check"?3:2]);s(e[e[0]==="check"?4:3])}}};
+for(const r of Object.values(w.rooms as any))for(const a of (r as any).actions??[])s(a.fx);
+for(const p of Object.values(w.npcs as any))for(const t of (p as any).topics??[])s(t.fx);
+console.log(n)'
+```
+
+`scripts/budget.ts` prints the slack an addition has to fit inside, and says
+the same thing from the other side: a screen the walkthrough never reaches
+costs nothing there and is measured by nothing else, so "it did not move the
+budget" is never on its own evidence that the content is fine.
+
+## 15. Style and budget
 
 The player is a language model reading one screen per turn. Every screen is
 paid for. `test/budget.test.ts` fails the build if the average `act` response
@@ -577,7 +700,7 @@ along the walkthrough exceeds 450 characters or any single one exceeds 1100.
   (might / a fight), craft (grace / wits), and words (will / an item / a
   favor). No class is ever locked out of a region's hollow.
 
-## 15. Before you hand it in
+## 16. Before you hand it in
 
 ```bash
 npm run validate world/reach.json   # every reference, every proof, the menu cap

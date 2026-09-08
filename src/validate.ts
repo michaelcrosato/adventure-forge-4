@@ -21,15 +21,17 @@ import type { Cond, Fx, State, WalkStep, World } from "./types.ts";
 export { MENU_CAP };
 
 const COND_OPS = new Set([
-  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "cond", "!cond", "npccond", "!npccond", "turn", "any",
+  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "cond", "!cond", "npccond", "!npccond", "turn", "horrorHere", "holdsGround", "companionDown", "checkHere", "lowHp", "any",
 ]);
 const FX_OPS = new Set([
-  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "calm", "cond", "npccond", "uncond", "unnpccond", "harm", "end",
+  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "calm", "calmhostile", "cond", "npccond", "condhostile", "uncond", "unnpccond", "harm", "harmhostile", "revive", "sayunvisited", "end",
 ]);
 /** Fields a `conditions` entry may carry — `name` required, everything else optional. Closed, like the rest of the DSL. */
 const CONDITION_FIELDS = new Set(["name", "hit", "dmg", "armor", "checks", "hpPerTurn", "hint"]);
 /** Fields a `world.clock` entry may carry — `id` and `fx` required, `if`/`once` optional. Closed, like the rest of the DSL. */
 const CLOCK_FIELDS = new Set(["id", "if", "once", "fx"]);
+/** Fields a `world.abilities` entry may carry — `label` and `fx` required, everything else optional. Closed, like a room's CustomAction it is shaped after. */
+const ABILITY_FIELDS = new Set(["label", "if", "context", "once", "free", "fx"]);
 
 /**
  * The files a world is made of: the root, then every part its `include` list
@@ -59,7 +61,7 @@ export function worldFiles(path: string): string[] {
 
 // Which top-level fields a part file may carry. A part is a slice of one world:
 // it adds records and list entries, never the world's identity or its proof.
-const ROOT_ONLY = new Set(["id", "title", "intro", "objectives", "start", "hp", "maxScore", "walkthrough", "progress", "include", "clock"]);
+const ROOT_ONLY = new Set(["id", "title", "intro", "objectives", "start", "hp", "maxScore", "walkthrough", "progress", "include", "clock", "abilities", "resources"]);
 const RECORD_FIELDS = new Set(["rooms", "items", "npcs", "classes", "perks", "regions", "quests", "proofs", "templates", "skills", "factions", "conditions"]);
 const LIST_FIELDS = new Set(["gen", "stamps", "epilogue", "statusTracks", "statusPaths", "hud"]);
 
@@ -130,6 +132,10 @@ export function validateWorld(world: World): string[] {
         if (!conditionOk(c[2])) err(`${where}: unknown condition ${c[2]}`);
       }
       else if (c[0] === "turn" && !["<", ">", "=", ">=", "<="].includes(c[1])) err(`${where}: bad turn comparator ${String(c[1])}`);
+      else if (c[0] === "checkHere") {
+        if (!checkNameOk(c[1])) err(`${where}: unknown skill ${c[1]}`);
+        if (typeof c[2] !== "number") err(`${where}: checkHere dc must be a number`);
+      }
       else if (c[0] === "any") {
         if (!Array.isArray(c[1]) || !c[1].length) err(`${where}: any needs a non-empty list of conditions`);
         else checkConds(`${where}.any`, c[1]);
@@ -165,6 +171,11 @@ export function validateWorld(world: World): string[] {
       if (op === "harm") {
         if (!npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
         if (typeof fx[2] !== "number") err(`${where}: harm amount must be a number`);
+      }
+      if (op === "harmhostile" && typeof fx[1] !== "number") err(`${where}: harmhostile amount must be a number`);
+      if (op === "condhostile") {
+        if (!conditionOk(fx[1])) err(`${where}: unknown condition ${fx[1]}`);
+        if (typeof fx[2] !== "number") err(`${where}: condhostile turns must be a number`);
       }
       if (op === "if") {
         checkConds(`${where}.if`, fx[1]);
@@ -259,6 +270,27 @@ export function validateWorld(world: World): string[] {
         }
     }
   }
+
+  // ---------- abilities and resources ----------
+  // Root-only (enforced above via ROOT_ONLY): every class's kit lives in one
+  // place, so ids need only be unique against each other here, not merged
+  // across parts like perks/conditions are. Shaped like a room's CustomAction
+  // minus the room, so this reuses the same `need`/checkConds/checkFx the
+  // room-action validation below uses rather than writing new helpers.
+  for (const [aid, ab] of Object.entries(world.abilities ?? {})) {
+    need(`ability ${aid}`, ab, [["label", "string"], ["fx", "array"]]);
+    for (const k of Object.keys(ab)) if (!ABILITY_FIELDS.has(k)) err(`ability ${aid}: unknown field ${k}`);
+    if (ab.context !== undefined && ab.context !== "combat" && ab.context !== "any") err(`ability ${aid}: context must be "combat" or "any", got ${String(ab.context)}`);
+    if (ab.once !== undefined && typeof ab.once !== "boolean") err(`ability ${aid}: "once" must be a boolean`);
+    if (ab.free !== undefined && typeof ab.free !== "boolean") err(`ability ${aid}: "free" must be a boolean`);
+    if (ab.if !== undefined && !Array.isArray(ab.if)) err(`ability ${aid}: "if" must be an array`);
+    checkConds(`ability ${aid} if`, ab.if);
+    checkFx(`ability ${aid} fx`, ab.fx);
+  }
+  // Full pool values an ability's cost var refreshes to on a rest — plain
+  // numbers, closed to positive ones (a pool of 0 or less could never be spent).
+  for (const [v, n] of Object.entries(world.resources ?? {}))
+    if (typeof n !== "number" || !(n > 0)) err(`resources ${v}: must be a positive number, got ${String(n)}`);
 
   // ---------- clock ----------
   // Root-only (enforced above via ROOT_ONLY), so this is just one list in one
@@ -404,6 +436,7 @@ export function validateWorld(world: World): string[] {
       for (const t of npc.topics ?? []) collectGotos(t.fx);
     }
     for (const entry of world.clock ?? []) collectGotos(entry.fx);
+    for (const ab of Object.values(world.abilities ?? {})) collectGotos(ab.fx);
     const seen = new Set<string>();
     const queue = [world.start, ...gotos].filter(roomOk);
     while (queue.length) {
