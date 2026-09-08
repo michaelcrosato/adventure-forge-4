@@ -338,10 +338,7 @@
           "if": [["flag", "or_warden_ir_frank_truth"]],
           "brief": "Banked forges. Aldous still meets a soldier's eye without flinching."
         },
-        {
-          "if": [["flag", "iron_sworn"]],
-          "brief": "Banked forges. The forges know you for an oath-brother now."
-        },
+        { "if": [["flag", "iron_sworn"]], "brief": "Banked forges. The forges know you for an oath-brother now." },
         {
           "if": [["flag", "iron_trusted"]],
           "brief": "Banked forges. The racks are yours, same as any chapterhouse hand."
@@ -952,6 +949,76 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "ir_march_words",
+          "label": "talk him down off the column (will)",
+          "if": [
+            ["flag", "iron_march"],
+            ["!flag", "iron_march_stopped"],
+            ["!npcDead", "ir_aldous"],
+            ["!flag", "ir_aldous_gone"]
+          ],
+          "say": "You mean to talk him off it — call the column home before it reaches anyone else.",
+          "fx": [
+            [
+              "check",
+              "will",
+              12,
+              [
+                ["set", "iron_march_stopped"],
+                ["score", 8],
+                ["xp", 3],
+                ["say", "He hears you out, jaw tight, and doesn't like a word of it. 'Held,' he says at last, and sends the order himself."]
+              ],
+              [
+                ["say", "He doesn't move. 'The column doesn't stop because a stranger doesn't care for fire,' he says, and goes back to his ledger."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "ir_march_rank",
+          "label": "order the column stood down",
+          "if": [
+            ["flag", "iron_march"],
+            ["!flag", "iron_march_stopped"],
+            ["any", [["flag", "watch_sworn"], ["flag", "regent_writ"]]]
+          ],
+          "say": "You put your rank on the table — writ or commission, whichever you carry — and tell him the column turns around.",
+          "fx": [
+            ["set", "iron_march_stopped"],
+            ["score", 5],
+            ["xp", 2],
+            ["say", "He reads it twice, and doesn't ask a third time. Word goes out before evening: the column comes home."]
+          ]
+        },
+        {
+          "id": "ir_march_spare",
+          "label": "buy the column's mercy for Thornwold",
+          "if": [
+            ["flag", "iron_march"],
+            ["flag", "iron_sworn"],
+            ["!flag", "th_hollow_done"],
+            ["!flag", "ir_march_spare_th"],
+            ["var", "gold", ">=", 10]
+          ],
+          "say": "You mean to spend the chapterhouse's trust in you on Thornwold's account, and nowhere else.",
+          "fx": [
+            ["addvar", "gold", -10],
+            ["set", "ir_march_spare_th"],
+            ["score", 4],
+            ["xp", 2],
+            ["say", "Aldous doesn't ask why Thornwold. He marks the column's road around it, and says nothing of where it goes instead."]
+          ]
+        },
+        {
+          "id": "ir_march_spare_ack",
+          "label": "about Thornwold, since",
+          "if": [["flag", "ir_march_spare_th"]],
+          "once": true,
+          "say": "You already know the column swings wide of Thornwold. Everywhere else, it doesn't.",
+          "fx": [["xp", 1]]
         },
         {
           "id": "confront",
@@ -1712,6 +1779,25 @@
           "once": true,
           "say": "Mirren. Everything here's priced fair for what it cost the company to bring up from Wardmoor. Which is to say, not cheap.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "ir_march_coin",
+          "label": "hire the Companies against the column",
+          "if": [
+            ["flag", "iron_march"],
+            ["!flag", "iron_march_stopped"],
+            ["var", "rep_free", ">=", 1],
+            ["var", "gold", ">=", 20]
+          ],
+          "say": "You want the Companies to make the column's road difficult, until it simply stops.",
+          "fx": [
+            ["addvar", "gold", -20],
+            ["set", "iron_march_stopped"],
+            ["addvar", "rep_free", 1],
+            ["score", 5],
+            ["xp", 2],
+            ["say", "Mirren doesn't blink, and doesn't ask what it's for. Paid steel finds reasons to slow an Ironbound column on every road out of Cinderhall, and inside a week it simply stops."]
+          ]
         },
         {
           "id": "bribe",
@@ -2500,6 +2586,190 @@
       }
     }
   ],
+  "clock": [
+    {
+      "id": "iron_march_begins",
+      "if": [["any", [["var", "hollows_burned", ">=", 1], ["flag", "regent_writ"]]], ["!flag", "iron_march"]],
+      "once": true,
+      "fx": [["set", "iron_march"], ["say", "The Ironbound have their answer now, and they mean to use it."]]
+    },
+    {
+      "id": "iron_march_warned",
+      "if": [["flag", "iron_march"], ["turn", ">=", 40], ["!flag", "iron_march_stopped"]],
+      "once": true,
+      "fx": [["say", "Word on the road: an Ironbound column is moving west, and it is not stopping at Cinderhall."]]
+    },
+    {
+      "id": "iron_march_burn_th",
+      "if": [
+        ["flag", "iron_march"],
+        ["turn", ">=", 540],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "th_hollow_done"],
+        ["!flag", "ir_march_spare_th"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "th_hollow_burned"],
+        ["set", "th_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have put Camp Gallows to the torch, Free Company and all."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_wm",
+      "if": [["flag", "iron_march"], ["turn", ">=", 620], ["!flag", "iron_march_stopped"], ["!flag", "wm_oath_resolved"]],
+      "once": true,
+      "fx": [
+        ["set", "wm_hollow_burned"],
+        ["set", "wm_oath_resolved"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the oath-stone at Highward, standards and all."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_kw",
+      "if": [["flag", "iron_march"], ["turn", ">=", 100], ["!flag", "iron_march_stopped"], ["!flag", "kw_hollow_done"]],
+      "once": true,
+      "fx": [
+        ["set", "kw_hollow_burned"],
+        ["set", "kw_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the Hunt's Stand, and Hornhallow's wood with it."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_mc",
+      "if": [["flag", "iron_march"], ["turn", ">=", 140], ["!flag", "iron_march_stopped"], ["!flag", "mc_hollow_done"]],
+      "once": true,
+      "fx": [
+        ["set", "mc_hollow_burned"],
+        ["set", "mc_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have put Mootcombe's Long Table to the torch."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_em",
+      "if": [["flag", "iron_march"], ["turn", ">=", 180], ["!flag", "iron_march_stopped"], ["!flag", "em_hollow_done"]],
+      "once": true,
+      "fx": [
+        ["set", "em_hollow_burned"],
+        ["set", "em_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have lit the Choir of Ash again, over Glasswick."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_hb",
+      "if": [
+        ["flag", "iron_march"],
+        ["turn", ">=", 220],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "hb_kingsrest_resolved"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "hb_hollow_burned"],
+        ["set", "hb_kingsrest_resolved"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the Kings' Rest, and Barrowmere's mound with it."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_sk",
+      "if": [
+        ["flag", "iron_march"],
+        ["turn", ">=", 580],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "sk_hollow_resolved"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "sk_hollow_burned"],
+        ["set", "sk_hollow_resolved"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the wreck off Gullhaven, admiral and all."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_hl",
+      "if": [["flag", "iron_march"], ["turn", ">=", 500], ["!flag", "iron_march_stopped"], ["!flag", "hl_hollow_done"]],
+      "once": true,
+      "fx": [
+        ["set", "hl_hollow_burned"],
+        ["set", "hl_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have put the Hunger Barn to the torch, and Tithing with it."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_fd",
+      "if": [["flag", "iron_march"], ["turn", ">=", 260], ["!flag", "iron_march_stopped"], ["!flag", "fd_hollow_done"]],
+      "once": true,
+      "fx": [
+        ["set", "fd_hollow_burned"],
+        ["set", "fd_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned Reedholm's drowned nave, bell and all."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_fl",
+      "if": [["flag", "iron_march"], ["turn", ">=", 300], ["!flag", "iron_march_stopped"], ["!flag", "fl_hollow_done"]],
+      "once": true,
+      "fx": [
+        ["set", "fl_hollow_burned"],
+        ["set", "fl_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the Long Furrow, Wickstead's dead a second time."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_me",
+      "if": [["flag", "iron_march"], ["turn", ">=", 340], ["!flag", "iron_march_stopped"], ["!flag", "me_hollow_done"]],
+      "once": true,
+      "fx": [
+        ["set", "me_hollow_burned"],
+        ["set", "me_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have cracked the Drowned Hall's stone, and Lantern Holm gone quiet."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_sh",
+      "if": [["flag", "iron_march"], ["turn", ">=", 380], ["!flag", "iron_march_stopped"], ["!flag", "sh_hollow_done"]],
+      "once": true,
+      "fx": [
+        ["set", "sh_hollow_burned"],
+        ["set", "sh_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the Truce Field, both lines' dead at once."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_pw",
+      "if": [["flag", "iron_march"], ["turn", ">=", 420], ["!flag", "iron_march_stopped"], ["!flag", "pw_hollow_done"]],
+      "once": true,
+      "fx": [
+        ["set", "pw_hollow_burned"],
+        ["set", "pw_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned through the Old Vault, Pennywell's coin with it."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_ff",
+      "if": [["flag", "iron_march"], ["turn", ">=", 460], ["!flag", "iron_march_stopped"], ["!flag", "ff_hollow_done"]],
+      "once": true,
+      "fx": [
+        ["set", "ff_hollow_burned"],
+        ["set", "ff_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the Schoolroom at Slatefold, and the writ with it."]
+      ]
+    }
+  ],
   "quests": {
     "ir_hollow": {
       "name": "The Hundred",
@@ -2647,6 +2917,21 @@
           "text": "The claim's vigil weighs on the hall. Find Ness, at the head-frame."
         },
         { "if": [], "text": "Cinderhall isn't done with the Hundred yet." }
+      ]
+    },
+    "ir_march": {
+      "name": "The Column",
+      "start": [["flag", "iron_march"]],
+      "done": [["flag", "iron_march_stopped"]],
+      "stages": [
+        {
+          "if": [["flag", "iron_march_stopped"]],
+          "text": "The column that marched out of Cinderhall has been called home."
+        },
+        {
+          "if": [],
+          "text": "An Ironbound column burns its way down the Reach unbidden. Find Aldous at Cinderhall, or beat it to the next hold."
+        }
       ]
     }
   },
@@ -2802,6 +3087,16 @@
     {
       "if": [["flag", "iron_trusted"], ["!flag", "iron_sworn"]],
       "text": "Cinderhall's chapterhouse still keeps its racks open to you, oil and iron both, no asking twice required.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "iron_march_stopped"]],
+      "text": "The column that marched out of Cinderhall came home again, called back before it finished what it started.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "ir_march_spare_th"]],
+      "text": "Thornwold never learned whose word kept the column off its road, or what that word cost everywhere else.",
       "weight": 1
     }
   ],
