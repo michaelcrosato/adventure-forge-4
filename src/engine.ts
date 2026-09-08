@@ -2542,7 +2542,14 @@ export function step(world: World, prev: State, action: Action): StepOut {
     case "travelto": {
       s.travelPage = 0;
       s.travelMenu = null;
-      events.push(`You travel to ${world.rooms[action.room]?.landmark ?? action.room}.`);
+      // the same fallback the travel menu's own label uses (see actionLabel's
+      // `travelto` case): local travel lists every *visited* room in a region,
+      // not only its landmarks, so a destination may have no travel name of its
+      // own — and printing the room id at a player ("You travel to
+      // ir_miners_hall.") is how three regions' worth of them reached a
+      // playtest report.
+      const dest = world.rooms[action.room];
+      events.push(`You travel to ${dest?.landmark ?? dest?.name ?? action.room}.`);
       enterRoom(world, s, action.room, events);
       break;
     }

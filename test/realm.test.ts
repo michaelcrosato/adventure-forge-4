@@ -77,6 +77,30 @@ test("travel is offered from an ordinary room too, but never with an aggressive 
   assert.ok(!labels(world, state).includes("travel to a known place"), "a noTravel room is walked out of");
 });
 
+/**
+ * Local travel: inside a region you have mapped, you can go back to anywhere
+ * you have stood, not only to its landmarks. A plain room has no travel name of
+ * its own, and the arrival line printed its room id at three regions' worth of
+ * players — "You travel to ir_miners_hall." — because the menu label had the
+ * name fallback and the event did not.
+ */
+test("travel inside a mapped region reaches plain rooms, and names them by name and never by id", () => {
+  const world = line(4, () => "vale");
+  world.regions = { vale: { name: "the Vale" } };
+  for (const i of [1, 2]) delete world.rooms[`r${i}`]!.landmark; // walked, mapped, but not landmarks
+  let { state } = newState(world, 1);
+  for (const _ of [0, 1, 2]) state = doLabel(world, state, "go east"); // r0 -> r3, standing in all four
+  state = doLabel(world, state, "travel to a known place");
+  // the two landmarks are on the top list, and so is the way back into this region
+  assert.deepEqual(labels(world, state), ["to place 0", "toward the Vale", "stay here"]);
+  state = doLabel(world, state, "toward the Vale");
+  assert.deepEqual(labels(world, state), ["to place 0", "to Room 1", "to Room 2", "back"], "every room stood in, plain ones included — a landmark under its travel name, a plain room under its own");
+  const out = step(world, state, actionByLabel(world, state, "to Room 1")!);
+  assert.equal(out.state.room, "r1");
+  assert.match(out.events.join(" "), /You travel to Room 1\./);
+  assert.doesNotMatch(out.events.join(" "), /\br1\b/, "a room id must never reach the player");
+});
+
 test("with more known landmarks than the menu holds, travel groups them by region, and 'back' steps out", () => {
   const n = MENU_CAP + 4;
   const world = line(n, (i) => (i < 6 ? "west" : "east"));
