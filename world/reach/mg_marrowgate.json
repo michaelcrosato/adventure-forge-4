@@ -932,6 +932,12 @@
             ],
             [
               "if",
+              [["var", "hollows_bargained", ">=", 3]],
+              [["say", "The bargain road stands ready: three holds already bargained with, and kept to."]],
+              [["say", "The bargain road still wants more holds bargained — three, and you are short of it."]]
+            ],
+            [
+              "if",
               [
                 [
                   "any",
@@ -1069,6 +1075,17 @@
             ["if", [["has", "ff_cinder_oil"]], [["move", "ff_cinder_oil", "nowhere"]], []],
             ["if", [["has", "mg_ironbound_oil"]], [["move", "mg_ironbound_oil", "nowhere"]], []],
             ["end", "win", "reach_burned", "Hold after hold has already gone to the torch; this is only the last of them. You break the casks over the seat and put fire to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace. Most of them mean it."]
+          ]
+        },
+        {
+          "id": "mg_bargain_throne",
+          "label": "strike the seat's own bargain",
+          "if": [["var", "hollows_bargained", ">=", 3], ["!flag", "mg_throne_resolved"]],
+          "fx": [
+            ["set", "mg_throne_resolved"],
+            ["set", "mg_bargained_throne"],
+            ["score", 25],
+            ["end", "win", "reach_bargained", "Three holds already stand bargained, not rested or burned: the grief paid for, not undone. You lay the same terms before the seat itself, plain and meant to be kept. The gray does not lift; it settles, the way a debt settles between two sides that mean to keep faith."]
           ]
         },
         {
@@ -4401,8 +4418,18 @@
       "weight": 3
     },
     {
+      "if": [["var", "hollows_bargained", ">=", 3]],
+      "text": "Three holds or more were bargained with, not rested or burned. The debt stands, and the dead still walk it.",
+      "weight": 3
+    },
+    {
       "if": [["flag", "mg_reeve_confessed"], ["flag", "mg_burned_throne"]],
       "text": "He confessed, four hundred years late — and the throne burned anyway. Some call that the cruelest mercy of all.",
+      "weight": 3
+    },
+    {
+      "if": [["flag", "mg_reeve_confessed"], ["flag", "mg_bargained_throne"]],
+      "text": "He confessed, four hundred years late — and you bargained with the seat anyway, not fire, not the rite. Call that the harder mercy.",
       "weight": 3
     },
     {
