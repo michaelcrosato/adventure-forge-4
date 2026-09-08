@@ -56,6 +56,7 @@ test("the base world validates clean, with or without a well-formed clock", () =
   const w = world();
   assert.deepEqual(validateWorld(w), []);
   w.clock = [
+    { id: "begins", if: [["turn", ">=", 1]], once: true, fx: [["set", "started"]] },
     { id: "warned", if: [["flag", "started"], ["turn", ">=", 1]], once: true, fx: [["say", "Word reaches you."]] },
     { id: "pressure", fx: [["say", "The pressure does not let up."]] },
   ];

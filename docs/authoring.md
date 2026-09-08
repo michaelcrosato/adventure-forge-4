@@ -770,7 +770,7 @@ along the walkthrough exceeds 450 characters or any single one exceeds 1100.
 ## 16. Before you hand it in
 
 ```bash
-npm run validate world/reach.json   # every reference, every proof, the menu cap
+npm run validate world/reach.json   # every reference, every proof, the menu cap, every gate's key
 npm run crawl world/reach.json      # random walks: crashes, empty menus, "undefined" holes
 npm run test                        # budget, content rules, determinism
 ```

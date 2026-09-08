@@ -90,3 +90,86 @@ test("a proof for an ending the content cannot reach is an error", () => {
   const errs = validateWorld(twoEndings({ gave_in: ["give in"], ghost: ["win"] }));
   assert.ok(errs.some((e) => e.includes("proofs.ghost")));
 });
+
+// ---------- reads with no writer ----------
+/**
+ * A gate whose key the world never cuts. Found for real in the Kingswood: the
+ * after-quest's burned branch waited on `said_kw_priest_sv_kw_burned_ask` and
+ * the topic is `sv_kw_burn_ask`, so the stage never cleared — a player who
+ * burned the Hunt's Stand was told "Father Twyne wonders what becomes of the
+ * cleared ground" for the rest of the run, however many times they asked him.
+ * One letter, and nothing in the toolchain could see it.
+ */
+const ok = (): World => twoEndings({ gave_in: ["give in"] });
+
+test("a flag nothing ever sets is an error, wherever it is read", () => {
+  for (const [what, put] of [
+    ["an action's if", (w: World) => { w.rooms["a"]!.actions![0]!.if = [["flag", "never_set"]]; }],
+    ["a quest's start", (w: World) => { w.quests = { q: { name: "Q", start: [["flag", "never_set"]], stages: [{ if: [], text: "go" }] } }; }],
+    ["an epilogue line", (w: World) => { w.epilogue = [{ if: [["flag", "never_set"]], text: "x" }]; }],
+    ["a clock entry", (w: World) => { w.clock = [{ id: "c", if: [["flag", "never_set"]], fx: [["say", "x"]] }]; }],
+    ["a since condition", (w: World) => { w.rooms["a"]!.actions![0]!.if = [["since", "never_set", ">=", 5]]; }],
+  ] as [string, (w: World) => void][]) {
+    const w = ok();
+    put(w);
+    const errs = validateWorld(w);
+    assert.ok(errs.some((e) => e.includes("never_set") && e.includes("gate with no key")), `${what}: ${errs.join(" | ") || "loaded clean"}`);
+  }
+});
+
+test("a var nothing ever writes is an error, including one only status prints", () => {
+  for (const [what, put] of [
+    ["a hud entry", (w: World) => { w.hud = [{ label: "gold", var: "never_written" }]; }],
+    ["a statusTracks entry", (w: World) => { w.statusTracks = [{ label: "names", var: "never_written", max: 3 }]; }],
+    ["an action's if", (w: World) => { w.rooms["a"]!.actions![0]!.if = [["var", "never_written", ">=", 1]]; }],
+  ] as [string, (w: World) => void][]) {
+    const w = ok();
+    put(w);
+    const errs = validateWorld(w);
+    assert.ok(errs.some((e) => e.includes("never_written") && e.includes("always be zero")), `${what}: ${errs.join(" | ") || "loaded clean"}`);
+  }
+});
+
+test("the flags and vars the engine writes itself are not the author's to set", () => {
+  const w = ok();
+  w.npcs = { lys: { name: "Lys", desc: "grim", room: "a", companion: {} } as never };
+  w.rooms["a"]!.actions![0]!.once = true;
+  w.rooms["a"]!.actions!.push({ id: "read", label: "read the sign", if: [
+    ["flag", "_seenTravel"],          // an engine notice
+    ["flag", "did_win"],              // a `once` action's own auto-flag
+    ["flag", "calm_lys"],             // set when content calms an npc
+    ["flag", "lys_left"],             // set when a companion parts ways
+    ["var", "thefts_with_lys", ">=", 1], // counted by the engine on a theft
+  ], fx: [["say", "x"]] });
+  assert.deepEqual(validateWorld(w), []);
+});
+
+test("an engine-shaped flag naming something that does not exist is still a typo", () => {
+  const w = ok();
+  w.rooms["a"]!.actions!.push({ id: "read", label: "read the sign", if: [["flag", "did_no_such_action"]], fx: [["say", "x"]] });
+  const errs = validateWorld(w);
+  assert.ok(errs.some((e) => e.includes("did_no_such_action")), errs.join(" | ") || "loaded clean");
+});
+
+// ---------- an ability's pool must be declared ----------
+/**
+ * An ability's price is an ordinary var by design, but only `world.resources`
+ * makes it a *pool*: that is where the menu reads it to say what pressing the
+ * option costs, where status reads it for "Ready to spend", and what a rest
+ * refills. Undeclared, a cost spends a counter that never comes back and a
+ * gate keeps the ability off the menu for the whole game.
+ */
+test("an ability may not spend or gate on a pool world.resources does not declare", () => {
+  const spends = ok();
+  spends.abilities = { shove: { label: "shove", fx: [["addvar", "res_nope", -1], ["say", "Oof."]] } };
+  assert.ok(validateWorld(spends).some((e) => e.includes("res_nope") && e.includes("never refill")), validateWorld(spends).join(" | ") || "loaded clean");
+
+  const gates = ok();
+  gates.abilities = { shove: { label: "shove", if: [["var", "res_nope", ">=", 1]], fx: [["say", "Oof."]] } };
+  assert.ok(validateWorld(gates).some((e) => e.includes("res_nope") && e.includes("never be offered")), validateWorld(gates).join(" | ") || "loaded clean");
+
+  const declared = ok();
+  declared.resources = { res_yes: 2 };
+  declared.abilities = { shove: { label: "shove", if: [["var", "res_yes", ">=", 1]], fx: [["addvar", "res_yes", -1], ["say", "Oof."]] } };
+  assert.deepEqual(validateWorld(declared), []);
+});

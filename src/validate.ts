@@ -138,6 +138,12 @@ export function validateWorld(world: World): string[] {
 
   const checkConds = (where: string, cs?: Cond[]) => {
     for (const c of cs ?? []) {
+      // collected as the existing walk passes, so "what does this world read"
+      // covers exactly what the validator already reaches — including the
+      // places a hand-written second walker forgets (companion remarks were
+      // where the first draft of this check found nothing but its own blind spot)
+      if (c[0] === "flag" || c[0] === "!flag" || c[0] === "since") flagReads.push({ name: String(c[1]), where });
+      else if (c[0] === "var") varReads.push({ name: String(c[1]), where });
       if (!COND_OPS.has(c[0])) err(`${where}: unknown cond op ${String(c[0])}`);
       else if ((c[0] === "has" || c[0] === "!has") && !itemOk(c[1])) err(`${where}: unknown item ${c[1]}`);
       else if ((c[0] === "npcDead" || c[0] === "!npcDead" || c[0] === "inParty" || c[0] === "!inParty") && !npcOk(c[1])) err(`${where}: unknown npc ${c[1]}`);
@@ -160,10 +166,19 @@ export function validateWorld(world: World): string[] {
       }
     }
   };
+  // A gate with no key: what the world reads, and what it ever writes. Filled
+  // in by checkConds and checkFx as they walk, spent at the end of this
+  // function (see "reads with no writer").
+  const flagWrites = new Set<string>();
+  const varWrites = new Set<string>(Object.keys(world.resources ?? {}));
+  const flagReads: { name: string; where: string }[] = [];
+  const varReads: { name: string; where: string }[] = [];
   const endIds = new Set<string>(); // every ending the content can reach
   const checkFx = (where: string, fxs?: Fx[]) => {
     for (const fx of fxs ?? []) {
       const op = fx[0];
+      if (op === "set" || op === "clear") flagWrites.add(String(fx[1]));
+      else if (op === "setvar" || op === "addvar") varWrites.add(String(fx[1]));
       if (!FX_OPS.has(op)) { err(`${where}: unknown fx op ${String(op)}`); continue; }
       if (op === "move" && !itemOk(fx[1])) err(`${where}: unknown item ${fx[1]}`);
       if (op === "move" && !moveOk(fx[2])) err(`${where}: bad location ${fx[2]}`);
@@ -304,6 +319,22 @@ export function validateWorld(world: World): string[] {
     if (ab.if !== undefined && !Array.isArray(ab.if)) err(`ability ${aid}: "if" must be an array`);
     checkConds(`ability ${aid} if`, ab.if);
     checkFx(`ability ${aid} fx`, ab.fx);
+    // An ability's price is an ordinary var by design (§14), but the menu can
+    // only read it as a price if `world.resources` declares it: `abilityCost`
+    // looks the pool up there to say "spends 1 of 2" before the option is
+    // pressed, `renderStatus` lists it under "Ready to spend", and a rest
+    // refills only what is declared. An `addvar res_x -1` on a pool nobody
+    // declared spends a counter that never refills and never shows; a
+    // `["var", "res_x", ">=", 1]` gate on one keeps the ability off the menu
+    // for the whole game. Both load clean without this.
+    const pools = new Set(Object.keys(world.resources ?? {}));
+    const poolish = (v: string) => v.startsWith("res_") && !pools.has(v);
+    for (const f of ab.fx ?? [])
+      if (f[0] === "addvar" && typeof f[2] === "number" && f[2] < 0 && poolish(String(f[1])))
+        err(`ability ${aid}: spends ${String(f[1])}, which world.resources does not declare — the pool would never refill and the menu could not price it`);
+    for (const c of ab.if ?? [])
+      if (c[0] === "var" && poolish(String(c[1])))
+        err(`ability ${aid}: gated on ${String(c[1])}, which world.resources does not declare — the ability would never be offered`);
   }
   // Full pool values an ability's cost var refreshes to on a rest — plain
   // numbers, closed to positive ones (a pool of 0 or less could never be spent).
@@ -428,6 +459,57 @@ export function validateWorld(world: World): string[] {
       if (r.fx) checkFx(`npc ${nid} remark ${r.id}`, r.fx);
     }
     for (const [i, l] of (npc.companion?.leaves ?? []).entries()) checkConds(`npc ${nid} leaves ${i}`, l.if);
+  }
+
+  // ---------- reads with no writer ----------
+  /**
+   * A gate whose key the world never cuts. A `["flag", f]` on a flag nothing
+   * ever sets is content that can never fire; the same read negated
+   * (`["!flag", f]`) is worse, because it fires forever — the Kingswood's
+   * after-quest told a player "Father Twyne wonders what becomes of the
+   * cleared ground" for the rest of the run, because the flag it waited on
+   * was `said_kw_priest_sv_kw_burned_ask` and the topic is `sv_kw_burn_ask`.
+   * One letter, and nothing in the toolchain could see it.
+   *
+   * The engine writes some flags and vars itself, so those are not the
+   * author's to set. Each family below is named, not pattern-matched loosely,
+   * and the id after the prefix has to be a real one — `did_` on an action
+   * that does not exist is exactly the typo this check is for.
+   */
+  const actionAndAbilityIds = new Set<string>(Object.keys(world.abilities ?? {}));
+  for (const r of Object.values(world.rooms)) for (const a of r.actions ?? []) actionAndAbilityIds.add(a.id);
+  const saidKeys = new Set<string>();
+  for (const [nid, n] of Object.entries(world.npcs)) for (const t of n.topics ?? []) saidKeys.add(`${nid}_${t.id}`);
+  const clockIds = new Set((world.clock ?? []).map((c) => c.id));
+  const engineWritesFlag = (f: string): boolean => {
+    if (f.startsWith("_")) return true; // the engine's own notices: _seenTravel, _seenPierce, _warnedEnd_<room>
+    if (f.startsWith("remarked_")) return true; // remarked_<win>_<remark>, keyed by ids only the engine pairs
+    const cut = f.indexOf("_");
+    if (cut < 0) return false;
+    const pre = f.slice(0, cut), rest = f.slice(cut + 1);
+    if (pre === "did") return actionAndAbilityIds.has(rest); // a `once` action or ability
+    if (pre === "said") return saidKeys.has(rest); // a `once` topic
+    if (pre === "clocked") return clockIds.has(rest); // a `once` clock entry
+    if (pre === "stole") return !!world.items[rest];
+    if (pre === "laid" || pre === "left" || pre === "down" || pre === "fell" || pre === "calm") return !!world.npcs[rest];
+    return f.endsWith("_left") && !!world.npcs[f.slice(0, -"_left".length)]; // <npc>_left, the other way round
+  };
+  const engineWritesVar = (v: string): boolean =>
+    v.startsWith("_") || v === "thefts" || (v.startsWith("thefts_with_") && !!world.npcs[v.slice("thefts_with_".length)]);
+  // the reads that are not conditions: what status and the header print
+  for (const h of world.hud ?? []) varReads.push({ name: h.var, where: "hud" });
+  for (const t of world.statusTracks ?? []) varReads.push({ name: t.var, where: "statusTracks" });
+  if (world.progress) varReads.push({ name: world.progress.var, where: "progress" });
+  const saidOnce = new Set<string>();
+  for (const r of flagReads) {
+    if (flagWrites.has(r.name) || engineWritesFlag(r.name) || saidOnce.has(r.name)) continue;
+    saidOnce.add(r.name);
+    err(`${r.where}: reads flag ${r.name}, which nothing in this world ever sets — a gate with no key`);
+  }
+  for (const r of varReads) {
+    if (varWrites.has(r.name) || engineWritesVar(r.name) || saidOnce.has(r.name)) continue;
+    saidOnce.add(r.name);
+    err(`${r.where}: reads var ${r.name}, which nothing in this world ever writes — it will always be zero`);
   }
 
   // ---------- reachability ----------

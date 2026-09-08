@@ -79,6 +79,8 @@ test("validator: a goto inside an if still counts for reachability", () => {
 
 test("any passes when one listed condition passes, and is validated like any other condition", () => {
   const w = world();
+  // something has to be able to set x, or the validator calls it a gate with no key
+  w.rooms["a"]!.actions!.push({ id: "setx", label: "set x", fx: [["set", "x"]] });
   w.rooms["a"]!.actions!.push({ id: "either", label: "either", if: [["any", [["flag", "x"], ["has", "coin"]]]], fx: [["say", "ok"]] });
   let { state } = newState(w, 1);
   assert.ok(legalActions(w, state).some((a) => a.kind === "custom" && a.id === "either"), "coin in hand satisfies the any");
