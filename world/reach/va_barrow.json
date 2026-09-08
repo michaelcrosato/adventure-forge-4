@@ -115,7 +115,20 @@
         "down": { "to": "va_crypt", "sideTrip": true },
         "east": { "to": "va_vault", "sideTrip": true }
       },
-      "onEnterOnce": [["xp", 2], ["say", "These niches once held tokens for the dead. Someone took them all."]]
+      "onEnterOnce": [["xp", 2], ["say", "These niches once held tokens for the dead. Someone took them all."]],
+      "actions": [
+        {
+          "id": "va_antechamber_niches",
+          "label": "search the empty niches",
+          "if": [["class", "scout"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "Not looted — emptied. Each niche swept clean, no chip or scratch from a hurried hand. Whoever took these tokens took their time, and meant to."]
+          ]
+        }
+      ]
     },
     "va_vault": {
       "name": "The King's Strongroom",
@@ -722,6 +735,14 @@
           "fx": [["xp", 2]]
         },
         {
+          "id": "crown_already_read",
+          "label": "you already read the crown's own words",
+          "if": [["flag", "va_read_crown"]],
+          "once": true,
+          "say": "\"You read it, then,\" he says. \"Then you already know the whole of my grievance. There is nothing left for me to add.\"",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "scout_quiet",
           "label": "let him see how quiet you can be",
           "if": [["class", "scout"], ["flag", "va_heard_grievance"]],
@@ -863,6 +884,26 @@
       "if": [["flag", "or_scout_va_king_tread"]],
       "text": "The Hollow King, in his last hour of grief, said a Scout's tread reminded him of a thief he'd once forgiven.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "va_kneel_warned"]],
+      "text": "Once, at the throne, you let yourself get close enough to feel its weight, and stepped back before it was yours.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "va_read_token"]],
+      "text": "The worn half-token you found at the barrow door: cold iron, a raised hand, one of a keeper's line long lapsed.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "va_wight_passed"]],
+      "text": "You never crossed blades with the barrow-wight at all — you kept to the shadow and left it guarding nothing.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "va_read_seal"]],
+      "text": "The king's seal told you plainly, in his own hand, that he only ever wanted the crown given back.",
+      "weight": 0
     }
   ]
 }
