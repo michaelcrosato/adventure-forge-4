@@ -60,11 +60,16 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // trade one for the other. crowned_hollow, hollow_reach and reach_at_rest
   // are not here at all — they meet the real bar, and hollow_reach came back
   // under it (1,042 to 982) when quest stage changes learned to collapse.
-  "reach:regent_deposed": { avg: 455, max: 1170 },
-  "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1166 }, // the burn road is a different route now, and a shorter-screened one
-  "reach:gray_crown": { avg: 483, max: 1125 },
-  "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1238 },
-  "reach:regent_deposed#warden_crown": { avg: AVG_CHARS_MAX, max: 1141 },
+  // Turned down across the board the day the menu stopped saying a check's
+  // skill twice — once in the label's own "(grace)" tag and again in the hint's
+  // "+2 grace" a foot later, 513 option lines deep. That is about 1.4
+  // characters a screen on every road at once, and it is why four of these
+  // numbers moved down together rather than one at a time.
+  "reach:regent_deposed": { avg: 453, max: 1162 },
+  "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1154 }, // the burn road is a different route now, and a shorter-screened one; 450.68 -> 449.30, so its average is honestly under the real bar rather than passing on a floor
+  "reach:gray_crown": { avg: 481, max: 1125 },
+  "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1116 },
+  "reach:regent_deposed#warden_crown": { avg: AVG_CHARS_MAX, max: 1131 },
   // The full-party road: four companions travelling, the most expensive proof
   // in the realm, and the ratchet turned down three times on the day it was
   // written. It arrived at 506 average and a 1,489-character screen at
@@ -72,7 +77,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // line, and collapsing quest stage changes took it to 478 and 1,448. What is
   // left is a hold's arrival text plus all four companions answering it in the
   // same breath — content worth having, delivered as a wall, and its own task.
-  "reach:reach_at_rest#devoted": { avg: 480, max: 1448 },
+  "reach:reach_at_rest#devoted": { avg: 478, max: 1448 },
 };
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { newState } from "../src/engine.ts";
-import { matchesMenuLabel, render, renderStatus } from "../src/format.ts";
+import { newState, step } from "../src/engine.ts";
+import { matchesMenuLabel, render, renderMenu, renderStatus } from "../src/format.ts";
 import type { State, World } from "../src/types.ts";
 
 test("matchesMenuLabel: a rendered menu line is its canonical label, alone or with one trailing display hint", () => {
@@ -24,6 +24,11 @@ test("matchesMenuLabel: a rendered menu line is its canonical label, alone or wi
     ["go eastward", "go east", false],
     ["use iron crown on hollow king", "use iron crown", false], // a different action, not a hint
     ["go east (toward drowned shrine) extra", "go east", false],
+    // and the one place a rendered line is NOT the canonical label plus a hint:
+    // renderMenu drops a trailing skill tag the hint beside it already names
+    ["swim it (DC 12, +2 grace: roll 10+ on the die)", "swim it (grace)", true],
+    ["raise the cup (will, 1hp fail) (DC 11, will: roll 11+ on the die)", "raise the cup (will, 1hp fail)", true], // not a bare tag: kept
+    ["swim it (DC 12, +2 might: roll 10+ on the die)", "swim it (grace)", false], // a different skill is a different option
   ];
   for (const [line, canonical, want] of cases)
     assert.equal(matchesMenuLabel(line, canonical), want, `"${line}" vs "${canonical}"`);
@@ -260,4 +265,55 @@ test("prose between two notices keeps them apart — a number belongs to what ea
   // and the sums read in a fixed order — score, then xp, then whatever names
   // its own subject — however the effects happened to push them
   assert.deepEqual(block, ["[(+5)", "The stair lets out behind the guards.", "(+2, +3xp)]"], text);
+});
+
+/**
+ * The realm tags a check option with its skill — "slip past him along the bough
+ * (grace)" — and then the hint beside it says "+2 grace" a foot away. 513
+ * option lines across the proven roads said it twice, 1.5 characters a screen,
+ * on every road including the four with about one character of slack left.
+ *
+ * The canonical label does not move: it is what `actionByLabel` matches and
+ * what all nine proofs and the walkthrough name their steps by.
+ */
+test("renderMenu drops a skill tag the hint already names, and only that", () => {
+  const world = {
+    id: "m",
+    title: "M",
+    intro: "x",
+    start: "a",
+    hp: 10,
+    maxScore: 5,
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        actions: [
+          { id: "swim", label: "swim it (grace)", fx: [["check", "grace", 12, [["say", "ok"]], [["say", "no"]]]] },
+          // the hint names a different skill, so the tag is telling the player something
+          { id: "odd", label: "heave it (might)", fx: [["check", "grace", 12, [["say", "ok"]], [["say", "no"]]]] },
+          // not a bare tag: it says what the hint does not
+          { id: "cup", label: "raise the cup (will, 1hp fail)", fx: [["check", "will", 11, [["say", "ok"]], [["hp", -1]]]] },
+          // no hint at all to double up with
+          { id: "plain", label: "wait a while (wits)", fx: [["say", "You wait."]] },
+        ],
+      },
+    },
+    items: {},
+    npcs: {},
+    walkthrough: [],
+  } as unknown as World;
+  const { state } = newState(world, 1);
+  const lines = renderMenu(world, state).text.split("\n");
+  const line = (frag: string) => lines.find((l) => l.includes(frag))!;
+
+  assert.match(line("swim it"), /^\d+ swim it \(DC 12, grace: roll 12\+ on the die\)$/, line("swim it"));
+  assert.match(line("heave it"), /^\d+ heave it \(might\) \(DC 12, grace: /, line("heave it"));
+  assert.match(line("raise the cup"), /^\d+ raise the cup \(will, 1hp fail\) \(DC 11, will: /, line("raise the cup"));
+  assert.equal(line("wait a while"), lines.find((l) => l.endsWith("wait a while (wits)")), "no hint, nothing to fold into");
+
+  // and the canonical label is untouched, so a walkthrough step still resolves
+  const out = step(world, state, { kind: "custom", room: "a", id: "swim" });
+  assert.notEqual(out.state, state, "sanity: the action ran");
+  assert.ok(matchesMenuLabel(line("swim it").replace(/^\d+ /, ""), "swim it (grace)"));
 });

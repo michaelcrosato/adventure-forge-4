@@ -19,6 +19,23 @@ const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 export const VISITED_FULL = 12;
 export const VISITED_RECENT = 5;
 
+/**
+ * A canonical label's trailing skill tag, when the hint beside it already names
+ * that skill: "slip past him along the bough (grace) (DC 10, +2 grace: roll 8+
+ * on the die)" says grace twice, a foot apart, 513 option lines deep across the
+ * proven roads. Dropped from the display only — the canonical label is what
+ * `actionByLabel` and every walkthrough and proof step match on, and it does
+ * not move (see matchesMenuLabel, which knows about this).
+ *
+ * Only an exact bare tag: `(will, 1hp fail)` says something the hint does not
+ * and stays.
+ */
+const SKILL_TAG = / \((might|grace|wits|will)\)$/;
+function shownLabel(label: string, hint: string): string {
+  const m = SKILL_TAG.exec(label);
+  return m && new RegExp(`\\b${m[1]}\\b`).test(hint) ? label.slice(0, -m[0].length) : label;
+}
+
 export function renderMenu(world: World, s: State, opts: { itemHints?: boolean } = {}): { text: string; actions: Action[]; numbers: number[] } {
   const actions = legalActions(world, s);
   // the number is the entry's place in the room's whole option list, not on
@@ -26,7 +43,10 @@ export function renderMenu(world: World, s: State, opts: { itemHints?: boolean }
   // number that had meant something else a page ago
   const numbers = menuNumbers(world, s);
   const text = actions
-    .map((a, i) => `${numbers[i]} ${actionLabel(world, a, s)}${oddsHint(world, s, a, opts)}`)
+    .map((a, i) => {
+      const hint = oddsHint(world, s, a, opts);
+      return `${numbers[i]} ${shownLabel(actionLabel(world, a, s), hint)}${hint}`;
+    })
     .join("\n");
   return { text, actions, numbers };
 }
@@ -44,7 +64,17 @@ export function renderMenu(world: World, s: State, opts: { itemHints?: boolean }
 export function matchesMenuLabel(line: string, canonical: string): boolean {
   const a = line.trim().toLowerCase();
   const b = canonical.trim().toLowerCase();
-  return a === b || (a.startsWith(`${b} (`) && a.endsWith(")"));
+  const like = (x: string) => a === x || (a.startsWith(`${x} (`) && a.endsWith(")"));
+  if (like(b)) return true;
+  // and the one place the rendered line is not the canonical label followed by
+  // a hint: renderMenu drops a trailing skill tag the hint already names (see
+  // shownLabel), so "swim it (grace)" renders as "swim it (DC 12, +2 grace: …)".
+  // The same test shownLabel makes, so a line whose hint names a different
+  // skill is a different option and does not match.
+  const m = SKILL_TAG.exec(b);
+  if (!m) return false;
+  const bare = b.slice(0, -m[0].length);
+  return like(bare) && new RegExp(`\\b${m[1]}\\b`).test(a.slice(bare.length));
 }
 
 export function render(
