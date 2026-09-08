@@ -38,11 +38,28 @@ const read = (flag: string, o: Origin) => { (readers.get(flag) ?? readers.set(fl
 /** Counters a branch adds to (`addvar`), by branch label: a branch that feeds a counter the world reads is remembered through it. */
 const counters = new Map<string, Set<string>>();
 const varReads = new Map<string, Origin[]>();
+/**
+ * Standings and tallies, both directions: how far the world can move each one
+ * (`addvar`/`setvar`) against which thresholds it ever reads back. A standing
+ * a hundred deeds can raise, read only at +2, is a promise the world does not
+ * keep — every deed past the second one changes nothing.
+ */
+type VarMoves = { ups: number; upSum: number; downs: number; downSum: number; sets: number };
+const varMoves = new Map<string, VarMoves>();
+const moveOf = (v: string) => varMoves.get(v) ?? varMoves.set(v, { ups: 0, upSum: 0, downs: 0, downSum: 0, sets: 0 }).get(v)!;
+const varThresholds = new Map<string, Map<string, number>>();
+/** Vars the player is merely SHOWN — a status tally, a hud counter, a path's number — as against read by a condition. */
+const varShown = new Set<string>();
+const thresholdOf = (v: string) => varThresholds.get(v) ?? varThresholds.set(v, new Map()).get(v)!;
 
 const walkCond = (conds: Cond[] | undefined, o: Origin) => {
   for (const c of conds ?? []) {
     if (c[0] === "flag" || c[0] === "!flag") read(c[1], o);
-    else if (c[0] === "var") (varReads.get(c[1]) ?? varReads.set(c[1], []).get(c[1])!).push(o);
+    else if (c[0] === "var") {
+      (varReads.get(c[1]) ?? varReads.set(c[1], []).get(c[1])!).push(o);
+      const key = `${c[2]}${c[3]}`;
+      thresholdOf(c[1]).set(key, (thresholdOf(c[1]).get(key) ?? 0) + 1);
+    }
     else if (c[0] === "any") walkCond(c[1], o);
   }
 };
@@ -53,7 +70,10 @@ const walkFx = (fxs: Fx[] | undefined, o: Origin, chosen: boolean) => {
       case "set": setters.push({ ...o, flag: fx[1], chosen }); break;
       case "addvar": // coin is a price, not a memory; standing, regard and tallies are
         if (chosen && fx[1] !== "gold") (counters.get(o.label) ?? counters.set(o.label, new Set()).get(o.label)!).add(fx[1]);
+        if (fx[2] > 0) { const m = moveOf(fx[1]); m.ups += 1; m.upSum += fx[2]; }
+        else if (fx[2] < 0) { const m = moveOf(fx[1]); m.downs += 1; m.downSum += fx[2]; }
         break;
+      case "setvar": moveOf(fx[1]).sets += 1; break;
       case "if": walkCond(fx[1], o); walkFx(fx[2], o, chosen); walkFx(fx[3], o, chosen); break;
       case "check": walkFx(fx[3], o, chosen); walkFx(fx[4], o, chosen); break;
       case "chance": walkFx(fx[2], o, chosen); walkFx(fx[3], o, chosen); break;
@@ -96,8 +116,20 @@ for (const [qid, q] of Object.entries(world.quests ?? {})) {
   for (const st of q.stages ?? []) walkCond(st.if, o);
 }
 for (const ep of world.epilogue ?? []) walkCond(ep.if, { kind: "epilogue", container: "epilogue", label: ep.text.slice(0, 40) });
-for (const tr of world.statusTracks ?? []) walkCond(tr.if, { kind: "status", container: "status", label: tr.label });
-for (const p of world.statusPaths ?? []) walkCond(p.if, { kind: "status", container: "status", label: p.label });
+for (const tr of world.statusTracks ?? []) {
+  walkCond(tr.if, { kind: "status", container: "status", label: tr.label });
+  varShown.add(tr.var);
+}
+if (world.progress) varShown.add(world.progress.var);
+for (const h of world.hud ?? []) varShown.add(h.var);
+for (const p of world.statusPaths ?? []) {
+  const o = { kind: "status", container: "status", label: p.label };
+  walkCond(p.if, o);
+  // a path's states are where a standing is actually read — walking only p.if
+  // undercounted every faction's reads to zero
+  for (const st of p.states ?? []) walkCond(st.if, o);
+  if (p.var) varShown.add(p.var);
+}
 if (Array.isArray(world.objectives)) for (const ob of world.objectives) walkCond(ob.if, { kind: "objectives", container: "status", label: "recap" });
 
 // ---- roll up per flag ----
@@ -167,6 +199,49 @@ if (forgotten.length) {
   console.log(`gates read only where they stand (${gates.length}) — one flag opened by several routes, a fork's done-marker, or a single path; fine unless it was meant to matter:`);
   for (const r of gates) show(r);
 } else console.log("every choice is remembered somewhere");
+
+/**
+ * The other half of "choice matters": a standing or tally the world moves but
+ * never reads back above a low threshold. Reputation with a faction is the
+ * usual offender — a hundred deeds can raise it, nothing reads it past +2, so
+ * every deed after the second one is a number that changes no scene.
+ */
+console.log();
+const tracked = [...new Set([...varMoves.keys(), ...varReads.keys()])]
+  .filter((v) => v !== "gold" && want(v) === (only ? prefixOf(v) === only : true))
+  .map((v) => {
+    const m = varMoves.get(v) ?? { ups: 0, upSum: 0, downs: 0, downSum: 0, sets: 0 };
+    const th = [...(varThresholds.get(v)?.keys() ?? [])];
+    // the highest value any condition ever asks this var to reach
+    const highest = th
+      .filter((k) => k.startsWith(">"))
+      .map((k) => Number(k.replace(/^>=?/, "")))
+      .filter((n) => Number.isFinite(n))
+      .reduce((a, b) => Math.max(a, b), -Infinity);
+    return { v, m, th, highest, reads: (varReads.get(v) ?? []).length };
+  })
+  .sort((a, b) => b.m.upSum - a.m.upSum || a.v.localeCompare(b.v));
+if (tracked.length) {
+  console.log(`standings and tallies (${tracked.length}) — how far the world moves each, against the highest it ever reads:`);
+  console.log(`  ${"var".padEnd(16)} ${pad("moves", 6)} ${pad("+total", 7)} ${pad("reads", 6)}  highest read  verdict`);
+  for (const t of tracked) {
+    const moves = t.m.ups + t.m.downs + t.m.sets;
+    const highest = Number.isFinite(t.highest) ? `>=${t.highest}` : "—";
+    // a standing worth three times what anything asks of it is inert over most of its range
+    const verdict = moves === 0
+      ? "not moved by content — the engine's own, or nothing feeds it"
+      : t.reads === 0
+        ? varShown.has(t.v)
+          ? "shown in status, but no gate, scene or line reads it"
+          : "never read — the world does not notice it at all"
+        : !Number.isFinite(t.highest)
+          ? "read, but never as a height to reach"
+          : t.m.upSum >= t.highest * 3
+            ? `inert above +${t.highest} — ${t.m.ups} deeds raise it, nothing reads past that`
+            : "";
+    console.log(`  ${t.v.padEnd(16)} ${pad(moves, 6)} ${pad("+" + t.m.upSum, 7)} ${pad(t.reads, 6)}  ${highest.padEnd(12)}  ${verdict}`);
+  }
+}
 
 if (all) {
   console.log();
