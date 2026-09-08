@@ -2312,6 +2312,7 @@
     "th_rook": {
       "name": "Rook",
       "room": null,
+      "dialogue": true,
       "hostile": true,
       "hp": 8,
       "atk": 2,
@@ -2404,6 +2405,12 @@
             ["xp", 3],
             ["calm", "th_rook"]
           ]
+        },
+        {
+          "id": "bye",
+          "label": "leave it for now",
+          "say": "He shrugs, easy about it. \"Tally's not going anywhere. Neither am I.\"",
+          "end": true
         }
       ]
     },
@@ -3112,10 +3119,7 @@
               [
                 "if",
                 [["!npcDead", "th_boar"], ["!flag", "watch_trusted"], ["!flag", "crown_trusted"]],
-                [
-                  ["npcgo", "th_boar", "here"],
-                  ["say", "A gray boar breaks from the brush, tusks first, heavier than any boar has a right to be."]
-                ],
+                [["npcgo", "th_boar", "here"], ["say", "A gray boar crashes out of the brush, already charging."]],
                 []
               ]
             ],
