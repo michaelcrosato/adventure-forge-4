@@ -30,6 +30,19 @@
           [["npcgo", "th_cal", null], ["set", "th_cal_gone"]],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "th_edge_board",
+          "label": "read past the board's warning",
+          "free": true,
+          "once": true,
+          "if": [["class", "scout"]],
+          "fx": [
+            ["xp", 1],
+            ["say", "Nailed below the board's stern lettering, smaller: a tally of names turned away this month. Fewer than you'd think, this deep in Company country."]
+          ]
+        }
       ]
     },
     "th_north_track": {
@@ -62,6 +75,19 @@
           [["npcgo", "th_cal", null], ["set", "th_cal_gone"]],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "th_track_toll",
+          "label": "note which wagons skipped the toll",
+          "free": true,
+          "once": true,
+          "if": [["class", "warden"]],
+          "fx": [
+            ["xp", 1],
+            ["say", "The ruts run deep and none of them turn toward the toll stand. Whoever's hauling ore off the Downs has been doing it a long time, unpaid."]
+          ]
+        }
       ]
     },
     "th_south_track": {
@@ -94,6 +120,19 @@
           [["npcgo", "th_cal", null], ["set", "th_cal_gone"]],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "th_track_signs",
+          "label": "read the scrub for trade-sign",
+          "free": true,
+          "once": true,
+          "if": [["class", "envoy"]],
+          "fx": [
+            ["xp", 1],
+            ["say", "Boot-prints in the scrub don't match the road's traffic — someone's been cutting south off the beaten track, and not to pay a toll."]
+          ]
+        }
       ]
     },
     "th_settlement": {
@@ -1199,6 +1238,24 @@
       "takeable": true,
       "owner": "th_cook",
       "hint": "tips left by mercs who didn't want to owe the cook a favor"
+    },
+    "th_passage_token": {
+      "name": "a worn grave-token",
+      "loc": "th_barrow1_passage",
+      "takeable": true,
+      "hint": "someone else came this way first, and left in a hurry"
+    },
+    "th_den_scrap": {
+      "name": "a scrap of torn cloth",
+      "loc": "th_cave1_mouth",
+      "takeable": true,
+      "hint": "not the beast's — something else has been through here"
+    },
+    "th_tower_note": {
+      "name": "a rain-blurred scrap of a runner's message",
+      "loc": "th_tower1_base",
+      "takeable": true,
+      "hint": "half a name, half a number — the rest is water-lost"
     }
   },
   "npcs": {
@@ -2340,7 +2397,19 @@
           "name": "Spoil Verge",
           "desc": "Scrub and spoil-dust drift down off the Iron Downs, gray on the old leaf-mold. A deer track bends east; the wood thickens south.",
           "brief": "Spoil-dust drifting south.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_spoil_sift",
+              "label": "sift the spoil for anything dropped",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 2],
+                ["xp", 1],
+                ["say", "A wagon-load's worth of waste, mostly — but one clod breaks open on a good coin, tossed off some cart too loaded to miss it."]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 0],
@@ -2367,14 +2436,63 @@
           "landmark": "Cairn Rise",
           "desc": "Ground humped and uneven underfoot, old grave-shapes gone soft under centuries of leaf-fall. North a paler mound breaks the pattern, its mouth a chink of old stone. The holloway runs west; wood thickens south and east.",
           "brief": "Old grave-shapes in the leaf-mold.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_cairn_honor",
+              "label": "leave a word for the old dead",
+              "free": true,
+              "once": true,
+              "if": [["!flag", "th_cairn_robbed"]],
+              "fx": [
+                ["set", "th_cairn_honored"],
+                ["addvar", "rep_keepers", 1],
+                ["xp", 1],
+                ["say", "You say what little you know over the humped graves, owed to nobody living. Small mercy, freely given."]
+              ]
+            },
+            {
+              "id": "th_cairn_rob",
+              "label": "pry a grave-token loose",
+              "once": true,
+              "if": [["!flag", "th_cairn_honored"]],
+              "fx": [
+                ["set", "th_cairn_robbed"],
+                ["addvar", "rep_keepers", -1],
+                ["addvar", "gold", 3],
+                ["xp", 1],
+                ["say", "A token comes free of the leaf-mold with a little prying. Yours now, by no right but the finding."]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 0],
           "name": "Ridge's End",
           "desc": "The ridge runs out in broken ground and a long view north over gray spoil-heaps that were never Thornwold's own. South the trees close again; west the holloway continues.",
           "brief": "Broken ground, a view north.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_ridge_look",
+              "label": "down the scree (grace, 1hp on fail)",
+              "if": [["!flag", "th_ridge_found"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["set", "th_ridge_found"],
+                    ["addvar", "gold", 3],
+                    ["xp", 2],
+                    ["say", "You pick your way down without a slip, and the spoil-heaps below give up a coin some hauler never missed."]
+                  ],
+                  [["hp", -1], ["say", "The scree gives way underfoot and you catch yourself late. It can be tried again."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 1],
@@ -2433,7 +2551,20 @@
           "name": "Camp's Shadow",
           "desc": "The palisade's shadow falls long here of an evening. Trampled grass shows where sentries cut the corner on their rounds. North the ridge rises; south the ground softens toward a stream.",
           "brief": "The palisade's long shadow.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_shadow_rounds",
+              "label": "mark where the sentries cut their rounds",
+              "free": true,
+              "once": true,
+              "if": [["class", "scout"]],
+              "fx": [
+                ["xp", 1],
+                ["say", "Trampled grass shows the same shortcut, evening after evening — whoever pulls this watch trusts the shadow more than the wall."]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 2],
@@ -2472,7 +2603,26 @@
           "name": "Fox Crossing",
           "desc": "A well-used game trail crosses here, fox-scent sharp on the air. East the trees start to thin toward camp; every other way the wood holds close.",
           "brief": "A fox-scented crossing.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "variants": [
+            {
+              "if": [["flag", "th_rook_dealt"]],
+              "desc": "A well-used game trail crosses here, one of Rook's snares hanging cut and empty from a low branch now. East the trees thin toward camp.",
+              "brief": "A crossing, a snare cut loose."
+            }
+          ],
+          "actions": [
+            {
+              "id": "th_fox_search",
+              "label": "check what the fox left behind",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 2],
+                ["xp", 1],
+                ["say", "Feathers and a picked-clean bone — the fox ate well here. Half-buried under the litter, a dropped coin it had no use for."]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 2],
@@ -2486,14 +2636,50 @@
           "name": "The Clawed Rock",
           "desc": "The ground drops toward a scatter of gray rock, half-swallowed by bramble. A dark crack shows west in the rockface, wide enough to trouble anyone who has to duck for it. North the wood climbs back toward thicker growth; east it opens onto easier walking.",
           "brief": "Bramble and a dark crack west.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_clawed_search",
+              "label": "turn over what the bramble caught",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 2],
+                ["xp", 1],
+                ["say", "The bramble's snagged more than thorn wants: a coin or two, washed down from the ford and forgotten here."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 3],
           "name": "The Ford Approach",
           "desc": "The ground softens, then softens more — a stream is close, though the trees hide it. West a dark crack breaks the rock; east the sound of moving water grows.",
           "brief": "Softening ground, water near.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_ford_test",
+              "label": "cross soft ground (grace, 1hp on fail)",
+              "if": [["!flag", "th_ford_found"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["set", "th_ford_found"],
+                    ["addvar", "gold", 3],
+                    ["xp", 2],
+                    ["say", "You read the mud for the firm way through and find, half-sunk in it, a boot-buckle worth more than the boot ever was."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "The ground swallows a step whole and you come up wet to the knee. It can be tried again."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 3],
@@ -2501,42 +2687,132 @@
           "landmark": "the river ford",
           "desc": "A stream cuts the wood here, shallow enough to ford but cold enough to make you think twice. Flat stones underfoot are worn smooth by feet older than the Company's camp.",
           "brief": "The cold ford.",
-          "onEnterOnce": [["xp", 2], ["score", 2]]
+          "onEnterOnce": [["xp", 2], ["score", 2]],
+          "actions": [
+            {
+              "id": "th_river_fish",
+              "label": "fish the shallows (wits)",
+              "if": [["!flag", "th_river_found"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "th_river_found"],
+                    ["addvar", "gold", 3],
+                    ["xp", 2],
+                    ["say", "Something metal catches the light between two stones — a plain ring, sound enough, tugged free before the current notices it's gone."]
+                  ],
+                  [["say", "Whatever's down there, the current keeps it for now. It can be tried again."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 3],
           "name": "Bramble Break",
           "desc": "Bramble grows thick and thorned, forcing the path to bend around it rather than through. Every direction looks the same from inside it.",
           "brief": "Thick, thorned bramble.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_bramble_force",
+              "label": "force the thorn (might, 1hp on fail)",
+              "if": [["!flag", "th_bramble_found"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  9,
+                  [
+                    ["set", "th_bramble_found"],
+                    ["addvar", "gold", 3],
+                    ["xp", 2],
+                    ["say", "You force a gap and the thorn gives up what it's snagged over the years: a coin, a button, a curse worth keeping to yourself."]
+                  ],
+                  [["hp", -1], ["say", "The thorn holds and takes its toll in scratches. It can be tried again."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 3],
           "name": "The Last Stand",
           "desc": "The old growth gives out into younger scrub pine, seeded nobody can say by whom. North the true wood climbs back; west it thickens again.",
           "brief": "Old growth gives to scrub.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_laststand_look",
+              "label": "look over the old scrub for sign",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Nothing grows quite right here — old iron under the needles, gone to rust, and a rib or two the pine has grown around rather than through."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 4],
           "name": "Gull's Reach",
           "desc": "Salt shows faint on the wind this far south, though the coast is a long way off yet. East the ground firms toward the south track.",
           "brief": "Salt on the wind.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_gull_search",
+              "label": "see what the gulls are working at",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 2],
+                ["xp", 1],
+                ["say", "A drowned courier's pouch, more salt than leather now, but the coin inside hasn't cared."]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 4],
           "name": "Pine Needle Flat",
           "desc": "Scrub pine needles carpet the ground thick enough to muffle every step. The wood feels thinner here, closer to its southern edge.",
           "brief": "A muffling carpet of needles.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_pine_dig",
+              "label": "dig under the needle carpet",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 2],
+                ["xp", 1],
+                ["say", "Someone buried a stash here once and never came back for it. Their loss, now."]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 4],
           "name": "The Bluff",
           "desc": "The ground rises to a low bluff. South, past a stand of dead pine, a tower's broken crown shows above the canopy — old, and not Company-built. West the pine flat continues; north the true wood climbs back.",
           "brief": "A tower's crown, south.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_bluff_scrap",
+              "label": "check what's caught on the dead pine",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "A scrap of signal-cloth, sun-bleached, snagged high on a branch — dropped or thrown from the tower's crown, south, long ago."]
+              ]
+            }
+          ]
         }
       ],
       "cellFx": {
