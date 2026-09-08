@@ -45,6 +45,13 @@ const stamped = (where: string) => stampPrefixes.some((p) => where.startsWith(p)
  * compass, not prose. Counted separately, like a template's copies.
  */
 const conventional = (where: string) => /bearings/.test(where);
+/**
+ * A room's own `variants` are alternative states of one place and are meant to
+ * differ by a clause — "the grass is white" against "the grass is white, and
+ * green is coming through it at last". Two variants of the SAME room reading
+ * alike is the feature, so a pair from one container is not an echo.
+ */
+const container = (where: string) => where.split(/[: ]/)[0] ?? where;
 
 type Line = { where: string; text: string; words: string[]; shingles: Set<string> };
 const lines: Line[] = [];
@@ -104,6 +111,7 @@ for (const [key, common] of shared) {
   if (jaccard < MIN) continue;
   if (stamped(a.where) || stamped(b.where)) { templateEchoes += 1; continue; }
   if (conventional(a.where) && conventional(b.where)) { conventionEchoes += 1; continue; }
+  if (a.where.includes("variant") && b.where.includes("variant") && container(a.where) === container(b.where)) { conventionEchoes += 1; continue; }
   pairs.push({ a, b, score: jaccard });
 }
 pairs.sort((x, y) => y.score - x.score);
