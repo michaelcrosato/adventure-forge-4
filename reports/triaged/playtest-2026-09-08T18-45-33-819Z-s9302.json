@@ -1,0 +1,45 @@
+{
+  "verdict": "stuck",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 480,
+  "receipt": "",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "Directional 'get your bearings' distances (e.g. 'three north, three east') often don't correspond to actual room-to-room movement — following them literally repeatedly overshot or looped back to already-visited rooms instead of the target (happened searching for the slag-hound's den and the Rope Larder).",
+      "where": "Iron Downs / Thornwold wilderness navigation"
+    },
+    {
+      "sev": "P2",
+      "what": "Taking an unattended-but-'watched' item (e.g. the headframe lantern) costs a companion's regard immediately and irreversibly, with no warning that it's treated as real theft rather than a minor scavenging action, even though many similar 'take X (NPC watching: theft)' prompts elsewhere had no apparent consequence when skipped.",
+      "where": "The Head-Frame, Cinderhall"
+    },
+    {
+      "sev": "P1",
+      "what": "The 480-turn playtest limit was reached one room before the actual Hollow Throne, despite following a fairly efficient main-quest path (3 hollows rested, all key items gathered) — for a game whose own text estimates '40-70 turns per hold, fifteen holds' and treats reaching Marrowgate as roughly the midpoint, the true ending is effectively unreachable within a normal single-session turn budget once any meaningful side content is engaged."
+    }
+  ],
+  "confusions": [
+    "The exact wayfinding needed to reach specific named sub-locations (Rope Larder, flooded quarry/slag-hound den, Gallows Glade) from 'get your bearings' hints was frequently unclear — cardinal directions given didn't reliably map onto the actual room graph.",
+    "It was never explicit whether party size is capped; recruiting a 4th companion (Lys) worked with no pushback, so the stated 'as many as will come' was ambiguous about limits until tested.",
+    "Distinguishing which NPC dialogue costs reputation/regard outright vs. after a failed skill check wasn't always clear before selecting the option — some 'a hit costs standing' options seemed harsh for what read as a neutral truth-telling action."
+  ],
+  "suggestions": [
+    "Add relative exits or a mini-map/'go toward X' auto-path option for wilderness zones instead of relying on error-prone cardinal-direction bearings.",
+    "Surface an explicit party-size cap (or confirmation prompt) when recruiting an additional companion.",
+    "Either shorten the critical path to a real ending or raise the suggested turn budget for playtesters, since a focused player following main+companion quests still runs out of turns just outside the final throne room.",
+    "Give a one-line preview of standing cost before locking in a dialogue choice (some options already do this — make it universal) so players aren't surprised by reputation losses on 'neutral' truth-telling picks."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-08T18-45-33-819Z",
+  "seed": 9302,
+  "build": {
+    "rev": "e166432",
+    "world": "3c55e8a4"
+  },
+  "cost_usd": 17.88979219999999,
+  "verified": false
+}
