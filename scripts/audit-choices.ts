@@ -262,6 +262,21 @@ const tracked = [...new Set([...varMoves.keys(), ...varReads.keys()])]
     return { v, m, th, highest, reads: (varReads.get(v) ?? []).length };
   })
   .sort((a, b) => b.m.upSum - a.m.upSum || a.v.localeCompare(b.v));
+/**
+ * A `statusTracks` var whose own `remaining` flags are read elsewhere is a
+ * display counter, not a forgotten number. Fosterfell's "Sent for: the roll,
+ * the writ, the letters" counts three flags, and its rite gates on all three
+ * individually — so the tally is what renders "2/3" and nothing more. I filed
+ * that as a defect off this tool's own verdict before checking, which is the
+ * mistake this line exists to stop the next reader making.
+ */
+const displayCounters = new Set<string>();
+for (const tr of world.statusTracks ?? []) {
+  if (!tr.var || !tr.remaining?.length) continue;
+  const parts = tr.remaining.map((r) => r.flag).filter((f): f is string => !!f);
+  if (parts.length && parts.every((f) => (readers.get(f) ?? []).length)) displayCounters.add(tr.var);
+}
+
 if (tracked.length) {
   console.log(`standings and tallies (${tracked.length}) — how far the world moves each, against the highest it ever reads:`);
   console.log(`  ${"var".padEnd(16)} ${pad("moves", 6)} ${pad("+total", 7)} ${pad("reads", 6)}  highest read  verdict`);
@@ -273,7 +288,9 @@ if (tracked.length) {
       ? "not moved by content — the engine's own, or nothing feeds it"
       : t.reads === 0
         ? varShown.has(t.v)
-          ? "shown in status, but no gate, scene or line reads it"
+          ? displayCounters.has(t.v)
+            ? "a display counter — the flags it counts are read, the number itself is not"
+            : "shown in status, but no gate, scene or line reads it"
           : "never read — the world does not notice it at all"
         : !Number.isFinite(t.highest)
           ? "read, but never as a height to reach"
