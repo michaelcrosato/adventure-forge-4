@@ -96,14 +96,22 @@ with the same line; two holds carry a quest named "The Child at the Wall";
 Iron Downs gives the identical line whether the Free Companies or the Watch
 back your claim.
 
-## 5. The act structure is fiction
+## 5. The acts are looser than they sound — and that was the design
 
-`act2_open` is read in exactly **one place** in sixty thousand lines of
-content (`world/reach/wm_wardmoor.json:13`), and is absent from all nine
-newer holds; the Vale's west road opens into Thornwold and the Hearthlands
-from turn two. The design doc's "act one resolves, Corvane opens act two"
-is true for one hold in fifteen. Either gate act two to match the story, or
-change the story.
+**Retracted, mostly.** `act2_open` is read in exactly one place in sixty
+thousand lines (`world/reach/wm_wardmoor.json:13`), which looks like a
+three-act structure the game never enforces. It is not: the realm design
+spec says so on purpose — *"Open from the start: Thornwold (west), Fenmarch
+(east), and through them the Iron Downs, Saltkerns, Hollowbrook. Highward's
+south gate (Wardmoor) admits no one from a blighted hold until the barrow is
+dealt with (`act2_open`)"* (`2026-09-05-realm-design.md:92`). One gate is the
+intent, and the openness is the Skyrim half of the goal working as designed.
+
+What survives is smaller and is about words, not gates: the free recap calls
+these "Act 2" as though something opened, when what Corvane actually opens is
+*information* — he names the other hollows and the road to Marrowgate. If
+that reads as a promise of a gate, the recap should say "the holds" and not
+"act two". A wording fix, not a design one.
 
 ## 6. A build is only ever "+N to a stat"
 
