@@ -1273,6 +1273,18 @@
       "name": "a Free Company chit",
       "loc": "nowhere",
       "hint": "Company-marked; their own people know it on sight"
+    },
+    "th_barrow1_ring": {
+      "name": "a corroded iron ring",
+      "loc": "th_barrow1_mouth",
+      "takeable": true,
+      "hint": "too small for a door, too big for a finger"
+    },
+    "th_track_trace": {
+      "name": "a snapped wagon-trace",
+      "loc": "th_north_track",
+      "takeable": true,
+      "hint": "leather, chewed through at the buckle — an animal's doing, not a knife's"
     }
   },
   "npcs": {
@@ -2686,14 +2698,38 @@
           "name": "Deer Break",
           "desc": "A trampled break in the bracken where deer bed down, though none are here now — gray droppings, old and dry. The wood presses close on every side.",
           "brief": "A deer's trampled bed.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_deerbreak_droppings",
+              "label": "read the dry droppings",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Old, all of it — a full season stale. Whatever bedded here hasn't been back, or isn't able to be."]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 1],
           "name": "The Split Beech",
           "desc": "A beech split clean by old lightning, half of it still stubbornly green. Paths run every way from here, trampled by something heavier than deer.",
           "brief": "The lightning-split beech.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_beech_tracks",
+              "label": "read the heavier tracks",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Bigger than deer, spaced wrong for a man — something crossed here on all fours, unhurried, and more than once."]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 1],
@@ -2751,7 +2787,19 @@
           "name": "The Listening Break",
           "desc": "The birdsong stops here, all at once, the way it does before weather — except there is no weather coming. West the wood stands unnervingly still. North and south the ordinary trees resume; east a thicket opens back toward easier ground.",
           "brief": "Birdsong stops here.",
-          "onEnterOnce": [["xp", 2]]
+          "onEnterOnce": [["xp", 2]],
+          "actions": [
+            {
+              "id": "th_listening_hush",
+              "label": "stand still and listen",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Nothing. Not wind, not wing, not even your own breath sounding right. The quiet here has a shape to it, like something is listening back."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 2],
@@ -2809,7 +2857,19 @@
           "name": "Wood's Edge",
           "desc": "The trees begin to thin, cut back by Company axes. East, past the last of the old growth, Camp Gallows' palisade shows through the branches.",
           "brief": "The wood thins toward camp.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_woodsedge_watch",
+              "label": "watch the palisade from the treeline",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "From here you could count Camp Gallows' whole watch rotation and never once be seen doing it."]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 3],

@@ -401,6 +401,36 @@
       "takeable": true,
       "owner": "cp_enna",
       "hint": "baked for whoever climbs the stair hungry"
+    },
+    "cp_cave_token": {
+      "name": "a lead trade-token",
+      "loc": "cp_smugglers_cave",
+      "takeable": true,
+      "hint": "worn smooth, no mint mark — a tally-chip, not a coin"
+    },
+    "cp_shoulder_cloth": {
+      "name": "a frost-stiff scrap of cloth",
+      "loc": "cp_spine_3_0",
+      "takeable": true,
+      "hint": "dropped here, and never missed enough to come back for"
+    },
+    "cp_ridge_peg": {
+      "name": "a rusted boundary-peg",
+      "loc": "cp_spine_3_1",
+      "takeable": true,
+      "hint": "surveyor's iron, hammered in and long forgotten"
+    },
+    "cp_cleft_line": {
+      "name": "a coil of tarred line",
+      "loc": "cp_spine_4_2",
+      "takeable": true,
+      "hint": "cached rigging rope, for a climb somebody meant to finish"
+    },
+    "cp_shrine1_taper": {
+      "name": "a stub of pilgrim's tallow",
+      "loc": "cp_shrine1_porch",
+      "takeable": true,
+      "hint": "wax pooled thick on the sill; someone still leaves these"
     }
   },
   "npcs": {
@@ -1092,7 +1122,10 @@
           "brief": "A windbreak, an old fire-ring.",
           "onEnterOnce": [["xp", 1]],
           "variants": [
-            { "if": [["flag", "cp_windbreak_kept"]], "brief": "The windbreak. The fire-ring stands built up higher than you left it." },
+            {
+              "if": [["flag", "cp_windbreak_kept"]],
+              "brief": "The windbreak. The fire-ring stands built up higher than you left it."
+            },
             { "if": [["flag", "cp_windbreak_taken"]], "brief": "A windbreak, the old fire-ring picked over." }
           ],
           "actions": [
@@ -1478,6 +1511,16 @@
           "onEnterOnce": [["xp", 1]],
           "actions": [
             {
+              "id": "cp_traverse_rope",
+              "label": "test the fixed rope's age",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "This stretch of rope is newer than the rest of the traverse, spliced in by someone who crosses here often enough to care whether it holds."]
+              ]
+            },
+            {
               "id": "cp_traverse_marks",
               "label": "note the unofficial marks on the rock",
               "if": [["class", "envoy"], ["!flag", "or_envoy_cp_traverse"]],
@@ -1532,6 +1575,16 @@
           "brief": "The narrow gap. The gate waits north.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            {
+              "id": "cp_col_ironwork",
+              "label": "study the gate's ironwork",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "The gate's iron bands are newer than the stone around them, mended more than once and not by the same smith twice."]
+              ]
+            },
             {
               "id": "cp_col_toll",
               "label": "weigh where a toll could be struck here",
