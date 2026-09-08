@@ -16,7 +16,7 @@ import { condOk, hashState, newState, oddsHint, receipt, step } from "../src/eng
 import { validateWorld } from "../src/validate.ts";
 import { replayTrace } from "../src/crawl.ts";
 import { renderMenu, renderStatus } from "../src/format.ts";
-import type { Cond, Action, World } from "../src/types.ts";
+import type { Cond, Action, Fx, World } from "../src/types.ts";
 
 const mini = (over: Partial<World> = {}): World => ({
   id: "mini",
@@ -87,8 +87,23 @@ test("escalation is keyed per check — failing one does not touch a different o
   assert.equal(oddsHint(world, state, easy), " (DC 9, wits: roll 9+ on the die)", "an unrelated check's odds are untouched");
 });
 
-test("a topic's check escalates too, keyed by npc and topic id, independent of a room action's", () => {
-  // the "natural key" the proposal names — an npc topic, not just a room action
+/**
+ * Escalation is for what you force, not for what you say.
+ *
+ * A lock gets harder as you work at it. A conversation does not: a topic's
+ * check is usually retryable only by walking away and coming back, so
+ * escalating it taxes exactly the thing you want a stuck player to do — leave,
+ * earn some standing or a rank or a companion's regard, and try again better
+ * placed. Two blind waves called it a trap, and the second named the compound:
+ * the companion-dispute checks already cost regard with BOTH companions on a
+ * miss, by design, and "failed twice in a row despite ~60% listed odds" with
+ * the DC creeping under you is a spiral with no way out. The double cost is the
+ * design; the escalation was the addition that broke it.
+ *
+ * The attempt is still counted, so status can say you tried and content can
+ * read it — only the DC stays where it was written.
+ */
+test("a topic's check counts its attempts and does NOT get harder for them", () => {
   const world = mini({
     npcs: {
       sage: {
@@ -102,8 +117,27 @@ test("a topic's check escalates too, keyed by npc and topic id, independent of a
   const t = { kind: "talk", npc: "sage", topic: "riddle" } as Action;
   assert.equal(oddsHint(world, state, t), " (DC 21, wits: roll 21+ on the die)");
   state = step(world, state, t).state;
-  assert.equal(state.checkAttempts["tp:sage:riddle"], 1);
-  assert.equal(oddsHint(world, state, t), " (DC 22, wits: roll 22+ on the die; raised 1 by failed tries)", "the topic's own retry is now harder, and says why");
+  assert.equal(state.checkAttempts["tp:sage:riddle"], 1, "the attempt is still counted");
+  assert.equal(oddsHint(world, state, t), " (DC 21, wits: roll 21+ on the die)", "and the second asking is exactly as hard as the first");
+  state = step(world, state, t).state;
+  assert.equal(oddsHint(world, state, t), " (DC 21, wits: roll 21+ on the die)", "and the third");
+});
+
+test("a room action's check still escalates, and an item's use too — those you force", () => {
+  const force: Fx = ["check", "might", 12, [["say", "ok"]], [["say", "no"]]];
+  const world = mini({
+    rooms: { a: { name: "A", desc: "A.", actions: [{ id: "force", label: "force the lid", fx: [force] }] } },
+    items: { bar: { name: "iron bar", loc: "inv", use: [{ fx: [force] }] } },
+  });
+  let { state } = newState(world, 1);
+  const act = { kind: "custom", room: "a", id: "force" } as Action;
+  const use = { kind: "use", item: "bar" } as Action;
+  assert.match(oddsHint(world, state, act), /DC 12/);
+  state = step(world, state, act).state;
+  assert.match(oddsHint(world, state, act), /DC 13, .*raised 1 by failed tries/, oddsHint(world, state, act));
+  assert.match(oddsHint(world, state, use), /DC 12/, "and the bar is its own key, untouched by the bare hands");
+  state = step(world, state, use).state;
+  assert.match(oddsHint(world, state, use), /DC 13, .*raised 1 by failed tries/, oddsHint(world, state, use));
 });
 
 test("a check with no source id never escalates (a world.clock entry: not a menu action a player retries)", () => {

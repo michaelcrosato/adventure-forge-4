@@ -888,6 +888,20 @@ function checkSourceId(a: Action): string | undefined {
  */
 function escalatedDc(s: State, sourceId: string | undefined, baseDc: number, mod = 0): number {
   if (!sourceId) return baseDc;
+  // Escalation is for what you force, not for what you say.
+  //
+  // A lock does get harder as you work at it, and a player who grinds one
+  // should feel that. A conversation does not: a topic's check is usually
+  // retryable only by walking away and coming back, so escalating it taxes
+  // exactly the thing you want a stuck player to do — leave, earn some
+  // standing or a rank or a companion's regard, and try again better placed.
+  //
+  // Two waves called it a trap, and the second named the compound: the
+  // companion-dispute checks already cost regard with BOTH companions on a
+  // miss, by design, and "failed twice in a row despite ~60% listed odds"
+  // with the DC creeping is a spiral with no way out of it. The double cost is
+  // the design; the escalation was the addition that broke it.
+  if (sourceId.startsWith("tp:")) return baseDc;
   const raised = baseDc + (s.checkAttempts[sourceId] ?? 0);
   // the highest DC this player's die can still meet, on a natural 20
   const reachable = mod + 20;
