@@ -61,7 +61,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // are not here at all — they meet the real bar, and hollow_reach came back
   // under it (1,042 to 982) when quest stage changes learned to collapse.
   "reach:regent_deposed": { avg: 455, max: 1170 },
-  "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1243 },
+  "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1166 }, // the burn road is a different route now, and a shorter-screened one
   "reach:gray_crown": { avg: 483, max: 1125 },
   "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1238 },
   "reach:regent_deposed#warden_crown": { avg: AVG_CHARS_MAX, max: 1141 },
