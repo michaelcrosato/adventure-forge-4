@@ -62,3 +62,32 @@ test("the Ironbound march counts its schedule from the march, not from turn zero
     assert.equal(delay(e, 470), early, `${e.id} falls ${early} turns after the column moves — it must not depend on when that was`);
   }
 });
+
+/**
+ * An ability offered where it cannot do anything is a lie the menu tells.
+ *
+ * Found in play: a Warden's `brace for it` spends a point for armor +2, and was
+ * offered against all eight of the realm's `pierce` hostiles — in rooms whose
+ * own text says "armor useless". The rule is general, not a patch on one
+ * ability: anything that buys armor must stay off the menu where nothing here
+ * can be turned by armor.
+ */
+test("nothing that buys armor is offered where armor counts for nothing", () => {
+  const world = loadWorld(path);
+  const armorConds = new Set(
+    Object.entries(world.conditions ?? {})
+      .filter(([, c]) => (c.armor ?? 0) > 0)
+      .map(([id]) => id),
+  );
+  assert.ok(armorConds.size, "the realm should have at least one condition that buys armor");
+  let checked = 0;
+  for (const [id, a] of Object.entries(world.abilities ?? {})) {
+    if (!(a.fx ?? []).some((f) => f[0] === "cond" && armorConds.has(String(f[1])))) continue;
+    checked++;
+    assert.ok(
+      (a.if ?? []).some((c) => Array.isArray(c) && c[0] === "!horrorHere"),
+      `ability ${id} buys armor and must be gated on ["!horrorHere"] — offering it against something that strikes through armor spends the point for nothing`,
+    );
+  }
+  assert.ok(checked, "no ability buys armor — this test has stopped watching anything");
+});

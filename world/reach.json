@@ -184,7 +184,7 @@
     "warden_brace": {
       "label": "brace for it",
       "context": "combat",
-      "if": [["class", "warden"], ["var", "res_warden", ">=", 1]],
+      "if": [["class", "warden"], ["var", "res_warden", ">=", 1], ["!horrorHere"]],
       "fx": [["addvar", "res_warden", -1], ["cond", "braced", 2], ["say", "You set your feet."]]
     },
     "warden_break": {
