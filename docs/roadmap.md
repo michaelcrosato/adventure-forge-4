@@ -235,6 +235,25 @@ paid for itself three times over:
 
 None of that was in the report they wrote.
 
+Replaying the **other** player's trace — the one that ran out of agent turns
+— made each finding much stronger, because the two converge:
+
+| | winner (8802) | non-finisher (8801) |
+|---|---|---|
+| class | Scholar | Scholar |
+| left the Vale at turn | 148 | 168 |
+| hollows rested | 3 | 3 |
+| Keepers / Church | 16 / 11 | 16 / 11 |
+| regions reached | 7 | 6 |
+
+**Both blind players picked a Scholar, spent about 40% of the run inside the
+Vale, and settled exactly the minimum three hollows.** Neither visited a
+fourth, because nothing asks them to — which is finding 1 above, confirmed
+from the player's side rather than the spreadsheet's. And 420 turns is right
+at the edge: one won at 397, the other was three turns into Coldpass at 419
+with the capital next. Use 480 next time, or the wave measures the budget
+instead of the game.
+
 ## The order
 
 1. **Corridors and echoes** — the density and freshness of what already
