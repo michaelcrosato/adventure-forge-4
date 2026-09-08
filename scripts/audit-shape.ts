@@ -69,11 +69,23 @@ const offeredTo = (a: { if?: unknown[] }, c: string): boolean => {
  * flattering one: a rest reachable two ways is two shapes, and hiding the
  * duller road is how a tool starts lying to its author.
  *
- * This reads gates, not intent, and cannot do better: the Meres' second road
- * asks a villager to wade in with you and then gates on the flag that records
- * she agreed, so it reads `plain` beside its four `witness` siblings. That is
- * why `--rites` names every setter and its verdict — the column says look
- * here, and the author is the one who reads.
+ * This reads gates, not intent, and cannot do better. Two shapes are invisible
+ * to it by construction:
+ *   - a **witness** recorded as a flag. The Meres' fifth road asks a villager
+ *     to wade in with you, then gates on the flag saying she agreed — `plain`,
+ *     beside its four `witness` siblings.
+ *   - a **trade**. "Give it back what was taken" is paid one hop earlier and
+ *     recorded as an ordinary flag, so the Hearthlands' trade reads `plain`
+ *     too. I tried the hop — find every flag set in the same breath as a
+ *     charge, call those rites trades — and it labelled eight regions `trade`,
+ *     including holds whose gate-flag merely happened to cost a standing point
+ *     on the way. A gate charging something incidentally is not a rite that
+ *     asks for payment, and nothing in the data separates them. Reverted:
+ *     a column that cannot tell the Hearthlands from Embermoor is worse than
+ *     one that admits it only reads gates.
+ *
+ * That is why `--rites` names every setter and its verdict — the column says
+ * look here, and the author is the one who reads.
  */
 type Rite = "witness" | "order" | "count" | "carry" | "plain";
 const riteOrder: Rite[] = ["witness", "order", "count", "carry", "plain"];
