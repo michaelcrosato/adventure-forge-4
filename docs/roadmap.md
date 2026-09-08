@@ -131,7 +131,25 @@ the one tool built to explore off the golden path does not check the
 invariant most likely to break off it. Nothing validates that a `gen` grid
 authors a scene for every open cell, though the brief requires it.
 
-## 8. Per-turn cost scales with the world, not the player
+## 8. The bar proves one playthrough shape
+
+Every one of the six proven routes — the walkthrough and all five ending
+proofs — opens with **"be a Scholar"**. Every one of them ends deep with the
+Barrow-Keepers and negative with the Ironbound, `reach_burned` included. And
+the walkthrough visits six of eighteen regions.
+
+The design contract says *"every obstacle has a force, a craft, and a words
+route, so no class is ever locked out"*. That is asserted and never checked:
+nothing in the bar establishes that a Warden, a Scout or an Envoy can finish
+this game, and the crawler — which picks its class at random — only ever
+reaches `dead` on the Reach. For a repo whose first value is proof over
+promises, this is the largest unproven claim in it.
+
+The fix is proofs, not argument: a Warden route and an Envoy route to an
+ending, and a road that is not the Keepers'. `scripts/walk.ts` turns a label
+list into a walkthrough, so the work is playing them and capturing them.
+
+## 9. Per-turn cost scales with the world, not the player
 
 0.16 ms/step at 9 rooms, 0.27 at 31, **2.73 at 905** — tracking total content,
 not walk depth, because `step()` deep-clones a state carrying 760+ dictionary
