@@ -115,6 +115,23 @@ function npcDead(world: World, s: State, id: string): boolean {
   return (s.npcHp[id] ?? def.hp ?? 1) <= 0;
 }
 
+/**
+ * A speaker's line, as the player reads it. The quotes are the engine's, added
+ * so a line reads as speech — but 236 of the realm's 1,957 topic lines (12%)
+ * already contain a quote of their own, because the author wrote the
+ * attribution themselves: narration, then speech ("She's quiet, then: \"Then
+ * that's that.\""), or speech interrupted by it ("\"Mine,\" Vell says"). Wrapping
+ * those again renders `vell: ""Mine," Vell says...`, doubled at the open and
+ * unbalanced at the close. So: quote a bare line, and let a line that has
+ * punctuated itself stand as written.
+ */
+export function speaks(name: string, say: string): string {
+  // A template hole leaves `say` undefined at runtime despite the type. Render
+  // that the way the old template literal did, so the crawler's HOLE check
+  // still catches "undefined" printed at the player — test/crawl covers it.
+  return typeof say === "string" && say.includes('"') ? `${name}: ${say}` : `${name}: "${say}"`;
+}
+
 export function condOk(world: World, s: State, c: Cond): boolean {
   switch (c[0]) {
     case "has":
@@ -764,7 +781,7 @@ function partyRemarks(world: World, s: State, events: string[]): void {
     // a companion who has had enough walks out before anyone gets a remark in
     const gone = def.companion?.leaves?.find((l) => condsOk(world, s, l.if));
     if (!gone) continue;
-    events.push(`${def.name}: "${gone.say}"`);
+    events.push(speaks(def.name, gone.say));
     s.party = s.party.filter((x) => x !== id);
     s.flags[`${id}_left`] = true;
     events.push(`${def.name} leaves your company.`);
@@ -789,7 +806,7 @@ function partyRemarks(world: World, s: State, events: string[]): void {
   const win = candidates.find((c) => c.r.fx?.length) ?? candidates[0];
   if (!win) return;
   s.flags[`remarked_${win.id}_${win.r.id}`] = true;
-  events.push(`${win.def.name}: "${win.r.say}"`);
+  events.push(speaks(win.def.name, win.r.say));
   if (win.r.fx) applyFx(world, s, win.r.fx, events);
   // a remark that opens a quarrel between two companions says where the
   // answer is: the sides and the settling live in their conversations
@@ -1696,7 +1713,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
       const t = world.npcs[action.npc]?.topics?.find((x) => x.id === action.topic);
       if (!t) break;
       if (t.once) s.flags[`said_${action.npc}_${t.id}`] = true;
-      events.push(`${world.npcs[action.npc]?.name}: "${t.say}"`);
+      events.push(speaks(world.npcs[action.npc]?.name ?? action.npc, t.say));
       if (t.fx) applyFx(world, s, t.fx, events);
       // a conversation closes on its own when the line says so, or when the
       // npc has nothing left to say / is no longer here (inTalkMode covers
