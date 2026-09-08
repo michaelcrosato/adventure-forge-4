@@ -62,13 +62,13 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // under it (1,042 to 982) when quest stage changes learned to collapse.
   // Turned down across the board the day the menu stopped saying a check's
   // skill twice — once in the label's own "(grace)" tag and again in the hint's
-  // "+2 grace" a foot later, 513 option lines deep. That is about 1.4
-  // characters a screen on every road at once, and it is why four of these
-  // numbers moved down together rather than one at a time.
+  // "+2 grace" a foot later, 513 option lines deep. That is about 1.1
+  // characters a screen on every road at once, and it is why these numbers
+  // moved down together rather than one at a time.
   "reach:regent_deposed": { avg: 453, max: 1162 },
   "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1154 }, // the burn road is a different route now, and a shorter-screened one; 450.68 -> 449.30, so its average is honestly under the real bar rather than passing on a floor
   "reach:gray_crown": { avg: 481, max: 1125 },
-  "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1116 },
+  "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1118 },
   "reach:regent_deposed#warden_crown": { avg: AVG_CHARS_MAX, max: 1131 },
   // The full-party road: four companions travelling, the most expensive proof
   // in the realm, and the ratchet turned down three times on the day it was

@@ -363,9 +363,9 @@ test("the menu says when an action settles a hold's grief or a miss costs standi
   const { state } = newState(world, 1);
   const menu = renderMenu(world, state).text;
   assert.match(menu, /speak the rite \(settles this hold's grief: rests it\)/);
-  // the label's own "(will)" tag is folded into the hint that names the same
-  // skill (see shownLabel in format.ts); the canonical label still carries it
-  assert.match(menu, /press the prior \(DC 10, will: roll 10\+ on the die; a miss costs standing\)/, "no faction names in this world: the plain warning");
+  // the label's "(will)" tag has just named the skill, so the hint does not
+  // name it again (see oddsHint); with no tag it would read "DC 10, will: roll…"
+  assert.match(menu, /press the prior \(will\) \(DC 10, roll 10\+ on the die; a miss costs standing\)/, "no faction names in this world: the plain warning");
   world.factions = { rep_church: "the Gray Church" };
   assert.match(renderMenu(world, state).text, /a miss costs standing with the Gray Church/);
   world.rooms["a"]!.actions!.push({ id: "vow", label: "swear the vow", fx: [["set", "x_hollow_bargained"], ["addvar", "hollows_rested", 1]] });

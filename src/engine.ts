@@ -2436,7 +2436,20 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     // reach, the modifier, and the die roll that gets there
     const mod = checkMod(world, s, chk[1]);
     const need = Math.max(1, dc - mod);
-    parts.push(mod ? `DC ${dc}, ${mod > 0 ? "+" : ""}${mod} ${chk[1]}: roll ${need}+ on the die` : `DC ${dc}, ${chk[1]}: roll ${need}+ on the die`);
+    // The realm tags a check option with its skill — "slip past him along the
+    // bough (grace)" — and this clause named it again a foot later, on 513
+    // option lines across the proven roads: about 1.4 characters a screen on
+    // every road at once, which at the time was more slack than four of them
+    // had left. Said once when the label has just said it; said in full when it
+    // has not, and in full whenever the label's tag names a different skill
+    // (which is the label telling the player something).
+    const tagged = new RegExp(`\\(${chk[1]}\\)$`).test(actionLabel(world, a, s));
+    const skill = tagged ? "" : ` ${chk[1]}`;
+    parts.push(
+      mod
+        ? `DC ${dc}, ${mod > 0 ? "+" : ""}${mod}${skill}: roll ${need}+ on the die`
+        : `DC ${dc},${skill ? `${skill}:` : ""} roll ${need}+ on the die`,
+    );
     // A raised DC has to say it was raised, and that it stops. A playtester
     // abandoned the King's Strongroom box because "the DC quietly goes up by 1
     // after every failure with no visible cap, which can spiral a puzzle out of
