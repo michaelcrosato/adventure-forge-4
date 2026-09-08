@@ -117,6 +117,59 @@ all. The epilogue reads back what they became.
 - Every region: nothing required, but a hold that wants to read
   `["flag", "keepers_sworn"]` in a variant or a topic should.
 
+### The state contract
+
+Three authors write this at once, so the names are fixed here and nowhere
+else. Each faction has a short code: `watch`, `church`, `iron`, `free`,
+`keepers`, `crown`.
+
+**Flags a granting scene sets** — and the only names any other file may read:
+
+| flag | set when |
+|---|---|
+| `<code>_trusted` | the trusted rite is taken, at standing >= 5 |
+| `<code>_sworn` | the sworn rite is taken, at standing >= 9 |
+| `<code>_hunted` | standing has fallen to -5 and the faction has acted on it |
+
+A tier's flag is set by its own scene, never by the number alone: standing
+buys the *offer*, and the player still has to walk in and take it. That is
+what makes it a choice, and it is also what lets the cross-pressure below be
+priced in the menu before it is paid.
+
+**The granting scene**, one per tier per faction, in that faction's home:
+
+- Listed in the room's menu whenever the standing is there and the flag is
+  not, so the offer is visible the turn it is earned.
+- Refused plainly, in the faction's own voice, when the standing is not
+  there — a locked entry that says what it wants is worth more than a hidden
+  one. Use the `hint` on a gated exit or an `if`-gated action with a
+  `lockedMsg`-style line, whichever the place already uses.
+- Says its price before it is taken. An action whose `fx` lowers another
+  faction's standing already prints "costs standing with …" in the menu
+  (see `outrightCosts` in the engine); do not hand-write that warning, let
+  it work.
+
+**The cross-pressure**, applied by the granting scene's own `fx`:
+
+| tier taken | costs |
+|---|---|
+| `iron_sworn` | `rep_keepers -3`, `rep_church -3` |
+| `keepers_sworn` | `rep_iron -3` |
+| `church_sworn` | `rep_iron -3` |
+| `crown_sworn` | `rep_free -3` |
+| `free_sworn` | `rep_crown -3` |
+| `watch_trusted` | `rep_free -1` |
+| `free_trusted` | `rep_watch -1` |
+
+Calibration says a route's favoured faction reaches +10 to +14 and a second
++5, so a -3 is the difference between keeping a second faction at trusted and
+losing it. That is the intended sting: sworn to one, trusted to a second,
+and never sworn to two whose aims cross.
+
+**Nothing else is shared.** A tier's *payoff* — the item it grants, the door
+it opens, the npc it summons — is named with the granting region's own prefix
+like any other content.
+
 ### Splitting the work
 
 Three authors, disjoint files:
