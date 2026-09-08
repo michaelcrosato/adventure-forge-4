@@ -21,6 +21,21 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "ir_sworn_waymark_east",
+          "label": "mark the east road, chapterhouse-fashion",
+          "if": [["flag", "iron_sworn"], ["!flag", "ir_waymark_east"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "ir_waymark_east"],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "You cut the iron-sun into the waymarker, plain and small. Whatever dies unburied on this stretch toward Wardmoor is chapterhouse business now."]
+          ]
+        }
       ]
     },
     "ir_south_track": {
@@ -44,6 +59,21 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "ir_sworn_waymark_south",
+          "label": "mark the south track, iron-fashion",
+          "if": [["flag", "iron_sworn"], ["!flag", "ir_waymark_south"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "ir_waymark_south"],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "You cut the same mark into the dead tree by the toll-notice. Whatever dies unburied toward Thornwold answers to the chapterhouse now — and to you."]
+          ]
+        }
       ]
     },
     "ir_tally_gate": {
@@ -307,6 +337,14 @@
         {
           "if": [["flag", "or_warden_ir_frank_truth"]],
           "brief": "Banked forges. Aldous still meets a soldier's eye without flinching."
+        },
+        {
+          "if": [["flag", "iron_sworn"]],
+          "brief": "Banked forges. The forges know you for an oath-brother now."
+        },
+        {
+          "if": [["flag", "iron_trusted"]],
+          "brief": "Banked forges. The racks are yours, same as any chapterhouse hand."
         }
       ],
       "actions": [
@@ -327,6 +365,28 @@
           "fx": [
             ["move", "ir_oil", "inv"],
             ["say", "Nobody left minds the chapterhouse stores closely. You take what you came for."]
+          ]
+        },
+        {
+          "id": "ir_draw_oil",
+          "label": "draw oil from the chapterhouse stores",
+          "if": [["flag", "iron_trusted"], ["!has", "ir_oil"]],
+          "free": true,
+          "fx": [
+            ["move", "ir_oil", "inv"],
+            ["say", "Nobody stops you at the racks anymore. You take what the chapterhouse keeps for its own."]
+          ]
+        },
+        {
+          "id": "ir_trusted_hauberk",
+          "label": "take a hauberk off the racks",
+          "if": [["flag", "iron_trusted"], ["!has", "ir_ironbound_hauberk"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["move", "ir_ironbound_hauberk", "inv"],
+            ["score", 3],
+            ["say", "Nobody rings it up. \"Chapterhouse issue,\" someone says, not looking up from the forge. \"You're accounted ours now.\""]
           ]
         }
       ]
@@ -642,6 +702,19 @@
           ]
         },
         {
+          "id": "ir_sworn_claim",
+          "label": "claim the Hundred for the chapterhouse",
+          "if": [["flag", "iron_sworn"], ["flag", "ir_hollow_resolved"], ["!flag", "ir_hundred_claimed"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "ir_hundred_claimed"],
+            ["score", 4],
+            ["xp", 2],
+            ["say", "You say it plain, the way the oath asks: whatever's left of the Hundred is chapterhouse business now, however this grief was settled. Nobody down here argues with you."]
+          ]
+        },
+        {
           "id": "ir_weigh_grief",
           "label": "weigh what this grief asks",
           "free": true,
@@ -709,6 +782,11 @@
       ]
     },
     "ir_oil": { "name": "a cask of Ironbound oil", "loc": "nowhere", "hint": "meant for burning a hollow clean" },
+    "ir_oath_token": {
+      "name": "an iron-sun oath-token",
+      "loc": "nowhere",
+      "hint": "chapterhouse-stamped — proof you swore the Preceptor's oath, brand and all"
+    },
     "ir_marked_pick": {
       "name": "Hob's marked pick",
       "loc": "nowhere",
@@ -782,12 +860,57 @@
           "fx": [["xp", 2]]
         },
         {
+          "id": "ir_trust_offer",
+          "label": "ask to be trusted with the forges",
+          "if": [["flag", "said_ir_aldous_bg_ironbound"], ["!flag", "iron_trusted"]],
+          "say": "You ask him plainly what it would take to be trusted here, not just tolerated.",
+          "fx": [
+            [
+              "if",
+              [["var", "rep_iron", ">=", 5]],
+              [
+                ["set", "iron_trusted"],
+                ["score", 6],
+                ["xp", 3],
+                ["say", "\"Trusted,\" he says, like he's deciding it out loud. \"Draw oil from our own stores whenever you need it. Take a hauberk off the racks. This chapterhouse minds its own.\""]
+              ],
+              [
+                ["say", "\"Not yet,\" he says. \"I've watched strangers turn on this chapterhouse before. Prove it a while longer.\""]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "bg_hundred",
           "label": "the Hundred Gallery",
           "if": [["flag", "said_ir_aldous_bg_ironbound"]],
           "once": true,
           "say": "Came down on bad ground. Rock doesn't ask permission before it falls. I've heard every theory since, and none of them change what's under that hill.",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "ir_sworn_offer",
+          "label": "ask to swear the Preceptor's oath",
+          "if": [["flag", "said_ir_aldous_bg_hundred"], ["!flag", "iron_sworn"]],
+          "say": "You ask him what it costs to swear in properly, not just to be trusted.",
+          "fx": [
+            [
+              "if",
+              [["var", "rep_iron", ">=", 9]],
+              [
+                ["set", "iron_sworn"],
+                ["addvar", "rep_keepers", -3],
+                ["addvar", "rep_church", -3],
+                ["move", "ir_oath_token", "inv"],
+                ["score", 10],
+                ["xp", 5],
+                ["say", "\"Then swear it,\" he says, and brands the iron-sun into your hand himself, no ceremony past the burn. \"Every grief left unburied in this Reach is chapterhouse business now. Yours too.\""]
+              ],
+              [
+                ["say", "\"An oath isn't trust with a better name,\" he says. \"You're not chapterhouse yet. Earn the rest of it first.\""]
+              ]
+            ]
+          ]
         },
         {
           "id": "oil",
@@ -1343,7 +1466,7 @@
               "will",
               10,
               [
-                ["set", "sv_ir_rested_stone_broker"],
+                ["set", "sv_ir_rested_broker"],
                 ["set", "sv_ir_rested_done"],
                 ["set", "sv_ir_after_done"],
                 ["addvar", "rep_watch", 1],
@@ -2597,7 +2720,7 @@
       "weight": 1
     },
     {
-      "if": [["flag", "sv_ir_rested_stone_broker"]],
+      "if": [["flag", "sv_ir_rested_broker"]],
       "text": "The Marker Stone lists the Hundred's names now, company coin behind half the lettering.",
       "weight": 1
     },
@@ -2670,6 +2793,27 @@
       "if": [["flag", "or_scout_ir_ness"]],
       "text": "A Scout showed Ness a quieter way to shave the company tally, and neither of them logged it.",
       "weight": 0
+    },
+    {
+      "if": [["flag", "iron_sworn"]],
+      "text": "Cinderhall's chapterhouse still calls you oath-sworn. The Reach's unburied dead are chapterhouse business now, and yours.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "iron_trusted"], ["!flag", "iron_sworn"]],
+      "text": "Cinderhall's chapterhouse still keeps its racks open to you, oil and iron both, no asking twice required.",
+      "weight": 1
+    }
+  ],
+  "statusPaths": [
+    {
+      "label": "Your rank with the Ironbound",
+      "var": "rep_iron",
+      "if": [["any", [["flag", "iron_trusted"], ["flag", "iron_sworn"]]]],
+      "states": [
+        { "if": [["flag", "iron_sworn"]], "text": "oath-sworn — the chapterhouse's dead, and yours" },
+        { "if": [["flag", "iron_trusted"]], "text": "trusted at the forges" }
+      ]
     }
   ]
 }
