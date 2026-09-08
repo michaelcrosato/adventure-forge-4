@@ -1734,6 +1734,66 @@ function standingAtRisk(fxs: Fx[] | undefined): string[] {
 }
 
 /** Regard an effect list moves outright as things stand: top-level `addvar appr_*`, and inside an `if` whose branch would run now. */
+/**
+ * Companions this action sends away, as things stand.
+ *
+ * A player at the Oath-Ground read "(Tamsin +1, Brother Osk -1, Vell -2)",
+ * swore the oath, and lost Vell outright: "did not warn that Vell would
+ * actually leave the party as a mechanical consequence, not just lose regard.
+ * Had to spend an extra turn re-recruiting them." Regard is a number that goes
+ * back up; a companion walking out is not, and the preview said the same kind
+ * of thing about both.
+ *
+ * Scanned the way `regardMoves` scans — following the branch of an `if` whose
+ * conditions hold now, so the line says what will happen rather than what might
+ * — which is what reaches this one: the departure sits behind `if inParty vell`.
+ * A departure behind a die (`check`, `chance`) is deliberately not previewed:
+ * this line is a fact about the choice, not a guess about the roll.
+ */
+function partyLeaves(world: World, s: State, fxs: Fx[] | undefined): string[] {
+  const out: string[] = [];
+  for (const fx of fxs ?? []) {
+    if (fx[0] === "party" && fx[2] === "leave" && s.party.includes(fx[1])) out.push(fx[1]);
+    if (fx[0] === "if") out.push(...partyLeaves(world, s, (condsOk(world, s, fx[1]) ? fx[2] : fx[3]) ?? []));
+  }
+  return out;
+}
+
+/**
+ * The clause that warns a companion walks out over this, phrased the way
+ * `costsStandingHint` phrases a standing cost — because the roll matters: at
+ * the Oath-Ground, one road loses Vell outright and the other loses them only
+ * if you *pass* the check, and "swear it and they may go" is a different choice
+ * from "swear it and they will".
+ *
+ * `talkingTo` is the npc whose conversation this option belongs to, if any. The
+ * realm's five "wait here (leaves the party for now)" lines are a dismissal —
+ * you sending them away, already said in the label — and not news.
+ */
+function partyLeavesHint(world: World, s: State, fx: Fx[] | undefined, chk: Fx | undefined, talkingTo?: string): string | null {
+  const name = (id: string) => world.npcs[id]?.name ?? id;
+  const list = (ids: string[]) => {
+    const names = [...new Set(ids)].filter((id) => id !== talkingTo).map(name);
+    return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0] ?? "";
+  };
+  const verb = (ids: string[]) => (new Set(ids.filter((id) => id !== talkingTo)).size > 1 ? "walk out" : "walks out");
+  // the unconditional road: everything but the check's own two branches
+  const flat = partyLeaves(world, s, fx);
+  if (chk && chk[0] === "check") {
+    const hit = partyLeaves(world, s, chk[3]), miss = partyLeaves(world, s, chk[4]);
+    const both = hit.filter((id) => miss.includes(id));
+    const hitOnly = hit.filter((id) => !both.includes(id)), missOnly = miss.filter((id) => !both.includes(id));
+    const parts: string[] = [];
+    for (const [ids, when] of [[[...flat, ...both], ""], [hitOnly, ", even if you succeed"], [missOnly, " if you fail"]] as [string[], string][]) {
+      const who = list(ids);
+      if (who) parts.push(`${who} ${verb(ids)}${when}`);
+    }
+    return parts.length ? parts.join("; ") : null;
+  }
+  const who = list(flat);
+  return who ? `${who} ${verb(flat)}` : null;
+}
+
 function regardMoves(world: World, s: State, fxs: Fx[]): ["addvar", string, number][] {
   const out: ["addvar", string, number][] = [];
   for (const fx of fxs) {
@@ -2373,6 +2433,10 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     .filter((f) => companionMet(world, s, f[1].slice(5)))
     .map((f) => `${world.npcs[f[1].slice(5)]!.name} ${f[2] > 0 ? "+" : "-"}${Math.abs(f[2])}`);
   if (moves.length) parts.push(moves.join(", "));
+  // and a companion who walks out over it, which regard alone never says: a
+  // number that goes back up and a friend who does not are not the same warning
+  const leaves = partyLeavesHint(world, s, fx, chk, a.kind === "talk" ? a.npc : undefined);
+  if (leaves) parts.push(leaves);
   // a standing an action lowers outright is said too, as things stand — the Coldpass gate's writ cost two factions a point with no word beforehand
   if (!(chk && chk[0] === "check")) {
     const costs = outrightCosts(world, s, fx ?? []);

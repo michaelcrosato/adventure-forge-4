@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByLabel, actionLabel, inTalkMode, journal, legalActions, newState, step } from "../src/engine.ts";
+import { actionByLabel, actionLabel, inTalkMode, journal, legalActions, newState, oddsHint, step } from "../src/engine.ts";
 import { render, renderMenu, renderStatus } from "../src/format.ts";
 import { validateWorld } from "../src/validate.ts";
 import type { Action, Fx, State, World } from "../src/types.ts";
@@ -1006,4 +1006,60 @@ test("status says where you stand with each faction, and the rank you hold", () 
   assert.match(renderStatus(world, state), /the Gray Church \+9 trusted/);
   state.flags["church_sworn"] = true;
   assert.match(renderStatus(world, state), /the Gray Church \+9 sworn/, "sworn outranks trusted, and only one is shown");
+});
+
+/**
+ * Wave six's one P1: a player read "(Tamsin +1, Brother Osk -1, Vell -2)" at the
+ * Oath-Ground, swore the oath, and lost Vell outright — "did not warn that Vell
+ * would actually leave the party as a mechanical consequence, not just lose
+ * regard". Regard is a number that goes back up. A companion who walks out is
+ * not, and the preview said the same kind of thing about both.
+ */
+test("an option that makes a companion walk out says so, and a dismissal does not", () => {
+  const world = mini({
+    npcs: {
+      vell: {
+        name: "Vell",
+        room: "a",
+        companion: {},
+        dialogue: true,
+        topics: [{ id: "dismiss", label: "wait here (leaves the party for now)", say: "Aye.", fx: [["party", "vell", "leave"]] }],
+      },
+      osk: { name: "Brother Osk", room: "a", companion: {} },
+    },
+    rooms: {
+      a: {
+        name: "A",
+        desc: "Room A.",
+        actions: [
+          // the shape the Oath-Ground uses: the departure sits behind `if inParty`
+          {
+            id: "swear",
+            label: "swear it",
+            fx: [["addvar", "appr_vell", -2], ["if", [["inParty", "vell"]], [["party", "vell", "leave"]], []]],
+          },
+          // and the other road there, where passing the check is what costs you
+          { id: "puzzle", label: "puzzle it out", fx: [["check", "wits", 10, [["party", "vell", "leave"]], [["say", "no"]]]] },
+          { id: "both", label: "burn the lot", fx: [["party", "vell", "leave"], ["party", "osk", "leave"]] },
+          { id: "quiet", label: "say nothing", fx: [["say", "Nothing happens."]] },
+        ],
+      },
+    },
+  });
+  let { state } = newState(world, 1);
+  state = { ...state, party: ["vell", "osk"] };
+  const hint = (id: string) => oddsHint(world, state, { kind: "custom", room: "a", id } as Action);
+
+  assert.match(hint("swear"), /Vell -2; Vell walks out\)$/, hint("swear"));
+  assert.match(hint("puzzle"), /Vell walks out, even if you succeed\)$/, hint("puzzle"));
+  assert.match(hint("both"), /Vell and Brother Osk walk out\)$/, hint("both"));
+  assert.equal(hint("quiet"), "", "an option that costs nobody says nothing");
+
+  // a dismissal is you sending them away, and the label already says it
+  const dismiss = oddsHint(world, state, { kind: "talk", npc: "vell", topic: "dismiss" } as Action);
+  assert.equal(dismiss, "", `a dismissal is not a departure: ${dismiss}`);
+
+  // and nothing is promised about a companion who is not with you
+  const alone = { ...state, party: ["osk"] };
+  assert.doesNotMatch(oddsHint(world, alone, { kind: "custom", room: "a", id: "swear" } as Action), /walks out/);
 });
