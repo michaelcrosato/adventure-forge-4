@@ -578,6 +578,68 @@ const countWord = (n: number) => COUNT_WORDS[n] ?? String(n);
  * route; the door is the quest. Pretending the place is unreachable would be
  * the same lie the coordinate offsets told.
  */
+/**
+ * The legs of a walked path, from a breadth-first `from` map: consecutive steps
+ * the same way count as one, so "north, north, west, west, west" reads "two
+ * north, then three west". Shared by `pathTo` and `bearingsHere`.
+ */
+function legsOf(from: Map<string, [string, string]>, start: string, target: string): string {
+  const dirs: string[] = [];
+  for (let cur = target; cur !== start; ) {
+    const step = from.get(cur)!;
+    dirs.push(step[1]);
+    cur = step[0];
+  }
+  dirs.reverse();
+  const legs: string[] = [];
+  for (let i = 0; i < dirs.length; ) {
+    let n = 1;
+    while (dirs[i + n] === dirs[i]) n++;
+    legs.push(`${countWord(n)} ${dirs[i]}`);
+    i += n;
+  }
+  return legs.join(", then ");
+}
+
+/** Most places one "get your bearings" names: past a few it stops being an answer and becomes a list. */
+const BEARINGS_CAP = 3;
+
+/**
+ * The way to the named places of this region, nearest first, walked.
+ *
+ * The realm carried 315 of these as hand-written strings — "As the fell runs,
+ * Slatefold is 4 south and 1 east, then down. The bound-stone: 6 south." — one
+ * per wilderness cell, each a separate chance to be wrong about a grid that has
+ * walls. Two waves reported them not matching the map, and the second put it
+ * plainly: "the real path required going east", where the text said west.
+ *
+ * So content still decides *where* a player can take their bearings (the `free`
+ * action stays authored, and the flavour opening with it); the engine says what
+ * the answer is. Unvisited places count — the whole point of asking is to find
+ * somewhere you have not been — which is what separates this from
+ * `wildBearing`'s way back to somewhere you know.
+ */
+export function bearingsHere(world: World, s: State): string {
+  const region = world.rooms[s.room]?.region;
+  if (!region) return "Nothing hereabouts has a name to steer by.";
+  const from = new Map<string, [string, string]>();
+  const order: string[] = [];
+  const queue = [s.room];
+  for (let head = 0; head < queue.length; head++) {
+    const at = queue[head]!;
+    for (const [dir, ex] of Object.entries(world.rooms[at]?.exits ?? {})) {
+      if (from.has(ex.to) || ex.to === s.room) continue;
+      from.set(ex.to, [at, dir]);
+      order.push(ex.to); // breadth-first, so this is nearest-first already
+      queue.push(ex.to);
+    }
+  }
+  const named = order.filter((id) => world.rooms[id]?.region === region && world.rooms[id]?.landmark).slice(0, BEARINGS_CAP);
+  if (!named.length) return "Nothing hereabouts has a name to steer by.";
+  const parts = named.map((id) => `${world.rooms[id]!.landmark}, ${legsOf(from, s.room, id)}`);
+  return `As the ground runs: ${parts.join("; ")}.`;
+}
+
 export function pathTo(world: World, s: State, target: string): string | null {
   if (target === s.room) return "";
   if (!world.rooms[target]) return null;
@@ -588,24 +650,7 @@ export function pathTo(world: World, s: State, target: string): string | null {
     for (const [dir, ex] of Object.entries(world.rooms[at]?.exits ?? {})) {
       if (from.has(ex.to) || ex.to === s.room) continue;
       from.set(ex.to, [at, dir]);
-      if (ex.to === target) {
-        // the path, as legs: consecutive steps the same way count as one
-        const dirs: string[] = [];
-        for (let cur = target; cur !== s.room; ) {
-          const step = from.get(cur)!;
-          dirs.push(step[1]);
-          cur = step[0];
-        }
-        dirs.reverse();
-        const legs: string[] = [];
-        for (let i = 0; i < dirs.length; ) {
-          let n = 1;
-          while (dirs[i + n] === dirs[i]) n++;
-          legs.push(`${countWord(n)} ${dirs[i]}`);
-          i += n;
-        }
-        return legs.join(", then ");
-      }
+      if (ex.to === target) return legsOf(from, s.room, target);
       queue.push(ex.to);
     }
   }
@@ -1283,6 +1328,9 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
         break;
       case "revive":
         reviveDowned(world, s, events);
+        break;
+      case "bearings":
+        events.push(bearingsHere(world, s));
         break;
       case "sayunvisited": {
         const region = world.rooms[s.room]?.region;

@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByLabel, actionLabel, condOk, inTravelMode, journal, legalActions, newState, oddsHint, pathTo, roomView, step, travelAvailable } from "../src/engine.ts";
+import { actionByLabel, actionLabel, bearingsHere, condOk, inTravelMode, journal, legalActions, newState, oddsHint, pathTo, roomView, step, travelAvailable } from "../src/engine.ts";
 import { render, renderStatus } from "../src/format.ts";
 import { validateWorld } from "../src/validate.ts";
 import { EPILOGUE_CAP, MENU_CAP } from "../src/types.ts";
@@ -567,4 +567,42 @@ test("a quest stage with a destination carries the way there into the status che
   const bad = line(2);
   bad.quests = { q: { name: "Q", stages: [{ if: [], text: "t", at: "r7" }] } };
   assert.ok(validateWorld(bad).some((e) => e.includes("at names no room (r7)")), validateWorld(bad).join("\n"));
+});
+
+/**
+ * "get your bearings" was 315 hand-written strings — one per wilderness cell,
+ * each its own chance to be wrong about a grid that has walls. The `bearings`
+ * effect leaves content deciding *where* a player can take them and lets the
+ * engine say what the answer is, walking the real exits to places the player
+ * has not been, which is the whole reason for asking.
+ */
+test("bearings names this region's places nearest first, walked, and only this region's", () => {
+  const world = line(6, (i) => (i < 4 ? "vale" : "downs"));
+  world.regions = { vale: { name: "the Vale" }, downs: { name: "the Downs" } };
+  for (const id of Object.keys(world.rooms)) delete world.rooms[id]!.landmark;
+  world.rooms["r1"]!.landmark = "the mill";
+  world.rooms["r3"]!.landmark = "the ford";
+  world.rooms["r5"]!.landmark = "the beacon"; // another region: not this answer
+  const { state } = newState(world, 1);
+  assert.equal(bearingsHere(world, state), "As the ground runs: the mill, one east; the ford, three east.");
+  assert.doesNotMatch(bearingsHere(world, state), /beacon/, "a place in the next region is not a bearing from here");
+
+  // it names places never visited: that is the question being asked
+  assert.deepEqual(state.visited, ["r0"]);
+
+  // and the effect is what content reaches it by
+  world.rooms["r0"]!.actions = [{ id: "look", label: "get your bearings", free: true, fx: [["bearings"]] }];
+  const out = step(world, state, actionByLabel(world, state, "get your bearings")!);
+  assert.ok(out.events.some((e) => e.includes("the mill, one east")), out.events.join(" | "));
+  assert.deepEqual(validateWorld(world).filter((e) => /bearings/.test(e)), [], "a closed DSL has to accept it");
+
+  // a region with nothing named, and a room in no region at all, both say so
+  // rather than printing an empty list
+  const bare = line(2, () => "vale");
+  bare.regions = { vale: { name: "the Vale" } };
+  for (const id of Object.keys(bare.rooms)) delete bare.rooms[id]!.landmark;
+  assert.match(bearingsHere(bare, newState(bare, 1).state), /nothing hereabouts has a name/i);
+  const nowhere = line(2);
+  for (const id of Object.keys(nowhere.rooms)) delete nowhere.rooms[id]!.landmark;
+  assert.match(bearingsHere(nowhere, newState(nowhere, 1).state), /nothing hereabouts has a name/i);
 });
