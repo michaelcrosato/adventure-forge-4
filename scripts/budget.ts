@@ -32,27 +32,33 @@ const top = rest.includes("--top") ? Number(rest[rest.indexOf("--top") + 1]) : 5
 const terse = rest.includes("--terse");
 const world: World = loadWorld(path);
 
-let { state, events } = newState(world, 1);
-const seen = new Set<string>([state.room]);
-const intro = renderIntro(world, state, events);
-
 type Screen = { n: number; chars: number; room: string; label: string };
-const screens: Screen[] = [];
-const doLabel = (label: string) => {
-  const a = actionByLabel(world, state, label);
-  if (!a) { console.error(`the walkthrough is broken at screen ${screens.length + 1}: no action "${label}" in ${state.room}`); process.exit(1); }
-  const before: State = state;
-  const out = step(world, state, a);
-  state = out.state;
-  const first = state.room !== before.room && !seen.has(state.room);
-  seen.add(state.room);
-  screens.push({ n: screens.length + 1, chars: render(world, state, out.events, { full: first }).text.length, room: state.room, label });
-};
-for (const w of world.walkthrough) {
-  if (typeof w === "string") doLabel(w);
-  else { let n = 0; while (!condOk(world, state, w.until) && n++ < w.max && !state.ended) doLabel(w.repeat); }
-  if (state.ended) break;
+
+/** Replay one route (the walkthrough, or an ending proof) and measure every screen it renders. */
+function walk(steps: World["walkthrough"], what: string): { screens: Screen[]; intro: ReturnType<typeof renderIntro> } {
+  let { state, events } = newState(world, 1);
+  const seen = new Set<string>([state.room]);
+  const intro = renderIntro(world, state, events);
+  const screens: Screen[] = [];
+  const doLabel = (label: string) => {
+    const a = actionByLabel(world, state, label);
+    if (!a) { console.error(`${what} is broken at screen ${screens.length + 1}: no action "${label}" in ${state.room}`); process.exit(1); }
+    const before: State = state;
+    const out = step(world, state, a);
+    state = out.state;
+    const first = state.room !== before.room && !seen.has(state.room);
+    seen.add(state.room);
+    screens.push({ n: screens.length + 1, chars: render(world, state, out.events, { full: first }).text.length, room: state.room, label });
+  };
+  for (const w of steps) {
+    if (typeof w === "string") doLabel(w);
+    else { let n = 0; while (!condOk(world, state, w.until) && n++ < w.max && !state.ended) doLabel(w.repeat); }
+    if (state.ended) break;
+  }
+  return { screens, intro };
 }
+
+const { screens, intro } = walk(world.walkthrough, "the walkthrough");
 
 const sum = screens.reduce((a, s) => a + s.chars, 0);
 const avg = sum / screens.length;
@@ -78,4 +84,23 @@ console.log();
 console.log(`the ${top} biggest screens:`);
 for (const s of [...screens].sort((a, b) => b.chars - a.chars).slice(0, top)) {
   console.log(`  ${String(s.chars).padStart(5)}  screen ${String(s.n).padStart(3)}  ${s.room.padEnd(24)} ${s.label}`);
+}
+
+// Every other proven route, measured the same way. The walkthrough is one road
+// through the realm and the only one the ceilings were ever checked against;
+// five of the eight ending proofs render a screen past MAX_MAX, two of them a
+// whole conversation's worth past it. A player on any of those roads is a real
+// player, so the numbers belong here where an author will see them.
+const proofs = Object.entries(world.proofs ?? {});
+if (proofs.length) {
+  console.log();
+  console.log(`the other proven routes (the same ceilings, ${AVG_MAX} avg and ${MAX_MAX} max):`);
+  for (const [key, steps] of proofs) {
+    const r = walk(steps, `proofs.${key}`).screens;
+    if (!r.length) continue;
+    const s2 = r.reduce((a, x) => a + x.chars, 0), avg2 = s2 / r.length;
+    const w2 = r.reduce((a, x) => (x.chars > a.chars ? x : a), r[0]!);
+    const flags = [avg2 > AVG_MAX ? `avg OVER by ${(avg2 - AVG_MAX).toFixed(0)}` : "", w2.chars > MAX_MAX ? `max OVER by ${w2.chars - MAX_MAX}` : ""].filter(Boolean).join(", ");
+    console.log(`  ${key.padEnd(28)} ${String(r.length).padStart(3)} screens  avg ${avg2.toFixed(0).padStart(4)}  max ${String(w2.chars).padStart(4)} (${w2.room})${flags ? `   ${flags}` : ""}`);
+  }
 }

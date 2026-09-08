@@ -18,6 +18,24 @@ const AVG_CHARS_MAX = 450; // avg act-response size along the walkthrough
 const MAX_CHARS_MAX = 1100; // no single response may exceed this
 const INTRO_CHARS_MAX = 1400;
 
+/**
+ * The same ceilings on every OTHER proven route — a ratchet, not a bar.
+ *
+ * The walkthrough is one road through the realm and it was the only road these
+ * ceilings had ever been measured against. Measured on the rest: five of the
+ * eight ending proofs render a screen past 1,100, two of them by well over a
+ * hundred characters, and three run the average past 450. Those are real roads
+ * with real players on them.
+ *
+ * So these numbers are today's worst, and they may only ever go DOWN. Raising
+ * one to make a change fit is the one thing this test exists to stop; the
+ * target is AVG_CHARS_MAX and MAX_CHARS_MAX, and the three rooms standing
+ * between here and there are mg_hollow_throne (1,171), th_wood_3_1 (1,244) and
+ * va_throne (1,129).
+ */
+const PROOF_AVG_RATCHET = 482; // gray_crown, today (whole characters: a route may not round up past this)
+const PROOF_MAX_RATCHET = 1244; // th_wood_3_1 on reach_burned, today
+
 const dir = fileURLToPath(new URL("../world", import.meta.url));
 const worlds: World[] = readdirSync(dir)
   .filter((f) => f.endsWith(".json"))
@@ -178,3 +196,42 @@ test("a full party never breaks the observation budget, in combat or on a plain 
   assert.ok(avg <= MAX_CHARS_MAX, `avg ${avg.toFixed(0)} chars > ${MAX_CHARS_MAX} across a full-party combat + plain-move turn`);
   assert.ok(max <= MAX_CHARS_MAX, `max ${max} chars > ${MAX_CHARS_MAX} across a full-party combat + plain-move turn`);
 });
+
+/**
+ * Every proven route, not just the walkthrough. See PROOF_*_RATCHET above for
+ * why these numbers are not AVG_CHARS_MAX and MAX_CHARS_MAX yet, and why they
+ * may only move one way.
+ */
+for (const world of worlds) {
+  const proofs = Object.entries(world.proofs ?? {});
+  if (!proofs.length) continue;
+  test(`the observation budget holds along every other proven route (${world.id})`, () => {
+    const over: string[] = [];
+    for (const [key, steps] of proofs) {
+      let { state } = newState(world, 1);
+      const seen = new Set<string>([state.room]);
+      const sizes: { chars: number; room: string }[] = [];
+      const doLabel = (label: string) => {
+        const a = actionByLabel(world, state, label);
+        assert.ok(a, `proofs.${key}: no action "${label}" in ${state.room}`);
+        const before: State = state;
+        const out = step(world, state, a);
+        state = out.state;
+        const first = state.room !== before.room && !seen.has(state.room);
+        seen.add(state.room);
+        sizes.push({ chars: render(world, state, out.events, { full: first }).text.length, room: state.room });
+      };
+      for (const w of steps) {
+        if (typeof w === "string") doLabel(w);
+        else { let n = 0; while (!condOk(world, state, w.until) && n++ < w.max && !state.ended) doLabel(w.repeat); }
+        if (state.ended) break;
+      }
+      assert.ok(sizes.length, `proofs.${key} rendered nothing`);
+      const avg = sizes.reduce((a, b) => a + b.chars, 0) / sizes.length;
+      const worst = sizes.reduce((a, b) => (b.chars > a.chars ? b : a), sizes[0]!);
+      if (Math.floor(avg) > PROOF_AVG_RATCHET) over.push(`proofs.${key}: avg ${avg.toFixed(1)} > ${PROOF_AVG_RATCHET}`);
+      if (worst.chars > PROOF_MAX_RATCHET) over.push(`proofs.${key}: max ${worst.chars} in ${worst.room} > ${PROOF_MAX_RATCHET}`);
+    }
+    assert.deepEqual(over, [], `a proven route got wordier — the ratchet only turns down:\n  ${over.join("\n  ")}`);
+  });
+}
