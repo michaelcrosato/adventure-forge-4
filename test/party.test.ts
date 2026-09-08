@@ -978,3 +978,32 @@ test("score still cannot go below nothing", () => {
   state = step(world, state, actionByLabel(world, state, "lose it")!).state;
   assert.equal(state.score, 0);
 });
+
+/**
+ * Where the player stands with each faction.
+ *
+ * `world.factions` existed only to name a faction inside an event — "(the Gray
+ * Church +2)" — and was never shown as a total anywhere. Six factions, two
+ * ranks each, payoffs for those ranks wired into all sixteen of the Reach's
+ * regions, and no way for a player to learn they were at +13 with the Church,
+ * that a rank existed, or how near one they were. Wave four's three players
+ * reached keepers +25, church +13, watch +6 and free +5 between them — every
+ * one of those past a threshold — and collected two ranks in total.
+ */
+test("status says where you stand with each faction, and the rank you hold", () => {
+  const world = mini({});
+  world.factions = { rep_church: "the Gray Church", rep_watch: "the Watch", rep_iron: "the Ironbound" };
+  let { state } = newState(world, 1);
+  assert.doesNotMatch(renderStatus(world, state), /Standing:/, "a faction that has not entered the story is not listed");
+  state.vars["rep_church"] = 9;
+  state.vars["rep_watch"] = -2;
+  state.vars["rep_iron"] = 0;
+  const plain = renderStatus(world, state);
+  assert.match(plain, /Standing: the Gray Church \+9, the Watch -2$/m, plain);
+  assert.doesNotMatch(plain, /Ironbound/, "standing at nothing means the faction has not entered the story");
+  // the rank comes off the flags content already sets by convention
+  state.flags["church_trusted"] = true;
+  assert.match(renderStatus(world, state), /the Gray Church \+9 trusted/);
+  state.flags["church_sworn"] = true;
+  assert.match(renderStatus(world, state), /the Gray Church \+9 sworn/, "sworn outranks trusted, and only one is shown");
+});

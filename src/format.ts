@@ -361,6 +361,32 @@ export function renderStatus(world: World, s: State): string {
   // A check that has cost a retry is worth surfacing somewhere: the odds
   // preview already shows the raised DC on the room/topic itself, but a
   // player who has walked away from one (or three) has no other way to
+  /**
+   * Where the player stands with each faction, and the rank they hold.
+   *
+   * `world.factions` existed only to name a faction inside an event — "(the
+   * Gray Church +2)" — and was never shown anywhere as a total. Six factions,
+   * two ranks each, payoffs for those ranks wired into all sixteen regions,
+   * and a player had no way to learn they were at +13 with the Church, that a
+   * rank existed at all, or how close they were to one. The fourth wave's
+   * three players reached keepers +25, church +13, watch +6 and free +5
+   * between them, every one of those past a threshold, and collected two
+   * ranks in total.
+   *
+   * The rank comes off the flags content already sets by convention —
+   * `rep_keepers` pairs with `keepers_trusted` and `keepers_sworn` — so this
+   * needs nothing new in the world data. Standing at zero is left out: it
+   * means the faction has not entered the story yet.
+   */
+  const standing = Object.entries(world.factions ?? {})
+    .map(([v, name]) => ({ v, name, n: s.vars[v] ?? 0, code: v.replace(/^rep_/, "") }))
+    .filter((f) => f.n !== 0)
+    .sort((a, b) => b.n - a.n)
+    .map((f) => {
+      const rank = s.flags[`${f.code}_sworn`] ? " sworn" : s.flags[`${f.code}_trusted`] ? " trusted" : "";
+      return `${f.name} ${f.n > 0 ? "+" : ""}${f.n}${rank}`;
+    });
+  if (standing.length) lines.push(`Standing: ${standing.join(", ")}`);
   // recall that later. Worst-tried first; past FAILED_CHECKS_MAX, a plain
   // count for the rest rather than a line that grows without bound.
   const tried = failedChecks(world, s);
