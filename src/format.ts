@@ -336,6 +336,23 @@ export function renderStatus(world: World, s: State): string {
     // name the weapon and armor that count, so a second piece is known not to stack
     const by = (id: string | null) => (id ? ` (${world.items[id]?.name ?? id})` : "");
     lines.push(`Combat: hit${signed(cm.hit)} dmg${signed(cm.dmg)}${by(cm.weapon)} armor${signed(cm.armor)}${by(cm.armorItem)}`);
+    // An ability spends a pool, and until now nothing anywhere said how much was
+    // left in it — not the menu, not here. A Warden could press "break them"
+    // twice and find out the third time by its absence. Only pools this
+    // character's abilities can actually spend are listed, so a Scholar is not
+    // shown the Warden's.
+    const mine = new Map<string, string>(); // pool -> the class whose ability spends it
+    for (const ab of Object.values(world.abilities ?? {})) {
+      const forMe = (ab.if ?? []).every((c) => !(c[0] === "class" && c[1] !== s.classId) && !(c[0] === "!class" && c[1] === s.classId));
+      if (!forMe) continue;
+      const cls = (ab.if ?? []).find((c) => c[0] === "class")?.[1];
+      const named = typeof cls === "string" ? (world.classes?.[cls]?.name ?? "") : "";
+      for (const c of ab.if ?? []) if (c[0] === "var" && typeof c[1] === "string" && c[1] in (world.resources ?? {})) mine.set(c[1], named);
+      for (const f of ab.fx ?? []) if (f[0] === "addvar" && typeof f[1] === "string" && f[1] in (world.resources ?? {})) mine.set(f[1], named);
+    }
+    const pools = [...mine].sort(([a], [b]) => a.localeCompare(b))
+      .map(([v, named]) => `${named ? `${named} ` : ""}${s.vars[v] ?? 0}/${world.resources![v]}`);
+    if (pools.length) lines.push(`Ready to spend: ${pools.join(", ")} (a rest fills it)`);
   }
   return lines.length ? lines.join("\n") : "No progress to report.";
 }

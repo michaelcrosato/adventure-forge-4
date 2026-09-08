@@ -13,7 +13,8 @@ import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { speaks } from "../src/engine.ts";
+import { newState, speaks } from "../src/engine.ts";
+import { renderStatus } from "../src/format.ts";
 import { loadWorld } from "../src/validate.ts";
 import type { World } from "../src/types.ts";
 
@@ -46,4 +47,25 @@ test("a bare line still gets the engine's quotes", () => {
   assert.equal(speaks("Lys", "Quiet out here."), 'Lys: "Quiet out here."');
   assert.equal(speaks("Vell", '"Mine," Vell says.'), 'Vell: "Mine," Vell says.');
   assert.equal(speaks("Osk", "He is quiet, then: \"Let it be the one that did.\""), 'Osk: He is quiet, then: "Let it be the one that did."');
+});
+
+test("status says how much of an ability pool is left, and only the player's own", () => {
+  // Nothing anywhere said this. A Warden could press "break them" twice and
+  // learn the pool was empty from the option's absence on the third turn.
+  const world = loadWorld(fileURLToPath(new URL("../world/reach.json", import.meta.url)));
+  const seen: Record<string, string> = {};
+  for (const c of Object.keys(world.classes ?? {})) {
+    const base = newState(world, 1).state;
+    const s = { ...base, classId: c, vars: { ...base.vars, res_warden: 1, res_scout: 2, res_scholar: 0, res_envoy: 2 } };
+    const line = renderStatus(world, s).split("\n").find((l) => l.startsWith("Ready to spend"));
+    assert.ok(line, `${c} sees no pool`);
+    seen[c] = line;
+  }
+  // each class is shown its own pool and no one else's
+  assert.match(seen["warden"]!, /Warden 1\/2/);
+  assert.doesNotMatch(seen["warden"]!, /Scout|Scholar|Envoy/);
+  assert.match(seen["scholar"]!, /Scholar 0\/2/);
+  assert.doesNotMatch(seen["scholar"]!, /Warden|Scout|Envoy/);
+  // and before a class is chosen there is nothing to report
+  assert.ok(!renderStatus(world, newState(world, 1).state).includes("Ready to spend"));
 });
