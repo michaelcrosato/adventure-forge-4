@@ -518,6 +518,14 @@ export type State = {
   npcRoom: Record<string, string | null>;
   conds: Record<string, number>; // condition id -> spent turns remaining, on the player
   npcConds: Record<string, Record<string, number>>; // npc id -> (condition id -> turns remaining)
+  /**
+   * Escalating retry: check source id (see engine.ts's checkSourceId) -> prior
+   * FAILED attempts recorded against it, never reset by a success. Each entry
+   * present is >0; a source never yet failed carries no key at all. Read by
+   * applyFx's `check` case and oddsHint to raise that same check's DC by one
+   * per failure already logged — see docs/authoring.md §4.
+   */
+  checkAttempts: Record<string, number>;
   visited: string[];
   party: string[]; // companions travelling with the player, in join order
   talking: string | null; // npc id while a conversation is open (conversation mode)

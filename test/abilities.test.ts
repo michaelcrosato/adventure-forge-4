@@ -174,6 +174,49 @@ test("a resource pool decrements on use and blocks the ability once it reaches z
   assert.ok(!legalActions(w, state).some((a) => a.kind === "ability" && a.id === "brace"), "empty pool blocks the ability");
 });
 
+test("an ability's menu preview says how much of its pool is left, and the number moves as it's spent", () => {
+  // Playtest finding: the menu offered "brace for it" / "break them", both
+  // spending from a pool of 2, and neither line said so — a Warden learned
+  // the pool was empty from an option's absence on the third press, not from
+  // being told. oddsHint now reads the cost off the same two places status
+  // does (the ability's own `addvar res_warden -1` and `world.resources`),
+  // so the price is stated before the turn, like every other cost in this file.
+  const w = world();
+  let state = pickClass(w, "warden");
+  state = step(w, state, { kind: "go", dir: "east" }).state; // the wolf's room: brace is context "combat"
+  const brace = { kind: "ability", id: "brace" } as Action;
+  assert.equal(oddsHint(w, state, brace), " (2 of 2 left)");
+  state = step(w, state, brace).state;
+  assert.equal(oddsHint(w, state, brace), " (1 of 2 left)", "one spent, one shown remaining — matches status's own count");
+  state = step(w, state, brace).state;
+  assert.equal(state.vars["res_warden"], 0);
+  assert.ok(!legalActions(w, state).some((a) => a.kind === "ability" && a.id === "brace"), "empty pool: gone from the menu entirely, not shown at 0");
+});
+
+test("a free ability that also spends a pool reads both: no turn, but a real point spent", () => {
+  // "free" is the turn, not the price (docs §4) — an ability can be free of
+  // one and not the other, and the menu has to say both when both are true.
+  const w: World = {
+    id: "freecost", title: "x", intro: "x", start: "a", hp: 10, maxScore: 5,
+    classes: { warden: { name: "Warden", desc: "warden" } },
+    resources: { res_warden: 2 },
+    abilities: {
+      glance: { label: "take a glance", free: true, if: [["class", "warden"], ["var", "res_warden", ">=", 1]], fx: [["addvar", "res_warden", -1], ["say", "You look."]] },
+    },
+    rooms: { a: { name: "A", desc: "A." } },
+    items: {}, npcs: {}, walkthrough: [],
+  };
+  const state = pickClass(w, "warden");
+  assert.equal(oddsHint(w, state, { kind: "ability", id: "glance" } as Action), " (free; 2 of 2 left)");
+});
+
+test("an ability with no resource cost previews no pool hint", () => {
+  const w = world();
+  const state = pickClass(w, "warden");
+  // "bearings" is free and spends nothing — no pool to name
+  assert.equal(oddsHint(w, state, { kind: "ability", id: "bearings" } as Action), " (free)");
+});
+
 test("a rest (a room action's positive hp) refreshes every resource pool to full", () => {
   const w = world();
   let state = pickClass(w, "warden");

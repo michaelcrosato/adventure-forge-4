@@ -72,7 +72,7 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["horrorHere"]` | a hostile npc with `pierce: true` (the realm's horrors, §7) stands alive in the player's room |
 | `["holdsGround"]` | a hostile npc that is **not** aggressive stands alive in the player's room — the same "leave … be" category |
 | `["companionDown"]` | a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up) |
-| `["checkHere", skill, dc]` | a room action or npc topic visible right now previews a `check` of `skill` at `dc` or higher, as its first effect (§4's preview rule) |
+| `["checkHere", skill, dc]` | a room action or npc topic visible right now previews a `check` of `skill` at `dc` or higher, as its first effect (§4's preview rule) — `dc` here is the check's current, possibly-escalated one (§4), not always the authored number |
 | `["lowHp"]` | the player's hp is at half of maxHp or less — "a fight is going badly," the same threshold `leave` uses against an aggressive npc (§7) |
 | `["any", [cond, cond, ...]]` | passes when at least one listed condition passes — the one OR inside an all-of list |
 
@@ -131,6 +131,40 @@ An action or topic that lowers a faction's standing outright, with no die, says
 "costs standing with …" as things stand (a branch under an `if` counts when its
 condition holds now), so a gate's price is never learned from the company's
 banter afterwards — a `free` action included: "free" is the turn, not the price.
+
+**Escalating retry.** A failed `check` raises the DC of the next attempt at
+that same room action, ability, topic, or item-use by 1 — the engine's own
+doing, nothing to author. The counter never resets (a success does not clear
+it, and neither does leaving and coming back), and it has no ceiling: a check
+retried enough times keeps getting harder, never impossible-in-principle,
+never a dead end — the player can always try again, or take the region's
+other route (force, craft, words) past the same obstacle instead. The preview
+always quotes the number the roll is actually about to use, so a check with
+two failures already logged against it reads `(DC 13, +2 wits: roll 11+ on
+the die)` where a fresh one would have read `(DC 11, +2 wits: roll 9+ on the
+die)` — never the stale, unescalated number (see the `check` case in
+`applyFx` and `oddsHint`, `src/engine.ts`; the history that makes this
+non-negotiable is in the comments above both).
+
+Escalation is keyed on the id of whatever offers the check — a room action's
+`id`, a topic's `id` (npc-qualified, since ids like `greet` repeat across
+npcs), an ability's key in `world.abilities`, an item's `use` entry — the same
+ids `did_<id>` and `said_<npc>_<topicId>` already key on, so there is nothing
+new to name. A `check` with no such id to key on (inside a room's `onEnter`,
+an npc's `onDeath`, a companion's remark, a `world.clock` entry) never
+escalates; author those as you always have. A check nested under an `if`
+inside an action's effects escalates on the same key as that action's own
+leading check — there is one counter per action/topic/ability/use, not one
+per `check` op — so two unrelated checks belong in two different actions if
+you want them to get harder independently.
+
+The practical upshot for a `walkthrough` or `proofs` entry that retries a
+check with `{"repeat": ..., "until": ..., "max": n}`: a later failure can cost
+more turns than an earlier one did on the same content, since the DC is
+higher each time. If a content change moves how many attempts a retry loop
+needs, re-run it through `npm run validate` (or `scripts/walk.ts`) rather than
+hand-editing `max` — the validator replays for real and will say exactly where
+a step went illegal.
 
 ## 5. Rooms
 

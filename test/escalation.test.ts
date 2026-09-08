@@ -1,0 +1,169 @@
+/**
+ * Escalating retry: a failed check raises the DC of a retry on that same
+ * check by 1 (see docs/authoring.md §4, and applyFx's `check` case /
+ * oddsHint in engine.ts). These pin the contract playtesting found missing:
+ * a failed check could be retried forever at the same DC for the price of
+ * one turn, so the odds preview nobody had to weigh was decoration.
+ *
+ * DC 21 at 0 modifier is used throughout on purpose: unreachable on a d20
+ * (max total 20), so every attempt fails deterministically without hunting
+ * for a seed — the tests are about the escalation arithmetic and its wiring,
+ * not about winning the roll.
+ */
+import assert from "node:assert/strict";
+import test from "node:test";
+import { hashState, newState, oddsHint, receipt, step } from "../src/engine.ts";
+import { replayTrace } from "../src/crawl.ts";
+import { renderMenu, renderStatus } from "../src/format.ts";
+import type { Action, World } from "../src/types.ts";
+
+const mini = (over: Partial<World> = {}): World => ({
+  id: "mini",
+  title: "Mini",
+  intro: "x",
+  start: "a",
+  hp: 10,
+  maxScore: 10,
+  rooms: { a: { name: "A", desc: "A." } },
+  items: {},
+  npcs: {},
+  walkthrough: [],
+  ...over,
+});
+
+const riddleWorld = (dc = 21) =>
+  mini({
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        actions: [{ id: "riddle", label: "riddle", fx: [["check", "wits", dc, [["say", "ok"]], [["say", "no"]]]] }],
+      },
+    },
+  });
+
+test("a failed attempt raises the DC of the next try on the same check — preview and roll agree, every time", () => {
+  const world = riddleWorld();
+  let { state } = newState(world, 1);
+  const a = { kind: "custom", room: "a", id: "riddle" } as Action;
+  for (let n = 0; n < 3; n++) {
+    const dc = 21 + n; // n prior failures already logged
+    assert.equal(oddsHint(world, state, a), ` (DC ${dc}, wits: roll ${dc}+ on the die)`, `attempt ${n + 1} preview`);
+    const out = step(world, state, a);
+    const line = out.events.find((e) => e.startsWith("WITS d20:"))!;
+    assert.match(line, new RegExp(`vs DC ${dc} \\(${dc}\\+ succeeds\\) — fail\\.$`), `attempt ${n + 1} roll: "${line}"`);
+    state = out.state;
+  }
+  assert.equal(state.checkAttempts["act:riddle"], 3, "three failures logged against this exact source");
+});
+
+test("escalation is keyed per check — failing one does not touch a different one", () => {
+  const world = mini({
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        actions: [
+          { id: "hard", label: "hard riddle", fx: [["check", "wits", 21, [["say", "ok"]], [["say", "no"]]]] },
+          { id: "easy", label: "easy riddle", fx: [["check", "wits", 9, [["say", "ok"]], [["say", "no"]]]] },
+        ],
+      },
+    },
+  });
+  let { state } = newState(world, 1);
+  const hard = { kind: "custom", room: "a", id: "hard" } as Action;
+  const easy = { kind: "custom", room: "a", id: "easy" } as Action;
+  state = step(world, state, hard).state;
+  state = step(world, state, hard).state;
+  assert.equal(state.checkAttempts["act:hard"], 2, "the failed check accrues its own attempts");
+  assert.equal(state.checkAttempts["act:easy"], undefined, "a check never attempted stays unrecorded");
+  assert.equal(oddsHint(world, state, easy), " (DC 9, wits: roll 9+ on the die)", "an unrelated check's odds are untouched");
+});
+
+test("a topic's check escalates too, keyed by npc and topic id, independent of a room action's", () => {
+  // the "natural key" the proposal names — an npc topic, not just a room action
+  const world = mini({
+    npcs: {
+      sage: {
+        name: "the sage",
+        room: "a",
+        topics: [{ id: "riddle", label: "ask for the riddle's answer", say: "Try.", fx: [["check", "wits", 21, [["say", "ok"]], [["say", "no"]]]] }],
+      },
+    },
+  });
+  let { state } = newState(world, 1);
+  const t = { kind: "talk", npc: "sage", topic: "riddle" } as Action;
+  assert.equal(oddsHint(world, state, t), " (DC 21, wits: roll 21+ on the die)");
+  state = step(world, state, t).state;
+  assert.equal(state.checkAttempts["tp:sage:riddle"], 1);
+  assert.equal(oddsHint(world, state, t), " (DC 22, wits: roll 22+ on the die)", "the topic's own retry is now harder");
+});
+
+test("a check with no source id never escalates (a world.clock entry: not a menu action a player retries)", () => {
+  const world = mini({
+    clock: [{ id: "trial", fx: [["check", "wits", 21, [["say", "ok"]], [["say", "no"]]]] }],
+    rooms: { a: { name: "A", desc: "A.", exits: { north: { to: "a" } } } }, // a self-loop, so "go north" always spends a turn
+  });
+  let { state } = newState(world, 1);
+  for (let i = 0; i < 3; i++) {
+    const out = step(world, state, { kind: "go", dir: "north" });
+    const line = out.events.find((e) => e.startsWith("WITS d20:"))!;
+    assert.match(line, /vs DC 21 \(21\+ succeeds\) — fail\.$/, `clock check on turn ${i + 1} should still read DC 21, not escalated`);
+    state = out.state;
+  }
+  assert.deepEqual(state.checkAttempts, {}, "nothing was ever recorded: there was no sourceId to key on");
+});
+
+test("determinism holds across escalating retries: same seed, same failures, same hashes and receipt", () => {
+  const world = riddleWorld();
+  const a = { kind: "custom", room: "a", id: "riddle" } as Action;
+  const run = () => {
+    let { state } = newState(world, 7);
+    const hashes = [hashState(state)];
+    for (let i = 0; i < 4; i++) {
+      state = step(world, state, a).state;
+      hashes.push(hashState(state));
+    }
+    return { state, hashes };
+  };
+  const r1 = run();
+  const r2 = run();
+  assert.deepEqual(r1.hashes, r2.hashes, "byte-identical hash sequence across two runs of the same seed");
+  assert.equal(receipt(world, r1.state), receipt(world, r2.state));
+  assert.equal(r1.state.checkAttempts["act:riddle"], 4, "sanity: this run actually escalated something, not a vacuous pass");
+});
+
+test("escalated state round-trips through a trace replay", () => {
+  const world = riddleWorld();
+  const a = { kind: "custom", room: "a", id: "riddle" } as Action;
+  let { state } = newState(world, 3);
+  const actions: Action[] = [];
+  for (let i = 0; i < 3; i++) {
+    actions.push(a);
+    state = step(world, state, a).state;
+  }
+  assert.equal(state.checkAttempts["act:riddle"], 3, "sanity: the recorded run really did escalate");
+  const rec = replayTrace(world, { world: world.id, seed: 3, actions });
+  assert.equal(rec, receipt(world, state), "checkAttempts survives structuredClone/canon and replays byte-identical");
+});
+
+test("a retried check's history shows up on the free status check, DC included", () => {
+  const world = riddleWorld();
+  let { state } = newState(world, 1);
+  const a = { kind: "custom", room: "a", id: "riddle" } as Action;
+  assert.doesNotMatch(renderStatus(world, state), /Failed before/, "nothing to report before any attempt");
+  state = step(world, state, a).state;
+  state = step(world, state, a).state;
+  assert.match(renderStatus(world, state), /Failed before: riddle \(2x, now DC 23\)/);
+});
+
+test("the rendered menu line itself carries the escalated DC (renderMenu, not just oddsHint in isolation)", () => {
+  const world = riddleWorld();
+  let { state } = newState(world, 1);
+  const first = renderMenu(world, state).text;
+  assert.match(first, /^1 riddle \(DC 21, wits: roll 21\+ on the die\)$/m);
+  state = step(world, state, { kind: "custom", room: "a", id: "riddle" }).state;
+  state = step(world, state, { kind: "custom", room: "a", id: "riddle" }).state;
+  const afterTwoFails = renderMenu(world, state).text;
+  assert.match(afterTwoFails, /^1 riddle \(DC 23, wits: roll 23\+ on the die\)$/m);
+});

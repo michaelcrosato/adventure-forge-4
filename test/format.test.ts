@@ -157,6 +157,30 @@ test("renderStatus: omits check/combat totals for a classless world", () => {
   assert.equal(renderStatus(world, state), "Find the crown.");
 });
 
+// Playtest finding: an ability spends a pool of 2 (`res_warden`), and nothing
+// anywhere said how much was left in it — not the menu, not status. A Warden
+// could press an ability twice and learn the pool was empty from its absence
+// on the third turn. `status` now carries "Ready to spend: <class> n/max", so
+// there is somewhere to check before spending the last point — and only the
+// player's own class's pool, since a Scholar has no use for the Warden's.
+const poolWorld = {
+  classes: { warden: { name: "Warden", desc: "strong" }, scholar: { name: "Scholar", desc: "wise" } },
+  resources: { res_warden: 2 },
+  abilities: {
+    brace: { label: "brace for it", if: [["class", "warden"], ["var", "res_warden", ">=", 1]], fx: [["addvar", "res_warden", -1]] },
+  },
+} as unknown as World;
+
+test("renderStatus: names an ability pool the player's own class can spend from", () => {
+  const state = { vars: { res_warden: 1 }, flags: {}, inv: [], perks: [], attrs: {}, conds: {}, classId: "warden" } as unknown as State;
+  assert.match(renderStatus(poolWorld, state), /Ready to spend: Warden 1\/2 \(a rest fills it\)/);
+});
+
+test("renderStatus: says nothing about a pool the player's class cannot spend from", () => {
+  const state = { vars: { res_warden: 1 }, flags: {}, inv: [], perks: [], attrs: {}, conds: {}, classId: "scholar" } as unknown as State;
+  assert.doesNotMatch(renderStatus(poolWorld, state), /Ready to spend/);
+});
+
 test("renderStatus: reports a statusPaths fallback when no state's conditions match", () => {
   const world = {
     statusPaths: [

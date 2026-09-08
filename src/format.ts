@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomView } from "./engine.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomView } from "./engine.ts";
 import { ATTRS, EPILOGUE_CAP, EPILOGUE_CHARS } from "./types.ts";
 import type { Action, Cond, State, World } from "./types.ts";
 
@@ -317,6 +317,17 @@ export function renderStatus(world: World, s: State): string {
         return `${def?.name ?? id} (${n} turn${n === 1 ? "" : "s"} left)${def?.hint ? ` — ${def.hint}` : ""}`;
       });
     lines.push(`Conditions: ${conds.join("; ")}`);
+  }
+  // A check that has cost a retry is worth surfacing somewhere: the odds
+  // preview already shows the raised DC on the room/topic itself, but a
+  // player who has walked away from one (or three) has no other way to
+  // recall that later. Worst-tried first; past FAILED_CHECKS_MAX, a plain
+  // count for the rest rather than a line that grows without bound.
+  const tried = failedChecks(world, s);
+  if (tried.length) {
+    const shown = tried.slice(0, FAILED_CHECKS_MAX).map((f) => `${f.label} (${f.attempts}x, now DC ${f.dc})`);
+    const more = tried.length > FAILED_CHECKS_MAX ? `, +${tried.length - FAILED_CHECKS_MAX} more` : "";
+    lines.push(`Failed before: ${shown.join(", ")}${more}`);
   }
   // Only worlds with a character system carry attrs/perks worth summing; a
   // classless world's s.attrs stays empty all game, so this would be an

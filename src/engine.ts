@@ -521,8 +521,132 @@ function travelMore(world: World, s: State): number {
 export const inPerkPickPhase = (world: World, s: State): boolean =>
   s.perkPicks > 0 && eligiblePerks(world, s).length > 0;
 
+// ---------- escalating retry ----------
+/**
+ * The id an escalating check's attempt counter is keyed on: the natural id of
+ * whatever action offers it — a room action, a class ability, an npc topic
+ * (npc-qualified, since a topic id like "greet" repeats across npcs the same
+ * way `said_<npc>_<topicId>` needs it to), or an item's use (item- and
+ * target-qualified, since one item can carry more than one use entry).
+ * Namespaced by kind (`act:`, `ab:`, `tp:`, `use:`) so two different sources
+ * never share a counter even where their bare ids happen to coincide — ids
+ * are `[a-z0-9_]` only (docs §2), so `:` can never appear in an authored id
+ * and never collides with one.
+ *
+ * Every other action kind (go, take, attack, classpick, ...) keys to
+ * undefined: applyFx only escalates a check when it is handed a sourceId, so
+ * an un-keyed check always rolls its authored DC, forever — never a wrong
+ * one, never a borrowed one. Room `onEnter`/`onEnterOnce` and an npc's
+ * `onDeath` are not offered as a menu Action at all, so they are not covered
+ * here; their own call sites key them directly (`enter:`, `enterOnce:`,
+ * `death:`), and every other applyFx call site (a companion's remark, a
+ * `world.clock` entry) passes no sourceId at all — a check reached from one
+ * of those never escalates, on purpose: see docs/authoring.md §4.
+ */
+function checkSourceId(a: Action): string | undefined {
+  switch (a.kind) {
+    case "custom":
+      return `act:${a.id}`;
+    case "ability":
+      return `ab:${a.id}`;
+    case "talk":
+      return `tp:${a.npc}:${a.topic}`;
+    case "use":
+      return `use:${a.item}:${a.target ?? ""}`;
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * A check's DC as it actually stands right now: the authored number, raised
+ * by one for every failed attempt already logged against this sourceId. The
+ * one place this arithmetic is defined — applyFx's `check` case, oddsHint's
+ * preview, and checkHereNow all call this, so the number a player is shown
+ * before spending a turn and the number the roll is actually compared against
+ * can never disagree (see oddsHint's comment on that history). A check with
+ * no sourceId never escalates: it reads its authored DC unchanged.
+ */
+function escalatedDc(s: State, sourceId: string | undefined, baseDc: number): number {
+  return sourceId ? baseDc + (s.checkAttempts[sourceId] ?? 0) : baseDc;
+}
+
+/**
+ * checkSourceId's inverse, best-effort, for the free `status` check (see
+ * failedChecks below): a source id back to the label a player would recognize
+ * ("ring the saint's bell", "Prior Halm: the saint's bell") and the check's
+ * own authored DC (escalatedDc raises it from there). Returns undefined for a
+ * source the content no longer carries (edited out from under a saved run)
+ * rather than guessing, and for a source whose leading effect is no longer a
+ * `check` at all — the label would be honest but the DC would not be.
+ */
+function checkSource(world: World, sourceId: string): { label: string; baseDc: number } | undefined {
+  const i = sourceId.indexOf(":");
+  const kind = sourceId.slice(0, i);
+  const rest = sourceId.slice(i + 1);
+  const leading = (fx: Fx[] | undefined): number | undefined => {
+    const c = fx?.[0];
+    return c && c[0] === "check" ? c[2] : undefined;
+  };
+  switch (kind) {
+    case "act":
+      for (const room of Object.values(world.rooms))
+        for (const a of room.actions ?? []) {
+          if (a.id !== rest) continue;
+          const dc = leading(a.fx);
+          return dc === undefined ? undefined : { label: a.label, baseDc: dc };
+        }
+      return undefined;
+    case "ab": {
+      const a = world.abilities?.[rest];
+      const dc = leading(a?.fx);
+      return a && dc !== undefined ? { label: a.label, baseDc: dc } : undefined;
+    }
+    case "tp": {
+      const j = rest.indexOf(":");
+      const npc = world.npcs[rest.slice(0, j)];
+      const topic = npc?.topics?.find((t) => t.id === rest.slice(j + 1));
+      const dc = leading(topic?.fx);
+      return npc && topic && dc !== undefined ? { label: `${npc.name}: ${topic.label}`, baseDc: dc } : undefined;
+    }
+    case "use": {
+      const j = rest.indexOf(":");
+      const itemId = j === -1 ? rest : rest.slice(0, j);
+      const target = j === -1 ? undefined : rest.slice(j + 1) || undefined;
+      const item = world.items[itemId];
+      const use = item?.use?.find((d) => d.target === target && leading(d.fx) !== undefined);
+      const dc = leading(use?.fx);
+      return item && dc !== undefined ? { label: `use ${item.name}`, baseDc: dc } : undefined;
+    }
+    default:
+      return undefined;
+  }
+}
+
+/** Most escalating checks worth naming on the free `status` check before the list gives way to a plain count. */
+export const FAILED_CHECKS_MAX = 6;
+
+/**
+ * Every check the player has failed at least once, worst-tried first — a
+ * memory aid for the free `status` check (no turn spent) so a player who has
+ * failed something three times can find that out somewhere, the way `status`
+ * already lists visited rooms and active conditions. `dc` is the CURRENT,
+ * escalated number — the same one the menu preview would quote right now —
+ * not the original authored one, so status never states a different figure
+ * than the next attempt actually faces.
+ */
+export function failedChecks(world: World, s: State): { label: string; dc: number; attempts: number }[] {
+  const out: { label: string; dc: number; attempts: number }[] = [];
+  for (const [id, attempts] of Object.entries(s.checkAttempts ?? {})) {
+    if (!attempts) continue;
+    const found = checkSource(world, id);
+    if (found) out.push({ label: found.label, dc: escalatedDc(s, id, found.baseDc), attempts });
+  }
+  return out.sort((a, b) => b.attempts - a.attempts);
+}
+
 // ---------- effects ----------
-function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
+function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?: string): void {
   for (const fx of fxs) {
     if (s.ended) return;
     switch (fx[0]) {
@@ -579,7 +703,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         s.npcRoom[fx[1]] = fx[2] === "here" ? s.room : fx[2];
         break;
       case "if":
-        applyFx(world, s, condsOk(world, s, fx[1]) ? fx[2] : fx[3], events);
+        applyFx(world, s, condsOk(world, s, fx[1]) ? fx[2] : fx[3], events, sourceId);
         break;
       case "calm":
         calmNpc(world, s, fx[1], events);
@@ -627,7 +751,13 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         break;
       }
       case "check": {
-        const [, skill, dc, okFx, failFx] = fx;
+        const [, skill, baseDc, okFx, failFx] = fx;
+        // Escalating retry: a check tied to a sourceId (a room action, an
+        // ability, an npc topic, an item's use — see checkSourceId) gets 1
+        // harder for every failed attempt already logged against it, so the
+        // second try at the same obstacle is never the freebie the first was.
+        // Un-keyed checks (no sourceId) never escalate and just use baseDc.
+        const dc = escalatedDc(s, sourceId, baseDc);
         const mod = checkMod(world, s, skill);
         const roll = d20(s);
         const total = roll + mod;
@@ -647,7 +777,8 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         // "roll 7 vs DC 10 lost, so ties can't really win"), not the total —
         // spelling the rule out as "(DC+ succeeds)", reusing the DC number
         // already in the line, states the same >= rule without a second,
-        // mistranslatable frame.
+        // mistranslatable frame. `dc` here is already escalated, so this line
+        // and oddsHint's preview of the same attempt never quote two numbers.
         // Only spelled out when more than one thing stacks into `mod` (base
         // plus at least one perk) — a plain attribute-only modifier needs no
         // breakdown, and most checks stay exactly as short as before.
@@ -663,7 +794,12 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         // "try again?" benefits from knowing the attempt nearly landed,
         // distinct from a wide miss that says nothing more.
         if (!ok && dc - total <= 2) events.push(NEAR_MISS_CUES[(roll + s.turn) % NEAR_MISS_CUES.length]!);
-        applyFx(world, s, ok ? okFx : failFx, events);
+        // Only a FAILURE raises the next attempt's DC — a success never
+        // resets it either, so a check retried again later (a non-once
+        // action a player returns to) keeps counting from its full history,
+        // not just its most recent streak.
+        if (!ok && sourceId) s.checkAttempts[sourceId] = (s.checkAttempts[sourceId] ?? 0) + 1;
+        applyFx(world, s, ok ? okFx : failFx, events, sourceId);
         break;
       }
       case "xp":
@@ -677,7 +813,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[]): void {
         // The roll comes from the state's cursor, so a trace replays it exactly.
         const [, pct, okFx, failFx] = fx;
         const roll = d100(s);
-        applyFx(world, s, roll <= pct ? okFx : failFx, events);
+        applyFx(world, s, roll <= pct ? okFx : failFx, events, sourceId);
         break;
       }
       case "party": {
@@ -757,8 +893,11 @@ function enterRoom(world: World, s: State, roomId: string, events: string[]): vo
   if (!room) return;
   const first = !s.visited.includes(roomId);
   if (first) s.visited.push(roomId);
-  if (first && room.onEnterOnce) applyFx(world, s, room.onEnterOnce, events);
-  if (room.onEnter) applyFx(world, s, room.onEnter, events);
+  // keyed by room id (distinct keys: onEnterOnce fires at most once ever, so
+  // its own check — if it ever authors one — can never actually escalate;
+  // onEnter is the repeatable one a player could retry by walking out and in)
+  if (first && room.onEnterOnce) applyFx(world, s, room.onEnterOnce, events, `enterOnce:${roomId}`);
+  if (room.onEnter) applyFx(world, s, room.onEnter, events, `enter:${roomId}`);
 }
 
 /**
@@ -807,6 +946,10 @@ function partyRemarks(world: World, s: State, events: string[]): void {
   if (!win) return;
   s.flags[`remarked_${win.id}_${win.r.id}`] = true;
   events.push(speaks(win.def.name, win.r.say));
+  // no sourceId: a remark is spoken once ever (the flag just above), so a
+  // check inside its fx could never be retried anyway — escalation would
+  // have nothing to key correctly to, and this stays consistent with every
+  // other applyFx call this file leaves unkeyed on purpose (see checkSourceId)
   if (win.r.fx) applyFx(world, s, win.r.fx, events);
   // a remark that opens a quarrel between two companions says where the
   // answer is: the sides and the settling live in their conversations
@@ -935,7 +1078,10 @@ function harmNpc(world: World, s: State, npcId: string, n: number, events: strin
   }
   if (after <= 0) {
     events.push(`${TheName(def.name)} is destroyed.`);
-    if (def.onDeath) applyFx(world, s, def.onDeath, events);
+    // keyed by npc id; an npc dies at most once, so a check inside onDeath
+    // (none exist today) could never actually retry, but is keyed anyway
+    // for consistency with attack's own onDeath call in step()
+    if (def.onDeath) applyFx(world, s, def.onDeath, events, `death:${npcId}`);
   }
 }
 
@@ -1050,6 +1196,9 @@ function tickClock(world: World, s: State, events: string[]): void {
     if (entry.once && s.flags[`clocked_${entry.id}`]) continue;
     if (!condsOk(world, s, entry.if)) continue;
     if (entry.once) s.flags[`clocked_${entry.id}`] = true;
+    // no sourceId: the realm's own turn, not a menu choice a player retries —
+    // a check here (none exist today) would escalate against the world's
+    // clock, which is not what "you tried this and it got harder" means
     applyFx(world, s, entry.fx, events);
     break; // at most one clock entry fires per turn, whatever else was eligible
   }
@@ -1079,6 +1228,7 @@ export function newState(world: World, seed: number): StepOut {
     npcRoom: Object.fromEntries(Object.entries(world.npcs).map(([id, d]) => [id, d.room])),
     conds: {},
     npcConds: {},
+    checkAttempts: {},
     visited: [],
     party: [],
     talking: null,
@@ -1131,12 +1281,15 @@ function visibleTopics(world: World, s: State, npc: string): TopicDef[] {
  * abilities in the first place.
  */
 function checkHereNow(world: World, s: State, skill: string, min: number): boolean {
-  const firstIsHardCheck = (fx: Fx[] | undefined) =>
-    !!fx?.[0] && fx[0][0] === "check" && fx[0][1] === skill && fx[0][2] >= min;
+  // dc >= min is asked of the check as it actually stands right now — a prior
+  // failed attempt already escalated it, and a check hard enough only because
+  // of that is still, honestly, hard enough
+  const firstIsHardCheck = (fx: Fx[] | undefined, sourceId: string | undefined) =>
+    !!fx?.[0] && fx[0][0] === "check" && fx[0][1] === skill && escalatedDc(s, sourceId, fx[0][2]) >= min;
   for (const a of world.rooms[s.room]?.actions ?? [])
-    if (customVisible(world, s, a) && firstIsHardCheck(a.fx)) return true;
+    if (customVisible(world, s, a) && firstIsHardCheck(a.fx, `act:${a.id}`)) return true;
   for (const npc of npcsHere(world, s))
-    for (const t of visibleTopics(world, s, npc)) if (firstIsHardCheck(t.fx)) return true;
+    for (const t of visibleTopics(world, s, npc)) if (firstIsHardCheck(t.fx, `tp:${npc}:${t.id}`)) return true;
   return false;
 }
 
@@ -1279,6 +1432,24 @@ function costsStandingHint(world: World, missFx: Fx[] | undefined, hitFx?: Fx[] 
   if (missOnly.length) parts.push(`a miss costs standing${withList(missOnly)}`);
   if (hitOnly.length) parts.push(`a hit costs standing${withList(hitOnly)}`);
   return parts.length ? parts.join("; ") : null;
+}
+
+/**
+ * How much of an ability pool an ability's own `fx` actually spends: its own
+ * `["addvar", pool, -n]` where `pool` names a `world.resources` entry.
+ * Nothing in the DSL declares "this is the cost" any more explicitly than
+ * that — the same two places (this, and the matching `if` gate) `status`
+ * already reads a pool's owner off (see format.ts's renderStatus) — so this
+ * reads it off the same spot rather than inventing a field only oddsHint
+ * would use. Playtest finding: an ability's menu line said what it did but
+ * never what spending it cost, so a Warden learned a pool was empty from an
+ * option's absence, not from being told.
+ */
+function abilityCost(world: World, fx: Fx[] | undefined): { pool: string; n: number } | undefined {
+  for (const f of fx ?? []) {
+    if (f[0] === "addvar" && f[2] < 0 && world.resources && f[1] in world.resources) return { pool: f[1], n: -f[2] };
+  }
+  return undefined;
 }
 
 /** True when an effect list can end the game somewhere inside it. */
@@ -1616,11 +1787,18 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   const chk = fx?.[0];
   const parts: string[] = [];
   if (chk && chk[0] === "check") {
+    // the DC quoted here is the one applyFx's `check` case will actually roll
+    // against (escalatedDc, keyed the same way via checkSourceId) — a prior
+    // failed attempt on this exact action/topic/ability/use already raised
+    // it, and the preview has to say so before the turn is spent, or it is
+    // the very promise-the-roll-then-breaks bug this file has paid for once
+    // (see oddsHint's own comment above and applyFx's `check` case)
+    const dc = escalatedDc(s, checkSourceId(a), chk[2]);
     // all three numbers, so neither frame can be misread: the DC the total must
     // reach, the modifier, and the die roll that gets there
     const mod = checkMod(world, s, chk[1]);
-    const need = Math.max(1, chk[2] - mod);
-    parts.push(mod ? `DC ${chk[2]}, ${mod > 0 ? "+" : ""}${mod} ${chk[1]}: roll ${need}+ on the die` : `DC ${chk[2]}, ${chk[1]}: roll ${need}+ on the die`);
+    const need = Math.max(1, dc - mod);
+    parts.push(mod ? `DC ${dc}, ${mod > 0 ? "+" : ""}${mod} ${chk[1]}: roll ${need}+ on the die` : `DC ${dc}, ${chk[1]}: roll ${need}+ on the die`);
     // a miss that costs standing or regard is said before the die is thrown, like "fail costs 1hp" — and with whom;
     // so is a hit that costs it, so the warning never reads as "only a miss"
     const cost = costsStandingHint(world, chk[4], chk[3]);
@@ -1639,6 +1817,13 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   if (!(chk && chk[0] === "check")) {
     const costs = outrightCosts(world, s, fx ?? []);
     if (costs.length) parts.push(`costs standing with ${costs.join(" and ")}`);
+  }
+  // an ability that spends a resource pool says so before it is pressed —
+  // "free" (below) is the turn, not the price, so an ability can read both
+  // "free" and this in the same line: no turn, but a real point of the pool
+  if (a.kind === "ability") {
+    const cost = abilityCost(world, fx);
+    if (cost) parts.push(`${s.vars[cost.pool] ?? 0} of ${world.resources![cost.pool]} left`);
   }
   if (who) parts.unshift(who);
   if (isFree) parts.unshift("free");
@@ -1705,7 +1890,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
     }
     case "use": {
       const u = useDefFor(world, s, action.item);
-      if (u) applyFx(world, s, u.fx, events);
+      if (u) applyFx(world, s, u.fx, events, checkSourceId(action));
       else events.push("Nothing happens.");
       break;
     }
@@ -1714,7 +1899,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
       if (!t) break;
       if (t.once) s.flags[`said_${action.npc}_${t.id}`] = true;
       events.push(speaks(world.npcs[action.npc]?.name ?? action.npc, t.say));
-      if (t.fx) applyFx(world, s, t.fx, events);
+      if (t.fx) applyFx(world, s, t.fx, events, checkSourceId(action));
       // a conversation closes on its own when the line says so, or when the
       // npc has nothing left to say / is no longer here (inTalkMode covers
       // the latter two — clearing here just keeps the state tidy)
@@ -1802,7 +1987,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
       }
       if ((s.npcHp[action.npc] ?? 0) <= 0) {
         events.push(`${TheName(def.name)} is destroyed.`);
-        if (def.onDeath) applyFx(world, s, def.onDeath, events);
+        if (def.onDeath) applyFx(world, s, def.onDeath, events, `death:${action.npc}`);
       } else if (def.atk) {
         npcStrike(world, s, action.npc, events, "strikes back");
         attacked = action.npc;
@@ -1813,7 +1998,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
       const a = world.rooms[action.room]?.actions?.find((x) => x.id === action.id);
       if (!a) break;
       if (a.once) s.flags[`did_${a.id}`] = true;
-      applyFx(world, s, a.fx, events);
+      applyFx(world, s, a.fx, events, checkSourceId(action));
       applyRest(world, s, a.fx, events);
       break;
     }
@@ -1821,7 +2006,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
       const a = world.abilities?.[action.id];
       if (!a) break;
       if (a.once) s.flags[`did_${action.id}`] = true;
-      applyFx(world, s, a.fx, events);
+      applyFx(world, s, a.fx, events, checkSourceId(action));
       applyRest(world, s, a.fx, events);
       break;
     }
