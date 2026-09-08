@@ -1882,6 +1882,26 @@ export function menuNumbers(world: World, s: State): number[] {
 }
 
 /**
+ * The action a menu number names — the inverse of `menuNumbers`.
+ *
+ * A number is a place in the room's whole option list, so it means the same
+ * thing on every page: the one a player read a screen ago still works after
+ * they turn the page. Two wave-six players hit "No action N" doing exactly
+ * that, because the front end was resolving numbers against the page in front
+ * of them instead of against the list they are numbered from. `step` has always
+ * judged against `allActions`, every page of it, so this only says out loud
+ * what the engine already allowed.
+ *
+ * A conversation and a travel list page by their own older rules and number
+ * from 1 per page, so `allActions` holds only the page showing there and a
+ * number off it correctly resolves to nothing.
+ */
+export function actionByNumber(world: World, s: State, n: number): Action | undefined {
+  if (!Number.isInteger(n) || n < 1) return undefined;
+  return allActions(world, s)[n - 1];
+}
+
+/**
  * Everything legal here, whichever page is showing — every option the room
  * offers plus, when it has more than one page, the way to the next. This is
  * what `step` and `actionByLabel` judge an action against: turning a page
@@ -2688,6 +2708,16 @@ export function step(world: World, prev: State, action: Action): StepOut {
   if (!s.ended && !s.flags["_seenTravel"] && travelAvailable(world, s)) {
     setFlag(s, "_seenTravel");
     events.push("(You know more than one place now: 'travel to a known place' moves you between the landmarks you have seen, not every room, in one turn.)");
+  }
+  // Once, the first time a room has more options than fit: two wave-six players
+  // read the page marker and still took "more in this room" for a submenu that
+  // had swapped their options away — "reads at first like the extra options
+  // vanished rather than being paginated" — and one of them then hit "No action
+  // N" typing a number off the page it was written on. The numbers really do
+  // hold across pages, which is the half worth saying out loud.
+  if (!s.ended && !s.flags["_seenPaging"] && roomPageOf(world, s)) {
+    setFlag(s, "_seenPaging");
+    events.push("(More options here than fit one screen: 'more in this room' turns the page, and a number you read on either page still works.)");
   }
   // Once per room that holds an ending: a player three hollows in walked to the
   // seat and ended the tale on the next action with four threads still open.

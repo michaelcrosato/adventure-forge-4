@@ -13,7 +13,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
-import { inClassPhase, inPerkPickPhase, inTalkMode, newState, receipt, step } from "./engine.ts";
+import { actionByNumber, inClassPhase, inPerkPickPhase, inTalkMode, newState, receipt, step } from "./engine.ts";
 import { render, renderIntro, renderStatus } from "./format.ts";
 import { loadWorld, validateWorld } from "./validate.ts";
 import type { Action, State, Trace, World } from "./types.ts";
@@ -132,10 +132,20 @@ server.registerTool(
     const world = sess.world;
     if (sess.state.ended)
       return text(`Game over.\n${render(world, sess.state, []).text}`);
-    // the numbers a menu shows are places in the room's whole option list, not
+    // The numbers a menu shows are places in the room's whole option list, not
     // positions in this page's array (see engine's menuNumbers), so a pick is
-    // looked up by the number the player actually read
-    const action = sess.actions[sess.numbers.indexOf(a)];
+    // looked up by the number the player actually read.
+    //
+    // And a number the *current page* does not show is still that number: two
+    // wave-six players hit "No action N" by typing a number they had read a
+    // screen earlier, on the page it was written on. The engine has always
+    // agreed — `step` judges against `allActions`, every page of it, because
+    // turning a page changes what you can see and never what you could do — so
+    // the second lookup here is not a widening, it is this layer catching up.
+    // (In a conversation or a travel list, which page by their own older rules
+    // and number from 1, `allActions` holds only the page showing, so a number
+    // off that page falls through to undefined and still says "No action".)
+    const action = sess.actions[sess.numbers.indexOf(a)] ?? actionByNumber(world, sess.state, a);
     if (!action)
       return text(`No action ${a}. Menu:\n${view(sess, [], false)}`);
     const before = sess.state.room;

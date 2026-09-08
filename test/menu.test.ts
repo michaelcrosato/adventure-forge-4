@@ -12,7 +12,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionLabel, allActions, legalActions, menuLoad, menuNumbers, newState, step } from "../src/engine.ts";
+import { actionByNumber, actionLabel, allActions, legalActions, menuLoad, menuNumbers, newState, step } from "../src/engine.ts";
 import { render } from "../src/format.ts";
 import { MENU_CAP } from "../src/types.ts";
 import type { Action, State, World } from "../src/types.ts";
@@ -221,4 +221,49 @@ test("an option keeps its number on whatever page it is showing", () => {
   // page two picks up where page one stopped, rather than starting again at 1
   assert.equal(pages[0]!.get("thing 8"), 11);
   assert.equal(pages[1]!.get("thing 9"), 12);
+});
+
+/**
+ * The other half of numbering off the whole list: a number keeps working after
+ * the page turns. Two wave-six players read a number, turned the page, typed
+ * it, and got "No action N" — the engine had always allowed it (`step` judges
+ * against `allActions`), and only the number-to-action lookup in front of it
+ * was resolving against the page instead of the list.
+ */
+test("a number read on one page still names the same thing from another", () => {
+  const world = crowded(24);
+  const numbered = (s: State) =>
+    new Map(legalActions(world, s).map((a, i) => [actionLabel(world, a, s), menuNumbers(world, s)[i]!]));
+  let s: State = newState(world, 1).state;
+  const onPageOne = numbered(s);
+  const thing0 = onPageOne.get("thing 0")!;
+  s = step(world, s, pick(world, s, "more in this room")).state;
+  const shown = numbered(s);
+  assert.ok(!shown.has("thing 0"), "sanity: page two is not showing it");
+
+  const a = actionByNumber(world, s, thing0);
+  assert.ok(a, `number ${thing0} still names something from page two`);
+  assert.equal(actionLabel(world, a!, s), "thing 0");
+  const out = step(world, s, a!);
+  assert.match(out.events.join(" "), /thing 0/, "and pressing it does the thing, not an illegal-action line");
+
+  // a number past the end is still nothing, and so is a nonsense one
+  assert.equal(actionByNumber(world, s, allActions(world, s).length + 1), undefined);
+  assert.equal(actionByNumber(world, s, 0), undefined);
+  assert.equal(actionByNumber(world, s, -3), undefined);
+  assert.equal(actionByNumber(world, s, 1.5), undefined);
+});
+
+test("the first crowded room says once that the numbers hold across its pages", () => {
+  const world = crowded(24);
+  const first = step(world, newState(world, 1).state, pick(world, newState(world, 1).state, "go north"));
+  assert.ok(
+    !first.events.some((e) => e.includes("turns the page")),
+    "the yard is not crowded, so there is nothing to explain there",
+  );
+  // walking back into the crowded hall is where it lands, and only the once
+  const back = step(world, first.state, pick(world, first.state, "go north"));
+  assert.ok(back.events.some((e) => e.includes("turns the page")), back.events.join(" | "));
+  const again = step(world, back.state, pick(world, back.state, "more in this room"));
+  assert.ok(!again.events.some((e) => e.includes("turns the page")), "said once, not on every page turn");
 });
