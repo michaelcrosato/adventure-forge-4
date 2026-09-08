@@ -95,16 +95,25 @@ player's action and after the world's aggressive pass:
   absent or one sentence, never a digest.
 - Its `fx` are ordinary effects, so the march can `say`, `set`, `addvar`,
   `npcgo`, `goto` and `if` like anything else. No new effect vocabulary.
-- **It shipped root-only, and that was my mistake.** A clock entry is
+- **It shipped root-only, and that was my mistake — fixed.** A clock entry is
   per-place content — like `epilogue`, `statusPaths`, `gen` and `stamps`, all
   of which concatenate from part files — not a root fact like `maxScore`.
-  Root-only means one author can schedule events in an eighteen-region realm,
-  which blocks the clock's most obvious first use: four holds promise in
-  prose a bargain that comes due (Mootcombe's feast-day pressing, the
+  Root-only meant one author could schedule events in an eighteen-region
+  realm, which blocked the clock's most obvious first use: four holds promise
+  in prose a bargain that comes due (Mootcombe's feast-day pressing, the
   Hearthlands' common store, the Kingswood's one night a year, the
   Shieldings' unploughed field) and each wants its own entry written by
-  whoever owns that hold. It should concatenate, with the duplicate-id check
-  widened to see across parts.
+  whoever owns that hold. `clock` now concatenates in file order, with the
+  duplicate-id check moved into `loadWorld` so a collision names the file that
+  got there first — the courtesy a room or an npc already got.
+- **File order is priority order, and that is the new thing to get right.**
+  At most one entry fires a turn, so an entry with a broad `if` starves every
+  entry behind it in the merge. A region's entry must be gated on that
+  region's own flags and vars, so it is only ever eligible when the realm is
+  actually looking at that hold. Nothing in the validator can catch a hog —
+  a broad `if` is legal — so it is an authoring rule (docs/authoring.md §13),
+  and the first thing to check when a scheduled event mysteriously never
+  fires is what is sitting in front of it.
 - Determinism is untouched: a pure function of state, and any chance goes
   through the existing seeded `chance` op.
 

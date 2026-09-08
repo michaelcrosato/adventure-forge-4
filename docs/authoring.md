@@ -576,9 +576,16 @@ have ticked:
 - It runs on spent turns only: a look, a menu page, a wide berth given ticks
   nothing, exactly like conditions (§8). If the game has already ended this
   turn — a fight, a trap, a condition's `hpPerTurn` — the clock does not run.
-- `world.clock` is root-only, like `walkthrough` and `maxScore`: a part file
-  carrying it is a load error (§1). Read the turn counter it is checked
-  against with `["turn", op, n]` (§3) in any `if`, anywhere — not just here.
+- `world.clock` **concatenates from the part files**, like `epilogue` and
+  `stamps` (§1): a scheduled event belongs to a place, and a region author owns
+  their own hold's march the way they own its epilogue lines. Entries land in
+  file order, the root's first. Because the engine fires **at most one a turn**,
+  file order is also priority order: an entry with a broad `if` starves every
+  entry behind it. Gate yours on your own region's flags and vars, so it is
+  eligible only when the realm is actually looking at you. An id another part
+  already used is a load error naming the file that got there first.
+- Read the turn counter the clock is checked against with `["turn", op, n]`
+  (§3) in any `if`, anywhere — not just here.
 
 ## 14. Abilities and resources
 

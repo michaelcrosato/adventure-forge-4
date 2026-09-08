@@ -61,9 +61,15 @@ export function worldFiles(path: string): string[] {
 
 // Which top-level fields a part file may carry. A part is a slice of one world:
 // it adds records and list entries, never the world's identity or its proof.
-const ROOT_ONLY = new Set(["id", "title", "intro", "objectives", "start", "hp", "maxScore", "walkthrough", "progress", "include", "clock", "abilities", "resources"]);
+const ROOT_ONLY = new Set(["id", "title", "intro", "objectives", "start", "hp", "maxScore", "walkthrough", "progress", "include", "abilities", "resources"]);
 const RECORD_FIELDS = new Set(["rooms", "items", "npcs", "classes", "perks", "regions", "quests", "proofs", "templates", "skills", "factions", "conditions"]);
-const LIST_FIELDS = new Set(["gen", "stamps", "epilogue", "statusTracks", "statusPaths", "hud"]);
+// `clock` is here, not in ROOT_ONLY, because a scheduled event is content that
+// belongs to a place: the Ironbound's march is the Ironbound author's, the same
+// way their epilogue lines are. It was root-only for one commit, which would
+// have made one author the owner of every scheduled event in an eighteen-region
+// realm. Entries concatenate in file order and the engine fires at most one a
+// turn, so file order is also priority order — see docs/authoring.md §13.
+const LIST_FIELDS = new Set(["gen", "stamps", "epilogue", "statusTracks", "statusPaths", "hud", "clock"]);
 
 /**
  * Load a world: read the root file, merge every included part (records must
@@ -75,6 +81,10 @@ export function loadWorld(path: string): World {
   const files = worldFiles(path);
   const root = JSON.parse(readFileSync(files[0]!, "utf8")) as World & Record<string, unknown>;
   const owner = new Map<string, string>(); // "rooms/gate" -> file that defined it
+  // a clock entry is a list entry but it carries an id, so a collision across
+  // parts has to name the file that got there first; seed the root's own
+  for (const e of (root.clock ?? []) as { id?: unknown }[])
+    if (e && typeof e.id === "string") owner.set(`clock/${e.id}`, "the root file");
   for (const f of files.slice(1)) {
     const name = relative(dirname(path), f);
     const part = JSON.parse(readFileSync(f, "utf8")) as Record<string, unknown>;
@@ -90,6 +100,13 @@ export function loadWorld(path: string): World {
         }
       } else if (LIST_FIELDS.has(k)) {
         if (!Array.isArray(v)) throw new Error(`${name}: "${k}" must be an array`);
+        if (k === "clock")
+          for (const e of v as { id?: unknown }[]) {
+            if (!e || typeof e.id !== "string") continue;
+            const key = `clock/${e.id}`;
+            if (owner.has(key)) throw new Error(`${name}: clock id "${e.id}" already defined in ${owner.get(key)}`);
+            owner.set(key, name);
+          }
         (root[k] as unknown[] | undefined) ??= [];
         (root[k] as unknown[]).push(...v);
       } else {
@@ -293,11 +310,13 @@ export function validateWorld(world: World): string[] {
     if (typeof n !== "number" || !(n > 0)) err(`resources ${v}: must be a positive number, got ${String(n)}`);
 
   // ---------- clock ----------
-  // Root-only (enforced above via ROOT_ONLY), so this is just one list in one
-  // file: ids need to be unique against each other, not merged across parts
-  // like a RECORD_FIELDS catalog would be. `if` and `fx` run through the same
-  // checkConds/checkFx as everywhere else — an unknown room in a `goto`, an
-  // unknown npc in `npcgo`/`harm`, an unknown condition — no special-casing.
+  // Concatenated from the parts in file order (LIST_FIELDS), so by the time this
+  // runs it is one list and ids are already unique — loadWorld refuses a
+  // collision and names the file that got there first. This is the second line
+  // of defence, for a world assembled in memory rather than loaded. `if` and
+  // `fx` run through the same checkConds/checkFx as everywhere else — an unknown
+  // room in a `goto`, an unknown npc in `npcgo`/`harm`, an unknown condition —
+  // no special-casing.
   {
     const seen = new Set<string>();
     for (const [i, entry] of (world.clock ?? []).entries()) {

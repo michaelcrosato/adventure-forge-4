@@ -1,5 +1,5 @@
 /**
- * The realm's own turn: `world.clock`, a root-only list of scheduled effects
+ * The realm's own turn: `world.clock`, a list of scheduled effects
  * evaluated once per spent turn, plus the read-only `["turn", op, n]`
  * condition it is checked against. See docs/authoring.md §13 "The world
  * clock" and the design doc docs/superpowers/specs/2026-09-08-the-realm-moves.md.
@@ -262,7 +262,7 @@ test("validator: a duplicate clock id is rejected", () => {
   assert.ok(errs.some((e) => e.includes("clock: duplicate id same")), errs.join("\n"));
 });
 
-test("a part file carrying `clock` is a load error, like any other root-only field", () => {
+test("a part file's clock entries concatenate into the root's, in file order", () => {
   const rootPath = fileURLToPath(new URL("./fixtures/.tmp_clock_include_root.json", import.meta.url));
   const partPath = fileURLToPath(new URL("./fixtures/.tmp_clock_include_part.json", import.meta.url));
   const root = {
@@ -270,14 +270,50 @@ test("a part file carrying `clock` is a load error, like any other root-only fie
     include: [".tmp_clock_include_part.json"],
     rooms: { a: { name: "A", desc: "A.", actions: [{ id: "win", label: "win", fx: [["score", 5], ["end", "win", "done", "Done."]] }] } },
     items: {}, npcs: {}, walkthrough: ["win"],
+    clock: [{ id: "root_one", fx: [["say", "root"]] }],
   };
-  const part = { clock: [{ id: "x", fx: [["say", "hi"]] }] };
+  const part = { clock: [{ id: "part_one", fx: [["say", "part"]] }] };
   writeFileSync(rootPath, JSON.stringify(root));
   writeFileSync(partPath, JSON.stringify(part));
   try {
-    assert.throws(() => loadWorld(rootPath), /"clock" belongs in the root world file/);
+    const w = loadWorld(rootPath);
+    // the root's own entries come first, so file order is also the priority
+    // order the engine's one-a-turn rule reads
+    assert.deepEqual((w.clock ?? []).map((e) => e.id), ["root_one", "part_one"]);
+    assert.deepEqual(validateWorld(w), []);
   } finally {
     unlinkSync(rootPath);
     unlinkSync(partPath);
+  }
+});
+
+test("a clock id a part reuses is a load error naming the file that got there first", () => {
+  const rootPath = fileURLToPath(new URL("./fixtures/.tmp_clock_dup_root.json", import.meta.url));
+  const partPath = fileURLToPath(new URL("./fixtures/.tmp_clock_dup_part.json", import.meta.url));
+  const otherPath = fileURLToPath(new URL("./fixtures/.tmp_clock_dup_other.json", import.meta.url));
+  const base = {
+    id: "cr", title: "CR", intro: "x", start: "a", hp: 10, maxScore: 5,
+    rooms: { a: { name: "A", desc: "A.", actions: [{ id: "win", label: "win", fx: [["score", 5], ["end", "win", "done", "Done."]] }] } },
+    items: {}, npcs: {}, walkthrough: ["win"],
+  };
+  // a part colliding with the root
+  writeFileSync(rootPath, JSON.stringify({ ...base, include: [".tmp_clock_dup_part.json"], clock: [{ id: "march", fx: [["say", "root"]] }] }));
+  writeFileSync(partPath, JSON.stringify({ clock: [{ id: "march", fx: [["say", "part"]] }] }));
+  try {
+    assert.throws(() => loadWorld(rootPath), /clock id "march" already defined in the root file/);
+  } finally {
+    unlinkSync(rootPath);
+    unlinkSync(partPath);
+  }
+  // and two parts colliding with each other, where the message has to name a part
+  writeFileSync(rootPath, JSON.stringify({ ...base, include: [".tmp_clock_dup_part.json", ".tmp_clock_dup_other.json"] }));
+  writeFileSync(partPath, JSON.stringify({ clock: [{ id: "march", fx: [["say", "one"]] }] }));
+  writeFileSync(otherPath, JSON.stringify({ clock: [{ id: "march", fx: [["say", "two"]] }] }));
+  try {
+    assert.throws(() => loadWorld(rootPath), /clock id "march" already defined in \.tmp_clock_dup_part\.json/);
+  } finally {
+    unlinkSync(rootPath);
+    unlinkSync(partPath);
+    unlinkSync(otherPath);
   }
 });
