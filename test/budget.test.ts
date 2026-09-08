@@ -51,10 +51,14 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   "reach:reach_at_rest#warden": { avg: 447, max: 1239 },
   "reach:regent_deposed#warden_crown": { avg: 454, max: 1142 },
   // The full-party road: four companions travelling, which is what makes it
-  // the most expensive proof in the realm by a wide margin — 506 against the
-  // next worst 482, and a 1,489-character screen at mc_north_road. That cost
-  // is the party's, not this route's, and it is tracked as its own defect.
-  "reach:reach_at_rest#devoted": { avg: 507, max: 1489 },
+  // the most expensive proof in the realm — and the ratchet turned down twice
+  // on the day it was written. It arrived at 506 average and a 1,489-character
+  // screen at mc_north_road; dropping the "with you" line where the company
+  // entry already names everyone, and giving each event its own line, took it
+  // to 481 and 1,448. What is left is a hold's arrival text plus all four
+  // companions answering it in the same breath, which is content worth having
+  // and a wall of text as delivered — tracked as its own defect.
+  "reach:reach_at_rest#devoted": { avg: 481, max: 1448 },
 };
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));

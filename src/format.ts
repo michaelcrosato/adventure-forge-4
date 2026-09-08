@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomPageOf, roomView , wildBearing} from "./engine.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, companyHere, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomPageOf, roomView , wildBearing} from "./engine.ts";
 import { ATTRS, EPILOGUE_CAP, EPILOGUE_CHARS } from "./types.ts";
 import type { Action, Cond, State, World } from "./types.ts";
 
@@ -117,7 +117,13 @@ export function render(
   lines.push(
     `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} t${s.turn}${hud}${conds}${page}`,
   );
-  if (events.length) lines.push(`[${events.join(" ")}]`);
+  // One event per line inside the one bracket. Arriving in a hold with a full
+  // party prints the hold's own arrival text and then each companion's reaction
+  // to it — good content, and it was being run together into a single
+  // 1,043-character bracket at the Cairn-Track, the widest screen on any proven
+  // road. A newline where a space was costs nothing and gives each voice its
+  // own line; with one event it reads exactly as it did.
+  if (events.length) lines.push(`[${events.join("\n")}]`);
   if (world.progress) {
     const v = s.vars[world.progress.var] ?? 0;
     lines.push(`${world.progress.label}: ${v}/${world.progress.max}`);
@@ -191,8 +197,21 @@ export function render(
         return condTag ? `${d.name} is here (${condTag})${tail}` : `${d.name} is here${tail}`;
       });
     if (npcs.length) lines.push(npcs.join("; "));
-    const party = s.party.map((id) => world.npcs[id]?.name ?? id);
-    if (party.length) lines.push(`with you: ${party.join(", ")}`);
+    // Only the companions the menu does not already name as company. With two
+    // or more to speak with, "speak with the company (Vell, Tamsin, Brother
+    // Osk, Lys)" is right there on the menu and this line repeated it word for
+    // word — forty characters on every screen of the full-party road, to say
+    // what the screen already said.
+    //
+    // Below two it stays, all of it. A lone "talk to Lys" does not say she is
+    // travelling with you: an npc merely standing in the room reads the same
+    // way, and the difference is the whole point of the line. Only the word
+    // "company" makes it unambiguous, and that only appears at two or more. A
+    // companion with nothing to say is on no menu entry at all and always
+    // belongs here.
+    const named = new Set(companyHere(world, s));
+    const quiet = s.party.filter((id) => !named.has(id) || named.size < 2);
+    if (quiet.length) lines.push(`with you: ${quiet.map((id) => world.npcs[id]?.name ?? id).join(", ")}`);
   }
 
   // Deep in a generated wilderness, where you stand counted from the nearest
