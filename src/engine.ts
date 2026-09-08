@@ -750,6 +750,28 @@ function travelRegions(world: World, s: State): string[] {
 }
 
 /** The travel menu: flat destinations when they fit, else regions first, then one region's destinations. */
+/**
+ * Rooms of one region the player has stood in and is not standing in now, in
+ * the order they were seen.
+ *
+ * I tried gating this on "the region is at least six rooms mapped", so the
+ * extra entries would only appear where the complaint actually bites. It made
+ * no difference to the cost — the proven road maps that much of the regions it
+ * travels inside — and tuning the threshold until the budget stopped noticing
+ * would be narrowing a gate to hide a price, which is the thing docs/roadmap.md
+ * §6 warns about in as many words. So it is ungated, and the price is paid
+ * where prices are recorded.
+ */
+function localTravel(world: World, s: State, region: string): string[] {
+  return s.visited.filter((id) => id !== s.room && (world.rooms[id]?.region ?? "") === region);
+}
+
+/**
+ * The name a region is offered under. `world.regions` names them; a region with
+ * no entry falls back to its code, which is at least unambiguous.
+ */
+const regionName = (world: World, region: string): string => world.regions?.[region]?.name ?? region;
+
 function travelActions(world: World, s: State): Action[] {
   const known = knownLandmarks(world, s);
   let list: Action[];
@@ -758,8 +780,23 @@ function travelActions(world: World, s: State): Action[] {
       known.length <= MENU_CAP - 1
         ? known.map((id): Action => ({ kind: "travelto", room: id }))
         : travelRegions(world, s).map((r): Action => ({ kind: "travelregion", region: r }));
+    // and the way back into the region you are standing in, when you have
+    // walked more of it than its landmarks — the short list above cannot name
+    // thirty mapped cells, and it should not have to
+    const here = world.rooms[s.room]?.region ?? "";
+    if (here && !list.some((a) => a.kind === "travelregion" && a.region === here)) {
+      if (localTravel(world, s, here).some((id) => !world.rooms[id]?.landmark)) list.push({ kind: "travelregion", region: here });
+    }
   } else {
-    list = known.filter((id) => (world.rooms[id]?.region ?? "") === s.travelMenu).map((id): Action => ({ kind: "travelto", room: id }));
+    // Every room of this region the player has stood in, not only its
+    // landmarks. Two playtest reports, two waves apart: "backtracking through
+    // multi-room dungeons/wilderness required long manual step-by-step
+    // retracing even after the area was fully mapped". Walking a wilderness
+    // the first time is the game; walking it the fourth time is not. Crossing
+    // the realm still goes landmark to landmark — you know the way to the mill
+    // road — but inside a region you have mapped, you can go back to anywhere
+    // you have been.
+    list = localTravel(world, s, s.travelMenu ?? "").map((id): Action => ({ kind: "travelto", room: id }));
   }
   // a list that has grown past the cap turns pages, like a long conversation:
   // "more places" (free, wrapping) and the way out stay on every page
@@ -777,8 +814,8 @@ function travelActions(world: World, s: State): Action[] {
 function travelMore(world: World, s: State): number {
   const known = knownLandmarks(world, s);
   const total = s.travelMenu === ""
-    ? (known.length <= MENU_CAP - 1 ? known.length : travelRegions(world, s).length)
-    : known.filter((id) => (world.rooms[id]?.region ?? "") === s.travelMenu).length;
+    ? travelActions(world, s).filter((a) => a.kind === "travelto" || a.kind === "travelregion").length
+    : localTravel(world, s, s.travelMenu ?? "").length;
   const shown = travelActions(world, s).filter((a) => a.kind === "travelto" || a.kind === "travelregion").length;
   return total - shown;
 }
@@ -2061,8 +2098,14 @@ export function actionLabel(world: World, a: Action, s?: State): string {
       return "travel to a known place";
     case "travelregion":
       return a.region ? `toward ${world.regions?.[a.region]?.name ?? a.region}` : "toward places elsewhere";
-    case "travelto":
-      return `to ${world.rooms[a.room]?.landmark ?? a.room}`;
+    case "travelto": {
+      // a landmark carries its own travel name; a plain room you have walked
+      // and can now walk back to is named by the room
+      const r = world.rooms[a.room];
+      // "to The Processional Gate" reads wrong after the preposition: a name
+      // carrying its own article lowercases it here, as theName does elsewhere
+      return `to ${(r?.landmark ?? r?.name ?? a.room).replace(/^The /, "the ")}`;
+    }
     case "traveldone":
       return s?.travelMenu ? "back" : "stay here";
     case "company":

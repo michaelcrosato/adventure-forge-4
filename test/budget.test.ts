@@ -40,6 +40,19 @@ const INTRO_CHARS_MAX = 1400;
  * every old one; an allowance per road means a route already over has to get
  * cheaper, and a route added later either meets the ceiling or says out loud
  * what it costs and why.
+ *
+ * Three of these averages were moved UP once, by 1 to 3 characters, and it is
+ * the only time: fast travel learned to carry a player back across a region
+ * they had already mapped, which two blind players asked for in two separate
+ * waves, and it costs 869 characters along the walkthrough. I looked for the
+ * money first — dropping the redundant "to " from every travel label would
+ * have paid for it and breaks all nine proofs, which name their travel steps
+ * by that label; gating the feature on how much of a region is mapped made no
+ * difference, and tuning that threshold until the budget stopped noticing
+ * would be hiding a price rather than paying it. So it is recorded here
+ * instead. The three roads were already over the real 450 and this made them
+ * 452->455, 480->483 and 478->480; the debt to the real bar is 5, 33 and 30
+ * characters, and it is still owed.
  */
 const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // Only the roads that are over, and only in the dimension they are over: an
@@ -47,9 +60,9 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // trade one for the other. crowned_hollow, hollow_reach and reach_at_rest
   // are not here at all — they meet the real bar, and hollow_reach came back
   // under it (1,042 to 982) when quest stage changes learned to collapse.
-  "reach:regent_deposed": { avg: 452, max: 1170 },
+  "reach:regent_deposed": { avg: 455, max: 1170 },
   "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1243 },
-  "reach:gray_crown": { avg: 480, max: 1125 },
+  "reach:gray_crown": { avg: 483, max: 1125 },
   "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1238 },
   "reach:regent_deposed#warden_crown": { avg: AVG_CHARS_MAX, max: 1141 },
   // The full-party road: four companions travelling, the most expensive proof
@@ -59,7 +72,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // line, and collapsing quest stage changes took it to 478 and 1,448. What is
   // left is a hold's arrival text plus all four companions answering it in the
   // same breath — content worth having, delivered as a wall, and its own task.
-  "reach:reach_at_rest#devoted": { avg: 478, max: 1448 },
+  "reach:reach_at_rest#devoted": { avg: 480, max: 1448 },
 };
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));
