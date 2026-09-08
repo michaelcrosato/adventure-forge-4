@@ -93,6 +93,45 @@ Do not edit any other file. Do not commit. Scratch files go under `/tmp`.
 - **Epilogue**: 4–8 lines (≤ 140 chars): hollow rested / burned / bargained /
   untouched, and one or two memorable side choices.
 
+## Density and consequence — the two the realm got wrong
+
+Both were measured across the eighteen finished regions on 2026-09-08. Neither
+is a matter of taste; both are the difference between a place and a corridor.
+
+**Every room owes the player a choice.** Not a good one, not a big one — but
+something other than which way to walk. Across the realm, 220 of 905 rooms
+(24%) offer no action, no one to speak to, and nothing to take. They are the
+best-written rooms in the game and they are corridors. The split is by
+authoring age, not design: the regions written last sit at 4-7% bare, the
+ones written first at 44-60%. **Your region ships under 15%.** Check it:
+
+```bash
+node --import tsx scripts/audit-shape.ts world/reach.json --prefix <code>
+```
+
+A wilderness cell earns its keep with a one-turn find, a check with a real
+price, a free beat that weighs what you are looking at, or a `variant` that
+reads a choice made elsewhere. Vary the shapes; do not put an npc on every
+cell. Emptiness can be the subject of a room without being its whole content:
+give the player something to *do about* what they are looking at.
+
+**A number you move must be read back at the height it can reach.** The realm
+moves faction standing in about twelve hundred places and reads it at six
+thresholds, all of them `>= 2`, so a player who has done fourteen things for
+the Barrow-Keepers meets the same doors as one who has done two. Every
+`addvar` you write is a promise. Before you hand in:
+
+```bash
+node --import tsx scripts/audit-choices.ts world/reach.json --prefix <code>
+```
+
+Every flag your region sets should be read somewhere else — the audit's
+"forks the world forgets" list is yours to keep empty. Every tally your
+region counts should be read at a height a player can actually reach, and at
+more than one height if it can be raised more than twice. A standing your
+region only ever raises, and never reads, is a line of text pretending to be
+a consequence.
+
 ## Budget (hard limits the tests enforce)
 
 `desc` ≤ 260 chars; `brief` ≤ 70; topic `say` ≤ 220; `label` ≤ 40; any
@@ -110,10 +149,15 @@ node --import tsx src/validate.ts world/reach.json      # must print ✓ for the
 node --import tsx src/crawl.ts world/reach.json         # must be clean; note rooms seen
 ```
 
+```bash
+node --import tsx scripts/lint-world.ts world/reach.json    # text budgets, per-region counts
+node --import tsx scripts/audit-shape.ts world/reach.json --prefix <code>    # bare rooms, the shape of the hold
+node --import tsx scripts/audit-choices.ts world/reach.json --prefix <code>  # what is read back, and what is forgotten
+```
+
 Run them from the repo root. Fix every line that names one of your ids. If
 an error names an id that is not yours and not in the contract, you have a
-typo. Then check your text budgets programmatically (write a small script)
-and play your region blind for a dozen turns:
+typo. Then play your region blind for a dozen turns:
 
 ```bash
 npm run turn -- new 5                                   # then act <id> <n>, look, status
