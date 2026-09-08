@@ -1,0 +1,40 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 571,
+  "receipt": "reach.4883.571.548.reach_at_rest.58df76c5",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "Distance/direction hints given in dialogue (e.g. 'three north of the head-frame, three east') often didn't match the actual room graph, making some sub-quest destinations (like the slag-hound's den in Cinderhall) hard to reach by dead reckoning.",
+      "where": "Iron Downs / Cinderhall overworld navigation"
+    },
+    {
+      "sev": "P2",
+      "what": "Paginated action menus (p1/2, p2/2) sometimes shifted the numbering of a just-used action (e.g. 'use dried herbs' silently consumed the item on a page where I meant to pick a different numbered option), leading to an accidental item use.",
+      "where": "The Kings' Rest — the Old Court, menu pagination"
+    }
+  ],
+  "confusions": [
+    "It was never fully clear whether resting a companion's personal grief-hold vs just doing the main hold's grief-rite were the same action or separate, until 'status' spelled it out — first-time players may under- or over-invest in companion quests without checking status.",
+    "The 'stands' unit of distance in NPC directions doesn't reliably equal one room-hop, so multi-step travel directions ('west five stands, then north twice') required trial-and-error rather than being followable literally."
+  ],
+  "suggestions": [
+    "Let 'travel to a known place' surface named sub-locations (like a specific NPC's camp) once discovered, not just major landmarks, to cut down on manual backtracking.",
+    "Make directional hints from NPCs consistently equal to room-hops so players can navigate by dead reckoning without guesswork.",
+    "Show a small 'X hollows rested / needs' counter in the main HUD line (not just in status) since it's the primary win-condition tracker.",
+    "On paginated menus, keep a used-up action's number from being silently reassigned to a different action on the same keypress context."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-08T22-19-56-722Z",
+  "seed": 4883,
+  "build": {
+    "rev": "d4b26bc",
+    "world": "fe284c1d"
+  },
+  "cost_usd": 23.71103660000001,
+  "verified": true
+}

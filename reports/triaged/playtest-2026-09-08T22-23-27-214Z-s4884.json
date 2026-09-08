@@ -1,0 +1,46 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 649,
+  "receipt": "reach.4884.649.625.reach_at_rest.22aa9a00",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "Navigation between wilderness rooms uses relative compass directions ('one north and two east of X') that don't always match actual movement outcomes 1:1 — occasionally moving a stated direction landed in a room whose own position description didn't line up with the prior room's stated bearings, requiring repeated 'get your bearings' calls to re-orient.",
+      "where": "Ashwood/Thornwold/Iron Downs wilderness grids"
+    },
+    {
+      "sev": "P2",
+      "what": "Failed skill checks (especially will checks) escalate the DC on retry ('raised 1 by failed tries') but the escalation combined with already-low will scores could create a losing spiral on companion-dispute diplomacy checks, several of which I failed twice in a row despite ~60% listed odds.",
+      "where": "companion dispute dialogues (Tamsin/Osk/Vell arguments)"
+    },
+    {
+      "sev": "P2",
+      "what": "The 'Column' consequence quest (Ironbound burning hollows) triggered from accepting the Regent's Commission/writ, but gave no actionable way to intervene before turns ran out — it just periodically announced more hollows burning as flavor text with no clear stop mechanism presented to the player.",
+      "where": "The Column side-quest, post-Wardmoor"
+    }
+  ],
+  "confusions": [
+    "It was never fully clear whether declining to promise the reeve about the barrow doors vs. getting the priest's blessing first was the 'correct' sequencing — both seemed to work fine in the end, but the game telegraphed real tension there that didn't end up mattering much.",
+    "The 'swear the oath yourself' warning at the Wardmoor oath-stone ('whoever swears it stands in it from then on') read as an irreversible/dangerous commitment but turned out to be just a rank-flavor status change; a clearer warning of actual mechanical stakes (or lack thereof) would help players decide without fear of a hidden softlock.",
+    "It was unclear how many of the 15 holds needed real attention vs. how much was intentionally leave-able; the status screen's 'a hold seen whole is forty to seventy turns' framing helped but I still wasn't sure if partial exploration of a hold (e.g. just its main hollow, skipping side content) counted fully toward 'settled.'"
+  ],
+  "suggestions": [
+    "Add a lightweight compass/minimap summary to 'get your bearings' so multi-step wilderness navigation is less trial-and-error.",
+    "Show a numeric percentage alongside 'roll N+ on the die' so players can gauge risk without doing mental math, especially for checks with stacking modifiers.",
+    "Give clearer in-fiction signposting for time-sensitive world-state consequences (like the Ironbound column) so players know whether/how they can intervene versus just being told about damage after the fact.",
+    "Consider flagging truly irreversible/character-altering choices (like binding oaths) more distinctly from ones that are just flavorful rank changes, so players can calibrate risk correctly."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-08T22-23-27-214Z",
+  "seed": 4884,
+  "build": {
+    "rev": "2ecfcc8",
+    "world": "af37ff21"
+  },
+  "cost_usd": 31.24747079999997,
+  "verified": false
+}
