@@ -1065,3 +1065,31 @@ test("an option that makes a companion walk out says so, and a dismissal does no
   const alone = { ...state, party: ["osk"] };
   assert.doesNotMatch(oddsHint(world, alone, { kind: "custom", room: "a", id: "swear" } as Action), /walks out/);
 });
+
+test("the company says once that nobody caps it", () => {
+  const world = mini({
+    npcs: {
+      lys: { name: "Lys", room: "a", companion: {} },
+      osk: { name: "Osk", room: "a", companion: {} },
+      vell: { name: "Vell", room: "a", companion: {} },
+    },
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        actions: [
+          { id: "j1", label: "take Lys", fx: [["party", "lys", "join"]] },
+          { id: "j2", label: "take Osk", fx: [["party", "osk", "join"]] },
+          { id: "j3", label: "take Vell", fx: [["party", "vell", "join"]] },
+        ],
+      },
+    },
+  });
+  let { state } = newState(world, 1);
+  let out = step(world, state, actionByLabel(world, state, "take Lys")!);
+  assert.ok(!out.events.some((e) => e.includes("limits your company")), "one companion is not yet a company");
+  out = step(world, out.state, actionByLabel(world, out.state, "take Osk")!);
+  assert.ok(out.events.some((e) => e.includes("Nobody limits your company")), out.events.join(" | "));
+  out = step(world, out.state, actionByLabel(world, out.state, "take Vell")!);
+  assert.ok(!out.events.some((e) => e.includes("limits your company")), "said once, not with every recruit");
+});

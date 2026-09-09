@@ -1309,6 +1309,16 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
           if (!s.party.includes(npc)) {
             s.party.push(npc);
             events.push(`${name} joins you.`);
+            // Once, when the company first becomes a company. Wave six, seed
+            // 7664: "Early on it wasn't clear whether the game enforced a
+            // companion-party cap; I kept recruiting (ended with 4) and was
+            // never told if that was a soft or hard limit." There is no cap,
+            // and a fuller company is more of the realm's writing rather than
+            // less — the answer is worth one line.
+            if (s.party.length === 2 && !s.flags["_seenCompany"]) {
+              setFlag(s, "_seenCompany");
+              events.push("(Nobody limits your company: everyone who will come may come, and they answer more of the road the more of them there are.)");
+            }
           }
           s.npcRoom[npc] = s.room;
         } else if (s.party.includes(npc)) {
