@@ -512,7 +512,15 @@ export function renderIntro(
   const head = [
     `${world.title} (seed ${s.seed})`,
     world.intro,
-    `Goal: reach an ending. hp0 = death. One action per turn: act(s, n) with a menu number. look(s)/status(s): free scene/quest/items recap incl. every path, no turn spent. hash ${hashState(s)}.`,
+    // The escalation rule states itself here rather than on every check
+    // preview. Wave eight, seed 9903: "DC-escalation-on-failure isn't flagged
+    // before the first failure, so a player can commit to a check without
+    // knowing repeated attempts get harder." Saying it per option would be 513
+    // option lines across the proven roads; saying it once is a rule of the
+    // world, and rules belong on the line that states the rules. The clause
+    // that prints the raised number ("raised 2 by failed tries, and stops at
+    // 24") then reads as the reminder it is.
+    `Goal: reach an ending. hp0 = death. One action per turn: act(s, n) with a menu number. look(s)/status(s): free recap: scene, quests, items, every path — no turn. A forced try gets harder each miss; talk never does. hash ${hashState(s)}.`,
   ].join("\n");
   return { text: `${head}\n${body.text}`, actions: body.actions, numbers: body.numbers };
 }
