@@ -607,6 +607,16 @@ it standing somewhere.
   match the actual room-exit labels; the real path required going east." **So
   do not write directions into stage text** — name the room and delete the
   clause. An `at` that names no room is a validator error.
+
+  An `at` beyond a one-way door prints nothing until the player is through it,
+  and that is correct rather than broken. Marrowgate is entered only by four
+  `["goto", "mg_south_gate"]` effects on the Pass Gate — a deliberate point of
+  no return — so no chain of `exits` reaches its 45 rooms from the Vale, and
+  `pathTo` answers `null` for all thirteen `at`s that name one. From inside the
+  gate every one of them walks ("one north, then one west, then two down, then
+  three north" to the Hollow Throne), which is the only side a player can be on
+  while those quests are open. So check an `at` from a room on its own side of
+  any one-way door before calling it dead.
 - Epilogue lines print after any ending when their conditions hold, at most
   6 and at most 600 characters together: the heaviest `weight` first (default
   0, ties in file order), and the survivors read in file order. A realm has far more true lines than places,
