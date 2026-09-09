@@ -101,6 +101,6 @@ if (proofs.length) {
     const s2 = r.reduce((a, x) => a + x.chars, 0), avg2 = s2 / r.length;
     const w2 = r.reduce((a, x) => (x.chars > a.chars ? x : a), r[0]!);
     const flags = [avg2 > AVG_MAX ? `avg OVER by ${(avg2 - AVG_MAX).toFixed(0)}` : "", w2.chars > MAX_MAX ? `max OVER by ${w2.chars - MAX_MAX}` : ""].filter(Boolean).join(", ");
-    console.log(`  ${key.padEnd(28)} ${String(r.length).padStart(3)} screens  avg ${avg2.toFixed(0).padStart(4)}  max ${String(w2.chars).padStart(4)} (${w2.room})${flags ? `   ${flags}` : ""}`);
+    console.log(`  ${key.padEnd(28)} ${String(r.length).padStart(3)} screens  avg ${avg2.toFixed(2).padStart(7)}  max ${String(w2.chars).padStart(4)} (${w2.room})${flags ? `   ${flags}` : ""}`);
   }
 }

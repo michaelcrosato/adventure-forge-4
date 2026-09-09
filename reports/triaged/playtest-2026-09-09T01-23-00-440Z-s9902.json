@@ -1,0 +1,45 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 505,
+  "receipt": "reach.9902.505.458.reach_at_rest.bfe93995",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "The Ashwood/Vale sub-region has non-Euclidean loop connections (e.g. 'east' from The Hollow Path led to Wolf Scrape instead of toward the shrine/tower; 'west' from Wolf Scrape sometimes returned to Hollow Path). Required repeated free 'get your bearings' calls to find the actual path to the sunken shrine and old watchtower.",
+      "where": "Ashwood exploration, around Twin Stones/Wolf Scrape/Hollow Path"
+    },
+    {
+      "sev": "P2",
+      "what": "At the Oath-Ground (Wardmoor), one resolution option ('bring a living oath to the stone') silently disappeared from the menu after a single failed attempt, while a same-DC alternative stayed — no explanation given for why one path closes and another doesn't after a fail.",
+      "where": "The Oath-Ground — Circle, Wardmoor"
+    },
+    {
+      "sev": "P2",
+      "what": "The 'shoulder it' resource (a per-rest-cycle boost usable on checks) is never explained in a tooltip or on-screen text the first time it's offered; its effect is only discoverable by using it.",
+      "where": "general check mechanics, first seen at Cinderhall/Camp Gallows wrestling ring"
+    }
+  ],
+  "confusions": [
+    "Early game map connectivity in the Ashwood loops back on itself unpredictably, making it hard to tell if unexplored exits actually lead somewhere new or just back the way you came.",
+    "DC-escalation-on-failure for skill checks isn't flagged before the first failure, so a player can commit to a check without knowing repeated attempts get harder each time."
+  ],
+  "suggestions": [
+    "Show a compact ASCII/text map or auto-offer 'get your bearings' the first time a player revisits a room via a loop-back exit.",
+    "Add a one-line explainer the first time 'shoulder it' appears, stating what resource it spends and what it boosts.",
+    "Flag DC-escalating checks explicitly ('further attempts get harder') before the first attempt, not just after a fail.",
+    "Consider letting failed dialogue-only skill checks (like oath-stone pleas) be retried without silently removing narratively distinct options, or explain why an option closes."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-09T01-23-00-440Z",
+  "seed": 9902,
+  "build": {
+    "rev": "20d6715",
+    "world": "07afcc30"
+  },
+  "cost_usd": 20.043543800000013,
+  "verified": true
+}

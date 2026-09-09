@@ -74,14 +74,18 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // fates. The third time this realm has paid width for legibility, after the
   // odds preview and the raised-DC clause.
   //
-  // Expected to be repaid: `th_wood_3_1` carries a hand-written direction in
-  // its quest stage ("Rook's camp is west of Camp Gallows, past Fox Crossing
-  // then north"), about 85 characters that an `at` replaces. Turn both of these
-  // back down when that lands.
-  "reach:regent_deposed": { avg: 453, max: 1180 },
+  // Repaid, and the prediction above it was wrong twice over. The hand-written
+  // direction is gone from `th_q_rook` — the stage names the room now and the
+  // engine walks the exits — but that screen belongs to `reach_at_rest#warden`,
+  // not to this road, and the clause was 24 characters, not the 85 guessed
+  // here. An `at`'s "(the way there: three east, then one in)" prints in the
+  // status screen, which no ceiling measures, so trading a route for an `at`
+  // only ever buys back the route's own words. #warden's max came down 1170 ->
+  // 1146 on it; this road's 1180 is `mg_hollow_throne` and was never involved.
+  "reach:regent_deposed": { avg: 452, max: 1180 },
   "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1154 }, // the burn road is a different route now, and a shorter-screened one; 450.68 -> 449.30, so its average is honestly under the real bar rather than passing on a floor
-  "reach:gray_crown": { avg: 453, max: 1125 }, // 481 -> 452.4 the day an item stopped explaining itself in every new room: the crown's 111-character clue rode 96 first-seen screens on this road alone
-  "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1170 },
+  "reach:gray_crown": { avg: 451, max: 1125 }, // 481 -> 452.4 the day an item stopped explaining itself in every new room: the crown's 111-character clue rode 96 first-seen screens on this road alone
+  "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1146 },
   // regent_deposed#warden_crown was here at max 1141, then 1131; the same
   // change took it to 1,092 and its average to 445, so it meets the real bar
   // on both counts and needs no allowance at all. Two roads down, eight to go.
@@ -97,7 +101,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // with that one ability's gate disabled reads 447.99 avg, under the real
   // bar — so the 16-character debt is that ability's own always-on presence,
   // not the road being wordier than its siblings.
-  "reach:reach_at_rest#scout": { avg: 466, max: MAX_CHARS_MAX },
+  "reach:reach_at_rest#scout": { avg: 465, max: MAX_CHARS_MAX },
   // The full-party road: four companions travelling, the most expensive proof
   // in the realm, and the ratchet turned down three times on the day it was
   // written. It arrived at 506 average and a 1,489-character screen at
@@ -107,7 +111,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // companions' answers moved out of one `onEnterOnce` and into region-gated
   // remarks of their own, which the engine has always spoken one a turn. The
   // average barely moved, which is the point — the words are all still there.
-  "reach:reach_at_rest#devoted": { avg: 478, max: 1155 },
+  "reach:reach_at_rest#devoted": { avg: 477, max: 1155 },
 };
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));
