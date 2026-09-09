@@ -335,22 +335,36 @@ if (all) {
  */
 const selfClosing: string[] = [];
 {
-  const moved = (fxs: Fx[] | undefined, out: Map<string, number> = new Map()): Map<string, number> => {
+  /** Every `addvar` in a branch, with the `var` floors guarding the path that reaches it. */
+  type Move = { v: string; d: number; floors: Map<string, number> };
+  const moved = (fxs: Fx[] | undefined, floors: Map<string, number>, out: Move[] = []): Move[] => {
     for (const f of fxs ?? []) {
-      if (f[0] === "addvar") out.set(String(f[1]), (out.get(String(f[1])) ?? 0) + Number(f[2]));
-      else if (f[0] === "if") { moved(f[2] as Fx[], out); moved(f[3] as Fx[], out); }
-      else if (f[0] === "check") { moved(f[3] as Fx[], out); moved(f[4] as Fx[], out); }
-      else if (f[0] === "chance") { moved(f[2] as Fx[], out); moved(f[3] as Fx[], out); }
+      if (f[0] === "addvar") out.push({ v: String(f[1]), d: Number(f[2]), floors });
+      else if (f[0] === "if") {
+        // the taken branch is reached only where these conditions hold, so a
+        // `["var", v, ">=", n]` among them is a floor on v inside it
+        const inner = new Map(floors);
+        for (const c of (f[1] as Cond[]) ?? [])
+          if (c[0] === "var" && String(c[2]).startsWith(">")) inner.set(String(c[1]), Math.max(inner.get(String(c[1])) ?? -Infinity, Number(c[3])));
+        moved(f[2] as Fx[], inner, out);
+        moved(f[3] as Fx[], floors, out);
+      } else if (f[0] === "check") { moved(f[3] as Fx[], floors, out); moved(f[4] as Fx[], floors, out); }
+      else if (f[0] === "chance") { moved(f[2] as Fx[], floors, out); moved(f[3] as Fx[], floors, out); }
     }
     return out;
   };
   const look = (where: string, label: string, ifs: Cond[] | undefined, fxs: Fx[] | undefined) => {
     const chk = fxs?.[0];
     if (!chk || chk[0] !== "check") return; // only a leading check has a miss branch of its own
-    const miss = moved(chk[4] as Fx[]);
+    const miss = moved(chk[4] as Fx[], new Map());
     for (const c of ifs ?? []) {
       if (c[0] !== "var" || !String(c[2]).startsWith(">")) continue;
-      const d = miss.get(String(c[1])) ?? 0;
+      const gate = Number(c[3]);
+      // a spend guarded by a floor high enough to survive it cannot close the
+      // door: "take the standing only where there is standing to spare"
+      const d = miss
+        .filter((m) => m.v === String(c[1]) && m.d < 0 && (m.floors.get(m.v) ?? -Infinity) + m.d < gate)
+        .reduce((a, m) => a + m.d, 0);
       if (d < 0) selfClosing.push(`  ${where}\n    "${label}"\n    gated on ${c[1]} ${c[2]} ${c[3]}, and a miss moves ${c[1]} by ${d}`);
     }
   };

@@ -206,7 +206,7 @@
                   [["!flag", "wm_oath_bargain_missed"]],
                   [
                     ["set", "wm_oath_bargain_missed"],
-                    ["addvar", "rep_watch", -1],
+                    ["if", [["var", "rep_watch", ">=", 2]], [["addvar", "rep_watch", -1]], []],
                     ["say", "The words come out uneven, half-borrowed, and the ring does not move — word of a botched oath at the old stone reaches Highward before you do."]
                   ],
                   [
