@@ -839,7 +839,16 @@
                 ["xp", 3],
                 ["say", "You don't run and you don't reach for a blade. You speak the old rest-rite instead, the one every honour guard was sworn under before it forgot everything else. Something in it remembers enough to stand down."]
               ],
-              [["say", "Whatever's left of it doesn't remember rites anymore, only orders. It comes for you regardless."]]
+              [
+                [
+                  "if",
+                  [["flag", "calm_mg_hollow_guard"]],
+                  [
+                    ["say", "Whatever's left of it doesn't remember rites anymore. It doesn't come for you either; it only holds the way north, the way it has for four hundred years."]
+                  ],
+                  [["say", "Whatever's left of it doesn't remember rites anymore, only orders. It comes for you regardless."]]
+                ]
+              ]
             ]
           ]
         }
@@ -1225,12 +1234,7 @@
       "h": 3,
       "region": "mg",
       "pools": {
-        "descs": [
-          "Alleys stacked on alleys, washing strung across the gap of sky.",
-          "Stairs that are also streets, worn hollow down the middle by two hundred years of the same feet.",
-          "A gutter runs the length of the lane, and everyone's back door opens onto it.",
-          "Shutters closed at head height and thrown open above, where the air is worth breathing."
-        ],
+        "descs": ["Alleys stacked on alleys, washing strung across the gap of sky.", "Stairs that are also streets, worn hollow down the middle by two hundred years of the same feet.", "A gutter runs the length of the lane, and everyone's back door opens onto it.", "Shutters closed at head height and thrown open above, where the air is worth breathing."],
         "briefs": ["Stacked alleys.", "Stairs for streets.", "The open gutter.", "Shutters open high."],
         "scenes": [
           {

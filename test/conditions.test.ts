@@ -10,7 +10,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { armorOf, checkMod, checkModParts, combatMods, condOk, hashState, legalActions, newState, oddsHint, receipt, step } from "../src/engine.ts";
+import { actionLabel, armorOf, checkMod, checkModParts, combatMods, condOk, hashState, legalActions, newState, oddsHint, receipt, step } from "../src/engine.ts";
 import { render, renderStatus } from "../src/format.ts";
 import { loadWorld, validateWorld } from "../src/validate.ts";
 import type { Action, State, World } from "../src/types.ts";
@@ -445,4 +445,53 @@ test("opening and leaving a conversation spends no turn", () => {
   // here because Wren carries an authored farewell topic instead, and a line of
   // dialogue is an action rather than a menu move
   assert.ok(legalActions(w, state).some((a) => a.kind === "talk"), "and the topics are what cost a turn");
+});
+
+/**
+ * Wave nine, seed 9911: "The 'name it (it stands down)' peaceful option on the
+ * honour guard at The Old Crypts reported 'You speak its true name, and it
+ * remembers what it was' but the way remained locked and a follow-up 'speak the
+ * old rest-rite' check failed and the guard attacked anyway."
+ *
+ * Half of that is the design saying no: standing something down is not a key,
+ * and the exit says so. The other half was a line telling the player something
+ * that could not happen. `scholar_name` calms the guard; `aggressiveNow` reads
+ * `calm_<id>` and refuses it its turn — so the rest-rite's miss said "It comes
+ * for you regardless" about a thing that was never coming. The player believed
+ * the line over the state, which is the right way round: the line was wrong.
+ *
+ * One action in the realm narrated an attack in a branch a calmed hostile could
+ * reach. It reads what the state says now.
+ */
+test("a calmed hostile's own room stops promising an attack it cannot make", () => {
+  const w = loadWorld("world/reach.json");
+  const start = newState(w, 1).state;
+  const base: State = {
+    ...start,
+    classId: "scholar",
+    room: "mg_old_crypts",
+    visited: ["mg_old_crypts"],
+    flags: { ...start.flags, calm_mg_hollow_guard: true },
+  };
+  let misses = 0;
+  for (let seed = 1; seed <= 40; seed++) {
+    let state: State = { ...base, rngA: seed, seed };
+    const rite = legalActions(w, state).find((a) => actionLabel(w, a, state).startsWith("speak the old rest-rite"));
+    assert.ok(rite, "the rest-rite is still offered to someone who has already named the guard");
+    const out = step(w, state, rite!);
+    const line = out.events.find((e) => e.startsWith("WILL d20:"));
+    if (!line || !line.endsWith("fail.")) continue;
+    misses++;
+    const said = out.events.join("\n");
+    assert.ok(
+      !/comes for you/.test(said),
+      `a calmed guard cannot come for anyone, and the miss must not say it does:\n${said}`,
+    );
+    assert.ok(
+      /doesn't come for you either/.test(said),
+      `the miss should say what actually happens:\n${said}`,
+    );
+    assert.equal(out.state.hp, base.hp, "and nothing struck the player");
+  }
+  assert.ok(misses > 0, "at least one of forty seeds misses a DC 12 will check");
 });
