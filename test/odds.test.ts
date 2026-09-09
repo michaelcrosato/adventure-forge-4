@@ -334,3 +334,46 @@ test("a check behind a die is not previewed — a guess about the roll is worse 
   assert.match(second, /DC 9, will/);
   assert.doesNotMatch(second, /DC 18/, "the second roll is not this turn's choice");
 });
+
+/**
+ * A failure taxed once is good design; a preview that keeps promising the tax
+ * is not. Press Preceptor Aldous on the Hundred and miss, and the chapterhouse
+ * marks it — once, guarded by its own flag, and never again. The preview said
+ * "a miss costs standing with the Ironbound" on the second try too, while the
+ * escalating DC climbed under it, and a wave-seven player read the two together
+ * as "a cost is still being tracked". They were right: the line promised one.
+ */
+test("a standing cost already spent is not promised again", () => {
+  const world = mini({
+    factions: { rep_iron: "the Ironbound" },
+    npcs: {
+      aldous: {
+        name: "the Preceptor",
+        room: "a",
+        dialogue: true,
+        topics: [
+          {
+            id: "press",
+            label: "press him",
+            say: "Ask, then.",
+            fx: [
+              [
+                "check",
+                "will",
+                12,
+                [["say", "He gives."]],
+                [["if", [["!flag", "marked"]], [["set", "marked"], ["addvar", "rep_iron", -1], ["say", "The chapterhouse marks it."]], [["say", "Nothing at all."]]]],
+              ],
+            ],
+          },
+        ],
+      },
+    },
+  });
+  const { state } = newState(world, 1);
+  const a = { kind: "talk", npc: "aldous", topic: "press" } as Action;
+  assert.match(oddsHint(world, state, a), /a miss costs standing with the Ironbound/, oddsHint(world, state, a));
+  const marked: State = { ...state, flags: { ...state.flags, marked: true } };
+  assert.doesNotMatch(oddsHint(world, marked, a), /costs standing/, oddsHint(world, marked, a));
+  assert.match(oddsHint(world, marked, a), /DC 12/, "the roll is still previewed; only the spent cost is gone");
+});

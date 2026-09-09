@@ -1896,11 +1896,6 @@ function hollowRoute(fxs: Fx[] | undefined): string | null {
   return tally;
 }
 
-/** True when an effect list lowers a faction's standing or a companion's regard somewhere inside it. */
-function fxCostsStanding(fxs: Fx[] | undefined): boolean {
-  return standingAtRisk(fxs).length > 0;
-}
-
 /** The standing vars (`rep_*`, `appr_*`) an effect list can lower, in order of appearance. */
 /**
  * The check this option will actually roll first, or undefined.
@@ -1927,13 +1922,20 @@ function leadingCheck(world: World, s: State, fxs: Fx[] | undefined): CheckFx | 
   return undefined;
 }
 
-function standingAtRisk(fxs: Fx[] | undefined): string[] {
+function standingAtRisk(world: World, s: State, fxs: Fx[] | undefined): string[] {
   const out: string[] = [];
   for (const fx of fxs ?? []) {
     if (fx[0] === "addvar" && fx[2] < 0 && (fx[1].startsWith("rep_") || fx[1].startsWith("appr_"))) out.push(fx[1]);
-    if (fx[0] === "if") out.push(...standingAtRisk(fx[2]), ...standingAtRisk(fx[3]));
-    if (fx[0] === "check") out.push(...standingAtRisk(fx[3]), ...standingAtRisk(fx[4]));
-    if (fx[0] === "chance") out.push(...standingAtRisk(fx[2]), ...standingAtRisk(fx[3]));
+    // Only the branch that would run, the way `regardMoves`, `partyLeaves` and
+    // `leadingCheck` follow one. A failure taxed once is good design — press
+    // Preceptor Aldous on the Hundred and miss, and the chapterhouse marks it
+    // once, never again — but the preview said "a miss costs standing with the
+    // Ironbound" on the second try too, while the escalating DC climbed. A
+    // wave-seven player read those two together as "a cost is still being
+    // tracked", and they were right to: the line promised one.
+    if (fx[0] === "if") out.push(...standingAtRisk(world, s, (condsOk(world, s, fx[1]) ? fx[2] : fx[3]) ?? []));
+    if (fx[0] === "check") out.push(...standingAtRisk(world, s, fx[3]), ...standingAtRisk(world, s, fx[4]));
+    if (fx[0] === "chance") out.push(...standingAtRisk(world, s, fx[2]), ...standingAtRisk(world, s, fx[3]));
   }
   return [...new Set(out)];
 }
@@ -2050,14 +2052,14 @@ function killCostHint(world: World, s: State, fxs: Fx[] | undefined): string | n
 }
 
 /** "a miss costs standing with the Gray Church" — names what a check's miss would cost, and what its hit would, when the world names it. */
-function costsStandingHint(world: World, missFx: Fx[] | undefined, hitFx?: Fx[] | undefined): string | null {
+function costsStandingHint(world: World, s: State, missFx: Fx[] | undefined, hitFx?: Fx[] | undefined): string | null {
   const name = (v: string) => (v.startsWith("rep_") ? world.factions?.[v] : world.npcs[v.slice(5)]?.name);
   const withList = (vars: string[]): string => {
     const names = vars.map(name).filter((n): n is string => !!n);
     if (!names.length) return "";
     return ` with ${names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0]!}`;
   };
-  const miss = standingAtRisk(missFx), hit = standingAtRisk(hitFx);
+  const miss = standingAtRisk(world, s, missFx), hit = standingAtRisk(world, s, hitFx);
   const both = miss.filter((v) => hit.includes(v));
   const missOnly = miss.filter((v) => !both.includes(v)), hitOnly = hit.filter((v) => !both.includes(v));
   const parts: string[] = [];
@@ -2639,7 +2641,7 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
     }
     // a miss that costs standing or regard is said before the die is thrown, like "fail costs 1hp" — and with whom;
     // so is a hit that costs it, so the warning never reads as "only a miss"
-    const cost = costsStandingHint(world, chk[4], chk[3]);
+    const cost = costsStandingHint(world, s, chk[4], chk[3]);
     if (cost) parts.push(cost);
   }
   // an action that settles a hold's grief is the one-shot the hold is built around; say so before it is taken, and which way
