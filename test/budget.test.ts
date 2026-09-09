@@ -129,6 +129,21 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // is what a four-companion road is for, and it is the one thing here that
   // should not be trimmed to meet a number.
   "reach:reach_at_rest#devoted": { avg: 461, max: 1131 },
+  // The realm's first proof to land a blow. Measured before this road existed,
+  // 125 proven screens offered a fight and 0 were taken — hp, armor, timed
+  // conditions, aggression and the down-and-revive path stood unexercised by
+  // anything the bar replays. This Warden road fights the Ashwood's three
+  // wolves and the gray husk, then the barrow-wight guarding the crypt's own
+  // passage north; the wight downs the companion mid-fight and warden_weight
+  // ("take the weight") hauls her back up before the killing blow, and the
+  // player's own hp crosses the lowHp line in that same exchange. A combat
+  // screen is not padding: the player's roll, the companion's roll, the
+  // retaliation, and a menu carrying several combat abilities at once all
+  // print together, on a road no proof had ever rendered before. The worst
+  // screen (1,295, va_crypt) is that room's first-visit description — two
+  // hostiles introduced, the "armor useless" warning, and a ten-line menu —
+  // paid once, by the first road to ever open that door.
+  "reach:crowned_hollow#bloodied": { avg: 511, max: 1295 },
 };
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));

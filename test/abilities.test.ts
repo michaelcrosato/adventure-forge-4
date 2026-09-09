@@ -27,11 +27,6 @@ const world: World = loadWorld("world/reach.json");
  * prints the same list with its numbers, and this set may only shrink.
  */
 const UNPROVEN: Record<string, string> = {
-  // `companionDown` was false on all 431 warden screens, and the traces say why:
-  // companions took 18 blows across every proven route and 1-8 in a whole blind
-  // run, never enough to drop one. The gate is the right gate; what is missing is
-  // a fight long enough to need it.
-  warden_weight: "no companion has ever gone down on a proven route",
   // Gold peaks at exactly 3 on all eleven routes, while real blind players finish
   // holding 17-36. The proofs walk past the realm's coin; the price is not wrong.
   envoy_buy_off: "no proven route ever holds 5 gold",
