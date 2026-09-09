@@ -445,9 +445,14 @@
     },
     "sh_q_rod": {
       "name": "The White Rod",
-      "start": [["flag", "sh_hollow_grievance"]],
+      "start": [["flag", "sh_entered"]],
       "done": [["flag", "sh_rod_shaft_known"], ["flag", "sh_rod_ferrule_known"]],
       "stages": [
+        {
+          "if": [["!flag", "sh_hollow_grievance"]],
+          "text": "A herald fell asking for a truce nobody called. The shield-lines still hold the Truce Field, unrested.",
+          "at": "sh_shield_line"
+        },
         {
           "if": [["flag", "sh_rod_shaft_known"], ["!flag", "sh_rod_ferrule_known"]],
           "text": "The rod's shaft is yours. The ferrule waits in the ground at the herald's walk.",

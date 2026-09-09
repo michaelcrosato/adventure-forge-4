@@ -450,9 +450,14 @@
   "quests": {
     "wm_q_founding": {
       "name": "The Oath That Never Ended",
-      "start": [["flag", "wm_gate_notice_2"]],
+      "start": [["flag", "wm_entered"]],
       "done": [["flag", "wm_oath_resolved"]],
       "stages": [
+        {
+          "if": [["!flag", "wm_gate_notice_2"]],
+          "text": "A company swore an oath on the moor four centuries ago, and Highward's gate still keeps its record.",
+          "at": "wm_south_gate"
+        },
         {
           "if": [["flag", "wm_oath_heard"]],
           "text": "Rest it, bargain it, or burn it — the choice at the oath-stone is yours to make now.",

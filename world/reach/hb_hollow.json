@@ -560,9 +560,14 @@
   "quests": {
     "hb_q_kingsrest": {
       "name": "The Kings' Rest",
-      "start": [["flag", "hb_found_kingsrest"]],
+      "start": [["flag", "hb_entered"]],
       "done": [["flag", "hb_kingsrest_resolved"]],
       "stages": [
+        {
+          "if": [["!flag", "hb_found_kingsrest"]],
+          "text": "A hundred mounds ring Barrowmere. The greatest of them holds a court that will not lie down.",
+          "at": "hb_wild_2_1"
+        },
         {
           "if": [["flag", "hb_heard_grievance"], ["has", "hb_keepers_key"]],
           "text": "You hold the Keeper's Key. Use it at the hearth-stone to rest the old court outright.",

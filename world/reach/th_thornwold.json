@@ -3225,9 +3225,14 @@
     },
     "th_q_company": {
       "name": "The Hanged Company",
-      "start": [["any", [["flag", "th_asked_captain_oath"], ["flag", "th_verse_known"], ["has", "th_pardon"]]]],
+      "start": [["flag", "th_entered"]],
       "done": [["flag", "th_hollow_done"]],
       "stages": [
+        {
+          "if": [["!flag", "th_asked_captain_oath"], ["!flag", "th_verse_known"], ["!has", "th_pardon"]],
+          "text": "A dozen hanged men still turn in Thornwold's wood, forty years unburied. The gallows road leads to them.",
+          "at": "th_hollow_approach"
+        },
         {
           "if": [["flag", "th_verse_known"]],
           "text": "You know the rest-verse. Speak it at the Gallows Glade.",
