@@ -556,10 +556,17 @@ map.
   the quest starts on standing in one particular room, or on one other flag.
   `audit-fates.ts` prints which, per hold, now.
 - Directions written by hand: 52 quest stages carried a compass word, twelve of
-  them a whole route. Two were plainly wrong — Camp Gallows' "west to the
-  cook-fire, south to the scout line" (west is open wood, south is the South
-  Track) and Cal buried "east of Camp Gallows" when he dies in the fire at the
-  Gallows Glade, eight stands west. Seven remain, all of them place names.
+  them a whole route. Seven remain, all of them place names. **Correction, made
+  the same day:** the commit that landed this claimed two of those routes were
+  "plainly wrong", and one of the two was not. Camp Gallows' "in to the muster
+  ground, west to the cook-fire, south to the scout line" is a *sequence*, and
+  walking it in the engine gives exactly that — `in`, then one west, then one
+  south. I had read three legs of one route as three exits from one room and
+  called a correct line wrong. Replacing it with a room the engine walks to is
+  still the right change by §9; the reason given for it was not. (Cal's grave
+  stands: he dies in the fire at the Gallows Glade, eight stands west, and
+  three lines had him buried east of the camp — an inconsistency with his own
+  death rather than with the map.)
 - A single step through a door reads as the menu's own word now ("two west,
   then in"), not as a tally — a count answers "how many times do I press
   this?", which only a compass run raises.
