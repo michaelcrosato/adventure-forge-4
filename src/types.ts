@@ -429,7 +429,13 @@ export type World = {
   items: Record<string, ItemDef>;
   npcs: Record<string, NpcDef>;
   /** Named regions that group fast-travel destinations (rooms point at them via `region`). */
-  regions?: Record<string, { name: string }>;
+  /**
+   * `bearing` is how this region says "the way from here" — "As the fell runs",
+   * "As the fen lies" — the opening of what the `bearings` effect prints. The
+   * words are the author's; the directions are the engine's, because 315
+   * hand-written ones were 315 chances to be wrong about a grid with walls.
+   */
+  regions?: Record<string, { name: string; bearing?: string }>;
   /** The journal, shown by the free `status` check; stage changes also print as events. */
   quests?: Record<string, QuestDef>;
   /**

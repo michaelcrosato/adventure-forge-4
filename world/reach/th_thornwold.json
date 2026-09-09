@@ -177,17 +177,7 @@
         { "if": [["flag", "th_hollow_rested"]], "brief": "The palisade. The old oak, quiet now." },
         { "if": [["flag", "th_hollow_bargained"]], "brief": "The palisade. The camp keeps an odd, solemn quiet." }
       ],
-      "actions": [
-        {
-          "id": "th_gate_bearings",
-          "label": "get your bearings",
-          "fx": [
-            ["say", "West gate, into the wood. From the wood's edge: the gallows road four stands west; the Rope Larder (Rook) one west, one north; the Cutter's Barrow one west, two north."],
-            ["say", "The Long Watch one west, two south; the Denhollow four west, one south; Hesper's hut and the black thorn's Understory four west, one north."]
-          ],
-          "free": true
-        }
-      ],
+      "actions": [{ "id": "th_gate_bearings", "label": "get your bearings", "fx": [["bearings"]], "free": true }],
       "onEnter": [
         [
           "if",
@@ -2872,16 +2862,7 @@
           "desc": "A shallow bowl in the land where the oldest trees stand thickest, canopy closed enough to dim midday to dusk.",
           "brief": "Old growth, closed canopy.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "th_heartwood_bearings",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [
-                ["say", "From the Heartwood: the gallows road two stands west; the Understory two west, one north; the Cutter's Barrow one east, two north; the Denhollow two west, one south; the Long Watch one east, two south."]
-              ]
-            }
-          ]
+          "actions": [{ "id": "th_heartwood_bearings", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [3, 2],

@@ -421,7 +421,15 @@ export function validateWorld(world: World): string[] {
     if (!world.regions) err(`fast travel: ${landmarks.length} landmarks exceed the flat menu (${MENU_CAP - 1}) — define regions to group them`);
   }
   void perRegion;
-  for (const [rid, region] of Object.entries(world.regions ?? {})) need(`region ${rid}`, region, [["name", "string"]]);
+  for (const [rid, region] of Object.entries(world.regions ?? {})) {
+    need(`region ${rid}`, region, [["name", "string"]]);
+    // it opens the bearings line and the engine adds ": <places>." — a trailing
+    // comma or colon reads as a stammer, and it is not the author's to add
+    if (region.bearing !== undefined) {
+      if (typeof region.bearing !== "string" || !region.bearing) err(`region ${rid}: bearing must be a non-empty string`);
+      else if (/[,:.;—-]\s*$/.test(region.bearing)) err(`region ${rid}: bearing ends in punctuation (${region.bearing}) — the engine adds ": the mill, one east."`);
+    }
+  }
 
   if (!roomOk(world.start)) err(`start: unknown room ${world.start}`);
   for (const [rid, room] of Object.entries(world.rooms)) {

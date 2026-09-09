@@ -12,16 +12,7 @@
         "west": { "to": "va_west_road", "landmark": "the west road" }
       },
       "onEnterOnce": [["set", "va_entered"]],
-      "actions": [
-        {
-          "id": "va_gate_bearings",
-          "label": "get your bearings",
-          "fx": [
-            ["say", "North through the wood the trail climbs to the barrow. Bear east among the trees for the sunken shrine and the old watchtower; west for the hunter's camp. Last Light's square, inn, forge, and chapel lie south."]
-          ],
-          "free": true
-        }
-      ],
+      "actions": [{ "id": "va_gate_bearings", "label": "get your bearings", "fx": [["bearings"]], "free": true }],
       "variants": [
         {
           "if": [["var", "hollows_rested", ">=", 3]],
@@ -300,7 +291,15 @@
             ["set", "va_named_drowned"],
             ["xp", 1],
             ["say", "A weathered post at the causeway's edge, names cut deep and half gone to lichen — fenfolk lost to the water before any king woke wrong under a hill. You read what is left of them aloud."],
-            ["if", [["inParty", "osk"]], [["say", "Osk stops beside you and says nothing until you finish. \"Nobody's done that in years,\" he says."], ["addvar", "appr_osk", 1]], []]
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Osk stops beside you and says nothing until you finish. \"Nobody's done that in years,\" he says."],
+                ["addvar", "appr_osk", 1]
+              ],
+              []
+            ]
           ]
         }
       ]

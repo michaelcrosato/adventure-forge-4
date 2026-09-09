@@ -619,7 +619,30 @@ const BEARINGS_CAP = 3;
  * somewhere you have not been — which is what separates this from
  * `wildBearing`'s way back to somewhere you know.
  */
+/**
+ * Cached per world and room, because the answer depends on nothing else: the
+ * region, the exits, the landmarks and the region's opening words are all
+ * static, and locks are conditions rather than missing exits (a barred door is
+ * still the way — see `pathTo`). Without it every press paid a whole-realm
+ * breadth-first walk, and it is a free action a lost player presses again and
+ * again. Measured on the forked crawl it bought about half a second of 28 —
+ * the walk is cheaper than it looks — so this is here for the player pressing
+ * it in one room, not for the bar.
+ */
+const bearingsCache = new WeakMap<World, Map<string, string>>();
+
 export function bearingsHere(world: World, s: State): string {
+  let cache = bearingsCache.get(world);
+  if (!cache) bearingsCache.set(world, (cache = new Map()));
+  const hit = cache.get(s.room);
+  if (hit !== undefined) return hit;
+  const answer = computeBearings(world, s.room);
+  cache.set(s.room, answer);
+  return answer;
+}
+
+function computeBearings(world: World, room: string): string {
+  const s = { room } as State;
   const region = world.rooms[s.room]?.region;
   if (!region) return "Nothing hereabouts has a name to steer by.";
   const from = new Map<string, [string, string]>();
@@ -637,7 +660,9 @@ export function bearingsHere(world: World, s: State): string {
   const named = order.filter((id) => world.rooms[id]?.region === region && world.rooms[id]?.landmark).slice(0, BEARINGS_CAP);
   if (!named.length) return "Nothing hereabouts has a name to steer by.";
   const parts = named.map((id) => `${world.rooms[id]!.landmark}, ${legsOf(from, s.room, id)}`);
-  return `As the ground runs: ${parts.join("; ")}.`;
+  // the region's own voice for it — "As the fell runs", "As the rides run" —
+  // which is the half of these lines that was worth keeping
+  return `${world.regions?.[region]?.bearing ?? "As the ground runs"}: ${parts.join("; ")}.`;
 }
 
 export function pathTo(world: World, s: State, target: string): string | null {
