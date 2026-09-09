@@ -66,26 +66,7 @@
       "brief": "The cairn, the only tended thing here.",
       "region": "fl",
       "exits": { "north": { "to": "fl_furrow_walk" } },
-      "onEnterOnce": [
-        ["xp", 3],
-        ["score", 2],
-        [
-          "if",
-          [["inParty", "osk"]],
-          [
-            ["say", "Brother Osk: \"A fever, the record says. I have stood at the edge of this and I do not believe the record ever once. Someone wrote that word down to make the silence afterward easier to keep.\""]
-          ],
-          []
-        ],
-        [
-          "if",
-          [["inParty", "tamsin"]],
-          [
-            ["say", "Tamsin: \"Forty years of somebody stacking one stone at a time because nobody would send more hands. That's not neglect. That's a whole hold being told to manage on its own.\""]
-          ],
-          []
-        ]
-      ],
+      "onEnterOnce": [["set", "fl_furrow_heart_seen"], ["xp", 3], ["score", 2]],
       "actions": [
         {
           "id": "fl_rest_furrow",
