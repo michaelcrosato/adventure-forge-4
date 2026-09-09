@@ -1296,7 +1296,17 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
               events.push(`${npc.name} ${Math.abs(d) > 1 ? "strongly " : ""}${d > 0 ? "approves" : "disapproves"} (${d > 0 ? "+" : ""}${d}).`);
               if (!s.flags["_seenApproval"]) {
                 setFlag(s, "_seenApproval");
-                events.push("(Companions judge what you do: their regard opens and closes doors; at -2 they are near leaving, and the next thing they mind is the last.)");
+                // What this said for three waves was "at -2 they are near
+                // leaving, and the next thing they mind is the last", and that
+                // is not the rule. The floors live in each companion's own
+                // `leaves` list, where the design puts them: a plain floor at
+                // -5, and a quarrel-specific one at -2 for whoever you sided
+                // against. A blind player of wave eight sat at -2 through a
+                // whole fight waiting to be abandoned and reported the warning
+                // as an unkept promise; they were reading it correctly. So the
+                // line says the shape of the rule and leaves the number to the
+                // content that owns it.
+                events.push("(Companions judge what you do: regard opens and closes doors, and one who falls far enough below zero walks — sooner if you crossed them.)");
               }
             } else if (npc && !npcDead(world, s, id) && (s.visited.includes(npc.room ?? "") || s.flags[`${id}_left`])) {
               // regard moved for someone not here to see it: a player found Osk at -1 with no idea why.

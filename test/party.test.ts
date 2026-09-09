@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { actionByLabel, actionLabel, inTalkMode, journal, legalActions, newState, oddsHint, step } from "../src/engine.ts";
 import { render, renderMenu, renderStatus } from "../src/format.ts";
-import { validateWorld } from "../src/validate.ts";
+import { loadWorld, validateWorld } from "../src/validate.ts";
 import type { Action, Fx, State, World } from "../src/types.ts";
 
 const mini = (over: Partial<World> = {}): World => ({
@@ -1092,4 +1092,35 @@ test("the company says once that nobody caps it", () => {
   assert.ok(out.events.some((e) => e.includes("Nobody limits your company")), out.events.join(" | "));
   out = step(world, out.state, actionByLabel(world, out.state, "take Vell")!);
   assert.ok(!out.events.some((e) => e.includes("limits your company")), "said once, not with every recruit");
+});
+
+/**
+ * The warning the engine prints the first time regard moves says a companion
+ * who sinks far enough below zero walks out. That promise is kept by content —
+ * each companion's own `leaves` list — so the promise and the content have to
+ * exist together.
+ *
+ * Wave eight, seed 9902, read the old wording ("at -2 they are near leaving,
+ * and the next thing they mind is the last"), sat at -2 through a whole fight,
+ * and reported the abandonment that never came. The number was wrong: the
+ * plain floor is -5, with a quarrel-specific -2 for whoever you sided against.
+ * The line quotes no number now, and this holds the other half — that every
+ * companion really can be lost by regard alone, with no other condition
+ * attached.
+ */
+test("every companion can be lost by regard alone", () => {
+  const world = loadWorld("world/reach.json");
+  const naked: string[] = [];
+  for (const [id, npc] of Object.entries(world.npcs)) {
+    if (!npc.companion) continue;
+    const floors = (npc.companion.leaves ?? []).filter(
+      (l) => l.if.length === 1 && l.if[0]![0] === "var" && l.if[0]![1] === `appr_${id}` && String(l.if[0]![2]).startsWith("<"),
+    );
+    if (!floors.length) naked.push(id);
+  }
+  assert.deepEqual(
+    naked,
+    [],
+    `these companions have no approval floor of their own, so the engine's regard warning promises something nothing keeps:\n  ${naked.join("\n  ")}`,
+  );
 });
