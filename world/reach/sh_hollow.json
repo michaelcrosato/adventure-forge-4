@@ -408,15 +408,18 @@
       "stages": [
         {
           "if": [["flag", "sh_word_roll"], ["flag", "sh_word_count"], ["!flag", "sh_word_book"]],
-          "text": "Two truce-words are known: the roll and the count. The last waits at Elgin's porch — the book."
+          "text": "Two truce-words are known: the roll and the count. The last waits at Elgin's porch — the book.",
+          "at": "sh_chantry_porch"
         },
         {
           "if": [["flag", "sh_word_roll"], ["!flag", "sh_word_count"], ["flag", "sh_word_book"]],
-          "text": "Two truce-words are known: the roll and the book. The last waits at Tolan's cot — the count."
+          "text": "Two truce-words are known: the roll and the book. The last waits at Tolan's cot — the count.",
+          "at": "sh_remembrancers_cot"
         },
         {
           "if": [["!flag", "sh_word_roll"], ["flag", "sh_word_count"], ["flag", "sh_word_book"]],
-          "text": "Two truce-words are known: the count and the book. The last waits at Ossett's house — the roll."
+          "text": "Two truce-words are known: the count and the book. The last waits at Ossett's house — the roll.",
+          "at": "sh_pensioners_house"
         },
         {
           "if": [["flag", "sh_word_roll"], ["!flag", "sh_word_count"], ["!flag", "sh_word_book"]],
@@ -443,11 +446,13 @@
       "stages": [
         {
           "if": [["flag", "sh_rod_shaft_known"], ["!flag", "sh_rod_ferrule_known"]],
-          "text": "The rod's shaft is yours. The ferrule waits in the ground at the herald's walk."
+          "text": "The rod's shaft is yours. The ferrule waits in the ground at the herald's walk.",
+          "at": "sh_heralds_walk"
         },
         {
           "if": [["!flag", "sh_rod_shaft_known"], ["flag", "sh_rod_ferrule_known"]],
-          "text": "The ferrule is dug. The shaft waits with Hew, at the ditch-gate — given, taken, or noticed."
+          "text": "The ferrule is dug. The shaft waits with Hew, at the ditch-gate — given, taken, or noticed.",
+          "at": "sh_ditch_gate"
         },
         {
           "if": [],
@@ -504,7 +509,8 @@
       "stages": [
         {
           "if": [["has", "sh_banner_cloth"]],
-          "text": "The banner is found. Bring it back to Ossett, at the pensioner's house."
+          "text": "The banner is found. Bring it back to Ossett, at the pensioner's house.",
+          "at": "sh_pensioners_house"
         },
         {
           "if": [],
@@ -541,15 +547,18 @@
       "stages": [
         {
           "if": [["flag", "sh_hollow_bargained"], ["!flag", "said_sh_reeve_sv_sh_bargain_ask"]],
-          "text": "The bargained ground wants tending. Sten, at the field-reeve's yard, would rather not answer for the bread alone."
+          "text": "The bargained ground wants tending. Sten, at the field-reeve's yard, would rather not answer for the bread alone.",
+          "at": "sh_reeve_yard"
         },
         {
           "if": [["flag", "sh_hollow_rested"], ["!flag", "said_sh_descendant_sv_sh_rested_ask"]],
-          "text": "The truce rests. Hew, at the ditch-gate, wonders what becomes of the rod now."
+          "text": "The truce rests. Hew, at the ditch-gate, wonders what becomes of the rod now.",
+          "at": "sh_ditch_gate"
         },
         {
           "if": [["flag", "sh_hollow_burned"], ["!flag", "said_sh_priest_sv_sh_burn_ask"]],
-          "text": "The field is ash. Elgin, at the chantry porch, wonders what becomes of the cleared ground."
+          "text": "The field is ash. Elgin, at the chantry porch, wonders what becomes of the cleared ground.",
+          "at": "sh_chantry_porch"
         },
         { "if": [], "text": "Harrowfield settles back into itself, whatever the Truce Field's fate cost it." }
       ]
