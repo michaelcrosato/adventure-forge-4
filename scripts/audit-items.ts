@@ -102,6 +102,30 @@ const total = (u: Use) => u.gates + u.moves + u.target + u.own;
  */
 const PROMISES = /\b(unlocks?|will open|opens (?!no|nothing)|use it|worth (carrying|keeping) (to|for)|shows the way|you will need|needed for)\b/i;
 const hintOf = (id: string) => world.items[id]?.hint ?? "";
+
+/**
+ * The other kind of promise, and the one the wording test missed: a hint that
+ * names a place.
+ *
+ * A blind player of wave eight carried the notched belt knife — "a boy's, by
+ * the grip — too small for a grown hand; the Broken Bridge, west, remembers a
+ * horse to match" — around the Ashwood and reported it as "never resolvable
+ * within the areas I explored, leaving a dangling thread with no way to know
+ * if it was missable content or a bug". This tool had called it a keepsake,
+ * because no word in that sentence is on the list above. But it names a room,
+ * and naming a room is telling the player to take the thing there.
+ *
+ * So the test is against the world rather than against a vocabulary: does the
+ * hint contain the name or landmark of a real place? Short names are skipped —
+ * "The Ford" and "Home" turn up inside ordinary sentences — which is why this
+ * stays a list of candidates to read and not a verdict.
+ */
+const PLACE_MIN = 9;
+const places = [...new Set(Object.values(world.rooms).flatMap((r) => [r.landmark, r.name]).filter((n): n is string => !!n && n.length >= PLACE_MIN))];
+const namesAPlace = (id: string): string | undefined => {
+  const hint = hintOf(id).toLowerCase();
+  return places.find((n) => hint.includes(n.toLowerCase()));
+};
 /** Kit is read by the fight, not by a `has` gate: a sword with `dmg` is doing its job unnamed. */
 const isKit = (id: string) => {
   const it = world.items[id];
@@ -109,9 +133,10 @@ const isKit = (id: string) => {
 };
 
 const dead = items.filter(([id]) => total(use.get(id)!) === 0 && !isKit(id));
-const promised = dead.filter(([id]) => PROMISES.test(hintOf(id)));
+const broken = (id: string) => PROMISES.test(hintOf(id)) || !!namesAPlace(id);
+const promised = dead.filter(([id]) => broken(id));
 const mute = dead.filter(([id]) => !hintOf(id));
-const keepsakes = dead.filter(([id]) => hintOf(id) && !PROMISES.test(hintOf(id)));
+const keepsakes = dead.filter(([id]) => hintOf(id) && !broken(id));
 
 if (terse) {
   console.log(`items ${items.length} read ${items.length - dead.length} keepsakes ${keepsakes.length} promised ${promised.length} mute ${mute.length}`);
@@ -130,7 +155,10 @@ if (!deadOnly) {
 }
 
 console.log(`${promised.length} items nothing reads whose own hint promises they are FOR something — read these, they are the defect:`);
-for (const [id, it] of promised) console.log(`  ${id.padEnd(26)} ${it.name.slice(0, 28).padEnd(28)} ${hintOf(id).slice(0, 56)}`);
+for (const [id, it] of promised) {
+  const place = namesAPlace(id);
+  console.log(`  ${id.padEnd(26)} ${it.name.slice(0, 28).padEnd(28)} ${hintOf(id).slice(0, 56)}${place ? `\n  ${" ".repeat(26)} names a place: ${place} — nothing there reads it` : ""}`);
+}
 
 if (mute.length) {
   console.log(`\n${mute.length} items nothing reads and that carry no hint at all — a player cannot even tell they are keepsakes:`);
