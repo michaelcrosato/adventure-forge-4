@@ -324,11 +324,13 @@
         },
         {
           "if": [["var", "fl_names_known", ">=", 3], ["!flag", "fl_church_rite_known"], ["!flag", "fl_keeper_verse_known"]],
-          "text": "The names are whole. The rite is Merrow's, once she owns her doubts; the verse is Frey's, once you press her."
+          "text": "The names are whole. The rite is Merrow's, once she owns her doubts; the verse is Frey's, once you press her.",
+          "at": "fl_chapel"
         },
         {
           "if": [["flag", "fl_church_rite_known"], ["flag", "fl_keeper_verse_known"], ["var", "fl_names_known", "<", 3]],
-          "text": "Rite and verse are yours. The names still want three sources: Ede's memory, the parish roll, the headland's markers."
+          "text": "Rite and verse are yours. The names still want three sources: Ede's memory, the parish roll, the headland's markers.",
+          "at": "fl_wicker_house"
         },
         {
           "if": [["has", "fl_cinder_oil"]],
@@ -375,19 +377,23 @@
         },
         {
           "if": [["flag", "fl_names_ede"], ["!flag", "fl_names_roll"], ["!flag", "fl_names_markers"]],
-          "text": "Ede's names are yours. Two sources left: the parish roll at the chapel, and the headland's markers by the Bone Road."
+          "text": "Ede's names are yours. Two sources left: the parish roll at the chapel, and the headland's markers by the Bone Road.",
+          "at": "fl_chapel"
         },
         {
           "if": [["flag", "fl_names_roll"], ["!flag", "fl_names_ede"], ["!flag", "fl_names_markers"]],
-          "text": "The parish roll is yours. Two sources left: Old Ede's memory, and the headland's markers by the Bone Road."
+          "text": "The parish roll is yours. Two sources left: Old Ede's memory, and the headland's markers by the Bone Road.",
+          "at": "fl_wicker_house"
         },
         {
           "if": [["flag", "fl_names_markers"], ["!flag", "fl_names_ede"], ["!flag", "fl_names_roll"]],
-          "text": "The markers are yours. Two sources left: Old Ede's memory, and the parish roll at Sister Merrow's chapel."
+          "text": "The markers are yours. Two sources left: Old Ede's memory, and the parish roll at Sister Merrow's chapel.",
+          "at": "fl_wicker_house"
         },
         {
           "if": [],
-          "text": "The rite needs the names whole: some from Ede's memory, more from the parish roll, the rest from the headland's markers."
+          "text": "The rite needs the names whole: some from Ede's memory, more from the parish roll, the rest from the headland's markers.",
+          "at": "fl_wicker_house"
         }
       ]
     }

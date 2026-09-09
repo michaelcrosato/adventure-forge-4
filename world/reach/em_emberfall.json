@@ -1299,7 +1299,11 @@
           "text": "The priory's plaque hints at a hidden date. Press Prior Wenlock on it.",
           "at": "em_priory"
         },
-        { "if": [], "text": "Something about Emberfall's founding doesn't add up. The priory might know more." }
+        {
+          "if": [],
+          "text": "Something about Emberfall's founding doesn't add up. The priory might know more.",
+          "at": "em_priory"
+        }
       ]
     },
     "em_q_debt": {
@@ -1323,7 +1327,11 @@
           "if": [["flag", "em_knows_debt"]],
           "text": "Sorra owes Corrin more than the furnace earns. Pay it, expose his tally (wits), or ask Pike to smuggle her fuel."
         },
-        { "if": [], "text": "Something's wrong with the glassworks' books, if Sorra will say so." }
+        {
+          "if": [],
+          "text": "Something's wrong with the glassworks' books, if Sorra will say so.",
+          "at": "em_glassworks"
+        }
       ]
     },
     "em_q_lost": {
@@ -1333,7 +1341,8 @@
       "stages": [
         {
           "if": [["flag", "em_neave_closure"]],
-          "text": "Neave has her answer, one way or another. Ash Row is quieter for it."
+          "text": "Neave has her answer, one way or another. Ash Row is quieter for it.",
+          "at": "em_ash_row"
         },
         {
           "if": [["has", "em_lost_token"]],
@@ -1345,7 +1354,7 @@
           "text": "Try the Glass Orchard, in the ash flats — a scrap of scorched cloth still hangs there, snagged on a low branch.",
           "at": "em_ash_1_2"
         },
-        { "if": [], "text": "A woman on Ash Row still watches the mine road." }
+        { "if": [], "text": "A woman on Ash Row still watches the mine road.", "at": "em_ash_row" }
       ]
     },
     "em_q_keeper": {
@@ -1355,7 +1364,8 @@
       "stages": [
         {
           "if": [["flag", "em_verse_known"]],
-          "text": "Brenna's rest-verse is yours. It can ease a refusal at the roofless chapel, though it isn't required."
+          "text": "Brenna's rest-verse is yours. It can ease a refusal at the roofless chapel, though it isn't required.",
+          "at": "em_choir_nave"
         },
         {
           "if": [["flag", "em_heard_brenna"]],
@@ -1369,7 +1379,8 @@
         },
         {
           "if": [],
-          "text": "Ash Row hides something under its own floor, if you look for it (wits, grace, or might)."
+          "text": "Ash Row hides something under its own floor, if you look for it (wits, grace, or might).",
+          "at": "em_ash_row"
         }
       ]
     },
@@ -1438,7 +1449,11 @@
       "start": [["has", "em_lost_token"]],
       "done": [["flag", "em_neave_closure"]],
       "stages": [
-        { "if": [], "text": "Neave, at Ash Row in Glasswick, would want to know the scorched cloth token was found." }
+        {
+          "if": [],
+          "text": "Neave, at Ash Row in Glasswick, would want to know the scorched cloth token was found.",
+          "at": "em_ash_row"
+        }
       ]
     }
   },

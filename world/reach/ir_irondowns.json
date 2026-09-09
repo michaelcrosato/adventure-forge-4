@@ -2683,7 +2683,8 @@
       "stages": [
         {
           "if": [["flag", "tamsin_mine_truth"]],
-          "text": "The truth is out: Aldous signed the order that doomed the Hundred. Decide the gallery's fate, and his, in Cinderhall."
+          "text": "The truth is out: Aldous doomed the Hundred. Decide the gallery's fate first, in its deep — his own fate can wait.",
+          "at": "ir_hundred_deep"
         },
         {
           "if": [["flag", "ir_hall_backing"]],
@@ -2692,7 +2693,8 @@
         },
         {
           "if": [["flag", "ir_hundred_passed"]],
-          "text": "Past the fall: read the true ledger at the working face, or win the miners' hall's backing in Cinderhall."
+          "text": "Past the fall: read the true ledger at the working face, or win the miners' hall's backing in Cinderhall.",
+          "at": "ir_hundred_face"
         },
         {
           "if": [],
@@ -2738,7 +2740,8 @@
         },
         {
           "if": [],
-          "text": "Old Crick survived the Hundred. His friend Hob did not. Ask him about it, at Cinderhall's miners' hall."
+          "text": "Old Crick survived the Hundred. His friend Hob did not. Ask him about it, at Cinderhall's miners' hall.",
+          "at": "ir_miners_hall"
         }
       ]
     },
@@ -2757,7 +2760,11 @@
           "text": "A slag-hound dens where the downs open into the flooded quarry.",
           "at": "ir_cave1_den"
         },
-        { "if": [], "text": "Miners at the head-frame complain of something prowling the downs after dark." }
+        {
+          "if": [],
+          "text": "Miners at the head-frame complain of something prowling the downs after dark.",
+          "at": "ir_headframe"
+        }
       ]
     },
     "ir_wenna": {
@@ -2788,7 +2795,8 @@
       "stages": [
         {
           "if": [["flag", "sk_berin_debt"], ["!flag", "ir_asked_berin"]],
-          "text": "Berin, on Gullhaven's quay, owes Rennick 6 gold and won't go home owing it. His grandfather Crick waits at Cinderhall."
+          "text": "Crick, at Cinderhall, doesn't know yet: his grandson Berin owes Rennick 6 gold on Gullhaven's quay, and won't come home.",
+          "at": "ir_miners_hall"
         },
         {
           "if": [["flag", "sk_entered"]],
@@ -2797,7 +2805,8 @@
         },
         {
           "if": [],
-          "text": "Old Crick's grandson Berin took the coin road to Gullhaven, in the Saltkerns, past Thornwold."
+          "text": "Old Crick's grandson Berin took the coin road to Gullhaven, in the Saltkerns, past Thornwold.",
+          "at": "sk_settlement"
         }
       ]
     },
@@ -2854,7 +2863,8 @@
         },
         {
           "if": [],
-          "text": "An Ironbound column burns its way down the Reach unbidden. Find Aldous at Cinderhall, or beat it to the next hold."
+          "text": "An Ironbound column burns its way down the Reach unbidden. Find Aldous at Cinderhall, or beat it to the next hold.",
+          "at": "ir_chapterhouse"
         }
       ]
     }

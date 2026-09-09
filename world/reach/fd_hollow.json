@@ -367,7 +367,7 @@
           "text": "Something sings under the water at dusk. Ask in Reedholm, then out onto the fen.",
           "at": "fd_nave_approach"
         },
-        { "if": [], "text": "Fenmarch's grief waits somewhere in its fens." }
+        { "if": [], "text": "Fenmarch's grief waits somewhere in its fens.", "at": "fd_nave_approach" }
       ]
     },
     "fd_q_confession": {
@@ -377,14 +377,19 @@
       "stages": [
         {
           "if": [["flag", "fd_prior_confessed"]],
-          "text": "Halm admitted it. The water may hear the truth as clearly as any bell, at the drowned nave."
+          "text": "Halm admitted it. The water may hear the truth as clearly as any bell, at the drowned nave.",
+          "at": "fd_nave_approach"
         },
         {
           "if": [["flag", "fd_read_tablet"]],
           "text": "A grave-tablet in the Priory's cloister hints at a hidden fault. Press Prior Halm on it.",
           "at": "fd_priory"
         },
-        { "if": [], "text": "Something about the flood doesn't add up. The Priory's cloister might know more." }
+        {
+          "if": [],
+          "text": "Something about the flood doesn't add up. The Priory's cloister might know more.",
+          "at": "fd_priory_cloister"
+        }
       ]
     },
     "fd_q_ironbound": {
@@ -404,11 +409,13 @@
       "stages": [
         {
           "if": [["flag", "fd_ironbound_exposed"]],
-          "text": "You told the Priory. The Ironbound were walked off Stilt Row; their camp is cold."
+          "text": "You told the Priory. The Ironbound were walked off Stilt Row; their camp is cold.",
+          "at": "fd_ironbound_camp"
         },
         {
           "if": [["flag", "fd_ironbound_refused"]],
-          "text": "You turned the Ironbound down. They're still camped on Stilt Row, waiting on someone less scrupulous."
+          "text": "You turned the Ironbound down. They're still camped on Stilt Row, waiting on someone less scrupulous.",
+          "at": "fd_ironbound_camp"
         },
         {
           "if": [["flag", "fd_ironbound_sided"]],
@@ -417,9 +424,10 @@
         },
         {
           "if": [["flag", "fd_knows_ironbound_plan"]],
-          "text": "The Ironbound mean to burn the drowned nave. Side with them, refuse, or tell the Priory what they intend."
+          "text": "The Ironbound mean to burn the drowned nave. Side with them or refuse at their mission — or tell the Priory instead.",
+          "at": "fd_ironbound_camp"
         },
-        { "if": [], "text": "Two Ironbound zealots have made camp somewhere in Reedholm." }
+        { "if": [], "text": "Two Ironbound zealots have made camp somewhere in Reedholm.", "at": "fd_ironbound_camp" }
       ]
     },
     "fd_q_kin": {
@@ -429,7 +437,8 @@
       "stages": [
         {
           "if": [["flag", "fd_mara_closure"]],
-          "text": "Mara has her answer, one way or another. The row is quieter for it."
+          "text": "Mara has her answer, one way or another. The row is quieter for it.",
+          "at": "fd_stilt_row"
         },
         {
           "if": [["has", "fd_grief_token"]],
@@ -441,7 +450,7 @@
           "text": "Mara's husband never came home from the flood. If the drowned nave holds anything of his, she wants to know.",
           "at": "fd_nave_approach"
         },
-        { "if": [], "text": "A woman on Stilt Row still watches the water some evenings." }
+        { "if": [], "text": "A woman on Stilt Row still watches the water some evenings.", "at": "fd_stilt_row" }
       ]
     },
     "fd_q_bog": {
@@ -464,14 +473,20 @@
           "text": "A bog-thing tears traps near the Eel-Run. Kill it, or raid its den for proof.",
           "at": "fd_fen_3_3"
         },
-        { "if": [], "text": "The eel-market's traps keep coming back torn." }
+        { "if": [], "text": "The eel-market's traps keep coming back torn.", "at": "fd_eel_market" }
       ]
     },
     "fd_q_buckle": {
       "name": "A Name on a Buckle",
       "start": [["has", "fd_grief_token"]],
       "done": [["flag", "fd_mara_closure"]],
-      "stages": [{ "if": [], "text": "Mara, on Stilt Row in Reedholm, would want to know the name-carved buckle was found." }]
+      "stages": [
+        {
+          "if": [],
+          "text": "Mara, on Stilt Row in Reedholm, would want to know the name-carved buckle was found.",
+          "at": "fd_stilt_row"
+        }
+      ]
     }
   },
   "epilogue": [

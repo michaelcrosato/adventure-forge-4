@@ -544,11 +544,13 @@
       "stages": [
         {
           "if": [["var", "mc_toasts_known", ">=", 3]],
-          "text": "All three toasts are known. The last course remains: persuade Hedda, work the press yourself, or buy a jar from Fulk."
+          "text": "All three toasts are known. The last course remains: persuade Hedda, work the press yourself, or buy a jar from Fulk.",
+          "at": "mc_press_hearth"
         },
         {
           "if": [["flag", "mc_last_course"]],
-          "text": "The last course is ready. Toasts remain: Ingrith's, Aldith's, and Hedda's — the loft, the chantry, the hearth."
+          "text": "The last course is ready. Toasts remain: Ingrith's, Aldith's, and Hedda's — the loft, the chantry, the hearth.",
+          "at": "mc_recorder_loft"
         },
         {
           "if": [["has", "mc_oak_apples"]],
@@ -557,7 +559,8 @@
         },
         {
           "if": [],
-          "text": "The Feast of Wax broke off unfinished. Wanted: the king's, Church's, and guests' toasts, and a last course."
+          "text": "The Feast of Wax broke off unfinished. Wanted: the king's, Church's, and guests' toasts, and a last course.",
+          "at": "mc_recorder_loft"
         }
       ],
       "failed": [["flag", "mc_hollow_done"], ["any", [["var", "mc_toasts_known", "<", 3], ["!flag", "mc_last_course"]]]]
@@ -569,13 +572,23 @@
       "stages": [
         {
           "if": [["var", "mc_course_step", ">=", 3]],
-          "text": "Three of the four have gone rightly. One remains — the table has borne enough wrong turns for one night."
+          "text": "Three of the four have gone rightly. One remains — the table has borne enough wrong turns for one night.",
+          "at": "mc_table_head"
         },
-        { "if": [["var", "mc_course_step", ">=", 2]], "text": "Two of the four have gone rightly here so far." },
-        { "if": [["var", "mc_course_step", ">=", 1]], "text": "One of the four has gone rightly here so far." },
+        {
+          "if": [["var", "mc_course_step", ">=", 2]],
+          "text": "Two of the four have gone rightly here so far.",
+          "at": "mc_table_head"
+        },
+        {
+          "if": [["var", "mc_course_step", ">=", 1]],
+          "text": "One of the four has gone rightly here so far.",
+          "at": "mc_table_head"
+        },
         {
           "if": [],
-          "text": "Everything's ready. Set the feast right, in order, at the table's head — Mootcombe half-remembers it, in pieces."
+          "text": "Everything's ready. Set the feast right, in order, at the table's head — Mootcombe half-remembers it, in pieces.",
+          "at": "mc_table_head"
         }
       ],
       "failed": [["flag", "mc_hollow_done"], ["!flag", "mc_hollow_rested"]]
@@ -587,11 +600,13 @@
       "stages": [
         {
           "if": [["flag", "mc_orchard_crown"]],
-          "text": "Mootcombe's orchards answer to the Crown's levy now, counted row by row from the tally-house."
+          "text": "Mootcombe's orchards answer to the Crown's levy now, counted row by row from the tally-house.",
+          "at": "mc_tally_house"
         },
         {
           "if": [["flag", "mc_orchard_free"]],
-          "text": "Mootcombe's orchards fill Free Company casks now, out of the cask-yard."
+          "text": "Mootcombe's orchards fill Free Company casks now, out of the cask-yard.",
+          "at": "mc_cask_yard"
         },
         {
           "if": [["flag", "mc_orchard_common"]],
@@ -621,7 +636,8 @@
         },
         {
           "if": [],
-          "text": "Fulk's cask wants carrying up the cairn-track. Read the sunken lane's line first, near the cairn-track's foot."
+          "text": "Fulk's cask wants carrying up the cairn-track. Read the sunken lane's line first, near the cairn-track's foot.",
+          "at": "mc_orchards_4_1"
         }
       ]
     },
@@ -632,7 +648,8 @@
       "stages": [
         {
           "if": [],
-          "text": "Nell listens at the hall wall some nights. Tell her it's not safe to answer, or that she's right to keep listening."
+          "text": "Nell listens at the hall wall some nights. Tell her it's not safe to answer, or that she's right to keep listening.",
+          "at": "mc_hall_gate"
         }
       ]
     },

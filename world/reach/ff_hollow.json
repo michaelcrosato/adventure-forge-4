@@ -449,7 +449,8 @@
         },
         {
           "if": [["flag", "ff_roll_read"], ["!flag", "ff_writ_ended"], ["!has", "ff_writ"], ["!flag", "ff_letters_freed"]],
-          "text": "The roll is read. Two remain: the writ, at the tally-house, and the letters, at the porch."
+          "text": "The roll is read. Two remain: the writ, at the tally-house, and the letters, at the porch.",
+          "at": "ff_tally_house"
         },
         {
           "if": [
@@ -457,15 +458,18 @@
             ["any", [["flag", "ff_writ_ended"], ["has", "ff_writ"]]],
             ["!flag", "ff_letters_freed"]
           ],
-          "text": "The writ is ended. Two remain: the ward-roll, at the recorder's loft, and the letters, at the porch."
+          "text": "The writ is ended. Two remain: the ward-roll, at the recorder's loft, and the letters, at the porch.",
+          "at": "ff_recorder_loft"
         },
         {
           "if": [["!flag", "ff_roll_read"], ["!flag", "ff_writ_ended"], ["!has", "ff_writ"], ["flag", "ff_letters_freed"]],
-          "text": "The letters are free. Two remain: the ward-roll, at the recorder's loft, and the writ, at the tally-house."
+          "text": "The letters are free. Two remain: the ward-roll, at the recorder's loft, and the writ, at the tally-house.",
+          "at": "ff_recorder_loft"
         },
         {
           "if": [],
-          "text": "Three are wanted first: the roll at the loft, the writ at the tally-house, the letters at the porch."
+          "text": "Three are wanted first: the roll at the loft, the writ at the tally-house, the letters at the porch.",
+          "at": "ff_recorder_loft"
         }
       ]
     },
@@ -497,19 +501,23 @@
         },
         {
           "if": [["flag", "ff_dame_agrees"], ["!flag", "ff_hold_word"], ["!flag", "ff_rent_turned"]],
-          "text": "The dame agrees. Two remain: the hold's word, from Freda, and the rent, from Bailiff Rowe."
+          "text": "The dame agrees. Two remain: the hold's word, from Freda at the hearth-house, and the rent, from Bailiff Rowe.",
+          "at": "ff_hearth_house"
         },
         {
           "if": [["!flag", "ff_dame_agrees"], ["flag", "ff_hold_word"], ["!flag", "ff_rent_turned"]],
-          "text": "The hold's given its word. Two remain: the dame's agreement, at the chantry, and the rent, at the tally-house."
+          "text": "The hold's given its word. Two remain: the dame's agreement, at the chantry, and the rent, at the tally-house.",
+          "at": "ff_chantry"
         },
         {
           "if": [["!flag", "ff_dame_agrees"], ["!flag", "ff_hold_word"], ["flag", "ff_rent_turned"]],
-          "text": "The rent's turned. Two remain: the dame's agreement, at the chantry, and the hold's word, from Freda."
+          "text": "The rent's turned. Two remain: the dame's agreement, at the chantry, and the hold's word, from Freda.",
+          "at": "ff_chantry"
         },
         {
           "if": [],
-          "text": "Three are wanted: the dame's word at the chantry, the hold's word from Freda, and the rent turned at the tally-house."
+          "text": "Three are wanted: the dame's word at the chantry, the hold's word from Freda, and the rent turned at the tally-house.",
+          "at": "ff_chantry"
         }
       ]
     },
@@ -520,11 +528,13 @@
       "stages": [
         {
           "if": [["flag", "ff_wardlands_crown"]],
-          "text": "The wardlands answer to the Crown now, rent and all, from the tally-house."
+          "text": "The wardlands answer to the Crown now, rent and all, from the tally-house.",
+          "at": "ff_tally_house"
         },
         {
           "if": [["flag", "ff_wardlands_free"]],
-          "text": "The wardlands are the Companies' enclosure now, walled out of the land-agent's lodging."
+          "text": "The wardlands are the Companies' enclosure now, walled out of the land-agent's lodging.",
+          "at": "ff_agents_lodging"
         },
         {
           "if": [["flag", "ff_wardlands_common"]],
@@ -559,7 +569,8 @@
         },
         {
           "if": [],
-          "text": "Coster's bound-stakes want carrying to the fell road. Read the lane's line first, if you can find where it's walked."
+          "text": "Coster's bound-stakes want carrying to the fell road. Read the lane's line first, if you can find where it's walked.",
+          "at": "ff_fells_3_5"
         }
       ]
     },
@@ -575,7 +586,8 @@
         },
         {
           "if": [],
-          "text": "The ward-roll wants reading against the Book of Houses. Tuck keeps the book; the roll waits in the dame's study."
+          "text": "The ward-roll wants reading against the Book of Houses. Tuck keeps the book; the roll waits in the dame's study.",
+          "at": "ff_recorder_loft"
         }
       ]
     },
@@ -586,7 +598,8 @@
       "stages": [
         {
           "if": [],
-          "text": "Tibb hums the wards' rhyme through the wall some nights. Tell her it isn't safe, or that she's right to answer."
+          "text": "Tibb hums the wards' rhyme through the wall some nights. Tell her it isn't safe, or that she's right to answer.",
+          "at": "ff_walled_lane"
         }
       ]
     },
