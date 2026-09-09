@@ -223,12 +223,12 @@ test("a hold's fates pay the same score, whichever road the deed is done by", ()
  */
 test("reach: a hold-grief quest's default stage names the room it points at", () => {
   const world = worlds.find((w) => w.id === "reach")!;
-  const UNPOINTED = new Set([
-    "em_q_keeper", "em_q_choir", "fd_q_congregation", "fd_q_ironbound", "ff_q_sent_for", "ff_q_lesson",
-    "ff_q_wardlands", "fl_q_names", "hl_q_due", "hl_q_order", "kw_q_round", "kw_q_horn", "mc_q_prepare",
-    "mc_q_order", "mc_q_orchard", "me_q_witness", "pw_q_dies", "pw_q_names", "sh_q_truce_words",
-    "sh_q_rod", "th_q_pardon",
-  ]);
+  // Twenty-one when this was written; two now, and both are right to leave.
+  // Each default stage says the thread is waiting on a *different* quest to
+  // settle first — whose the wardlands are waits on the Schoolroom's own fate,
+  // whose the orchards on the Long Table's — so there is no room to send
+  // anyone to yet, and an `at` would name a place that answers nothing.
+  const UNPOINTED = new Set(["ff_q_wardlands", "mc_q_orchard"]);
   const pointless: string[] = [];
   const fixed: string[] = [];
   for (const [qid, q] of Object.entries(world.quests ?? {})) {
