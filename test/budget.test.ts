@@ -67,9 +67,11 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // moved down together rather than one at a time.
   "reach:regent_deposed": { avg: 453, max: 1162 },
   "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1154 }, // the burn road is a different route now, and a shorter-screened one; 450.68 -> 449.30, so its average is honestly under the real bar rather than passing on a floor
-  "reach:gray_crown": { avg: 481, max: 1125 },
+  "reach:gray_crown": { avg: 453, max: 1125 }, // 481 -> 452.4 the day an item stopped explaining itself in every new room: the crown's 111-character clue rode 96 first-seen screens on this road alone
   "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1118 },
-  "reach:regent_deposed#warden_crown": { avg: AVG_CHARS_MAX, max: 1131 },
+  // regent_deposed#warden_crown was here at max 1141, then 1131; the same
+  // change took it to 1,092 and its average to 445, so it meets the real bar
+  // on both counts and needs no allowance at all. Two roads down, eight to go.
   // The full-party road: four companions travelling, the most expensive proof
   // in the realm, and the ratchet turned down three times on the day it was
   // written. It arrived at 506 average and a 1,489-character screen at

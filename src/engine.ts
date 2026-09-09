@@ -1193,6 +1193,7 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
             const wieldedBefore = bestWeapon(world, s).item, wornBefore = bestArmor(world, s).item;
             s.inv.push(item);
             s.itemLoc[item] = "inv";
+            s.vars[`_got_${item}`] = s.visited.length;
             events.push(`${world.items[item]?.name ?? item}: obtained.`);
             // a reward or a found thing that becomes the best weapon or armor carried says so, as a pickup does
             if (bestWeapon(world, s).item === item && wieldedBefore !== item) events.push(`(You will fight with it now.)`);
@@ -2487,6 +2488,11 @@ function bestWeapon(world: World, s: State): { hit: number; dmg: number; item: s
   return best;
 }
 
+/** New places seen since a thing came into the pack, over which its hint still shows in the menu. */
+const HINT_PLACES = 5;
+/** Whether an item is still new enough to explain itself in the menu (see oddsHint's `use` case). */
+const freshlyGot = (s: State, item: string) => s.visited.length - (s.vars[`_got_${item}`] ?? 0) <= HINT_PLACES;
+
 /** The use def a "use" action runs: first entry whose conditions pass and whose target (if any) is at hand. Shared by step() and oddsHint(). */
 function useDefFor(world: World, s: State, item: string): UseDef | undefined {
   return (world.items[item]?.use ?? []).find((d) => {
@@ -2705,9 +2711,20 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   if (who) parts.unshift(who);
   if (isFree) parts.unshift("free");
   if (parts.length) return ` (${parts.join("; ")})`;
-  if (a.kind === "use" && opts.itemHints !== false) {
-    // an item's use can sit in the menu for the rest of the game, so its hint
-    // is shown where a place is first shown (and in status), not on every screen
+  if (a.kind === "use" && opts.itemHints !== false && freshlyGot(s, a.item)) {
+    // An item's use can sit in the menu for the rest of the game, so its hint
+    // shows where a place is first shown (and in status), not on every screen —
+    // and, since HINT_PLACES ago, only while the thing is still new to you.
+    //
+    // The crown is why. "use iron crown (read the engraving inside the band; a
+    // throne in Marrowgate was cut to take it, or to go without)" is 111
+    // characters of good clue, and the gray_crown road carried the crown into
+    // 96 first-seen rooms and printed it in all of them: ten thousand
+    // characters of one sentence, and the whole of that road's 31-character
+    // overrun. A hint is discovery — the pickup line says it, status says it
+    // free on demand, and the next few new places say it again in case you
+    // walked off without reading. After that it is a HUD, and this realm makes
+    // a HUD earn its place.
     const hint = itemHint(world, s, a.item);
     return hint ? ` (${hint})` : "";
   }
@@ -2800,6 +2817,7 @@ export function step(world: World, prev: State, action: Action): StepOut {
       const wieldedBefore = bestWeapon(world, s).item, wornBefore = bestArmor(world, s).item;
       s.itemLoc[action.item] = "inv";
       s.inv.push(action.item);
+      s.vars[`_got_${action.item}`] = s.visited.length;
       const def = world.items[action.item];
       const label = def?.name ?? action.item;
       const hint = itemHint(world, s, action.item);
