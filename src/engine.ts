@@ -316,8 +316,21 @@ export function condOk(world: World, s: State, c: Cond): boolean {
     // shipped without the negated twin every other op in this switch has. That
     // is a hole, not a simplification: there was no way to write "offer this
     // only when nothing here ignores armor", which is exactly what the Warden's
-    // `brace for it` (armor +2) needs — it is currently offered against all
-    // eight `pierce` hostiles, in rooms whose own text says "armor useless".
+    // `brace for it` (armor +2) needs — it was offered against all eight
+    // `pierce` hostiles, in rooms whose own text says "armor useless".
+    //
+    // `horrorHere` is "some hostile here pierces", and the two content uses
+    // want opposite quantifiers from it: `warden_brace` is gated on
+    // `!horrorHere` ("nothing here ignores armor") when what it really wants
+    // is "something here does NOT ignore armor", and `scholar_name` is gated
+    // on `horrorHere` ("there is a horror to name"), which is exactly right.
+    // A mixed room therefore hides the brace even though armor still helps
+    // against half of what is in it. Measured before adding an op for it:
+    // of the 58 rooms in the realm that hold something which strikes back,
+    // **one** is mixed — `va_crypt`, blight rats beside the barrow-wight. One
+    // room does not earn an op in a closed DSL, and the first road ever to
+    // fight in that crypt confirmed the behaviour rather than tripping over
+    // it. Left as it is, with the blast radius written down.
     case "horrorHere":
       return hostilesHere(world, s).some((id) => world.npcs[id]?.pierce);
     case "!horrorHere":
