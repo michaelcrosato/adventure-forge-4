@@ -75,9 +75,12 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["companionDown"]` / `["!companionDown"]` | a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up) |
 | `["checkHere", skill, dc]` / `["!checkHere", skill, dc]` | a room action or npc topic visible right now previews a `check` of `skill` at `dc` or higher, as its first effect (§4's preview rule) — `dc` here is the check's current, possibly-escalated one (§4), not always the authored number |
 | `["lowHp"]` / `["!lowHp"]` | the player's hp is at half of maxHp or less — "a fight is going badly," the same threshold `leave` uses against an aggressive npc (§7) |
+| `["region", code]` / `["!region", code]` | the player stands in a room of this region (a key of `world.regions`) — "while we are in this hold", which is what a companion's arrival remark wants. A code that names no region is a validator error, because a typo reads as "nowhere" and the condition simply never fires |
 | `["any", [cond, cond, ...]]` | passes when at least one listed condition passes — the one OR inside an all-of list |
 
-These five are room- or player-scoped rather than naming an id: no target, so no unknown-id check — they read the room or the player as they stand, which is what an ability's `if` (§14) usually needs instead of a specific npc it cannot know in advance. Each has its negated twin, like every other op above; without them there is no way to say "only when nothing in this room ignores armor", which is exactly what a `brace for it` needs.
+These six are room- or player-scoped rather than naming an id: no target, so no unknown-id check — they read the room or the player as they stand, which is what an ability's `if` (§14) usually needs instead of a specific npc it cannot know in advance. Each has its negated twin, like every other op above; without them there is no way to say "only when nothing in this room ignores armor", which is exactly what a `brace for it` needs.
+
+`region` is the one that pays for itself in content rather than in abilities. A hold's arrival used to be written as a chain of `["if", [["inParty", npc]], [["say", …]], []]` inside one `onEnterOnce`, and with a full party that put four companions' answers on one screen — 1,448 characters at Mootcombe's Cairn-Track, one speaker twice. The engine speaks at most **one** companion remark a turn for the whole company, rotating who leads (§7), so the lines belong in `companion.remarks` gated on `[["flag", "<code>_entered"], ["region", "<code>"]]`; there they land one a turn as the player walks the hold, and the arrival screen falls to 812. The flag says they have arrived; the region says they are still here, so a line about Mootcombe's chantry is never spoken in Fenmarch forty turns later.
 
 ## 4. Effects
 
@@ -111,6 +114,8 @@ Effects run in order and stop the moment the game ends.
 | `["calmhostile"]` | `calm` applied to every currently-hostile npc in the room |
 | `["revive"]` | every party member currently down (flag `down_<id>`) gets back up now, at half their max hp — the same recovery a cleared fight grants on its own (§7), just not waiting for the room to clear |
 | `["sayunvisited"]` | names this room's region's landmarks not yet visited (or says there are none left) — for a free, informational ability |
+| `["bearings"]` | says the way to this region's three nearest named places, walked through the real exits and folded into legs ("Slatefold, four south, then one down"), opening with `regions[code].bearing` if the region has one. Content still decides *where* a player can take their bearings; the directions are not the author's to write — see §9 |
+| `["questsopen"]` | says how many quests the player still has open, and sends them to `status` for the list — for a point of no return. Deliberately no names: which threads lie *behind* the door is not something the engine knows, and naming one that is ahead would be its own lie |
 | `["end", "win"|"lose", endingId, text]` | ends the game (every ending id needs a proof — see §12) |
 
 The `hostile`-scoped trio (`harmhostile`, `condhostile`, `calmhostile`) exist for
@@ -146,6 +151,17 @@ the die)` where a fresh one would have read `(DC 11, +2 wits: roll 9+ on the
 die)` — never the stale, unescalated number (see the `check` case in
 `applyFx` and `oddsHint`, `src/engine.ts`; the history that makes this
 non-negotiable is in the comments above both).
+
+**A conversation does not escalate.** A lock gets harder as you work at it; a
+topic's check reads the DC you wrote, however many times it is asked. Two blind
+waves called the old behaviour a trap and the second named the compound: a
+companion-dispute check already costs regard with *both* companions on a miss,
+by design, and "failed twice despite ~60% listed odds" with the DC creeping
+under you is a spiral whose only exit is the thing escalation taxes — walk
+away, earn some standing or a rank or a companion's regard, come back better
+placed. The attempt is still counted, so `Failed before:` on the status check
+and any content reading `checkAttempts` are unchanged. Acts, item uses and
+abilities still escalate: those you force.
 
 Escalation is keyed on the id of whatever offers the check — a room action's
 `id`, a topic's `id` (npc-qualified, since ids like `greet` repeat across
@@ -493,6 +509,21 @@ left and its hint, under "Conditions:".
   landmark per six cells is right: the realm runs 77 across 445 cells. Too few
   and there is nothing to steer by; too many and the anchor changes under the
   player's feet mid-leg.
+- **Never write a direction by hand.** The realm carried 286 hand-written
+  "get your bearings" actions — "As the fell runs, Slatefold is 4 south and 1
+  east, then down. The bound-stone: 6 south." — 286 separate chances to be
+  wrong about a grid with walls, and two playtest waves reported them not
+  matching the map. Every one is now `"fx": [["bearings"]]` and the engine
+  walks the exits. Offer the action wherever a lost player would want it (free,
+  labelled "get your bearings"), and give the region the words it opens with:
+
+  ```json
+  "regions": { "ff": { "name": "the Fosterfell", "bearing": "As the fell runs" } }
+  ```
+
+  The opening is the author's; the directions are not. An opening that ends in
+  punctuation is a validator error, because the engine adds `": the mill, one
+  east."` after it.
 
 ## 10. Templates and stamps
 
@@ -537,8 +568,8 @@ it standing somewhere.
   "fd_bell": { "name": "The Saint's Bell",
     "start": [["flag", "fd_knows_bell"]], "done": [["flag", "fd_congregation_rested"]], "failed": [["flag", "fd_bell_sold"]],
     "stages": [
-      { "if": [["has", "fd_saint_bell"]], "text": "Ring the bell at the drowned nave." },
-      { "if": [], "text": "Find the saint's bell in the sunk nave, east of Reedholm." } ] }
+      { "if": [["has", "fd_saint_bell"]], "text": "Ring the bell at the drowned nave.", "at": "fd_nave_approach" },
+      { "if": [], "text": "Find the saint's bell in the sunk nave, east of Reedholm.", "at": "fd_nave_approach" } ] }
 },
 "epilogue": [
   { "if": [["flag", "fd_congregation_rested"]], "text": "In Reedholm they ring a bell at dusk now, and the water stays quiet." },
@@ -560,6 +591,20 @@ it standing somewhere.
   beginning on one turn collapse to one `Journal: …` line); `status` lists
   the journal. Every region quest (4–6 per region) needs a stage for
   each state a player can be in.
+- **A stage that points somewhere names the room, not the way there.** `at` is
+  a room id; the free `status` check walks the real exits to it and prints the
+  legs, so the log reads "Ring the bell at the drowned nave. (the way there:
+  three east, then one in)". It shortens as the player walks, says "(you are
+  standing there)" on arrival, and says nothing at all when no chain of exits
+  reaches it — nothing rather than something wrong. A locked exit counts as an
+  exit: the door is the quest.
+
+  Every player of wave seven asked for this, independently, and two of them
+  lost 30-60 turns of a 620-turn run for want of it. The third found why the
+  hand-written version could not be trusted: "'two stands west, then in' didn't
+  match the actual room-exit labels; the real path required going east." **So
+  do not write directions into stage text** — name the room and delete the
+  clause. An `at` that names no room is a validator error.
 - Epilogue lines print after any ending when their conditions hold, at most
   6 and at most 600 characters together: the heaviest `weight` first (default
   0, ties in file order), and the survivors read in file order. A realm has far more true lines than places,
@@ -690,6 +735,37 @@ menu cap (§15's 12), the room turns pages: the exits stay put and `more here`
 (free, no turn) shows the rest. Nothing is dropped. It used to be: abilities
 past the cap simply did not appear, which meant a Warden could stand in a
 crowded room with a full pool and never be offered the thing they had earned.
+
+**Every class needs at least one ability that works outside a fight.** Nine of
+the realm's first ten were `context: "combat"`, and something stands in the
+room to fight on **4.1% of screens** — so a Warden's and a Scholar's whole kit
+sat behind a door that opens one screen in twenty-five, and the class was a
+stat line the rest of the time. `test/abilities.test.ts` holds the rule now.
+The shape that works, one per class, on its own attribute:
+
+```json
+"scholar_read": {
+  "label": "read it twice",
+  "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["checkHere", "wits", 11]],
+  "fx": [["addvar", "res_scholar", -1], ["cond", "studied", 2], ["say", "You stop hurrying it, and read from the top in the tongue it was written in."]]
+}
+```
+
+Spend a charge when a hard check of your own attribute is standing in front of
+you (`checkHere`, §3), and take a timed +4 to it (a `conditions` entry with
+`checks`, §8). It reads as the class doing what the class is for, and it is
+offered where it matters instead of everywhere.
+
+**Read a share against the right denominator.** `npx tsx
+scripts/audit-abilities.ts world/reach.json` prints, per ability, how many
+screens each clause of its `if` held on across the walkthrough and every proof
+— and the fight count beside it, because an ability on 1.6% of a class's
+screens is on 41% of that road's fights, which is a working ability and not a
+broken one. It is the tool that separates "never chosen" from "never shown"
+from "its class was never played". **Do not gate an ability on a conjunction
+you have not measured**: `scholar_name` wanted a horror in the room AND a
+companion holding the line AND you under half your hp, and stood on 1 screen
+in 1760.
 
 **The cap is on a room's own content, not on that plus your abilities.** A
 class carries three or four abilities into every room in the realm, so taxing
