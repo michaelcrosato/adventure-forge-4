@@ -248,6 +248,17 @@
                 ["addvar", "gold", 2],
                 ["say", "Under the fallen rail, a purse gone green with two coins still in it, and a child's wooden horse nobody came back for."]
               ]
+            },
+            {
+              "id": "va_bridge_horse",
+              "label": "leave the knife with the wooden horse",
+              "once": true,
+              "if": [["has", "va_split_knife"], ["flag", "did_va_bridge_search"]],
+              "fx": [
+                ["move", "va_split_knife", "nowhere"],
+                ["xp", 2],
+                ["say", "The grip fits the horse's owner and nothing else you have met. You set the two together under the fallen rail, above the water, where whoever comes looking will find both at once."]
+              ]
             }
           ]
         },

@@ -4749,6 +4749,14 @@
           "fx": [["move", "vell_ledger_leaf", "inv"], ["set", "vell_devoted"], ["xp", 3]]
         },
         {
+          "id": "leaf_read",
+          "label": "read the leaf against the cipher",
+          "if": [["has", "vell_ledger_leaf"], ["has", "vell_cipher_key"], ["!flag", "vell_leaf_read"]],
+          "once": true,
+          "say": "They hold the strip against the leaf themselves. The cipher is their own hand, from before the exile, and what it turns the leaf into is a name — not theirs. \"I took someone else's entry. They had children. I did not.\"",
+          "fx": [["set", "vell_leaf_read"], ["addvar", "appr_vell", 2], ["xp", 4]]
+        },
+        {
           "id": "quarrel_osk_vell_side_vell",
           "label": "back Vell — it belongs in the record",
           "if": [["flag", "quarrel_osk_vell"], ["!flag", "quarrel_osk_vell_done"]],
@@ -5204,7 +5212,8 @@
     },
     "vell_cipher_key": {
       "name": "a strip of vellum, a cipher in hand",
-      "loc": "nowhere",
+      "loc": "hb_keepers_hall",
+      "takeable": true,
       "hint": "notes in Vell's own hand — might unlock more of theirs, if you find any."
     },
     "vell_ledger_leaf": {
@@ -5317,6 +5326,11 @@
     }
   },
   "epilogue": [
+    {
+      "if": [["flag", "vell_leaf_read"]],
+      "text": "Vell writes under their own name again, in Marrowgate, where the entry they took is still on a shelf they can no longer reach.",
+      "weight": 1
+    },
     {
       "if": [["flag", "lys_dead"]],
       "text": "Lys never got the chance to find her brother. Nobody else went looking either.",
