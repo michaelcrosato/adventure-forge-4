@@ -830,7 +830,9 @@ instead of advancing" is the intended cycle. `pageRoom` takes
 `s.roomPage % pages`, the header prints `p2/3`, and `roomPage` resets on
 entering a room. What that report actually wants is a way to know a two-page
 room *has* two pages — which the marker gives, and which the player did not
-mention seeing.
+mention seeing. That one is superseded, by rename, as the sweep's
+not-a-defect items were; the inbox stands at 45 open (8 of them P1), which is
+23 filed by this wave on top of the 23 the sweep left, less this one.
 
 **Reframed, and it turned out to be the same door.** A player reported that
 bearings "described paths that didn't match the actual room-to-room
