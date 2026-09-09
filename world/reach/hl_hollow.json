@@ -444,18 +444,21 @@
       "stages": [
         {
           "if": [["flag", "hl_hollow_rested"], ["!flag", "said_hl_tallykeeper_sv_hl_rested_ask"]],
-          "text": "The barn rests. Brida, at the tally-keeper's cottage, wonders what becomes of the account now it's paid."
+          "text": "The barn rests. Brida, at the tally-keeper's cottage, wonders what becomes of the account now it's paid.",
+          "at": "hl_tally_cottage"
         },
         {
           "if": [
             ["any", [["flag", "hl_hollow_bargained"], ["flag", "hl_tithe_common"]]],
             ["!flag", "said_hl_bailiff_sv_hl_bargain_ask"]
           ],
-          "text": "The open barn drew Marrowgate's notice. Bailiff Vance has a report he'd rather not have written alone."
+          "text": "The open barn drew Marrowgate's notice. Bailiff Vance has a report he'd rather not have written alone.",
+          "at": "hl_counting_house"
         },
         {
           "if": [["flag", "hl_hollow_burned"], ["!flag", "said_hl_almoner_sv_hl_burned_ask"]],
-          "text": "The barn is ash. Sister Winnow, at the almonry, wonders what becomes of the burned ground now."
+          "text": "The barn is ash. Sister Winnow, at the almonry, wonders what becomes of the burned ground now.",
+          "at": "hl_almonry"
         },
         { "if": [], "text": "Tithing settles back into itself, whatever the Hunger Barn's fate cost it." }
       ]
