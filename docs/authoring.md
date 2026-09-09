@@ -608,6 +608,17 @@ it standing somewhere.
   do not write directions into stage text** — name the room and delete the
   clause. An `at` that names no room is a validator error.
 
+  **A hold's grief quest must carry an `at` on the line a player reads before
+  the quest has moved** — `test/content.test.ts` holds that as a named ratchet,
+  and the two exceptions in it are both stages that say the thread is waiting
+  on a different quest to settle first, where there is nowhere to send anyone
+  yet. This is not a style rule. A blind player of wave eight finished two of
+  the Hearthlands' side quests, never found the threshing floor, and reported
+  that the hold had no grief at all; 21 of the realm's 27 grief quests were
+  silent about where they led at the moment it mattered, while their side
+  quests were not. A player who follows the signposts should not end up in the
+  optional content.
+
   An `at` beyond a one-way door prints nothing until the player is through it,
   and that is correct rather than broken. Marrowgate is entered only by four
   `["goto", "mg_south_gate"]` effects on the Pass Gate — a deliberate point of
