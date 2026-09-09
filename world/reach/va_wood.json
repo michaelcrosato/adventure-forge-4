@@ -41,7 +41,20 @@
           "name": "The Last Trees",
           "desc": "The ash wood thins to nothing. North the barrow hill rises, white grass on a bare slope and two stone doors set into it.",
           "brief": "The last trees. The barrow north.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "va_lasttrees_frost",
+              "label": "read the frost for old tracks",
+              "if": [["class", "warden"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "One set of prints, old, going up and none coming down. Whoever the reeve meant by 'never came down' came this way first."]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 0],
@@ -108,7 +121,20 @@
           "name": "The Hollow Path",
           "desc": "The ground dips into a sunken trail, root and stone rising to either side. Through a gap in the trees east, black water marks the sunken shrine; past it the watchtower's broken crown breaks the skyline.",
           "brief": "The sunken trail. Shrine and tower east.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "va_hollowpath_coin",
+              "label": "note the coin left on the flat stone",
+              "if": [["class", "envoy"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "A single coin, old minting, set on the flat stone and left — not dropped. Someone paid the path a toll once, or asked it for safe passage."]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 1],
@@ -123,14 +149,40 @@
           "name": "Tower Shadow",
           "desc": "The watchtower's shadow falls long across the path. Its stones rise east through the last trees. South, the ground drops toward black water.",
           "brief": "Tower shadow. The tower stands east.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "va_towershadow_marks",
+              "label": "trace the tower's old signal-marks",
+              "if": [["class", "scout"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Notches on the nearest trunk, old and weathered, spaced for counting fires on the watchtower — a signal code nobody living remembers reading."]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 2],
           "name": "Camp Smoke",
           "desc": "A thread of smoke shows through the trees. The hunter's lean-to stands just beyond, to the west. North, a cairn of flat stones and a cold mineral smell.",
           "brief": "Camp smoke. The camp lies west.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "va_campsmoke_drift",
+              "label": "read the smoke's drift",
+              "if": [["class", "scout"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "It leans east, into the trees, not west toward open ground — a hunter banks a fire to hide its smoke from the wood, not the road. Old habit."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 2],
@@ -165,7 +217,20 @@
           "name": "Sodden Verge",
           "desc": "The ground turns soft and cold underfoot. East, black water glints through the trees where a stone roofline breaks the surface. A worn track climbs north toward the tower.",
           "brief": "Soft ground. The shrine's water east.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "va_soddenverge_holes",
+              "label": "study the ground gone soft here",
+              "if": [["class", "warden"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Old post-holes under the moss, in a line — a picket line, or a fence to keep something in the water, not out of it."]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 3],
@@ -183,6 +248,17 @@
                 ["addvar", "gold", 2],
                 ["say", "Under the fallen rail, a purse gone green with two coins still in it, and a child's wooden horse nobody came back for."]
               ]
+            },
+            {
+              "id": "va_bridge_horse",
+              "label": "leave the knife with the wooden horse",
+              "once": true,
+              "if": [["has", "va_split_knife"], ["flag", "did_va_bridge_search"]],
+              "fx": [
+                ["move", "va_split_knife", "nowhere"],
+                ["xp", 2],
+                ["say", "The grip fits the horse's owner and nothing else you have met. You set the two together under the fallen rail, above the water, where whoever comes looking will find both at once."]
+              ]
             }
           ]
         },
@@ -191,7 +267,8 @@
           "name": "The Split Oak",
           "desc": "An oak split clean by old lightning at the wood's edge. East along the trail a lean wolf has taken the charcoal ring for its own; north the trail runs deeper; west, past a broken bridge, woodsmoke marks a hunter's camp.",
           "brief": "The split oak. Village south.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "items": ["va_split_knife"]
         },
         {
           "cell": [2, 3],
@@ -502,6 +579,12 @@
       "hint": "the lean wolf's — the hunter might want to see it",
       "variants": [{ "if": [["flag", "said_va_hunter_pelt"]], "hint": "the hunter has seen it" }]
     },
+    "va_split_knife": {
+      "name": "notched belt knife",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "a boy's, by the grip — too small for a grown hand; the Broken Bridge, west, remembers a horse to match"
+    },
     "va_stag_clasp": {
       "name": "a tarnished stag clasp",
       "loc": "nowhere",
@@ -514,6 +597,30 @@
           "hint": "the old king's mark; the Vale's elder is behind you now, a keepsake"
         }
       ]
+    },
+    "va_hollowpath_cord": {
+      "name": "a length of braided cord",
+      "loc": "va_wood_1_1",
+      "takeable": true,
+      "hint": "old, but sound — worth keeping"
+    },
+    "va_campsmoke_peg": {
+      "name": "a whittled tent-peg",
+      "loc": "va_wood_0_2",
+      "takeable": true,
+      "hint": "carved deep with a mark, one of a set"
+    },
+    "va_soddenverge_stake": {
+      "name": "a bent iron stake",
+      "loc": "va_wood_3_2",
+      "takeable": true,
+      "hint": "pulled loose from a post-line, half-sunk in the mud"
+    },
+    "va_lasttrees_cloth": {
+      "name": "a torn strip of oilcloth",
+      "loc": "va_wood_1_0",
+      "takeable": true,
+      "hint": "wrapped around nothing now; whatever it kept dry is long gone"
     }
   },
   "npcs": {
@@ -570,7 +677,7 @@
             ["xp", 2],
             ["hp", 3],
             ["addvar", "gold", 3],
-            ["say", "The hunter presses a bundle of herbs and three coins into your hands."]
+            ["say", "She turns the fang over, thumbs the ash-white root of it, and counts three coins out with the herbs."]
           ]
         },
         {
@@ -583,7 +690,7 @@
             ["xp", 2],
             ["hp", 3],
             ["addvar", "gold", 3],
-            ["say", "The hunter presses a bundle of herbs and three coins into your hands."]
+            ["say", "She weighs the rib in one hand. \"Hungry, that one. They all are now.\" Herbs, and three coins."]
           ]
         },
         {
@@ -596,7 +703,7 @@
             ["xp", 2],
             ["hp", 3],
             ["addvar", "gold", 3],
-            ["say", "The hunter presses a bundle of herbs and three coins into your hands."]
+            ["say", "She works a thumb through the pelt against the grain. \"Ran a long way on nothing.\" Herbs and three coins."]
           ]
         },
         {
@@ -661,6 +768,14 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "tally_confirmed",
+          "label": "the tally marks by the rack",
+          "if": [["flag", "va_camp_tally_read"]],
+          "once": true,
+          "say": "\"Found what they say, then,\" he says. \"A gap under the fallen stone, north face. Older than my telling, like I said.\"",
+          "fx": [["xp", 1]]
         },
         { "id": "bye", "label": "leave the hunter to the trees", "say": "Keep iron close.", "end": true }
       ]
@@ -734,15 +849,18 @@
       "stages": [
         {
           "if": [["npcDead", "va_ash_wolf"], ["npcDead", "va_gaunt_wolf"], ["npcDead", "va_lean_wolf"]],
-          "text": "All three wolves are down. Report to the hunter at his camp, west of the split oak."
+          "text": "All three wolves are down. Report to the hunter at his camp.",
+          "at": "va_hunters_camp"
         },
         {
           "if": [["any", [["flag", "left_va_ash_wolf"], ["flag", "left_va_gaunt_wolf"], ["flag", "left_va_lean_wolf"]]]],
-          "text": "A wolf let be keeps its distance; the hunter will take that answer. Report to him at his camp, west of the split oak."
+          "text": "A wolf let be keeps its distance; the hunter will take that answer. Report to him at his camp.",
+          "at": "va_hunters_camp"
         },
         {
           "if": [],
-          "text": "Three wolves: the charcoal ring, one east of the gate path; the leaning stones and clawed trunks north of it."
+          "text": "Three wolves range the wood: the Charcoal Ring first, then Twin Stones, then the Wolf Scrape.",
+          "at": "va_wood_2_3"
         }
       ]
     }

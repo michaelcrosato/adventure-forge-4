@@ -1,0 +1,106 @@
+{
+  "quests": {
+    "rank_watch": {
+      "name": "The Watch's Word",
+      "start": [["flag", "said_wm_sgt_rook_duty"]],
+      "done": [["flag", "watch_sworn"]],
+      "stages": [
+        {
+          "if": [["flag", "watch_trusted"]],
+          "at": "wm_hall",
+          "text": "On the roll. The Captain-General makes serjeants, and only in the hall at Highward."
+        },
+        {
+          "if": [],
+          "at": "wm_parade",
+          "text": "Sergeant Rook keeps the Watch's roll at the parade ground, and would put you on it."
+        }
+      ]
+    },
+    "rank_church": {
+      "name": "The Prior's Trust",
+      "start": [["var", "rep_church", ">=", 5], ["flag", "said_fd_prior_greet"]],
+      "done": [["flag", "church_sworn"]],
+      "stages": [
+        {
+          "if": [["flag", "church_trusted"]],
+          "at": "fd_priory",
+          "text": "Trusted. The Church swears its own once you stand high enough with it, and the Prior hears it."
+        },
+        {
+          "if": [],
+          "at": "fd_priory",
+          "text": "Prior Halm can put your standing with the Gray Church on the record, at the priory."
+        }
+      ]
+    },
+    "rank_iron": {
+      "name": "Trusted with the Forges",
+      "start": [["flag", "said_ir_aldous_bg_ironbound"]],
+      "done": [["flag", "iron_sworn"]],
+      "stages": [
+        {
+          "if": [["flag", "iron_trusted"]],
+          "at": "ir_chapterhouse",
+          "text": "Trusted with the forges. The Preceptor's oath is Aldous's to give, and only in the chapterhouse."
+        },
+        {
+          "if": [],
+          "at": "ir_chapterhouse",
+          "text": "Aldous keeps the Ironbound's chapterhouse, and would trust you with the forges now."
+        }
+      ]
+    },
+    "rank_free": {
+      "name": "Trusted with the Road",
+      "start": [["var", "rep_free", ">=", 5], ["flag", "said_th_vane_greet"]],
+      "done": [["flag", "free_sworn"]],
+      "stages": [
+        {
+          "if": [["flag", "free_trusted"]],
+          "at": "th_captains_tent",
+          "text": "Trusted with the road. The Companies swear their own, and Vane can swear you, in her own tent."
+        },
+        {
+          "if": [],
+          "at": "th_captains_tent",
+          "text": "Captain Vane holds the Free Companies' road from her tent, and you have her ear."
+        }
+      ]
+    },
+    "rank_keepers": {
+      "name": "Trusted with the Hall",
+      "start": [["flag", "said_hb_keeper_wren_order"]],
+      "done": [["flag", "keepers_sworn"]],
+      "stages": [
+        {
+          "if": [["flag", "keepers_trusted"]],
+          "at": "hb_keepers_hall",
+          "text": "Trusted with the Hall. The Covenant is sworn there too, and Wren is the one who hears it."
+        },
+        {
+          "if": [],
+          "at": "hb_keepers_hall",
+          "text": "Keeper Wren decides who is trusted with the Keepers' Hall, and you have asked the right questions."
+        }
+      ]
+    },
+    "rank_crown": {
+      "name": "Crown Business",
+      "start": [["var", "rep_crown", ">=", 5]],
+      "done": [["flag", "crown_sworn"]],
+      "stages": [
+        {
+          "if": [["flag", "crown_trusted"]],
+          "at": "mg_regents_chamber",
+          "text": "Trusted with Crown business. The Regent's hand is a rank, not a favour, and the chamber gives it."
+        },
+        {
+          "if": [],
+          "at": "mg_regents_chamber",
+          "text": "The Regent trusts a few with Crown business, and does it in the chamber, in person."
+        }
+      ]
+    }
+  }
+}

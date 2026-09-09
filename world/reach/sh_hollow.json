@@ -23,30 +23,6 @@
             ["say", "Vell: \"He stood where I am standing, that night — the herald, walking into a field my own ancestor decided did not need a truce. I share the blame for it, standing here.\""]
           ],
           []
-        ],
-        [
-          "if",
-          [["inParty", "osk"]],
-          [
-            ["say", "Brother Osk: \"Two lines, four hundred years unburied, and a chantry a mile off that has never once said a word over either of them. Someone should have come here a very long time ago.\""]
-          ],
-          []
-        ],
-        [
-          "if",
-          [["inParty", "tamsin"]],
-          [
-            ["say", "Tamsin: \"A shield-wall that broke by dark, and a company that signed its own charter on the strength of it that same night. However this field gets settled, the Companies owe it more than they've ever paid.\""]
-          ],
-          []
-        ],
-        [
-          "if",
-          [["inParty", "lys"]],
-          [
-            ["say", "Lys: \"At dusk this ground fills with men nobody living can see, still waiting on an order that never came. I don't think that's a haunting. I think it's just patience, gone on far too long.\""]
-          ],
-          []
         ]
       ],
       "variants": [
@@ -73,7 +49,7 @@
           "free": true,
           "if": [["!flag", "sh_hollow_done"]],
           "fx": [
-            ["say", "The truce wants the rod made whole and three truce-words spoken, then walked out at dusk from the herald's walk."],
+            ["say", "The truce wants the rod made whole and three truce-words spoken, then the stand-down given at the herald's walk — your nerve against the line's, unless Merle's already proven a living voice reaches them."],
             [
               "if",
               [["var", "sh_words_known", ">=", 3]],
@@ -114,8 +90,28 @@
             ],
             [
               "if",
-              [["flag", "sh_rod_shaft_known"], ["flag", "sh_rod_ferrule_known"], ["var", "sh_words_known", ">=", 3]],
-              [["say", "Everything's ready together: walk the rod out at dusk, from the herald's walk."]],
+              [
+                ["flag", "sh_rod_shaft_known"],
+                ["flag", "sh_rod_ferrule_known"],
+                ["var", "sh_words_known", ">=", 3],
+                ["flag", "sh_daughter_answered_back"]
+              ],
+              [
+                ["say", "Everything's ready, and Merle's already proven the line will listen: give the stand-down at the herald's walk, sure of it."]
+              ],
+              []
+            ],
+            [
+              "if",
+              [
+                ["flag", "sh_rod_shaft_known"],
+                ["flag", "sh_rod_ferrule_known"],
+                ["var", "sh_words_known", ">=", 3],
+                ["!flag", "sh_daughter_answered_back"]
+              ],
+              [
+                ["say", "Everything's ready: give the stand-down at the herald's walk, alone — a real risk, unless Merle answers for you first."]
+              ],
               []
             ],
             [
@@ -241,12 +237,13 @@
           ]
         },
         {
-          "id": "sh_rest_hollow",
-          "label": "walk the rod out at dusk",
+          "id": "sh_rest_hollow_merle",
+          "label": "give the stand-down, Merle steadied",
           "if": [
             ["has", "sh_rod_shaft"],
             ["has", "sh_rod_ferrule"],
             ["var", "sh_words_known", ">=", 3],
+            ["flag", "sh_daughter_answered_back"],
             ["!flag", "sh_hollow_done"]
           ],
           "fx": [
@@ -259,12 +256,12 @@
             ["addvar", "appr_osk", 1],
             ["score", 25],
             ["xp", 8],
-            ["say", "You fit the ferrule to the shaft, speak the truce-words whole, and walk the rod out into the furrow at dusk. Nothing answers aloud. It does not need to. Both lines stand down."],
+            ["say", "You fit the ferrule to the shaft and speak the truce-words plain, but it's Merle's steadiness you feel most — she proved once a living voice reaches them. This time the line does not have to guess. Both lines stand down."],
             [
               "if",
               [["inParty", "vell"]],
               [
-                ["say", "Vell: \"My own line's hunt, recalled at last. I did not know what I expected to feel, standing here for it. Something like relief. I did not expect that.\""]
+                ["say", "Vell: \"My own line's hunt, recalled at last — and a farm-girl's nerve carried what four hundred years of my family's guilt couldn't. I did not expect that.\""]
               ],
               []
             ],
@@ -272,12 +269,64 @@
               "if",
               [["inParty", "lys"]],
               [
-                ["say", "Lys: \"That's a truce, not a victory. Whoever taught you the words knew exactly what they were asking the rod to say. Well done.\""]
+                ["say", "Lys: \"A truce, carried by someone who'd already proven she could be heard. That's better craft than most rites manage.\""]
               ],
               []
             ],
             ["move", "sh_rod_shaft", "nowhere"],
             ["move", "sh_rod_ferrule", "nowhere"]
+          ]
+        },
+        {
+          "id": "sh_rest_hollow",
+          "label": "give the stand-down (will, 1hp fail)",
+          "if": [
+            ["has", "sh_rod_shaft"],
+            ["has", "sh_rod_ferrule"],
+            ["var", "sh_words_known", ">=", 3],
+            ["!flag", "sh_daughter_answered_back"],
+            ["!flag", "sh_hollow_done"]
+          ],
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "sh_hollow_rested"],
+                ["set", "sh_hollow_done"],
+                ["addvar", "hollows_rested", 1],
+                ["addvar", "rep_keepers", 2],
+                ["addvar", "rep_church", 2],
+                ["addvar", "appr_vell", 1],
+                ["addvar", "appr_osk", 1],
+                ["score", 25],
+                ["xp", 8],
+                ["say", "You fit the ferrule to the shaft, speak the words whole, and give the order the herald never finished. Nothing answers aloud, but the ground stops holding its breath. Both lines stand down."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["say", "Vell: \"My own line's hunt, recalled at last. I did not know what I expected to feel, standing here for it. Something like relief. I did not expect that.\""]
+                  ],
+                  []
+                ],
+                [
+                  "if",
+                  [["inParty", "lys"]],
+                  [
+                    ["say", "Lys: \"That's a truce, not a victory. Whoever taught you the words knew exactly what they were asking the rod to say. Well done.\""]
+                  ],
+                  []
+                ],
+                ["move", "sh_rod_shaft", "nowhere"],
+                ["move", "sh_rod_ferrule", "nowhere"]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The line does not answer plain, and for one bad second you stand where the herald stood, both sides suddenly alert. Something scores past you before the moment passes. It can be tried again."]
+              ]
+            ]
           ]
         }
       ]
@@ -324,7 +373,7 @@
                 ["addvar", "rep_church", -2],
                 ["addvar", "appr_tamsin", 1],
                 ["addvar", "appr_osk", -1],
-                ["score", 15],
+                ["score", 25],
                 ["xp", 8],
                 ["say", "The oil takes fast along four centuries of dry bone and dryer grudge. The bone-house and the mounds beyond it burn through the night, and by morning there is nothing left of either line for anyone to keep waiting on."]
               ],
@@ -356,53 +405,69 @@
       "name": "The Truce-Words",
       "start": [["flag", "sh_hollow_grievance"]],
       "done": [["var", "sh_words_known", ">=", 3]],
+      "failed": [["flag", "sh_hollow_done"], ["var", "sh_words_known", "<", 3]],
       "stages": [
         {
           "if": [["flag", "sh_word_roll"], ["flag", "sh_word_count"], ["!flag", "sh_word_book"]],
-          "text": "Two truce-words are known: the roll and the count. The last waits at Elgin's porch — the book."
+          "text": "Two truce-words are known: the roll and the count. The last waits at Elgin's porch — the book.",
+          "at": "sh_chantry_porch"
         },
         {
           "if": [["flag", "sh_word_roll"], ["!flag", "sh_word_count"], ["flag", "sh_word_book"]],
-          "text": "Two truce-words are known: the roll and the book. The last waits at Tolan's cot — the count."
+          "text": "Two truce-words are known: the roll and the book. The last waits at Tolan's cot — the count.",
+          "at": "sh_remembrancers_cot"
         },
         {
           "if": [["!flag", "sh_word_roll"], ["flag", "sh_word_count"], ["flag", "sh_word_book"]],
-          "text": "Two truce-words are known: the count and the book. The last waits at Ossett's house — the roll."
+          "text": "Two truce-words are known: the count and the book. The last waits at Ossett's house — the roll.",
+          "at": "sh_pensioners_house"
         },
         {
           "if": [["flag", "sh_word_roll"], ["!flag", "sh_word_count"], ["!flag", "sh_word_book"]],
-          "text": "One truce-word is known: the roll. Two remain: the count (Tolan's cot) and the book (Elgin's porch)."
+          "text": "One truce-word is known: the roll. Two remain: the count (Tolan's cot) and the book (Elgin's porch).",
+          "at": "sh_remembrancers_cot"
         },
         {
           "if": [["!flag", "sh_word_roll"], ["flag", "sh_word_count"], ["!flag", "sh_word_book"]],
-          "text": "One truce-word is known: the count. Two remain: the roll (Ossett's house) and the book (Elgin's porch)."
+          "text": "One truce-word is known: the count. Two remain: the roll (Ossett's house) and the book (Elgin's porch).",
+          "at": "sh_pensioners_house"
         },
         {
           "if": [["!flag", "sh_word_roll"], ["!flag", "sh_word_count"], ["flag", "sh_word_book"]],
-          "text": "One truce-word is known: the book. Two remain: the roll (Ossett's house) and the count (Tolan's cot)."
+          "text": "One truce-word is known: the book. Two remain: the roll (Ossett's house) and the count (Tolan's cot).",
+          "at": "sh_pensioners_house"
         },
         {
           "if": [],
-          "text": "Three truce-words are wanted: the roll (Ossett's house), the count (Tolan's cot), the book (Elgin's porch)."
+          "text": "Three truce-words are wanted: the roll (Ossett's house), the count (Tolan's cot), the book (Elgin's porch).",
+          "at": "sh_pensioners_house"
         }
       ]
     },
     "sh_q_rod": {
       "name": "The White Rod",
-      "start": [["flag", "sh_hollow_grievance"]],
-      "done": [["flag", "sh_rod_shaft_known"], ["flag", "sh_rod_ferrule_known"]],
+      "start": [["flag", "sh_entered"]],
+      "done": [["flag", "sh_hollow_done"]],
       "stages": [
         {
+          "if": [["!flag", "sh_hollow_grievance"]],
+          "text": "A herald fell asking for a truce nobody called. The shield-lines still hold the Truce Field, unrested.",
+          "at": "sh_shield_line"
+        },
+        {
           "if": [["flag", "sh_rod_shaft_known"], ["!flag", "sh_rod_ferrule_known"]],
-          "text": "The rod's shaft is yours. The ferrule waits in the ground at the herald's walk."
+          "text": "The rod's shaft is yours. The ferrule waits in the ground at the herald's walk.",
+          "at": "sh_heralds_walk"
         },
         {
           "if": [["!flag", "sh_rod_shaft_known"], ["flag", "sh_rod_ferrule_known"]],
-          "text": "The ferrule is dug. The shaft waits with Hew, at the ditch-gate — given, taken, or noticed."
+          "text": "The ferrule is dug. The shaft waits with Hew, at the ditch-gate — given, taken, or noticed.",
+          "at": "sh_ditch_gate"
         },
         {
           "if": [],
-          "text": "The rod wants two things: the shaft, from Hew at the ditch-gate, and the ferrule, dug from the herald's walk."
+          "text": "The rod wants two things: the shaft, from Hew at the ditch-gate, and the ferrule, dug from the herald's walk.",
+          "at": "sh_ditch_gate"
         }
       ]
     },
@@ -424,27 +489,33 @@
       "stages": [
         {
           "if": [["flag", "sh_stone_crown"]],
-          "text": "The first Reeve's victory stands cut into the ditch-stone, in the Crown's own words."
+          "text": "The first Reeve's victory stands cut into the ditch-stone, in the Crown's own words.",
+          "at": "sh_stonecutter_lodge"
         },
         {
           "if": [["flag", "sh_stone_companies"]],
-          "text": "The Free Companies' founding stands cut into the ditch-stone, in the pensioner's words."
+          "text": "The Free Companies' founding stands cut into the ditch-stone, in the pensioner's words.",
+          "at": "sh_stonecutter_lodge"
         },
         {
           "if": [["flag", "sh_stone_names"]],
-          "text": "Both lines' names stand cut into the ditch-stone, small and even, no victor claimed."
+          "text": "Both lines' names stand cut into the ditch-stone, small and even, no victor claimed.",
+          "at": "sh_stonecutter_lodge"
         },
         {
           "if": [["flag", "sh_stone_broker"]],
-          "text": "A brokered third wording stands cut into the ditch-stone, the Crown's and the Companies' both."
+          "text": "A brokered third wording stands cut into the ditch-stone, the Crown's and the Companies' both.",
+          "at": "sh_stonecutter_lodge"
         },
         {
           "if": [["flag", "sh_stone_none"]],
-          "text": "No stone stands on the given field. The fork said so, and Bevan let the canvas fall for good."
+          "text": "No stone stands on the given field. The fork said so, and Bevan let the canvas fall for good.",
+          "at": "sh_stonecutter_lodge"
         },
         {
           "if": [],
-          "text": "Three claims stand on the stone: the Crown's, the Companies', or names with no victor — or none, if given."
+          "text": "Three claims stand on the stone: the Crown's, the Companies', or names with no victor — or none, if given.",
+          "at": "sh_stonecutter_lodge"
         }
       ]
     },
@@ -455,11 +526,13 @@
       "stages": [
         {
           "if": [["has", "sh_banner_cloth"]],
-          "text": "The banner is found. Bring it back to Ossett, at the pensioner's house."
+          "text": "The banner is found. Bring it back to Ossett, at the pensioner's house.",
+          "at": "sh_pensioners_house"
         },
         {
           "if": [],
-          "text": "The Free Companies' first banner is lost on the captains' knoll. Ossett, at the pensioner's house, would have it back."
+          "text": "The Free Companies' first banner is lost on the captains' knoll. Ossett, at the pensioner's house, would have it back.",
+          "at": "sh_captains_knoll"
         }
       ]
     },
@@ -470,7 +543,8 @@
       "stages": [
         {
           "if": [],
-          "text": "Crake's dug shield-bosses, at the trade counter, want a reader of the old tongue to say whose levies stood where."
+          "text": "Crake's dug shield-bosses, at the trade counter, want a reader of the old tongue to say whose levies stood where.",
+          "at": "sh_trade_counter"
         }
       ]
     },
@@ -492,15 +566,18 @@
       "stages": [
         {
           "if": [["flag", "sh_hollow_bargained"], ["!flag", "said_sh_reeve_sv_sh_bargain_ask"]],
-          "text": "The bargained ground wants tending. Sten, at the field-reeve's yard, would rather not answer for the bread alone."
+          "text": "The bargained ground wants tending. Sten, at the field-reeve's yard, would rather not answer for the bread alone.",
+          "at": "sh_reeve_yard"
         },
         {
           "if": [["flag", "sh_hollow_rested"], ["!flag", "said_sh_descendant_sv_sh_rested_ask"]],
-          "text": "The truce rests. Hew, at the ditch-gate, wonders what becomes of the rod now."
+          "text": "The truce rests. Hew, at the ditch-gate, wonders what becomes of the rod now.",
+          "at": "sh_ditch_gate"
         },
         {
           "if": [["flag", "sh_hollow_burned"], ["!flag", "said_sh_priest_sv_sh_burn_ask"]],
-          "text": "The field is ash. Elgin, at the chantry porch, wonders what becomes of the cleared ground."
+          "text": "The field is ash. Elgin, at the chantry porch, wonders what becomes of the cleared ground.",
+          "at": "sh_chantry_porch"
         },
         { "if": [], "text": "Harrowfield settles back into itself, whatever the Truce Field's fate cost it." }
       ]
@@ -524,6 +601,11 @@
       "if": [["flag", "sh_hollow_rested"]],
       "text": "The Truce Field rests at last: the rod made whole, the truce-words spoken, the lines given what they were owed.",
       "weight": 2
+    },
+    {
+      "if": [["flag", "sh_hollow_rested"], ["flag", "sh_daughter_answered_back"]],
+      "text": "The truce that rested the Shieldings was Merle's nerve as much as a stranger's — she answered first, and the line believed the second time.",
+      "weight": 1
     },
     {
       "if": [
@@ -603,6 +685,10 @@
     {
       "if": [["any", [["flag", "sv_sh_rested_kept"], ["flag", "sv_sh_rested_sent"]]]],
       "text": "The white rod stands whole at the herald's walk, or rests at the Keepers' Hall — proof, either way, a truce was kept."
+    },
+    {
+      "if": [["flag", "or_envoy_sh_broker"]],
+      "text": "The stone carries a wording neither side asked for. Bevan cut it, Ossett signed it, and Harrowfield ploughs past it without argument."
     }
   ]
 }

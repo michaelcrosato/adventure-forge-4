@@ -12,16 +12,7 @@
         "west": { "to": "va_west_road", "landmark": "the west road" }
       },
       "onEnterOnce": [["set", "va_entered"]],
-      "actions": [
-        {
-          "id": "va_gate_bearings",
-          "label": "get your bearings",
-          "fx": [
-            ["say", "North through the wood the trail climbs to the barrow. Bear east among the trees for the sunken shrine and the old watchtower; west for the hunter's camp. Last Light's square, inn, forge, and chapel lie south."]
-          ],
-          "free": true
-        }
-      ],
+      "actions": [{ "id": "va_gate_bearings", "label": "get your bearings", "fx": [["bearings"]], "free": true }],
       "variants": [
         {
           "if": [["var", "hollows_rested", ">=", 3]],
@@ -256,6 +247,20 @@
           "brief": "The milestone. Thornwold west, and a thinner gray behind it.",
           "desc": "The old road west runs between the last fields and the wood's edge. The milestone still reads THORNWOLD, worn to a guess — and the gray that hung over these fields has thinned to almost nothing."
         }
+      ],
+      "actions": [
+        {
+          "id": "va_milestone_cuts",
+          "label": "study the milestone's old muster-cuts",
+          "if": [["class", "envoy"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_envoy_va_milestone"],
+            ["xp", 1],
+            ["say", "Beneath THORNWOLD, older cuts: tallies, a company's mark, a date scratched out and re-cut twice. Whoever kept count here stopped trusting the count."]
+          ]
+        }
       ]
     },
     "va_causeway": {
@@ -264,7 +269,40 @@
       "brief": "The causeway east.",
       "region": "va",
       "landmark": "the fen causeway",
-      "exits": { "west": { "to": "va_square" }, "east": { "to": "fd_causeway_west", "landmark": "Fenmarch" } }
+      "exits": { "west": { "to": "va_square" }, "east": { "to": "fd_causeway_west", "landmark": "Fenmarch" } },
+      "variants": [
+        {
+          "if": [["flag", "va_heard_reeve_blight"]],
+          "brief": "The causeway east. The reeve's blight-talk sits with you out here.",
+          "desc": "A raised road of packed stone runs east from the square into low ground. Reeds either side, the smell of standing water — and the reeve's word on the blight fits what you see: crops first, then cattle. Fenmarch lies that way."
+        },
+        {
+          "if": [["flag", "va_notice_1"]],
+          "brief": "The causeway east. The notice board's charge sits with you out here.",
+          "desc": "A raised road of packed stone runs east from the square into low ground. Reeds either side, the smell of standing water. Settle him, seal the doors after — the notice board's charge, plain out here where nobody reads it twice."
+        }
+      ],
+      "actions": [
+        {
+          "id": "va_causeway_marker",
+          "label": "read the names on the causeway marker",
+          "once": true,
+          "fx": [
+            ["set", "va_named_drowned"],
+            ["xp", 1],
+            ["say", "A weathered post at the causeway's edge, names cut deep and half gone to lichen — fenfolk lost to the water before any king woke wrong under a hill. You read what is left of them aloud."],
+            [
+              "if",
+              [["inParty", "osk"]],
+              [
+                ["say", "Osk stops beside you and says nothing until you finish. \"Nobody's done that in years,\" he says."],
+                ["addvar", "appr_osk", 1]
+              ],
+              []
+            ]
+          ]
+        }
+      ]
     },
     "va_north_road": {
       "name": "The North Road",
@@ -272,7 +310,39 @@
       "brief": "The watch-stone. Wardmoor north.",
       "region": "va",
       "landmark": "the Vale's north road",
-      "exits": { "south": { "to": "va_barrow_field" }, "north": { "to": "wm_south_gate", "landmark": "Wardmoor" } }
+      "exits": { "south": { "to": "va_barrow_field" }, "north": { "to": "wm_south_gate", "landmark": "Wardmoor" } },
+      "variants": [
+        {
+          "if": [["flag", "va_heard_decree"]],
+          "brief": "The watch-stone. Wardmoor north; Marrowgate's herald behind you.",
+          "desc": "Past the barrow hill the trail widens and climbs toward moorland. The watch-stone bears Highward's mark — and behind you, a Marrowgate herald has already ridden as far as the square. The barrow field lies south."
+        },
+        {
+          "if": [["flag", "va_met_herald"]],
+          "brief": "The watch-stone. Wardmoor north; you've met the herald.",
+          "desc": "Past the barrow hill the trail widens and climbs toward moorland. The watch-stone stands at the edge of the Vale, Highward's mark cut into it — plainer, somehow, since Marrowgate sent word of its own. The barrow field lies south."
+        }
+      ],
+      "actions": [
+        {
+          "id": "va_road_verge",
+          "label": "search the verge — a slip costs 1hp",
+          "once": true,
+          "fx": [
+            [
+              "check",
+              "grace",
+              9,
+              [
+                ["xp", 2],
+                ["addvar", "gold", 3],
+                ["say", "Half-sunk in the ditch grass, a dead courier's dispatch case, long empty — and three coins some crow missed."]
+              ],
+              [["hp", -1], ["say", "The ditch gives without warning, and takes the moment with it."]]
+            ]
+          ]
+        }
+      ]
     }
   },
   "items": {
@@ -540,6 +610,14 @@
           "once": true,
           "say": "\"Saw you pocket that,\" he says, not unkindly. \"I'll not chase a guest over copper. I'll just remember your face at the door.\"",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "va_innkeep_locket_opened",
+          "label": "the name inside the locket",
+          "if": [["flag", "va_opened_locket"]],
+          "once": true,
+          "say": "\"Maren,\" he says again, turning the name over. \"Still not one I know. But you opened it — that's more than most do with a locket.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -637,6 +715,12 @@
           "label": "a blessing for the barrow",
           "if": [["flag", "va_heard_oldking"], ["!flag", "va_barrow_open"], ["flag", "va_promised_seal"]],
           "say": "You've promised the reeve to seal him in. I'll not open a door for a man who means to shut it on grief. Force it, or find another way, or come back released from your word."
+        },
+        {
+          "id": "blessing_moot",
+          "label": "a blessing for the barrow",
+          "if": [["flag", "va_heard_oldking"], ["flag", "va_barrow_open"], ["!flag", "va_barrow_blessed"]],
+          "say": "The doors are already open — I can hear it in how you ask. A blessing opens what is shut; it does not follow a man through a door he has already put his shoulder to. Say the words yourself at the seat, if you mean them."
         },
         {
           "id": "release",
@@ -902,6 +986,14 @@
           "say": "The stag — the same mark as my coffer's lid. A brooch from the old king's household; there were a hundred like it once, and I'd have sworn none left. Keep it. It buys nothing, and it's worth more than that.",
           "fx": [["xp", 2], ["score", 2], ["set", "va_clasp_read"]]
         },
+        {
+          "id": "king_forgave",
+          "label": "the king forgave the first reeve",
+          "if": [["flag", "va_king_memories"]],
+          "once": true,
+          "say": "Her hands go still on the page. \"He forgave the theft before I ever locked that coffer. Forty years, and I never once asked him.\"",
+          "fx": [["xp", 1]]
+        },
         { "id": "bye", "label": "leave her to the ledgers", "say": "Shut the door. The wood is close.", "end": true }
       ]
     },
@@ -1113,6 +1205,31 @@
     {
       "if": [["flag", "or_warden_va_hunter_sortie"], ["!flag", "or_warden_va_hunter_sortie_done"]],
       "text": "The hunter still says a Warden once took his wolves on as personal business, and never came back to collect.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "va_asked_coffer_early"]],
+      "text": "Last Light's elder remembers being pressed for the coffer before you'd earned the asking — and remembers you came back properly.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "va_blade_taken"]],
+      "text": "The smith's plain sword, given freely off the wall, went the length of the Reach and came home with you.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "va_notice_4"]],
+      "text": "Last Light's notice board carries its last line now, added after: the barrow settled, one way or the other.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "va_named_drowned"]],
+      "text": "You once read the fenfolk's names off the causeway marker aloud, unasked. Not every traveler bothers.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_envoy_va_milestone"]],
+      "text": "An Envoy once read the west road's milestone and knew a company's old, uneasy count at a glance.",
       "weight": 0
     }
   ]

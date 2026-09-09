@@ -38,11 +38,28 @@ const read = (flag: string, o: Origin) => { (readers.get(flag) ?? readers.set(fl
 /** Counters a branch adds to (`addvar`), by branch label: a branch that feeds a counter the world reads is remembered through it. */
 const counters = new Map<string, Set<string>>();
 const varReads = new Map<string, Origin[]>();
+/**
+ * Standings and tallies, both directions: how far the world can move each one
+ * (`addvar`/`setvar`) against which thresholds it ever reads back. A standing
+ * a hundred deeds can raise, read only at +2, is a promise the world does not
+ * keep — every deed past the second one changes nothing.
+ */
+type VarMoves = { ups: number; upSum: number; downs: number; downSum: number; sets: number };
+const varMoves = new Map<string, VarMoves>();
+const moveOf = (v: string) => varMoves.get(v) ?? varMoves.set(v, { ups: 0, upSum: 0, downs: 0, downSum: 0, sets: 0 }).get(v)!;
+const varThresholds = new Map<string, Map<string, number>>();
+/** Vars the player is merely SHOWN — a status tally, a hud counter, a path's number — as against read by a condition. */
+const varShown = new Set<string>();
+const thresholdOf = (v: string) => varThresholds.get(v) ?? varThresholds.set(v, new Map()).get(v)!;
 
 const walkCond = (conds: Cond[] | undefined, o: Origin) => {
   for (const c of conds ?? []) {
     if (c[0] === "flag" || c[0] === "!flag") read(c[1], o);
-    else if (c[0] === "var") (varReads.get(c[1]) ?? varReads.set(c[1], []).get(c[1])!).push(o);
+    else if (c[0] === "var") {
+      (varReads.get(c[1]) ?? varReads.set(c[1], []).get(c[1])!).push(o);
+      const key = `${c[2]}${c[3]}`;
+      thresholdOf(c[1]).set(key, (thresholdOf(c[1]).get(key) ?? 0) + 1);
+    }
     else if (c[0] === "any") walkCond(c[1], o);
   }
 };
@@ -53,7 +70,10 @@ const walkFx = (fxs: Fx[] | undefined, o: Origin, chosen: boolean) => {
       case "set": setters.push({ ...o, flag: fx[1], chosen }); break;
       case "addvar": // coin is a price, not a memory; standing, regard and tallies are
         if (chosen && fx[1] !== "gold") (counters.get(o.label) ?? counters.set(o.label, new Set()).get(o.label)!).add(fx[1]);
+        if (fx[2] > 0) { const m = moveOf(fx[1]); m.ups += 1; m.upSum += fx[2]; }
+        else if (fx[2] < 0) { const m = moveOf(fx[1]); m.downs += 1; m.downSum += fx[2]; }
         break;
+      case "setvar": moveOf(fx[1]).sets += 1; break;
       case "if": walkCond(fx[1], o); walkFx(fx[2], o, chosen); walkFx(fx[3], o, chosen); break;
       case "check": walkFx(fx[3], o, chosen); walkFx(fx[4], o, chosen); break;
       case "chance": walkFx(fx[2], o, chosen); walkFx(fx[3], o, chosen); break;
@@ -79,7 +99,12 @@ for (const [nid, n] of Object.entries(world.npcs)) {
     walkFx(t.fx, o, true);
   }
   walkFx(n.onDeath, { kind: "death", container: nid, label: n.name }, false);
-  for (const rm of n.companion?.remarks ?? []) walkCond(rm.if, { kind: "remark", container: nid, label: `${n.name} remarks` });
+  for (const rm of n.companion?.remarks ?? []) {
+    const o = { kind: "remark", container: nid, label: `${n.name} remarks` };
+    walkCond(rm.if, o);
+    // a remark's own effects set flags (every quarrel_* in the realm is set here)
+    walkFx((rm as { fx?: Fx[] }).fx, o, true);
+  }
   for (const lv of n.companion?.leaves ?? []) walkCond(lv.if, { kind: "leaves", container: nid, label: `${n.name} leaves` });
 }
 for (const [iid, it] of Object.entries(world.items)) {
@@ -95,9 +120,31 @@ for (const [qid, q] of Object.entries(world.quests ?? {})) {
   walkCond(q.start, o); walkCond(q.done, o); walkCond(q.failed, o);
   for (const st of q.stages ?? []) walkCond(st.if, o);
 }
+// `world.clock` concatenates from the part files, so a scheduled event is a
+// region author's content — and it both reads flags and sets them. Missing it
+// made the Ironbound march's own `iron_march` report as a gate with no key on
+// the very day the march landed: the flag is set by a clock entry and nothing
+// else, which this walk could not see.
+for (const entry of world.clock ?? []) {
+  const o = { kind: "clock", container: "clock", label: entry.id };
+  walkCond(entry.if, o);
+  walkFx(entry.fx, o, true);
+}
 for (const ep of world.epilogue ?? []) walkCond(ep.if, { kind: "epilogue", container: "epilogue", label: ep.text.slice(0, 40) });
-for (const tr of world.statusTracks ?? []) walkCond(tr.if, { kind: "status", container: "status", label: tr.label });
-for (const p of world.statusPaths ?? []) walkCond(p.if, { kind: "status", container: "status", label: p.label });
+for (const tr of world.statusTracks ?? []) {
+  walkCond(tr.if, { kind: "status", container: "status", label: tr.label });
+  varShown.add(tr.var);
+}
+if (world.progress) varShown.add(world.progress.var);
+for (const h of world.hud ?? []) varShown.add(h.var);
+for (const p of world.statusPaths ?? []) {
+  const o = { kind: "status", container: "status", label: p.label };
+  walkCond(p.if, o);
+  // a path's states are where a standing is actually read — walking only p.if
+  // undercounted every faction's reads to zero
+  for (const st of p.states ?? []) walkCond(st.if, o);
+  if (p.var) varShown.add(p.var);
+}
 if (Array.isArray(world.objectives)) for (const ob of world.objectives) walkCond(ob.if, { kind: "objectives", container: "status", label: "recap" });
 
 // ---- roll up per flag ----
@@ -168,6 +215,92 @@ if (forgotten.length) {
   for (const r of gates) show(r);
 } else console.log("every choice is remembered somewhere");
 
+/**
+ * Content nobody can reach: a flag read by a condition that nothing ever sets.
+ * The mirror image of a forgotten choice, and a worse bug — a forgotten choice
+ * happened and was ignored, this one cannot happen at all. The engine writes
+ * several flags itself, so those are not holes; anything else read and never
+ * written is a gate with no key.
+ */
+{
+  const written = new Set<string>(setters.map((s) => s.flag));
+  // flags the ENGINE sets for itself — see docs/authoring.md's auto-flag list
+  const engineWritten = (f: string) =>
+    // `left_<npc>` (a wide berth given) and `<companion>_left` (a companion walking out) are both the engine's
+    /^(did_|said_|remarked_|clocked_|calm_|down_|fell_|laid_|stole_|left_|_)/.test(f) || /_(lit|left)$/.test(f);
+  const unreachable = [...readers.entries()]
+    .filter(([flag]) => !written.has(flag) && !engineWritten(flag) && want(flag))
+    .sort(([a], [b]) => a.localeCompare(b));
+  if (unreachable.length) {
+    console.log();
+    console.log(`gates with no key (${unreachable.length}) — a flag read by a condition that nothing in the world ever sets:`);
+    for (const [flag, where] of unreachable) {
+      const places = [...new Set(where.map((o) => `${o.kind} "${o.label}"`))];
+      console.log(`  ${flag}  <- read by ${places.slice(0, 3).join("; ")}${places.length > 3 ? ` (+${places.length - 3} more)` : ""}`);
+    }
+  }
+}
+
+/**
+ * The other half of "choice matters": a standing or tally the world moves but
+ * never reads back above a low threshold. Reputation with a faction is the
+ * usual offender — a hundred deeds can raise it, nothing reads it past +2, so
+ * every deed after the second one is a number that changes no scene.
+ */
+console.log();
+const tracked = [...new Set([...varMoves.keys(), ...varReads.keys()])]
+  .filter((v) => v !== "gold" && want(v) === (only ? prefixOf(v) === only : true))
+  .map((v) => {
+    const m = varMoves.get(v) ?? { ups: 0, upSum: 0, downs: 0, downSum: 0, sets: 0 };
+    const th = [...(varThresholds.get(v)?.keys() ?? [])];
+    // the highest value any condition ever asks this var to reach
+    const highest = th
+      .filter((k) => k.startsWith(">"))
+      .map((k) => Number(k.replace(/^>=?/, "")))
+      .filter((n) => Number.isFinite(n))
+      .reduce((a, b) => Math.max(a, b), -Infinity);
+    return { v, m, th, highest, reads: (varReads.get(v) ?? []).length };
+  })
+  .sort((a, b) => b.m.upSum - a.m.upSum || a.v.localeCompare(b.v));
+/**
+ * A `statusTracks` var whose own `remaining` flags are read elsewhere is a
+ * display counter, not a forgotten number. Fosterfell's "Sent for: the roll,
+ * the writ, the letters" counts three flags, and its rite gates on all three
+ * individually — so the tally is what renders "2/3" and nothing more. I filed
+ * that as a defect off this tool's own verdict before checking, which is the
+ * mistake this line exists to stop the next reader making.
+ */
+const displayCounters = new Set<string>();
+for (const tr of world.statusTracks ?? []) {
+  if (!tr.var || !tr.remaining?.length) continue;
+  const parts = tr.remaining.map((r) => r.flag).filter((f): f is string => !!f);
+  if (parts.length && parts.every((f) => (readers.get(f) ?? []).length)) displayCounters.add(tr.var);
+}
+
+if (tracked.length) {
+  console.log(`standings and tallies (${tracked.length}) — how far the world moves each, against the highest it ever reads:`);
+  console.log(`  ${"var".padEnd(16)} ${pad("moves", 6)} ${pad("+total", 7)} ${pad("reads", 6)}  highest read  verdict`);
+  for (const t of tracked) {
+    const moves = t.m.ups + t.m.downs + t.m.sets;
+    const highest = Number.isFinite(t.highest) ? `>=${t.highest}` : "—";
+    // a standing worth three times what anything asks of it is inert over most of its range
+    const verdict = moves === 0
+      ? "not moved by content — the engine's own, or nothing feeds it"
+      : t.reads === 0
+        ? varShown.has(t.v)
+          ? displayCounters.has(t.v)
+            ? "a display counter — the flags it counts are read, the number itself is not"
+            : "shown in status, but no gate, scene or line reads it"
+          : "never read — the world does not notice it at all"
+        : !Number.isFinite(t.highest)
+          ? "read, but never as a height to reach"
+          : t.m.upSum >= t.highest * 3
+            ? `inert above +${t.highest} — ${t.m.ups} deeds raise it, nothing reads past that`
+            : "";
+    console.log(`  ${t.v.padEnd(16)} ${pad(moves, 6)} ${pad("+" + t.m.upSum, 7)} ${pad(t.reads, 6)}  ${highest.padEnd(12)}  ${verdict}`);
+  }
+}
+
 if (all) {
   console.log();
   for (const [region, list] of [...byRegion.entries()].sort()) {
@@ -178,5 +311,73 @@ if (all) {
       const where = [...kinds.entries()].map(([k, n]) => `${k}×${n}`).join(", ");
       console.log(`  ${r.flag}: ${r.outside.length} reads outside${r.elsewhere.length ? `, ${r.elsewhere.length} in other regions` : ""}${r.epilogue ? ", epilogue" : ""}${where ? ` [${where}]` : ""}`);
     }
+  }
+}
+
+/**
+ * A door that shuts behind a failed try.
+ *
+ * An option gated on a standing — `["var", "rep_watch", ">=", 1]` — whose own
+ * miss branch takes that standing away can leave the player at exactly the
+ * value where the option disappears from the menu, with no line saying why.
+ * Wave eight, seed 9902, at the Oath-Ground: "one resolution option ('bring a
+ * living oath to the stone') silently disappeared from the menu after a single
+ * failed attempt, while a same-DC alternative stayed — no explanation given
+ * for why one path closes and another doesn't after a fail." That option is
+ * one of the Wardmoor hold's three fates, so a missed roll closed a whole
+ * ending off the road with no announcement.
+ *
+ * The realm's rule is that a price is said before the die is thrown, and the
+ * miss's standing cost IS previewed. What is not previewable is that the cost
+ * falsifies the option's own gate. Cheaper than an engine clause for a shape
+ * this rare: find them, and write the content so the cost never crosses the
+ * gate (spend the standing only when there is standing to spare).
+ */
+const selfClosing: string[] = [];
+{
+  /** Every `addvar` in a branch, with the `var` floors guarding the path that reaches it. */
+  type Move = { v: string; d: number; floors: Map<string, number> };
+  const moved = (fxs: Fx[] | undefined, floors: Map<string, number>, out: Move[] = []): Move[] => {
+    for (const f of fxs ?? []) {
+      if (f[0] === "addvar") out.push({ v: String(f[1]), d: Number(f[2]), floors });
+      else if (f[0] === "if") {
+        // the taken branch is reached only where these conditions hold, so a
+        // `["var", v, ">=", n]` among them is a floor on v inside it
+        const inner = new Map(floors);
+        for (const c of (f[1] as Cond[]) ?? [])
+          if (c[0] === "var" && String(c[2]).startsWith(">")) inner.set(String(c[1]), Math.max(inner.get(String(c[1])) ?? -Infinity, Number(c[3])));
+        moved(f[2] as Fx[], inner, out);
+        moved(f[3] as Fx[], floors, out);
+      } else if (f[0] === "check") { moved(f[3] as Fx[], floors, out); moved(f[4] as Fx[], floors, out); }
+      else if (f[0] === "chance") { moved(f[2] as Fx[], floors, out); moved(f[3] as Fx[], floors, out); }
+    }
+    return out;
+  };
+  const look = (where: string, label: string, ifs: Cond[] | undefined, fxs: Fx[] | undefined) => {
+    const chk = fxs?.[0];
+    if (!chk || chk[0] !== "check") return; // only a leading check has a miss branch of its own
+    const miss = moved(chk[4] as Fx[], new Map());
+    for (const c of ifs ?? []) {
+      if (c[0] !== "var" || !String(c[2]).startsWith(">")) continue;
+      const gate = Number(c[3]);
+      // a spend guarded by a floor high enough to survive it cannot close the
+      // door: "take the standing only where there is standing to spare"
+      const d = miss
+        .filter((m) => m.v === String(c[1]) && m.d < 0 && (m.floors.get(m.v) ?? -Infinity) + m.d < gate)
+        .reduce((a, m) => a + m.d, 0);
+      if (d < 0) selfClosing.push(`  ${where}\n    "${label}"\n    gated on ${c[1]} ${c[2]} ${c[3]}, and a miss moves ${c[1]} by ${d}`);
+    }
+  };
+  for (const [rid, r] of Object.entries(world.rooms)) for (const a of r.actions ?? []) look(`room ${rid}`, a.label, a.if, a.fx);
+  for (const [nid, npc] of Object.entries(world.npcs)) for (const t of npc.topics ?? []) look(`npc  ${nid}`, t.label, t.if, t.fx);
+}
+if (!only) {
+  console.log();
+  if (selfClosing.length) {
+    const one = selfClosing.length === 1;
+    console.log(`${selfClosing.length} option${one ? "" : "s"} can close ${one ? "its" : "their"} own door on a miss — the cost of failing is the thing the gate asks for:`);
+    for (const l of selfClosing) console.log(l);
+  } else {
+    console.log("No option in the realm closes its own door on a miss: no gate reads a standing its own failure spends.");
   }
 }

@@ -16,7 +16,22 @@
       "region": "cp",
       "landmark": "the Smugglers' Cave",
       "exits": { "down": { "to": "sk_smugglers_stair" } },
-      "onEnterOnce": [["set", "cp_entered"], ["xp", 1]]
+      "onEnterOnce": [["set", "cp_entered"], ["xp", 1]],
+      "actions": [
+        {
+          "id": "cp_cave_crates",
+          "label": "read the crates' chalk-tallies",
+          "if": [["class", "scout"], ["!flag", "or_scout_cp_crates"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "or_scout_cp_crates"],
+            ["score", 2],
+            ["xp", 2],
+            ["say", "Every crate carries the same chalk-mark, rubbed and redrawn: a tally of loads, not goods, kept by someone who counts trips, not cargo. Whoever runs this cave, they've been running it for years."]
+          ]
+        }
+      ]
     },
     "cp_pass": {
       "name": "The Pass Gate",
@@ -28,7 +43,8 @@
         ["set", "cp_entered"],
         ["set", "cp_pass_seen"],
         ["xp", 2],
-        ["say", "Past this gate the holds fall behind you. A companion's grief left unfinished there stays unfinished unless you walk back for it."]
+        ["say", "Past this gate the holds fall behind you. A companion's grief left unfinished there stays unfinished unless you walk back for it."],
+        ["questsopen"]
       ],
       "variants": [
         {
@@ -41,7 +57,7 @@
           "id": "cp_gate_dual_ways",
           "label": "weigh the writ against the stair",
           "if": [
-            ["any", [["var", "hollows_rested", ">=", 3], ["flag", "hb_keepers_key_found"]]],
+            ["any", [["var", "hollows_rested", ">=", 3], ["flag", "hb_keepers_key_found"], ["flag", "keepers_trusted"]]],
             ["flag", "regent_writ"],
             ["!flag", "cp_came_by_stair"],
             ["!flag", "cp_came_by_writ"],
@@ -60,12 +76,26 @@
           "if": [
             [
               "any",
-              [["var", "hollows_rested", ">=", 3], ["flag", "hb_keepers_key_found"], ["flag", "me_covenant_carried"]]
+              [
+                ["var", "hollows_rested", ">=", 3],
+                ["flag", "hb_keepers_key_found"],
+                ["flag", "me_covenant_carried"],
+                ["flag", "keepers_trusted"]
+              ]
             ]
           ],
           "fx": [
             ["set", "cp_came_by_stair"],
-            ["say", "A narrow stair the guard doesn't see opens behind the grate. The Keepers still keep this door, quiet as they've always been."],
+            [
+              "if",
+              [["flag", "keepers_trusted"], ["!has", "hb_keepers_key"], ["var", "hollows_rested", "<", 3]],
+              [
+                ["say", "A narrow stair the guard doesn't see opens behind the grate. You've never carried the Key, but the Keepers' own trust in you is warrant enough."]
+              ],
+              [
+                ["say", "A narrow stair the guard doesn't see opens behind the grate. The Keepers still keep this door, quiet as they've always been."]
+              ]
+            ],
             ["score", 5],
             ["xp", 3],
             ["goto", "mg_south_gate"]
@@ -74,12 +104,24 @@
         {
           "id": "cp_door_writ",
           "label": "show the Regent's writ at the gate",
-          "if": [["flag", "regent_writ"]],
+          "if": [["flag", "regent_writ"], ["!has", "mg_regent_seal"]],
           "fx": [
             ["set", "cp_came_by_writ"],
             ["addvar", "rep_church", -1],
             ["addvar", "rep_keepers", -1],
             ["say", "The guard reads the writ twice, then a third time, and swings the grate wide without another word for you."],
+            ["score", 5],
+            ["xp", 3],
+            ["goto", "mg_south_gate"]
+          ]
+        },
+        {
+          "id": "cp_door_seal",
+          "label": "show the Regent's own seal at the gate",
+          "if": [["has", "mg_regent_seal"]],
+          "fx": [
+            ["set", "cp_came_by_writ"],
+            ["say", "The guard doesn't read this one twice. She knows the Regent's own mark on sight, and swings the grate wide before you've finished drawing it out."],
             ["score", 5],
             ["xp", 3],
             ["goto", "mg_south_gate"]
@@ -196,8 +238,9 @@
       "onEnter": [
         [
           "if",
-          [["inParty", "vell"]],
+          [["inParty", "vell"], ["!flag", "cp_vell_scriptorium"]],
           [
+            ["set", "cp_vell_scriptorium"],
             ["say", "Vell: \"Rite-texts, under a monastery roof, kept from a Church that half-forgot them — now that's worth a closer look.\""]
           ],
           []
@@ -223,6 +266,27 @@
             ["score", 2],
             ["xp", 2],
             ["say", "You lift the flagstone and read them where they lie: a rite for a throne under a palace, not a chapel — words meant for a rest no living Church has spoken in generations."]
+          ]
+        },
+        {
+          "id": "cp_marginalia_wits",
+          "label": "puzzle out Fost's marginalia (wits)",
+          "if": [["flag", "did_cp_lift_flagstone"], ["!flag", "cp_marginalia_read"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              14,
+              [
+                ["set", "cp_marginalia_read"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "Fost's hand is cramped even by his own lights, but one name recurs in the margins with no ledger entry to match: a toll waived for pilgrims too poor to pay it. He's done it for years, off every book but his own."]
+              ],
+              [
+                ["say", "Whatever Fost is marking in these margins, it isn't meant to be read by anyone who wasn't taught his hand. The pages keep their own counsel tonight."]
+              ]
+            ]
           ]
         }
       ]
@@ -274,8 +338,11 @@
       "onEnter": [
         [
           "if",
-          [["inParty", "lys"]],
-          [["say", "Lys: \"Goats and a windbreak — she's got a hunter's sense for shelter. I like her already.\""]],
+          [["inParty", "lys"], ["!flag", "cp_lys_ness"]],
+          [
+            ["set", "cp_lys_ness"],
+            ["say", "Lys: \"Goats and a windbreak — she's got a hunter's sense for shelter. I like her already.\""]
+          ],
           []
         ]
       ],
@@ -386,6 +453,36 @@
       "takeable": true,
       "owner": "cp_enna",
       "hint": "baked for whoever climbs the stair hungry"
+    },
+    "cp_cave_token": {
+      "name": "a lead trade-token",
+      "loc": "cp_smugglers_cave",
+      "takeable": true,
+      "hint": "worn smooth, no mint mark — a tally-chip, not a coin"
+    },
+    "cp_shoulder_cloth": {
+      "name": "a frost-stiff scrap of cloth",
+      "loc": "cp_spine_3_0",
+      "takeable": true,
+      "hint": "dropped here, and never missed enough to come back for"
+    },
+    "cp_ridge_peg": {
+      "name": "a rusted boundary-peg",
+      "loc": "cp_spine_3_1",
+      "takeable": true,
+      "hint": "surveyor's iron, hammered in and long forgotten"
+    },
+    "cp_cleft_line": {
+      "name": "a coil of tarred line",
+      "loc": "cp_spine_4_2",
+      "takeable": true,
+      "hint": "cached rigging rope, for a climb somebody meant to finish"
+    },
+    "cp_shrine1_taper": {
+      "name": "a stub of pilgrim's tallow",
+      "loc": "cp_shrine1_porch",
+      "takeable": true,
+      "hint": "wax pooled thick on the sill; someone still leaves these"
     }
   },
   "npcs": {
@@ -959,7 +1056,19 @@
           "name": "The Waystone Trail",
           "desc": "The trail levels here, and the monastery's roofline shows south, below. Scree slides west; a line of pilgrim-cairns marches east; north the ground climbs hard into rock. The wind up here already finds every gap a cloak leaves open.",
           "brief": "The trail levels. The Perch is south, below.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "cp_waystone_read",
+              "label": "read the marks on the nearest waystone",
+              "once": true,
+              "free": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Three hands' worth of marks share the one stone: a pilgrim's tally of prayers, a trader's chalk-cross rubbed half away, and a courier's wax seal, cracked, pressed flat by a boot that didn't stop to read it."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 3],
@@ -1063,7 +1172,42 @@
           "name": "Windbreak Rocks",
           "desc": "A shelf of rock breaks the worst of the wind. Old ash and a fire-ring show others have sheltered here before you. West the cairns march on; north the rock closes into a narrow cleft.",
           "brief": "A windbreak, an old fire-ring.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "variants": [
+            {
+              "if": [["flag", "cp_windbreak_kept"]],
+              "brief": "The windbreak. The fire-ring stands built up higher than you left it."
+            },
+            { "if": [["flag", "cp_windbreak_taken"]], "brief": "A windbreak, the old fire-ring picked over." }
+          ],
+          "actions": [
+            {
+              "id": "cp_windbreak_take",
+              "label": "pocket the coins left in the ash",
+              "if": [["!flag", "cp_windbreak_taken"], ["!flag", "cp_windbreak_kept"]],
+              "once": true,
+              "fx": [
+                ["set", "cp_windbreak_taken"],
+                ["addvar", "gold", 3],
+                ["addvar", "appr_lys", -1],
+                ["xp", 1],
+                ["say", "Someone left three coins wedged in the cold ash, an offering or a hiding-place, no way to tell which. You take them; whichever it was, they're yours now."]
+              ]
+            },
+            {
+              "id": "cp_windbreak_leave",
+              "label": "leave the coins, build the ring higher",
+              "if": [["!flag", "cp_windbreak_taken"], ["!flag", "cp_windbreak_kept"]],
+              "once": true,
+              "fx": [
+                ["set", "cp_windbreak_kept"],
+                ["xp", 1],
+                ["score", 1],
+                ["addvar", "appr_lys", 1],
+                ["say", "You leave the coins where they sat and stack the fire-ring's stones higher against the wind, for whoever comes up hungrier than you are."]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 2],
@@ -1081,6 +1225,31 @@
               ],
               []
             ]
+          ],
+          "actions": [
+            {
+              "id": "cp_switchback_edge",
+              "label": "test the shelf, 1hp risk (wits)",
+              "if": [["!flag", "cp_switchback_tested"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "cp_switchback_tested"],
+                    ["addvar", "gold", 2],
+                    ["xp", 1],
+                    ["say", "You read the shelf's crumbled edge before trusting it, and the safer line takes you past a hand of coin worked loose from someone's dropped pack, years back."]
+                  ],
+                  [
+                    ["set", "cp_switchback_tested"],
+                    ["hp", -1],
+                    ["say", "The shelf gives more than you read for. You catch yourself against the rock, hard, and the fall you didn't take costs you anyway."]
+                  ]
+                ]
+              ]
+            }
           ]
         },
         {
@@ -1168,6 +1337,19 @@
               ],
               []
             ]
+          ],
+          "actions": [
+            {
+              "id": "cp_shrine_clear",
+              "label": "clear the drift from the door",
+              "once": true,
+              "free": true,
+              "fx": [
+                ["xp", 1],
+                ["score", 1],
+                ["say", "Under the snow, names cut into the lintel — the whole lost band, by hand, someone's grief spent in stone rather than words. The door beneath is easier to see, now."]
+              ]
+            }
           ]
         },
         {
@@ -1175,7 +1357,32 @@
           "name": "The Cleft Span",
           "desc": "A rope-and-plank span crosses a gorge the wind uses like a throat, howling up through the gap. West the shrine's roofline shows; east the planks lead toward a narrow cleft in the rock.",
           "brief": "A rope span over a howling gorge.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "cp_span_pack",
+              "label": "reach the snagged pack, 2hp risk (grace)",
+              "if": [["!flag", "cp_span_pack_done"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  10,
+                  [
+                    ["set", "cp_span_pack_done"],
+                    ["addvar", "gold", 4],
+                    ["xp", 2],
+                    ["say", "A pack, snagged on the span's underside rigging, comes free with your fingertips and nothing else. Whoever dropped it kept their coin better than their footing."]
+                  ],
+                  [
+                    ["set", "cp_span_pack_done"],
+                    ["hp", -2],
+                    ["say", "The span bucks under the wind exactly as you commit your weight wrong. You get back both feet and nothing else, and the gorge takes its due out of your ribs."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 2],
@@ -1183,21 +1390,70 @@
           "landmark": "the Smugglers' Cleft",
           "desc": "A crack in the rock, easy to miss but for the boot-scuffs worn into the stone at its lip — far too many for a place no map admits to. Cold, salt-tinged air breathes up out of the dark below.",
           "brief": "A hidden crack, boot-worn at the lip.",
-          "onEnterOnce": [["xp", 1], ["set", "cp_found_cleft"]]
+          "onEnterOnce": [["xp", 1], ["set", "cp_found_cleft"]],
+          "actions": [
+            {
+              "id": "cp_cleft_watchlog",
+              "label": "mark the cleft for a soldier's report",
+              "if": [["class", "warden"], ["!flag", "or_warden_cp_cleft"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["set", "or_warden_cp_cleft"],
+                ["score", 2],
+                ["xp", 2],
+                ["addvar", "rep_watch", 1],
+                ["say", "You take the crack's bearing off the ridge-line the way a watch log wants it, precise enough that Bray's stair-log will find it without a second climb up here."]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 1],
           "name": "The Goat Track",
           "desc": "A track worn thin by hooves, not boots, switchbacking along a shoulder of bare rock. A thread of woodsmoke rises from a windbreak just off the path. South the trail doubles back; east a ruined tower stands against the sky.",
           "brief": "A hoof-worn track, smoke on the wind.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "cp_track_boots",
+              "label": "read the boots hung on the waymark",
+              "once": true,
+              "free": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "A pilgrim custom, this far up: when your feet finally fail you, you hang the boots here and finish barefoot or turn back. A dozen pairs, in every stage of rot, mark exactly how far that custom carries most people."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 1],
           "name": "The Lookout",
           "desc": "A ruined watchtower stands over the ridge, most of its roof gone to weather. South the tarn's ice glints; north the col narrows toward the pass; the tower's broken door stands in.",
           "brief": "The ruined watchtower.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "cp_lookout_ash",
+              "label": "search the old signal-ash (wits)",
+              "if": [["!flag", "cp_lookout_ash_done"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "cp_lookout_ash_done"],
+                    ["addvar", "gold", 2],
+                    ["xp", 1],
+                    ["say", "A stone ring outside the broken door, packed with ash gone hard as clay: signal-fires, once, for whoever kept this watch. Coin someone dropped counting a watch-shift is still in it."]
+                  ],
+                  [["say", "Whatever the ash-ring is still holding, it isn't giving it up to a careless look."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 1],
@@ -1269,8 +1525,9 @@
           "onEnter": [
             [
               "if",
-              [["inParty", "tamsin"]],
+              [["inParty", "tamsin"], ["!flag", "cp_tamsin_spine"]],
               [
+                ["set", "cp_tamsin_spine"],
                 ["say", "Tamsin: \"Snow did this, not neglect. Different kind of grief. Still ought to dig properly, if we've time.\""]
               ],
               []
@@ -1282,21 +1539,86 @@
           "name": "The Wind-Scoured Ridge",
           "desc": "Wind has scoured this ridge down to bare rock, not a scrap of snow able to hold on. West old avalanche-debris chokes the slope; east the ridge narrows toward a hidden cleft; north it climbs toward the col.",
           "brief": "Bare rock, scoured clean by wind.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "cp_ridge_claim",
+              "label": "read the claim-stake in the scoured rock",
+              "if": [["class", "warden"], ["!flag", "or_warden_cp_claim"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["set", "or_warden_cp_claim"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "An old boundary-stake, iron gone to rust, marks a mining claim nobody's filed for in a soldier's lifetime. Whoever's working the drift below, it isn't on any warrant you've seen."]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 1],
           "name": "The High Traverse",
           "desc": "A narrow traverse along the shoulder's east face, one hand always on the rock. South a hidden cleft splits the stone; west the ridge climbs on. North the peak simply refuses to be climbed.",
           "brief": "A narrow traverse, one hand on the rock.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "cp_traverse_rope",
+              "label": "test the fixed rope's age",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "This stretch of rope is newer than the rest of the traverse, spliced in by someone who crosses here often enough to care whether it holds."]
+              ]
+            },
+            {
+              "id": "cp_traverse_marks",
+              "label": "note the unofficial marks on the rock",
+              "if": [["class", "envoy"], ["!flag", "or_envoy_cp_traverse"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["set", "or_envoy_cp_traverse"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "Scratched low where a hand feeling along the rock would find it: a pilgrim's blessing-mark crossed by a smuggler's tally-cut, neither defaced. Somebody up here already brokered a peace nobody wrote down."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 0],
           "name": "The West Shoulder",
           "desc": "The Spine's west peak closes off here, sheer and unclimbable, cutting the wind into a knife-edge. South the ruined tower stands watch; east the ground narrows toward the col.",
           "brief": "A sheer peak, the wind cut to a knife-edge.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "cp_shoulder_rope",
+              "label": "follow the frozen rope, 1hp risk (grace)",
+              "if": [["!flag", "cp_shoulder_rope_done"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["set", "cp_shoulder_rope_done"],
+                    ["addvar", "gold", 3],
+                    ["xp", 1],
+                    ["say", "A rope, frozen fast to the rock, trails down out of sight over the edge. At its end, wedged in a crevice the cold has kept sealed for years: a dead climber's purse, coin and all."]
+                  ],
+                  [
+                    ["set", "cp_shoulder_rope_done"],
+                    ["hp", -1],
+                    ["say", "The knife-edge wind takes your balance before you're halfway down the rope. You climb back up empty-handed and colder for the trying."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 0],
@@ -1304,14 +1626,54 @@
           "landmark": "the Col",
           "desc": "The Spine narrows to a gap here, flanked by two peaks no one climbs. North, through blown snow, an iron gate half-shows itself. South the ground falls away toward the shrine and the tarn beyond.",
           "brief": "The narrow gap. The gate waits north.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "cp_col_ironwork",
+              "label": "study the gate's ironwork",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "The gate's iron bands are newer than the stone around them, mended more than once and not by the same smith twice."]
+              ]
+            },
+            {
+              "id": "cp_col_toll",
+              "label": "weigh where a toll could be struck here",
+              "if": [["class", "envoy"], ["!flag", "or_envoy_cp_col"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["set", "or_envoy_cp_col"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "Four ways through that gate, and not one of them a plain toll paid in the open. You could name terms here that satisfy the guard without costing the Companies a coin — if anyone up here wanted a fifth way."]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 0],
           "name": "The East Shoulder",
           "desc": "The Spine's east peak closes off here, a mirror of its western twin. West the gap narrows toward the col; south the ridge runs on, scoured bare.",
           "brief": "The east peak, sheer and closed.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "cp_east_wind",
+              "label": "read the wind off the peak",
+              "if": [["class", "scout"], ["!flag", "or_scout_cp_wind"]],
+              "once": true,
+              "free": true,
+              "fx": [
+                ["set", "or_scout_cp_wind"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "The wind's coming down wrong off this shoulder, backing round from where it should be steady. Weather's turning somewhere past the peaks, sooner than the clear sky over the col would have you believe."]
+              ]
+            }
+          ]
         }
       ],
       "cellFx": {
@@ -1393,11 +1755,13 @@
         },
         {
           "if": [["flag", "cp_shrine1_done"]],
-          "text": "The frozen pilgrim's vigil is ended. A crypt beneath the nave still waits, unsearched."
+          "text": "The frozen pilgrim's vigil is ended. A crypt beneath the nave still waits, unsearched.",
+          "at": "cp_shrine1_crypt"
         },
         {
           "if": [["any", [["flag", "said_cp_enna_lore_shrine"], ["flag", "said_cp_abbot_about_shrine"]]]],
-          "text": "Somewhere past the tarn, high in the Spine, a shrine holds pilgrims who never came down."
+          "text": "Somewhere past the tarn, high in the Spine, a shrine holds pilgrims who never came down.",
+          "at": "cp_shrine1_porch"
         },
         {
           "if": [],
@@ -1421,11 +1785,13 @@
         },
         {
           "if": [["flag", "said_cp_crell_demand"]],
-          "text": "Crell wants the Keeper texts Brother Fost hides in the scriptorium. Refuse him, or don't."
+          "text": "Crell wants the Keeper texts Brother Fost hides in the scriptorium. Refuse him, or don't.",
+          "at": "cp_scriptorium"
         },
         {
           "if": [],
-          "text": "An Ironbound envoy lodges in the Perch's guesthouse, here on business he hasn't named yet."
+          "text": "An Ironbound envoy lodges in the Perch's guesthouse, here on business he hasn't named yet.",
+          "at": "cp_guesthouse"
         }
       ]
     },
@@ -1443,10 +1809,15 @@
           "if": [["flag", "cp_bell_sold"]],
           "text": "The clapper is gone, sold. The bell will hang silent from here on."
         },
-        { "if": [["has", "cp_bell_clapper"]], "text": "You have the clapper. Ring the bell in the tower — or don't." },
+        {
+          "if": [["has", "cp_bell_clapper"]],
+          "text": "You have the clapper. Ring the bell in the tower — or don't.",
+          "at": "cp_bell_tower"
+        },
         {
           "if": [],
-          "text": "Abbot Corvin wants the tower bell rung again. Old Maud, on the Goat Track, has kept the spare clapper for years."
+          "text": "Abbot Corvin wants the tower bell rung again. Old Maud, on the Goat Track, has kept the spare clapper for years.",
+          "at": "cp_ness_camp"
         }
       ]
     },
@@ -1465,7 +1836,8 @@
         },
         {
           "if": [["flag", "cp_found_cleft"]],
-          "text": "You've found the cleft the boot-scuffs led to. Bray, at the south stair, wants to hear what you saw."
+          "text": "You've found the cleft the boot-scuffs led to. Bray, at the south stair, wants to hear what you saw.",
+          "at": "cp_south_stair"
         },
         {
           "if": [],
@@ -1475,6 +1847,11 @@
     }
   },
   "epilogue": [
+    {
+      "if": [["flag", "cp_marginalia_read"]],
+      "text": "Brother Fost has been quietly waiving tolls for the poorest pilgrims for years, off every book but his own.",
+      "weight": 0
+    },
     {
       "if": [["flag", "cp_came_by_stair"]],
       "text": "You crossed into Marrowgate by the Keepers' old pilgrim stair, past St. Ashwyn's Perch, the quiet way.",
@@ -1553,6 +1930,36 @@
       "if": [["flag", "or_scout_cp_maud"]],
       "text": "Old Maud still says she can spot the Spine's quiet sort from the ordinary pilgrims at twenty paces.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "or_scout_cp_crates"]],
+      "text": "The Smugglers' Cave keeps its tally exactly the way one Scout read it, chalk and all.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_scout_cp_wind"]],
+      "text": "The Spine's weather turned exactly as one Scout read it off the East Shoulder, sooner than the clear sky promised.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_warden_cp_claim"]],
+      "text": "A Warden's report on the Wind-Scoured Ridge's old claim-stake never found a warrant to answer to.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_warden_cp_cleft"]],
+      "text": "Sergeant Bray's stair-log carries a Warden's bearing on the Smugglers' Cleft, precise to the ridge-line.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_envoy_cp_col"]],
+      "text": "One Envoy still says the Col could carry a fifth way through, if the Companies ever asked for terms.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "or_envoy_cp_traverse"]],
+      "text": "The High Traverse's crossed marks still hold, a pilgrim's blessing and a smuggler's tally, neither defaced.",
+      "weight": 0
     }
   ]
 }

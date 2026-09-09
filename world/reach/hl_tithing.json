@@ -14,39 +14,7 @@
           [
             ["set", "hl_entered"],
             ["xp", 2],
-            ["say", "This is the Hearthlands: granary lowland that fed the whole Vale, until a Reeve's order shut a tithe-barn's doors on the crofters who grew the grain, one hard winter four hundred years gone."],
-            [
-              "if",
-              [["inParty", "vell"]],
-              [
-                ["say", "Vell: \"My own line's first Reeve, and a barn full of people his order starved. I have read every history written of that winter. Not one names this place.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "osk"]],
-              [
-                ["say", "Brother Osk: \"An almoner kept the worthy names, and a barn-reeve kept the doors. Two duties, and neither one was mercy. I don't like how familiar that sounds.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "tamsin"]],
-              [
-                ["say", "Tamsin: \"Feeding a town is simple arithmetic — grain in, mouths fed. Somebody did those sums here and left the crofters out of the count on purpose.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "lys"]],
-              [
-                ["say", "Lys: \"Doors locked from the inside, against people who grew the grain with their own hands. I've seen animals treated better, and called it husbandry.\""]
-              ],
-              []
-            ]
+            ["say", "This is the Hearthlands: granary lowland that fed the whole Vale, until a Reeve's order shut a tithe-barn's doors on the crofters who grew the grain, one hard winter four hundred years gone."]
           ],
           []
         ]
@@ -66,39 +34,7 @@
           [
             ["set", "hl_entered"],
             ["xp", 2],
-            ["say", "This is the Hearthlands: granary lowland that fed the whole Vale, until a Reeve's order shut a tithe-barn's doors on the crofters who grew the grain, one hard winter four hundred years gone."],
-            [
-              "if",
-              [["inParty", "vell"]],
-              [
-                ["say", "Vell: \"My own line's first Reeve, and a barn full of people his order starved. I have read every history written of that winter. Not one names this place.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "osk"]],
-              [
-                ["say", "Brother Osk: \"An almoner kept the worthy names, and a barn-reeve kept the doors. Two duties, and neither one was mercy. I don't like how familiar that sounds.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "tamsin"]],
-              [
-                ["say", "Tamsin: \"Feeding a town is simple arithmetic — grain in, mouths fed. Somebody did those sums here and left the crofters out of the count on purpose.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "lys"]],
-              [
-                ["say", "Lys: \"Doors locked from the inside, against people who grew the grain with their own hands. I've seen animals treated better, and called it husbandry.\""]
-              ],
-              []
-            ]
+            ["say", "This is the Hearthlands: granary lowland that fed the whole Vale, until a Reeve's order shut a tithe-barn's doors on the crofters who grew the grain, one hard winter four hundred years gone."]
           ],
           []
         ]
@@ -200,7 +136,7 @@
             ["addvar", "rep_watch", 2],
             ["addvar", "appr_tamsin", 1],
             ["addvar", "appr_lys", 1],
-            ["score", 20],
+            ["score", 25],
             ["xp", 8],
             ["say", "You pay the tithe out of your own pocket and tell the sergeant plainly what it buys: the granary's doors, open to anyone hungry, starting today. Nobody argues with coin already counted."],
             [
@@ -210,6 +146,40 @@
                 ["say", "Vell: \"Bought, not spoken. It is not what I would have chosen. It is still more than four hundred years managed on its own.\""]
               ],
               []
+            ]
+          ]
+        },
+        {
+          "id": "hl_haul_due",
+          "label": "haul the debt from the granary (might)",
+          "if": [["flag", "hl_hollow_grievance"], ["!flag", "hl_hollow_done"], ["!flag", "hl_due_paid"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              11,
+              [
+                ["set", "hl_due_paid"],
+                ["set", "hl_due_source_hauled"],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "rep_watch", -1],
+                ["cond", "winded", 4],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "You shoulder past the queue and Rook's grounded pike both, and carry sacks straight off the Crown's own scales before anyone quite decides to stop you. Your arms and back will know it for days."],
+                [
+                  "if",
+                  [["inParty", "tamsin"]],
+                  [
+                    ["say", "Tamsin: \"Arithmetic, settled with your shoulders instead of a ledger. I can't say I mind the method.\""]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["hp", -2],
+                ["say", "Rook's pike is level before you've got a second sack up, and the queue closes around you besides. You're driven back down the steps empty-handed."]
+              ]
             ]
           ]
         }
@@ -254,7 +224,7 @@
                 ["addvar", "rep_watch", 2],
                 ["addvar", "appr_tamsin", 1],
                 ["addvar", "appr_vell", -1],
-                ["score", 20],
+                ["score", 25],
                 ["xp", 8],
                 ["say", "The strongbox gives with a crack of old iron, and you carry its tithe-stores straight to the granary steps yourself. Vance protests exactly once, then starts recounting his ledgers instead."],
                 [
@@ -314,7 +284,7 @@
                 ["addvar", "rep_watch", 2],
                 ["addvar", "appr_tamsin", 1],
                 ["addvar", "appr_osk", -1],
-                ["score", 20],
+                ["score", 25],
                 ["xp", 8],
                 ["say", "A stroke of the pen where the ledger reads \"worthy,\" and every name in Tithing qualifies from this week on. Winnow finds the entry later, and says nothing, which tells you she'd have written it herself if she'd dared."],
                 [
@@ -405,6 +375,34 @@
             ["score", 2],
             ["xp", 2],
             ["say", "Boot-scuffs favoring one wall, a chalk-tally rubbed thin in exactly the spot a nervous thumb would rub it: two sacks a week leave uncounted, same as the hedge-gap already told you."]
+          ]
+        },
+        {
+          "id": "hl_claim_backlane_slack",
+          "label": "intercept the skimmed sacks (grace)",
+          "if": [
+            ["flag", "hl_hollow_grievance"],
+            ["!flag", "hl_hollow_done"],
+            ["!flag", "hl_due_paid"],
+            ["any", [["flag", "hl_child_count_known"], ["flag", "hl_found_hedge_gap"]]]
+          ],
+          "fx": [
+            [
+              "check",
+              "grace",
+              10,
+              [
+                ["set", "hl_due_paid"],
+                ["set", "hl_due_source_skim"],
+                ["addvar", "rep_free", -2],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "You know the gap's own rhythm well enough now to beat the next load to it — two sacks that were never going to be chalked on any board, turned back the way they should have gone."]
+              ],
+              [
+                ["say", "Whoever's running the lane tonight isn't careless enough. The sacks move on schedule, without you. It can be tried again."]
+              ]
+            ]
           ]
         }
       ]
@@ -551,7 +549,7 @@
                 ["addvar", "rep_watch", 2],
                 ["addvar", "appr_tamsin", 1],
                 ["addvar", "appr_vell", 1],
-                ["score", 20],
+                ["score", 25],
                 ["xp", 8],
                 ["say", "You give him a reason that outweighs the ledger, and Vance writes the order himself rather than have history write it for him a second time. The granary doors go back on their hinges by evening."],
                 [
@@ -574,6 +572,46 @@
                   ],
                   [["say", "\"The Regent's grain is the Regent's grain,\" he says again, unmoved."]]
                 ]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "hl_persuade_due",
+          "label": "persuade him to release the due (will)",
+          "if": [
+            ["flag", "hl_bailiff_bg"],
+            ["flag", "hl_hollow_grievance"],
+            ["!flag", "hl_hollow_done"],
+            ["!flag", "hl_due_paid"],
+            ["var", "gold", ">=", 12]
+          ],
+          "say": "Give grain away on top of the tithe itself? Convince me the dead outrank the Regent's ledger — and back it with coin, not only words.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["addvar", "gold", -12],
+                ["set", "hl_due_paid"],
+                ["set", "hl_due_source_persuaded"],
+                ["addvar", "rep_crown", -1],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "You make the case, and back it with coin enough that his columns still close clean when Marrowgate checks them. Vance counts it twice, and writes the release himself."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [
+                    ["say", "Vell: \"Bought again. Coin where a reckoning should stand. I begin to see the pattern in you — and I am not yet certain I mind it.\""],
+                    ["addvar", "appr_vell", -1]
+                  ],
+                  []
+                ]
+              ],
+              [
+                ["say", "\"Not today,\" he says, and goes back to his columns like the matter's closed. It can be tried again."]
               ]
             ]
           ]
@@ -686,7 +724,7 @@
           "label": "the Hunger Barn, now it's rested",
           "if": [["flag", "hl_hollow_rested"]],
           "once": true,
-          "say": "Names and an order, both read aloud at once. My ledgers don't have a column for that, and for once I'm not sure I want them to.",
+          "say": "Grain returned, and an order read over it. My ledgers don't have a column for that, and for once I'm not sure I want them to.",
           "fx": [["xp", 1]]
         },
         {

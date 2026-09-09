@@ -13,42 +13,24 @@
           [
             ["set", "sh_entered"],
             ["xp", 2],
-            ["say", "This is the Shieldings: the open plain where the first Reeve's hired Companies broke a loyal shield-wall by dark, and both lines have held their ground, unrested, ever since."],
-            [
-              "if",
-              [["inParty", "vell"]],
-              [
-                ["say", "Vell: \"My own line's field, this — won here, the night the herald walked out with the white rod and was shot for his trouble. I have never once heard anyone in Marrowgate tell it that way.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "osk"]],
-              [
-                ["say", "Brother Osk: \"Every hold has its grief, but I begin to think none of them has a priest who has buried nobody at all. I want to meet this one.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "tamsin"]],
-              [
-                ["say", "Tamsin: \"The Free Companies were born on this ground, out of a broken truce and a captain's itchy trigger-finger. Worth remembering, whenever anyone tells you a hired sword answers to nobody.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "lys"]],
-              [
-                ["say", "Lys: \"They say the crows never really left this field. I believe it. And I believe a dead herald is still owed the patience nobody gave him.\""]
-              ],
-              []
-            ]
+            ["say", "This is the Shieldings: the open plain where the first Reeve's hired Companies broke a loyal shield-wall by dark, and both lines have held their ground, unrested, ever since."]
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "sh_north_road_envoy",
+          "label": "guess which way the levy marched",
+          "free": true,
+          "once": true,
+          "if": [["class", "envoy"]],
+          "fx": [
+            ["addvar", "or_envoy_words", 1],
+            ["xp", 1],
+            ["say", "The ruts cut two ways, but only one is worn deep enough for men marching in step: south, into the Shieldings. None of them came back out on this road."]
+          ]
+        }
       ]
     },
     "sh_west_road": {
@@ -251,6 +233,18 @@
       "hit": 1,
       "dmg": 3,
       "hint": "field-iron, four hundred years seasoned; a step above a belt-knife"
+    },
+    "sh_road_buckle": {
+      "name": "a corroded belt-buckle, army-issue",
+      "loc": "sh_north_road",
+      "takeable": true,
+      "hint": "no belt left to hold; the strap rotted off it long ago"
+    },
+    "sh_road_tally": {
+      "name": "a drover's tally-stick, notched",
+      "loc": "sh_west_road",
+      "takeable": true,
+      "hint": "one notch short of a full count; whoever kept it never finished"
     }
   }
 }

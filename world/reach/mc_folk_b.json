@@ -45,6 +45,13 @@
           ]
         },
         {
+          "id": "mc_toast_church_sworn",
+          "label": "ask for it as one sworn to the Church",
+          "if": [["flag", "mc_aldith_bg"], ["flag", "church_sworn"], ["!flag", "mc_toast_church"]],
+          "say": "Sworn to my own Church, are you. Then there's no case to make and no waiting on me for it — an oath already kept between us is argument enough.",
+          "fx": [["set", "mc_toast_church"], ["addvar", "mc_toasts_known", 1], ["score", 4], ["xp", 3]]
+        },
+        {
           "id": "mc_scholar_chantry_free",
           "label": "read the rite for the table outright",
           "free": true,
@@ -56,7 +63,16 @@
             ["set", "mc_toast_church"],
             ["addvar", "mc_toasts_known", 1],
             ["score", 4],
-            ["xp", 3]
+            ["xp", 3],
+            [
+              "if",
+              [["!flag", "mc_order_known"]],
+              [
+                ["set", "mc_order_known"],
+                ["say", "The rite's margin carries more than the Church's own part: a server's note of the whole running order, king to guests, penned by whoever once called the courses."]
+              ],
+              []
+            ]
           ]
         },
         {
@@ -257,6 +273,42 @@
           "fx": [["set", "mc_oswin_bg"], ["xp", 2]]
         },
         {
+          "id": "mc_order_oswin",
+          "label": "press him for the order (will)",
+          "if": [["flag", "mc_oswin_bg"], ["!flag", "mc_order_known"]],
+          "say": "You want the order it ran in? That's asking me to walk back into a night my own family barred the door on.",
+          "fx": [
+            [
+              "check",
+              "will",
+              10,
+              [
+                ["set", "mc_order_known"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "The doors went up right in the middle of the second telling — Aldith's kind of toast, not the king's, that one was long done — with the meat scarce cleared for what should have followed it."]
+              ],
+              [
+                ["say", "He shakes his head, not unkindly. \"Not today. Some nights don't want walking back into, on the first ask.\" It can be asked again."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "mc_order_oswin_envoy",
+          "label": "get him talking about the order",
+          "if": [["class", "envoy"], ["flag", "mc_oswin_bg"], ["!flag", "mc_order_known"]],
+          "once": true,
+          "say": "Something about how you ask makes it easy instead of hard, for once. \"Church's toast done, the meat barely served for the course after it, when the bar went up. That's as much order as I've got.\"",
+          "fx": [
+            ["set", "or_envoy_mc_oswin"],
+            ["addvar", "or_envoy_words", 1],
+            ["set", "mc_order_known"],
+            ["score", 2],
+            ["xp", 2]
+          ]
+        },
+        {
           "id": "mc_hall_key_ask",
           "label": "ask to hold the key a moment",
           "if": [["flag", "mc_oswin_bg"], ["!has", "mc_hall_key"]],
@@ -288,7 +340,7 @@
             ["addvar", "rep_keepers", 2],
             ["addvar", "appr_vell", 1],
             ["addvar", "appr_tamsin", 1],
-            ["score", 20],
+            ["score", 25],
             ["xp", 8],
             ["say", "Oswin doesn't turn the key even now, only closes his hand tighter around it. \"Sealed, then. And the first pressing goes to that door every feast-day from now on, whether I ever turn this or not.\""],
             [
@@ -399,6 +451,14 @@
           "once": true,
           "say": "Something in her face steadies, like being believed matters more than being kept safe. \"Nobody else even listens. Somebody should. Might as well be me.\"",
           "fx": [["set", "mc_nell_keep"], ["score", 2], ["xp", 2], ["addvar", "appr_lys", 1]]
+        },
+        {
+          "id": "mc_order_nell",
+          "label": "what she remembers hearing, in order",
+          "if": [["flag", "mc_nell_bg"], ["!flag", "mc_order_known"]],
+          "once": true,
+          "say": "A voice, proud and alone, first. Then quiet a while. Then a different voice, softer, like praying. Then plates and clatter, a long time. Then lots of voices together, right before it all stopped.",
+          "fx": [["set", "mc_order_known"], ["score", 2], ["xp", 2]]
         },
         {
           "id": "mc_nell_closure",

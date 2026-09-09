@@ -7,12 +7,13 @@ import {
   hashState,
   legalActions,
   newState,
+  oddsHint,
   receipt,
   step,
 } from "../src/engine.ts";
 import { replayTrace } from "../src/crawl.ts";
 import { loadWorld, replayWalkthrough } from "../src/validate.ts";
-import type { Action, State, World } from "../src/types.ts";
+import type { Action, RoomDef, State, World } from "../src/types.ts";
 
 const world: World = loadWorld(fileURLToPath(new URL("../world/lighthouse.json", import.meta.url)));
 
@@ -186,4 +187,49 @@ test("healing reports its actual effect, same as damage and score do", () => {
 test("score is clamped to maxScore", () => {
   const a = playWalkthrough(1);
   assert.ok(a.state.score <= world.maxScore);
+});
+
+/**
+ * An item explains itself while it is new, and then stops.
+ *
+ * "use iron crown (read the engraving inside the band; a throne in Marrowgate
+ * was cut to take it, or to go without)" is 111 characters of good clue, and
+ * the gray_crown road carried the crown into 96 first-seen rooms and printed it
+ * in all of them — ten thousand characters of one sentence, and the whole of
+ * that road's 31-character overrun. The pickup line says it, `status` says it
+ * free on demand, and the next few new places say it again in case you walked
+ * off without reading. After that it is a HUD.
+ */
+test("a use-hint rides the first few new places and then goes quiet", () => {
+  const rooms: Record<string, RoomDef> = {};
+  for (let i = 0; i < 9; i++)
+    rooms[`r${i}`] = {
+      name: `R${i}`,
+      desc: `Room ${i}.`,
+      exits: i < 8 ? { east: { to: `r${i + 1}` } } : {},
+      ...(i === 0 ? { items: undefined } : {}),
+    };
+  const world = {
+    id: "m",
+    title: "M",
+    intro: "x",
+    start: "r0",
+    hp: 10,
+    maxScore: 5,
+    rooms,
+    items: { crown: { name: "iron crown", loc: "r0", takeable: true, hint: "a throne was cut to take it", use: [{ fx: [["say", "You read the band."]] }] } },
+    npcs: {},
+    walkthrough: [],
+  } as unknown as World;
+  let { state } = newState(world, 1);
+  state = step(world, state, { kind: "take", item: "crown" }).state;
+  const hint = () => oddsHint(world, state, { kind: "use", item: "crown" } as Action, { itemHints: true });
+  assert.match(hint(), /a throne was cut to take it/, "just picked up: it says what it is");
+  for (let i = 0; i < 4; i++) state = step(world, state, { kind: "go", dir: "east" }).state;
+  assert.match(hint(), /a throne was cut to take it/, "four new places on: still new enough to say");
+  for (let i = 0; i < 4; i++) state = step(world, state, { kind: "go", dir: "east" }).state;
+  assert.equal(hint(), "", "eight new places on: the pack is not a HUD");
+  // and walking back through places already seen does not age it further
+  const back = { ...state, visited: state.visited.slice(0, 3) } as State;
+  assert.match(oddsHint(world, back, { kind: "use", item: "crown" } as Action, { itemHints: true }), /a throne/);
 });

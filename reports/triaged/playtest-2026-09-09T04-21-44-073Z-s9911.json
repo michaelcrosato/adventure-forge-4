@@ -1,0 +1,46 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 568,
+  "receipt": "reach.9911.568.532.reach_at_rest.3b2c96dc",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "The 'name it (it stands down)' peaceful option on the honour guard at The Old Crypts reported 'You speak its true name, and it remembers what it was' but the way remained locked and a follow-up 'speak the old rest-rite' check failed and the guard attacked anyway — the 'stood down' status text was misleading since combat still triggered.",
+      "where": "The Old Crypts (Marrowgate undercity)"
+    },
+    {
+      "sev": "P2",
+      "what": "Directional 'get your bearings' hints sometimes described paths (e.g. 'one west, then one north, then four west...') that didn't match the actual room-to-room connections encountered while following them, causing backtracking.",
+      "where": "Thornwold wood / Camp Gallows area"
+    },
+    {
+      "sev": "P2",
+      "what": "Menu pagination ('more in this room') occasionally cycled back to page 1 instead of advancing to unseen options, making it hard to tell if all options had been viewed.",
+      "where": "The Gallows Glade, Cracked Adit"
+    }
+  ],
+  "confusions": [
+    "It's not always clear which items are 'Chekhov's gun' consumables meant for a specific later puzzle (e.g. the Prior's rite, the founding ledger) versus flavor keepsakes — discovering the Prior's rite worked on the gray sergeant at the Waiting Bough felt like a lucky guess rather than a signposted solution.",
+    "The distinction between a barrow-wight/honour guard 'standing down' (peaceful) versus still being a mandatory fight was inconsistent — sometimes naming it fully bypassed combat, other times it only removed future turns of standing down but combat still happened.",
+    "Companion party-conflict resolution checks (will, DC ~11) had no clear signal for which approach (backing one side vs. mediating) was safer; failing them just cost standing with both companions with no warning of the odds beforehand."
+  ],
+  "suggestions": [
+    "Make 'get your bearings' path descriptions match actual traversal 1:1, or warn when the printed path is approximate.",
+    "Give a consistent, telegraphed signal for whether a 'stood down'/'named' undead enemy is actually pacified or just delayed.",
+    "Surface the odds (or at least success/fail history) before a companion-mediation will check, similar to how normal skill checks show 'roll X+ on the die'.",
+    "Consider a lightweight 'journal cross-reference' so a Scholar knows which carried items are flagged as usable at a specific upcoming location, to reduce trial-and-error inventory use."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-09T04-21-44-073Z",
+  "seed": 9911,
+  "build": {
+    "rev": "de27dd6",
+    "world": "a4e2459a"
+  },
+  "cost_usd": 27.868749599999997,
+  "verified": true
+}

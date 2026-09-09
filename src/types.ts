@@ -22,6 +22,23 @@ export type Cond =
   | ["!inParty", string]
   | ["npcHere", string] // npc stands alive in the player's room (a companion's warning before a fight, a line only said in someone's presence)
   | ["!npcHere", string]
+  | ["cond", string] // the player currently holds this timed condition
+  | ["!cond", string]
+  | ["npccond", string, string] // an npc currently holds this timed condition
+  | ["!npccond", string, string]
+  | ["turn", "<" | ">" | "=" | ">=" | "<=", number] // the turn counter so far — deterministic state, read-only (never mirrored into vars, so content can't write it)
+  | ["since", string, string, number] // turns since a flag was set: op/n as `var`. False while the flag is unset, so it never reads as "0 turns ago"
+  // These five read the room or the player rather than naming an id. Each has
+  // its negated twin, like every other op here — without them there was no way
+  // to write "only when nothing in this room ignores armor".
+  | ["horrorHere"] | ["!horrorHere"] // a hostile npc with `pierce: true` (the realm's horrors — see docs §7) stands alive in the player's room
+  | ["holdsGround"] | ["!holdsGround"] // a hostile npc that is not aggressive stands alive in the player's room (the "leave ... be" category)
+  | ["companionDown"] | ["!companionDown"] // a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up)
+  | ["checkHere", string, number] | ["!checkHere", string, number] // a currently-visible room action or npc topic previews a `check` of this skill at dc >= n (see checkHere in engine.ts)
+  | ["lowHp"] | ["!lowHp"] // the player's hp is at half or less of maxHp — the same "a fight is going badly" threshold the disengage gate uses
+  | ["region", string] | ["!region", string] // the player stands in a room of this region (world.regions' code). A companion's line about a hold, said while you are in that hold.
+  | ["unseenHere"] | ["!unseenHere"] // this region still holds a landmarked place the player has not stood in — the same list `sayunvisited` reads out
+  | ["inWild"] | ["!inWild"] // the player stands in a generated wilderness cell (a `gen` grid room), not in an authored interior
   | ["any", Cond[]]; // passes when at least one of the listed conditions passes (the one OR in an all-of list)
 
 // ---------- effects ----------
@@ -44,6 +61,18 @@ export type Fx =
   | ["perk", string] // grant a perk directly (a trainer teaches you)
   | ["chance", number, Fx[], Fx[]] // pct 0..100 from the state's PRNG: okFx if the roll lands, else failFx
   | ["party", string, "join" | "leave"] // npc joins the player's company (follows room to room, fights beside them) or leaves it
+  | ["cond", string, number] // put a timed condition on the player for N spent turns; re-applying refreshes to the longer remaining duration
+  | ["npccond", string, string, number] // same, on an npc: npc, conditionId, turns
+  | ["uncond", string] // clear a timed condition from the player before it would expire on its own
+  | ["unnpccond", string, string] // clear a timed condition from an npc: npc, conditionId
+  | ["harm", string, number] // n damage to an npc with no attack roll; runs onDeath if it drops, like a killing attack. Safe if the npc is absent or already dead
+  | ["harmhostile", number] // `harm` applied to every currently-hostile npc in the player's room (usually exactly one) instead of one named id
+  | ["condhostile", string, number] // `npccond` applied to every currently-hostile npc in the player's room
+  | ["calmhostile"] // `calm` applied to every currently-hostile npc in the player's room
+  | ["questsopen"] // name what the player still has open, and how many — for a point of no return, where a warning without a number is easy to read past
+  | ["bearings"] // say the way to this region's named places, nearest first, walked through the real exits (see bearingsHere) — replaces a hand-written direction, which a grid with walls makes a guess
+  | ["revive"] // every party member currently down (flag `down_<id>`) gets back up now, at half strength — the same recovery recoverDowned grants once a fight clears, just not waiting for that
+  | ["sayunvisited"] // names this room's region's landmarks not yet visited (or says there are none left) — for a free "what haven't I seen near here" ability
   | ["end", "win" | "lose", string, string]; // kind, endingId, text
 
 // ---------- content ----------
@@ -128,8 +157,10 @@ export type TopicDef = {
 };
 
 /**
- * A companion's one-line reaction. Checked after every turn for each party
- * member; the first remark whose conditions pass is spoken, once ever
+ * A companion's one-line reaction. Checked after every turn, across the whole
+ * party at once — at most one remark reaches the screen a turn, not one per
+ * companion — for the first ready candidate (fx-carrying ones win the slot
+ * over plain ones; a rotating start decides among ties), spoken once ever
  * (flag `remarked_<npc>_<id>`). This is how a companion notices where you are
  * and what you just chose.
  */
@@ -212,6 +243,53 @@ export type PerkDef = {
     armor?: number;
     maxhp?: number;
   };
+};
+
+/**
+ * A named, timed status effect — put on the player with `["cond", id, turns]`
+ * or on an npc with `["npccond", npc, id, turns]`. Small and closed: every
+ * field but `name` is optional, and the validator rejects any other key.
+ * Player conditions fold into attackBonus/combatMods/armorOf/checkMod; an
+ * npc condition's `hit` folds into its strike and `armor` raises its df.
+ */
+export type ConditionDef = {
+  name: string; // shown wherever the condition is listed (HUD, room line, status)
+  hit?: number; // attack-roll modifier
+  dmg?: number; // damage modifier
+  armor?: number; // armor modifier (raises an npc's df; adds to the player's armor)
+  checks?: Partial<Record<string, number>>; // +N to named checks (player only — npcs don't roll checks)
+  hpPerTurn?: number; // hp applied at the end of each spent turn while it holds; negative hurts, positive heals (player only)
+  hint?: string; // short clause the menu/HUD/status may show, e.g. "your guard is down"
+};
+
+/**
+ * One scheduled effect in `world.clock` — the realm's own turn. Checked in
+ * file order once per spent turn; the first entry whose `if` passes (and,
+ * for a `once` entry, has not already fired) runs its `fx`, and the rest
+ * wait for a later turn. At most one entry fires per turn — see World.clock.
+ */
+export type ClockEntry = {
+  id: string; // unique; a `once` entry sets flag `clocked_<id>` the turn it fires
+  if?: Cond[]; // all must pass; default always
+  once?: boolean; // fires at most once ever (auto-flag `clocked_<id>`); omitted, it may fire again on any later turn its `if` still holds
+  fx: Fx[]; // ordinary effects, run through the same applyFx as everything else — no new effect vocabulary
+};
+
+/**
+ * An action available generally, not tied to any one room — a class's active
+ * ability. Shaped like `CustomAction` minus the room: merged by id, like
+ * `perks`/`conditions`. `context: "combat"` offers it only while a live
+ * hostile stands in the player's room (the same test `attack` uses); `"any"`
+ * (the default) offers it wherever its `if` holds. Abilities are listed after
+ * a room's own actions, so a room's content always reads first.
+ */
+export type AbilityDef = {
+  label: string; // shown verbatim in the menu
+  if?: Cond[];
+  context?: "combat" | "any"; // default "any"
+  once?: boolean; // auto-flag `did_<id>` and hide after
+  free?: boolean; // costs no turn and says so in the menu
+  fx: Fx[];
 };
 
 // ---------- overworld generation ----------
@@ -298,7 +376,17 @@ export type QuestDef = {
   start?: Cond[];
   done?: Cond[];
   failed?: Cond[];
-  stages: { if: Cond[]; text: string }[];
+  /**
+   * `at` is the room this stage points the player at. Written once, it replaces
+   * a hand-authored direction: the free status check walks the real exits to it
+   * and prints the legs (see `pathTo` / `renderStatus`).
+   *
+   * The realm carried 315 hand-written bearing strings — "Slatefold is 4 south
+   * and 1 east, then down" — and two playtest waves reported them not matching
+   * the map, because a wilderness grid has walls and a hop count is not a
+   * route. A room id cannot be wrong about the way there.
+   */
+  stages: { if: Cond[]; text: string; at?: string }[];
 };
 
 /** Most epilogue lines appended to an ending; the rest stay untold. */
@@ -318,6 +406,23 @@ export type World = {
   skills?: Record<string, number>; // name -> modifier for ["check", ...]
   classes?: Record<string, ClassDef>; // if present, the game starts with a class menu
   perks?: Record<string, PerkDef>;
+  /** Named timed status effects (see ConditionDef) — put on the player or an npc by id, merged like perks. */
+  conditions?: Record<string, ConditionDef>;
+  /**
+   * Actions available generally, not tied to a room (see AbilityDef) — a
+   * class's active abilities, keyed by id like perks. Root-only, unlike
+   * `perks`/`conditions`: a part file declaring `abilities` is a load error,
+   * so every class's kit lives in one place.
+   */
+  abilities?: Record<string, AbilityDef>;
+  /**
+   * Full values for the vars an ability spends (`res_warden`, `res_scout`, …).
+   * Root-only, like `walkthrough`. A room action that heals the party (the
+   * "rest" a hearth or a bunk grants — see step()'s `custom` case) refreshes
+   * every entry here to its full value; `newState` starts a fresh game full.
+   * Refreshing means "set to full", not "add".
+   */
+  resources?: Record<string, number>;
   /** Part files merged into this one at load (paths or `dir/*.json` globs, relative to this file). Root-only fields stay in the root. */
   include?: string[];
   gen?: GenDef[]; // regions expanded into rooms at load, before validation
@@ -327,7 +432,13 @@ export type World = {
   items: Record<string, ItemDef>;
   npcs: Record<string, NpcDef>;
   /** Named regions that group fast-travel destinations (rooms point at them via `region`). */
-  regions?: Record<string, { name: string }>;
+  /**
+   * `bearing` is how this region says "the way from here" — "As the fell runs",
+   * "As the fen lies" — the opening of what the `bearings` effect prints. The
+   * words are the author's; the directions are the engine's, because 315
+   * hand-written ones were 315 chances to be wrong about a grid with walls.
+   */
+  regions?: Record<string, { name: string; bearing?: string }>;
   /** The journal, shown by the free `status` check; stage changes also print as events. */
   quests?: Record<string, QuestDef>;
   /**
@@ -336,6 +447,16 @@ export type World = {
    * (default 0), ties in file order — and the survivors read in file order.
    */
   epilogue?: { if: Cond[]; text: string; weight?: number }[];
+  /**
+   * The realm's own turn: scheduled effects evaluated once per **spent**
+   * turn, after the player's action, the world's aggressive pass, and
+   * conditions have ticked. Checked in file order; the first entry whose
+   * `if` passes (and is not already spent) fires and the rest wait for a
+   * later turn — at most one entry fires per turn, which is what keeps a
+   * turn's clock line to at most one sentence, never a digest. Root-only,
+   * like `walkthrough` — a part file carrying it is a load error.
+   */
+  clock?: ClockEntry[];
   /** Extra counters shown compactly in the per-turn status line (e.g. gold). */
   hud?: { var: string; label: string }[];
   /** Reputation vars by display name (e.g. rep_church -> "the Gray Church"): a change to one prints "(the Gray Church -1)" the turn it happens. */
@@ -364,7 +485,13 @@ export type World = {
   }[];
   /** Authored proof: must reach a win ending with score === maxScore (validator replays it). */
   walkthrough: WalkStep[];
-  /** Ending proofs: each must replay (seed 1) to a game ended with exactly that ending id. */
+  /**
+   * Ending proofs: each must replay (seed 1) to a game ended with exactly that
+   * ending id. The key is the ending id, optionally followed by "#" and a label
+   * naming this particular witness — `"regent_deposed#warden"` is a second
+   * proof of the same ending by a different road, and an ending may carry as
+   * many as anyone can write.
+   */
   proofs?: Record<string, WalkStep[]>;
 };
 
@@ -376,6 +503,7 @@ export type Action =
   | { kind: "talk"; npc: string; topic: string }
   | { kind: "attack"; npc: string }
   | { kind: "custom"; room: string; id: string }
+  | { kind: "ability"; id: string } // a class ability from world.abilities — not tied to any room
   | { kind: "classpick"; id: string } // choose who you are (first menu when a world has classes)
   | { kind: "perkpick"; id: string } // choose a perk after a level-up
   | { kind: "talkto"; npc: string }
@@ -388,6 +516,7 @@ export type Action =
   | { kind: "company" } // open the list of companions to speak with (two or more travelling with you)
   | { kind: "companydone" } // close that list
   | { kind: "talkmore" } // turn to the next page of a long conversation (free)
+  | { kind: "roommore" } // turn to the next page of a room with more to do than the menu holds (free)
   | { kind: "travelmore" }; // turn to the next page of a long travel list (free)
 
 export type Ending = { kind: "win" | "lose"; id: string; text: string };
@@ -413,12 +542,30 @@ export type State = {
   itemLoc: Record<string, string>;
   npcHp: Record<string, number>;
   npcRoom: Record<string, string | null>;
+  conds: Record<string, number>; // condition id -> spent turns remaining, on the player
+  npcConds: Record<string, Record<string, number>>; // npc id -> (condition id -> turns remaining)
+  /**
+   * Escalating retry: check source id (see engine.ts's checkSourceId) -> prior
+   * FAILED attempts recorded against it, never reset by a success. Each entry
+   * present is >0; a source never yet failed carries no key at all. Read by
+   * applyFx's `check` case and oddsHint to raise that same check's DC by one
+   * per failure already logged — see docs/authoring.md §4.
+   */
+  checkAttempts: Record<string, number>;
+  /**
+   * The turn each flag was first set, for `["since", flag, op, n]` (§3) — "N
+   * turns after this happened", which nothing in the DSL could express: `turn`
+   * reads the absolute counter and `setvar` takes a literal, so content had no
+   * way to record "now". Internal `_`-prefixed markers are not recorded.
+   */
+  flagTurn: Record<string, number>;
   visited: string[];
   party: string[]; // companions travelling with the player, in join order
   talking: string | null; // npc id while a conversation is open (conversation mode)
   travelMenu: string | null; // null: closed; "": destinations (or regions) listed; a region id: that region's destinations
   companyMenu: boolean; // the list of companions to speak with is open (browsing, no turn spent)
   talkPage: number; // which page of a long conversation's topics is showing (0 unless it runs past the menu cap)
+  roomPage: number; // which page of a crowded room's own options is showing (0 unless it runs past the menu cap; reset on entering a room)
   travelPage: number; // which page of a long travel list (regions, or one region's places) is showing
   ended: Ending | null;
 };

@@ -18,6 +18,19 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "sk_track_scout",
+          "label": "read the track for boot-sign",
+          "if": [["class", "scout"], ["!flag", "sk_track_scout_done"]],
+          "free": true,
+          "fx": [
+            ["set", "sk_track_scout_done"],
+            ["xp", 1],
+            ["say", "Boot-prints press deep and steady, Thornwold-ward and back, worn by feet that never once stopped in the village between. Whoever walks this isn't selling firewood."]
+          ]
+        }
       ]
     },
     "sk_coast_road": {
@@ -42,6 +55,30 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "sk_road_cairn",
+          "label": "search the roadside cairn (wits)",
+          "if": [["!flag", "sk_road_cairn_searched"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "sk_road_cairn_searched"],
+                ["addvar", "gold", 2],
+                ["score", 1],
+                ["xp", 2],
+                ["say", "Someone's stacked more than luck into this cairn: a hollow near the base, a few coins wedged in old cloth. Watch and Free Company patrols both leave this stretch alone — now you know one reason why."]
+              ],
+              [
+                ["say", "Stone and moss, stacked by hands with better things to hoard than secrets. Or this cairn's honest, for once."]
+              ]
+            ]
+          ]
+        }
       ]
     },
     "sk_smugglers_stair": {
@@ -64,6 +101,20 @@
         ["set", "sk_entered"],
         ["xp", 2],
         ["say", "This stair goes under the pass to Coldpass, past every hold between. Nothing closes behind you, but a companion's grief left in those holds stays unfinished unless you walk back for it."]
+      ],
+      "actions": [
+        {
+          "id": "sk_stair_tamsin",
+          "label": "ask what Tamsin makes of the stair",
+          "if": [["inParty", "tamsin"], ["!flag", "sk_stair_tamsin_done"]],
+          "free": true,
+          "fx": [
+            ["set", "sk_stair_tamsin_done"],
+            ["xp", 1],
+            ["addvar", "appr_tamsin", 1],
+            ["say", "Tamsin runs a hand along the worn stone. 'Coin, no masters, no questions asked at the door,' she says. 'My brother would have liked this stair.' She doesn't sound entirely comfortable admitting it."]
+          ]
+        }
       ]
     },
     "sk_settlement": {
@@ -273,7 +324,30 @@
       "desc": "A narrow office smelling of tallow and old paper. Sergeant Ilsa Brann counts a manifest twice before she trusts it, and trusts fewer things than that. The high street lies north.",
       "brief": "Tallow, paper, and a careful sergeant.",
       "region": "sk",
-      "exits": { "north": { "to": "sk_high_street" } }
+      "exits": { "north": { "to": "sk_high_street" } },
+      "actions": [
+        {
+          "id": "sk_read_manifest",
+          "label": "cross-check the manifest yourself (wits)",
+          "if": [["!flag", "sk_heard_customs"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              14,
+              [
+                ["set", "sk_heard_customs"],
+                ["score", 2],
+                ["xp", 2],
+                ["say", "The tallies read clean until you check the cellar-stair crates against the harbor rolls twice: same hand, same ink, a count that doesn't match what's stacked. Someone's skimming a toll the crown never sees."]
+              ],
+              [
+                ["say", "Brann's manifests are neat enough to hide a great deal from anyone not already looking for it. Nothing here gives itself up on a first read."]
+              ]
+            ]
+          ]
+        }
+      ]
     },
     "sk_widows_house": {
       "name": "Widow Kestrel's House",
@@ -433,6 +507,12 @@
       "takeable": true,
       "owner": "sk_harbourmaster",
       "hint": "the lens is good; the charts under it are better"
+    },
+    "sk_track_pin": {
+      "name": "a broken cart-pin",
+      "loc": "sk_north_track",
+      "takeable": true,
+      "hint": "sheared clean; whatever it dropped from didn't stop to look"
     }
   },
   "npcs": {
@@ -715,6 +795,14 @@
           ]
         },
         {
+          "id": "sk_rennick_trusted",
+          "label": "the Company chit",
+          "if": [["flag", "free_trusted"]],
+          "once": true,
+          "say": "Rennick's thumb finds the stamp without needing to be shown where it is. \"Vane's mark. Company's own, then.\" He doesn't ask to see it twice.",
+          "fx": [["xp", 2], ["score", 2]]
+        },
+        {
           "id": "bye",
           "label": "leave him to his charts",
           "say": "Mind the tide going out. It doesn't wait on strangers.",
@@ -959,6 +1047,14 @@
           "fx": [["xp", 1], ["addvar", "rep_watch", 1]]
         },
         {
+          "id": "sk_cache_told",
+          "label": "the cache under the watch cairn",
+          "if": [["flag", "sk_found_cache"]],
+          "once": true,
+          "say": "Brann's mouth goes thin. 'Half of Rennick's coin never sees a manifest. I'm not surprised it's buried under a cairn wearing my own title as a joke.' She doesn't ask for a cut, but she remembers.",
+          "fx": [["addvar", "rep_watch", 1], ["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave the post to its ledgers",
           "say": "Straight roads, stranger. Fewer questions that way.",
@@ -1031,6 +1127,14 @@
           "if": [["flag", "sk_nets_amends"]],
           "once": true,
           "say": "\"Paid honest, after the fact, is still paid honest,\" Marta says, not quite smiling. \"I'll not forget you made it right, at least.\"",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "sk_shingle_told",
+          "label": "the drag-marks on the shingle",
+          "if": [["flag", "sk_shingle_searched"]],
+          "once": true,
+          "say": "Marta's jaw sets. \"That's my knot on that netting, or near enough. Wreckers again, working the shingle same as they worked my own racks.\" She doesn't ask for it back. She already knows where it went.",
           "fx": [["xp", 1]]
         },
         {
@@ -1263,6 +1367,7 @@
     },
     "sk_tavernkeep": {
       "name": "Bram Otts",
+      "dialogue": true,
       "room": "sk_drowned_bell",
       "desc": "Built like a mooring post, and about as talkative.",
       "topics": [
@@ -1362,6 +1467,14 @@
           "once": true,
           "say": "Otts doesn't say much, but he marks your face against the door now, same as he does for men who've run a tab and skipped it.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "sk_otts_trusted",
+          "label": "the Company chit, at the bar",
+          "if": [["flag", "free_trusted"]],
+          "once": true,
+          "say": "Otts glances at the chit and pours without being asked twice. \"Company's own drinks free in here. Rest of you pay same as always.\"",
+          "fx": [["hp", 4], ["xp", 1]]
         }
       ]
     },
@@ -1418,6 +1531,11 @@
     {
       "if": [["any", [["flag", "sk_helped_free"], ["flag", "sk_sided_watch"]]]],
       "text": "Gullhaven's taverns argue for years after whether the Free Companies or the Watch came out ahead across the Reach; nobody settles it."
+    },
+    {
+      "if": [["flag", "sk_found_cache"]],
+      "text": "The coin under the Watch Cairn stopped being a joke the day Sergeant Brann heard where it came from.",
+      "weight": 0
     },
     {
       "if": [["flag", "rb_ir_sk_home"]],
@@ -1518,6 +1636,11 @@
       "if": [["flag", "or_scholar_sk_plate"]],
       "text": "A Scholar read the Reeve's Pride's own dedication plate: a marriage envoy, not a war fleet, sent to buy peace.",
       "weight": 0
+    },
+    {
+      "if": [["flag", "free_trusted"]],
+      "text": "Rennick still tells new hires about the stranger who walked into Gullhaven already carrying the Company's own mark.",
+      "weight": 1
     }
   ],
   "quests": {
@@ -1528,11 +1651,13 @@
       "stages": [
         {
           "if": [["flag", "hb_entered"]],
-          "text": "You're in Hollowbrook. The bell's owed to the Keepers' Hall, or sold, or hung where you see fit."
+          "text": "You're in Hollowbrook. The bell's owed to the Keepers' Hall, or sold, or hung where you see fit.",
+          "at": "hb_keepers_hall"
         },
         {
           "if": [],
-          "text": "The Drowned Bell's old ship's-bell is owed, by custom, to Hollowbrook's Keepers' Hall. Carry it north."
+          "at": "hb_keepers_hall",
+          "text": "The Drowned Bell's old ship's-bell is owed, by custom, to Hollowbrook's Keepers' Hall."
         }
       ]
     },
@@ -1547,27 +1672,33 @@
         },
         {
           "if": [["flag", "sv_sk_rested_asked"], ["!flag", "sv_sk_rested_done"]],
-          "text": "Widow Kestrel is waiting on your word, at her house on the high street."
+          "text": "Widow Kestrel is waiting on your word, at her house on the high street.",
+          "at": "sk_widows_house"
         },
         {
           "if": [["flag", "sv_sk_bargained_asked"], ["!flag", "sv_sk_bargained_done"]],
-          "text": "Rennick is waiting on your word about the tithe."
+          "text": "Rennick is waiting on your word about the tithe.",
+          "at": "sk_harbourmaster_house"
         },
         {
           "if": [["flag", "sv_sk_burned_asked"], ["!flag", "sv_sk_burned_done"]],
-          "text": "Brann is waiting on your word about the wreck."
+          "text": "Brann is waiting on your word about the wreck.",
+          "at": "sk_customs_post"
         },
         {
           "if": [["flag", "sk_hollow_rested"]],
-          "text": "Widow Kestrel has a harder question now. Find her, high street, Gullhaven."
+          "text": "Widow Kestrel has a harder question now. Find her, high street, Gullhaven.",
+          "at": "sk_widows_house"
         },
         {
           "if": [["flag", "sk_hollow_bargained"]],
-          "text": "The spring tithe troubles Rennick. Find him at the harbourmaster's house."
+          "text": "The spring tithe troubles Rennick. Find him at the harbourmaster's house.",
+          "at": "sk_harbourmaster_house"
         },
         {
           "if": [["flag", "sk_hollow_burned"]],
-          "text": "Salvage rights to the Pride trouble Brann. Find her at the customs post."
+          "text": "Salvage rights to the Pride trouble Brann. Find her at the customs post.",
+          "at": "sk_customs_post"
         },
         { "if": [], "text": "Gullhaven isn't done with the wreck yet." }
       ]

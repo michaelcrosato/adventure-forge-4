@@ -52,42 +52,47 @@
           },
           {
             "id": "r_th_entered",
-            "if": [["flag", "th_entered"]],
+            "if": [["flag", "th_entered"], ["region", "th"]],
             "say": "Camp Gallows is close now. Some of me wants to run there today. Some of me knows better than to hope out loud."
           },
           {
             "id": "r_fd_entered",
-            "if": [["flag", "fd_entered"]],
+            "if": [["flag", "fd_entered"], ["region", "fd"]],
             "say": "Wet ground, soft footing. I don't like a wood I can't hear myself walk through."
           },
           {
             "id": "r_wm_entered",
-            "if": [["flag", "wm_entered"]],
+            "if": [["flag", "wm_entered"], ["region", "wm"]],
             "say": "Open moor. No cover for a hundred strides. I don't love being this easy to see."
           },
           {
             "id": "r_ir_entered",
-            "if": [["flag", "ir_entered"]],
+            "if": [["flag", "ir_entered"], ["region", "ir"]],
             "say": "Iron on the wind before we even crest the hill. This is Tamsin's country more than mine."
           },
           {
             "id": "r_hb_entered",
-            "if": [["flag", "hb_entered"]],
+            "if": [["flag", "hb_entered"], ["region", "hb"]],
             "say": "Barrows every way I look. Whatever sleeps under this ground, I'd rather not wake it."
           },
           {
             "id": "r_sk_entered",
-            "if": [["flag", "sk_entered"]],
+            "if": [["flag", "sk_entered"], ["region", "sk"]],
             "say": "Salt air. My father always said it ruins a good bowstring. He wasn't wrong."
           },
           {
             "id": "r_cp_entered",
-            "if": [["flag", "cp_entered"]],
+            "if": [["flag", "cp_entered"], ["region", "cp"]],
             "say": "Thin air, thin trail. Watch your footing more than the view up here."
           },
           {
+            "id": "r_settled",
+            "if": [["var", "appr_lys", ">=", 2], ["flag", "cp_entered"]],
+            "say": "This is about as far from the Vale as I've ever walked. Didn't think I'd mind it this little."
+          },
+          {
             "id": "r_em_entered",
-            "if": [["flag", "em_entered"]],
+            "if": [["flag", "em_entered"], ["region", "em"]],
             "say": "Glass underfoot instead of ground. Whatever this valley learned, it learned it the hard way, same as the rest of us."
           },
           {
@@ -97,7 +102,7 @@
           },
           {
             "id": "r_mg_entered",
-            "if": [["flag", "mg_entered"]],
+            "if": [["flag", "mg_entered"], ["region", "mg"]],
             "say": "So this is the city that started all of it. Doesn't look like much, for the weight it's carrying."
           },
           {
@@ -119,6 +124,18 @@
             "id": "r_appr_neg",
             "if": [["var", "appr_lys", "<=", -2]],
             "say": "I'm starting to wonder why I still walk beside you. Give me a reason before I stop wondering."
+          },
+          {
+            "id": "r_hardened",
+            "if": [["var", "appr_lys", "<=", -3]],
+            "say": "I've started keeping a step of my own instead of yours. Don't ask why. You already know.",
+            "fx": [["set", "lys_hardened"]]
+          },
+          {
+            "id": "r_devoted",
+            "if": [["var", "appr_lys", ">=", 8], ["lowHp"], ["!flag", "lys_hardened"]],
+            "say": "Don't think about it. Just hit where I'm already looking.",
+            "fx": [["cond", "honed", 2], ["set", "lys_devoted"]]
           },
           {
             "id": "r_th_hollow_rested",
@@ -507,8 +524,18 @@
             "say": "Kept doesn't mean it helped anyone still standing in the water out here."
           },
           {
+            "id": "r_me_arrival",
+            "if": [["flag", "me_entered"], ["region", "me"]],
+            "say": "Fog like this carries sound wrong — too far, or not at all. If something out there is singing, I'd rather know before dark finds us on open water."
+          },
+          {
+            "id": "r_me_hollow_arrival",
+            "if": [["flag", "me_hollow_found"], ["region", "me"]],
+            "say": "Quiet out here. Too quiet for water this open. If Wick's right about the singing, this is where it comes from."
+          },
+          {
             "id": "r_me_entered",
-            "if": [["flag", "me_entered"]],
+            "if": [["flag", "me_entered"], ["region", "me"]],
             "say": "Stilt-hamlets and lantern-light. My brother would have called this a good place to hide. I'd have said the same and meant something different."
           },
           {
@@ -523,8 +550,13 @@
             "fx": [["addvar", "appr_lys", -1]]
           },
           {
+            "id": "r_hl_arrival",
+            "if": [["flag", "hl_entered"], ["region", "hl"]],
+            "say": "Doors locked from the inside, against people who grew the grain with their own hands. I've seen animals treated better, and called it husbandry."
+          },
+          {
             "id": "r_hl_entered",
-            "if": [["flag", "hl_entered"]],
+            "if": [["flag", "hl_entered"], ["region", "hl"]],
             "say": "Fields, and every one of them fed. Hunters starve first in a bad winter and crofters second. I'd like to hear who starved third, here."
           },
           {
@@ -544,8 +576,13 @@
             "fx": [["addvar", "appr_lys", -1]]
           },
           {
+            "id": "r_kw_hollow_arrival",
+            "if": [["flag", "kw_hollow_grievance"], ["region", "kw"]],
+            "say": "No dogs. I can feel where they'd be, same as I feel a treeline at night, and there's nothing there. That's worse than baying, somehow."
+          },
+          {
             "id": "r_kw_entered",
-            "if": [["flag", "kw_entered"]],
+            "if": [["flag", "kw_entered"], ["region", "kw"]],
             "say": "Ridings and hound-pits and a horn-post. My father would have called this the only honest wood in the Reach. He'd have meant the poaching."
           },
           {
@@ -559,8 +596,18 @@
             "say": "You burned the Stand with the hunt still out. They'll ride till the wood's gone now, and the wood will go. Don't ask me to hunt here again."
           },
           {
+            "id": "r_sh_arrival",
+            "if": [["flag", "sh_entered"], ["region", "sh"]],
+            "say": "They say the crows never really left this field. I believe it. And I believe a dead herald is still owed the patience nobody gave him."
+          },
+          {
+            "id": "r_sh_hollow_arrival",
+            "if": [["flag", "sh_hollow_grievance"], ["region", "sh"]],
+            "say": "At dusk this ground fills with men nobody living can see, still waiting on an order that never came. I don't think that's a haunting. I think it's just patience, gone on far too long."
+          },
+          {
             "id": "r_sh_entered",
-            "if": [["flag", "sh_entered"]],
+            "if": [["flag", "sh_entered"], ["region", "sh"]],
             "say": "A field nobody ploughs, in country this good. Crows on every hedge and not one of them feeding. My father said you can read a place by its crows."
           },
           {
@@ -574,8 +621,18 @@
             "say": "You burned two lines of men who were waiting to be told they could stop. Dusk here will be worse now, not better. I know fire."
           },
           {
+            "id": "r_pw_arrival",
+            "if": [["flag", "pw_entered"], ["region", "pw"]],
+            "say": "A river with old pennies washing up on its spit, and a child who won't stop hearing hammers for it. That's not a haunting I'd want growing up beside."
+          },
+          {
+            "id": "r_pw_hollow_arrival",
+            "if": [["flag", "pw_hollow_grievance"], ["region", "pw"]],
+            "say": "Coin-blanks racked for a hand that isn't coming. I've seen traps set kinder than that."
+          },
+          {
             "id": "r_pw_entered",
-            "if": [["flag", "pw_entered"]],
+            "if": [["flag", "pw_entered"], ["region", "pw"]],
             "say": "A river that keeps giving back what was thrown in it. My father fished a mill-race like that once and never told us what he found in it."
           },
           {
@@ -589,8 +646,18 @@
             "say": "You burned a door with four men behind it who only wanted to finish a job. I know that's not what happened. It's what it sounded like."
           },
           {
+            "id": "r_mc_arrival",
+            "if": [["flag", "mc_entered"], ["region", "mc"]],
+            "say": "Wax-hives in every hedge and an orchard nobody picks clean. That's a hold feeding its dead before it feeds itself."
+          },
+          {
+            "id": "r_mc_hollow_arrival",
+            "if": [["flag", "mc_hollow_grievance"], ["region", "mc"]],
+            "say": "An orchard nobody picks, hives nobody robs, all so a hold can go on starving itself a little every year for guests who can't taste it. That's not honoring the dead. That's going hungry with them."
+          },
+          {
             "id": "r_mc_entered",
-            "if": [["flag", "mc_entered"]],
+            "if": [["flag", "mc_entered"], ["region", "mc"]],
             "say": "Orchards left to rot for the dead, and hives still working the blossom because nobody told the bees. My father would've had those apples in within a week."
           },
           {
@@ -604,8 +671,18 @@
             "say": "You burned a hall with the guests still seated. They were poisoned at a table under a promise, and now they're ash under one. I don't know what that rests."
           },
           {
+            "id": "r_ff_arrival",
+            "if": [["flag", "ff_entered"], ["region", "ff"]],
+            "say": "Thirty-one children carried up a fell road, and a hold still farming the dead's own land for a Crown that never once sent for them. That's not a debt. That's a theft with good manners."
+          },
+          {
+            "id": "r_ff_hollow_arrival",
+            "if": [["flag", "ff_hollow_grievance"], ["region", "ff"]],
+            "say": "Children who never once got to go home, in a house that still sweeps their floor for them. I don't have a clean word for what that is."
+          },
+          {
             "id": "r_ff_entered",
-            "if": [["flag", "ff_entered"]],
+            "if": [["flag", "ff_entered"], ["region", "ff"]],
             "say": "Sheep on the dead's land, and the Crown's rent on the sheep. Thirty-one children walked up this fell road and the fell kept every one. My father would have walked them home himself."
           },
           {
@@ -710,6 +787,11 @@
             "id": "r_quarrel_lys_tamsin_wood_sour_lys",
             "if": [["flag", "quarrel_lys_tamsin_wood_tamsin"]],
             "say": "Fair trade. Right. Tell that to whatever's left riding those ridings by winter."
+          },
+          {
+            "id": "r_fl_arrival",
+            "if": [["flag", "fl_entered"], ["region", "fl"], ["!flag", "fl_muster_broken"]],
+            "say": "I can already hear drilling from here. Someone's teaching desperate people to hold a spear for coin. I've seen that trade before."
           }
         ],
         "leaves": [
@@ -726,7 +808,7 @@
             "say": "He was still in there, and you knew it, and you did it anyway. I watched Thornwold burn from the ridge. I'm done."
           },
           {
-            "if": [["var", "appr_lys", "<=", -3]],
+            "if": [["var", "appr_lys", "<=", -5]],
             "say": "I've watched you long enough to know what you are. I won't watch anymore."
           },
           {
@@ -877,7 +959,7 @@
         {
           "id": "trust1",
           "label": "ask why she never went herself",
-          "if": [["var", "appr_lys", ">=", 4], ["flag", "said_lys_confide"]],
+          "if": [["var", "appr_lys", ">=", 4], ["flag", "said_lys_confide"], ["!flag", "lys_hardened"]],
           "once": true,
           "say": "I got as far as the Thornwold treeline once, a year before you ever came. Heard the Company's fires through the trees, and turned back. Told myself it was the wood. It wasn't.",
           "fx": [["xp", 2]]
@@ -949,7 +1031,7 @@
         },
         {
           "id": "quarrel_lys_tamsin_settle",
-          "label": "tell her it's not yours to judge (will)",
+          "label": "try to settle the rope (will)",
           "if": [["flag", "quarrel_lys_tamsin"], ["!flag", "quarrel_lys_tamsin_done"]],
           "once": true,
           "say": "You tell them plainly the glade's rope isn't a fight for you to settle between them.",
@@ -1009,7 +1091,7 @@
         },
         {
           "id": "quarrel_lys_vell_crown_settle",
-          "label": "call the crown's claim a draw (will)",
+          "label": "try to settle the crown (will)",
           "if": [["flag", "quarrel_lys_vell_crown"], ["!flag", "quarrel_lys_vell_crown_done"]],
           "once": true,
           "say": "You tell them plainly the crown isn't yours to fight over between them.",
@@ -1097,7 +1179,7 @@
         },
         {
           "id": "quarrel_lys_vell_pride_settle",
-          "label": "call the wreck's fate a draw (will)",
+          "label": "try to settle the Pride (will)",
           "if": [["flag", "quarrel_lys_vell_pride"], ["!flag", "quarrel_lys_vell_pride_done"]],
           "once": true,
           "say": "You tell them plainly what's left of the Reeve's Pride isn't yours to fight over between them.",
@@ -1144,7 +1226,7 @@
         },
         {
           "id": "quarrel_lys_tamsin_camp_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the toll (will)",
           "if": [["flag", "quarrel_lys_tamsin_camp"], ["!flag", "quarrel_lys_tamsin_camp_done"]],
           "once": true,
           "say": "You tell them plainly what Camp Gallows charges on the road isn't yours to referee between them.",
@@ -1170,7 +1252,7 @@
         },
         {
           "id": "quarrel_lys_osk_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the sexton's roll (will)",
           "if": [["flag", "quarrel_lys_osk"], ["!flag", "quarrel_lys_osk_done"]],
           "once": true,
           "say": "You tell them plainly the sexton's roll isn't a fight for you to referee.",
@@ -1196,7 +1278,7 @@
         },
         {
           "id": "quarrel_lys_osk_covenant_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the covenant (will)",
           "if": [["flag", "quarrel_lys_osk_covenant"], ["!flag", "quarrel_lys_osk_covenant_done"]],
           "once": true,
           "say": "You tell them plainly what the covenant is worth now isn't a fight for you to settle between them.",
@@ -1235,7 +1317,7 @@
         },
         {
           "id": "quarrel_lys_osk_pressing_settle_b",
-          "label": "call the pressing a draw (will)",
+          "label": "try to settle the pressing (will)",
           "if": [["flag", "quarrel_lys_osk_pressing"], ["!flag", "quarrel_lys_osk_pressing_done"]],
           "once": true,
           "say": "You tell them plainly whether Mootcombe feeds its dead or its living isn't yours to settle between them.",
@@ -1261,7 +1343,7 @@
         },
         {
           "id": "quarrel_lys_vell_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the bargain (will)",
           "if": [["flag", "quarrel_lys_vell"], ["!flag", "quarrel_lys_vell_done"]],
           "once": true,
           "say": "You tell them plainly the broken bargain isn't a fight for you to settle between them.",
@@ -1300,7 +1382,7 @@
         },
         {
           "id": "quarrel_lys_tamsin_wood_settle_b",
-          "label": "call the coppice a draw (will)",
+          "label": "try to settle the coppice (will)",
           "if": [["flag", "quarrel_lys_tamsin_wood"], ["!flag", "quarrel_lys_tamsin_wood_done"]],
           "once": true,
           "say": "You tell them plainly whether the Kingswood feeds a hearth or a hunt isn't yours to settle between them.",
@@ -1378,42 +1460,47 @@
           },
           {
             "id": "r_th_entered",
-            "if": [["flag", "th_entered"]],
+            "if": [["flag", "th_entered"], ["region", "th"]],
             "say": "Rough company, this Free Company. I'll say a verse for whoever needs one and try not to judge the rest."
           },
           {
             "id": "r_fd_entered",
-            "if": [["flag", "fd_entered"]],
+            "if": [["flag", "fd_entered"], ["region", "fd"]],
             "say": "Reedholm. I know these stilts better than I know my own two feet. Careful where you put yours."
           },
           {
             "id": "r_wm_entered",
-            "if": [["flag", "wm_entered"]],
+            "if": [["flag", "wm_entered"], ["region", "wm"]],
             "say": "The Watch keeps good order up here. Order isn't the same as peace, but it's not nothing either."
           },
           {
             "id": "r_ir_entered",
-            "if": [["flag", "ir_entered"]],
+            "if": [["flag", "ir_entered"], ["region", "ir"]],
             "say": "Cinderhall smells of ash even from the road. I don't think that's only the forges."
           },
           {
             "id": "r_hb_entered",
-            "if": [["flag", "hb_entered"]],
+            "if": [["flag", "hb_entered"], ["region", "hb"]],
             "say": "Barrowmere. So many kept graves in one place. The Keepers do good work, whatever else gets said of them."
           },
           {
             "id": "r_sk_entered",
-            "if": [["flag", "sk_entered"]],
+            "if": [["flag", "sk_entered"], ["region", "sk"]],
             "say": "Gullhaven. Salt air, hard people. I like it more than I expected to."
           },
           {
             "id": "r_cp_entered",
-            "if": [["flag", "cp_entered"]],
+            "if": [["flag", "cp_entered"], ["region", "cp"]],
             "say": "This high, even the verses feel thinner. Or maybe that's just the air."
           },
           {
+            "id": "r_em_choir_arrival",
+            "if": [["flag", "em_choir_seen"], ["region", "em"]],
+            "say": "This is us. The Church did this — not let it happen, did it. I have never said that thought aloud before now."
+          },
+          {
             "id": "r_em_entered",
-            "if": [["flag", "em_entered"]],
+            "if": [["flag", "em_entered"], ["region", "em"]],
             "say": "Glasswick. They sell the fire's leftovers as beauty here, and I can't decide if that's healing or just very good business."
           },
           {
@@ -1433,7 +1520,7 @@
           },
           {
             "id": "r_mg_entered",
-            "if": [["flag", "mg_entered"]],
+            "if": [["flag", "mg_entered"], ["region", "mg"]],
             "say": "Marrowgate. Four hundred years of unrested grief, and a throne built right on top of it. Lord."
           },
           {
@@ -1455,6 +1542,12 @@
             "id": "r_appr_neg",
             "if": [["var", "appr_osk", "<=", -2]],
             "say": "I keep telling myself there's a reason for what you do. I'm running out of ways to believe it."
+          },
+          {
+            "id": "r_hardened",
+            "if": [["var", "appr_osk", "<=", -3]],
+            "say": "I still say the words over what you do. I've stopped asking you to explain yourself to me first. That isn't forgiveness — I've just given up on the question.",
+            "fx": [["set", "osk_hardened"]]
           },
           {
             "id": "r_fd_hollow_rested",
@@ -1731,8 +1824,18 @@
             "say": "The ditches matter. I only meant the promise mattered too. We agreed more than it sounded."
           },
           {
+            "id": "r_me_arrival",
+            "if": [["flag", "me_entered"], ["region", "me"]],
+            "say": "Saint Ashwyn, born on these stilts — that's the Church's own claim, and Coldpass tells it otherwise. I would like to know, for once, which of us is wrong."
+          },
+          {
+            "id": "r_me_hollow_arrival",
+            "if": [["flag", "me_hollow_found"], ["region", "me"]],
+            "say": "Four hundred years, and no Church rite ever reached this far out. That failing is older than mine."
+          },
+          {
             "id": "r_me_entered",
-            "if": [["flag", "me_entered"]],
+            "if": [["flag", "me_entered"], ["region", "me"]],
             "say": "The Keepers' first Hall, under the water. The Priory never taught that it existed. I'm learning how much the Priory never taught."
           },
           {
@@ -1746,8 +1849,18 @@
             "say": "The covenant was the compact between the living and the dead, and we cracked it for kindling. I said a verse over the pieces. It felt like apology."
           },
           {
+            "id": "r_hl_arrival",
+            "if": [["flag", "hl_entered"], ["region", "hl"]],
+            "say": "An almoner kept the worthy names, and a barn-reeve kept the doors. Two duties, and neither one was mercy. I don't like how familiar that sounds."
+          },
+          {
+            "id": "r_hl_hollow_arrival",
+            "if": [["flag", "hl_hollow_grievance"], ["region", "hl"]],
+            "say": "'Worthy' was a word my own Church chose to write in a ledger, and chose whom to spend it on. I have never once heard a priest apologize for a word."
+          },
+          {
             "id": "r_hl_entered",
-            "if": [["flag", "hl_entered"]],
+            "if": [["flag", "hl_entered"], ["region", "hl"]],
             "say": "An almonry that keeps a ledger of the worthy. I have handed out bread from one of those. I never asked to see the book."
           },
           {
@@ -1767,8 +1880,13 @@
             "fx": [["addvar", "appr_osk", -1]]
           },
           {
+            "id": "r_kw_hollow_arrival",
+            "if": [["flag", "kw_hollow_grievance"], ["region", "kw"]],
+            "say": "No rite was ever said over this. Not once, in four centuries. I don't think anyone even knew there was a grief here to answer."
+          },
+          {
             "id": "r_kw_entered",
-            "if": [["flag", "kw_entered"]],
+            "if": [["flag", "kw_entered"], ["region", "kw"]],
             "say": "A hunt's chapel with a hermit in it. The Church forgot this place, or hid it. I am learning those are the same thing."
           },
           {
@@ -1782,8 +1900,18 @@
             "say": "The huntsmen never got their recall, and now they never will. I said a verse over the ash. Nobody in it was listening anymore."
           },
           {
+            "id": "r_sh_arrival",
+            "if": [["flag", "sh_entered"], ["region", "sh"]],
+            "say": "Every hold has its grief, but I begin to think none of them has a priest who has buried nobody at all. I want to meet this one."
+          },
+          {
+            "id": "r_sh_hollow_arrival",
+            "if": [["flag", "sh_hollow_grievance"], ["region", "sh"]],
+            "say": "Two lines, four hundred years unburied, and a chantry a mile off that has never once said a word over either of them. Someone should have come here a very long time ago."
+          },
+          {
             "id": "r_sh_entered",
-            "if": [["flag", "sh_entered"]],
+            "if": [["flag", "sh_entered"], ["region", "sh"]],
             "say": "A chantry that buried no one because it could not bury everyone. I understand the rule. I am starting to hate the rule."
           },
           {
@@ -1797,8 +1925,18 @@
             "say": "The ground left to them, and Harrowfield shorter of bread for it. The Church would call that a fair tithe. I've stopped saying what the Church would call things."
           },
           {
+            "id": "r_pw_arrival",
+            "if": [["flag", "pw_entered"], ["region", "pw"]],
+            "say": "Men who chose a sealed door over striking a lie into silver. I did not know that story until today, and I am glad, finally, to."
+          },
+          {
+            "id": "r_pw_hollow_arrival",
+            "if": [["flag", "pw_hollow_grievance"], ["region", "pw"]],
+            "say": "No rite was ever said over that door. Four hundred years, and not one priest thought a sealed door still needed a blessing. I mean to say one, before we're finished here."
+          },
+          {
             "id": "r_pw_entered",
-            "if": [["flag", "pw_entered"]],
+            "if": [["flag", "pw_entered"], ["region", "pw"]],
             "say": "Men who chose a sealed door over a lie. The Church calls that pride. I am not sure the Church has the right word for it."
           },
           {
@@ -1812,8 +1950,18 @@
             "say": "The door's through and the hoard is solder. The moneyers wanted one thing in four hundred years, and we took it to a furnace. I said the words anyway."
           },
           {
+            "id": "r_mc_arrival",
+            "if": [["flag", "mc_entered"], ["region", "mc"]],
+            "say": "A whole hold fasting on one day, every year, for four centuries. That is not a small grief to carry alone. I want to know what rite this is, and why it was never finished."
+          },
+          {
+            "id": "r_mc_hollow_arrival",
+            "if": [["flag", "mc_hollow_grievance"], ["region", "mc"]],
+            "say": "Four hundred years of a fast, and no one left who remembers why, only that it's owed. I mean to learn the words this rite was never let finish."
+          },
+          {
             "id": "r_mc_entered",
-            "if": [["flag", "mc_entered"]],
+            "if": [["flag", "mc_entered"], ["region", "mc"]],
             "say": "A fast four hundred years long, kept for a feast the Church blessed the night it was poisoned. The chantry never says which part it is fasting for."
           },
           {
@@ -1827,8 +1975,18 @@
             "say": "The hall kept shut, and the first pressing carried to its doors. A fast turned into a tithe. I can't tell yet whether that's mercy or habit."
           },
           {
+            "id": "r_ff_arrival",
+            "if": [["flag", "ff_entered"], ["region", "ff"]],
+            "say": "A dame with a dismissal rite she's never once been let speak. Four hundred years of a lesson with no one to end it properly. I mean to see that changed."
+          },
+          {
+            "id": "r_ff_hollow_arrival",
+            "if": [["flag", "ff_hollow_grievance"], ["region", "ff"]],
+            "say": "A dame with a dismissal rite she's never once been let speak, thirty-one benches still full. This is exactly the unfinished grief I came looking for."
+          },
+          {
             "id": "r_ff_entered",
-            "if": [["flag", "ff_entered"]],
+            "if": [["flag", "ff_entered"], ["region", "ff"]],
             "say": "A dame of the Church taught them their letters and their catechism and never once the way down the fell. The Church calls that fostering. I am learning what the Church calls things."
           },
           {
@@ -1906,6 +2064,16 @@
             "id": "r_quarrel_osk_vell_barn_sour_osk",
             "if": [["flag", "quarrel_osk_vell_barn_vell"]],
             "say": "Written down properly. Fine. Tell me when ink has ever once opened a barn door."
+          },
+          {
+            "id": "r_fl_arrival",
+            "if": [["flag", "fl_entered"], ["region", "fl"]],
+            "say": "No Keeper came. The Church wrote it off as a fever and never sent a second man to check. I have started keeping a list of what we got wrong out here."
+          },
+          {
+            "id": "r_fl_furrow_arrival",
+            "if": [["flag", "fl_furrow_heart_seen"], ["region", "fl"]],
+            "say": "A fever, the record says. I have stood at the edge of this and I do not believe the record ever once. Someone wrote that word down to make the silence afterward easier to keep."
           }
         ],
         "leaves": [
@@ -1914,7 +2082,7 @@
             "say": "You burned it. My family, the nave, all of it. I have nothing left to say to you."
           },
           {
-            "if": [["var", "appr_osk", "<=", -3]],
+            "if": [["var", "appr_osk", "<=", -5]],
             "say": "I came to this Church to be better than my worst assumptions about people. Standing next to you keeps proving them right. I'm done."
           },
           {
@@ -2046,7 +2214,7 @@
         {
           "id": "trust1",
           "label": "ask what he really remembers of that day",
-          "if": [["var", "appr_osk", ">=", 4], ["flag", "said_osk_confide"]],
+          "if": [["var", "appr_osk", ">=", 4], ["flag", "said_osk_confide"], ["!flag", "osk_hardened"]],
           "once": true,
           "say": "I wasn't there when the water took them. Sent off for dry wood on some errand nobody even remembers giving me now. I have never told a living soul I sometimes wonder if that's the only reason I'm still here.",
           "fx": [["xp", 2]]
@@ -2093,6 +2261,14 @@
           "fx": [["addvar", "rep_church", -1], ["addvar", "appr_osk", 1]]
         },
         {
+          "id": "devoted",
+          "label": "tell him to skip the rite, just once",
+          "if": [["var", "appr_osk", ">=", 8], ["!flag", "osk_hardened"]],
+          "once": true,
+          "say": "\"No.\" He says it plainly, for once, and doesn't soften it after. He says the rite anyway, low and steady, over whatever you told him to leave unspoken — and something in you settles that wasn't, until then.",
+          "fx": [["cond", "resolved", 3], ["set", "osk_devoted"], ["xp", 3]]
+        },
+        {
           "id": "quarrel_lys_osk_side_osk",
           "label": "side with him — it's not his roll-book",
           "if": [["flag", "quarrel_lys_osk"], ["!flag", "quarrel_lys_osk_done"]],
@@ -2107,7 +2283,7 @@
         },
         {
           "id": "quarrel_lys_osk_settle",
-          "label": "tell him it's not yours to judge (will)",
+          "label": "try to settle the sexton's roll (will)",
           "if": [["flag", "quarrel_lys_osk"], ["!flag", "quarrel_lys_osk_done"]],
           "once": true,
           "say": "You tell them plainly the sexton's roll isn't a fight for you to referee.",
@@ -2167,7 +2343,7 @@
         },
         {
           "id": "quarrel_osk_vell_settle",
-          "label": "tell him it's not yours to grade (will)",
+          "label": "try to settle the confession (will)",
           "if": [["flag", "quarrel_osk_vell"], ["!flag", "quarrel_osk_vell_done"]],
           "once": true,
           "say": "You tell them plainly the prior's confession isn't a fight for you to settle between them.",
@@ -2214,7 +2390,7 @@
         },
         {
           "id": "quarrel_osk_tamsin_doors_settle",
-          "label": "call the door's fate a draw (will)",
+          "label": "try to settle the door (will)",
           "if": [["flag", "quarrel_osk_tamsin_doors"], ["!flag", "quarrel_osk_tamsin_doors_done"]],
           "once": true,
           "say": "You tell them plainly the barrow door isn't yours to fight over between them.",
@@ -2302,7 +2478,7 @@
         },
         {
           "id": "quarrel_osk_tamsin_aldous_settle",
-          "label": "tell them it's not yours to weigh (will)",
+          "label": "try to settle Aldous's due (will)",
           "if": [["flag", "quarrel_osk_tamsin_aldous"], ["!flag", "quarrel_osk_tamsin_aldous_done"]],
           "once": true,
           "say": "You tell them plainly what Aldous deserves isn't a verdict for you to hand down between them.",
@@ -2349,7 +2525,7 @@
         },
         {
           "id": "quarrel_lys_osk_covenant_settle",
-          "label": "tell them it's not yours to weigh (will)",
+          "label": "try to settle the covenant (will)",
           "if": [["flag", "quarrel_lys_osk_covenant"], ["!flag", "quarrel_lys_osk_covenant_done"]],
           "once": true,
           "say": "You tell them plainly what the covenant is worth now isn't a fight for you to settle between them.",
@@ -2396,7 +2572,7 @@
         },
         {
           "id": "quarrel_lys_osk_pressing_settle",
-          "label": "call the pressing a draw (will)",
+          "label": "try to settle the pressing (will)",
           "if": [["flag", "quarrel_lys_osk_pressing"], ["!flag", "quarrel_lys_osk_pressing_done"]],
           "once": true,
           "say": "You tell them plainly whether Mootcombe feeds its dead or its living isn't yours to settle between them.",
@@ -2430,7 +2606,7 @@
         },
         {
           "id": "quarrel_osk_tamsin_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the fire (will)",
           "if": [["flag", "quarrel_osk_tamsin"], ["!flag", "quarrel_osk_tamsin_done"]],
           "once": true,
           "say": "You tell them plainly this fire isn't yours to referee.",
@@ -2456,7 +2632,7 @@
         },
         {
           "id": "quarrel_osk_vell_nave_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the nave (will)",
           "if": [["flag", "quarrel_osk_vell_nave"], ["!flag", "quarrel_osk_vell_nave_done"]],
           "once": true,
           "say": "You tell them plainly the drowned nave isn't a fight for you to settle between them.",
@@ -2495,7 +2671,7 @@
         },
         {
           "id": "quarrel_osk_vell_barn_settle_b",
-          "label": "call the record a draw (will)",
+          "label": "try to settle the record (will)",
           "if": [["flag", "quarrel_osk_vell_barn"], ["!flag", "quarrel_osk_vell_barn_done"]],
           "once": true,
           "say": "You tell them plainly whether the barn's dead get a record or a rite isn't yours to settle between them.",
@@ -2573,42 +2749,47 @@
           },
           {
             "id": "r_th_entered",
-            "if": [["flag", "th_entered"]],
+            "if": [["flag", "th_entered"], ["region", "th"]],
             "say": "Free Company work, this ground. Mercenaries. I've sharpened enough of their blades to know their word's worth exactly what they're paid."
           },
           {
             "id": "r_fd_entered",
-            "if": [["flag", "fd_entered"]],
+            "if": [["flag", "fd_entered"], ["region", "fd"]],
             "say": "Wet ground ruins good steel fast. Whatever you're carrying, dry it tonight."
           },
           {
             "id": "r_wm_entered",
-            "if": [["flag", "wm_entered"]],
+            "if": [["flag", "wm_entered"], ["region", "wm"]],
             "say": "Watch country. Say what you like about rules — their gear's always in good repair. I respect that."
           },
           {
             "id": "r_ir_entered",
-            "if": [["flag", "ir_entered"]],
+            "if": [["flag", "ir_entered"], ["region", "ir"]],
             "say": "Cinderhall. Home ground, near enough. I know this air. Iron and old smoke."
           },
           {
             "id": "r_hb_entered",
-            "if": [["flag", "hb_entered"]],
+            "if": [["flag", "hb_entered"], ["region", "hb"]],
             "say": "Barrows everywhere you look. Keepers guard the dead like the dead are still paying them. Maybe they are."
           },
           {
             "id": "r_sk_entered",
-            "if": [["flag", "sk_entered"]],
+            "if": [["flag", "sk_entered"], ["region", "sk"]],
             "say": "Salt eats steel worse than anything. Remind me to check every blade we're carrying before we leave."
           },
           {
             "id": "r_cp_entered",
-            "if": [["flag", "cp_entered"]],
+            "if": [["flag", "cp_entered"], ["region", "cp"]],
             "say": "Cold enough up here to crack a bad weld. Whoever forged your gear better have known what they were doing."
           },
           {
+            "id": "r_em_choir_arrival",
+            "if": [["flag", "em_choir_seen"], ["region", "em"]],
+            "say": "Four fires and it's still standing, still singing. That's not a fire that failed once. That's a fire that doesn't work here at all."
+          },
+          {
             "id": "r_em_entered",
-            "if": [["flag", "em_entered"]],
+            "if": [["flag", "em_entered"], ["region", "em"]],
             "say": "Ground gone to glass. Whatever burned this hot, it burned hotter than any forge I've ever worked."
           },
           {
@@ -2618,7 +2799,7 @@
           },
           {
             "id": "r_mg_entered",
-            "if": [["flag", "mg_entered"]],
+            "if": [["flag", "mg_entered"], ["region", "mg"]],
             "say": "Marrowgate. Big walls, soft hands, near as I can tell. We'll see if that holds up."
           },
           {
@@ -2640,6 +2821,18 @@
             "id": "r_appr_neg",
             "if": [["var", "appr_tamsin", "<=", -2]],
             "say": "I don't waste time on people I don't trust. I'm starting to wonder why I'm still wasting it on you."
+          },
+          {
+            "id": "r_hardened",
+            "if": [["var", "appr_tamsin", "<=", -3]],
+            "say": "I've stopped telling you what I'm thinking before I do something about it. For someone who counts blows out loud, that's the whole warning you're getting now.",
+            "fx": [["set", "tamsin_hardened"]]
+          },
+          {
+            "id": "r_devoted",
+            "if": [["var", "appr_tamsin", ">=", 8], ["lowHp"], ["!flag", "tamsin_hardened"]],
+            "say": "Move. I've got this one.",
+            "fx": [["cond", "braced", 2], ["set", "tamsin_devoted"]]
           },
           {
             "id": "r_ir_hollow_rested",
@@ -2950,8 +3143,18 @@
             "say": "Scholars worry about rings. I worry about the living who'd sell their own teeth for less."
           },
           {
+            "id": "r_me_arrival",
+            "if": [["flag", "me_entered"], ["region", "me"]],
+            "say": "Somebody built dams strong enough to drown a whole Hall on purpose, and they've held four hundred years. I'd like to see that work before anyone talks about blowing it."
+          },
+          {
+            "id": "r_me_hollow_arrival",
+            "if": [["flag", "me_hollow_found"], ["region", "me"]],
+            "say": "They drowned themselves to keep a stone from a king's men. I want to understand that before I judge it either way."
+          },
+          {
             "id": "r_me_entered",
-            "if": [["flag", "me_entered"]],
+            "if": [["flag", "me_entered"], ["region", "me"]],
             "say": "Wet ground, wet timber, wet everything. Nothing here I'd know how to fix, and everyone still standing anyway. Fair enough."
           },
           {
@@ -2965,8 +3168,18 @@
             "say": "A stone's a stone. But you spoke three words over it and the water sat down. I'll take that over charges, this once."
           },
           {
+            "id": "r_hl_arrival",
+            "if": [["flag", "hl_entered"], ["region", "hl"]],
+            "say": "Feeding a town is simple arithmetic — grain in, mouths fed. Somebody did those sums here and left the crofters out of the count on purpose."
+          },
+          {
+            "id": "r_hl_hollow_arrival",
+            "if": [["flag", "hl_hollow_grievance"], ["region", "hl"]],
+            "say": "Somebody always decides who eats first when there isn't enough. Somebody just usually has the decency not to lock the door on the rest."
+          },
+          {
             "id": "r_hl_entered",
-            "if": [["flag", "hl_entered"]],
+            "if": [["flag", "hl_entered"], ["region", "hl"]],
             "say": "A tithe barn with a Watch sergeant on the steps. Somebody worked out long ago that grain needs guarding more than gold does."
           },
           {
@@ -2980,8 +3193,13 @@
             "say": "Old timber goes up fast. The bailiff will call it an accident by the time the ash is cold, and the Regent will call it farmland."
           },
           {
+            "id": "r_kw_hollow_arrival",
+            "if": [["flag", "kw_hollow_grievance"], ["region", "kw"]],
+            "say": "Even the Ironbound leave this clearing be. Four hundred years of good timber, and no cart-wheel has ever crossed this court. That tells you something."
+          },
+          {
             "id": "r_kw_entered",
-            "if": [["flag", "kw_entered"]],
+            "if": [["flag", "kw_entered"], ["region", "kw"]],
             "say": "Charcoal. Every forge in Cinderhall eats this wood by the cartload, and I never once asked where the carts came from."
           },
           {
@@ -2995,8 +3213,18 @@
             "say": "The Stand's gone and the coppice will follow. The forges will thank you. I find I've stopped counting that as the only kind of thanks."
           },
           {
+            "id": "r_sh_arrival",
+            "if": [["flag", "sh_entered"], ["region", "sh"]],
+            "say": "The Free Companies were born on this ground, out of a broken truce and a captain's itchy trigger-finger. Worth remembering, whenever anyone tells you a hired sword answers to nobody."
+          },
+          {
+            "id": "r_sh_hollow_arrival",
+            "if": [["flag", "sh_hollow_grievance"], ["region", "sh"]],
+            "say": "A shield-wall that broke by dark, and a company that signed its own charter on the strength of it that same night. However this field gets settled, the Companies owe it more than they've ever paid."
+          },
+          {
             "id": "r_sh_entered",
-            "if": [["flag", "sh_entered"]],
+            "if": [["flag", "sh_entered"], ["region", "sh"]],
             "say": "So this is where the Companies were born. Every sergeant at Highward has a speech about it: hired swords and a herald shot. The Watch takes no one's coin. That's the whole speech."
           },
           {
@@ -3010,8 +3238,13 @@
             "say": "Cinder-oil on a battlefield. The bosses will come out of the ash by the cartload, and the Ironbound will thank you. I keep finding I don't want their thanks."
           },
           {
+            "id": "r_pw_arrival",
+            "if": [["flag", "pw_entered"], ["region", "pw"]],
+            "say": "A mill-race gone still and hammers nobody swings. Whatever's down there was built to work. Worth remembering, before anyone decides what to do with it."
+          },
+          {
             "id": "r_pw_entered",
-            "if": [["flag", "pw_entered"]],
+            "if": [["flag", "pw_entered"], ["region", "pw"]],
             "say": "A water-race for the hammers. Whoever built that mint knew their trade; the Watch pays its smiths in Pennywell silver, and I never once looked at the face."
           },
           {
@@ -3025,8 +3258,18 @@
             "say": "Sealed, and struck above it with the old face. Good silver stays good whatever's on it. The Crown will hate it, which is a point in its favour."
           },
           {
+            "id": "r_mc_arrival",
+            "if": [["flag", "mc_entered"], ["region", "mc"]],
+            "say": "Apples rotting in the grass and nobody willing to press them. Whatever happened in that hall, it's still doing work on people who weren't alive for it."
+          },
+          {
+            "id": "r_mc_hollow_arrival",
+            "if": [["flag", "mc_hollow_grievance"], ["region", "mc"]],
+            "say": "A word given at a table, and broken before the second course was cleared. That's exactly the kind of thing the Watch was raised to stand between people and."
+          },
+          {
             "id": "r_mc_entered",
-            "if": [["flag", "mc_entered"]],
+            "if": [["flag", "mc_entered"], ["region", "mc"]],
             "say": "A safe-conduct given at a table and broken at the door. The Watch was founded against exactly that, or so Highward says. Highward says a lot."
           },
           {
@@ -3040,8 +3283,18 @@
             "say": "You burned the hall with the cooper's oil. His casks, his fire, his hall's timber gone with it. The Ironbound will call that thrift. I'm trying not to."
           },
           {
+            "id": "r_ff_arrival",
+            "if": [["flag", "ff_entered"], ["region", "ff"]],
+            "say": "Hostages, dressed up as fostering. The Watch's first law forbids taking a child as anyone's surety. Someone should have said so, four hundred years back."
+          },
+          {
+            "id": "r_ff_hollow_arrival",
+            "if": [["flag", "ff_hollow_grievance"], ["region", "ff"]],
+            "say": "Sureties, kept past every reasonable term, letters never sent. The Watch would call this three crimes wearing one roof."
+          },
+          {
             "id": "r_ff_entered",
-            "if": [["flag", "ff_entered"]],
+            "if": [["flag", "ff_entered"], ["region", "ff"]],
             "say": "Sureties. Children held against their fathers' good behaviour. The Watch's first law forbids it, and the Watch was founded by the man who did it. Highward doesn't teach that part."
           },
           {
@@ -3099,6 +3352,16 @@
             "id": "r_quarrel_lys_tamsin_wood_sour_tamsin",
             "if": [["flag", "quarrel_lys_tamsin_wood_lys"]],
             "say": "Soft is how a forge goes cold. I'll say it as many times as it takes."
+          },
+          {
+            "id": "r_fl_arrival",
+            "if": [["flag", "fl_entered"], ["region", "fl"]],
+            "say": "Forty years is a long grief to leave unburied. Whatever's owed the dead here, the living standing in that crossroads come first."
+          },
+          {
+            "id": "r_fl_furrow_arrival",
+            "if": [["flag", "fl_furrow_heart_seen"], ["region", "fl"]],
+            "say": "Forty years of somebody stacking one stone at a time because nobody would send more hands. That's not neglect. That's a whole hold being told to manage on its own."
           }
         ],
         "leaves": [
@@ -3107,7 +3370,7 @@
             "say": "You sold out the miners. The same mine that killed my mother, and you sold out the men still working it for coin. We're done."
           },
           {
-            "if": [["var", "appr_tamsin", "<=", -3]],
+            "if": [["var", "appr_tamsin", "<=", -5]],
             "say": "I don't fight beside people I can't trust at my back. That's you now. Find someone else."
           },
           {
@@ -3239,7 +3502,7 @@
         {
           "id": "trust1",
           "label": "ask what she still expects, some days",
-          "if": [["var", "appr_tamsin", ">=", 4], ["flag", "said_tamsin_confide"]],
+          "if": [["var", "appr_tamsin", ">=", 4], ["flag", "said_tamsin_confide"], ["!flag", "tamsin_hardened"]],
           "once": true,
           "say": "Some mornings I still listen for her boots on the forge steps. Twenty years gone and some fool part of me hasn't caught up with the rest. Never told the smith that. Never told anyone.",
           "fx": [["xp", 2]]
@@ -3298,7 +3561,7 @@
         },
         {
           "id": "quarrel_osk_tamsin_settle",
-          "label": "tell her to leave this one to him (will)",
+          "label": "try to settle the fire (will)",
           "if": [["flag", "quarrel_osk_tamsin"], ["!flag", "quarrel_osk_tamsin_done"]],
           "once": true,
           "say": "You tell them plainly this fire isn't yours to referee.",
@@ -3358,7 +3621,7 @@
         },
         {
           "id": "quarrel_tamsin_vell_settle",
-          "label": "tell her it's not yours to settle (will)",
+          "label": "try to settle the founding (will)",
           "if": [["flag", "quarrel_tamsin_vell"], ["!flag", "quarrel_tamsin_vell_done"]],
           "once": true,
           "say": "You tell them plainly the fort's founding isn't a fight for you to settle between them.",
@@ -3446,7 +3709,7 @@
         },
         {
           "id": "quarrel_lys_tamsin_camp_settle",
-          "label": "call the toll-road a draw (will)",
+          "label": "try to settle the toll (will)",
           "if": [["flag", "quarrel_lys_tamsin_camp"], ["!flag", "quarrel_lys_tamsin_camp_done"]],
           "once": true,
           "say": "You tell them plainly what Camp Gallows charges on the road isn't yours to referee between them.",
@@ -3506,7 +3769,7 @@
         },
         {
           "id": "quarrel_tamsin_vell_goods_settle",
-          "label": "tell them it's not yours to price (will)",
+          "label": "try to settle the grave-goods (will)",
           "if": [["flag", "quarrel_tamsin_vell_goods"], ["!flag", "quarrel_tamsin_vell_goods_done"]],
           "once": true,
           "say": "You tell them plainly what leaves the barrows isn't a fight for you to settle between them.",
@@ -3540,7 +3803,7 @@
         },
         {
           "id": "quarrel_lys_tamsin_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the rope (will)",
           "if": [["flag", "quarrel_lys_tamsin"], ["!flag", "quarrel_lys_tamsin_done"]],
           "once": true,
           "say": "You tell them plainly the glade's rope isn't a fight for you to settle between them.",
@@ -3566,7 +3829,7 @@
         },
         {
           "id": "quarrel_osk_tamsin_doors_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the door (will)",
           "if": [["flag", "quarrel_osk_tamsin_doors"], ["!flag", "quarrel_osk_tamsin_doors_done"]],
           "once": true,
           "say": "You tell them plainly the barrow door isn't yours to fight over between them.",
@@ -3592,7 +3855,7 @@
         },
         {
           "id": "quarrel_osk_tamsin_aldous_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle Aldous's due (will)",
           "if": [["flag", "quarrel_osk_tamsin_aldous"], ["!flag", "quarrel_osk_tamsin_aldous_done"]],
           "once": true,
           "say": "You tell them plainly what Aldous deserves isn't a verdict for you to hand down between them.",
@@ -3631,7 +3894,7 @@
         },
         {
           "id": "quarrel_lys_tamsin_wood_settle",
-          "label": "call the coppice a draw (will)",
+          "label": "try to settle the coppice (will)",
           "if": [["flag", "quarrel_lys_tamsin_wood"], ["!flag", "quarrel_lys_tamsin_wood_done"]],
           "once": true,
           "say": "You tell them plainly whether the Kingswood feeds a hearth or a hunt isn't yours to settle between them.",
@@ -3678,7 +3941,7 @@
         },
         {
           "id": "quarrel_tamsin_vell_charter_settle_b",
-          "label": "call the charter a draw (will)",
+          "label": "try to settle the charter (will)",
           "if": [["flag", "quarrel_tamsin_vell_charter"], ["!flag", "quarrel_tamsin_vell_charter_done"]],
           "once": true,
           "say": "You tell them plainly whose coin bought the Shieldings' peace isn't yours to settle between them.",
@@ -3756,42 +4019,42 @@
           },
           {
             "id": "r_th_entered",
-            "if": [["flag", "th_entered"]],
+            "if": [["flag", "th_entered"], ["region", "th"]],
             "say": "Mercenary country. Poor record-keeping, excellent gossip. I'll take what I can get."
           },
           {
             "id": "r_fd_entered",
-            "if": [["flag", "fd_entered"]],
+            "if": [["flag", "fd_entered"], ["region", "fd"]],
             "say": "Fenmarch keeps its history underwater, apparently. I do hope it kept it readable."
           },
           {
             "id": "r_wm_entered",
-            "if": [["flag", "wm_entered"]],
+            "if": [["flag", "wm_entered"], ["region", "wm"]],
             "say": "Wardmoor's archive is meant to be excellent. I intend to find out, given half a chance."
           },
           {
             "id": "r_ir_entered",
-            "if": [["flag", "ir_entered"]],
+            "if": [["flag", "ir_entered"], ["region", "ir"]],
             "say": "The Ironbound burn what they don't like. I try not to think too hard about what that's cost the Downs' history."
           },
           {
             "id": "r_hb_entered",
-            "if": [["flag", "hb_entered"]],
+            "if": [["flag", "hb_entered"], ["region", "hb"]],
             "say": "Barrowmere. The Keepers' Hall is here somewhere. I have — reasons to want to see it."
           },
           {
             "id": "r_sk_entered",
-            "if": [["flag", "sk_entered"]],
+            "if": [["flag", "sk_entered"], ["region", "sk"]],
             "say": "Gullhaven keeps its records in the harbormaster's memory, near as I can tell. Frustrating, and probably more accurate than paper."
           },
           {
             "id": "r_cp_entered",
-            "if": [["flag", "cp_entered"]],
+            "if": [["flag", "cp_entered"], ["region", "cp"]],
             "say": "St. Ashwyn's Perch. Old enough to remember things properly, if anyone up here still bothers to ask it."
           },
           {
             "id": "r_em_entered",
-            "if": [["flag", "em_entered"]],
+            "if": [["flag", "em_entered"], ["region", "em"]],
             "say": "Emberfall. I'd heard the name only as a footnote before. It deserves a chapter, not a footnote."
           },
           {
@@ -3799,7 +4062,7 @@
             "if": [["flag", "em_hollow_burned"]],
             "say": "A fifth fire, and still no one writes down that the first four already failed. I intend to be the one who finally does."
           },
-          { "id": "r_mg_entered", "if": [["flag", "mg_entered"]], "say": "Marrowgate." },
+          { "id": "r_mg_entered", "if": [["flag", "mg_entered"], ["region", "mg"]], "say": "Marrowgate." },
           {
             "id": "r_hollows3",
             "if": [["var", "hollows_rested", ">=", 3]],
@@ -3819,6 +4082,12 @@
             "id": "r_appr_neg",
             "if": [["var", "appr_vell", "<=", -2]],
             "say": "I am reconsidering several earlier assessments of your character. None of the revisions favor you."
+          },
+          {
+            "id": "r_hardened",
+            "if": [["var", "appr_vell", "<=", -3]],
+            "say": "I've stopped correcting you when you get the details wrong. That isn't generosity. It means I've stopped expecting you to get anything right.",
+            "fx": [["set", "vell_hardened"]]
           },
           {
             "id": "r_hb_hollow_rested",
@@ -4123,8 +4392,13 @@
             "say": "Coin over grief. I catalogue that particular trade for a living. I still mind it."
           },
           {
+            "id": "r_me_arrival",
+            "if": [["flag", "me_entered"], ["region", "me"]],
+            "say": "The Keepers' first Hall, and the first Reeve's men who drowned it. I have heard this story only ever half-told, and always by someone with a reason to leave the other half out."
+          },
+          {
             "id": "r_me_entered",
-            "if": [["flag", "me_entered"]],
+            "if": [["flag", "me_entered"], ["region", "me"]],
             "say": "The Meres. The Ashreeve records mention it once, as a drainage problem. I begin to see what they were draining."
           },
           {
@@ -4139,8 +4413,18 @@
             "fx": [["addvar", "appr_vell", -1]]
           },
           {
+            "id": "r_hl_arrival",
+            "if": [["flag", "hl_entered"], ["region", "hl"]],
+            "say": "My own line's first Reeve, and a barn full of people his order starved. I have read every history written of that winter. Not one names this place."
+          },
+          {
+            "id": "r_hl_hollow_arrival",
+            "if": [["flag", "hl_hollow_grievance"], ["region", "hl"]],
+            "say": "The order came from the crown itself, not the barn-reeve's own cruelty. I would rather it were only him. It would be so much simpler to hate one dead man."
+          },
+          {
             "id": "r_hl_entered",
-            "if": [["flag", "hl_entered"]],
+            "if": [["flag", "hl_entered"], ["region", "hl"]],
             "say": "The Hearthlands. The Vale ate that winter; the records say so. They do not say where the grain was, or who stood at the doors."
           },
           {
@@ -4155,7 +4439,7 @@
           },
           {
             "id": "r_kw_entered",
-            "if": [["flag", "kw_entered"]],
+            "if": [["flag", "kw_entered"], ["region", "kw"]],
             "say": "The Kingswood. The king's own hunt was out here the morning my ancestor took the crown. The records say the hunt was 'not recalled.' Now I know what that means."
           },
           {
@@ -4169,8 +4453,13 @@
             "say": "A night a year for the hunt. My line owed them a recall and paid nothing; the burners owe them nothing and pay a night's fear. That is the Reach, in one bargain."
           },
           {
+            "id": "r_sh_arrival",
+            "if": [["flag", "sh_entered"], ["region", "sh"]],
+            "say": "My own line's field, this — won here, the night the herald walked out with the white rod and was shot for his trouble. I have never once heard anyone in Marrowgate tell it that way."
+          },
+          {
             "id": "r_sh_entered",
-            "if": [["flag", "sh_entered"]],
+            "if": [["flag", "sh_entered"], ["region", "sh"]],
             "say": "The Shieldings. The records call it the first Reeve's victory and give it a page. The herald has one line, unnamed: 'shot in error at dusk.' I am learning what my house's errors look like."
           },
           {
@@ -4184,8 +4473,18 @@
             "say": "My line broke that wall with hired swords, and now the field is ash. The Ashreeves' victory is complete. I did not think I could be more ashamed of it."
           },
           {
+            "id": "r_pw_arrival",
+            "if": [["flag", "pw_entered"], ["region", "pw"]],
+            "say": "The first Reeve's own face, struck fresh over a Reach that had just watched him take a barrow's crown. I begin to see why four men thought that worth a mortared door."
+          },
+          {
+            "id": "r_pw_hollow_arrival",
+            "if": [["flag", "pw_hollow_grievance"], ["region", "pw"]],
+            "say": "My own blood's first order as Reeve, and it ends with four men choosing a wall over a lie. I don't know whether to be proud of them or ashamed of him. Perhaps both fit."
+          },
+          {
             "id": "r_pw_entered",
-            "if": [["flag", "pw_entered"]],
+            "if": [["flag", "pw_entered"], ["region", "pw"]],
             "say": "Pennywell. Every coin in the Reach carries my ancestor's face because of what happened under this town. I have spent a great many of them without thinking."
           },
           {
@@ -4199,8 +4498,18 @@
             "say": "Burned through. My line took the crown, the coin, and now the vault, and I stood there while it happened. The face on the silver is still ours. I wish it were not."
           },
           {
+            "id": "r_mc_arrival",
+            "if": [["flag", "mc_entered"], ["region", "mc"]],
+            "say": "Six hundred years of kings acclaimed under that oak, and it ends in a hall nobody has opened since. I begin to understand why nobody in my family ever spoke this hold's name to me."
+          },
+          {
+            "id": "r_mc_hollow_arrival",
+            "if": [["flag", "mc_hollow_grievance"], ["region", "mc"]],
+            "say": "The safe-conduct was my ancestor's own word, given at that table. My house tore the page out rather than read what he did with it. I'd like to read the rest, now."
+          },
+          {
             "id": "r_mc_entered",
-            "if": [["flag", "mc_entered"]],
+            "if": [["flag", "mc_entered"], ["region", "mc"]],
             "say": "Mootcombe. The Feast of Wax is the page my house tore out of every record it kept. The safe-conduct was my ancestor's word. I know what the word was worth now."
           },
           {
@@ -4214,8 +4523,13 @@
             "say": "The hall stays shut and the pressing goes to the door every year. Mootcombe feeds the guests my line poisoned. I would rather that than a stone with my name on it."
           },
           {
+            "id": "r_ff_arrival",
+            "if": [["flag", "ff_entered"], ["region", "ff"]],
+            "say": "The writ that sent them up here is in my ancestor's hand. Sureties were the first Reeve's own idea. I didn't expect to have to stand in the place his idea emptied out."
+          },
+          {
             "id": "r_ff_entered",
-            "if": [["flag", "ff_entered"]],
+            "if": [["flag", "ff_entered"], ["region", "ff"]],
             "say": "Fosterfell. The writ of wardship is in my ancestor's hand; I have seen the copy. Thirty-one names. I have never been able to read past the first."
           },
           {
@@ -4247,6 +4561,11 @@
             "id": "r_quarrel_tamsin_vell_charter_sour_vell",
             "if": [["flag", "quarrel_tamsin_vell_charter_tamsin"]],
             "say": "No lord came that winter. I keep finding this Reach prefers its rescues tidy to its rescues real."
+          },
+          {
+            "id": "r_fl_arrival",
+            "if": [["flag", "fl_entered"], ["region", "fl"]],
+            "say": "Escheat — no heirs, so the Crown claims it outright. That is the Reeve's law dressed up as an accident. I know that particular theft rather well."
           }
         ],
         "leaves": [
@@ -4259,7 +4578,7 @@
             "say": "You swore to keep my name out of it. You named it anyway, the first time it paid. I don't forget a broken oath. I'm gone."
           },
           {
-            "if": [["var", "appr_vell", "<=", -3]],
+            "if": [["var", "appr_vell", "<=", -5]],
             "say": "I've reconsidered the wisdom of this arrangement entirely. Goodbye."
           },
           {
@@ -4377,7 +4696,7 @@
         {
           "id": "trust1",
           "label": "ask if they've ever been to Marrowgate",
-          "if": [["var", "appr_vell", ">=", 4], ["flag", "said_vell_confide"]],
+          "if": [["var", "appr_vell", ">=", 4], ["flag", "said_vell_confide"], ["!flag", "vell_hardened"]],
           "once": true,
           "say": "Once. Years before I met you, plain gray, nobody looking twice. I stood in the market square, looked up at the palace, and did not go in. I have never told anyone that either.",
           "fx": [["xp", 2]]
@@ -4422,6 +4741,22 @@
           "fx": [["set", "vell_kept_secret"], ["addvar", "appr_vell", 1]]
         },
         {
+          "id": "devoted",
+          "label": "ask what Vell actually wants from you",
+          "if": [["var", "appr_vell", ">=", 8], ["!flag", "vell_hardened"]],
+          "once": true,
+          "say": "For once, Vell asks instead of deflecting: keep this safe, and never let it decide anything for you. They press a leaf torn from a ledger into your hand — the first thing they've handed over instead of guarded.",
+          "fx": [["move", "vell_ledger_leaf", "inv"], ["set", "vell_devoted"], ["xp", 3]]
+        },
+        {
+          "id": "leaf_read",
+          "label": "read the leaf against the cipher",
+          "if": [["has", "vell_ledger_leaf"], ["has", "vell_cipher_key"], ["!flag", "vell_leaf_read"]],
+          "once": true,
+          "say": "They hold the strip against the leaf themselves. The cipher is their own hand, from before the exile, and what it turns the leaf into is a name — not theirs. \"I took someone else's entry. They had children. I did not.\"",
+          "fx": [["set", "vell_leaf_read"], ["addvar", "appr_vell", 2], ["xp", 4]]
+        },
+        {
           "id": "quarrel_osk_vell_side_vell",
           "label": "back Vell — it belongs in the record",
           "if": [["flag", "quarrel_osk_vell"], ["!flag", "quarrel_osk_vell_done"]],
@@ -4462,7 +4797,7 @@
         },
         {
           "id": "quarrel_lys_vell_settle",
-          "label": "tell them it's not yours to grade (will)",
+          "label": "try to settle the bargain (will)",
           "if": [["flag", "quarrel_lys_vell"], ["!flag", "quarrel_lys_vell_done"]],
           "once": true,
           "say": "You tell them plainly the broken bargain isn't a fight for you to settle between them.",
@@ -4587,7 +4922,7 @@
         },
         {
           "id": "quarrel_osk_vell_nave_settle",
-          "label": "tell them it's not yours to grade (will)",
+          "label": "try to settle the nave (will)",
           "if": [["flag", "quarrel_osk_vell_nave"], ["!flag", "quarrel_osk_vell_nave_done"]],
           "once": true,
           "say": "You tell them plainly the drowned nave isn't a fight for you to settle between them.",
@@ -4634,7 +4969,7 @@
         },
         {
           "id": "quarrel_lys_vell_crown_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the crown (will)",
           "if": [["flag", "quarrel_lys_vell_crown"], ["!flag", "quarrel_lys_vell_crown_done"]],
           "once": true,
           "say": "You tell them plainly the crown isn't yours to fight over between them.",
@@ -4660,7 +4995,7 @@
         },
         {
           "id": "quarrel_lys_vell_pride_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the Pride (will)",
           "if": [["flag", "quarrel_lys_vell_pride"], ["!flag", "quarrel_lys_vell_pride_done"]],
           "once": true,
           "say": "You tell them plainly what's left of the Reeve's Pride isn't yours to fight over between them.",
@@ -4686,7 +5021,7 @@
         },
         {
           "id": "quarrel_tamsin_vell_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the founding (will)",
           "if": [["flag", "quarrel_tamsin_vell"], ["!flag", "quarrel_tamsin_vell_done"]],
           "once": true,
           "say": "You tell them plainly the fort's founding isn't a fight for you to settle between them.",
@@ -4712,7 +5047,7 @@
         },
         {
           "id": "quarrel_tamsin_vell_goods_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the grave-goods (will)",
           "if": [["flag", "quarrel_tamsin_vell_goods"], ["!flag", "quarrel_tamsin_vell_goods_done"]],
           "once": true,
           "say": "You tell them plainly what leaves the barrows isn't a fight for you to settle between them.",
@@ -4738,7 +5073,7 @@
         },
         {
           "id": "quarrel_osk_vell_settle_b",
-          "label": "call it a draw between them (will)",
+          "label": "try to settle the confession (will)",
           "if": [["flag", "quarrel_osk_vell"], ["!flag", "quarrel_osk_vell_done"]],
           "once": true,
           "say": "You tell them plainly the prior's confession isn't a fight for you to settle between them.",
@@ -4777,7 +5112,7 @@
         },
         {
           "id": "quarrel_osk_vell_barn_settle",
-          "label": "call the record a draw (will)",
+          "label": "try to settle the record (will)",
           "if": [["flag", "quarrel_osk_vell_barn"], ["!flag", "quarrel_osk_vell_barn_done"]],
           "once": true,
           "say": "You tell them plainly whether the barn's dead get a record or a rite isn't yours to settle between them.",
@@ -4824,7 +5159,7 @@
         },
         {
           "id": "quarrel_tamsin_vell_charter_settle",
-          "label": "call the charter a draw (will)",
+          "label": "try to settle the charter (will)",
           "if": [["flag", "quarrel_tamsin_vell_charter"], ["!flag", "quarrel_tamsin_vell_charter_done"]],
           "once": true,
           "say": "You tell them plainly whose coin bought the Shieldings' peace isn't yours to settle between them.",
@@ -4877,8 +5212,14 @@
     },
     "vell_cipher_key": {
       "name": "a strip of vellum, a cipher in hand",
-      "loc": "nowhere",
+      "loc": "hb_keepers_hall",
+      "takeable": true,
       "hint": "notes in Vell's own hand — might unlock more of theirs, if you find any."
+    },
+    "vell_ledger_leaf": {
+      "name": "a single leaf, torn from a ledger",
+      "loc": "nowhere",
+      "hint": "not the Church's copy, not the Keepers'. Theirs. They asked you to keep it safe."
     }
   },
   "quests": {
@@ -4894,7 +5235,7 @@
         },
         {
           "if": [["flag", "lys_brother_buried"]],
-          "text": "He's buried east of Camp Gallows, in Thornwold. Grief, not victory — but it's finished."
+          "text": "He's buried at the glade, where the tree stood. Grief, not victory — but it's finished."
         },
         {
           "if": [["flag", "lys_brother_found"]],
@@ -4902,11 +5243,13 @@
         },
         {
           "if": [["flag", "th_entered"]],
-          "text": "You're at Camp Gallows: in to the muster ground, west to the cook-fire, south to the scout line."
+          "at": "th_muster",
+          "text": "You're at Camp Gallows. Ask at the muster ground, the cook-fire, and the scout line."
         },
         {
           "if": [],
-          "text": "Ask after Lys's brother at Camp Gallows, in Thornwold west of the Vale — before Coldpass."
+          "at": "th_settlement",
+          "text": "Ask after Lys's brother at Camp Gallows, in Thornwold — before Coldpass."
         }
       ]
     },
@@ -4922,11 +5265,13 @@
         },
         {
           "if": [["flag", "fd_entered"]],
-          "text": "You're in Fenmarch. Ask after Osk's family at the drowned nave, near Reedholm."
+          "text": "You're in Fenmarch. Ask after Osk's family at the drowned nave, near Reedholm.",
+          "at": "fd_nave_approach"
         },
         {
           "if": [],
-          "text": "Ask Osk about his family, then find Fenmarch east of the Vale — before Coldpass, or it stays as it is."
+          "at": "fd_causeway_west",
+          "text": "Ask Osk about his family, then find Fenmarch — before Coldpass, or it stays as it is."
         }
       ]
     },
@@ -4946,11 +5291,13 @@
         },
         {
           "if": [["flag", "ir_entered"]],
-          "text": "You're in the Iron Downs. Ask after the collapsed mine at Cinderhall."
+          "text": "You're in the Iron Downs. Ask after the collapsed mine at Cinderhall.",
+          "at": "ir_tally_gate"
         },
         {
           "if": [],
-          "text": "Ask Tamsin about the mine, then find Cinderhall in the Iron Downs, past Thornwold — before Coldpass."
+          "text": "Ask Tamsin about the mine, then find Cinderhall in the Iron Downs, past Thornwold — before Coldpass.",
+          "at": "ir_south_track"
         }
       ]
     },
@@ -4962,20 +5309,28 @@
       "stages": [
         {
           "if": [["flag", "hb_entered"]],
-          "text": "You're in Hollowbrook. Ask after the Keepers' Hall and the ledger it holds."
+          "text": "You're in Hollowbrook. Ask after the Keepers' Hall and the ledger it holds.",
+          "at": "hb_keepers_hall"
         },
         {
           "if": [["flag", "said_vell_bg_marrowgate"]],
-          "text": "Vell goes quiet at the name Marrowgate. The Keepers' Hall in Hollowbrook might hold why."
+          "text": "Vell goes quiet at the name Marrowgate. The Keepers' Hall in Hollowbrook might hold why.",
+          "at": "hb_keepers_hall"
         },
         {
           "if": [],
-          "text": "Ask Vell about Marrowgate, then find the Keepers' Hall in Hollowbrook, north past Fenmarch — before Coldpass."
+          "at": "hb_keepers_hall",
+          "text": "Ask Vell about Marrowgate, then find the Keepers' Hall in Hollowbrook — before Coldpass."
         }
       ]
     }
   },
   "epilogue": [
+    {
+      "if": [["flag", "vell_leaf_read"]],
+      "text": "Vell writes under their own name again, in Marrowgate, where the entry they took is still on a shelf they can no longer reach.",
+      "weight": 1
+    },
     {
       "if": [["flag", "lys_dead"]],
       "text": "Lys never got the chance to find her brother. Nobody else went looking either.",
@@ -5013,13 +5368,23 @@
       "weight": 1
     },
     {
-      "if": [["var", "appr_lys", ">=", 4], ["!flag", "lys_left"], ["!flag", "lys_dead"]],
+      "if": [["var", "appr_lys", ">=", 4], ["!flag", "lys_left"], ["!flag", "lys_dead"], ["!flag", "lys_devoted"]],
       "text": "By the end Lys called you the steadiest thing on a road she never expected to walk this far down.",
       "weight": 1
     },
     {
-      "if": [["var", "appr_lys", "<=", -2], ["!flag", "lys_left"], ["!flag", "lys_dead"]],
+      "if": [["var", "appr_lys", "<=", -2], ["!flag", "lys_left"], ["!flag", "lys_dead"], ["!flag", "lys_hardened"]],
       "text": "Lys still walks beside you, but she watches you now the way she watches strange ground — carefully, from a distance.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "lys_devoted"], ["!flag", "lys_left"], ["!flag", "lys_dead"]],
+      "text": "Lys never says what changed. She just stopped waiting to be asked before she read a fight for you, and never went back to waiting.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "lys_hardened"], ["!flag", "lys_left"], ["!flag", "lys_dead"]],
+      "text": "Lys kept walking beside you after the worst of it, but she never closed that half-step of distance again. Some things don't undo.",
       "weight": 1
     },
     {
@@ -5058,12 +5423,22 @@
       "weight": 1
     },
     {
-      "if": [["var", "appr_osk", ">=", 4], ["!flag", "osk_left"], ["!flag", "osk_dead"]],
+      "if": [["var", "appr_osk", ">=", 4], ["!flag", "osk_left"], ["!flag", "osk_dead"], ["!flag", "osk_devoted"]],
       "text": "Brother Osk stopped calling himself a novice somewhere around you, though the Church never made it official.",
       "weight": 1
     },
     {
-      "if": [["var", "appr_osk", "<=", -2], ["!flag", "osk_left"], ["!flag", "osk_dead"]],
+      "if": [["flag", "osk_devoted"], ["!flag", "osk_left"], ["!flag", "osk_dead"]],
+      "text": "Once, you told Brother Osk to leave a grief unspoken. He refused, said the rite anyway, and never once made you regret asking.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "osk_hardened"], ["!flag", "osk_left"], ["!flag", "osk_dead"]],
+      "text": "Brother Osk still says the rites over what you do. He stopped asking you to explain yourself first, and never started again.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "appr_osk", "<=", -2], ["!flag", "osk_left"], ["!flag", "osk_dead"], ["!flag", "osk_hardened"]],
       "text": "Osk still says the rites when you ask him to, but he has stopped explaining them to you, and you have stopped asking why.",
       "weight": 1
     },
@@ -5108,12 +5483,32 @@
       "weight": 1
     },
     {
-      "if": [["var", "appr_tamsin", ">=", 4], ["!flag", "tamsin_left"], ["!flag", "tamsin_dead"]],
+      "if": [
+        ["var", "appr_tamsin", ">=", 4],
+        ["!flag", "tamsin_left"],
+        ["!flag", "tamsin_dead"],
+        ["!flag", "tamsin_devoted"]
+      ],
       "text": "Tamsin swings her hammer easier with you at her back than she'd ever admit to the smith.",
       "weight": 1
     },
     {
-      "if": [["var", "appr_tamsin", "<=", -2], ["!flag", "tamsin_left"], ["!flag", "tamsin_dead"]],
+      "if": [["flag", "tamsin_devoted"], ["!flag", "tamsin_left"], ["!flag", "tamsin_dead"]],
+      "text": "Nobody had to tell Tamsin to step in front of the blow meant for you. She just did, once, and never mentioned it again.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "tamsin_hardened"], ["!flag", "tamsin_left"], ["!flag", "tamsin_dead"]],
+      "text": "Tamsin stopped telling you what she was thinking before she acted on it. For a warden who counts blows out loud, that silence never lifted.",
+      "weight": 1
+    },
+    {
+      "if": [
+        ["var", "appr_tamsin", "<=", -2],
+        ["!flag", "tamsin_left"],
+        ["!flag", "tamsin_dead"],
+        ["!flag", "tamsin_hardened"]
+      ],
       "text": "Tamsin still marches with you, but she counts your blows now the way she counts an enemy's, out of old habit.",
       "weight": 1
     },
@@ -5153,12 +5548,22 @@
       "weight": 1
     },
     {
-      "if": [["var", "appr_vell", ">=", 4], ["!flag", "vell_left"], ["!flag", "vell_dead"]],
+      "if": [["var", "appr_vell", ">=", 4], ["!flag", "vell_left"], ["!flag", "vell_dead"], ["!flag", "vell_devoted"]],
       "text": "Vell stopped being careful with you somewhere along the road, and started being honest instead.",
       "weight": 1
     },
     {
-      "if": [["var", "appr_vell", "<=", -2], ["!flag", "vell_left"], ["!flag", "vell_dead"]],
+      "if": [["flag", "vell_devoted"], ["!flag", "vell_left"], ["!flag", "vell_dead"]],
+      "text": "Vell handed you a leaf torn from a ledger, once, and asked you to keep it safe — the first thing they ever gave instead of guarded.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "vell_hardened"], ["!flag", "vell_left"], ["!flag", "vell_dead"]],
+      "text": "Vell stopped correcting your mistakes somewhere along the road. Not generosity — they'd simply stopped expecting better.",
+      "weight": 1
+    },
+    {
+      "if": [["var", "appr_vell", "<=", -2], ["!flag", "vell_left"], ["!flag", "vell_dead"], ["!flag", "vell_hardened"]],
       "text": "Vell still travels with you, notebook closed more often than open now, and asks you fewer questions than before.",
       "weight": 1
     },
@@ -5818,5 +6223,47 @@
       "require": { "level": 99 },
       "bonus": { "check": { "will": 1 } }
     }
-  }
+  },
+  "statusPaths": [
+    {
+      "label": "how Lys has come to see you",
+      "states": [
+        {
+          "if": [["flag", "lys_devoted"]],
+          "text": "she reads a fight before you do, and won't wait to be asked again"
+        },
+        { "if": [["flag", "lys_hardened"]], "text": "she keeps a half-step of distance now, and hasn't said why" }
+      ]
+    },
+    {
+      "label": "where you and Brother Osk stand",
+      "states": [
+        {
+          "if": [["flag", "osk_devoted"]],
+          "text": "he'll refuse you outright when he's sure of it, and say the rite anyway"
+        },
+        {
+          "if": [["flag", "osk_hardened"]],
+          "text": "he still says the words over what you do, but stopped asking you to explain first"
+        }
+      ]
+    },
+    {
+      "label": "what Tamsin will do for you now",
+      "states": [
+        { "if": [["flag", "tamsin_devoted"]], "text": "she'll step in front of a blow meant for you, unasked" },
+        {
+          "if": [["flag", "tamsin_hardened"]],
+          "text": "she's stopped telling you what she's thinking before she acts on it"
+        }
+      ]
+    },
+    {
+      "label": "how much of themself Vell has shown you",
+      "states": [
+        { "if": [["flag", "vell_devoted"]], "text": "they handed you the one page they never let out of their sight" },
+        { "if": [["flag", "vell_hardened"]], "text": "they've stopped correcting you when you get the details wrong" }
+      ]
+    }
+  ]
 }

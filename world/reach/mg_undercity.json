@@ -298,7 +298,32 @@
       "desc": "A loft above the long shed, rope-dust in every breath. Three guild-marks are chalked on a beam — ropewalkers, bell-founders, dyers — and an old woman with rope-scarred hands sits beneath them like she owns the beam outright.",
       "brief": "Rope-dust. Three guild-marks.",
       "region": "mg",
-      "onEnterOnce": [["xp", 2]]
+      "onEnterOnce": [["xp", 2]],
+      "actions": [
+        {
+          "id": "mg_prove_line",
+          "label": "test the proving-line — fail costs 1hp",
+          "if": [["!flag", "mg_proving_hoisted"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              14,
+              [
+                ["set", "mg_proving_hoisted"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "gold", 3],
+                ["say", "New rope hangs untested from the beam, the guilds still arguing whose fault a slip would be. You put your whole weight on it, arms only, until it holds. Sarah Wick looks up for the first time since you came in."]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The rope holds you half a breath longer than your arms do, and the floor finds you first. Sarah Wick doesn't look up. It can be tried again."]
+              ]
+            ]
+          ]
+        }
+      ]
     }
   },
   "items": {
@@ -333,6 +358,41 @@
       "takeable": true,
       "owner": "mg_guild_elder",
       "hint": "guild-stamped, unlike the coil in the fens"
+    },
+    "mg_tower_roster": {
+      "name": "a courier's tally-slip",
+      "loc": "mg_tower1_base",
+      "takeable": true,
+      "hint": "names logged passing below -- read it",
+      "use": [
+        {
+          "if": [["!flag", "mg_roster_read"]],
+          "fx": [
+            ["set", "mg_roster_read"],
+            ["xp", 2],
+            [
+              "if",
+              [["flag", "cp_came_by_writ"]],
+              [
+                ["say", "Your own passage is on it, logged plain, the writ's number beside a rough description. Someone above this tower knows exactly when you came through."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "cp_came_by_cave"]],
+                  [
+                    ["say", "Your passage isn't on it at all. Whatever door you used, it isn't one this tower is paid to watch."]
+                  ],
+                  [
+                    ["say", "Your passage isn't on it. The old pilgrim stair hasn't been a door this tower watches in a hundred years."]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        { "fx": [["say", "Names, dates, nothing new to find in it now."]] }
+      ]
     }
   },
   "npcs": {
@@ -482,6 +542,14 @@
           "once": true,
           "say": "\"A barrow-mouth,\" Nyle says, when you tell her. \"That would explain why the water never really stopped, whatever we did to the gathering. Some graves don't stay covered for the asking.\"",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "mg_nyle_rite",
+          "label": "the Priory's rite, shown here",
+          "if": [["flag", "church_trusted"]],
+          "once": true,
+          "say": "Nyle turns the Priory's seal over once, hands it back warm. \"Fenmarch's mother-house doesn't seal these for just anyone.\" Something in how she says it counts you one of theirs. \"Ask plainly. It'll be answered.\"",
+          "fx": [["xp", 2], ["score", 2]]
         },
         {
           "id": "bye",
@@ -672,6 +740,14 @@
           "once": true,
           "say": "\"Guild rope's counted by the coil,\" Sarah Wick says. \"Counted twice, now that I've met you. The loft doesn't forget a light-fingered guest.\"",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "mg_proving_respect",
+          "label": "the proving-line, since",
+          "if": [["flag", "mg_proving_hoisted"]],
+          "once": true,
+          "say": "\"Three trades share this beam's say-so, and not one of them takes a stranger's word for their back.\" Sarah Wick's nod is small, but it's there. \"Yours, they'd take.\"",
+          "fx": [["xp", 1]]
         }
       ]
     },
@@ -759,11 +835,13 @@
       "stages": [
         {
           "if": [["flag", "mg_vat_found"], ["flag", "mg_ash_confirmed"]],
-          "text": "You know where it started, and why. The drowned chapel, down from the cistern: rite, seal, or fire."
+          "text": "You know where it started, and why. The drowned chapel, down from the cistern: rite, seal, or fire.",
+          "at": "mg_drowned_chapel"
         },
         {
           "if": [["any", [["flag", "mg_vat_found"], ["flag", "mg_ash_confirmed"]]]],
-          "text": "You have part of the answer. The drowned chapel, down from the cistern, is where it must be settled."
+          "text": "You have part of the answer. The drowned chapel, down from the cistern, is where it must be settled.",
+          "at": "mg_drowned_chapel"
         },
         {
           "if": [],
@@ -779,11 +857,13 @@
       "stages": [
         {
           "if": [["flag", "mg_watch_knows_novice"]],
-          "text": "A novice sits in the Watch House cells. Pay her fine, argue her oath, break her out — or leave her to it."
+          "text": "A novice sits in the Watch House cells. Pay her fine, argue her oath, break her out — or leave her to it.",
+          "at": "mg_watch_house_cells"
         },
         {
           "if": [["flag", "said_mg_novice_free_rites"]],
-          "text": "A novice at the chapel undercroft speaks of a sister the Watch took. Find her — the Watch House, off the Regent's Way."
+          "text": "A novice at the chapel undercroft speaks of a sister the Watch took. Find her — the Watch House, off the Regent's Way.",
+          "at": "mg_watch_house_cells"
         },
         {
           "if": [],

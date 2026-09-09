@@ -20,8 +20,8 @@ A world is one root file, plus part files it `include`s:
 A **part file** is a slice of the same world. It may carry only:
 
 - records that merge by id — `rooms`, `items`, `npcs`, `classes`, `perks`,
-  `regions`, `quests`, `proofs`, `templates`, `skills`. Two files defining the
-  same id is a load error that names both files.
+  `conditions`, `regions`, `quests`, `proofs`, `templates`, `skills`. Two
+  files defining the same id is a load error that names both files.
 - lists that concatenate — `gen`, `stamps`, `epilogue`, `statusTracks`,
   `statusPaths`, `hud`.
 A path may name a `var`; its value then prints after the text ("the Watch:
@@ -30,8 +30,8 @@ label still reads as having moved. `status` shows each companion's regard from
 the day they join, and "near leaving" once it reaches −2.
 
 Root-only fields (`id`, `title`, `intro`, `objectives`, `start`, `hp`,
-`maxScore`, `walkthrough`, `progress`) in a part are a load error. Anything
-else at the top level is too.
+`maxScore`, `walkthrough`, `progress`, `clock`) in a part are a load error.
+Anything else at the top level is too.
 
 Load order: root, then parts in `include` order (globs sort by file name);
 then `gen` regions expand into rooms; then `stamps` expand templates into
@@ -48,8 +48,9 @@ content is checked exactly like authored content.
   `use ... on`).
 - Auto-flags the engine sets for you: `did_<actionId>` (an action with
   `once`), `said_<npc>_<topicId>` (a topic with `once`),
-  `remarked_<npc>_<remarkId>`, `<itemId>_lit`, and the engine's own
-  `_seenCheck`. You can read them in conditions.
+  `remarked_<npc>_<remarkId>`, `<itemId>_lit`, `clocked_<id>` (a `world.clock`
+  entry with `once`, see §13), and the engine's own `_seenCheck`. You can read
+  them in conditions.
 
 ## 3. Conditions
 
@@ -65,7 +66,23 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["perk", p]` / `["!perk", p]` | the player owns the perk |
 | `["inParty", npc]` / `["!inParty", npc]` | companion travels with the player |
 | `["npcHere", id]` / `["!npcHere", id]` | the npc stands alive in the player's room — a companion's warning before a fight, a line said only in someone's presence |
+| `["cond", id]` / `["!cond", id]` | the player currently holds / does not hold this timed condition — see §8 |
+| `["npccond", npc, id]` / `["!npccond", npc, id]` | an npc currently holds / does not hold this timed condition |
+| `["turn", op, n]` | same `op`s as `var`; the turn counter so far — deterministic state, read-only (content cannot set it) — see §13 |
+| `["since", flag, op, n]` | turns since `flag` was set — "N turns after this happened". **False while the flag is unset**, so an unfired flag is never "0 turns ago". A flag cleared and set again is measured from the second time |
+| `["horrorHere"]` / `["!horrorHere"]` | a hostile npc with `pierce: true` (the realm's horrors, §7) stands alive in the player's room |
+| `["holdsGround"]` / `["!holdsGround"]` | a hostile npc that is **not** aggressive stands alive in the player's room — the same "leave … be" category |
+| `["companionDown"]` / `["!companionDown"]` | a party member currently carries the `down_<id>` flag (struck out of a fight, not yet back up) |
+| `["checkHere", skill, dc]` / `["!checkHere", skill, dc]` | a room action or npc topic visible right now previews a `check` of `skill` at `dc` or higher, as its first effect (§4's preview rule) — `dc` here is the check's current, possibly-escalated one (§4), not always the authored number |
+| `["lowHp"]` / `["!lowHp"]` | the player's hp is at half of maxHp or less — "a fight is going badly," the same threshold `leave` uses against an aggressive npc (§7) |
+| `["region", code]` / `["!region", code]` | the player stands in a room of this region (a key of `world.regions`) — "while we are in this hold", which is what a companion's arrival remark wants. A code that names no region is a validator error, because a typo reads as "nowhere" and the condition simply never fires |
+| `["unseenHere"]` / `["!unseenHere"]` | this region still holds a landmarked place the player has not stood in. The gate for anything that offers to name one: it reads the same list `["sayunvisited"]` says out loud, so the two cannot drift apart |
+| `["inWild"]` / `["!inWild"]` | the player stands in a generated wilderness cell (a `gen` grid room) rather than an authored interior — "out on the ground", for a thing that only makes sense outdoors |
 | `["any", [cond, cond, ...]]` | passes when at least one listed condition passes — the one OR inside an all-of list |
+
+These six are room- or player-scoped rather than naming an id: no target, so no unknown-id check — they read the room or the player as they stand, which is what an ability's `if` (§14) usually needs instead of a specific npc it cannot know in advance. Each has its negated twin, like every other op above; without them there is no way to say "only when nothing in this room ignores armor", which is exactly what a `brace for it` needs.
+
+`region` is the one that pays for itself in content rather than in abilities. A hold's arrival used to be written as a chain of `["if", [["inParty", npc]], [["say", …]], []]` inside one `onEnterOnce`, and with a full party that put four companions' answers on one screen — 1,448 characters at Mootcombe's Cairn-Track, one speaker twice. The engine speaks at most **one** companion remark a turn for the whole company, rotating who leads (§7), so the lines belong in `companion.remarks` gated on `[["flag", "<code>_entered"], ["region", "<code>"]]`; there they land one a turn as the player walks the hold, and the arrival screen falls to 812. The flag says they have arrived; the region says they are still here, so a line about Mootcombe's chantry is never spoken in Fenmarch forty turns later.
 
 ## 4. Effects
 
@@ -75,7 +92,7 @@ Effects run in order and stop the moment the game ends.
 |---|---|
 | `["say", text]` | prints text |
 | `["set", f]` / `["clear", f]` | flag on / off |
-| `["score", n]` | add score (clamped 0..maxScore); prints `(+n)` |
+| `["score", n]` | add score (never below 0, and with no ceiling); prints `(+n)` |
 | `["hp", n]` | heal or hurt (clamped 0..maxHp); 0 hp is the engine's `dead` loss |
 | `["xp", n]` | grant xp; levels apply themselves (+2 max hp, a perk pick) |
 | `["perk", p]` | grant a perk outright (a trainer) |
@@ -89,7 +106,25 @@ Effects run in order and stop the moment the game ends.
 | `["party", npc, "join"]` / `["party", npc, "leave"]` | companion joins / leaves (npc needs a `companion` block) |
 | `["slay", npc]` | scripted death: no fight, no onDeath |
 | `["calm", npc]` | a hostile stands down for good: no longer blocks fast travel, reads "is here (stood down)", and attacking them is listed last — for a words route that ends a standoff without the npc leaving |
-| `["end", "win"|"lose", endingId, text]` | ends the game (every ending id needs a proof — see §10) |
+| `["cond", id, turns]` | put a timed condition on the player for `turns` spent turns; re-applying refreshes to the longer of the current and new remaining duration — see §8 |
+| `["npccond", npc, id, turns]` | the same, on an npc |
+| `["uncond", id]` | clear a timed condition from the player before it would expire on its own |
+| `["unnpccond", npc, id]` | clear a timed condition from an npc |
+| `["harm", npc, n]` | `n` damage to an npc with no attack roll; runs `onDeath` if it drops, exactly like a killing `attack`. Safe if the npc is absent or already dead |
+| `["harmhostile", n]` | `harm` applied to every currently-hostile npc in the player's room instead of one named id — usually exactly one, since a room holds one hostile at a time by convention (§9), but correct if it ever holds more |
+| `["condhostile", id, turns]` | `npccond` applied to every currently-hostile npc in the room |
+| `["calmhostile"]` | `calm` applied to every currently-hostile npc in the room |
+| `["revive"]` | every party member currently down (flag `down_<id>`) gets back up now, at half their max hp — the same recovery a cleared fight grants on its own (§7), just not waiting for the room to clear |
+| `["sayunvisited"]` | names the nearest landmarks of this region not yet visited, with the way there, and counts the rest (or says there are none left) — for a free, informational ability. Gate it on `["unseenHere"]` so it is never offered with nothing to say |
+| `["bearings"]` | says the way to this region's three nearest named places, walked through the real exits and folded into legs ("Slatefold, four south, then down" — a single step through a door reads as the menu's own word, not as a count), opening with `regions[code].bearing` if the region has one. Content still decides *where* a player can take their bearings; the directions are not the author's to write — see §9 |
+| `["questsopen"]` | says how many quests the player still has open, and sends them to `status` for the list — for a point of no return. Deliberately no names: which threads lie *behind* the door is not something the engine knows, and naming one that is ahead would be its own lie |
+| `["end", "win"|"lose", endingId, text]` | ends the game (every ending id needs a proof — see §12) |
+
+The `hostile`-scoped trio (`harmhostile`, `condhostile`, `calmhostile`) exist for
+`world.abilities` (§14): an ability is not written for one room's specific npc,
+so it cannot name one the way a room action names its own. Reach for the
+named form (`harm`, `npccond`, `calm`) in ordinary room and topic content,
+where the npc is always known.
 
 `check` skills are the four attributes `might`, `grace`, `wits`, `will`, or a
 name in `world.skills`. Put the `check` **first** in an action's or topic's
@@ -104,6 +139,51 @@ An action or topic that lowers a faction's standing outright, with no die, says
 "costs standing with …" as things stand (a branch under an `if` counts when its
 condition holds now), so a gate's price is never learned from the company's
 banter afterwards — a `free` action included: "free" is the turn, not the price.
+
+**Escalating retry.** A failed `check` raises the DC of the next attempt at
+that same room action, ability, topic, or item-use by 1 — the engine's own
+doing, nothing to author. The counter never resets (a success does not clear
+it, and neither does leaving and coming back), and it has no ceiling: a check
+retried enough times keeps getting harder, never impossible-in-principle,
+never a dead end — the player can always try again, or take the region's
+other route (force, craft, words) past the same obstacle instead. The preview
+always quotes the number the roll is actually about to use, so a check with
+two failures already logged against it reads `(DC 13, +2 wits: roll 11+ on
+the die)` where a fresh one would have read `(DC 11, +2 wits: roll 9+ on the
+die)` — never the stale, unescalated number (see the `check` case in
+`applyFx` and `oddsHint`, `src/engine.ts`; the history that makes this
+non-negotiable is in the comments above both).
+
+**A conversation does not escalate.** A lock gets harder as you work at it; a
+topic's check reads the DC you wrote, however many times it is asked. Two blind
+waves called the old behaviour a trap and the second named the compound: a
+companion-dispute check already costs regard with *both* companions on a miss,
+by design, and "failed twice despite ~60% listed odds" with the DC creeping
+under you is a spiral whose only exit is the thing escalation taxes — walk
+away, earn some standing or a rank or a companion's regard, come back better
+placed. The attempt is still counted, so `Failed before:` on the status check
+and any content reading `checkAttempts` are unchanged. Acts, item uses and
+abilities still escalate: those you force.
+
+Escalation is keyed on the id of whatever offers the check — a room action's
+`id`, a topic's `id` (npc-qualified, since ids like `greet` repeat across
+npcs), an ability's key in `world.abilities`, an item's `use` entry — the same
+ids `did_<id>` and `said_<npc>_<topicId>` already key on, so there is nothing
+new to name. A `check` with no such id to key on (inside a room's `onEnter`,
+an npc's `onDeath`, a companion's remark, a `world.clock` entry) never
+escalates; author those as you always have. A check nested under an `if`
+inside an action's effects escalates on the same key as that action's own
+leading check — there is one counter per action/topic/ability/use, not one
+per `check` op — so two unrelated checks belong in two different actions if
+you want them to get harder independently.
+
+The practical upshot for a `walkthrough` or `proofs` entry that retries a
+check with `{"repeat": ..., "until": ..., "max": n}`: a later failure can cost
+more turns than an earlier one did on the same content, since the DC is
+higher each time. If a content change moves how many attempts a retry loop
+needs, re-run it through `npm run validate` (or `scripts/walk.ts`) rather than
+hand-editing `max` — the validator replays for real and will say exactly where
+a step went illegal.
 
 ## 5. Rooms
 
@@ -156,6 +236,19 @@ A room action with `"free": true` costs no turn and shows "(free)" in the
 menu: use it for flavour that reads like `look` — getting your bearings from a
 parapet, reading a notice board — so a player is never charged a turn for what
 the rules told them is free. Anything that changes the world keeps its cost.
+
+**Browsing is free by the engine's own rule**, and an author does not mark it:
+opening the travel menu, choosing a region, opening the company menu, turning
+a page, opening a conversation and backing out of one all cost nothing. Only
+the journey, the topic, the action is a turn. Two of those (`talkto`,
+`endtalk`) were missing from that list for a long time and cost two things: a
+folded npc's conversation was a turn dearer than an unfolded one's, for
+nothing but how the menu was laid out; and a "+N for 2 turns" ability could
+never reach a check inside a topic, because opening the conversation spent one
+of the two turns. 65% of the realm's will checks live inside a topic, which is
+why `envoy_press` was offered 77 times across two blind waves and pressed 0.
+If you write an ability whose buff is meant for a check, count the turns
+between them.
 
 A room action or topic with a top-level `["class", c]` condition shows
 "(as a Scholar)" after its label — "(free; as a Scout)" when it is also free —
@@ -210,7 +303,14 @@ nobody's business but the player's.
 ```
 
 - **Inline npcs** (no `dialogue`) list every visible topic in the room menu as
-  `ask <name>: <label>`. Use for npcs with 1–3 topics.
+  `ask <name>: <label>`. Use for npcs with 1–3 topics. **This is enforced now**,
+  by the room-load bound in `test/content.test.ts`: an inline npc's topics all
+  count against `MENU_CAP` at once, so a fourth one usually pushes its room
+  over and fails the bar. Five npcs had drifted past it unnoticed (Bray at 12
+  topics, Coe and Wardmoor's quartermaster and Corporal Fenn at 10, Bram Otts
+  at 9) and took four rooms to 14–16 in flag states no crawl walk ever reached.
+  Folding is free to the player — opening a conversation spends no turn — so
+  there is no reason to leave a talkative npc inline.
 - **Conversation mode** (`"dialogue": true`) folds them behind one `talk to
   <name>` entry; inside, the menu is the topics plus `end conversation`, and
   the room's menu waits. Use for anyone with 4+ topics. A topic with
@@ -244,13 +344,29 @@ nobody's business but the player's.
   free, sets `left_<npc>`, and lifts the standoff's hold on fast travel — so
   walking past it is a choice in so many words. The line says "they" of a
   company or a named person, and names any exit still locked in the room
-  instead of promising the way past. A free action spends no turn, so an
-  aggressive npc gets no strike for it.
+  instead of promising the way past.
+- **Breaking from an aggressive npc.** `leave <name> be` also appears against
+  an **aggressive** npc once the fight is going badly (hp at half of maxHp or
+  less) — a dead end and a losing fight both keep a way out. It still costs no
+  turn, but it is not free: the npc gets one last strike as you break away,
+  and the menu says so first (`(a strike)`, not `(free)`) — a price stated
+  before it lands, like every other costly action. The npc then carries the
+  `disengaged` condition for a couple of turns, so the very next step (walking
+  out) is not struck too; it wears off on its own, exactly like any other
+  timed condition (§8). A Scout with a point of `res_scout` to spend breaks
+  away clean instead — no strike, same suppression, the menu reading
+  `(free: slip away)` — spent directly in the `leave` case rather than through
+  `world.abilities` (§14), since the disengage it prices is already
+  npc-specific and abilities are not. A **non-aggressive** hostile's `leave`
+  is unchanged by any of this: always free, never a strike.
 - A remark may carry `fx`, run when it is spoken — a companion who says what
   they think of a theft can also think less of you (`["addvar", "appr_lys", -1]`).
-  One remark a companion a turn, but a remark carrying `fx` is never held
-  behind a plain one, and none speak while a menu is being turned (the
-  travel list, the company list, a conversation's next page).
+  One remark a turn, for the whole party — not one each, so a full company
+  never floods a screen — but a remark carrying `fx` is never held behind a
+  plain one, and none speak while a menu is being turned (the travel list,
+  the company list, a conversation's next page). A companion who has had
+  enough (`leaves`) is not a remark and is never held back this way: every
+  farewell is heard the turn it is earned, however many that is.
   An action or topic whose top-level `fx` moves a companion's regard shows it in
   its hint ("Lys +2, Osk -2"), so a side taken is taken knowingly.
   A remark whose `fx` sets a quarrel flag (`quarrel_<a>_<b>` or
@@ -301,7 +417,68 @@ for a remark or an epilogue line to recall it. `status` shows each
 companion's hp beside their regard. Nobody dies of it — a companion's death,
 if a story wants one, is written with `slay` or a `leaves` line.
 
-## 8. Wilderness regions (`gen`)
+## 8. Conditions (status effects)
+
+A **condition** is a named, timed modifier — winded, braced, bleeding — put
+on the player or on an npc for a number of spent turns. The catalog is a
+root-mergeable record, like `perks`:
+
+```json
+"conditions": {
+  "winded":   { "name": "winded",   "hit": -2, "hint": "your guard is down" },
+  "braced":   { "name": "braced",   "armor": 2 },
+  "bleeding": { "name": "bleeding", "hpPerTurn": -1 },
+  "steady":   { "name": "steady",   "checks": { "grace": 2 } }
+}
+```
+
+Every field but `name` is optional, and the set is closed — an unknown key
+is a validator error, exactly like an unknown DSL op:
+
+| field | does |
+|---|---|
+| `name` | shown in the HUD, a room's npc line, and `status` |
+| `hit` | attack-roll modifier — on the player, the roll; on an npc (no roll of its own), the damage its strike lands |
+| `dmg` | damage modifier (player only — see below) |
+| `armor` | armor modifier — on the player, damage taken; on an npc, its `df` |
+| `checks` | a record of attribute/skill name -> modifier, applied to `check` (player only — npcs don't roll checks) |
+| `hpPerTurn` | hp applied at the end of each spent turn while it holds (player only): negative hurts, positive heals |
+| `hint` | a short clause the menu/HUD/status may show, e.g. "your guard is down" |
+
+Put one on with `["cond", id, turns]` (the player) or `["npccond", npc, id,
+turns]` (an npc); re-applying refreshes to the **longer** of the current and
+new remaining duration, so a fresh dose never cuts a longer one short.
+`["uncond", id]` and `["unnpccond", npc, id]` clear one early — content that
+grants the cure, or a scene that ends the fight it came from. Test for one in
+an `if` with `["cond", id]` / `["!cond", id]` (the player) or `["npccond",
+npc, id]` / `["!npccond", npc, id]`. `["harm", npc, n]` deals `n` damage to
+an npc with no attack roll — a trap, a curse, a fire that spreads — and runs
+`onDeath` exactly once if it drops, just like a killing `attack`; it does
+nothing if the npc is absent or already dead.
+
+A player condition folds into the numbers a check or an `attack` actually
+uses: `hit`/`dmg`/`armor` stack into combat, `checks` into the matching
+`check` — all of it already counted in the odds a menu previews and in
+`status`'s "Checks:"/"Combat:" totals, nothing to re-derive by hand. An npc's
+condition has no roll of its own to modify, so it folds in differently:
+`hit` sharpens or dulls the damage its strike lands (whether it strikes every
+turn or only strikes back after a failed kill), and `armor` raises its `df`
+— so a player weighing whether to press an attack sees the true number, not
+the authored one.
+
+Every condition ticks down by one at the end of each **spent** turn — a free
+action (menu paging, `look`, `leave`) ticks nothing. The player's
+`hpPerTurn` applies first, through the same hp path a fight or a trap would
+use, so it can end the run exactly like any other loss of hp. A condition
+that reaches zero turns is dropped and prints one short event ("winded
+passes."), folded into that turn's line like any other. The HUD line appends
+active player conditions only when there are any — `[winded 2]`,
+space-separated if several — costing nothing on a turn without one; an npc
+that carries one shows it the same way, in its room line's own parenthetical.
+The free `status` check lists every active player condition with its turns
+left and its hint, under "Conditions:".
+
+## 9. Wilderness regions (`gen`)
 
 ```json
 "gen": [{
@@ -341,8 +518,36 @@ if a story wants one, is written with `slay` or a `leaves` line.
   `here` while it lives — never spawn something unkillable or unavoidable.
 - The region must stay connected (walls cannot cut it in two): the
   reachability check will tell you.
+- **Mark a handful of cells `landmark`.** They do two jobs: they become
+  fast-travel destinations once seen, and they anchor the breadcrumb the
+  engine prints in every other cell of the region — "the north lane: two
+  north, then three west", the way back to the nearest landmark the player
+  has already stood in. That line is what makes a bearing given as a hop
+  count ("the drowned nave, two stands west") followable without counting in
+  your head; three playtest reports asked for it. It is a real path,
+  breadth-first through your actual exits, because the first version printed
+  the coordinate offset and a player rightly reported that a quarter of those
+  cannot be walked in a straight line — **your walls are why**. Roughly one
+  landmark per six cells is right: the realm runs 77 across 445 cells. Too few
+  and there is nothing to steer by; too many and the anchor changes under the
+  player's feet mid-leg.
+- **Never write a direction by hand.** The realm carried 286 hand-written
+  "get your bearings" actions — "As the fell runs, Slatefold is 4 south and 1
+  east, then down. The bound-stone: 6 south." — 286 separate chances to be
+  wrong about a grid with walls, and two playtest waves reported them not
+  matching the map. Every one is now `"fx": [["bearings"]]` and the engine
+  walks the exits. Offer the action wherever a lost player would want it (free,
+  labelled "get your bearings"), and give the region the words it opens with:
 
-## 9. Templates and stamps
+  ```json
+  "regions": { "ff": { "name": "the Fosterfell", "bearing": "As the fell runs" } }
+  ```
+
+  The opening is the author's; the directions are not. An opening that ends in
+  punctuation is a validator error, because the engine adds `": the mill, one
+  east."` after it.
+
+## 10. Templates and stamps
 
 A template is a place written once with placeholders; a stamp is one copy of
 it standing somewhere.
@@ -378,15 +583,15 @@ it standing somewhere.
   Give each copy a distinct `NAME` and a distinct inhabitant; vary which
   class-favored solution works.
 
-## 10. Quests, journal, epilogue, hud
+## 11. Quests, journal, epilogue, hud
 
 ```json
 "quests": {
   "fd_bell": { "name": "The Saint's Bell",
     "start": [["flag", "fd_knows_bell"]], "done": [["flag", "fd_congregation_rested"]], "failed": [["flag", "fd_bell_sold"]],
     "stages": [
-      { "if": [["has", "fd_saint_bell"]], "text": "Ring the bell at the drowned nave." },
-      { "if": [], "text": "Find the saint's bell in the sunk nave, east of Reedholm." } ] }
+      { "if": [["has", "fd_saint_bell"]], "text": "Ring the bell at the drowned nave.", "at": "fd_nave_approach" },
+      { "if": [], "text": "Find the saint's bell in the sunk nave, east of Reedholm.", "at": "fd_nave_approach" } ] }
 },
 "epilogue": [
   { "if": [["flag", "fd_congregation_rested"]], "text": "In Reedholm they ring a bell at dusk now, and the water stays quiet." },
@@ -408,6 +613,55 @@ it standing somewhere.
   beginning on one turn collapse to one `Journal: …` line); `status` lists
   the journal. Every region quest (4–6 per region) needs a stage for
   each state a player can be in.
+- **A stage that points somewhere names the room, not the way there.** `at` is
+  a room id; the free `status` check walks the real exits to it and prints the
+  legs, so the log reads "Ring the bell at the drowned nave. (the way there:
+  three east, then one in)". It shortens as the player walks, says "(you are
+  standing there)" on arrival, and says nothing at all when no chain of exits
+  reaches it — nothing rather than something wrong. A locked exit counts as an
+  exit: the door is the quest.
+
+  Every player of wave seven asked for this, independently, and two of them
+  lost 30-60 turns of a 620-turn run for want of it. The third found why the
+  hand-written version could not be trusted: "'two stands west, then in' didn't
+  match the actual room-exit labels; the real path required going east." **So
+  do not write directions into stage text** — name the room and delete the
+  clause. An `at` that names no room is a validator error.
+
+  **A hold's grief quest opens on the region's own `<code>_entered` flag**, so
+  the thread is in the journal from the moment a player crosses the border,
+  with a hook line in the shape of `ir_hollow`'s — the wrong, and where to
+  begin, in one sentence: "A hundred miners died when the Hundred Gallery fell.
+  Its adit is still open, out on the downs." Eight of the fifteen holds used to
+  wait until the player had stood in one particular room or set one particular
+  flag, and a hold's grief could be missed entirely: wave eight's seed 9901
+  finished two of the Hearthlands' side quests and left reporting that the hold
+  had no grief at all. Gate the hook stage against whatever flag means "you
+  have been told" (`["!flag", "<code>_hollow_grievance"]` is the usual one) and
+  put it **first**, since the engine shows the first stage whose `if` holds.
+  `npx tsx scripts/audit-fates.ts world/reach.json --terse` prints, per hold,
+  whether its grief opens on arrival or waits.
+
+  **A hold's grief quest must carry an `at` on the line a player reads before
+  the quest has moved** — `test/content.test.ts` holds that as a named ratchet,
+  and the two exceptions in it are both stages that say the thread is waiting
+  on a different quest to settle first, where there is nowhere to send anyone
+  yet. This is not a style rule. A blind player of wave eight finished two of
+  the Hearthlands' side quests, never found the threshing floor, and reported
+  that the hold had no grief at all; 21 of the realm's 27 grief quests were
+  silent about where they led at the moment it mattered, while their side
+  quests were not. A player who follows the signposts should not end up in the
+  optional content.
+
+  An `at` beyond a one-way door prints nothing until the player is through it,
+  and that is correct rather than broken. Marrowgate is entered only by four
+  `["goto", "mg_south_gate"]` effects on the Pass Gate — a deliberate point of
+  no return — so no chain of `exits` reaches its 45 rooms from the Vale, and
+  `pathTo` answers `null` for all thirteen `at`s that name one. From inside the
+  gate every one of them walks ("one north, then one west, then two down, then
+  three north" to the Hollow Throne), which is the only side a player can be on
+  while those quests are open. So check an `at` from a room on its own side of
+  any one-way door before calling it dead.
 - Epilogue lines print after any ending when their conditions hold, at most
   6 and at most 600 characters together: the heaviest `weight` first (default
   0, ties in file order), and the survivors read in file order. A realm has far more true lines than places,
@@ -425,12 +679,17 @@ it standing somewhere.
   "disapproves." when that companion is in the party or the room. Choices
   are legible without the player calling `status`.
 
-## 11. Endings and proofs
+## 12. Endings and proofs
 
 Only the root world (act 1 and act 3 files) ends the game. A region file
 never uses `end`. Every ending id used anywhere needs `proofs.<id>`: a list of
 menu labels that replays (seed 1) to exactly that ending. The root
-`walkthrough` must replay to a **win with score === maxScore**. Labels are the
+`walkthrough` must replay to a **win with score === maxScore** — which is what
+`maxScore` means: **what one whole route pays**, not a ceiling. Score is not
+clamped to it (a realm authors far more than one route's worth; the Gray Reach
+authors 7,608 points across 1,395 sites), so a player who sees more of the
+realm keeps being paid for it, and `status` says what the number means rather
+than dividing by it. Labels are the
 canonical text without the display hints: `go east`, `talk to Prior Halm`,
 `the saint's bell`, `end conversation`, `travel to a known place`, `to
 Reedholm`, `attack bog-thing with belt knife`, `perk: Iron Skin (+1 armor)`,
@@ -440,7 +699,198 @@ Reedholm`, `attack bog-thing with belt knife`, `perk: Iron Skin (+1 armor)`,
 To record labels instead of writing them: play with `npm run turn -- new 1`,
 `act <id> <n>`…, then `npm run turn -- labels <id>`.
 
-## 12. Style and budget
+## 13. The world clock
+
+Nothing in the world moves unless the player does — until `world.clock`.
+It is a **root-only** list of scheduled effects, evaluated once per **spent**
+turn, after the player's action, the world's aggressive pass, and conditions
+have ticked:
+
+```json
+"clock": [
+  { "id": "iron_march_warned",
+    "if": [["flag", "iron_march"], ["turn", ">=", 40]],
+    "once": true,
+    "fx": [["say", "Word on the road: an Ironbound column is moving west, and it is not stopping at Cinderhall."]] }
+]
+```
+
+- Entries are checked **in file order**, and **at most one fires per turn** —
+  the first whose `if` passes (and, for a `once` entry, has not already
+  fired) runs its `fx`; the rest wait for a later turn. This is the whole
+  budget story: a turn's clock line is either absent or one sentence, never a
+  digest.
+- `once: true` marks an entry that fires at most once ever, and sets the
+  auto-flag `clocked_<id>` the turn it fires — read it back exactly like
+  `did_<id>`. Without `once`, an entry may fire again on any later turn its
+  `if` still holds: a recurring pressure, still subject to the one-per-turn
+  rule.
+- `fx` are ordinary effects, run through the same path as everything else —
+  `say`, `set`, `addvar`, `npcgo`, `goto`, `if`, `chance`, `end`, all of it.
+  No new effect vocabulary: a clock entry that wants to end the game just
+  uses `end` like any other effect list, and one that wants to roll the dice
+  uses `chance` like any other — still replay-safe, since it draws from the
+  same seeded PRNG cursor.
+- It runs on spent turns only: a look, a menu page, a wide berth given ticks
+  nothing, exactly like conditions (§8). If the game has already ended this
+  turn — a fight, a trap, a condition's `hpPerTurn` — the clock does not run.
+- **Pace a schedule off its own trigger, not off the absolute turn.** Use
+  `["since", flag, ">=", n]` (§3), not `["turn", ">=", n]`, for anything that
+  should happen *n* turns after something the player did. The Ironbound march
+  shipped with fourteen burns pinned to absolute turns 100 through 620, which
+  gives one hold every forty turns to a player who sets it moving early — and
+  eleven holds in forty turns to one who sets it moving at turn 470, because
+  ten thresholds were already behind them. Measured, not guessed. An absolute
+  `turn` gate is right for something that happens on a calendar; almost
+  everything else is relative to a deed.
+- `world.clock` **concatenates from the part files**, like `epilogue` and
+  `stamps` (§1): a scheduled event belongs to a place, and a region author owns
+  their own hold's march the way they own its epilogue lines. Entries land in
+  file order, the root's first. Because the engine fires **at most one a turn**,
+  file order is also priority order: an entry with a broad `if` starves every
+  entry behind it. Gate yours on your own region's flags and vars, so it is
+  eligible only when the realm is actually looking at you. An id another part
+  already used is a load error naming the file that got there first.
+- Read the turn counter the clock is checked against with `["turn", op, n]`
+  (§3) in any `if`, anywhere — not just here.
+
+## 14. Abilities and resources
+
+Every custom action so far lives in one room's `actions[]`. An **ability** is
+the same shape, minus the room: available wherever its `if` holds, not tied
+to any one place — a class's active kit.
+
+```json
+"abilities": {
+  "warden_brace": {
+    "label": "brace for it",
+    "context": "combat",
+    "if": [["class", "warden"], ["var", "res_warden", ">=", 1]],
+    "fx": [["addvar", "res_warden", -1], ["cond", "braced", 2], ["say", "You set your feet."]]
+  }
+}
+```
+
+`world.abilities` is a root-mergeable-by-id record like `perks` and
+`conditions` **in storage shape**, but root-**only** in where it may be
+authored: a part file carrying `abilities` is a load error, like `clock`
+(§13), so a class's whole kit lives in one place. Fields, closed like every
+DSL shape:
+
+| field | does |
+|---|---|
+| `label` | shown verbatim in the menu (required) |
+| `fx` | ordinary effects, run through the same path as a room action's (required) |
+| `if` | all must pass; default always |
+| `context` | `"combat"`: offered only while a live hostile stands in the player's room, the same test `attack` uses — `"any"` (default): offered wherever `if` holds |
+| `once` | auto-flag `did_<id>` and hide after, exactly like a room action's |
+| `free` | costs no turn and reads `(free)` in the menu, exactly like a room action's |
+
+Abilities are checked **after** a room's own actions and everything else in
+it — a room's content always reads first. Where the two together run past the
+menu cap (§15's 12), the room turns pages: the exits stay put and `more here`
+(free, no turn) shows the rest. Nothing is dropped. It used to be: abilities
+past the cap simply did not appear, which meant a Warden could stand in a
+crowded room with a full pool and never be offered the thing they had earned.
+
+**Every class needs at least one ability that works outside a fight.** Nine of
+the realm's first ten were `context: "combat"`, and something stands in the
+room to fight on **4.1% of screens** — so a Warden's and a Scholar's whole kit
+sat behind a door that opens one screen in twenty-five, and the class was a
+stat line the rest of the time. `test/abilities.test.ts` holds the rule now.
+The shape that works, one per class, on its own attribute:
+
+```json
+"scholar_read": {
+  "label": "read it twice",
+  "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["checkHere", "wits", 11]],
+  "fx": [["addvar", "res_scholar", -1], ["cond", "studied", 2], ["say", "You stop hurrying it, and read from the top in the tongue it was written in."]]
+}
+```
+
+Spend a charge when a hard check of your own attribute is standing in front of
+you (`checkHere`, §3), and take a timed +4 to it (a `conditions` entry with
+`checks`, §8). It reads as the class doing what the class is for, and it is
+offered where it matters instead of everywhere.
+
+**Read a share against the right denominator.** `npx tsx
+scripts/audit-abilities.ts world/reach.json` prints, per ability, how many
+screens each clause of its `if` held on across the walkthrough and every proof
+— and the fight count beside it, because an ability on 1.6% of a class's
+screens is on 41% of that road's fights, which is a working ability and not a
+broken one. It is the tool that separates "never chosen" from "never shown"
+from "its class was never played". **Do not gate an ability on a conjunction
+you have not measured**: `scholar_name` wanted a horror in the room AND a
+companion holding the line AND you under half your hp, and stood on 1 screen
+in 1760.
+
+**The cap is on a room's own content, not on that plus your abilities.** A
+class carries three or four abilities into every room in the realm, so taxing
+every room for them would be taxing it for a class its author cannot see. The
+validator and the crawler measure a room's own load — exits, travel, actions,
+items, people — and hold *that* to 12. Whatever the abilities add on top is
+what paging is for. Keep the room's own load under the cap anyway: paging is
+the safety net, not permission to write a twenty-option room.
+
+Gate a combat ability tightly where you can (`checkHere`, `horrorHere`,
+`holdsGround`, `lowHp`, §3) — an ability offered where it does nothing useful
+is still a line on every screen it appears on, and the budget (§15) does not
+forgive that. `["!horrorHere"]` is required of any ability that buys armor:
+offering it against something that strikes through armor charges a point of
+the pool for nothing (there is a test).
+
+An ability's cost is an ordinary `var` (`res_warden`, `res_scout`, …) — no new
+state, tested with `["var", v, ">=", n]` like any other. `world.resources`
+(root-only, like `abilities`) names each pool's full value:
+
+```json
+"resources": { "res_warden": 2, "res_scout": 2, "res_scholar": 2, "res_envoy": 2 }
+```
+
+Every entry must be a positive number. A fresh game starts every pool at its
+full value; a **rest** — the same room action (a hearth, a bunk) whose
+positive `hp` already heals the standing company (§7) — refreshes every pool
+to full in the same turn, whether the rest came from a room action or from an
+ability's own `fx`. Refreshing means *set to full*, not *add*: spend a pool
+down, then rest, and it reads the same as a fresh game, never overfilled by
+resting twice.
+
+A handful of DSL primitives (§3, §4) exist only to serve an ability that
+cannot name one room's npc, or one party member, in advance: the
+`hostile`-scoped fx trio (`harmhostile`, `condhostile`, `calmhostile`),
+`revive` (every downed party member, not one named companion), and the
+room- or player-scoped conds (`horrorHere`, `holdsGround`, `companionDown`,
+`checkHere`, `lowHp`). Reach for the named forms (`harm`, `npccond`, `calm`,
+`npcHere`) in ordinary room and topic content, where the npc is always
+known — the unnamed forms are for `world.abilities` specifically, not a
+shortcut to reach for elsewhere.
+
+**A gate the realm cannot satisfy is not a tight ability, it is a dead one.**
+An ability's cost is paid on every screen it appears on, and the budget (§15)
+is unforgiving, so the tempting move is to narrow the `if` until it stops
+showing up. That is the same move as deleting it, done less honestly: the
+realm shipped a Scholar ability gated on `["checkHere", "wits", 13]` when the
+hardest wits check anywhere in eighteen regions is DC 12, so it could never
+appear for anybody, and the budget was "unchanged" because nothing had been
+added. Before narrowing a gate, count what satisfies it:
+
+```bash
+# does anything in the realm actually offer a wits check this hard?
+node --import tsx -e 'import{loadWorld}from"./src/validate.ts";
+const w=loadWorld("world/reach.json");let n=0;const s=(f:any)=>{if(!Array.isArray(f))return;
+for(const e of f){if(!Array.isArray(e))continue;if(e[0]==="check"&&e[1]==="wits"&&e[2]>=13)n++;
+if(e[0]==="check"||e[0]==="if"||e[0]==="chance"){s(e[e[0]==="check"?3:2]);s(e[e[0]==="check"?4:3])}}};
+for(const r of Object.values(w.rooms as any))for(const a of (r as any).actions??[])s(a.fx);
+for(const p of Object.values(w.npcs as any))for(const t of (p as any).topics??[])s(t.fx);
+console.log(n)'
+```
+
+`scripts/budget.ts` prints the slack an addition has to fit inside, and says
+the same thing from the other side: a screen the walkthrough never reaches
+costs nothing there and is measured by nothing else, so "it did not move the
+budget" is never on its own evidence that the content is fine.
+
+## 15. Style and budget
 
 The player is a language model reading one screen per turn. Every screen is
 paid for. `test/budget.test.ts` fails the build if the average `act` response
@@ -468,10 +918,12 @@ along the walkthrough exceeds 450 characters or any single one exceeds 1100.
   (might / a fight), craft (grace / wits), and words (will / an item / a
   favor). No class is ever locked out of a region's hollow.
 
-## 13. Before you hand it in
+## 16. Before you hand it in
 
 ```bash
-npm run validate world/reach.json   # every reference, every proof, the menu cap
+npm run validate world/reach.json   # every reference, every proof, the menu cap, every gate's key
+npm run crawl -- world/reach.json --fork      # 438 rooms, six endings, gates open
+npm run crawl -- world/reach.json --sweep     # 268 rooms, wandering toward the unseen
 npm run crawl world/reach.json      # random walks: crashes, empty menus, "undefined" holes
 npm run test                        # budget, content rules, determinism
 ```
@@ -492,3 +944,63 @@ companion's remark. A fork whose branch is read nowhere but where it was made
 is a choice the world forgets: give it a line somewhere else (the asker's
 thanks, a variant, an epilogue line, a remark), or make it plain the choice
 was only flavour. Gates opened by several routes are fine to leave alone.
+
+And the same question about the things a player carries:
+
+```bash
+npx tsx scripts/audit-items.ts world/reach.json --dead
+```
+
+An item nothing reads is not a defect — a keepsake is allowed to be a
+keepsake, and the realm is better for the knot of sea-glass "smoothed by years
+in the tide; a small thing to keep". What a player cannot forgive is not being
+able to tell which is which, so the tool separates the honest keepsakes (a
+`hint` that reads as one) from the two kinds that are wrong: an item whose
+hint **promises** a use nothing ever asks for, and one with no hint at all.
+The realm currently runs 230 of 321 read, wielded, worn or carried for light,
+87 honest keepsakes, four broken promises and nothing mute. **The cheap fix
+for a silent item is a hint, not a use.** A hint that names a real place is
+counted as a promise too, because naming a room is telling the player to take
+the thing there — one of the four is a false positive that names a place in
+order to say the thing is finished, which is why this prints candidates to
+read rather than a verdict.
+
+And what a fight costs, before you write another one:
+
+```bash
+npx tsx scripts/audit-fights.ts world/reach.json
+```
+
+It puts one fixed build against every hostile that strikes back, at party
+sizes 0, 2 and 4, through the engine's own `step`. The realm currently reads
+7 rounds and 14 hp alone (46 of 68 fights kill the player), 3 rounds and 2 hp
+with two companions, 2 rounds and 2 hp with four. Every companion standing
+with you swings on your turn and the enemy's one blow rotates between all of
+you, so a party multiplies what you deal and divides what you take, and
+nothing on the other side scales with the crowd it faces. Write a fight
+knowing which of those two games it will be played in.
+
+And whether the way you point at can actually be walked:
+
+```bash
+npx tsx scripts/audit-routes.ts world/reach.json
+```
+
+A stage's `at` makes the free `status` screen print the walk to that room, and
+that walk comes from the same breadth-first search `bearings` uses — which
+crosses every exit in the graph, gated ones included. That is right for a
+bearing: a locked door does not move the barrow, and a bearing says where a
+place *is*. It is not always right for a route a player is being told to
+follow.
+
+The split is the whole point. A route whose **last** leg is shut is the design
+working — the door is the objective, and you are being sent to open it. A route
+shut **before** the last leg sends the player through a door that is not the
+point, and following it costs them the walk back. The realm currently prints
+1,120 routes along its walkthrough; 111 cross a shut exit and 80 of those are
+shut before the last leg, all of them at three doors (the barrow doors, the
+honour guard's passage under Marrowgate, and the pilgrim's door). Wave nine
+reported this as bearings that "didn't match the actual room-to-room
+connections" — every leg leads exactly where it says, which `audit-bearings`
+confirms across all 293 rooms that offer them; what the player hit was a shut
+door mid-route.

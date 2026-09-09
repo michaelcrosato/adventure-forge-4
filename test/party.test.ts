@@ -4,9 +4,9 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByLabel, actionLabel, inTalkMode, journal, legalActions, newState, step } from "../src/engine.ts";
+import { actionByLabel, actionLabel, inTalkMode, journal, legalActions, newState, oddsHint, step } from "../src/engine.ts";
 import { render, renderMenu, renderStatus } from "../src/format.ts";
-import { validateWorld } from "../src/validate.ts";
+import { loadWorld, validateWorld } from "../src/validate.ts";
 import type { Action, Fx, State, World } from "../src/types.ts";
 
 const mini = (over: Partial<World> = {}): World => ({
@@ -209,7 +209,7 @@ test("in a conversation, a line that sends a companion away is listed last, neve
   assert.equal(menu.indexOf("wait here (leaves the party for now)"), menu.length - 2, "sending her away sits last, just before the way out");
 });
 
-test("a free room action costs no turn and says so; a scripted end reads 'at rest', not 'dead'; the score ceiling lives in status", () => {
+test("a free room action costs no turn and says so; a scripted end reads 'at rest', not 'dead'; score has no ceiling and status says what one route pays", () => {
   const world = mini({
     items: { sword: { name: "sword", loc: "inv", hit: 0, dmg: 2 }, coat: { name: "tarred coat", loc: "inv", armor: 2 }, mail: { name: "mail shirt", loc: "inv", armor: 1 } },
     npcs: { saint: { name: "St. Mara", room: "a", hp: 3, desc: "A figure at the altar." } },
@@ -220,9 +220,18 @@ test("a free room action costs no turn and says so; a scripted end reads 'at res
   ];
   let { state } = newState(world, 1);
   const header = render(world, state, []).text.split("\n")[0]!;
-  assert.match(header, /score0 t0/, "the turn header shows the tally without a ceiling");
-  assert.doesNotMatch(header, /score0\//);
-  assert.match(renderStatus(world, state), /Score: 0\/\d+ \(a bonus tally/, "status names the ceiling and what the score is");
+  // the turn header carries no score at all: not the ceiling (two blind players
+  // read "198/366" as a share of the realm) and not the bare tally either,
+  // which restated on every screen told a player something no turn of theirs
+  // had changed. Both live in status; a turn that earns something says "(+N)".
+  assert.doesNotMatch(header, /score/, `the turn header carries no score: ${header}`);
+  assert.match(header, /hp\d+\/\d+( L\d+)? t\d+/, `it carries what a turn can change: ${header}`);
+  // Score has no ceiling — maxScore is what one whole route pays, and the realm
+  // authors twenty times that across 1,395 sites — so status says what the
+  // number means rather than dividing by it. Two blind players read "198/366"
+  // as a share of the realm; three more hit 366 and played on for two hundred
+  // turns earning nothing.
+  assert.match(renderStatus(world, state), /Score: 0 \(deeds and discoveries; \d+ is what one whole route pays/, "status says what the number means, without a denominator");
   assert.ok(labels(world, state).includes("attack St. Mara with sword"));
   const menu = renderMenu(world, state).text;
   assert.match(menu, /get your bearings \(free\)/);
@@ -354,7 +363,9 @@ test("the menu says when an action settles a hold's grief or a miss costs standi
   const { state } = newState(world, 1);
   const menu = renderMenu(world, state).text;
   assert.match(menu, /speak the rite \(settles this hold's grief: rests it\)/);
-  assert.match(menu, /press the prior \(will\) \(DC 10, will: roll 10\+ on the die; a miss costs standing\)/, "no faction names in this world: the plain warning");
+  // the label's "(will)" tag has just named the skill, so the hint does not
+  // name it again (see oddsHint); with no tag it would read "DC 10, will: roll…"
+  assert.match(menu, /press the prior \(will\) \(DC 10, roll 10\+ on the die; a miss costs standing\)/, "no faction names in this world: the plain warning");
   world.factions = { rep_church: "the Gray Church" };
   assert.match(renderMenu(world, state).text, /a miss costs standing with the Gray Church/);
   world.rooms["a"]!.actions!.push({ id: "vow", label: "swear the vow", fx: [["set", "x_hollow_bargained"], ["addvar", "hollows_rested", 1]] });
@@ -588,7 +599,7 @@ test("a companion with a matching `leaves` entry walks out after the turn, sets 
   state = doLabel(world, state, "kick a dog");
   assert.deepEqual(state.party, ["lys"], "one strike is not enough");
   const out = step(world, state, actionByLabel(world, state, "kick a dog")!);
-  assert.match(out.events.join(" "), /Lys: "I've seen enough of you\." Lys leaves your company\./);
+  assert.match(out.events.join(" "), /Lys: "I've seen enough of you\." Lys walks out\./);
   assert.deepEqual(out.state.party, []);
   assert.ok(out.state.flags["lys_left"]);
   const moved = doLabel(world, out.state, "go east");
@@ -800,7 +811,7 @@ test("calm: a hostile who stands down no longer blocks travel, reads as at peace
   assert.ok(!menu.includes("travel to a known place"), "a standoff blocks travel");
   assert.match(render(world, state, []).text, /Rook \(hostile, holds its ground/);
   const out = step(world, state, actionByLabel(world, state, "ask Rook: trade him respect")!);
-  assert.ok(out.events.some((e) => /Rook stands down\./.test(e)), out.events.join(" | "));
+  assert.ok(out.events.some((e) => /No more fight from Rook\./.test(e)), out.events.join(" | "));
   state = out.state;
   menu = labels(world, state);
   assert.ok(menu.includes("travel to a known place"), "the standoff is over: travel is back");
@@ -927,4 +938,189 @@ test("a remark that opens a quarrel says where the sides are", () => {
   const joined = step(world, state, actionByLabel(world, state, "ask Lys: come with me")!).state;
   const out = step(world, joined, actionByLabel(world, joined, "do the thing")!);
   assert.match(out.events.join(" "), /Lys: "They both look at you\." \(Speak with Lys or Osk to take a side, or to tell them to settle it\.\)/);
+});
+
+/**
+ * Score has no ceiling.
+ *
+ * `world.maxScore` is what one whole route pays — the walkthrough must reach
+ * exactly it, which is how the validator proves the score economy sound — but
+ * it was also a hard clamp in applyFx, and the Gray Reach authors 7,608 points
+ * across 1,395 sites. Five per cent of what it offers was payable. Three blind
+ * players hit 366 and played on for another two hundred turns earning nothing,
+ * having seen eight of the realm's eighteen regions between them: a tally that
+ * stops moving tells a player to stop looking.
+ */
+test("score passes what one route pays, and keeps counting", () => {
+  const world = mini({});
+  world.rooms["a"]!.actions = [
+    { id: "again", label: "find another small thing", fx: [["score", 4]] },
+    { id: "win", label: "win", fx: [["end", "win", "done", "Done."]] },
+  ];
+  world.maxScore = 10;
+  let { state } = newState(world, 1);
+  const gains: string[] = [];
+  for (let i = 0; i < 5; i++) {
+    const out = step(world, state, actionByLabel(world, state, "find another small thing")!);
+    state = out.state;
+    gains.push(out.events.join(" "));
+  }
+  assert.equal(state.score, 20, "five finds at four points each, none of them swallowed by a ceiling");
+  assert.ok(
+    gains.every((g) => g.includes("(+4)")),
+    `every one of them said so: ${gains.join(" | ")}`,
+  );
+  assert.match(renderStatus(world, state), /Score: 20 \(deeds and discoveries; 10 is what one whole route pays/);
+});
+
+test("score still cannot go below nothing", () => {
+  const world = mini({});
+  world.rooms["a"]!.actions = [{ id: "lose", label: "lose it", fx: [["score", -5]] }, { id: "win", label: "win", fx: [["end", "win", "done", "Done."]] }];
+  let { state } = newState(world, 1);
+  state = step(world, state, actionByLabel(world, state, "lose it")!).state;
+  assert.equal(state.score, 0);
+});
+
+/**
+ * Where the player stands with each faction.
+ *
+ * `world.factions` existed only to name a faction inside an event — "(the Gray
+ * Church +2)" — and was never shown as a total anywhere. Six factions, two
+ * ranks each, payoffs for those ranks wired into all sixteen of the Reach's
+ * regions, and no way for a player to learn they were at +13 with the Church,
+ * that a rank existed, or how near one they were. Wave four's three players
+ * reached keepers +25, church +13, watch +6 and free +5 between them — every
+ * one of those past a threshold — and collected two ranks in total.
+ */
+test("status says where you stand with each faction, and the rank you hold", () => {
+  const world = mini({});
+  world.factions = { rep_church: "the Gray Church", rep_watch: "the Watch", rep_iron: "the Ironbound" };
+  let { state } = newState(world, 1);
+  assert.doesNotMatch(renderStatus(world, state), /Standing:/, "a faction that has not entered the story is not listed");
+  state.vars["rep_church"] = 9;
+  state.vars["rep_watch"] = -2;
+  state.vars["rep_iron"] = 0;
+  const plain = renderStatus(world, state);
+  assert.match(plain, /Standing: the Gray Church \+9, the Watch -2$/m, plain);
+  assert.doesNotMatch(plain, /Ironbound/, "standing at nothing means the faction has not entered the story");
+  // the rank comes off the flags content already sets by convention
+  state.flags["church_trusted"] = true;
+  assert.match(renderStatus(world, state), /the Gray Church \+9 trusted/);
+  state.flags["church_sworn"] = true;
+  assert.match(renderStatus(world, state), /the Gray Church \+9 sworn/, "sworn outranks trusted, and only one is shown");
+});
+
+/**
+ * Wave six's one P1: a player read "(Tamsin +1, Brother Osk -1, Vell -2)" at the
+ * Oath-Ground, swore the oath, and lost Vell outright — "did not warn that Vell
+ * would actually leave the party as a mechanical consequence, not just lose
+ * regard". Regard is a number that goes back up. A companion who walks out is
+ * not, and the preview said the same kind of thing about both.
+ */
+test("an option that makes a companion walk out says so, and a dismissal does not", () => {
+  const world = mini({
+    npcs: {
+      vell: {
+        name: "Vell",
+        room: "a",
+        companion: {},
+        dialogue: true,
+        topics: [{ id: "dismiss", label: "wait here (leaves the party for now)", say: "Aye.", fx: [["party", "vell", "leave"]] }],
+      },
+      osk: { name: "Brother Osk", room: "a", companion: {} },
+    },
+    rooms: {
+      a: {
+        name: "A",
+        desc: "Room A.",
+        actions: [
+          // the shape the Oath-Ground uses: the departure sits behind `if inParty`
+          {
+            id: "swear",
+            label: "swear it",
+            fx: [["addvar", "appr_vell", -2], ["if", [["inParty", "vell"]], [["party", "vell", "leave"]], []]],
+          },
+          // and the other road there, where passing the check is what costs you
+          { id: "puzzle", label: "puzzle it out", fx: [["check", "wits", 10, [["party", "vell", "leave"]], [["say", "no"]]]] },
+          { id: "both", label: "burn the lot", fx: [["party", "vell", "leave"], ["party", "osk", "leave"]] },
+          { id: "quiet", label: "say nothing", fx: [["say", "Nothing happens."]] },
+        ],
+      },
+    },
+  });
+  let { state } = newState(world, 1);
+  state = { ...state, party: ["vell", "osk"] };
+  const hint = (id: string) => oddsHint(world, state, { kind: "custom", room: "a", id } as Action);
+
+  assert.match(hint("swear"), /Vell -2; Vell walks out\)$/, hint("swear"));
+  assert.match(hint("puzzle"), /Vell walks out, even if you succeed\)$/, hint("puzzle"));
+  assert.match(hint("both"), /Vell and Brother Osk walk out\)$/, hint("both"));
+  assert.equal(hint("quiet"), "", "an option that costs nobody says nothing");
+
+  // a dismissal is you sending them away, and the label already says it
+  const dismiss = oddsHint(world, state, { kind: "talk", npc: "vell", topic: "dismiss" } as Action);
+  assert.equal(dismiss, "", `a dismissal is not a departure: ${dismiss}`);
+
+  // and nothing is promised about a companion who is not with you
+  const alone = { ...state, party: ["osk"] };
+  assert.doesNotMatch(oddsHint(world, alone, { kind: "custom", room: "a", id: "swear" } as Action), /walks out/);
+});
+
+test("the company says once that nobody caps it", () => {
+  const world = mini({
+    npcs: {
+      lys: { name: "Lys", room: "a", companion: {} },
+      osk: { name: "Osk", room: "a", companion: {} },
+      vell: { name: "Vell", room: "a", companion: {} },
+    },
+    rooms: {
+      a: {
+        name: "A",
+        desc: "A.",
+        actions: [
+          { id: "j1", label: "take Lys", fx: [["party", "lys", "join"]] },
+          { id: "j2", label: "take Osk", fx: [["party", "osk", "join"]] },
+          { id: "j3", label: "take Vell", fx: [["party", "vell", "join"]] },
+        ],
+      },
+    },
+  });
+  let { state } = newState(world, 1);
+  let out = step(world, state, actionByLabel(world, state, "take Lys")!);
+  assert.ok(!out.events.some((e) => e.includes("limits your company")), "one companion is not yet a company");
+  out = step(world, out.state, actionByLabel(world, out.state, "take Osk")!);
+  assert.ok(out.events.some((e) => e.includes("Nobody limits your company")), out.events.join(" | "));
+  out = step(world, out.state, actionByLabel(world, out.state, "take Vell")!);
+  assert.ok(!out.events.some((e) => e.includes("limits your company")), "said once, not with every recruit");
+});
+
+/**
+ * The warning the engine prints the first time regard moves says a companion
+ * who sinks far enough below zero walks out. That promise is kept by content —
+ * each companion's own `leaves` list — so the promise and the content have to
+ * exist together.
+ *
+ * Wave eight, seed 9902, read the old wording ("at -2 they are near leaving,
+ * and the next thing they mind is the last"), sat at -2 through a whole fight,
+ * and reported the abandonment that never came. The number was wrong: the
+ * plain floor is -5, with a quarrel-specific -2 for whoever you sided against.
+ * The line quotes no number now, and this holds the other half — that every
+ * companion really can be lost by regard alone, with no other condition
+ * attached.
+ */
+test("every companion can be lost by regard alone", () => {
+  const world = loadWorld("world/reach.json");
+  const naked: string[] = [];
+  for (const [id, npc] of Object.entries(world.npcs)) {
+    if (!npc.companion) continue;
+    const floors = (npc.companion.leaves ?? []).filter(
+      (l) => l.if.length === 1 && l.if[0]![0] === "var" && l.if[0]![1] === `appr_${id}` && String(l.if[0]![2]).startsWith("<"),
+    );
+    if (!floors.length) naked.push(id);
+  }
+  assert.deepEqual(
+    naked,
+    [],
+    `these companions have no approval floor of their own, so the engine's regard warning promises something nothing keeps:\n  ${naked.join("\n  ")}`,
+  );
 });

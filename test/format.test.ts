@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { matchesMenuLabel, renderStatus } from "../src/format.ts";
+import { actionByLabel, condOk, newState, step } from "../src/engine.ts";
+import { matchesMenuLabel, render, renderStatus } from "../src/format.ts";
+import { loadWorld } from "../src/validate.ts";
 import type { State, World } from "../src/types.ts";
 
 test("matchesMenuLabel: a rendered menu line is its canonical label, alone or with one trailing display hint", () => {
@@ -105,7 +107,7 @@ test("renderStatus: omits the visited line when nothing has been visited yet", (
   assert.equal(renderStatus(world, state), "Find the crown.");
 });
 
-test("renderStatus: lists held perks with their effects, so a player can recall what each does", () => {
+test("renderStatus: a world with no character system lists perks with their effects, since nothing else sums them", () => {
   const world = {
     objectives: "Find the crown.",
     perks: {
@@ -142,10 +144,16 @@ test("renderStatus: totals check and combat modifiers for worlds with a characte
     inv: ["sword"],
     perks: ["keen_edge", "old_lore"],
     attrs: { might: 2, wits: 1 },
+    conds: {},
   } as unknown as State;
   assert.equal(
     renderStatus(world, state),
-    "Find the crown.\ncarrying: sword\nPerks: Keen Edge (+1 to hit), Old Lore (+1 wits)\n" +
+    // names alone here: this world has a character system, so the two lines
+    // below already carry every perk's effect — Old Lore inside the wits
+    // total by name, Keen Edge inside hit. The classless fixture above still
+    // gets the descriptions, because there they are the only place the effect
+    // is written down.
+    "Find the crown.\ncarrying: sword\nPerks: Keen Edge, Old Lore\n" +
       "Checks: might+2 grace+0 wits+2 (+1 base, +1 Old Lore) will+0\nCombat: hit+4 dmg+3 (sword) armor+0",
   );
 });
@@ -154,6 +162,30 @@ test("renderStatus: omits check/combat totals for a classless world", () => {
   const world = { objectives: "Find the crown." } as World;
   const state = stateWithVars({});
   assert.equal(renderStatus(world, state), "Find the crown.");
+});
+
+// Playtest finding: an ability spends a pool of 2 (`res_warden`), and nothing
+// anywhere said how much was left in it — not the menu, not status. A Warden
+// could press an ability twice and learn the pool was empty from its absence
+// on the third turn. `status` now carries "Ready to spend: <class> n/max", so
+// there is somewhere to check before spending the last point — and only the
+// player's own class's pool, since a Scholar has no use for the Warden's.
+const poolWorld = {
+  classes: { warden: { name: "Warden", desc: "strong" }, scholar: { name: "Scholar", desc: "wise" } },
+  resources: { res_warden: 2 },
+  abilities: {
+    brace: { label: "brace for it", if: [["class", "warden"], ["var", "res_warden", ">=", 1]], fx: [["addvar", "res_warden", -1]] },
+  },
+} as unknown as World;
+
+test("renderStatus: names an ability pool the player's own class can spend from", () => {
+  const state = { vars: { res_warden: 1 }, flags: {}, inv: [], perks: [], attrs: {}, conds: {}, classId: "warden" } as unknown as State;
+  assert.match(renderStatus(poolWorld, state), /Ready to spend: Warden 1\/2 \(a rest fills it\)/);
+});
+
+test("renderStatus: says nothing about a pool the player's class cannot spend from", () => {
+  const state = { vars: { res_warden: 1 }, flags: {}, inv: [], perks: [], attrs: {}, conds: {}, classId: "scholar" } as unknown as State;
+  assert.doesNotMatch(renderStatus(poolWorld, state), /Ready to spend/);
 });
 
 test("renderStatus: reports a statusPaths fallback when no state's conditions match", () => {
@@ -191,4 +223,111 @@ test("renderStatus: omits a statusPaths line when nothing matches and there is n
     statusPaths: [{ label: "Barrow", states: [{ if: [["flag", "promised_seal"]], text: "promised" }] }],
   } as unknown as World;
   assert.equal(renderStatus(world, stateWithVars({})), "No progress to report.");
+});
+
+/**
+ * A turn's numbers fold onto one line, and add up.
+ *
+ * One action can earn score twice and xp twice, and each pushes its own event.
+ * Once every event got its own line — which is what made four companions
+ * answering a hold's arrival legible — that read as "(+5)", "(+3xp)",
+ * "(+5xp)", "(+5)" straight down the screen: four lines to say two numbers.
+ */
+const noticeWorld = (): World =>
+  ({
+    id: "n",
+    title: "N",
+    intro: "x",
+    start: "a",
+    hp: 10,
+    maxScore: 5,
+    rooms: { a: { name: "A", desc: "A room.", actions: [{ id: "win", label: "win", fx: [["score", 5], ["end", "win", "done", "Done."]] }] } },
+    items: {},
+    npcs: {},
+    walkthrough: ["win"],
+  }) as unknown as World;
+
+test("a run of bare notices reads as one line, with score and xp summed", () => {
+  const world = noticeWorld();
+  const line = (events: string[]) => render(world, newState(world, 1).state, events).text.split("\n")[1]!;
+  assert.equal(line(["(+5)", "(+3xp)", "(+5xp)", "(+5)"]), "[(+10, +8xp)]");
+  assert.equal(line(["(+5)"]), "[(+5)]", "one notice reads exactly as it always did");
+  assert.equal(
+    line(["(+5)", "(+4xp)", "(the Gray Church -2)", "(the Crown +1)"]),
+    "[(+5, +4xp, the Gray Church -2, the Crown +1)]",
+    "anything that names its subject keeps its own words, in the order it was pushed",
+  );
+});
+
+test("prose between two notices keeps them apart — a number belongs to what earned it", () => {
+  const world = noticeWorld();
+  const text = render(world, newState(world, 1).state, ["(+5)", "The stair lets out behind the guards.", "(+3xp)", "(+2)"]).text;
+  const block = text.split("\n").slice(1, 4);
+  // and the sums read in a fixed order — score, then xp, then whatever names
+  // its own subject — however the effects happened to push them
+  assert.deepEqual(block, ["[(+5)", "The stair lets out behind the guards.", "(+2, +3xp)]"], text);
+});
+
+/**
+ * The status screen is the largest surface in the game and the only one no
+ * ceiling was watching.
+ *
+ * The act response is held to 450 characters on average and 1,100 at its
+ * worst, measured on every proven road. `status` is free — no turn, and blind
+ * players read it constantly — so nothing measured it, and it had quietly
+ * grown to **3,924 characters on average and 6,705 at its worst** along the
+ * proven walkthrough, nine times the response bar in both dimensions. Most of
+ * that is information a player asked for (their threads, their standing, the
+ * epilogue at the end), so this is a ratchet on growth rather than a small
+ * number: it may only turn down, and it exists so the next thing added to
+ * `status` is added on purpose.
+ *
+ * What came off first was the way to a thread two regions away: a nine-leg
+ * walk is not the answer to "where do I go next", and the region's name is
+ * what a player routes by at that distance. 3,924 -> 3,713 average, 6,705 ->
+ * 5,743 worst, and it skips a breadth-first walk per distant thread on every
+ * call.
+ */
+test("the free status screen stays inside its own ratchet along the walkthrough", () => {
+  const AVG_MAX = 3650;
+  const WORST_MAX = 5650;
+  const world = loadWorld("world/reach.json");
+  let { state } = newState(world, 1);
+  let sum = 0, n = 0, worst = 0, worstRoom = "";
+  const note = () => {
+    const t = renderStatus(world, state);
+    sum += t.length;
+    n++;
+    if (t.length > worst) {
+      worst = t.length;
+      worstRoom = state.room;
+    }
+  };
+  note();
+  for (const w of world.walkthrough) {
+    const label = typeof w === "string" ? w : w.repeat;
+    let k = 0;
+    do {
+      const a = actionByLabel(world, state, label);
+      if (!a) break;
+      state = step(world, state, a).state as State;
+      note();
+    } while (typeof w !== "string" && !condOk(world, state, w.until) && ++k < w.max && !state.ended);
+    if (state.ended) break;
+  }
+  const avg = sum / n;
+  assert.ok(avg <= AVG_MAX, `status averages ${avg.toFixed(0)} > ${AVG_MAX} over ${n} turns — the ratchet only turns down`);
+  assert.ok(worst <= WORST_MAX, `status peaks at ${worst} in ${worstRoom} > ${WORST_MAX} — the ratchet only turns down`);
+});
+
+test("a journal line names the region for a thread outside this one, and the walk for one inside it", () => {
+  const world = loadWorld("world/reach.json");
+  const { state } = newState(world, 1);
+  // the Vale's own barrow field, from the Vale's gate: a walk
+  const inside = renderStatus(world, { ...state, room: "va_gate" } as State);
+  assert.match(inside, /the way there: |you are standing there/, inside.slice(0, 400));
+  // and Act I from inside Marrowgate, two regions on: the region, not nine legs
+  const away = renderStatus(world, { ...state, room: "mg_south_gate" } as State);
+  assert.match(away, /\(in the Vale of Ash\)/, away.slice(0, 400));
+  assert.doesNotMatch(away, /the way there: [^)]*, then [^)]*, then [^)]*, then/, "no nine-leg walk to another region");
 });

@@ -13,7 +13,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
-import { inClassPhase, inPerkPickPhase, inTalkMode, newState, receipt, step } from "./engine.ts";
+import { actionByNumber, inClassPhase, inPerkPickPhase, inTalkMode, newState, receipt, step } from "./engine.ts";
 import { render, renderIntro, renderStatus } from "./format.ts";
 import { loadWorld, validateWorld } from "./validate.ts";
 import type { Action, State, Trace, World } from "./types.ts";
@@ -45,6 +45,7 @@ type Session = {
   world: World; // the world as it stood when this game began
   state: State;
   actions: Action[]; // menu offered for the CURRENT state
+  numbers: number[]; // the number each of those shows, parallel to actions (see engine's menuNumbers)
   trace: Trace;
   seen: Set<string>; // rooms fully rendered (render memo, not game state)
 };
@@ -70,6 +71,7 @@ function view(sess: Session, events: string[], full: boolean): string {
     sess.seen.add(sess.state.room);
   const r = render(world, sess.state, events, { full: full || first });
   sess.actions = r.actions;
+  sess.numbers = r.numbers;
   return r.text;
 }
 
@@ -99,12 +101,14 @@ server.registerTool(
       world,
       state: out.state,
       actions: [],
+      numbers: [],
       trace: { world: world.id, seed: s, actions: [] },
       seen: new Set(),
     };
     sessions.set(id, sess);
     const intro = renderIntro(world, sess.state, out.events);
     sess.actions = intro.actions;
+    sess.numbers = intro.numbers;
     if (!inClassPhase(world, sess.state)) sess.seen.add(sess.state.room);
     flush(sess);
     return text(`s=${id}\n${intro.text}`);
@@ -128,7 +132,20 @@ server.registerTool(
     const world = sess.world;
     if (sess.state.ended)
       return text(`Game over.\n${render(world, sess.state, []).text}`);
-    const action = sess.actions[a - 1];
+    // The numbers a menu shows are places in the room's whole option list, not
+    // positions in this page's array (see engine's menuNumbers), so a pick is
+    // looked up by the number the player actually read.
+    //
+    // And a number the *current page* does not show is still that number: two
+    // wave-six players hit "No action N" by typing a number they had read a
+    // screen earlier, on the page it was written on. The engine has always
+    // agreed — `step` judges against `allActions`, every page of it, because
+    // turning a page changes what you can see and never what you could do — so
+    // the second lookup here is not a widening, it is this layer catching up.
+    // (In a conversation or a travel list, which page by their own older rules
+    // and number from 1, `allActions` holds only the page showing, so a number
+    // off that page falls through to undefined and still says "No action".)
+    const action = sess.actions[sess.numbers.indexOf(a)] ?? actionByNumber(world, sess.state, a);
     if (!action)
       return text(`No action ${a}. Menu:\n${view(sess, [], false)}`);
     const before = sess.state.room;

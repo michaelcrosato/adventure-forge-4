@@ -22,6 +22,18 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "fd_causeway_marker",
+          "label": "read the boundary marker",
+          "free": true,
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "A stone marks where the Vale's dry road ends. Someone has scratched a line beneath the old carving, newer: THE CHURCH'S WATER STARTS HERE."]
+          ]
+        }
       ]
     },
     "fd_north_dike": {
@@ -46,6 +58,29 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "fd_dike_shore",
+          "label": "shore the dike — fail costs 1hp (might)",
+          "once": true,
+          "fx": [
+            [
+              "check",
+              "might",
+              9,
+              [
+                ["score", 2],
+                ["xp", 2],
+                ["say", "You wedge stone and turf back into the slump before the fen can widen it. It'll hold another season."]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The stone shifts wrong and takes your footing with it. You climb out muddy and short a season's patience."]
+              ]
+            ]
+          ]
+        }
       ]
     },
     "fd_coast_road": {
@@ -470,6 +505,35 @@
           "desc": "The netshed stands empty, the iron sun taken down. Ash from the brazier is the only sign they were ever here.",
           "brief": "Empty netshed, cold ash."
         }
+      ],
+      "actions": [
+        {
+          "id": "fd_free_skiff",
+          "label": "drag the skiff free — fail costs 1hp",
+          "if": [
+            ["flag", "said_fd_ironbound_warder_greet"],
+            ["!flag", "fd_ironbound_skiff_freed"],
+            ["!flag", "fd_ironbound_gone"]
+          ],
+          "fx": [
+            [
+              "check",
+              "might",
+              14,
+              [
+                ["set", "fd_ironbound_skiff_freed"],
+                ["score", 4],
+                ["xp", 3],
+                ["addvar", "rep_iron", 1],
+                ["say", "Their skiff sank a rung into the mud sometime before you came, and neither zealot's said a word about it — pride, probably. You get a shoulder under the hull and walk it out yourself, mud to the knee."]
+              ],
+              [
+                ["hp", -1],
+                ["say", "The mud holds the skiff harder than it holds your footing, and you go down in it before the hull comes free. It can be tried again."]
+              ]
+            ]
+          ]
+        }
       ]
     },
     "fd_way_shrine": {
@@ -722,6 +786,12 @@
     }
   },
   "items": {
+    "fd_tide_glass": {
+      "name": "a knot of sea-glass",
+      "loc": "fd_coast_road",
+      "takeable": true,
+      "hint": "smoothed by years in the tide; a small thing to keep"
+    },
     "fd_eel_spear": { "name": "eel-spear", "loc": "nowhere", "hit": 1, "dmg": 4 },
     "fd_oilskin_cloak": { "name": "oilskin cloak", "loc": "nowhere", "armor": 1 },
     "fd_smoked_eel": {
@@ -763,6 +833,16 @@
       "takeable": true,
       "owner": "fd_prior",
       "hint": "Church wax, meant for the drowned nave's altar"
+    },
+    "fd_priors_rite": {
+      "name": "the Prior's rite",
+      "loc": "nowhere",
+      "hint": "Church-sealed; said to ease even a barrow's grief, once, wherever it's carried"
+    },
+    "fd_bell_of_reach": {
+      "name": "the Bell of the Reach",
+      "loc": "nowhere",
+      "hint": "the mark of an office, not a trophy — every gray house between here and Coldpass should know it"
     },
     "fd_trader_scale": {
       "name": "a set of brass scale-weights",
@@ -1029,12 +1109,47 @@
           "once": true,
           "say": "You quote the rite he should have rung the bell over, word for word, in the tongue it was cut in. He flinches. \"You read it as I was taught it,\" he says. \"Not as I've let it become.\"",
           "fx": [["set", "or_scholar_fd_halm"], ["xp", 2], ["addvar", "rep_church", 1]]
+        },
+        {
+          "id": "fd_prior_trusted_offer",
+          "label": "ask to be trusted by the Church",
+          "if": [["var", "rep_church", ">=", 5], ["!flag", "church_trusted"]],
+          "once": true,
+          "say": "Halm weighs you a long moment, then presses something sealed into your hand. 'The Priory's rite,' he says. 'You've done more for grieving houses than most who wear the gray. Carry it. You're one of ours now.'",
+          "fx": [["set", "church_trusted"], ["move", "fd_priors_rite", "inv"], ["score", 5], ["xp", 3]]
+        },
+        {
+          "id": "fd_prior_trusted_refuse",
+          "label": "ask to be trusted by the Church",
+          "if": [["var", "rep_church", "<", 5], ["!flag", "church_trusted"]],
+          "say": "'Trust isn't a rite I say over one good turn.' Halm's hands go still, for once. 'Do more, across more water than mine, and ask me again.'"
+        },
+        {
+          "id": "fd_prior_sworn_offer",
+          "label": "ask to be sworn to the Church",
+          "if": [["var", "rep_church", ">=", 9], ["!flag", "church_sworn"]],
+          "once": true,
+          "say": "Halm doesn't smile. 'Sworn isn't a reward, whatever titles mean to the Ironbound. It means the next grief needing air is yours to give, wherever found, ready or not.' He waits. 'If you still want it, you're sworn.'",
+          "fx": [
+            ["set", "church_sworn"],
+            ["move", "fd_bell_of_reach", "inv"],
+            ["addvar", "rep_iron", -3],
+            ["score", 8],
+            ["xp", 4]
+          ]
+        },
+        {
+          "id": "fd_prior_sworn_refuse",
+          "label": "ask to be sworn to the Church",
+          "if": [["var", "rep_church", "<", 9], ["!flag", "church_sworn"], ["flag", "church_trusted"]],
+          "say": "'Sworn is a heavier water than trusted.' Halm shakes his head, not unkindly. 'I won't hand you an office you'll only ever carry through one hold. Earn it wider. Then ask.'"
         }
       ]
     },
     "fd_sexton": {
       "name": "old sexton",
       "room": "fd_priory_cloister",
+      "dialogue": true,
       "desc": "Bent low over the one clear tablet, scraping moss that keeps coming back.",
       "topics": [
         {
@@ -1087,12 +1202,19 @@
             ["addvar", "rep_church", -1],
             ["addvar", "appr_osk", -1]
           ]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his scraping",
+          "say": "Someone has to be here when you're not. Go on, then.",
+          "end": true
         }
       ]
     },
     "fd_netkeep": {
       "name": "netkeep",
       "room": "fd_net_hall",
+      "dialogue": true,
       "desc": "Mending net by firelight, fingers quick despite the poor light.",
       "topics": [
         {
@@ -1161,12 +1283,19 @@
           "once": true,
           "say": "He doesn't answer right away. \"Funny,\" he says at last, counting his tools without quite looking at them. \"Most folk don't notice what I'm not saying.\"",
           "fx": [["set", "or_scout_fd_netkeep_wary"], ["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave him to his nets",
+          "say": "Mind the third plank past the door. It's softer than it looks.",
+          "end": true
         }
       ]
     },
     "fd_eel_trader": {
       "name": "eel-trader",
       "room": "fd_eel_market",
+      "dialogue": true,
       "desc": "Two fingers gone at the second knuckle, and quick enough with the rest not to miss them.",
       "topics": [
         {
@@ -1302,6 +1431,12 @@
           "once": true,
           "say": "\"Because you'd have talked me down to less if I'd let you keep going,\" she says. \"I know when to stop losing.\"",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave her to her eels",
+          "say": "Watch your footing on the ramp. Everyone loses a boot there eventually.",
+          "end": true
         }
       ]
     },
@@ -1477,6 +1612,14 @@
           ]
         },
         {
+          "id": "fd_skiff_thanks",
+          "label": "the skiff, since",
+          "if": [["flag", "fd_ironbound_skiff_freed"]],
+          "once": true,
+          "say": "\"Didn't ask for that,\" Iss says, \"but I'll not pretend it wasn't needed. Iron's iron, however it's carried.\"",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "bye",
           "label": "leave the mission to its brazier",
           "say": "Mind the water. It remembers who prayed and who didn't.",
@@ -1501,6 +1644,7 @@
     "fd_perrins_mother": {
       "name": "Perrin's mother",
       "room": "fd_settlement",
+      "dialogue": true,
       "desc": "Watches the causeway more than the water, a boy's bedding still folded on the shelf.",
       "topics": [
         {
@@ -1618,6 +1762,12 @@
             ["!flag", "rb_fd_wm_reported"]
           ],
           "say": "She only nods, the way she's nodded every evening for two winters. \"Bed's still made,\" she says."
+        },
+        {
+          "id": "bye",
+          "label": "leave her to her vigil",
+          "say": "Mind the water on your way out. She's watched enough people go.",
+          "end": true
         }
       ]
     }
@@ -1736,6 +1886,25 @@
       "if": [["flag", "or_scout_fd_netkeep_wary"]],
       "text": "The net-hall's keeper still counts his tools twice when a certain quiet sort passes through, and won't say why.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "church_sworn"]],
+      "text": "The Bell of the Reach rings in whatever hand carries it now. Halm never explains what that costs the one sworn to it, and neither do you.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "church_trusted"], ["!flag", "church_sworn"]],
+      "text": "The Priory's rite still rides in a stranger's coat, sealed and unspent. Halm says that's exactly how it should sit until it's needed.",
+      "weight": 1
+    }
+  ],
+  "statusPaths": [
+    {
+      "label": "your standing with the Gray Church",
+      "states": [
+        { "if": [["flag", "church_sworn"]], "text": "sworn to the Church" },
+        { "if": [["flag", "church_trusted"]], "text": "trusted by the Priory" }
+      ]
     }
   ],
   "quests": {
@@ -1746,12 +1915,18 @@
       "stages": [
         {
           "if": [["any", [["flag", "rb_fd_wm_home"], ["flag", "rb_fd_wm_hidden"], ["flag", "rb_fd_wm_reported"]]]],
-          "text": "Perrin's fate is settled. Tell his mother in Reedholm, as you promised her."
+          "text": "Perrin's fate is settled. Tell his mother in Reedholm, as you promised her.",
+          "at": "fd_settlement"
         },
-        { "if": [["flag", "wm_entered"]], "text": "You're in Wardmoor. Ask after Perrin at Highward's barracks." },
+        {
+          "if": [["flag", "wm_entered"]],
+          "text": "You're in Wardmoor. Ask after Perrin at Highward's barracks.",
+          "at": "wm_barracks"
+        },
         {
           "if": [],
-          "text": "A Reedholm mother wants word of her son, pressed into the Watch at Highward, in Wardmoor."
+          "text": "Ask after Perrin first, at Highward's barracks in Wardmoor. His mother in Reedholm wants the word after.",
+          "at": "wm_barracks"
         }
       ]
     },
@@ -1775,15 +1950,18 @@
       "stages": [
         {
           "if": [["flag", "fd_hollow_rested"]],
-          "text": "The old sexton has a name the rite missed. He's at the Priory cloister."
+          "text": "The old sexton has a name the rite missed. He's at the Priory cloister.",
+          "at": "fd_priory_cloister"
         },
         {
           "if": [["flag", "fd_hollow_bargained"]],
-          "text": "Prior Halm has word of the first tithe. Find him at the Priory."
+          "text": "Prior Halm has word of the first tithe. Find him at the Priory.",
+          "at": "fd_priory"
         },
         {
           "if": [["flag", "fd_hollow_burned"]],
-          "text": "The eel-trader has an idea about the burned water. Find her at the market."
+          "text": "The eel-trader has an idea about the burned water. Find her at the market.",
+          "at": "fd_eel_market"
         }
       ]
     }

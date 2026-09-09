@@ -13,30 +13,6 @@
         ["say", "This is the Hunger Barn: a Reeve's order locked its doors against the crofters who grew what it held, one winter four hundred years gone, and the barn-reeve who kept them shut. Neither grief has been spoken for."],
         [
           "if",
-          [["inParty", "vell"]],
-          [
-            ["say", "Vell: \"The order came from the crown itself, not the barn-reeve's own cruelty. I would rather it were only him. It would be so much simpler to hate one dead man.\""]
-          ],
-          []
-        ],
-        [
-          "if",
-          [["inParty", "osk"]],
-          [
-            ["say", "Brother Osk: \"'Worthy' was a word my own Church chose to write in a ledger, and chose whom to spend it on. I have never once heard a priest apologize for a word.\""]
-          ],
-          []
-        ],
-        [
-          "if",
-          [["inParty", "tamsin"]],
-          [
-            ["say", "Tamsin: \"Somebody always decides who eats first when there isn't enough. Somebody just usually has the decency not to lock the door on the rest.\""]
-          ],
-          []
-        ],
-        [
-          "if",
           [["inParty", "lys"]],
           [
             ["say", "Lys: \"Scored right through the wood, here — fingernails, maybe, or a blade, trying anything. I don't need the rest of the story after seeing that.\""]
@@ -97,8 +73,8 @@
       "actions": [
         {
           "id": "hl_rest_hollow",
-          "label": "speak the names and the order together",
-          "if": [["var", "hl_ticks_known", ">=", 3], ["flag", "hl_order_known"], ["!flag", "hl_hollow_done"]],
+          "label": "pay the crofters' due, and name them",
+          "if": [["flag", "hl_due_paid"], ["flag", "hl_order_known"], ["!flag", "hl_hollow_done"]],
           "fx": [
             ["set", "hl_hollow_rested"],
             ["set", "hl_hollow_done"],
@@ -109,12 +85,49 @@
             ["addvar", "appr_lys", 1],
             ["score", 25],
             ["xp", 8],
-            ["say", "You speak every name the tally-sticks gave up, then the order that shut the doors on them, in the same breath — the crofters' due and the barn-reeve's guilt, named together at last."],
+            ["say", "You lay the debt down on the threshing floor and speak the order over it, name by name — the crofters' due paid and their due named in the same breath."],
+            [
+              "if",
+              [["flag", "hl_due_source_hauled"]],
+              [
+                ["say", "Grain hauled openly off the Crown's own steps, short now by exactly what four sacks in ten once cost them."]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_due_source_almonry"]],
+              [
+                ["say", "Grain that sat forgotten behind the almonry's older page, the same page that once marked them unworthy."]
+              ],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_due_source_skim"]],
+              [["say", "Grain turned back at the hedge-gap before it ever left, the count made honest for once."]],
+              []
+            ],
+            [
+              "if",
+              [["flag", "hl_due_source_persuaded"]],
+              [["say", "Coin enough to answer for it, and a bailiff's own hand behind the paying."]],
+              []
+            ],
+            [
+              "if",
+              [["has", "hl_crofter_token"]],
+              [
+                ["say", "You leave the carved token from the grain pit atop the rest — small, but it was theirs, and you have no better use for it than giving it back."],
+                ["move", "hl_crofter_token", "nowhere"]
+              ],
+              []
+            ],
             [
               "if",
               [["inParty", "vell"]],
               [
-                ["say", "Vell: \"My own line's order, spoken back to the ones it starved. I did not know how much that would cost me to hear. I am glad I heard it anyway.\""]
+                ["say", "Vell: \"My own line's order, spoken back to the ones it starved, and something given besides. I did not know how much that would cost me to hear. I am glad I heard it anyway.\""]
               ],
               []
             ],
@@ -122,7 +135,7 @@
               "if",
               [["inParty", "lys"]],
               [
-                ["say", "Lys: \"Names, not numbers. That's the whole of what they were owed, and it took four hundred years to pay it. Better late.\""]
+                ["say", "Lys: \"Grain instead of grief. That's the whole of what they were owed, and it took four hundred years to pay it. Better late.\""]
               ],
               []
             ]
@@ -131,14 +144,14 @@
         {
           "id": "hl_burn_hollow",
           "label": "burn it with cinder-oil (1hp on fail)",
-          "if": [["has", "hl_cinder_oil"], ["!flag", "hl_hollow_done"]],
+          "if": [["any", [["has", "hl_cinder_oil"], ["flag", "iron_trusted"]]], ["!flag", "hl_hollow_done"]],
           "fx": [
             [
               "check",
               "might",
               9,
               [
-                ["move", "hl_cinder_oil", "nowhere"],
+                ["if", [["has", "hl_cinder_oil"]], [["move", "hl_cinder_oil", "nowhere"]], []],
                 ["set", "hl_hollow_burned"],
                 ["addvar", "appr_osk", -1],
                 ["set", "hl_hollow_done"],
@@ -147,7 +160,7 @@
                 ["addvar", "rep_church", -2],
                 ["addvar", "appr_tamsin", 1],
                 ["addvar", "appr_vell", -1],
-                ["score", 15],
+                ["score", 25],
                 ["xp", 8],
                 ["say", "The oil takes fast along seasoned timber, and the Hunger Barn burns a night and a day. By morning only cleared black ground is left, and smoke that finds the Vale's own west road on the wind."],
                 [
@@ -174,62 +187,10 @@
           "fx": [
             [
               "if",
-              [["var", "hl_ticks_known", ">=", 3]],
+              [["flag", "hl_due_paid"]],
+              [["say", "The debt itself is paid — hauled, uncovered, or bought back, whichever way you chose."]],
               [
-                ["say", "All three tally-sticks are yours: the tally-keeper's, the widow's croft, and the almonry's older ledger."]
-              ],
-              [
-                [
-                  "if",
-                  [["flag", "hl_tick_keeper"], ["flag", "hl_tick_widow"]],
-                  [
-                    ["say", "Brida's stick and the widow's are yours. The last is the almonry's older ledger, or Saint Garner's chapel, out in the fields."]
-                  ],
-                  [
-                    [
-                      "if",
-                      [["flag", "hl_tick_keeper"], ["flag", "hl_tick_almonry"]],
-                      [
-                        ["say", "Brida's stick and the almonry's tally are yours. The last waits at the widow's croft, out past the boundary hedge."]
-                      ],
-                      [
-                        [
-                          "if",
-                          [["flag", "hl_tick_widow"], ["flag", "hl_tick_almonry"]],
-                          [
-                            ["say", "The widow's stick and the almonry's tally are yours. The last is Brida's, at the tally-keeper's cottage."]
-                          ],
-                          [
-                            [
-                              "if",
-                              [["flag", "hl_tick_keeper"]],
-                              [["say", "Brida's stick is yours. Two remain: the widow's croft, and the almonry's ledger (or the chapel)."]],
-                              [
-                                [
-                                  "if",
-                                  [["flag", "hl_tick_widow"]],
-                                  [
-                                    ["say", "The widow's stick is yours. Two remain: Brida's cottage, and the almonry's ledger (or the chapel)."]
-                                  ],
-                                  [
-                                    [
-                                      "if",
-                                      [["flag", "hl_tick_almonry"]],
-                                      [["say", "The almonry's tally is yours. Two remain: Brida's cottage, and the widow's croft."]],
-                                      [
-                                        ["say", "The rest wants three tally-sticks: the tally-keeper Brida's, the widow's croft, and the almonry's older ledger (or the chapel)."]
-                                      ]
-                                    ]
-                                  ]
-                                ]
-                              ]
-                            ]
-                          ]
-                        ]
-                      ]
-                    ]
-                  ]
-                ]
+                ["say", "The debt isn't paid yet: haul it from the granary (might), find where the surplus is kept (grace/wits — the almonry's ledger, or the back lane's own skim), or buy Bailiff Vance's case for it (will)."]
               ]
             ],
             [
@@ -242,14 +203,14 @@
             ],
             [
               "if",
-              [["var", "hl_ticks_known", ">=", 3], ["flag", "hl_order_known"]],
-              [["say", "Both ready together: speak the names and the order here, to rest the barn whole."]],
+              [["flag", "hl_due_paid"], ["flag", "hl_order_known"]],
+              [["say", "Both ready together: give back the due and speak the order here, to rest the barn whole."]],
               []
             ],
             ["say", "The bargain stands ready either way, back in Tithing: persuade the bailiff (will), force his strongbox (might), alter the almoner's ledger (wits), or simply pay the tithe yourself, at the granary steps."],
             [
               "if",
-              [["has", "hl_cinder_oil"]],
+              [["any", [["has", "hl_cinder_oil"], ["flag", "iron_trusted"]]]],
               [
                 ["say", "The burn stands ready: Ironbound cinder-oil is yours — burn it here (might; a failed try costs 1 hp)."]
               ],
@@ -257,6 +218,20 @@
                 ["say", "The burn wants Ironbound cinder-oil — Lay-brother Emmet, at the back lane, gives it for the asking."]
               ]
             ]
+          ]
+        },
+        {
+          "id": "hl_speak_great_rite",
+          "label": "speak the Great Rite over the barn",
+          "if": [["flag", "keepers_sworn"], ["!flag", "hl_hollow_done"]],
+          "fx": [
+            ["set", "hl_hollow_rested"],
+            ["set", "hl_hollow_done"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no due paid and no order found. The scoring on the doors stops mattering; whatever scratched it has finally stopped listening for a latch."]
           ]
         }
       ]
@@ -366,7 +341,7 @@
     "hl_crofter_token": {
       "name": "a carved wooden token",
       "loc": "nowhere",
-      "hint": "a child's keepsake; nothing more is owed on it"
+      "hint": "a child's keepsake — worth carrying to the barn's own rest, if the debt is ever paid"
     },
     "hl_cinder_oil": {
       "name": "a cask of Ironbound cinder-oil",
@@ -405,6 +380,14 @@
           "fx": [["set", "hl_reeve_confessed"], ["xp", 2]]
         },
         {
+          "id": "what_settles",
+          "label": "ask what would actually settle this",
+          "if": [["flag", "hl_reeve_confessed"], ["!flag", "hl_hollow_done"]],
+          "once": true,
+          "say": "Not a story told well. They didn't starve for want of one. Give back what the door kept from them, if you can still find any of it to give. That would be a beginning I never made.",
+          "fx": [["xp", 2]]
+        },
+        {
           "id": "react_hollow_rested",
           "label": "the barn, now it's rested",
           "if": [["flag", "hl_hollow_rested"], ["flag", "hl_reeve_confessed"]],
@@ -440,16 +423,23 @@
   "quests": {
     "hl_q_order": {
       "name": "The Barn-Reeve's Order",
-      "start": [["flag", "hl_hollow_grievance"]],
-      "done": [["flag", "hl_order_known"]],
+      "start": [["flag", "hl_entered"]],
+      "done": [["flag", "hl_hollow_done"]],
       "stages": [
         {
+          "if": [["!flag", "hl_hollow_grievance"]],
+          "text": "The Hunger Barn was barred on the crofters who filled it. Its doors still stand, out in Tithing's fields.",
+          "at": "hl_barn_doors"
+        },
+        {
           "if": [["flag", "hl_bailiff_order_known"]],
-          "text": "Vance keeps a title-copy in his strongbox — buy, force, argue it loose. Or search the reeve's chest, in the loft."
+          "text": "Vance keeps a title-copy, at the counting-house — buy, force, or argue it loose. Or search the loft's chest instead.",
+          "at": "hl_counting_house"
         },
         {
           "if": [],
-          "text": "The order might still exist — in the barn-reeve's chest, in the loft, or a kept copy in the counting-house."
+          "text": "The order might still exist — try the barn-reeve's chest first, in the loft, or a kept copy waits in the counting-house.",
+          "at": "hl_loft"
         }
       ]
     },
@@ -460,40 +450,45 @@
       "stages": [
         {
           "if": [["flag", "hl_hollow_rested"], ["!flag", "said_hl_tallykeeper_sv_hl_rested_ask"]],
-          "text": "The barn rests. Brida, at the tally-keeper's cottage, wonders what becomes of the sticks now they're read."
+          "text": "The barn rests. Brida, at the tally-keeper's cottage, wonders what becomes of the account now it's paid.",
+          "at": "hl_tally_cottage"
         },
         {
           "if": [
             ["any", [["flag", "hl_hollow_bargained"], ["flag", "hl_tithe_common"]]],
             ["!flag", "said_hl_bailiff_sv_hl_bargain_ask"]
           ],
-          "text": "The open barn drew Marrowgate's notice. Bailiff Vance has a report he'd rather not have written alone."
+          "text": "The open barn drew Marrowgate's notice. Bailiff Vance has a report he'd rather not have written alone.",
+          "at": "hl_counting_house"
         },
         {
           "if": [["flag", "hl_hollow_burned"], ["!flag", "said_hl_almoner_sv_hl_burned_ask"]],
-          "text": "The barn is ash. Sister Winnow, at the almonry, wonders what becomes of the burned ground now."
+          "text": "The barn is ash. Sister Winnow, at the almonry, wonders what becomes of the burned ground now.",
+          "at": "hl_almonry"
         },
         { "if": [], "text": "Tithing settles back into itself, whatever the Hunger Barn's fate cost it." }
       ]
     }
   },
-  "statusTracks": [
+  "statusPaths": [
     {
-      "var": "hl_ticks_known",
-      "label": "The Hearthlands' Tally-Sticks",
-      "max": 3,
-      "remaining": [
-        { "flag": "hl_tick_keeper", "label": "the tally-keeper Brida" },
-        { "flag": "hl_tick_widow", "label": "the widow's croft" },
-        { "flag": "hl_tick_almonry", "label": "the almonry's older ledger" }
+      "label": "The Hunger Barn's due",
+      "if": [["flag", "hl_hollow_grievance"], ["!flag", "hl_hollow_done"]],
+      "states": [
+        {
+          "if": [["flag", "hl_due_paid"], ["flag", "hl_order_known"]],
+          "text": "the due is paid and the order is known — ready to give both back at once"
+        },
+        { "if": [["flag", "hl_due_paid"]], "text": "the due is paid; the barn-reeve's order still wants finding" },
+        { "if": [["flag", "hl_order_known"]], "text": "the order is known; the due itself still wants paying" }
       ],
-      "if": [["flag", "hl_hollow_grievance"]]
+      "fallback": "neither the due nor the order is settled yet"
     }
   ],
   "epilogue": [
     {
       "if": [["flag", "hl_hollow_rested"]],
-      "text": "The Hunger Barn rests at last: the crofters' names and the order that starved them, spoken together after four hundred years.",
+      "text": "The Hunger Barn rests at last: the crofters' due paid back, their names and the order spoken together, four hundred years late.",
       "weight": 2
     },
     {
@@ -527,12 +522,12 @@
     },
     {
       "if": [["flag", "hl_bargain_broken"]],
-      "text": "Tithing's bargain with its own dead did not hold. Nobody there talks about what that cost, exactly.",
+      "text": "The Hunger Barn's granary barred its doors again inside the week. Tithing calls that orders, not mercy.",
       "weight": 1
     },
     {
       "if": [["flag", "sv_hl_bargained_paid"]],
-      "text": "The Hunger Barn's bargain held a while longer on borrowed coin. Someone will have to keep paying it, eventually."
+      "text": "Vance's report to Marrowgate still reads answered, not escalated. Coin bought that wording once, and will have to buy it again."
     },
     {
       "if": [["flag", "sv_hl_bargained_honored"]],
@@ -540,11 +535,11 @@
     },
     {
       "if": [["flag", "sv_hl_rested_kept"]],
-      "text": "The tally-sticks hang plain in Brida's cottage now, read once and kept for anyone who asks again."
+      "text": "The tally-sticks hang plain in Brida's cottage now, marked paid and kept for anyone who asks again."
     },
     {
       "if": [["flag", "sv_hl_rested_sent"]],
-      "text": "The Hearthlands' names went on to Barrowmere's Keepers' Hall, so more than Tithing remembers them."
+      "text": "The Hearthlands' names went on to Barrowmere's Keepers' Hall, so more than Tithing remembers the debt was paid."
     },
     {
       "if": [["flag", "sv_hl_burned_marked"]],
@@ -565,6 +560,22 @@
     {
       "if": [["flag", "hl_order_source_bailiff"]],
       "text": "The barn-reeve's order came out of a Crown strongbox, filed as title, same as any theft can be filed away."
+    },
+    {
+      "if": [["flag", "hl_due_source_hauled"]],
+      "text": "The crofters' due came off the Crown's own granary steps, hauled, and Sergeant Rook still isn't saying how."
+    },
+    {
+      "if": [["flag", "hl_due_source_almonry"]],
+      "text": "The crofters' due came out of the almonry's own held-back surplus, kept since the winter that made it owed."
+    },
+    {
+      "if": [["flag", "hl_due_source_skim"]],
+      "text": "The crofters' due came off the back lane's own skim, turned back at the hedge-gap before it ever left."
+    },
+    {
+      "if": [["flag", "hl_due_source_persuaded"]],
+      "text": "The crofters' due was bought back with coin enough to keep Bailiff Vance's columns closing clean."
     }
   ]
 }

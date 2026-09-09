@@ -30,6 +30,19 @@
           [["npcgo", "th_cal", null], ["set", "th_cal_gone"]],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "th_edge_board",
+          "label": "read past the board's warning",
+          "free": true,
+          "once": true,
+          "if": [["class", "scout"]],
+          "fx": [
+            ["xp", 1],
+            ["say", "Nailed below the board's stern lettering, smaller: a tally of names turned away this month. Fewer than you'd think, this deep in Company country."]
+          ]
+        }
       ]
     },
     "th_north_track": {
@@ -62,6 +75,19 @@
           [["npcgo", "th_cal", null], ["set", "th_cal_gone"]],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "th_track_toll",
+          "label": "note which wagons skipped the toll",
+          "free": true,
+          "once": true,
+          "if": [["class", "warden"]],
+          "fx": [
+            ["xp", 1],
+            ["say", "The ruts run deep and none of them turn toward the toll stand. Whoever's hauling ore off the Downs has been doing it a long time, unpaid."]
+          ]
+        }
       ]
     },
     "th_south_track": {
@@ -94,6 +120,19 @@
           [["npcgo", "th_cal", null], ["set", "th_cal_gone"]],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "th_track_signs",
+          "label": "read the scrub for trade-sign",
+          "free": true,
+          "once": true,
+          "if": [["class", "envoy"]],
+          "fx": [
+            ["xp", 1],
+            ["say", "Boot-prints in the scrub don't match the road's traffic — someone's been cutting south off the beaten track, and not to pay a toll."]
+          ]
+        }
       ]
     },
     "th_settlement": {
@@ -138,17 +177,7 @@
         { "if": [["flag", "th_hollow_rested"]], "brief": "The palisade. The old oak, quiet now." },
         { "if": [["flag", "th_hollow_bargained"]], "brief": "The palisade. The camp keeps an odd, solemn quiet." }
       ],
-      "actions": [
-        {
-          "id": "th_gate_bearings",
-          "label": "get your bearings",
-          "fx": [
-            ["say", "West gate, into the wood. From the wood's edge: the gallows road four stands west; the Rope Larder (Rook) one west, one north; the Cutter's Barrow one west, two north."],
-            ["say", "The Long Watch one west, two south; the Denhollow four west, one south; Hesper's hut and the black thorn's Understory four west, one north."]
-          ],
-          "free": true
-        }
-      ],
+      "actions": [{ "id": "th_gate_bearings", "label": "get your bearings", "fx": [["bearings"]], "free": true }],
       "onEnter": [
         [
           "if",
@@ -626,6 +655,18 @@
               [["say", "He hears you out and does not move. Whatever he's waiting to hear, that wasn't it."]]
             ]
           ]
+        },
+        {
+          "id": "th_sergeant_rite",
+          "label": "show him the Priory's sealed rite",
+          "if": [["!flag", "th_gate_passed"], ["any", [["flag", "church_trusted"], ["has", "fd_priors_rite"]]]],
+          "fx": [
+            ["set", "th_gate_passed"],
+            ["npcgo", "th_sergeant", null],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "You hold up the Priory's sealed rite. He studies it a long moment — the first thing in forty years that isn't the bough — and steps from the path."]
+          ]
         }
       ]
     },
@@ -677,6 +718,20 @@
             ["addvar", "appr_lys", 1],
             ["addvar", "appr_osk", 1],
             ["say", "You read the pardon whole, forty years late, every name on it spoken aloud. The turning stops. One by one they settle, and the tree is only a tree."]
+          ]
+        },
+        {
+          "id": "th_speak_great_rite",
+          "label": "speak the Great Rite over the glade",
+          "if": [["flag", "keepers_sworn"], ["!flag", "th_hollow_done"]],
+          "fx": [
+            ["set", "th_hollow_done"],
+            ["set", "th_hollow_rested"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no pardon found and none read. The turning stops anyway. One by one they settle, and the tree is only a tree."]
           ]
         },
         {
@@ -784,7 +839,7 @@
                 ["set", "th_hollow_bargained"],
                 ["addvar", "hollows_rested", 1],
                 ["addvar", "hollows_bargained", 1],
-                ["score", 20],
+                ["score", 25],
                 ["xp", 8],
                 ["addvar", "rep_free", 2],
                 ["addvar", "rep_keepers", -1],
@@ -822,7 +877,7 @@
                 ["set", "th_hollow_done"],
                 ["set", "th_hollow_burned"],
                 ["addvar", "hollows_burned", 1],
-                ["score", 15],
+                ["score", 25],
                 ["xp", 8],
                 ["addvar", "rep_iron", 2],
                 ["addvar", "rep_free", -2],
@@ -922,6 +977,28 @@
             ["xp", 2],
             ["say", "Five old coins and a muster-roll page gone soft, one name ringed twice in fading ink — a rival officer's, not one of the hanged. Whoever wrote that ring knew more than they ever said."]
           ]
+        },
+        {
+          "id": "th_roll_second_hand",
+          "label": "puzzle out the roll's second hand (wits)",
+          "if": [["flag", "did_th_search_tin"], ["!flag", "th_roll_solved"]],
+          "fx": [
+            [
+              "check",
+              "wits",
+              15,
+              [
+                ["set", "th_roll_solved"],
+                ["score", 5],
+                ["xp", 4],
+                ["addvar", "rep_free", 1],
+                ["say", "The ringed name matches a hand in three other ledgers since — always present when the Company's luck turned, never once when it mattered whose fault that was. Whoever fell that day, the muster-roll lies about why."]
+              ],
+              [
+                ["say", "Forty years has softened the ink more than it's softened the mold. Whatever that ring meant, it isn't giving it up tonight."]
+              ]
+            ]
+          ]
         }
       ]
     },
@@ -940,6 +1017,7 @@
           "fx": [
             ["addvar", "gold", -2],
             ["set", "th_toll_resolved"],
+            ["set", "th_toll_paid_coin"],
             ["npcgo", "th_toll_men", null],
             ["addvar", "rep_free", 1],
             ["score", 2],
@@ -991,6 +1069,17 @@
             ["npcgo", "th_toll_men", null],
             ["xp", 1],
             ["say", "Neither of them reaches for the pole. \"Not worth the argument,\" the nearer one mutters, and waves you through without a coin changing hands."]
+          ]
+        },
+        {
+          "id": "th_toll_trusted",
+          "label": "show the Company's own mark",
+          "if": [["flag", "free_trusted"], ["!flag", "th_toll_resolved"]],
+          "free": true,
+          "fx": [
+            ["set", "th_toll_resolved"],
+            ["npcgo", "th_toll_men", null],
+            ["say", "The nearer one clocks the chit before it's half out of your coat and hauls the pole himself. \"Trusted,\" he says, like it settles an argument nobody was having."]
           ]
         }
       ]
@@ -1199,6 +1288,41 @@
       "takeable": true,
       "owner": "th_cook",
       "hint": "tips left by mercs who didn't want to owe the cook a favor"
+    },
+    "th_passage_token": {
+      "name": "a worn grave-token",
+      "loc": "th_barrow1_passage",
+      "takeable": true,
+      "hint": "someone else came this way first, and left in a hurry"
+    },
+    "th_den_scrap": {
+      "name": "a scrap of torn cloth",
+      "loc": "th_cave1_mouth",
+      "takeable": true,
+      "hint": "not the beast's — something else has been through here"
+    },
+    "th_tower_note": {
+      "name": "a rain-blurred scrap of a runner's message",
+      "loc": "th_tower1_base",
+      "takeable": true,
+      "hint": "half a name, half a number — the rest is water-lost"
+    },
+    "th_free_chit": {
+      "name": "a Free Company chit",
+      "loc": "nowhere",
+      "hint": "Company-marked; their own people know it on sight"
+    },
+    "th_barrow1_ring": {
+      "name": "a corroded iron ring",
+      "loc": "th_barrow1_mouth",
+      "takeable": true,
+      "hint": "too small for a door, too big for a finger"
+    },
+    "th_track_trace": {
+      "name": "a snapped wagon-trace",
+      "loc": "th_north_track",
+      "takeable": true,
+      "hint": "leather, chewed through at the buckle — an animal's doing, not a knife's"
     }
   },
   "npcs": {
@@ -1512,7 +1636,7 @@
           "label": "the poacher skimming your tolls",
           "if": [["flag", "said_th_vane_greet"]],
           "once": true,
-          "say": "Rook. Camped two stands west of here, then one north — past Fox Crossing, at what's left of an old snare-line we call the Rope Larder. Skims coin off travelers before my toll-men ever see it.",
+          "say": "Rook. Camped two stands west of the gate, then one north — past Fox Crossing, at what's left of an old snare-line we call the Rope Larder. Skims coin off travelers before my toll-men ever see it.",
           "fx": [["xp", 1]]
         },
         {
@@ -1522,11 +1646,175 @@
           "once": true,
           "say": "She doesn't ask if you served the Watch; she just talks like you did. \"Half my roster's owed wages I can't cover past the next contract.\" Her own men go quiet when they clock the same bearing.",
           "fx": [["set", "or_warden_th_vane"], ["xp", 2], ["addvar", "rep_watch", 1], ["addvar", "rep_free", -1]]
+        },
+        {
+          "id": "th_vane_trusted_offer",
+          "label": "ask to be trusted with the road",
+          "if": [["var", "rep_free", ">=", 5], ["!flag", "free_trusted"]],
+          "once": true,
+          "say": "Vane checks you the way she checks a tally that finally balances. \"You've paid your way in more than one of my camps. That's trust, not luck. Take the road — nobody at my gates troubles you twice.\"",
+          "fx": [
+            ["set", "free_trusted"],
+            [
+              "if",
+              [["!flag", "free_passage"]],
+              [
+                ["set", "free_passage"],
+                ["say", "\"The stair under Coldpass, too. Don't thank me for what's already yours.\""]
+              ],
+              []
+            ],
+            ["move", "th_free_chit", "inv"],
+            [
+              "if",
+              [["flag", "th_toll_paid_coin"]],
+              [["addvar", "gold", 2], ["say", "She flips back what you paid at her own gate, unasked."]],
+              []
+            ],
+            ["addvar", "rep_watch", -1],
+            ["score", 5],
+            ["xp", 3]
+          ]
+        },
+        {
+          "id": "th_vane_trusted_refuse",
+          "label": "ask to be trusted with the road",
+          "if": [["var", "rep_free", "<", 5], ["!flag", "free_trusted"]],
+          "say": "\"Not yet.\" Vane doesn't look up from the tally. \"Trust isn't a toll I take once. Do right by more than one of my camps, then ask me again.\""
+        },
+        {
+          "id": "th_vane_sworn_offer",
+          "label": "ask to be sworn to the Companies",
+          "if": [["var", "rep_free", ">=", 9], ["!flag", "free_sworn"]],
+          "once": true,
+          "say": "Vane doesn't hesitate. \"Sworn, then. Not hired — ours.\" She tips her head toward the muster. \"Doss. Been waiting on someone worth the trouble. Try not to get them killed.\"",
+          "fx": [
+            ["set", "free_sworn"],
+            ["npcgo", "th_doss", "th_muster"],
+            ["addvar", "rep_crown", -3],
+            ["score", 8],
+            ["xp", 4]
+          ]
+        },
+        {
+          "id": "th_vane_sworn_refuse",
+          "label": "ask to be sworn to the Companies",
+          "if": [["var", "rep_free", "<", 9], ["!flag", "free_sworn"], ["flag", "free_trusted"]],
+          "say": "\"Sworn's a different debt than trusted.\" Vane doesn't soften it. \"Trusted, I hand out. Sworn, you earn from more of us than just me. Not yet.\""
         }
+      ]
+    },
+    "th_doss": {
+      "name": "Doss",
+      "room": null,
+      "dialogue": true,
+      "desc": "New to the muster, sizing up the yard the way a hired blade sizes up any room — for the exits, not the company.",
+      "hp": 14,
+      "atk": 4,
+      "df": 13,
+      "onDeath": [
+        ["set", "th_doss_dead"],
+        ["say", "Doss goes down before the oath is a day old, sword still half in its sheath. Vane will hear of this before you do the telling."],
+        ["addvar", "rep_free", -3],
+        ["addvar", "appr_lys", -1],
+        ["addvar", "appr_osk", -1],
+        ["addvar", "appr_tamsin", -1],
+        ["addvar", "appr_vell", -1]
+      ],
+      "companion": {
+        "hit": 3,
+        "dmg": 4,
+        "remarks": [
+          {
+            "id": "r_th_burned",
+            "if": [["flag", "th_hollow_burned"]],
+            "say": "My own camp's grief, and you burned it. Vane will have opinions. I'm keeping mine to myself, for now."
+          },
+          {
+            "id": "r_th_rested",
+            "if": [["flag", "th_hollow_rested"]],
+            "say": "Rested clean, no fire, no argument. Wish every contract closed that easy."
+          },
+          {
+            "id": "r_sk_entered",
+            "if": [["flag", "sk_entered"]],
+            "say": "Salt coast. Half the Company's second income comes off this stretch. Mind your footing on the stair."
+          },
+          {
+            "id": "r_king_forsaken",
+            "if": [["flag", "va_king_forsaken"]],
+            "say": "Left him neither settled nor answered. In my trade you finish the job, or you don't take the coin for it."
+          },
+          {
+            "id": "r_rites",
+            "if": [["flag", "hb_entered"]],
+            "say": "Rites, rest-verses, reading-stones. I've buried men with a shovel and a curse and it took just as well."
+          },
+          {
+            "id": "r_bargain_broken",
+            "if": [["flag", "th_bargain_broken"]],
+            "say": "You told Bray to walk from a debt the Company swore to pay. That's not clever, that's theft with better manners. I'll remember it.",
+            "fx": [["addvar", "appr_th_doss", -2]]
+          },
+          {
+            "id": "r_coin",
+            "if": [["var", "gold", ">=", 40]],
+            "say": "Coin in the purse, none of it spent proving a point to anybody. That's the only virtue I've ever trusted."
+          },
+          {
+            "id": "r_appr_pos",
+            "if": [["var", "appr_th_doss", ">=", 2]],
+            "say": "You pay what you owe and you don't waste my time. I've soldiered under worse, for better pay."
+          },
+          {
+            "id": "r_appr_neg",
+            "if": [["var", "appr_th_doss", "<=", -2]],
+            "say": "I took this contract on Vane's word, not yours. Don't make her wrong about you."
+          }
+        ],
+        "leaves": [
+          {
+            "if": [["var", "appr_th_doss", "<=", -3]],
+            "say": "Hired's hired, and paid's paid, but this isn't worth either anymore. Find someone else to watch your back."
+          }
+        ]
+      },
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Doss. Vane's word got me here; yours keeps me. I fight for coin and I fight well — the second part is why the first is worth paying.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "bg",
+          "label": "what the Company actually believes",
+          "if": [["flag", "said_th_doss_greet"]],
+          "once": true,
+          "say": "Coin and no masters. That's the whole charter, near enough — signed the night we shot a herald asking truce. Nobody's proud of the start. Nobody's apologized either.",
+          "fx": [["xp", 2]]
+        },
+        {
+          "id": "recruit",
+          "label": "come with me",
+          "if": [["!inParty", "th_doss"], ["!flag", "th_doss_left"], ["flag", "said_th_doss_greet"]],
+          "say": "Pay's pay. Lead on.",
+          "fx": [["party", "th_doss", "join"], ["set", "th_doss_joined"]]
+        },
+        {
+          "id": "dismiss",
+          "label": "wait here (leaves the party for now)",
+          "if": [["inParty", "th_doss"]],
+          "say": "Fair enough. I don't work for free, but I don't chase, either.",
+          "fx": [["party", "th_doss", "leave"]]
+        },
+        { "id": "bye", "label": "leave it there", "say": "Mind your coin and your back. In that order.", "end": true }
       ]
     },
     "th_bray": {
       "name": "Quartermaster Bray",
+      "dialogue": true,
       "room": "th_quartermaster",
       "topics": [
         {
@@ -1699,6 +1987,7 @@
     },
     "th_coe": {
       "name": "Sergeant Coe",
+      "dialogue": true,
       "room": "th_muster",
       "topics": [
         {
@@ -2015,6 +2304,7 @@
     "th_rook": {
       "name": "Rook",
       "room": null,
+      "dialogue": true,
       "hostile": true,
       "hp": 8,
       "atk": 2,
@@ -2107,6 +2397,12 @@
             ["xp", 3],
             ["calm", "th_rook"]
           ]
+        },
+        {
+          "id": "bye",
+          "label": "leave it for now",
+          "say": "He shrugs, easy about it. \"Tally's not going anywhere. Neither am I.\"",
+          "end": true
         }
       ]
     },
@@ -2117,7 +2413,7 @@
       "hp": 14,
       "atk": 3,
       "df": 10,
-      "desc": "Forty years gray, a noose-shaped collar of old rope still at his neck. The cold coming off him hasn't slowed in all that time; it goes through mail same as skin.",
+      "desc": "The cold coming off him hasn't slowed in forty years; it goes through mail same as skin.",
       "onDeath": [
         [
           "if",
@@ -2340,7 +2636,19 @@
           "name": "Spoil Verge",
           "desc": "Scrub and spoil-dust drift down off the Iron Downs, gray on the old leaf-mold. A deer track bends east; the wood thickens south.",
           "brief": "Spoil-dust drifting south.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_spoil_sift",
+              "label": "sift the spoil for anything dropped",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 2],
+                ["xp", 1],
+                ["say", "A wagon-load's worth of waste, mostly — but one clod breaks open on a good coin, tossed off some cart too loaded to miss it."]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 0],
@@ -2367,18 +2675,68 @@
           "landmark": "Cairn Rise",
           "desc": "Ground humped and uneven underfoot, old grave-shapes gone soft under centuries of leaf-fall. North a paler mound breaks the pattern, its mouth a chink of old stone. The holloway runs west; wood thickens south and east.",
           "brief": "Old grave-shapes in the leaf-mold.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_cairn_honor",
+              "label": "leave a word for the old dead",
+              "free": true,
+              "once": true,
+              "if": [["!flag", "th_cairn_robbed"]],
+              "fx": [
+                ["set", "th_cairn_honored"],
+                ["addvar", "rep_keepers", 1],
+                ["xp", 1],
+                ["say", "You say what little you know over the humped graves, owed to nobody living. Small mercy, freely given."]
+              ]
+            },
+            {
+              "id": "th_cairn_rob",
+              "label": "pry a grave-token loose",
+              "once": true,
+              "if": [["!flag", "th_cairn_honored"]],
+              "fx": [
+                ["set", "th_cairn_robbed"],
+                ["addvar", "rep_keepers", -1],
+                ["addvar", "gold", 3],
+                ["xp", 1],
+                ["say", "A token comes free of the leaf-mold with a little prying. Yours now, by no right but the finding."]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 0],
           "name": "Ridge's End",
           "desc": "The ridge runs out in broken ground and a long view north over gray spoil-heaps that were never Thornwold's own. South the trees close again; west the holloway continues.",
           "brief": "Broken ground, a view north.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_ridge_look",
+              "label": "down the scree (grace, 1hp on fail)",
+              "if": [["!flag", "th_ridge_found"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["set", "th_ridge_found"],
+                    ["addvar", "gold", 3],
+                    ["xp", 2],
+                    ["say", "You pick your way down without a slip, and the spoil-heaps below give up a coin some hauler never missed."]
+                  ],
+                  [["hp", -1], ["say", "The scree gives way underfoot and you catch yourself late. It can be tried again."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 1],
           "name": "Black Thorn Stand",
+          "landmark": "Black Thorn Stand",
           "desc": "Thornbrake grows close and black here, older than the rest of the wood. A gap shows north between the thorns, and past it, nothing you can quite focus on. West, past a stand of alder, a thread of smoke rises. South and east the ordinary wood resumes.",
           "brief": "Black thorn. A gap north.",
           "onEnterOnce": [["xp", 2]]
@@ -2388,14 +2746,38 @@
           "name": "Deer Break",
           "desc": "A trampled break in the bracken where deer bed down, though none are here now — gray droppings, old and dry. The wood presses close on every side.",
           "brief": "A deer's trampled bed.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_deerbreak_droppings",
+              "label": "read the dry droppings",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Old, all of it — a full season stale. Whatever bedded here hasn't been back, or isn't able to be."]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 1],
           "name": "The Split Beech",
           "desc": "A beech split clean by old lightning, half of it still stubbornly green. Paths run every way from here, trampled by something heavier than deer.",
           "brief": "The lightning-split beech.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_beech_tracks",
+              "label": "read the heavier tracks",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Bigger than deer, spaced wrong for a man — something crossed here on all fours, unhurried, and more than once."]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 1],
@@ -2433,14 +2815,39 @@
           "name": "Camp's Shadow",
           "desc": "The palisade's shadow falls long here of an evening. Trampled grass shows where sentries cut the corner on their rounds. North the ridge rises; south the ground softens toward a stream.",
           "brief": "The palisade's long shadow.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_shadow_rounds",
+              "label": "mark where the sentries cut their rounds",
+              "free": true,
+              "once": true,
+              "if": [["class", "scout"]],
+              "fx": [
+                ["xp", 1],
+                ["say", "Trampled grass shows the same shortcut, evening after evening — whoever pulls this watch trusts the shadow more than the wall."]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 2],
           "name": "The Listening Break",
           "desc": "The birdsong stops here, all at once, the way it does before weather — except there is no weather coming. West the wood stands unnervingly still. North and south the ordinary trees resume; east a thicket opens back toward easier ground.",
           "brief": "Birdsong stops here.",
-          "onEnterOnce": [["xp", 2]]
+          "onEnterOnce": [["xp", 2]],
+          "actions": [
+            {
+              "id": "th_listening_hush",
+              "label": "stand still and listen",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Nothing. Not wind, not wing, not even your own breath sounding right. The quiet here has a shape to it, like something is listening back."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 2],
@@ -2453,47 +2860,106 @@
         {
           "cell": [2, 2],
           "name": "The Heartwood Hollow",
+          "landmark": "the Heartwood Hollow",
           "desc": "A shallow bowl in the land where the oldest trees stand thickest, canopy closed enough to dim midday to dusk.",
           "brief": "Old growth, closed canopy.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "th_heartwood_bearings",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [
-                ["say", "From the Heartwood: the gallows road two stands west; the Understory two west, one north; the Cutter's Barrow one east, two north; the Denhollow two west, one south; the Long Watch one east, two south."]
-              ]
-            }
-          ]
+          "actions": [{ "id": "th_heartwood_bearings", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [3, 2],
           "name": "Fox Crossing",
           "desc": "A well-used game trail crosses here, fox-scent sharp on the air. East the trees start to thin toward camp; every other way the wood holds close.",
           "brief": "A fox-scented crossing.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "variants": [
+            {
+              "if": [["flag", "th_rook_dealt"]],
+              "desc": "A well-used game trail crosses here, one of Rook's snares hanging cut and empty from a low branch now. East the trees thin toward camp.",
+              "brief": "A crossing, a snare cut loose."
+            }
+          ],
+          "actions": [
+            {
+              "id": "th_fox_search",
+              "label": "check what the fox left behind",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 2],
+                ["xp", 1],
+                ["say", "Feathers and a picked-clean bone — the fox ate well here. Half-buried under the litter, a dropped coin it had no use for."]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 2],
           "name": "Wood's Edge",
           "desc": "The trees begin to thin, cut back by Company axes. East, past the last of the old growth, Camp Gallows' palisade shows through the branches.",
           "brief": "The wood thins toward camp.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_woodsedge_watch",
+              "label": "watch the palisade from the treeline",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "From here you could count Camp Gallows' whole watch rotation and never once be seen doing it."]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 3],
           "name": "The Clawed Rock",
           "desc": "The ground drops toward a scatter of gray rock, half-swallowed by bramble. A dark crack shows west in the rockface, wide enough to trouble anyone who has to duck for it. North the wood climbs back toward thicker growth; east it opens onto easier walking.",
           "brief": "Bramble and a dark crack west.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_clawed_search",
+              "label": "turn over what the bramble caught",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 2],
+                ["xp", 1],
+                ["say", "The bramble's snagged more than thorn wants: a coin or two, washed down from the ford and forgotten here."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 3],
           "name": "The Ford Approach",
           "desc": "The ground softens, then softens more — a stream is close, though the trees hide it. West a dark crack breaks the rock; east the sound of moving water grows.",
           "brief": "Softening ground, water near.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_ford_test",
+              "label": "cross soft ground (grace, 1hp on fail)",
+              "if": [["!flag", "th_ford_found"]],
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["set", "th_ford_found"],
+                    ["addvar", "gold", 3],
+                    ["xp", 2],
+                    ["say", "You read the mud for the firm way through and find, half-sunk in it, a boot-buckle worth more than the boot ever was."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "The ground swallows a step whole and you come up wet to the knee. It can be tried again."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 3],
@@ -2501,42 +2967,132 @@
           "landmark": "the river ford",
           "desc": "A stream cuts the wood here, shallow enough to ford but cold enough to make you think twice. Flat stones underfoot are worn smooth by feet older than the Company's camp.",
           "brief": "The cold ford.",
-          "onEnterOnce": [["xp", 2], ["score", 2]]
+          "onEnterOnce": [["xp", 2], ["score", 2]],
+          "actions": [
+            {
+              "id": "th_river_fish",
+              "label": "fish the shallows (wits)",
+              "if": [["!flag", "th_river_found"]],
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["set", "th_river_found"],
+                    ["addvar", "gold", 3],
+                    ["xp", 2],
+                    ["say", "Something metal catches the light between two stones — a plain ring, sound enough, tugged free before the current notices it's gone."]
+                  ],
+                  [["say", "Whatever's down there, the current keeps it for now. It can be tried again."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 3],
           "name": "Bramble Break",
           "desc": "Bramble grows thick and thorned, forcing the path to bend around it rather than through. Every direction looks the same from inside it.",
           "brief": "Thick, thorned bramble.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_bramble_force",
+              "label": "force the thorn (might, 1hp on fail)",
+              "if": [["!flag", "th_bramble_found"]],
+              "fx": [
+                [
+                  "check",
+                  "might",
+                  9,
+                  [
+                    ["set", "th_bramble_found"],
+                    ["addvar", "gold", 3],
+                    ["xp", 2],
+                    ["say", "You force a gap and the thorn gives up what it's snagged over the years: a coin, a button, a curse worth keeping to yourself."]
+                  ],
+                  [["hp", -1], ["say", "The thorn holds and takes its toll in scratches. It can be tried again."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 3],
           "name": "The Last Stand",
           "desc": "The old growth gives out into younger scrub pine, seeded nobody can say by whom. North the true wood climbs back; west it thickens again.",
           "brief": "Old growth gives to scrub.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_laststand_look",
+              "label": "look over the old scrub for sign",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Nothing grows quite right here — old iron under the needles, gone to rust, and a rib or two the pine has grown around rather than through."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 4],
           "name": "Gull's Reach",
           "desc": "Salt shows faint on the wind this far south, though the coast is a long way off yet. East the ground firms toward the south track.",
           "brief": "Salt on the wind.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_gull_search",
+              "label": "see what the gulls are working at",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 2],
+                ["xp", 1],
+                ["say", "A drowned courier's pouch, more salt than leather now, but the coin inside hasn't cared."]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 4],
           "name": "Pine Needle Flat",
           "desc": "Scrub pine needles carpet the ground thick enough to muffle every step. The wood feels thinner here, closer to its southern edge.",
           "brief": "A muffling carpet of needles.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_pine_dig",
+              "label": "dig under the needle carpet",
+              "once": true,
+              "fx": [
+                ["addvar", "gold", 2],
+                ["xp", 1],
+                ["say", "Someone buried a stash here once and never came back for it. Their loss, now."]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 4],
           "name": "The Bluff",
           "desc": "The ground rises to a low bluff. South, past a stand of dead pine, a tower's broken crown shows above the canopy — old, and not Company-built. West the pine flat continues; north the true wood climbs back.",
           "brief": "A tower's crown, south.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "th_bluff_scrap",
+              "label": "check what's caught on the dead pine",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "A scrap of signal-cloth, sun-bleached, snagged high on a branch — dropped or thrown from the tower's crown, south, long ago."]
+              ]
+            }
+          ]
         }
       ],
       "cellFx": {
@@ -2547,11 +3103,8 @@
             [
               [
                 "if",
-                [["!npcDead", "th_boar"]],
-                [
-                  ["npcgo", "th_boar", "here"],
-                  ["say", "A gray boar breaks from the brush, tusks first, heavier than any boar has a right to be."]
-                ],
+                [["!npcDead", "th_boar"], ["!flag", "watch_trusted"], ["!flag", "crown_trusted"]],
+                [["npcgo", "th_boar", "here"], ["say", "A gray boar crashes out of the brush, already charging."]],
                 []
               ]
             ],
@@ -2630,18 +3183,22 @@
       "name": "The Hidden Root",
       "start": [["flag", "th_heard_understory"]],
       "done": [["flag", "th_verse_known"]],
+      "failed": [["flag", "th_hollow_done"], ["!flag", "th_verse_known"]],
       "stages": [
         {
           "if": [["flag", "th_heard_keeper_lore"]],
-          "text": "Keeper Rowan knows the old rest-verse for the Hanged Company. Ask to be taught it."
+          "text": "Keeper Rowan knows the old rest-verse for the Hanged Company. Ask to be taught it.",
+          "at": "th_understory_hall"
         },
         {
           "if": [["flag", "th_root_found"]],
-          "text": "The way through the Black Thorn Gap is yours. Go down into the Understory."
+          "text": "The way through the Black Thorn Gap is yours. Go down into the Understory.",
+          "at": "th_understory_hall"
         },
         {
           "if": [],
-          "text": "Keepers hide in the wood: west five stands from Camp Gallows to the Listening Break, then north twice."
+          "at": "th_understory_hall",
+          "text": "Keepers hide in the wood, in a hall under the roots past the Listening Break."
         }
       ]
     },
@@ -2653,34 +3210,45 @@
       "stages": [
         {
           "if": [["has", "th_pardon"]],
-          "text": "The pardon is yours. Read it at the gallows glade: due west of Camp Gallows through the wood, eight stands on."
+          "text": "The pardon is yours. Read it at the gallows glade.",
+          "at": "th_hollow_glade"
         },
         {
           "if": [["flag", "th_pardon_clue"]],
-          "text": "The pardon may be lost in the quartermaster's dead-letter box. Search it (wits)."
+          "text": "The pardon may be lost in the quartermaster's dead-letter box. Search it (wits).",
+          "at": "th_quartermaster"
         },
         {
           "if": [],
-          "text": "Fenn in the stockade thinks the Company's hanging was never lawful. Ask what proof he found."
+          "text": "Fenn in the stockade thinks the Company's hanging was never lawful. Ask what proof he found.",
+          "at": "th_stockade"
         }
       ]
     },
     "th_q_company": {
       "name": "The Hanged Company",
-      "start": [["any", [["flag", "th_asked_captain_oath"], ["flag", "th_verse_known"], ["has", "th_pardon"]]]],
+      "start": [["flag", "th_entered"]],
       "done": [["flag", "th_hollow_done"]],
       "stages": [
         {
+          "if": [["!flag", "th_asked_captain_oath"], ["!flag", "th_verse_known"], ["!has", "th_pardon"]],
+          "text": "A dozen hanged men still turn in Thornwold's wood, forty years unburied. The gallows road leads to them.",
+          "at": "th_hollow_approach"
+        },
+        {
           "if": [["flag", "th_verse_known"]],
-          "text": "You know the rest-verse. Speak it at the Gallows Glade: eight stands west, past the Waiting Bough."
+          "text": "You know the rest-verse. Speak it at the Gallows Glade.",
+          "at": "th_hollow_glade"
         },
         {
           "if": [["has", "th_pardon"]],
-          "text": "The pardon is yours. Read it at the Gallows Glade: eight stands west, past the Waiting Bough's sergeant."
+          "text": "The pardon is yours. Read it at the Gallows Glade.",
+          "at": "th_hollow_glade"
         },
         {
           "if": [],
-          "text": "Rest them at the Gallows Glade, eight stands west past the Waiting Bough: verse, pardon, oath, or the tree's names."
+          "at": "th_hollow_glade",
+          "text": "Rest them at the Gallows Glade, past the Waiting Bough: verse, pardon, oath, or the tree's names."
         }
       ]
     },
@@ -2696,7 +3264,7 @@
         },
         {
           "if": [["flag", "lys_brother_buried"]],
-          "text": "Cal is buried east of Camp Gallows. Lys should hear it from you, gently, when you find her."
+          "text": "Cal is buried at the glade where the tree burned. Lys should hear it from you, gently, when you find her."
         },
         {
           "if": [["flag", "lys_brother_lost"]],
@@ -2704,11 +3272,13 @@
         },
         {
           "if": [["flag", "th_cal_staying"]],
-          "text": "Cal means to stay with the Company, debt or no. Clear his debt if you like, or leave him to it."
+          "text": "Cal means to stay with the Company, debt or no. Clear his debt if you like, or leave him to it.",
+          "at": "th_quartermaster"
         },
         {
           "if": [],
-          "text": "Cal is at the scout line. Persuade him home (will), clear his debt at the wagon (10 gold), or win it at the ring."
+          "text": "Cal is at the scout line. Persuade him home (will), clear his debt at the wagon (10 gold), or win it at the ring.",
+          "at": "th_scout_line"
         }
       ]
     },
@@ -2719,7 +3289,8 @@
       "stages": [
         {
           "if": [],
-          "text": "Rook's camp is west of Camp Gallows, past Fox Crossing then north, at the Rope Larder. Pay, fight, or talk him down."
+          "at": "th_wood_3_1",
+          "text": "Rook keeps the Rope Larder, out in the wood past Fox Crossing. Pay, fight, or talk him down."
         }
       ]
     },
@@ -2730,11 +3301,13 @@
       "stages": [
         {
           "if": [["var", "rep_free", ">=", 1], ["flag", "th_rook_dealt"]],
-          "text": "Captain Vane will trade the smugglers' road for coin, or for Rook dealt with, while the Companies think well of you."
+          "text": "Captain Vane will trade the smugglers' road for coin, or for Rook dealt with, while the Companies think well of you.",
+          "at": "th_captains_tent"
         },
         {
           "if": [["var", "rep_free", ">=", 1]],
-          "text": "Captain Vane will sell the smugglers' road under Coldpass for 15 gold, or a favor she'd value more."
+          "text": "Captain Vane will sell the smugglers' road under Coldpass for 15 gold, or a favor she'd value more.",
+          "at": "th_captains_tent"
         },
         {
           "if": [],
@@ -2749,11 +3322,13 @@
       "stages": [
         {
           "if": [["flag", "fd_entered"]],
-          "text": "Fenmarch's reached. Settle the letter at the Priory's cloister, the net-hall's fire, or the drowned nave."
+          "text": "Fenmarch's reached. Settle the letter at the Priory's cloister, the net-hall's fire, or the drowned nave.",
+          "at": "fd_priory_cloister"
         },
         {
           "if": [],
-          "text": "Bray's dead-letter box gave up one more paper. Carry it east to Fenmarch and decide its fate."
+          "at": "fd_causeway_west",
+          "text": "Bray's dead-letter box gave up one more paper. Carry it to Fenmarch and decide its fate."
         }
       ]
     },
@@ -2777,20 +3352,37 @@
       "stages": [
         {
           "if": [["flag", "th_hollow_rested"]],
-          "text": "Captain Vane wants a word about a stone for the glade. Find her at her tent."
+          "text": "Captain Vane wants a word about a stone for the glade. Find her at her tent.",
+          "at": "th_captains_tent"
         },
         {
           "if": [["flag", "th_hollow_bargained"]],
-          "text": "Quartermaster Bray has a tally to settle — the oath's old toll. Find him at the wagon."
+          "text": "Quartermaster Bray has a tally to settle — the oath's old toll. Find him at the wagon.",
+          "at": "th_quartermaster"
         },
         {
           "if": [["flag", "th_hollow_burned"]],
-          "text": "Sergeant Coe wants to talk over what the glade's ash is good for now. Find her at the muster ground."
+          "text": "Sergeant Coe wants to talk over what the glade's ash is good for now. Find her at the muster ground.",
+          "at": "th_muster"
         }
       ]
     }
   },
+  "statusPaths": [
+    {
+      "label": "your rank with the Free Companies",
+      "states": [
+        { "if": [["flag", "free_sworn"]], "text": "sworn to the Companies" },
+        { "if": [["flag", "free_trusted"]], "text": "trusted on their roads" }
+      ]
+    }
+  ],
   "epilogue": [
+    {
+      "if": [["flag", "th_roll_solved"]],
+      "text": "The Fallen Muster's ringed name finally has a story. Nobody left alive would care to hear it.",
+      "weight": 0
+    },
     {
       "if": [["flag", "th_hollow_rested"]],
       "text": "The gallows glade grows green again, slow but sure, and Camp Gallows keeps a quiet toast to the Company each year it turns.",
@@ -2816,7 +3408,7 @@
     },
     {
       "if": [["flag", "lys_brother_buried"]],
-      "text": "Cal is buried east of Camp Gallows, marked the way hunters mark a trail, so someone could find him again."
+      "text": "Cal is buried at the glade where the tree burned, marked the way hunters mark a trail, so someone could find him again."
     },
     {
       "if": [["flag", "lys_brother_lost"]],
@@ -2927,6 +3519,31 @@
     {
       "if": [["any", [["flag", "th_rook_traded"], ["flag", "or_scout_th_rook"]]]],
       "text": "Rook still tells it as the one time a stranger settled his account with a nod, not a blade or a coin.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "free_sworn"]],
+      "text": "The Free Companies count you sworn, not hired — a rank the charter itself remembers, no coin needing to change hands again.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "free_trusted"], ["!flag", "free_sworn"]],
+      "text": "No toll camp between Thornwold and the Saltkerns stops you twice. The Free Companies call that trust, and mean it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "free_sworn"], ["flag", "th_doss_dead"]],
+      "text": "Doss didn't outlive the oath by a season. Camp Gallows still argues whether the fault was the contract's or the hire's.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "free_sworn"], ["!flag", "th_doss_dead"], ["flag", "th_doss_joined"]],
+      "text": "Doss is still Company, still sworn to your back specifically, and still says the pay was never really the point.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "free_sworn"], ["!flag", "th_doss_dead"], ["!flag", "th_doss_joined"]],
+      "text": "Doss still waits at the muster, sworn but never called on. Some contracts just sit unused, Vane says, and pays them anyway.",
       "weight": 1
     }
   ]

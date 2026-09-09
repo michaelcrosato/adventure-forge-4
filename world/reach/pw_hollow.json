@@ -6,114 +6,29 @@
       "brief": "A row of silent hammer-frames, cocked mid-stroke.",
       "region": "pw",
       "landmark": "the Old Vault",
-      "exits": {
-        "up": {
-          "to": "pw_vault_stair"
-        },
-        "in": {
-          "to": "pw_outer_strongroom"
-        }
-      },
+      "exits": { "up": { "to": "pw_vault_stair" }, "in": { "to": "pw_outer_strongroom" } },
       "onEnterOnce": [
-        [
-          "set",
-          "pw_hollow_grievance"
-        ],
-        [
-          "score",
-          2
-        ],
-        [
-          "xp",
-          3
-        ],
-        [
-          "say",
-          "This is the Old Vault's outer hall: the moneyers carried the king's coin and dies down past here, and the Reeve's men mortared the door behind them. Four hundred years on, the hammers still keep quarter-days."
-        ],
+        ["set", "pw_hollow_grievance"],
+        ["score", 2],
+        ["xp", 3],
+        ["say", "This is the Old Vault's outer hall: the moneyers carried the king's coin and dies down past here, and the Reeve's men mortared the door behind them. Four hundred years on, the hammers still keep quarter-days."],
         [
           "if",
+          [["inParty", "tamsin"]],
           [
-            [
-              "inParty",
-              "vell"
-            ]
-          ],
-          [
-            [
-              "say",
-              "Vell: \"My own blood's first order as Reeve, and it ends with four men choosing a wall over a lie. I don't know whether to be proud of them or ashamed of him. Perhaps both fit.\""
-            ]
-          ],
-          []
-        ],
-        [
-          "if",
-          [
-            [
-              "inParty",
-              "tamsin"
-            ]
-          ],
-          [
-            [
-              "say",
-              "Tamsin: \"Listen — nothing's swinging, and that race outside hasn't turned in longer than the wheel's been broken. Whoever built these frames meant them to outlast the men working them. They have.\""
-            ]
-          ],
-          []
-        ],
-        [
-          "if",
-          [
-            [
-              "inParty",
-              "osk"
-            ]
-          ],
-          [
-            [
-              "say",
-              "Brother Osk: \"No rite was ever said over that door. Four hundred years, and not one priest thought a sealed door still needed a blessing. I mean to say one, before we're finished here.\""
-            ]
-          ],
-          []
-        ],
-        [
-          "if",
-          [
-            [
-              "inParty",
-              "lys"
-            ]
-          ],
-          [
-            [
-              "say",
-              "Lys: \"Coin-blanks racked for a hand that isn't coming. I've seen traps set kinder than that.\""
-            ]
+            ["say", "Tamsin: \"Listen — nothing's swinging, and that race outside hasn't turned in longer than the wheel's been broken. Whoever built these frames meant them to outlast the men working them. They have.\""]
           ],
           []
         ]
       ],
       "variants": [
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_rested"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_rested"]],
           "desc": "Hammer-frames stand in their long row, cocked still — but the air has lost the waiting feel it had. Whatever they were held ready for, it came once, and answered.",
           "brief": "The frames, cocked still, but no longer waiting."
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_burned"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_burned"]],
           "desc": "The hammer-frames stand scorched and warped, cinder-oil smoke still ghosting off the timber. Whatever quarter-day sound Pennywell used to hear, nobody's claimed to hear it since.",
           "brief": "The frames, scorched; the old sound gone quiet."
         }
@@ -124,57 +39,26 @@
       "desc": "A stone room short of the vault-door proper, shelves collapsed along one wall since the night the door went up. Whatever was being carried in a hurry that night, some of it never made the last few steps.",
       "brief": "A stone room; shelves collapsed since the sealing.",
       "region": "pw",
-      "exits": {
-        "out": {
-          "to": "pw_striking_hall"
-        },
-        "in": {
-          "to": "pw_vault_door"
-        }
-      },
+      "exits": { "out": { "to": "pw_striking_hall" }, "in": { "to": "pw_vault_door" } },
       "actions": [
         {
           "id": "pw_search_strongroom",
           "label": "search where the shelves fell (wits)",
-          "if": [
-            [
-              "!flag",
-              "pw_die_obverse_known"
-            ]
-          ],
+          "if": [["!flag", "pw_die_obverse_known"]],
           "fx": [
             [
               "check",
               "wits",
               10,
               [
-                [
-                  "set",
-                  "pw_die_obverse_known"
-                ],
-                [
-                  "move",
-                  "pw_obverse_die",
-                  "inv"
-                ],
-                [
-                  "score",
-                  4
-                ],
-                [
-                  "xp",
-                  3
-                ],
-                [
-                  "say",
-                  "Wedged behind a fallen shelf, dropped and never missed in the hurry of that night: the mint's own obverse die, the first Reeve's face still cut sharp into its face."
-                ]
+                ["set", "pw_die_obverse_known"],
+                ["move", "pw_obverse_die", "inv"],
+                ["score", 4],
+                ["xp", 3],
+                ["say", "Wedged behind a fallen shelf, dropped and never missed in the hurry of that night: the mint's own obverse die, the first Reeve's face still cut sharp into its face."]
               ],
               [
-                [
-                  "say",
-                  "Forty years of undisturbed dust and broken shelving, nothing more obvious than that. It can be searched again."
-                ]
+                ["say", "Forty years of undisturbed dust and broken shelving, nothing more obvious than that. It can be searched again."]
               ]
             ]
           ]
@@ -187,49 +71,27 @@
       "brief": "Mortared stone, warm to the touch; no fire behind it.",
       "region": "pw",
       "exits": {
-        "out": {
-          "to": "pw_outer_strongroom"
-        },
+        "out": { "to": "pw_outer_strongroom" },
         "in": {
           "to": "pw_vault",
-          "if": [
-            [
-              "flag",
-              "pw_hollow_burned"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_burned"]],
           "lockedMsg": "The door is mortared stone, whole. Nothing short of fire is getting through it.",
           "hint": "burn through the door first"
         }
       },
       "variants": [
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_rested"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_rested"]],
           "desc": "Mortared stone, whole still — but the warmth in it has settled into something gentler, less like a held breath and more like a hearth banked for the night.",
           "brief": "The mortared door, warm still, but settled now."
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_bargained"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_bargained"]],
           "desc": "Mortared stone, whole, and Pennywell means to keep it that way. The warmth hasn't left it. Nobody who's felt it seems to want it to.",
           "brief": "The mortared door, kept whole, and warm, by choice."
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_burned"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_burned"]],
           "desc": "A ragged black gap where mortared stone used to be, cinder-oil scored deep into what's left of the frame. Whatever kept the stone warm went out with the door.",
           "brief": "A burned-through gap; the warmth is gone."
         }
@@ -239,200 +101,85 @@
           "id": "pw_weigh_grief",
           "label": "weigh what this grief asks",
           "free": true,
-          "if": [
-            [
-              "!flag",
-              "pw_hollow_done"
-            ]
-          ],
+          "if": [["!flag", "pw_hollow_done"]],
           "fx": [
-            [
-              "say",
-              "The rite wants the king's penny struck once more at this door: both dies, and the three moneyers' names spoken."
-            ],
+            ["say", "The rite wants the king's penny struck once more at this door: both dies, and the three moneyers' names spoken."],
             [
               "if",
+              [["!flag", "sh_hollow_done"]],
               [
-                [
-                  "flag",
-                  "pw_die_reverse_known"
-                ]
+                ["say", "But the moneyers won't strike, dies and names or not, while the Shieldings' dead still hold their line — cut the same night as this door, and it wants answering first: rest it, bargain it, or burn it, at Harrowfield."]
               ],
               [
-                [
-                  "say",
-                  "The reverse die is yours."
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "The reverse die is still wanted: Sarel keeps it, at the Hammer Hearth — given, taken, or found."
-                ]
+                ["say", "The Shieldings have their answer now, one way or another. That excuse is gone from Pennywell's mouth."]
               ]
             ],
             [
               "if",
+              [["flag", "pw_die_reverse_known"]],
+              [["say", "The reverse die is yours."]],
+              [["say", "The reverse die is still wanted: Sarel keeps it, at the Hammer Hearth — given, taken, or found."]]
+            ],
+            [
+              "if",
+              [["flag", "pw_die_obverse_known"]],
+              [["say", "The obverse die is yours."]],
               [
-                [
-                  "flag",
-                  "pw_die_obverse_known"
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "The obverse die is yours."
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "The obverse die is still wanted: in the outer strong-room, from Slade's scrap, or washed up on the gravel spit."
-                ]
+                ["say", "The obverse die is still wanted: in the outer strong-room, from Slade's scrap, or washed up on the gravel spit."]
               ]
             ],
             [
               "if",
+              [["var", "pw_names_known", ">=", 3]],
               [
-                [
-                  "var",
-                  "pw_names_known",
-                  ">=",
-                  3
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "All three moneyers' names are known: Doran's record, Meva's ledger, and the child's river penny read."
-                ]
+                ["say", "All three moneyers' names are known: Doran's record, Meva's ledger, and the child's river penny read."]
               ],
               []
             ],
             [
               "if",
-              [
-                [
-                  "!flag",
-                  "pw_name_assayer"
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "One name is missing still: Doran's record, at the assayer's cot."
-                ]
-              ],
+              [["!flag", "pw_name_assayer"]],
+              [["say", "One name is missing still: Doran's record, at the assayer's cot."]],
+              []
+            ],
+            [
+              "if",
+              [["!flag", "pw_name_tithe"]],
+              [["say", "One name is missing still: Meva's ledger of faces, at the tithe-house."]],
+              []
+            ],
+            [
+              "if",
+              [["!flag", "pw_name_child"]],
+              [["say", "One name is missing still: read Robin's river penny, in the mint yard."]],
               []
             ],
             [
               "if",
               [
-                [
-                  "!flag",
-                  "pw_name_tithe"
-                ]
+                ["flag", "pw_die_reverse_known"],
+                ["flag", "pw_die_obverse_known"],
+                ["var", "pw_names_known", ">=", 3],
+                ["flag", "sh_hollow_done"]
               ],
-              [
-                [
-                  "say",
-                  "One name is missing still: Meva's ledger of faces, at the tithe-house."
-                ]
-              ],
+              [["say", "Everything's ready together: strike the king's penny once more, here at the door."]],
               []
             ],
             [
               "if",
+              [["flag", "pw_warden_refused"], ["flag", "pw_paymaster_refused"], ["flag", "pw_smelter_refused"]],
+              [["say", "The bargain stands ready: tell Averil, at the counting-house, the vault stays sealed."]],
               [
-                [
-                  "!flag",
-                  "pw_name_child"
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "One name is missing still: read Robin's river penny, in the mint yard."
-                ]
-              ],
-              []
-            ],
-            [
-              "if",
-              [
-                [
-                  "flag",
-                  "pw_die_reverse_known"
-                ],
-                [
-                  "flag",
-                  "pw_die_obverse_known"
-                ],
-                [
-                  "var",
-                  "pw_names_known",
-                  ">=",
-                  3
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "Everything's ready together: strike the king's penny once more, here at the door."
-                ]
-              ],
-              []
-            ],
-            [
-              "if",
-              [
-                [
-                  "flag",
-                  "pw_warden_refused"
-                ],
-                [
-                  "flag",
-                  "pw_paymaster_refused"
-                ],
-                [
-                  "flag",
-                  "pw_smelter_refused"
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "The bargain stands ready: tell Averil, at the counting-house, the vault stays sealed."
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "The bargain wants three refused, in Pennywell: the warden's warrant, the paymaster's chest, and the smelter's melt."
-                ]
+                ["say", "The bargain wants three refused, in Pennywell: the warden's warrant, the paymaster's chest, and the smelter's melt."]
               ]
             ],
             [
               "if",
+              [["has", "pw_cinder_oil"]],
               [
-                [
-                  "has",
-                  "pw_cinder_oil"
-                ]
+                ["say", "The burn stands ready: cinder-oil is yours — burn through the door here (might; a failed try costs 1 hp)."]
               ],
-              [
-                [
-                  "say",
-                  "The burn stands ready: cinder-oil is yours — burn through the door here (might; a failed try costs 1 hp)."
-                ]
-              ],
-              [
-                [
-                  "say",
-                  "The burn wants cinder-oil — Slade, at the furnace-yard, gives it gladly."
-                ]
-              ]
+              [["say", "The burn wants cinder-oil — Slade, at the furnace-yard, gives it gladly."]]
             ]
           ]
         },
@@ -440,24 +187,11 @@
           "id": "pw_rest_hollow",
           "label": "strike the penny (might, 1hp fail)",
           "if": [
-            [
-              "has",
-              "pw_reverse_die"
-            ],
-            [
-              "has",
-              "pw_obverse_die"
-            ],
-            [
-              "var",
-              "pw_names_known",
-              ">=",
-              3
-            ],
-            [
-              "!flag",
-              "pw_hollow_done"
-            ]
+            ["has", "pw_reverse_die"],
+            ["has", "pw_obverse_die"],
+            ["var", "pw_names_known", ">=", 3],
+            ["flag", "sh_hollow_done"],
+            ["!flag", "pw_hollow_done"]
           ],
           "fx": [
             [
@@ -465,93 +199,36 @@
               "might",
               9,
               [
-                [
-                  "set",
-                  "pw_hollow_rested"
-                ],
-                [
-                  "set",
-                  "pw_hollow_done"
-                ],
-                [
-                  "addvar",
-                  "hollows_rested",
-                  1
-                ],
-                [
-                  "addvar",
-                  "rep_keepers",
-                  2
-                ],
-                [
-                  "addvar",
-                  "rep_church",
-                  2
-                ],
-                [
-                  "addvar",
-                  "appr_vell",
-                  1
-                ],
-                [
-                  "addvar",
-                  "appr_tamsin",
-                  1
-                ],
-                [
-                  "score",
-                  25
-                ],
-                [
-                  "xp",
-                  8
-                ],
-                [
-                  "say",
-                  "You set both dies true and swing once, saying Corbet, Wyle, and Hann into the strike. The coin comes out whole, the first struck true in four hundred years — and from behind the stone, once, the hammers answer it."
-                ],
+                ["set", "pw_hollow_rested"],
+                ["set", "pw_hollow_done"],
+                ["addvar", "hollows_rested", 1],
+                ["addvar", "rep_keepers", 2],
+                ["addvar", "rep_church", 2],
+                ["addvar", "appr_vell", 1],
+                ["addvar", "appr_tamsin", 1],
+                ["score", 25],
+                ["xp", 8],
+                ["say", "You set both dies true and swing once, saying Corbet, Wyle, and Hann into the strike. The coin comes out whole, the first struck true in four hundred years — and from behind the stone, once, the hammers answer it."],
                 [
                   "if",
+                  [["inParty", "vell"]],
                   [
-                    [
-                      "inParty",
-                      "vell"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "Vell: \"There. My own line's face, and theirs, on the same small piece of silver. I did not think that would ever sit easily in one hand. It very nearly does.\""
-                    ]
+                    ["say", "Vell: \"There. My own line's face, and theirs, on the same small piece of silver. I did not think that would ever sit easily in one hand. It very nearly does.\""]
                   ],
                   []
                 ],
                 [
                   "if",
+                  [["inParty", "tamsin"]],
                   [
-                    [
-                      "inParty",
-                      "tamsin"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "Tamsin: \"That's a craftsman's answer, not a priest's. Dies, a die-hand, and a true swing. I'll allow it counts as a rite anyway.\""
-                    ]
+                    ["say", "Tamsin: \"That's a craftsman's answer, not a priest's. Dies, a die-hand, and a true swing. I'll allow it counts as a rite anyway.\""]
                   ],
                   []
                 ]
               ],
               [
-                [
-                  "hp",
-                  -1
-                ],
-                [
-                  "say",
-                  "The hammer skips its mark. The coin comes out bent, unspendable, unspeakable — and the names go unsaid for it. It can be tried again."
-                ]
+                ["hp", -1],
+                ["say", "The hammer skips its mark. The coin comes out bent, unspendable, unspeakable — and the names go unsaid for it. It can be tried again."]
               ]
             ]
           ]
@@ -559,114 +236,42 @@
         {
           "id": "pw_burn_hollow",
           "label": "burn the vault-door (might, 1hp fail)",
-          "if": [
-            [
-              "has",
-              "pw_cinder_oil"
-            ],
-            [
-              "!flag",
-              "pw_hollow_done"
-            ]
-          ],
+          "if": [["has", "pw_cinder_oil"], ["!flag", "pw_hollow_done"]],
           "fx": [
             [
               "check",
               "might",
               9,
               [
-                [
-                  "move",
-                  "pw_cinder_oil",
-                  "nowhere"
-                ],
-                [
-                  "set",
-                  "pw_hollow_burned"
-                ],
-                [
-                  "set",
-                  "pw_hollow_done"
-                ],
-                [
-                  "addvar",
-                  "hollows_burned",
-                  1
-                ],
-                [
-                  "addvar",
-                  "rep_iron",
-                  2
-                ],
-                [
-                  "addvar",
-                  "rep_church",
-                  -2
-                ],
-                [
-                  "addvar",
-                  "appr_tamsin",
-                  1
-                ],
-                [
-                  "addvar",
-                  "appr_vell",
-                  -1
-                ],
-                [
-                  "score",
-                  15
-                ],
-                [
-                  "xp",
-                  8
-                ],
-                [
-                  "say",
-                  "The cinder-oil eats through four hundred years of mortar in a night. By morning the door's a black gap, and whatever the moneyers were guarding is only silver again — melted, mostly, and easy now to claim."
-                ],
+                ["move", "pw_cinder_oil", "nowhere"],
+                ["set", "pw_hollow_burned"],
+                ["set", "pw_hollow_done"],
+                ["addvar", "hollows_burned", 1],
+                ["addvar", "rep_iron", 2],
+                ["addvar", "rep_church", -2],
+                ["addvar", "appr_tamsin", 1],
+                ["addvar", "appr_vell", -1],
+                ["score", 25],
+                ["xp", 8],
+                ["say", "The cinder-oil eats through four hundred years of mortar in a night. By morning the door's a black gap, and whatever the moneyers were guarding is only silver again — melted, mostly, and easy now to claim."],
                 [
                   "if",
-                  [
-                    [
-                      "inParty",
-                      "tamsin"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "Tamsin: \"Quick, clean, and the forges eat well tonight. I won't pretend I'm sorry for it.\""
-                    ]
-                  ],
+                  [["inParty", "tamsin"]],
+                  [["say", "Tamsin: \"Quick, clean, and the forges eat well tonight. I won't pretend I'm sorry for it.\""]],
                   []
                 ],
                 [
                   "if",
+                  [["inParty", "vell"]],
                   [
-                    [
-                      "inParty",
-                      "vell"
-                    ]
-                  ],
-                  [
-                    [
-                      "say",
-                      "Vell: \"My own family's coin, my own family's fire. I keep thinking someone should have asked those men first. Nobody did, either time.\""
-                    ]
+                    ["say", "Vell: \"My own family's coin, my own family's fire. I keep thinking someone should have asked those men first. Nobody did, either time.\""]
                   ],
                   []
                 ]
               ],
               [
-                [
-                  "hp",
-                  -1
-                ],
-                [
-                  "say",
-                  "The oil catches wrong on the damp stone and flares back short. You're driven off a step, singed, the door untouched."
-                ]
+                ["hp", -1],
+                ["say", "The oil catches wrong on the damp stone and flares back short. You're driven off a step, singed, the door untouched."]
               ]
             ]
           ]
@@ -678,81 +283,46 @@
       "desc": "The vault proper, walls scorched black where the cinder-oil ate through stone meant to last forever. Four moneyers lie where they sat down to wait, dies and coin-dust scattered around them like a trade left mid-count.",
       "brief": "The scorched vault; four moneyers, a trade left mid-count.",
       "region": "pw",
-      "exits": {
-        "out": {
-          "to": "pw_vault_door"
-        }
-      },
+      "exits": { "out": { "to": "pw_vault_door" } },
       "actions": [
         {
           "id": "pw_search_vault",
           "label": "search the scorched hoard",
           "once": true,
-          "if": [
-            [
-              "flag",
-              "pw_hollow_burned"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_burned"]],
           "fx": [
-            [
-              "move",
-              "pw_hoard_silver",
-              "inv"
-            ],
-            [
-              "score",
-              3
-            ],
-            [
-              "xp",
-              2
-            ],
-            [
-              "addvar",
-              "gold",
-              8
-            ],
-            [
-              "say",
-              "Most of the hoard is a single fused lump now, faces melted past reading. You take what's still worth taking, and try not to look too long at the four of them."
-            ]
+            ["move", "pw_hoard_silver", "inv"],
+            ["score", 3],
+            ["xp", 2],
+            ["addvar", "gold", 8],
+            ["say", "Most of the hoard is a single fused lump now, faces melted past reading. You take what's still worth taking, and try not to look too long at the four of them."]
           ]
         }
       ]
     }
   },
   "items": {
+    "pw_coin_blank": {
+      "name": "an unstruck coin-blank",
+      "loc": "pw_striking_hall",
+      "takeable": true,
+      "hint": "blank on both faces; four hundred years of nobody deciding what to stamp on it"
+    },
     "pw_reverse_die": {
       "name": "the king's reverse die",
       "loc": "nowhere",
       "hint": "wants the obverse to be struck true; Hann's own hand cut this one",
       "variants": [
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_rested"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_rested"]],
           "hint": "struck true at the vault door; Sarel will want to know where it rests"
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_bargained"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_bargained"]],
           "hint": "the vault kept; the press strikes the old face from its own dies now — a keepsake"
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_burned"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_burned"]],
           "hint": "the vault burned through; nothing left to strike — a keepsake"
         }
       ]
@@ -763,30 +333,15 @@
       "hint": "silver-black with age; the old king's face still sharp on it",
       "variants": [
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_rested"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_rested"]],
           "hint": "struck true at the vault door; Sarel will want to know where it rests"
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_bargained"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_bargained"]],
           "hint": "the vault kept; the press strikes the old face from its own dies now — a keepsake"
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_burned"
-            ]
-          ],
+          "if": [["flag", "pw_hollow_burned"]],
           "hint": "the vault burned through; nothing left to strike — a keepsake"
         }
       ]
@@ -799,371 +354,155 @@
     "pw_hoard_silver": {
       "name": "a fused lump of coin-silver, faces melted past reading",
       "loc": "nowhere",
-      "hint": "worth its weight, nothing more; nothing is owed on it"
+      "hint": "coin melted past any face you'd know; worth is the silver alone now."
     }
   },
   "quests": {
     "pw_q_dies": {
       "name": "The Two Dies",
-      "start": [
-        [
-          "flag",
-          "pw_hollow_grievance"
-        ]
-      ],
-      "done": [
-        [
-          "has",
-          "pw_reverse_die"
-        ],
-        [
-          "has",
-          "pw_obverse_die"
-        ]
-      ],
+      "start": [["flag", "pw_hollow_grievance"]],
+      "done": [["has", "pw_reverse_die"], ["has", "pw_obverse_die"]],
+      "failed": [["flag", "pw_hollow_done"], ["any", [["!has", "pw_reverse_die"], ["!has", "pw_obverse_die"]]]],
       "stages": [
         {
-          "if": [
-            [
-              "has",
-              "pw_reverse_die"
-            ],
-            [
-              "!has",
-              "pw_obverse_die"
-            ]
-          ],
-          "text": "The reverse die is yours. The obverse waits in the outer strong-room, in Slade's scrap, or on the gravel spit."
+          "if": [["has", "pw_reverse_die"], ["!has", "pw_obverse_die"]],
+          "text": "The reverse die is yours. The obverse waits in the outer strong-room, in Slade's scrap, or on the gravel spit.",
+          "at": "pw_outer_strongroom"
         },
         {
-          "if": [
-            [
-              "!has",
-              "pw_reverse_die"
-            ],
-            [
-              "has",
-              "pw_obverse_die"
-            ]
-          ],
-          "text": "The obverse die is yours. The reverse waits with Sarel, at the Hammer Hearth — given, taken, or found."
+          "if": [["!has", "pw_reverse_die"], ["has", "pw_obverse_die"]],
+          "text": "The obverse die is yours. The reverse waits with Sarel, at the Hammer Hearth — given, taken, or found.",
+          "at": "pw_hearth"
         },
         {
           "if": [],
-          "text": "Two dies are wanted: the reverse from Sarel, the obverse from the strong-room, the scrap, or the spit."
+          "text": "Two dies are wanted: the reverse from Sarel, the obverse from the strong-room, the scrap, or the spit.",
+          "at": "pw_hearth"
         }
       ]
     },
     "pw_q_names": {
       "name": "The Moneyers' Names",
-      "start": [
-        [
-          "flag",
-          "pw_hollow_grievance"
-        ]
-      ],
-      "done": [
-        [
-          "var",
-          "pw_names_known",
-          ">=",
-          3
-        ]
-      ],
+      "start": [["flag", "pw_hollow_grievance"]],
+      "done": [["var", "pw_names_known", ">=", 3]],
+      "failed": [["flag", "pw_hollow_done"], ["var", "pw_names_known", "<", 3]],
       "stages": [
         {
-          "if": [
-            [
-              "flag",
-              "pw_name_assayer"
-            ],
-            [
-              "flag",
-              "pw_name_tithe"
-            ],
-            [
-              "!flag",
-              "pw_name_child"
-            ]
-          ],
-          "text": "Two names are known: Doran's and Meva's. The last is Robin's river penny, read, in the mint yard."
+          "if": [["flag", "pw_name_assayer"], ["flag", "pw_name_tithe"], ["!flag", "pw_name_child"]],
+          "text": "Two names are known: Doran's and Meva's. The last is Robin's river penny, read, in the mint yard.",
+          "at": "pw_mint_yard"
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_name_assayer"
-            ],
-            [
-              "!flag",
-              "pw_name_tithe"
-            ],
-            [
-              "flag",
-              "pw_name_child"
-            ]
-          ],
-          "text": "Two names are known: Doran's and the river penny's. The last waits in Meva's ledger, at the tithe-house."
+          "if": [["flag", "pw_name_assayer"], ["!flag", "pw_name_tithe"], ["flag", "pw_name_child"]],
+          "text": "Two names are known: Doran's and the river penny's. The last waits in Meva's ledger, at the tithe-house.",
+          "at": "pw_tithe_house"
         },
         {
-          "if": [
-            [
-              "!flag",
-              "pw_name_assayer"
-            ],
-            [
-              "flag",
-              "pw_name_tithe"
-            ],
-            [
-              "flag",
-              "pw_name_child"
-            ]
-          ],
-          "text": "Two names are known: Meva's and the river penny's. The last waits in Doran's record, at the assayer's cot."
+          "if": [["!flag", "pw_name_assayer"], ["flag", "pw_name_tithe"], ["flag", "pw_name_child"]],
+          "text": "Two names are known: Meva's and the river penny's. The last waits in Doran's record, at the assayer's cot.",
+          "at": "pw_assayer_cot"
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_name_assayer"
-            ],
-            [
-              "!flag",
-              "pw_name_tithe"
-            ],
-            [
-              "!flag",
-              "pw_name_child"
-            ]
-          ],
-          "text": "One name is known: Doran's record. Two remain: Meva's ledger and Robin's river penny."
+          "if": [["flag", "pw_name_assayer"], ["!flag", "pw_name_tithe"], ["!flag", "pw_name_child"]],
+          "text": "One name is known: Doran's record. Two remain: Meva's ledger and Robin's river penny.",
+          "at": "pw_tithe_house"
         },
         {
-          "if": [
-            [
-              "!flag",
-              "pw_name_assayer"
-            ],
-            [
-              "flag",
-              "pw_name_tithe"
-            ],
-            [
-              "!flag",
-              "pw_name_child"
-            ]
-          ],
-          "text": "One name is known: Meva's ledger. Two remain: Doran's record and Robin's river penny."
+          "if": [["!flag", "pw_name_assayer"], ["flag", "pw_name_tithe"], ["!flag", "pw_name_child"]],
+          "text": "One name is known: Meva's ledger. Two remain: Doran's record and Robin's river penny.",
+          "at": "pw_assayer_cot"
         },
         {
-          "if": [
-            [
-              "!flag",
-              "pw_name_assayer"
-            ],
-            [
-              "!flag",
-              "pw_name_tithe"
-            ],
-            [
-              "flag",
-              "pw_name_child"
-            ]
-          ],
-          "text": "One name is known: the river penny's. Two remain: Doran's record and Meva's ledger."
+          "if": [["!flag", "pw_name_assayer"], ["!flag", "pw_name_tithe"], ["flag", "pw_name_child"]],
+          "text": "One name is known: the river penny's. Two remain: Doran's record and Meva's ledger.",
+          "at": "pw_assayer_cot"
         },
-        {
-          "if": [],
-          "text": "Three names are wanted: Doran's record, Meva's ledger, and Robin's river penny, read."
-        }
+        { "if": [], "text": "Three names are wanted: Doran's record, Meva's ledger, and Robin's river penny, read.", "at": "pw_assayer_cot" }
       ]
     },
     "pw_q_penny": {
       "name": "The River Penny",
-      "start": [
-        [
-          "flag",
-          "pw_robin_bg"
-        ]
-      ],
-      "done": [
-        [
-          "any",
-          [
-            [
-              "flag",
-              "pw_penny_read"
-            ],
-            [
-              "flag",
-              "pw_penny_given"
-            ],
-            [
-              "flag",
-              "pw_penny_kept"
-            ]
-          ]
-        ]
-      ],
+      "start": [["flag", "pw_robin_bg"]],
+      "done": [["any", [["flag", "pw_penny_read"], ["flag", "pw_penny_given"], ["flag", "pw_penny_kept"]]]],
       "stages": [
         {
           "if": [],
-          "text": "Robin's river penny still hears hammers. Read it for a name, give it to Meva's ledger, or tell her to keep it unread."
+          "text": "Robin's river penny still hears hammers. Read it for a name, give it to Meva's ledger, or tell her to keep it unread.",
+          "at": "pw_mint_yard"
         }
       ]
     },
     "pw_q_coin": {
       "name": "Pennywell's Coin",
-      "start": [
-        [
-          "flag",
-          "pw_entered"
-        ]
-      ],
-      "done": [
-        [
-          "flag",
-          "pw_coin_settled"
-        ]
-      ],
+      "start": [["flag", "pw_entered"]],
+      "done": [["flag", "pw_coin_settled"]],
       "stages": [
         {
-          "if": [
-            [
-              "flag",
-              "pw_coin_crown"
-            ]
-          ],
-          "text": "Pennywell strikes the Crown's face now, the first Reeve's own, from the counting-house."
+          "if": [["flag", "pw_coin_crown"]],
+          "text": "Pennywell strikes the Crown's face now, the first Reeve's own, from the counting-house.",
+          "at": "pw_counting_house"
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_coin_free"
-            ]
-          ],
-          "text": "Pennywell's silver runs faceless now, weighed and not counted, out of the paymaster's chest-room."
+          "if": [["flag", "pw_coin_free"]],
+          "text": "Pennywell's silver runs faceless now, weighed and not counted, out of the paymaster's chest-room.",
+          "at": "pw_chest_room"
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_coin_king"
-            ]
-          ],
-          "text": "Pennywell strikes the old king's face now, the Keepers' answer, settled at the assayer's cot or by the bargain itself."
+          "if": [["flag", "pw_coin_broker"]],
+          "text": "Pennywell strikes the old king's face now, an Envoy's bargain the warden and the paymaster both signed."
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_done"
-            ]
-          ],
-          "text": "The vault's fate is settled. Pennywell's coin is still open: the counting-house, the chest-room, or the assayer's cot."
+          "if": [["flag", "pw_coin_king"]],
+          "text": "Pennywell strikes the old king's face now, the Keepers' answer, settled at the assayer's cot or by the bargain itself.",
+          "at": "pw_assayer_cot"
         },
         {
-          "if": [],
-          "text": "Whose face Pennywell strikes waits on the vault's own fate being settled first."
-        }
+          "if": [["flag", "pw_hollow_done"]],
+          "text": "The vault's fate is settled. Pennywell's coin is still open: the counting-house, the chest-room, or the assayer's cot.",
+          "at": "pw_counting_house"
+        },
+        { "if": [], "text": "Whose face Pennywell strikes waits on the vault's own fate being settled first.", "at": "pw_vault" }
       ]
     },
     "pw_q_paymaster": {
       "name": "The Paymaster's Errand",
-      "start": [
-        [
-          "flag",
-          "pw_paymaster_errand"
-        ]
-      ],
-      "done": [
-        [
-          "flag",
-          "pw_paymaster_errand_done"
-        ]
-      ],
-      "failed": [
-        [
-          "flag",
-          "pw_paymaster_errand_failed"
-        ]
-      ],
+      "start": [["flag", "pw_paymaster_errand"]],
+      "done": [["flag", "pw_paymaster_errand_done"]],
+      "failed": [["flag", "pw_paymaster_errand_failed"]],
       "stages": [
         {
-          "if": [
-            [
-              "flag",
-              "pw_ford_line_known"
-            ]
-          ],
-          "text": "The ford's safe line is known. Carry Dray's chest across it, at dusk."
+          "if": [["flag", "pw_ford_line_known"]],
+          "text": "The ford's safe line is known. Carry Dray's chest across it, at dusk.",
+          "at": "pw_bank_0_3"
         },
         {
           "if": [],
-          "text": "Dray's chest wants carrying over the ford at dusk. Read the ford's line first: from the mill-race, one south, one west."
+          "at": "pw_bank_0_3",
+          "text": "Dray's chest wants carrying over the ford at dusk. Read the ford's line before you cross it."
         }
       ]
     },
     "pw_q_after": {
       "name": "Pennywell, After",
-      "start": [
-        [
-          "flag",
-          "sv_pw_back"
-        ]
-      ],
-      "done": [
-        [
-          "flag",
-          "sv_pw_after_done"
-        ]
-      ],
+      "start": [["flag", "sv_pw_back"]],
+      "done": [["flag", "sv_pw_after_done"]],
       "stages": [
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_bargained"
-            ],
-            [
-              "!flag",
-              "said_pw_warden_sv_pw_bargain_ask"
-            ]
-          ],
-          "text": "The bargain's come due. Averil, at the counting-house, has news you won't like."
+          "if": [["flag", "pw_hollow_bargained"], ["!flag", "said_pw_warden_sv_pw_bargain_ask"]],
+          "text": "The bargain's come due. Averil, at the counting-house, has news you won't like.",
+          "at": "pw_counting_house"
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_rested"
-            ],
-            [
-              "!flag",
-              "said_pw_descendant_sv_pw_rested_ask"
-            ]
-          ],
-          "text": "The rite is settled. Sarel, at the Hammer Hearth, wonders what becomes of the dies now."
+          "if": [["flag", "pw_hollow_rested"], ["!flag", "said_pw_descendant_sv_pw_rested_ask"]],
+          "text": "The rite is settled. Sarel, at the Hammer Hearth, wonders what becomes of the dies now.",
+          "at": "pw_hearth"
         },
         {
-          "if": [
-            [
-              "flag",
-              "pw_hollow_burned"
-            ],
-            [
-              "!flag",
-              "said_pw_smelter_sv_pw_burn_ask"
-            ]
-          ],
-          "text": "The vault is ash and melt. Slade, at the furnace-yard, wants to know where the silver goes."
+          "if": [["flag", "pw_hollow_burned"], ["!flag", "said_pw_smelter_sv_pw_burn_ask"]],
+          "text": "The vault is ash and melt. Slade, at the furnace-yard, wants to know where the silver goes.",
+          "at": "pw_furnace_yard"
         },
-        {
-          "if": [],
-          "text": "Pennywell settles back into itself, whatever the Old Vault's fate cost it."
-        }
+        { "if": [], "text": "Pennywell settles back into itself, whatever the Old Vault's fate cost it." }
       ]
     }
   },
@@ -1173,223 +512,108 @@
       "label": "The moneyers' names",
       "max": 3,
       "remaining": [
-        {
-          "flag": "pw_name_assayer",
-          "label": "Doran's record"
-        },
-        {
-          "flag": "pw_name_tithe",
-          "label": "Meva's ledger of faces"
-        },
-        {
-          "flag": "pw_name_child",
-          "label": "Robin's river penny, read"
-        }
+        { "flag": "pw_name_assayer", "label": "Doran's record" },
+        { "flag": "pw_name_tithe", "label": "Meva's ledger of faces" },
+        { "flag": "pw_name_child", "label": "Robin's river penny, read" }
       ],
-      "if": [
-        [
-          "flag",
-          "pw_hollow_grievance"
-        ]
-      ]
+      "if": [["flag", "pw_hollow_grievance"]]
     }
   ],
   "epilogue": [
     {
-      "if": [
-        [
-          "flag",
-          "pw_hollow_rested"
-        ]
-      ],
+      "if": [["flag", "pw_hollow_rested"]],
       "text": "The king's penny was struck once more at Pennywell's vault-door, and the hammers under the ground answered it, once, and stopped.",
       "weight": 2
     },
     {
-      "if": [
-        [
-          "flag",
-          "pw_hollow_bargained"
-        ]
-      ],
+      "if": [["flag", "pw_hollow_rested"], ["flag", "sh_hollow_rested"]],
+      "text": "Pennywell struck true only once Harrowfield's own truce was finally called — the same night's two debts, closed within one season.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "pw_hollow_rested"], ["any", [["flag", "sh_hollow_bargained"], ["flag", "sh_hollow_burned"]]]],
+      "text": "Pennywell struck its penny only once the Shieldings' account was closed, one way or another. The moneyers never say aloud they were waiting.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "pw_hollow_bargained"]],
       "text": "Pennywell's vault stays sealed and warm, and its mint strikes an old king's face now, by nobody's leave but its own.",
       "weight": 2
     },
     {
-      "if": [
-        [
-          "flag",
-          "pw_hollow_burned"
-        ]
-      ],
+      "if": [["flag", "pw_hollow_burned"]],
       "text": "Ironbound cinder-oil ate through four hundred years of mortar in a night, and Pennywell's hoard went into the forges by morning.",
       "weight": 2
     },
     {
-      "if": [
-        [
-          "!flag",
-          "pw_hollow_done"
-        ],
-        [
-          "flag",
-          "pw_entered"
-        ]
-      ],
+      "if": [["!flag", "pw_hollow_done"], ["flag", "pw_entered"]],
       "text": "Pennywell's vault stands mortared still. No one born there will spend a penny they haven't looked at first.",
       "weight": 1
     },
     {
-      "if": [
-        [
-          "flag",
-          "pw_coin_crown"
-        ]
-      ],
+      "if": [["flag", "pw_coin_crown"]],
       "text": "Pennywell strikes the Crown's face now, the first Reeve's own, and calls the argument settled.",
       "weight": 1
     },
     {
-      "if": [
-        [
-          "flag",
-          "pw_coin_free"
-        ]
-      ],
+      "if": [["flag", "pw_coin_free"]],
       "text": "Pennywell's silver runs faceless out of the Free Companies' chest now, weighed, never counted."
     },
     {
-      "if": [
-        [
-          "flag",
-          "pw_coin_king"
-        ]
-      ],
+      "if": [["flag", "pw_coin_king"]],
       "text": "Pennywell strikes the old king's face now, and no one who spends it looks at it twice before it's gone."
     },
     {
-      "if": [
-        [
-          "flag",
-          "or_envoy_pw_broker"
-        ]
-      ],
+      "if": [["flag", "or_envoy_pw_broker"]],
       "text": "An Envoy talked the Crown's warden and the Companies' paymaster into signing the same coin. Neither has stopped watching the other since."
     },
     {
-      "if": [
-        [
-          "flag",
-          "pw_penny_read"
-        ]
-      ],
+      "if": [["flag", "pw_penny_read"]],
       "text": "Robin still hears hammers on quarter-days. She says it sounds less lonely now that someone finally answered."
     },
     {
-      "if": [
-        [
-          "flag",
-          "pw_penny_given"
-        ]
-      ],
+      "if": [["flag", "pw_penny_given"]],
       "text": "Robin's river penny sits in Meva's ledger of faces now, one more coin counted rather than kept."
     },
     {
-      "if": [
-        [
-          "flag",
-          "pw_penny_kept"
-        ]
-      ],
+      "if": [["flag", "pw_penny_kept"]],
       "text": "Robin kept her penny unread. She still won't say what she thinks it means, only that it's hers."
     },
     {
-      "if": [
-        [
-          "flag",
-          "pw_paymaster_errand_done"
-        ]
-      ],
+      "if": [["flag", "pw_paymaster_errand_done"]],
       "text": "Dray's chest crossed the ford at dusk and reached the far bank whole, drowned moneyer and all."
     },
     {
-      "if": [
-        [
-          "flag",
-          "free_passage"
-        ],
-        [
-          "flag",
-          "pw_paymaster_errand_done"
-        ]
-      ],
+      "if": [["flag", "free_passage"], ["flag", "pw_paymaster_errand_done"]],
       "text": "Pennywell's ford errand bought the Free Companies' road under the pass, same as Gullhaven's fog and Hornhallow's timber did."
     },
     {
       "if": [
         [
           "any",
-          [
-            [
-              "flag",
-              "sv_pw_bargained_kept"
-            ],
-            [
-              "flag",
-              "sv_pw_bargained_paid"
-            ],
-            [
-              "flag",
-              "sv_pw_bargained_opened"
-            ]
-          ]
+          [["flag", "sv_pw_bargained_kept"], ["flag", "sv_pw_bargained_paid"], ["flag", "sv_pw_bargained_opened"]]
         ]
       ],
       "text": "The Crown came back for Pennywell's vault after all. What it found waiting there depended on who'd been asked to pay for keeping it shut."
     },
     {
-      "if": [
-        [
-          "flag",
-          "sv_pw_rested_kept"
-        ]
-      ],
+      "if": [["flag", "sv_pw_rested_kept"]],
       "text": "The struck penny's dies stand in their own niche at Pennywell's vault-door now, for anyone who doubts the rite to go and see."
     },
     {
-      "if": [
-        [
-          "flag",
-          "sv_pw_rested_sent"
-        ]
-      ],
+      "if": [["flag", "sv_pw_rested_sent"]],
       "text": "The dies that struck the king's penny at Pennywell's door now rest at the Keepers' Hall, proof a rite was carried whole."
     },
     {
-      "if": [
-        [
-          "flag",
-          "sv_pw_burned_crown"
-        ]
-      ],
+      "if": [["flag", "sv_pw_burned_crown"]],
       "text": "Pennywell's melted hoard went to the Regent's coffers in the end, counted, weighed, and gone."
     },
     {
-      "if": [
-        [
-          "flag",
-          "sv_pw_burned_iron"
-        ]
-      ],
+      "if": [["flag", "sv_pw_burned_iron"]],
       "text": "Pennywell's melted hoard stayed at the Ironbound's furnace, and the hold's own tools have run sharper since."
     },
     {
-      "if": [
-        [
-          "flag",
-          "or_warden_pw_word"
-        ]
-      ],
+      "if": [["flag", "or_warden_pw_word"]],
       "text": "A Warden got a straight answer out of Sergeant Wray at Pennywell's stair, watch to watch, that nobody else was offered."
     }
   ]

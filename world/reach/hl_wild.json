@@ -1,5 +1,5 @@
 {
-  "regions": { "hl": { "name": "the Hearthlands" } },
+  "regions": { "hl": { "name": "the Hearthlands", "bearing": "As the tithing lands lie" } },
   "gen": [
     {
       "id": "hl_fields",
@@ -27,14 +27,7 @@
           "desc": "A waist-high post at a field corner, its carved measure worn but legible: the standard sack, chalked and re-chalked every autumn since before anyone here was born. Nobody has adjusted it in living memory.",
           "brief": "The tithe-post, its carved measure.",
           "onEnterOnce": [["xp", 2]],
-          "actions": [
-            {
-              "id": "hl_bearings_1_0",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 2 south and 3 east. The Hunger Barn: 4 south."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_1_0", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [2, 0],
@@ -42,14 +35,7 @@
           "desc": "The tithe-lane widens here where cart-traffic from the Vale first meets the open fields, ruts cut deep enough to catch a boot. North, the lane climbs on toward the Vale of Ash.",
           "brief": "The lane's foot. North: the Vale road.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_2_0",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 2 south and 2 east. The Hunger Barn: 4 south and 1 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_2_0", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [3, 0],
@@ -57,14 +43,7 @@
           "desc": "The ground rises just enough to dry the ruts here before anywhere else, so every tithe-cart for a hundred years has chosen this exact line. The grass between the ruts has never once recovered.",
           "brief": "Rising ground, deep old cart-ruts.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_3_0",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 2 south and 1 east. The Hunger Barn: 4 south and 2 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_3_0", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [4, 0],
@@ -72,14 +51,7 @@
           "desc": "A low rise at the fields' northern edge, worn stone footings the only sign anything once stood watch here. North, a broken tower still keeps a little of its height above the grain.",
           "brief": "A rise. North: a broken watch-tower.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_4_0",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 2 south. The Hunger Barn: 4 south and 3 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_4_0", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [0, 1],
@@ -87,14 +59,7 @@
           "desc": "A hedgerow taller than a rider marks the region's western edge, laid and kept for longer than the fields themselves have had a name. Nothing about it invites a way through.",
           "brief": "A tall, unbroken boundary hedge.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_0_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 south and 4 east. The Hunger Barn: 3 south and 1 east."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_0_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [1, 1],
@@ -102,14 +67,7 @@
           "desc": "A strip left for gleaners by old custom, picked clean every year down to the last dropped ear. It is picked clean now too, though nobody has walked it since dawn.",
           "brief": "A gleaning-strip, already picked clean.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_1_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 south and 3 east. The Hunger Barn: 3 south."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_1_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [2, 1],
@@ -117,14 +75,7 @@
           "desc": "Two furrows meet here at a crook no plow would choose on purpose, as if the field itself remembers a boundary that predates the plowing. Nothing grows quite right along the seam.",
           "brief": "Furrows meeting at an old, crooked seam.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_2_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 south and 2 east. The Hunger Barn: 3 south and 1 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_2_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [3, 1],
@@ -133,12 +84,7 @@
           "brief": "A worked gap in the hedge, well-used.",
           "onEnterOnce": [["set", "hl_found_hedge_gap"], ["score", 2], ["xp", 2]],
           "actions": [
-            {
-              "id": "hl_bearings_3_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 south and 1 east. The Hunger Barn: 3 south and 2 west."]]
-            },
+            { "id": "hl_bearings_3_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] },
             {
               "id": "hl_scout_gap",
               "label": "read the gap's marks",
@@ -160,14 +106,7 @@
           "desc": "A worn marker gives the distance to Marrowgate in a hand nobody uses for measuring anymore. Six miles, it still claims, though the road it once measured has long since wandered off elsewhere.",
           "brief": "An old, wandering distance-stone.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_4_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 south. The Hunger Barn: 3 south and 3 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_4_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [5, 1],
@@ -175,14 +114,7 @@
           "desc": "The fields climb gently toward the region's eastern edge, the ground here never quite as productive as the rest, kept anyway out of some old habit. East, a chapel roof breaks the grain.",
           "brief": "Rising ground. East: a chapel roof.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_5_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 south and 1 west. The Hunger Barn: 3 south and 4 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_5_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [0, 2],
@@ -190,14 +122,7 @@
           "desc": "The boundary hedge finally breaks here, worn thin by one household's determined, decades-long refusal to walk any further around it than necessary. West, past the gap, a hut sits low against the hedge-line.",
           "brief": "The hedge breaks. West: a low hut.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_0_2",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 4 east. The Hunger Barn: 2 south and 1 east."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_0_2", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [1, 2],
@@ -205,14 +130,7 @@
           "desc": "A strip left unplanted every year since the Winter of Locked Doors, by nobody's order that anyone can now name — just a habit nobody has ever quite dared to break. Weeds have made a kind of peace with it.",
           "brief": "A strip left fallow since that winter.",
           "onEnterOnce": [["score", 2], ["xp", 2]],
-          "actions": [
-            {
-              "id": "hl_bearings_1_2",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 3 east. The Hunger Barn: 2 south."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_1_2", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [3, 2],
@@ -220,14 +138,7 @@
           "desc": "The stream widens above the millrace, slowed by a low dam of old, black-stained timber. Water pools dark and patient behind it, no hurry at all to reach the wheel it's meant to turn.",
           "brief": "Dark water, pooled above the millrace.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_3_2",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 east. The Hunger Barn: 2 south and 2 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_3_2", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [4, 2],
@@ -235,14 +146,7 @@
           "desc": "The fields give way to hard-packed ground and the first low roofs of Tithing itself, granary thatch showing gray-gold above a lane worn to bare earth leading straight in to the market cross.",
           "brief": "The fields' edge. In: the village proper.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_4_2",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is here. The Hunger Barn: 2 south and 3 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_4_2", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [5, 2],
@@ -250,14 +154,7 @@
           "desc": "A long, straight furlong runs the region's eastern edge, better tended than most ground this far from the village, though nobody you've met yet has claimed it as theirs.",
           "brief": "A long, well-tended furlong.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_5_2",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 west. The Hunger Barn: 2 south and 4 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_5_2", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [0, 3],
@@ -266,14 +163,7 @@
           "brief": "A worked croft. A fresh Crown chalk-mark.",
           "npcs": ["hl_widow"],
           "onEnterOnce": [["score", 2], ["xp", 2]],
-          "actions": [
-            {
-              "id": "hl_bearings_0_3",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 north and 4 east. The Hunger Barn: 1 south and 1 east."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_0_3", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [1, 3],
@@ -285,14 +175,7 @@
             ["xp", 2],
             ["say", "Nailed into the bark, gone soft with rot: the remains of a Crown notice, a debt and a name too weathered to read whole."]
           ],
-          "actions": [
-            {
-              "id": "hl_bearings_1_3",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 north and 3 east. The Hunger Barn: 1 south."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_1_3", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [2, 3],
@@ -300,14 +183,7 @@
           "desc": "Black, still water backs up behind the mill's own sluice, deep enough to lose a dropped tool and never see it again. Something about the stillness makes people walk the long way round instead.",
           "brief": "The millpond, black and still.",
           "onEnterOnce": [["score", 2], ["xp", 2]],
-          "actions": [
-            {
-              "id": "hl_bearings_2_3",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 north and 2 east. The Hunger Barn: 1 south and 1 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_2_3", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [4, 3],
@@ -315,14 +191,7 @@
           "desc": "A long, unbroken run of grain, tended well enough that it's easy to forget, standing in the middle of it, that the ground under your boots once went a whole winter without a single hand to work it.",
           "brief": "A long, well-tended run of grain.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_4_3",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 north. The Hunger Barn: 1 south and 3 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_4_3", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [5, 3],
@@ -330,14 +199,7 @@
           "desc": "A second boundary hedge, lower and younger than the western one, marking where the Hearthlands' claimed fields simply stop and somebody else's country begins.",
           "brief": "A lower, younger boundary hedge.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_5_3",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 1 north and 1 west. The Hunger Barn: 1 south and 4 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_5_3", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [0, 4],
@@ -346,14 +208,7 @@
           "brief": "A fallen croft, its roof long gone.",
           "items": ["hl_threshing_flail"],
           "onEnterOnce": [["score", 2], ["xp", 2]],
-          "actions": [
-            {
-              "id": "hl_bearings_0_4",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 2 north and 4 east. The Hunger Barn: 1 east."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_0_4", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [1, 4],
@@ -361,14 +216,7 @@
           "desc": "A cart-track runs straight in from the fields here, grass grown up through the ruts but the line of it still plain. It leads to a barn nobody in Tithing much likes to name out loud.",
           "brief": "A cart-track. In: an old barn.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_1_4",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 2 north and 3 east. The Hunger Barn: here."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_1_4", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [2, 4],
@@ -377,14 +225,7 @@
           "brief": "Soft, waterlogged ground.",
           "items": ["hl_dried_peas"],
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_2_4",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 2 north and 2 east. The Hunger Barn: 1 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_2_4", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [3, 4],
@@ -392,14 +233,7 @@
           "desc": "More grain, more furrows, the fields running on long enough here that it's easy to lose count of which strip belongs to which household, if any of them still do.",
           "brief": "More long, unbroken fields.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_3_4",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 2 north and 1 east. The Hunger Barn: 2 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_3_4", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [4, 4],
@@ -407,14 +241,7 @@
           "desc": "A packed-earth track breaks off from the main fields here, wagon-ruts pressed deeper than any honest cart-traffic would leave them, dipping toward a stand of scrub where tents show through the branches.",
           "brief": "A worn track, dipping toward a camp.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_4_4",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 2 north. The Hunger Barn: 3 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_4_4", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [5, 4],
@@ -422,14 +249,7 @@
           "desc": "The younger hedge bends south here, thinner and more recently laid, as if whoever kept it ran short of both time and conviction before finishing the job properly.",
           "brief": "A thin, hastily-kept hedge.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_5_4",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 2 north and 1 west. The Hunger Barn: 4 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_5_4", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [1, 5],
@@ -437,14 +257,7 @@
           "desc": "A low rise gives the best view south of anywhere in the fields, salt-smell already faint on the wind if the day is right. The ground beyond it starts sloping toward the coast in earnest.",
           "brief": "Rising ground. A hint of salt on the wind.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_1_5",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 3 north and 3 east. The Hunger Barn: 1 north."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_1_5", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [2, 5],
@@ -452,14 +265,7 @@
           "desc": "The fields thin toward the region's southern edge, grain giving way by degrees to scrub and salt-tolerant grass that no tithe has ever bothered counting.",
           "brief": "Thinning fields, salt-grass beyond.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_2_5",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 3 north and 2 east. The Hunger Barn: 1 north and 1 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_2_5", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [3, 5],
@@ -467,14 +273,7 @@
           "desc": "The tithe-lane gathers itself here for the last stretch south, ruts running straight and true toward salt air and open cliff-country beyond the fields.",
           "brief": "The lane's foot. South: the coast road.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_3_5",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 3 north and 1 east. The Hunger Barn: 1 north and 2 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_3_5", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [4, 5],
@@ -482,14 +281,7 @@
           "desc": "The southernmost furlong the Hearthlands still claims, grain giving out entirely a few dozen paces past it into country the tithe-lanes were never cut to reach.",
           "brief": "The southernmost furlong.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "hl_bearings_4_5",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, Tithing is 3 north. The Hunger Barn: 1 north and 3 west."]]
-            }
-          ]
+          "actions": [{ "id": "hl_bearings_4_5", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         }
       ],
       "cellFx": {
@@ -500,7 +292,7 @@
             [
               [
                 "if",
-                [["!npcDead", "hl_gleaner"]],
+                [["!npcDead", "hl_gleaner"], ["!flag", "watch_trusted"], ["!flag", "crown_trusted"]],
                 [
                   ["npcgo", "hl_gleaner", "here"],
                   ["say", "Something gray and stoop-backed straightens up out of the furrows ahead, hands still moving through the motions of a harvest that finished four hundred years ago."]

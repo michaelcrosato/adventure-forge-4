@@ -11,6 +11,7 @@ import {
   actionByLabel,
   condOk,
   legalActions,
+  menuLoad,
   newState,
   step,
 } from "./engine.ts";
@@ -21,11 +22,17 @@ import type { Cond, Fx, State, WalkStep, World } from "./types.ts";
 export { MENU_CAP };
 
 const COND_OPS = new Set([
-  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "any",
+  "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "cond", "!cond", "npccond", "!npccond", "turn", "since", "horrorHere", "!horrorHere", "holdsGround", "!holdsGround", "companionDown", "!companionDown", "checkHere", "!checkHere", "lowHp", "!lowHp", "region", "!region", "unseenHere", "!unseenHere", "inWild", "!inWild", "any",
 ]);
 const FX_OPS = new Set([
-  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "calm", "end",
+  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "calm", "calmhostile", "cond", "npccond", "condhostile", "uncond", "unnpccond", "harm", "harmhostile", "bearings", "questsopen", "revive", "sayunvisited", "end",
 ]);
+/** Fields a `conditions` entry may carry — `name` required, everything else optional. Closed, like the rest of the DSL. */
+const CONDITION_FIELDS = new Set(["name", "hit", "dmg", "armor", "checks", "hpPerTurn", "hint"]);
+/** Fields a `world.clock` entry may carry — `id` and `fx` required, `if`/`once` optional. Closed, like the rest of the DSL. */
+const CLOCK_FIELDS = new Set(["id", "if", "once", "fx"]);
+/** Fields a `world.abilities` entry may carry — `label` and `fx` required, everything else optional. Closed, like a room's CustomAction it is shaped after. */
+const ABILITY_FIELDS = new Set(["label", "if", "context", "once", "free", "fx"]);
 
 /**
  * The files a world is made of: the root, then every part its `include` list
@@ -55,9 +62,15 @@ export function worldFiles(path: string): string[] {
 
 // Which top-level fields a part file may carry. A part is a slice of one world:
 // it adds records and list entries, never the world's identity or its proof.
-const ROOT_ONLY = new Set(["id", "title", "intro", "objectives", "start", "hp", "maxScore", "walkthrough", "progress", "include"]);
-const RECORD_FIELDS = new Set(["rooms", "items", "npcs", "classes", "perks", "regions", "quests", "proofs", "templates", "skills", "factions"]);
-const LIST_FIELDS = new Set(["gen", "stamps", "epilogue", "statusTracks", "statusPaths", "hud"]);
+const ROOT_ONLY = new Set(["id", "title", "intro", "objectives", "start", "hp", "maxScore", "walkthrough", "progress", "include", "abilities", "resources"]);
+const RECORD_FIELDS = new Set(["rooms", "items", "npcs", "classes", "perks", "regions", "quests", "proofs", "templates", "skills", "factions", "conditions"]);
+// `clock` is here, not in ROOT_ONLY, because a scheduled event is content that
+// belongs to a place: the Ironbound's march is the Ironbound author's, the same
+// way their epilogue lines are. It was root-only for one commit, which would
+// have made one author the owner of every scheduled event in an eighteen-region
+// realm. Entries concatenate in file order and the engine fires at most one a
+// turn, so file order is also priority order — see docs/authoring.md §13.
+const LIST_FIELDS = new Set(["gen", "stamps", "epilogue", "statusTracks", "statusPaths", "hud", "clock"]);
 
 /**
  * Load a world: read the root file, merge every included part (records must
@@ -69,6 +82,10 @@ export function loadWorld(path: string): World {
   const files = worldFiles(path);
   const root = JSON.parse(readFileSync(files[0]!, "utf8")) as World & Record<string, unknown>;
   const owner = new Map<string, string>(); // "rooms/gate" -> file that defined it
+  // a clock entry is a list entry but it carries an id, so a collision across
+  // parts has to name the file that got there first; seed the root's own
+  for (const e of (root.clock ?? []) as { id?: unknown }[])
+    if (e && typeof e.id === "string") owner.set(`clock/${e.id}`, "the root file");
   for (const f of files.slice(1)) {
     const name = relative(dirname(path), f);
     const part = JSON.parse(readFileSync(f, "utf8")) as Record<string, unknown>;
@@ -84,6 +101,13 @@ export function loadWorld(path: string): World {
         }
       } else if (LIST_FIELDS.has(k)) {
         if (!Array.isArray(v)) throw new Error(`${name}: "${k}" must be an array`);
+        if (k === "clock")
+          for (const e of v as { id?: unknown }[]) {
+            if (!e || typeof e.id !== "string") continue;
+            const key = `clock/${e.id}`;
+            if (owner.has(key)) throw new Error(`${name}: clock id "${e.id}" already defined in ${owner.get(key)}`);
+            owner.set(key, name);
+          }
         (root[k] as unknown[] | undefined) ??= [];
         (root[k] as unknown[]).push(...v);
       } else {
@@ -105,6 +129,7 @@ export function validateWorld(world: World): string[] {
   const npcOk = (id: string) => !!world.npcs[id];
   const classOk = (id: string) => !!world.classes?.[id];
   const perkOk = (id: string) => !!world.perks?.[id];
+  const conditionOk = (id: string) => !!world.conditions?.[id];
   const locOk = (l: string) => l === "inv" || l === "nowhere" || roomOk(l);
   const moveOk = (l: string) => l === "here" || locOk(l); // "here" only makes sense inside an effect
   const attrSet = new Set<string>(ATTRS);
@@ -113,22 +138,64 @@ export function validateWorld(world: World): string[] {
 
   const checkConds = (where: string, cs?: Cond[]) => {
     for (const c of cs ?? []) {
+      // collected as the existing walk passes, so "what does this world read"
+      // covers exactly what the validator already reaches — including the
+      // places a hand-written second walker forgets (companion remarks were
+      // where the first draft of this check found nothing but its own blind spot)
+      if (c[0] === "flag" || c[0] === "!flag" || c[0] === "since") flagReads.push({ name: String(c[1]), where });
+      else if (c[0] === "var") varReads.push({ name: String(c[1]), where });
       if (!COND_OPS.has(c[0])) err(`${where}: unknown cond op ${String(c[0])}`);
       else if ((c[0] === "has" || c[0] === "!has") && !itemOk(c[1])) err(`${where}: unknown item ${c[1]}`);
       else if ((c[0] === "npcDead" || c[0] === "!npcDead" || c[0] === "inParty" || c[0] === "!inParty") && !npcOk(c[1])) err(`${where}: unknown npc ${c[1]}`);
       else if (c[0] === "var" && !["<", ">", "=", ">=", "<="].includes(c[2])) err(`${where}: bad var comparator ${String(c[2])}`);
       else if ((c[0] === "class" || c[0] === "!class") && !classOk(c[1])) err(`${where}: unknown class ${c[1]}`);
       else if ((c[0] === "perk" || c[0] === "!perk") && !perkOk(c[1])) err(`${where}: unknown perk ${c[1]}`);
+      else if ((c[0] === "cond" || c[0] === "!cond") && !conditionOk(c[1])) err(`${where}: unknown condition ${c[1]}`);
+      else if (c[0] === "npccond" || c[0] === "!npccond") {
+        if (!npcOk(c[1])) err(`${where}: unknown npc ${c[1]}`);
+        if (!conditionOk(c[2])) err(`${where}: unknown condition ${c[2]}`);
+      }
+      else if (c[0] === "turn" || c[0] === "since") {
+        // world JSON is cast, not type-checked, so a typo'd comparator such as
+        // "=>" loads cleanly and falls through to equality: a scheduled event
+        // that fires on one exact turn, or never. `turn` checked its comparator
+        // and not its threshold; `since` checked neither.
+        const [op, n] = c[0] === "turn" ? [c[1], c[2]] : [c[2], c[3]];
+        if (!["<", ">", "=", ">=", "<="].includes(String(op))) err(`${where}: bad ${c[0]} comparator ${String(op)}`);
+        if (typeof n !== "number") err(`${where}: ${c[0]} threshold must be a number`);
+      }
+      else if (c[0] === "checkHere" || c[0] === "!checkHere") {
+        // both forms, because a misspelled skill in the negated one is worse:
+        // the nonexistent positive check is false everywhere, so `!checkHere`
+        // reads true everywhere and the ability it gates is offered realm-wide
+        if (!checkNameOk(c[1])) err(`${where}: unknown skill ${c[1]}`);
+        if (typeof c[2] !== "number") err(`${where}: ${c[0]} dc must be a number`);
+      }
+      else if ((c[0] === "region" || c[0] === "!region") && !(c[1] in (world.regions ?? {})))
+        err(`${where}: unknown region ${c[1]} — a typo here reads as "nowhere" and the condition simply never fires`);
       else if (c[0] === "any") {
         if (!Array.isArray(c[1]) || !c[1].length) err(`${where}: any needs a non-empty list of conditions`);
         else checkConds(`${where}.any`, c[1]);
       }
     }
   };
+  // A gate with no key: what the world reads, and what it ever writes. Filled
+  // in by checkConds and checkFx as they walk, spent at the end of this
+  // function (see "reads with no writer").
+  const flagWrites = new Set<string>();
+  const varWrites = new Set<string>(Object.keys(world.resources ?? {}));
+  const flagReads: { name: string; where: string }[] = [];
+  const varReads: { name: string; where: string }[] = [];
   const endIds = new Set<string>(); // every ending the content can reach
   const checkFx = (where: string, fxs?: Fx[]) => {
     for (const fx of fxs ?? []) {
       const op = fx[0];
+      // `set` only. Clearing a flag nothing ever sets leaves the gate that reads
+      // it permanently false, which is precisely the unreachable content the
+      // "reads with no writer" check below exists to find — so counting `clear`
+      // as a key defeated it.
+      if (op === "set") flagWrites.add(String(fx[1]));
+      else if (op === "setvar" || op === "addvar") varWrites.add(String(fx[1]));
       if (!FX_OPS.has(op)) { err(`${where}: unknown fx op ${String(op)}`); continue; }
       if (op === "move" && !itemOk(fx[1])) err(`${where}: unknown item ${fx[1]}`);
       if (op === "move" && !moveOk(fx[2])) err(`${where}: bad location ${fx[2]}`);
@@ -137,6 +204,29 @@ export function validateWorld(world: World): string[] {
       if (op === "npcgo" && fx[2] !== null && fx[2] !== "here" && !roomOk(fx[2])) err(`${where}: unknown room ${fx[2]}`);
       if (op === "slay" && !npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
       if (op === "calm" && !npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
+      if (op === "cond") {
+        if (!conditionOk(fx[1])) err(`${where}: unknown condition ${fx[1]}`);
+        if (typeof fx[2] !== "number") err(`${where}: cond turns must be a number`);
+      }
+      if (op === "npccond") {
+        if (!npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
+        if (!conditionOk(fx[2])) err(`${where}: unknown condition ${fx[2]}`);
+        if (typeof fx[3] !== "number") err(`${where}: npccond turns must be a number`);
+      }
+      if (op === "uncond" && !conditionOk(fx[1])) err(`${where}: unknown condition ${fx[1]}`);
+      if (op === "unnpccond") {
+        if (!npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
+        if (!conditionOk(fx[2])) err(`${where}: unknown condition ${fx[2]}`);
+      }
+      if (op === "harm") {
+        if (!npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
+        if (typeof fx[2] !== "number") err(`${where}: harm amount must be a number`);
+      }
+      if (op === "harmhostile" && typeof fx[1] !== "number") err(`${where}: harmhostile amount must be a number`);
+      if (op === "condhostile") {
+        if (!conditionOk(fx[1])) err(`${where}: unknown condition ${fx[1]}`);
+        if (typeof fx[2] !== "number") err(`${where}: condhostile turns must be a number`);
+      }
       if (op === "if") {
         checkConds(`${where}.if`, fx[1]);
         checkFx(`${where}.if.then`, fx[2]);
@@ -211,6 +301,88 @@ export function validateWorld(world: World): string[] {
       if (!checkNameOk(n)) err(`perk ${pid}: unknown check name ${n}`);
   }
 
+  // ---------- conditions ----------
+  // Small and closed, like the rest of the DSL: `name` required, every other
+  // field whitelisted, and `checks` keyed only by real skill/attribute names.
+  for (const [cid, cond] of Object.entries(world.conditions ?? {})) {
+    need(`condition ${cid}`, cond, [["name", "string"]]);
+    for (const k of Object.keys(cond)) if (!CONDITION_FIELDS.has(k)) err(`condition ${cid}: unknown field ${k}`);
+    for (const f of ["hit", "dmg", "armor", "hpPerTurn"] as const) {
+      if (cond[f] !== undefined && typeof cond[f] !== "number") err(`condition ${cid}: "${f}" must be a number`);
+    }
+    if (cond.hint !== undefined && typeof cond.hint !== "string") err(`condition ${cid}: "hint" must be a string`);
+    if (cond.checks !== undefined) {
+      if (typeof cond.checks !== "object" || cond.checks === null || Array.isArray(cond.checks)) err(`condition ${cid}: "checks" must be an object`);
+      else
+        for (const [n, v] of Object.entries(cond.checks)) {
+          if (!checkNameOk(n)) err(`condition ${cid}: unknown check name ${n}`);
+          if (typeof v !== "number") err(`condition ${cid}: checks.${n} must be a number`);
+        }
+    }
+  }
+
+  // ---------- abilities and resources ----------
+  // Root-only (enforced above via ROOT_ONLY): every class's kit lives in one
+  // place, so ids need only be unique against each other here, not merged
+  // across parts like perks/conditions are. Shaped like a room's CustomAction
+  // minus the room, so this reuses the same `need`/checkConds/checkFx the
+  // room-action validation below uses rather than writing new helpers.
+  for (const [aid, ab] of Object.entries(world.abilities ?? {})) {
+    need(`ability ${aid}`, ab, [["label", "string"], ["fx", "array"]]);
+    for (const k of Object.keys(ab)) if (!ABILITY_FIELDS.has(k)) err(`ability ${aid}: unknown field ${k}`);
+    if (ab.context !== undefined && ab.context !== "combat" && ab.context !== "any") err(`ability ${aid}: context must be "combat" or "any", got ${String(ab.context)}`);
+    if (ab.once !== undefined && typeof ab.once !== "boolean") err(`ability ${aid}: "once" must be a boolean`);
+    if (ab.free !== undefined && typeof ab.free !== "boolean") err(`ability ${aid}: "free" must be a boolean`);
+    if (ab.if !== undefined && !Array.isArray(ab.if)) err(`ability ${aid}: "if" must be an array`);
+    checkConds(`ability ${aid} if`, ab.if);
+    checkFx(`ability ${aid} fx`, ab.fx);
+    // An ability's price is an ordinary var by design (§14), but the menu can
+    // only read it as a price if `world.resources` declares it: `abilityCost`
+    // looks the pool up there to say "spends 1 of 2" before the option is
+    // pressed, `renderStatus` lists it under "Ready to spend", and a rest
+    // refills only what is declared. An `addvar res_x -1` on a pool nobody
+    // declared spends a counter that never refills and never shows; a
+    // `["var", "res_x", ">=", 1]` gate on one keeps the ability off the menu
+    // for the whole game. Both load clean without this.
+    const pools = new Set(Object.keys(world.resources ?? {}));
+    const poolish = (v: string) => v.startsWith("res_") && !pools.has(v);
+    for (const f of ab.fx ?? [])
+      if (f[0] === "addvar" && typeof f[2] === "number" && f[2] < 0 && poolish(String(f[1])))
+        err(`ability ${aid}: spends ${String(f[1])}, which world.resources does not declare — the pool would never refill and the menu could not price it`);
+    for (const c of ab.if ?? [])
+      if (c[0] === "var" && poolish(String(c[1])))
+        err(`ability ${aid}: gated on ${String(c[1])}, which world.resources does not declare — the ability would never be offered`);
+  }
+  // Full pool values an ability's cost var refreshes to on a rest — plain
+  // numbers, closed to positive ones (a pool of 0 or less could never be spent).
+  for (const [v, n] of Object.entries(world.resources ?? {}))
+    if (typeof n !== "number" || !(n > 0)) err(`resources ${v}: must be a positive number, got ${String(n)}`);
+
+  // ---------- clock ----------
+  // Concatenated from the parts in file order (LIST_FIELDS), so by the time this
+  // runs it is one list and ids are already unique — loadWorld refuses a
+  // collision and names the file that got there first. This is the second line
+  // of defence, for a world assembled in memory rather than loaded. `if` and
+  // `fx` run through the same checkConds/checkFx as everywhere else — an unknown
+  // room in a `goto`, an unknown npc in `npcgo`/`harm`, an unknown condition —
+  // no special-casing.
+  {
+    const seen = new Set<string>();
+    for (const [i, entry] of (world.clock ?? []).entries()) {
+      const where = `clock ${entry?.id ?? i}`;
+      need(where, entry, [["id", "string"], ["fx", "array"]]);
+      for (const k of Object.keys(entry ?? {})) if (!CLOCK_FIELDS.has(k)) err(`${where}: unknown field ${k}`);
+      if (typeof entry?.id === "string") {
+        if (seen.has(entry.id)) err(`clock: duplicate id ${entry.id}`);
+        seen.add(entry.id);
+      }
+      if (entry?.once !== undefined && typeof entry.once !== "boolean") err(`${where}: "once" must be a boolean`);
+      if (entry?.if !== undefined && !Array.isArray(entry.if)) err(`${where}: "if" must be an array`);
+      checkConds(`${where} if`, entry?.if);
+      checkFx(`${where} fx`, entry?.fx);
+    }
+  }
+
   for (const p of world.statusPaths ?? []) {
     for (const st of p.states) checkConds(`statusPaths ${p.label}`, st.if);
   }
@@ -225,6 +397,11 @@ export function validateWorld(world: World): string[] {
     for (const [i, st] of (Array.isArray(q.stages) ? q.stages : []).entries()) {
       need(`quest ${qid} stage ${i}`, st, [["if", "array"], ["text", "string"]]);
       checkConds(`quest ${qid} stage ${i}`, st.if);
+      // `at` is what the status check walks to (see pathTo). A room id that does
+      // not exist would silently print nothing, which is the failure mode this
+      // field exists to end — 315 hand-written bearing strings and two waves of
+      // "the directions don't match the map".
+      if (st.at !== undefined && !world.rooms[st.at]) err(`quest ${qid} stage ${i}: at names no room (${String(st.at)})`);
     }
   }
   if (Array.isArray(world.objectives)) {
@@ -259,7 +436,55 @@ export function validateWorld(world: World): string[] {
     if (!world.regions) err(`fast travel: ${landmarks.length} landmarks exceed the flat menu (${MENU_CAP - 1}) — define regions to group them`);
   }
   void perRegion;
-  for (const [rid, region] of Object.entries(world.regions ?? {})) need(`region ${rid}`, region, [["name", "string"]]);
+  for (const [rid, region] of Object.entries(world.regions ?? {})) {
+    need(`region ${rid}`, region, [["name", "string"]]);
+    // it opens the bearings line and the engine adds ": <places>." — a trailing
+    // comma or colon reads as a stammer, and it is not the author's to add
+    if (region.bearing !== undefined) {
+      if (typeof region.bearing !== "string" || !region.bearing) err(`region ${rid}: bearing must be a non-empty string`);
+      else if (/[,:.;—-]\s*$/.test(region.bearing)) err(`region ${rid}: bearing ends in punctuation (${region.bearing}) — the engine adds ": the mill, one east."`);
+    }
+  }
+
+  /**
+   * A named voice saying one specific thing on EVERY entry.
+   *
+   * `onEnter` runs each time; `onEnterOnce` runs once. A companion's reaction
+   * belongs in the second, or behind a flag it sets — three lines in Coldpass
+   * were in the first with neither, so Vell praised the scriptorium's rite-texts
+   * afresh every time the player walked back through. Weather in an `onEnter`
+   * is fine and stays fine; this is only the case where the line is gated on a
+   * *person* being there and nothing stops it repeating.
+   */
+  const repeatsForever = (fxs: Fx[] | undefined, person: boolean, held: boolean, hits: string[]): void => {
+    for (const fx of fxs ?? []) {
+      if (fx[0] === "say") {
+        if (person && !held) hits.push(String(fx[1]).slice(0, 48));
+      } else if (fx[0] === "if") {
+        const conds = fx[1] ?? [];
+        const p = person || conds.some((c) => c[0] === "inParty" || c[0] === "npcHere");
+        const h = held || conds.some((c) => c[0] === "flag" || c[0] === "!flag" || c[0] === "since");
+        repeatsForever(fx[2], p, h, hits);
+        repeatsForever(fx[3], person, h, hits); // the else branch is not the person's line
+      } else if (fx[0] === "check") {
+        repeatsForever(fx[3] as Fx[], person, held, hits);
+        repeatsForever(fx[4] as Fx[], person, held, hits);
+      } else if (fx[0] === "chance") {
+        // ["chance", pct, okFx, failFx] — one index left of a check's branches.
+        // Sharing the check's offsets read the fail branch as the success one
+        // and index 4 as undefined, so a repeating companion line inside a
+        // chance's success branch was never looked at.
+        repeatsForever(fx[2] as Fx[], person, held, hits);
+        repeatsForever(fx[3] as Fx[], person, held, hits);
+      }
+    }
+  };
+  for (const [rid, room] of Object.entries(world.rooms)) {
+    const hits: string[] = [];
+    repeatsForever(room.onEnter, false, false, hits);
+    for (const h of hits)
+      err(`room ${rid}: onEnter says "${h}…" whenever someone is in the party, with nothing to stop it repeating — put it in onEnterOnce, or guard it with a flag it sets`);
+  }
 
   if (!roomOk(world.start)) err(`start: unknown room ${world.start}`);
   for (const [rid, room] of Object.entries(world.rooms)) {
@@ -306,6 +531,57 @@ export function validateWorld(world: World): string[] {
     for (const [i, l] of (npc.companion?.leaves ?? []).entries()) checkConds(`npc ${nid} leaves ${i}`, l.if);
   }
 
+  // ---------- reads with no writer ----------
+  /**
+   * A gate whose key the world never cuts. A `["flag", f]` on a flag nothing
+   * ever sets is content that can never fire; the same read negated
+   * (`["!flag", f]`) is worse, because it fires forever — the Kingswood's
+   * after-quest told a player "Father Twyne wonders what becomes of the
+   * cleared ground" for the rest of the run, because the flag it waited on
+   * was `said_kw_priest_sv_kw_burned_ask` and the topic is `sv_kw_burn_ask`.
+   * One letter, and nothing in the toolchain could see it.
+   *
+   * The engine writes some flags and vars itself, so those are not the
+   * author's to set. Each family below is named, not pattern-matched loosely,
+   * and the id after the prefix has to be a real one — `did_` on an action
+   * that does not exist is exactly the typo this check is for.
+   */
+  const actionAndAbilityIds = new Set<string>(Object.keys(world.abilities ?? {}));
+  for (const r of Object.values(world.rooms)) for (const a of r.actions ?? []) actionAndAbilityIds.add(a.id);
+  const saidKeys = new Set<string>();
+  for (const [nid, n] of Object.entries(world.npcs)) for (const t of n.topics ?? []) saidKeys.add(`${nid}_${t.id}`);
+  const clockIds = new Set((world.clock ?? []).map((c) => c.id));
+  const engineWritesFlag = (f: string): boolean => {
+    if (f.startsWith("_")) return true; // the engine's own notices: _seenTravel, _seenPierce, _warnedEnd_<room>
+    if (f.startsWith("remarked_")) return true; // remarked_<win>_<remark>, keyed by ids only the engine pairs
+    const cut = f.indexOf("_");
+    if (cut < 0) return false;
+    const pre = f.slice(0, cut), rest = f.slice(cut + 1);
+    if (pre === "did") return actionAndAbilityIds.has(rest); // a `once` action or ability
+    if (pre === "said") return saidKeys.has(rest); // a `once` topic
+    if (pre === "clocked") return clockIds.has(rest); // a `once` clock entry
+    if (pre === "stole") return !!world.items[rest];
+    if (pre === "laid" || pre === "left" || pre === "down" || pre === "fell" || pre === "calm") return !!world.npcs[rest];
+    return f.endsWith("_left") && !!world.npcs[f.slice(0, -"_left".length)]; // <npc>_left, the other way round
+  };
+  const engineWritesVar = (v: string): boolean =>
+    v.startsWith("_") || v === "thefts" || (v.startsWith("thefts_with_") && !!world.npcs[v.slice("thefts_with_".length)]);
+  // the reads that are not conditions: what status and the header print
+  for (const h of world.hud ?? []) varReads.push({ name: h.var, where: "hud" });
+  for (const t of world.statusTracks ?? []) varReads.push({ name: t.var, where: "statusTracks" });
+  if (world.progress) varReads.push({ name: world.progress.var, where: "progress" });
+  const saidOnce = new Set<string>();
+  for (const r of flagReads) {
+    if (flagWrites.has(r.name) || engineWritesFlag(r.name) || saidOnce.has(r.name)) continue;
+    saidOnce.add(r.name);
+    err(`${r.where}: reads flag ${r.name}, which nothing in this world ever sets — a gate with no key`);
+  }
+  for (const r of varReads) {
+    if (varWrites.has(r.name) || engineWritesVar(r.name) || saidOnce.has(r.name)) continue;
+    saidOnce.add(r.name);
+    err(`${r.where}: reads var ${r.name}, which nothing in this world ever writes — it will always be zero`);
+  }
+
   // ---------- reachability ----------
   // Every room must be reachable from the start through some exit (whatever
   // its conditions) or some goto effect. A room nothing leads to is content
@@ -331,6 +607,8 @@ export function validateWorld(world: World): string[] {
       collectGotos(npc.onDeath);
       for (const t of npc.topics ?? []) collectGotos(t.fx);
     }
+    for (const entry of world.clock ?? []) collectGotos(entry.fx);
+    for (const ab of Object.values(world.abilities ?? {})) collectGotos(ab.fx);
     const seen = new Set<string>();
     const queue = [world.start, ...gotos].filter(roomOk);
     while (queue.length) {
@@ -383,16 +661,30 @@ export function validateWorld(world: World): string[] {
 
   // Ending proofs: every ending the content can reach must be replay-proven.
   // (The primary walkthrough covers its own ending; "dead" is the engine's.)
+  // `"regent_deposed#warden"` is a proof OF `regent_deposed`, so coverage is
+  // asked of the normalized ids rather than of the literal keys — a world whose
+  // only witness for an ending carries a label was being told it had none.
+  const provenEnds = new Set(Object.keys(world.proofs ?? {}).map((k) => k.split("#")[0]!));
   for (const id of endIds) {
     if (id === primaryEnd || id === "dead") continue;
-    if (!world.proofs?.[id]) err(`ending ${id}: no proof — add proofs.${id} or it is a claim, not a fact`);
+    if (!provenEnds.has(id)) err(`ending ${id}: no proof — add proofs.${id} or it is a claim, not a fact`);
   }
-  for (const [id, steps] of Object.entries(world.proofs ?? {})) {
-    if (!endIds.has(id)) { err(`proofs.${id}: no ["end", ..] in content uses this id`); continue; }
+  // An ending may carry more than one witness: `"regent_deposed#warden"` is a
+  // second proof of the same ending by a different road. Everything from the
+  // first "#" is a label for people; the ending id is what precedes it.
+  //
+  // This exists because the bar could otherwise only ever prove ONE
+  // playthrough shape. `proofs` held exactly one array per ending id, all six
+  // of the realm's endings were claimed by a Scholar route, and a verified
+  // Warden win — full score, 258 turns — had nowhere to be recorded. A proof
+  // that cannot be stored is not a proof.
+  for (const [key, steps] of Object.entries(world.proofs ?? {})) {
+    const id = key.split("#")[0]!;
+    if (!endIds.has(id)) { err(`proofs.${key}: no ["end", ..] in content uses the id "${id}"`); continue; }
     const r = replayWalkthrough(world, 1, steps);
-    if (r.error) err(`proofs.${id}: ${r.error}`);
+    if (r.error) err(`proofs.${key}: ${r.error}`);
     else if (r.state?.ended?.id !== id)
-      err(`proofs.${id}: ended as ${r.state?.ended?.id ?? "still open"}, not ${id}`);
+      err(`proofs.${key}: ended as ${r.state?.ended?.id ?? "still open"}, not ${id}`);
   }
   return errs;
 }
@@ -405,7 +697,9 @@ export function replayWalkthrough(
   let { state } = newState(world, seed);
   let maxMenu = 0;
   const doLabel = (label: string): string | null => {
-    maxMenu = Math.max(maxMenu, legalActions(world, state).length);
+    // the room's whole load, not the page showing: paging is the safety net that
+    // keeps a crowded room from hiding an option, and the cap is still the bar
+    maxMenu = Math.max(maxMenu, menuLoad(world, state));
     const a = actionByLabel(world, state, label);
     if (!a) return `no legal action labeled "${label}" at ${state.room} (turn ${state.turn})`;
     state = step(world, state, a).state;

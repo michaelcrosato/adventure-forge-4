@@ -27,6 +27,7 @@
           "name": "The Sunk Fence",
           "desc": "Fence posts march into black water and keep going under it, some farmer's boundary from before the fen took this ground.",
           "brief": "Posts into the water.",
+          "items": ["fd_fence_latch"],
           "onEnterOnce": [["xp", 1]]
         },
         {
@@ -34,20 +35,41 @@
           "name": "Dike's End",
           "desc": "The ground firms and rises toward a dike; north, drier land climbs on toward Hollowbrook. South, the fen closes back in.",
           "brief": "Rising ground. North: the dike.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fd_dikesend_bearings",
+              "label": "read the ground",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Bootprints press deep here, then vanish onto the dike's stone. Someone crosses this way often, and lightly."]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 0],
           "name": "Eel-Trap Row",
           "desc": "A dozen woven eel-traps hang from a rope strung between posts, half of them torn open and empty.",
           "brief": "Torn eel-traps.",
-          "onEnterOnce": [["xp", 1]]
+          "items": ["fd_eelline"],
+          "onEnterOnce": [["xp", 1]],
+          "variants": [
+            {
+              "if": [["flag", "fd_heard_ash_claim"]],
+              "desc": "A dozen woven eel-traps hang from a rope strung between posts, half of them torn open and empty. Word's reached even here: new nets may go in over the burned nave before the season turns.",
+              "brief": "Torn traps. Talk of new nets on the burned water."
+            }
+          ]
         },
         {
           "cell": [4, 0],
           "name": "Widow's Weir",
           "desc": "A stone weir, moss-slick, channels the black water into a chattering fall barely a foot high. Someone still maintains it, badly.",
           "brief": "A mossy weir.",
+          "npcs": ["fd_weir_keeper"],
           "onEnterOnce": [["xp", 1]]
         },
         {
@@ -63,7 +85,19 @@
           "name": "Sunken Howe",
           "desc": "A low mound breaks the reed-flat, turf grown thick and dark. A black doorway shows in its flank, half-choked with silt.",
           "brief": "A mound, a dark doorway.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fd_howe_dragmarks",
+              "label": "read the drag-marks",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Reed is crushed flat in a line from the doorway, out and back, more than once. Whatever uses this door, it comes and goes."]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 1],
@@ -71,6 +105,7 @@
           "landmark": "the drowned orchard",
           "desc": "Fruit trees stand dead to the waist in black water, bare branches holding their shape years after the roots gave up on it.",
           "brief": "Dead orchard, waist-deep.",
+          "items": ["fd_orchard_apple"],
           "onEnterOnce": [["xp", 1]]
         },
         {
@@ -78,20 +113,56 @@
           "name": "The Reed-Cutter's Camp",
           "desc": "A one-room hut on a spit of drier ground, reed bundled in stacks outside it taller than the roof itself.",
           "brief": "A hut, reed stacked high.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fd_cutter_stacks",
+              "label": "count the reed-stacks",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "More reed cut and bundled than one hut could use in a year. Whoever lives here doesn't stop, or doesn't sleep much."]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 1],
           "name": "Heron Reach",
           "desc": "A line of herons stands in the shallows, so still you take them for dead branches until one of them blinks.",
           "brief": "The unmoving herons.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fd_heron_catch",
+              "label": "raid a heron's catch — 1hp risk (grace)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["score", 2],
+                    ["xp", 2],
+                    ["say", "You lift a fat eel clean out of a heron's beak before it knows you're there. It does not forgive you for it."]
+                  ],
+                  [
+                    ["hp", -1],
+                    ["say", "A heron's beak finds your knuckles before your fingers find the fish. The whole line takes wing, screaming."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [0, 2],
           "name": "The Last Dry Ground",
           "desc": "Reed gives way to firm footing here; west the ground rises dry toward the causeway and the Vale beyond it. East, only water.",
           "brief": "Dry ground. West: the causeway.",
+          "items": ["fd_tally_stick"],
           "onEnterOnce": [["xp", 1]]
         },
         {
@@ -99,21 +170,64 @@
           "name": "Mudflat Crossing",
           "desc": "A stretch of gray mudflat, pocked with footprints going every direction, none of them recent.",
           "brief": "Pocked mudflat.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fd_mudflat_search",
+              "label": "search the crossing (wits)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "wits",
+                  9,
+                  [
+                    ["addvar", "gold", 2],
+                    ["score", 1],
+                    ["xp", 2],
+                    ["say", "One set of prints doubles back on itself, pressed deeper than the rest. Someone dropped a purse here, and never came back for it."]
+                  ],
+                  [
+                    ["say", "The footprints lead everywhere and nowhere. Whatever this crossing has seen, it isn't giving it up today."]
+                  ]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 2],
           "name": "The Drowned Nave's Roof",
           "desc": "A chapel roof breaks the black water like a whale's back, moss-slick and cracked open along the ridge. Something under it hums, low, just past hearing.",
           "brief": "A sunken chapel roof.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fd_naveroof_listen",
+              "label": "listen to the roof",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "The hum comes up through the slates, felt in your teeth more than heard. It doesn't stop when you do."]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 2],
           "name": "Bell-Rope Reeds",
           "desc": "Reeds grow unnaturally straight here, in a ring, as if something below keeps them that way. The water at the center never quite goes still.",
           "brief": "A ring of straight reeds.",
-          "onEnterOnce": [["xp", 1]]
+          "items": ["fd_ring_stone"],
+          "onEnterOnce": [["xp", 1]],
+          "variants": [
+            {
+              "if": [["flag", "fd_heard_missed_name"]],
+              "desc": "Reeds grow unnaturally straight here, in a ring, as if something below keeps them that way. You already have a name to give the water, if you can find your way back to it.",
+              "brief": "The ring of reeds. A name still unspoken."
+            }
+          ]
         },
         {
           "cell": [4, 2],
@@ -121,16 +235,7 @@
           "desc": "Reedholm's roofs show east through the reeds, close now, nets strung rail to rail between the houses.",
           "brief": "Reedholm's roofs, east.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "fd_stiltshadow_bearings",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [
-                ["say", "From Stilt-Shadow: the drowned nave, two stands west; the Eel-Run, one west then one south; Sunken Howe, three west then one north; the causeway, four stands west."]
-              ]
-            }
-          ]
+          "actions": [{ "id": "fd_stiltshadow_bearings", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [0, 3],
@@ -145,27 +250,72 @@
           "name": "The Flood-Watch",
           "desc": "A stone tower leans but holds, the only thing in the fen taller than the reeds. Its door hangs open on one hinge.",
           "brief": "A leaning stone tower.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fd_watch_door",
+              "label": "duck the loose door — 1hp risk (grace)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["score", 2],
+                    ["xp", 2],
+                    ["say", "The door swings on its one hinge and you're through before it decides to fall."]
+                  ],
+                  [["hp", -1], ["say", "The door picks its moment and swings hard into your shoulder as you pass."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [2, 3],
           "name": "The Long Gap",
           "desc": "Open water stretches wide here, the reed line broken clean through, as if something once dragged a great weight across it.",
           "brief": "A wide break in the reeds.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fd_longgap_look",
+              "label": "look for what made this gap",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Reed is torn out by the root in a line too straight for wind or water. Something heavy came through here, and not long ago."]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 3],
           "name": "The Eel-Run",
           "desc": "The bank here is undercut, a black opening low over the waterline, wide enough to duck into if the water's low.",
           "brief": "A low bank-cave.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fd_eelrun_listen",
+              "label": "listen at the bank",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Something breathes, slow and even, just past where the dark starts. It hasn't noticed you yet, or doesn't care to."]
+              ]
+            }
+          ]
         },
         {
           "cell": [4, 3],
           "name": "Trapper's Blind",
           "desc": "A hunter's blind of woven reed, collapsed at one corner, aimed out over water where nothing has moved in years.",
           "brief": "A collapsed reed blind.",
+          "items": ["fd_old_arrowhead"],
           "onEnterOnce": [
             ["xp", 1],
             [
@@ -181,16 +331,29 @@
         },
         {
           "cell": [0, 4],
-          "name": "The Milestone",
+          "name": "The Sunken Milestone",
           "desc": "A stone marker leans in the mud, its carved word worn past reading. Whatever it once pointed toward, the fen has swallowed the road as well as the name.",
           "brief": "A worn, leaning marker.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fd_milestone_trace",
+              "label": "trace the worn carving",
+              "free": true,
+              "once": true,
+              "fx": [
+                ["xp", 1],
+                ["say", "Half a word survives under your fingers, more guess than reading. It might have once said REEDHOLM. It might have said something older."]
+              ]
+            }
+          ]
         },
         {
           "cell": [1, 4],
           "name": "Cutter's Path",
           "desc": "A narrow path of laid reed-bundles, sunk half into the mud, the only dry footing for a long stretch either way.",
           "brief": "A path of sunk reed-bundles.",
+          "items": ["fd_whetstone"],
           "onEnterOnce": [["xp", 1]]
         },
         {
@@ -198,13 +361,34 @@
           "name": "Shingle's Edge",
           "desc": "Reed gives way to shingle underfoot, salt cutting through the standing water smell. South, a road climbs toward the coast.",
           "brief": "Shingle. South: the coast road.",
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [
+            {
+              "id": "fd_shingle_sift",
+              "label": "sift the tideline — 1hp risk (grace)",
+              "once": true,
+              "fx": [
+                [
+                  "check",
+                  "grace",
+                  9,
+                  [
+                    ["addvar", "gold", 2],
+                    ["xp", 2],
+                    ["say", "You catch a glint before the next wave takes it back, and come up with coin, cold and green with age."]
+                  ],
+                  [["hp", -1], ["say", "A wave takes your footing along with whatever you were reaching for."]]
+                ]
+              ]
+            }
+          ]
         },
         {
           "cell": [3, 4],
           "name": "Gull Roost",
           "desc": "Gulls have taken over a stand of dead trees, screaming at nothing in particular. Their droppings have killed what little green was left.",
           "brief": "Screaming gulls, dead trees.",
+          "npcs": ["fd_beachcomber"],
           "onEnterOnce": [["xp", 1]]
         }
       ],
@@ -216,7 +400,7 @@
             [
               [
                 "if",
-                [["!npcDead", "fd_bog_thing"]],
+                [["!npcDead", "fd_bog_thing"], ["!flag", "watch_trusted"], ["!flag", "crown_trusted"]],
                 [
                   ["npcgo", "fd_bog_thing", "here"],
                   ["say", "Something surfaces beside you, gray and dripping, before you've even heard it move."]
@@ -256,7 +440,7 @@
       "landmark": "the reed-cutter's hut",
       "vars": {
         "NAME": "The Reed-Cutter's Hut",
-        "HERMIT": "Yarrow",
+        "HERMIT": "Sedge",
         "SIGN": "Dried eels hang in a row from the rafters, twine looped through their eyes.",
         "LOOT": "a coil of tarred eel-line",
         "VOICE": "Eels don't ask, and I've grown used to that."
@@ -320,6 +504,57 @@
       "loc": "nowhere",
       "takeable": true,
       "hint": "old, and worth something to the right buyer"
+    },
+    "fd_fence_latch": {
+      "name": "a corroded iron latch",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "torn from a gate the fen swallowed whole"
+    },
+    "fd_orchard_apple": {
+      "name": "a withered orchard apple",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "shrunk hard as a stone, but sound",
+      "use": [
+        {
+          "fx": [
+            ["hp", 2],
+            ["move", "fd_orchard_apple", "nowhere"],
+            ["say", "Tough and sour, but it holds. Whatever kept these trees fruiting this long, it wasn't the roots."]
+          ]
+        }
+      ]
+    },
+    "fd_tally_stick": {
+      "name": "a drover's notched tally-stick",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "someone's count of a debt, lost before it was settled"
+    },
+    "fd_eelline": {
+      "name": "a coil of good eel-line",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "salvage; worth mending a trap or two"
+    },
+    "fd_ring_stone": {
+      "name": "a stone worn perfectly round",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "smooth all over, like the water shaped it on purpose"
+    },
+    "fd_old_arrowhead": {
+      "name": "a corroded arrowhead",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "nothing has moved here in years; this is likely why"
+    },
+    "fd_whetstone": {
+      "name": "a dropped whetstone",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "worn to a curve; a reed-cutter's, most likely"
     }
   },
   "npcs": {
@@ -337,6 +572,58 @@
         ["xp", 4],
         ["move", "fd_bog_hide", "inv"],
         ["say", "It comes apart into mud and old gray hide before it even finishes falling. One piece of hide holds its shape."]
+      ]
+    },
+    "fd_weir_keeper": {
+      "name": "the weir-keeper",
+      "room": null,
+      "desc": "Elbow-deep in the sluice, one hand always testing the flow.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "why keep a weir nobody thanks you for",
+          "once": true,
+          "say": "Fen floods without it. Reedholm only remembers that the year it does.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "work",
+          "label": "ask what the weir needs",
+          "if": [["flag", "said_fd_weir_keeper_greet"]],
+          "once": true,
+          "say": "Stone, mostly, and someone fool enough to keep coming back. Reeds don't fix themselves.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "tithe",
+          "label": "the water's tithe, since you heard",
+          "if": [["flag", "fd_heard_tithe"]],
+          "once": true,
+          "say": "Heard about that, even out here. A tithe's just another toll the water charges. I've paid mine for years, in upkeep.",
+          "fx": [["xp", 1]]
+        }
+      ]
+    },
+    "fd_beachcomber": {
+      "name": "a beachcomber",
+      "room": null,
+      "desc": "Turns over gull-killed ground with a stick, unbothered by the noise.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "what are you hunting for",
+          "once": true,
+          "say": "Whatever the gulls turn up and don't want. You'd be surprised what a dead tree collects, this far out.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "share",
+          "label": "ask what they've found lately",
+          "if": [["flag", "said_fd_beachcomber_greet"]],
+          "once": true,
+          "say": "A little, this week. Take it — no use for coin out here with nothing to spend it on.",
+          "fx": [["addvar", "gold", 2], ["xp", 1]]
+        }
       ]
     }
   }

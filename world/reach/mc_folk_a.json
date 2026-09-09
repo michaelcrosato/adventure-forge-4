@@ -66,6 +66,14 @@
           ]
         },
         {
+          "id": "mc_order_hedda",
+          "label": "what she knows of the courses' order",
+          "if": [["flag", "mc_hedda_bg"], ["!flag", "mc_order_known"]],
+          "once": true,
+          "say": "Cider-lore, if nothing else. The wassail's cup is poured only once the boards are cleared of the last course, every year I've ever pressed for — never before it. Whatever ran first, that didn't.",
+          "fx": [["set", "mc_order_known"], ["score", 2], ["xp", 2]]
+        },
+        {
           "id": "react_hollow_rested",
           "label": "the fast, now the rite is done",
           "if": [["flag", "mc_hollow_rested"]],

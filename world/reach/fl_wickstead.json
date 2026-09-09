@@ -17,42 +17,36 @@
           [
             ["set", "fl_entered"],
             ["xp", 2],
-            ["say", "This is the Fallows: a hold that emptied in one winter forty years gone, when its people lost the will to stand and lay down in their own fields. A few dozen live here again now, at a crossroads called Wickstead."],
-            [
-              "if",
-              [["inParty", "osk"]],
-              [
-                ["say", "Brother Osk: \"No Keeper came. The Church wrote it off as a fever and never sent a second man to check. I have started keeping a list of what we got wrong out here.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "vell"]],
-              [
-                ["say", "Vell: \"Escheat — no heirs, so the Crown claims it outright. That is the Reeve's law dressed up as an accident. I know that particular theft rather well.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "lys"], ["!flag", "fl_muster_broken"]],
-              [
-                ["say", "Lys: \"I can already hear drilling from here. Someone's teaching desperate people to hold a spear for coin. I've seen that trade before.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "tamsin"]],
-              [
-                ["say", "Tamsin: \"Forty years is a long grief to leave unburied. Whatever's owed the dead here, the living standing in that crossroads come first.\""]
-              ],
-              []
-            ]
+            ["say", "This is the Fallows: a hold that emptied in one winter forty years gone, when its people lost the will to stand and lay down in their own fields. A few dozen live here again now, at a crossroads called Wickstead."]
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "fl_dike_bearings",
+          "label": "count the smoking chimneys",
+          "free": true,
+          "fx": [
+            [
+              "if",
+              [["flag", "fl_hollow_burned"]],
+              [
+                ["say", "Smoke enough for the whole hold today, and none of it from a chimney. It drifts up from the south instead."]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "fl_hollow_rested"]],
+                  [
+                    ["say", "A handful of chimneys smoking below, same as always, and somehow the fields past them look less empty for it."]
+                  ],
+                  [["say", "A handful of chimneys smoking below, in a hold built for hundreds more roofs than that."]]
+                ]
+              ]
+            ]
+          ]
+        }
       ]
     },
     "fl_wickstead_cross": {
@@ -66,9 +60,7 @@
         "north": { "to": "fl_common", "landmark": "the staked common" },
         "east": { "to": "fl_chapel", "landmark": "the chapel" },
         "out": { "to": "fl_muster_barn", "landmark": "the muster barn" },
-        "in": { "to": "fl_hearth" },
-        "up": { "to": "fl_wicker_house", "landmark": "Ede's house" },
-        "down": { "to": "fl_trade_counter" }
+        "in": { "to": "fl_hearth" }
       },
       "variants": [
         {
@@ -125,7 +117,7 @@
       "brief": "The common, staked and drilled both.",
       "region": "fl",
       "landmark": "the staked common",
-      "exits": { "south": { "to": "fl_wickstead_cross" } },
+      "exits": { "south": { "to": "fl_wickstead_cross" }, "east": { "to": "fl_trade_counter" } },
       "variants": [
         {
           "if": [["flag", "fl_stakes_pulled"]],
@@ -261,7 +253,7 @@
       "desc": "The one house in Wickstead big enough to call communal: a long hearth, benches worn by more people than currently live here, and a pot that is never quite empty because nobody will let it be. Returners, refugees, and the merely lost all sleep here some nights.",
       "brief": "The Cross House, hearth and long benches.",
       "region": "fl",
-      "exits": { "out": { "to": "fl_wickstead_cross" } },
+      "exits": { "out": { "to": "fl_wickstead_cross" }, "up": { "to": "fl_wicker_house", "landmark": "Ede's house" } },
       "onEnter": [["if", [["flag", "fl_hollow_done"], ["!flag", "sv_fl_back"]], [["set", "sv_fl_back"]], []]],
       "actions": [
         {
@@ -280,14 +272,14 @@
       "brief": "Ede's round wicker house.",
       "region": "fl",
       "landmark": "Ede's house",
-      "exits": { "down": { "to": "fl_wickstead_cross" } }
+      "exits": { "down": { "to": "fl_hearth" } }
     },
     "fl_trade_counter": {
       "name": "The Trade Counter",
-      "desc": "A plank counter across an old cattle-byre, stacked with what a returner can spare and a refugee can use: seed, tools, a little cloth. A returner keeps the count in chalk and does not pretend it always comes out fair.",
+      "desc": "A plank counter across an old cattle-byre, stacked with what a returner can spare and a refugee can use: seed, tools, a little cloth. West, the staked common. A returner keeps the count in chalk and does not pretend it always comes out fair.",
       "brief": "A plank counter, chalk tallies.",
       "region": "fl",
-      "exits": { "up": { "to": "fl_wickstead_cross" } },
+      "exits": { "west": { "to": "fl_common", "landmark": "the staked common" } },
       "actions": [
         {
           "id": "fl_buy_bread",
@@ -1119,7 +1111,8 @@
               ]
             ]
           ],
-          "text": "Four claims stand on this ground: the surveyor's, the recruiter's, the sister's, and a Keeper's. Back one, at Wickstead."
+          "text": "Four claims stand on this ground: the surveyor's, the recruiter's, the sister's, and a Keeper's. Back one, at Wickstead.",
+          "at": "fl_wickstead_cross"
         },
         {
           "if": [["flag", "fl_entered"]],
@@ -1134,7 +1127,8 @@
       "stages": [
         {
           "if": [],
-          "text": "Surveyor Pell stakes the common for the Crown. Help him finish it, pull the stakes, or find a third way, at the common."
+          "text": "Surveyor Pell stakes the common for the Crown. Help him finish it, pull the stakes, or find a third way, at the common.",
+          "at": "fl_common"
         }
       ]
     },
@@ -1155,7 +1149,8 @@
       "stages": [
         {
           "if": [],
-          "text": "Recruiter Dace drills desperate refugees in the muster barn. Break it up, join it, or let it be."
+          "text": "Recruiter Dace drills desperate refugees in the muster barn. Break it up, join it, or let it be.",
+          "at": "fl_muster_barn"
         }
       ]
     }

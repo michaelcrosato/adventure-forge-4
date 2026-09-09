@@ -1,0 +1,44 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 523,
+  "receipt": "reach.7663.523.516.reach_at_rest.3453b967",
+  "bugs": [
+    {
+      "sev": "P1",
+      "what": "The 'read the true record, and swear it' option at the Oath-Ground listed only relationship deltas (Tamsin +1, Brother Osk -1, Vell -2) but did not warn that Vell would actually leave the party as a mechanical consequence, not just lose regard. Had to spend an extra turn re-recruiting them.",
+      "where": "The Oath-Ground — Circle (Wardmoor)"
+    },
+    {
+      "sev": "P2",
+      "what": "Standing-loss messaging was inconsistent: the first failed 'press him on the Hundred' against Preceptor Aldous printed '(the Ironbound -1)', but a second identical failed press against the same NPC printed no standing-change line at all, even though the DC kept rising as if a cost were still being tracked.",
+      "where": "The Ironbound Chapterhouse (Cinderhall)"
+    },
+    {
+      "sev": "P2",
+      "what": "When a room's action list exceeds ~11 items, 'more in this room' toggles between two fixed pages (p1/2 ↔ p2/2) rather than appending or scrolling, which reads at first like the extra options vanished rather than being paginated.",
+      "where": "The Gallows Glade / The Oath-Ground — Circle (general UI pattern)"
+    }
+  ],
+  "confusions": [
+    "The 'press him' action (e.g. at the Oath-Ground) sometimes fired with a flavor line ('You press your case and do not blink.') but no visible mechanical effect, leaving it unclear what it actually changed.",
+    "It wasn't obvious early on that crossing the Pass Gate into Marrowgate would lock out unfinished companion-quest holds (Vell's Hollowbrook ledger, Perrin's mother's news) for the rest of the run — the warning appeared right at the gate rather than earlier when those quests were picked up."
+  ],
+  "suggestions": [
+    "Flag party-departure risk explicitly in the option text (e.g. 'Vell may leave the party') rather than only showing regard-point deltas.",
+    "Make 'more in this room' clearly indicate it's paging (e.g. '(page 2/2, includes previous options)') instead of silently swapping the visible action set.",
+    "Consider a gentle reminder near act-boundary gates (like the Pass Gate) earlier in the game, e.g. when a companion's personal quest is first accepted, noting which region it must be resolved in before the point of no return."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-08T23-04-28-286Z",
+  "seed": 7663,
+  "build": {
+    "rev": "ad06817",
+    "world": "3578a4fe"
+  },
+  "cost_usd": 20.59997199999999,
+  "verified": false
+}

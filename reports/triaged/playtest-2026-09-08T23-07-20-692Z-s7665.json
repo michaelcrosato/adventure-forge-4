@@ -1,0 +1,45 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 591,
+  "receipt": "reach.7665.591.609.reach_at_rest.17aada73",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "Internal room/scene IDs occasionally leak into player-facing travel text instead of the proper place name, e.g. 'You travel to ir_miners_hall.', 'You travel to fd_net_hall.', 'You travel to wm_moor_2_2.', 'You travel to wm_record_house.'",
+      "where": "travel-to-known-place action, Iron Downs/Fenmarch/Wardmoor regions"
+    },
+    {
+      "sev": "P2",
+      "what": "At a location with a paginated menu ('more in this room'), acting on a stale remembered menu number from before paging can silently land on the wrong page and produce 'No action N' instead of executing the intended choice, forcing a manual look/repage to recover.",
+      "where": "The Hollow Throne (Marrowgate) menu pagination"
+    },
+    {
+      "sev": "P2",
+      "what": "A companion quest (Two Keepers, One Covenant) can trigger asking the player to carry a question to an NPC (Keeper Rowan) already fully talked-to and left behind hours of play earlier, with no way to complete it short of a very long backtrack — and no warning that crossing the Pass Gate into Marrowgate permanently forfeits it.",
+      "where": "Hollowbrook Keepers' Hall / Thornwold Understory"
+    }
+  ],
+  "confusions": [
+    "Wardmoor's open moor (Cairn Field/Twin Ruts/Sedge Flat/Hut Path/Peat Score, etc.) has many visually similar tiles and 'get your bearings' never actually named the two active side-quest destinations (Boot-Track Hollow for the Lost Sentry, the beacon hill for the Dark Beacon) after the first mention, so both were abandoned unfound despite real effort.",
+    "The game doesn't warn before the Pass Gate that any companion-hold grief left unresolved becomes permanently unresolved once you cross toward Marrowgate — this is stated once in passing dialogue but easy to miss and irreversible."
+  ],
+  "suggestions": [
+    "Strip internal scene-id strings from the 'You travel to X' text everywhere, not just most places.",
+    "Persist the current menu page reliably so an action number typed right after a 'more' expansion never resolves against the wrong page.",
+    "Have 'get your bearings' surface named quest-destination hints (not just static landmarks) so distant sub-quests like the Lost Sentry/Dark Beacon stay findable without exhaustive grid-walking.",
+    "Surface a one-time explicit confirmation ('crossing here leaves N holds/quests behind for good — continue?') at the Pass Gate, since it's a hard point of no return for a lot of accumulated content."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-08T23-07-20-692Z",
+  "seed": 7665,
+  "build": {
+    "rev": "ad06817",
+    "world": "3578a4fe"
+  },
+  "cost_usd": 25.930224000000027,
+  "verified": true
+}

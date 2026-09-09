@@ -157,6 +157,36 @@
               [["say", "It does not move, and neither, this time, does your nerve hold long enough to matter."]]
             ]
           ]
+        },
+        {
+          "id": "hb_wight_key",
+          "label": "show the Keeper's Key to the grave-wight",
+          "if": [
+            ["flag", "keepers_trusted"],
+            ["has", "hb_keepers_key"],
+            ["!flag", "hb_wights_passed"],
+            ["!npcDead", "hb_grave_wight"]
+          ],
+          "fx": [
+            ["set", "hb_wights_passed"],
+            ["xp", 2],
+            ["say", "The wight's blind stare finds the Key before you've raised it all the way. Whatever it was set to watch for, a Keeper's own trust isn't it. It steps aside, unhurried, and lets you through."]
+          ]
+        },
+        {
+          "id": "hb_warden_wight_name",
+          "label": "pin it and demand the name it guards",
+          "if": [["class", "warden"], ["!flag", "hb_wights_passed"], ["!npcDead", "hb_grave_wight"]],
+          "once": true,
+          "fx": [
+            ["set", "hb_wights_passed"],
+            ["set", "hb_belief_caelrin"],
+            ["clear", "hb_belief_roderic"],
+            ["clear", "hb_belief_ossian"],
+            ["score", 3],
+            ["xp", 3],
+            ["say", "You don't slip past it or talk it down. You put it on the ground and hold it there until whatever's left of a mind in it gives up its post. 'Caelrin,' it manages, like the word costs it something."]
+          ]
         }
       ]
     },
@@ -199,24 +229,6 @@
       ],
       "actions": [
         {
-          "id": "hb_speak_verses",
-          "label": "speak the three verses over the court",
-          "if": [["flag", "hb_heard_grievance"], ["var", "hb_verses_known", ">=", 3], ["!flag", "hb_kingsrest_resolved"]],
-          "fx": [
-            ["set", "hb_hollow_rested"],
-            ["set", "hb_kingsrest_resolved"],
-            ["addvar", "hollows_rested", 1],
-            ["score", 25],
-            ["xp", 8],
-            ["addvar", "rep_keepers", 2],
-            ["addvar", "rep_crown", -2],
-            ["addvar", "appr_vell", 1],
-            ["addvar", "appr_osk", 1],
-            ["npcgo", "hb_eldest_king", null],
-            ["say", "You speak the three verses whole, in the order the downs gave them up. The eldest king closes his eyes like a man finally allowed to. One by one, the old court lies back down."]
-          ]
-        },
-        {
           "id": "hb_use_key",
           "label": "lay the Keeper's Key on the hearth-stone",
           "if": [["flag", "hb_heard_grievance"], ["has", "hb_keepers_key"], ["!flag", "hb_kingsrest_resolved"]],
@@ -244,7 +256,7 @@
             ["set", "hb_kingsrest_resolved"],
             ["addvar", "hollows_rested", 1],
             ["move", "hb_grave_good", "nowhere"],
-            ["score", 20],
+            ["score", 25],
             ["xp", 8],
             ["addvar", "rep_keepers", 2],
             ["addvar", "rep_iron", -2],
@@ -268,7 +280,7 @@
             ["set", "hb_kingsrest_resolved"],
             ["addvar", "hollows_burned", 1],
             ["move", "hb_pitch_jar", "nowhere"],
-            ["score", 15],
+            ["score", 25],
             ["xp", 8],
             ["addvar", "rep_iron", 2],
             ["addvar", "rep_keepers", -2],
@@ -298,7 +310,7 @@
                 ["addvar", "appr_osk", -1],
                 ["set", "hb_kingsrest_resolved"],
                 ["addvar", "hollows_burned", 1],
-                ["score", 15],
+                ["score", 25],
                 ["xp", 8],
                 ["addvar", "rep_iron", 2],
                 ["addvar", "rep_keepers", -2],
@@ -308,6 +320,112 @@
                 ["say", "You don't wait on pitch. You put your full weight into the cold hearth-stone until it cracks clean in half, and whatever was sitting this court out finally has nowhere left to sit."]
               ],
               [["say", "The hearth-stone is older and harder than you are tonight. It doesn't so much as chip."]]
+            ]
+          ]
+        },
+        {
+          "id": "hb_speak_great_rite",
+          "label": "speak the Great Rite over the court",
+          "if": [["flag", "keepers_sworn"], ["flag", "hb_heard_grievance"], ["!flag", "hb_kingsrest_resolved"]],
+          "fx": [
+            ["set", "hb_hollow_rested"],
+            ["set", "hb_kingsrest_resolved"],
+            ["set", "hb_kingsrest_rite_spoken"],
+            ["addvar", "hollows_rested", 1],
+            ["score", 25],
+            ["xp", 8],
+            ["addvar", "rep_keepers", 2],
+            ["addvar", "rep_crown", -2],
+            ["addvar", "appr_vell", 1],
+            ["addvar", "appr_osk", 1],
+            ["npcgo", "hb_eldest_king", null],
+            ["say", "You speak the Rite whole, the way Wren taught it, needing no found verse and no borrowed key. The eldest king rises once, to bow to the office and not to you, before he lies back down for good."]
+          ]
+        },
+        {
+          "id": "hb_believe_caelrin",
+          "label": "settle on the name Caelrin",
+          "free": true,
+          "if": [["flag", "hb_heard_grievance"], ["!flag", "hb_kingsrest_resolved"], ["!flag", "hb_belief_caelrin"]],
+          "fx": [
+            ["set", "hb_belief_caelrin"],
+            ["clear", "hb_belief_roderic"],
+            ["clear", "hb_belief_ossian"],
+            ["say", "You settle on Caelrin. If the roll and the stone are honest with each other, it's him."]
+          ]
+        },
+        {
+          "id": "hb_believe_roderic",
+          "label": "settle on the name Roderic",
+          "free": true,
+          "if": [["flag", "hb_heard_grievance"], ["!flag", "hb_kingsrest_resolved"], ["!flag", "hb_belief_roderic"]],
+          "fx": [
+            ["clear", "hb_belief_caelrin"],
+            ["set", "hb_belief_roderic"],
+            ["clear", "hb_belief_ossian"],
+            ["say", "You settle on Roderic. It's the name everyone in Barrowmere already knows."]
+          ]
+        },
+        {
+          "id": "hb_believe_ossian",
+          "label": "settle on the name Ossian",
+          "free": true,
+          "if": [["flag", "hb_heard_grievance"], ["!flag", "hb_kingsrest_resolved"], ["!flag", "hb_belief_ossian"]],
+          "fx": [
+            ["clear", "hb_belief_caelrin"],
+            ["clear", "hb_belief_roderic"],
+            ["set", "hb_belief_ossian"],
+            ["say", "You settle on Ossian. Nothing you've found points to him either way — it would be a plain guess."]
+          ]
+        },
+        {
+          "id": "hb_speak_name",
+          "label": "speak the name — wrong costs you",
+          "if": [
+            ["flag", "hb_heard_grievance"],
+            ["!flag", "hb_kingsrest_resolved"],
+            ["any", [["flag", "hb_belief_caelrin"], ["flag", "hb_belief_roderic"], ["flag", "hb_belief_ossian"]]]
+          ],
+          "fx": [
+            [
+              "if",
+              [["flag", "hb_belief_caelrin"]],
+              [
+                ["set", "hb_hollow_rested"],
+                ["set", "hb_kingsrest_resolved"],
+                ["set", "hb_named_true"],
+                ["addvar", "hollows_rested", 1],
+                ["score", 25],
+                ["xp", 8],
+                ["npcgo", "hb_eldest_king", null],
+                ["say", "'Caelrin.' The name lands like it was always going to. The eldest king closes his eyes, recognized at last by somebody other than himself. One by one, the old court lies back down."],
+                [
+                  "if",
+                  [["inParty", "vell"]],
+                  [["say", "Vell: \"A name, restored. I didn't expect to feel this pleased about someone else's.\""]],
+                  []
+                ]
+              ],
+              [
+                [
+                  "if",
+                  [["flag", "hb_belief_roderic"]],
+                  [
+                    ["set", "hb_named_wrong"],
+                    ["set", "hb_named_wrong_roderic"],
+                    ["hp", -1],
+                    ["if", [["!npcDead", "hb_grave_wight"]], [["npcgo", "hb_grave_wight", "here"]], []],
+                    ["say", "'Roderic.' The old court does not answer to it. Cold air moves behind you — the grave-wight you passed is not staying passed tonight."]
+                  ],
+                  [
+                    ["set", "hb_named_wrong"],
+                    ["set", "hb_named_wrong_ossian"],
+                    ["hp", -1],
+                    ["if", [["!npcDead", "hb_grave_wight"]], [["npcgo", "hb_grave_wight", "here"]], []],
+                    ["say", "'Ossian.' Nothing in the ring so much as stirs. Whatever you hoped for, it wasn't a silence this complete. Cold air moves behind you, unsettled."]
+                  ]
+                ]
+              ]
             ]
           ]
         },
@@ -332,17 +450,13 @@
                 ],
                 [
                   "if",
-                  [["var", "hb_verses_known", ">=", 3]],
-                  [["say", "The rest can be done outright: all three verses are yours — speak them over the court."]],
-                  []
-                ],
-                [
-                  "if",
-                  [["!has", "hb_keepers_key"], ["var", "hb_verses_known", "<", 3]],
+                  [["any", [["flag", "hb_belief_caelrin"], ["flag", "hb_belief_roderic"], ["flag", "hb_belief_ossian"]]]],
                   [
-                    ["say", "The rest wants the Keeper's Key, forced or picked from the chest in the Keepers' Hall, or all three old verses from the downs."]
+                    ["say", "You've settled on a name. Speak it, or change your mind first — wrong, and it costs the Keepers' trust, and the wight won't stay quiet."]
                   ],
-                  []
+                  [
+                    ["say", "The rest can also be earned by naming him true. The downs hold evidence, not verses; settle on a name, then speak it — wrong costs you."]
+                  ]
                 ],
                 [
                   "if",
@@ -407,8 +521,16 @@
           "label": "what you want",
           "if": [["flag", "said_hb_eldest_king_greet"]],
           "once": true,
-          "say": "We ruled before the Hollow King's blood was crowned; his own line's founder robbed us too. Rest us, buy back what was taken, or burn us — we are done being merely remembered.",
+          "say": "We ruled before the Hollow King's blood was crowned; his own line's founder robbed us of more than land. Name the eldest true, buy back what was taken, or burn us — we are done being merely remembered.",
           "fx": [["set", "hb_heard_grievance"], ["score", 3], ["xp", 3]]
+        },
+        {
+          "id": "about_name",
+          "label": "the name even he has lost",
+          "if": [["flag", "hb_heard_grievance"]],
+          "once": true,
+          "say": "'Ask it plainly, then.' A long pause. 'Say it back to me, if you can — I find I no longer can. His line was thorough. Find it in the ground, if you want it said true.'",
+          "fx": [["xp", 1]]
         },
         {
           "id": "about_key",
@@ -419,11 +541,11 @@
           "fx": [["xp", 1]]
         },
         {
-          "id": "about_verses",
-          "label": "the verses in the downs",
-          "if": [["flag", "hb_heard_grievance"], ["var", "hb_verses_known", ">=", 1]],
+          "id": "about_evidence",
+          "label": "the name in the downs",
+          "if": [["flag", "hb_heard_grievance"], ["var", "hb_evidence_known", ">=", 1]],
           "once": true,
-          "say": "Word of mouth, cut in stone and water. Slower than the Key, but it will serve, once you have all three.",
+          "say": "Cut in stone at the causeway, rolled off in the ring-ditch, and the mere still answers if you ask it right. They do not all agree. That is the puzzle, not a flaw in it.",
           "fx": [["xp", 1]]
         },
         {
@@ -438,71 +560,75 @@
   "quests": {
     "hb_q_kingsrest": {
       "name": "The Kings' Rest",
-      "start": [["flag", "hb_found_kingsrest"]],
-      "done": [["flag", "hb_kingsrest_resolved"]],
+      "start": [["flag", "hb_entered"]],
+      "done": [
+        ["any", [["flag", "hb_hollow_rested"], ["flag", "hb_hollow_bargained"], ["flag", "hb_hollow_burned"]]]
+      ],
       "stages": [
         {
-          "if": [["flag", "hb_heard_grievance"], ["has", "hb_keepers_key"]],
-          "text": "You hold the Keeper's Key. Use it at the hearth-stone to rest the old court outright."
+          "if": [["!flag", "hb_found_kingsrest"]],
+          "text": "A hundred mounds ring Barrowmere. The greatest of them holds a court that will not lie down.",
+          "at": "hb_wild_2_1"
         },
         {
-          "if": [["flag", "hb_heard_grievance"], ["var", "hb_verses_known", ">=", 3]],
-          "text": "All three verses are yours. Speak them over the court at the great mound's heart."
+          "if": [["flag", "hb_heard_grievance"], ["has", "hb_keepers_key"]],
+          "text": "You hold the Keeper's Key. Use it at the hearth-stone to rest the old court outright.",
+          "at": "hb_kingsrest_throne"
+        },
+        {
+          "if": [
+            ["flag", "hb_heard_grievance"],
+            ["any", [["flag", "hb_belief_caelrin"], ["flag", "hb_belief_roderic"], ["flag", "hb_belief_ossian"]]]
+          ],
+          "text": "You've settled on a name. Speak it at the great mound's heart — a wrong one costs you.",
+          "at": "hb_kingsrest_throne"
         },
         {
           "if": [["flag", "hb_heard_grievance"], ["has", "hb_grave_good"]],
-          "text": "You have a grave-good to return. Bring it to the hearth-stone to bargain the old court's rest."
+          "text": "You have a grave-good to return. Bring it to the hearth-stone to bargain the old court's rest.",
+          "at": "hb_kingsrest_throne"
         },
         {
           "if": [["flag", "hb_heard_grievance"], ["has", "hb_pitch_jar"]],
-          "text": "You have pitch enough to burn the old court out for good, if that is the road you choose."
+          "text": "You have pitch enough to burn the old court out for good, if that is the road you choose.",
+          "at": "hb_kingsrest_throne"
         },
         {
           "if": [["flag", "hb_heard_grievance"]],
-          "text": "The old court's grievance is heard. Find verses, the Keeper's Key, a grave-good, or pitch, then return to the mound."
+          "text": "The grievance is heard. Find the Key, name him true, or bring a grave-good or pitch — all answered at the great mound.",
+          "at": "hb_kingsrest_throne"
         },
         {
           "if": [["flag", "hb_found_kingsrest"]],
-          "text": "The great mound stands before you. Go in and hear the old court before deciding anything."
+          "text": "The great mound stands before you. Go in and hear the old court before deciding anything.",
+          "at": "hb_kingsrest_throne"
         },
         {
           "if": [],
-          "text": "A hundred mounds ring Barrowmere, and one great mound above them all holds a court that will not lie down."
+          "text": "A hundred mounds ring Barrowmere, and one great mound above them all holds a court that will not lie down.",
+          "at": "hb_kingsrest_throne"
         }
       ]
     },
-    "hb_q_verses": {
-      "name": "Three Old Verses",
+    "hb_q_evidence": {
+      "name": "Which King",
       "start": [["flag", "hb_heard_warden_lore"]],
-      "done": [["var", "hb_verses_known", ">=", 3]],
+      "done": [["flag", "hb_named_true"]],
+      "failed": [["flag", "hb_kingsrest_resolved"], ["!flag", "hb_named_true"]],
       "stages": [
         {
-          "if": [["flag", "hb_verse_causeway"], ["flag", "hb_verse_merestone"], ["!flag", "hb_verse_ringditch"]],
-          "text": "Two of three verses known. The last waits at the ring-ditch."
+          "if": [["var", "hb_evidence_known", ">=", 3]],
+          "text": "You have every piece. Settle on a name at the great mound, and speak it.",
+          "at": "hb_kingsrest_throne"
         },
         {
-          "if": [["flag", "hb_verse_ringditch"], ["flag", "hb_verse_merestone"], ["!flag", "hb_verse_causeway"]],
-          "text": "Two of three verses known. The last waits at the king's causeway."
-        },
-        {
-          "if": [["flag", "hb_verse_ringditch"], ["flag", "hb_verse_causeway"], ["!flag", "hb_verse_merestone"]],
-          "text": "Two of three verses known. The last waits at the mere-stone."
-        },
-        {
-          "if": [["flag", "hb_verse_ringditch"], ["!flag", "hb_verse_causeway"], ["!flag", "hb_verse_merestone"]],
-          "text": "One verse known, the ring-ditch's. Two more wait: the king's causeway, the mere-stone."
-        },
-        {
-          "if": [["flag", "hb_verse_causeway"], ["!flag", "hb_verse_ringditch"], ["!flag", "hb_verse_merestone"]],
-          "text": "One verse known, the king's causeway's. Two more wait: the ring-ditch, the mere-stone."
-        },
-        {
-          "if": [["flag", "hb_verse_merestone"], ["!flag", "hb_verse_ringditch"], ["!flag", "hb_verse_causeway"]],
-          "text": "One verse known, the mere-stone's. Two more wait: the ring-ditch, the king's causeway."
+          "if": [["var", "hb_evidence_known", ">=", 1]],
+          "text": "The evidence doesn't agree with itself yet. Settle on a name, or keep looking."
         },
         {
           "if": [],
-          "text": "Three verses were cut for the old court: the ring-ditch, the king's causeway, and the mere-stone."
+          "text": "The eldest king has no name anyone living remembers. The causeway, the ring-ditch, and the mere might.",
+          "at": "hb_wild_2_0"
         }
       ]
     },
@@ -513,14 +639,16 @@
       "stages": [
         {
           "if": [["flag", "said_hb_keeper_wren_order"]],
-          "text": "Force the Hall's old chest, pick its lock, or earn enough of Keeper Wren's trust to ask her outright."
+          "text": "Force the Hall's old chest, pick its lock, or earn enough of Keeper Wren's trust to ask her outright.",
+          "at": "hb_keepers_hall"
         },
         {
           "if": [],
-          "text": "Keeper Wren tends the ruined Hall alone. Hear what she has to say before asking for what she guards."
+          "text": "Keeper Wren tends the ruined Hall alone. Hear what she has to say before asking for what she guards.",
+          "at": "hb_keepers_hall"
         }
       ],
-      "failed": [["flag", "hb_wren_chest_forced"]]
+      "failed": [["any", [["flag", "hb_wren_chest_forced"], ["flag", "hb_kingsrest_resolved"]]]]
     },
     "hb_q_surveyor": {
       "name": "The Surveyor's Map",
@@ -542,20 +670,21 @@
       "stages": [
         {
           "if": [],
-          "text": "A digger works the robbed mounds, north-west of Barrowmere, past the toll-stones. Stop him or take your cut."
+          "at": "hb_wild_0_2",
+          "text": "A digger works the robbed mounds, out past the Toll Stones. Stop him or take your cut."
         }
       ]
     }
   },
   "statusTracks": [
     {
-      "var": "hb_verses_known",
-      "label": "Old Court Verses",
+      "var": "hb_evidence_known",
+      "label": "Old Court Evidence",
       "max": 3,
       "remaining": [
-        { "flag": "hb_verse_ringditch", "label": "the ring-ditch" },
-        { "flag": "hb_verse_causeway", "label": "the king's causeway" },
-        { "flag": "hb_verse_merestone", "label": "the mere-stone" }
+        { "flag": "hb_evidence_ringditch", "label": "the ring-ditch's roll" },
+        { "flag": "hb_evidence_causeway", "label": "the causeway stone" },
+        { "flag": "hb_evidence_merestone", "label": "the mere's answer" }
       ],
       "if": [["flag", "hb_entered"]]
     }
@@ -600,6 +729,16 @@
       "if": [["flag", "hb_keepers_key_found"], ["flag", "cp_came_by_stair"]],
       "text": "The Keeper's Key left Barrowmere in a pocket and turned the pilgrim stair at Coldpass, a hundred years after it last turned.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "hb_named_true"]],
+      "text": "The eldest king had a name after all, one nobody living had spoken in four hundred years. Now one has.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "hb_named_wrong"], ["flag", "hb_named_true"]],
+      "text": "Barrowmere still tells, half-admiring, of the wrong name once said to the old court before the right one came.",
+      "weight": 0
     }
   ],
   "items": {

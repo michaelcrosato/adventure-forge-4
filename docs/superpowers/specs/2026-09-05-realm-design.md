@@ -233,8 +233,16 @@ menu cap turns pages, so neither regions nor landmarks are capped. `maxScore`
 Thornwold (the Keeper's verse), the Iron Downs (the true ledger) and the
 Saltkerns (the sailors' verse under the Farlight), earns the Free Companies'
 stair in Gullhaven, climbs the Keepers' pilgrim stair at Coldpass, hears the
-first Reeve's confession, and speaks the Great Rite — 255 turns, about 417
-characters a screen on average. Proofs replay the Regent deposed by the
+first Reeve's confession, and speaks the Great Rite — 255 turns, and an
+average screen of **449.9 characters against the budget's cap of 450**
+(measured 2026-09-08; an earlier draft of this paragraph said 417, which was
+true when it was written and has not been true for some time). **There is no
+headroom left on the main road.** Roughly twenty-seven characters of slack
+exist across the whole walkthrough — less than one menu line — so anything
+added to a room the walkthrough or an ending proof passes through has to be
+gated behind state those runs never reach, or it puts the bar red. Content
+off those paths is free. Measure before and after; do not trust this
+paragraph, and do not trim the realm's existing prose to make room for new. Proofs replay the Regent deposed by the
 Companies, the throne burned with the Regent's own oil, the Vale's crown worn
 on the gray seat, and kneeling to the hollow. Fifty-six blind playtests of the
 whole realm (300–650 turns) reached forty-seven wins on four different roads,

@@ -12,39 +12,7 @@
           [
             ["set", "me_entered"],
             ["xp", 2],
-            ["say", "This is the Meres: reed-lakes north of Barrowmere, where the Keepers' first Hall stood on an island until the first Reeve's men came for the covenant, and the Keepers drowned it, and themselves, rather than give it up."],
-            [
-              "if",
-              [["inParty", "vell"]],
-              [
-                ["say", "Vell: \"The Keepers' first Hall, and the first Reeve's men who drowned it. I have heard this story only ever half-told, and always by someone with a reason to leave the other half out.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "osk"]],
-              [
-                ["say", "Brother Osk: \"Saint Ashwyn, born on these stilts — that's the Church's own claim, and Coldpass tells it otherwise. I would like to know, for once, which of us is wrong.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "tamsin"]],
-              [
-                ["say", "Tamsin: \"Somebody built dams strong enough to drown a whole Hall on purpose, and they've held four hundred years. I'd like to see that work before anyone talks about blowing it.\""]
-              ],
-              []
-            ],
-            [
-              "if",
-              [["inParty", "lys"]],
-              [
-                ["say", "Lys: \"Fog like this carries sound wrong — too far, or not at all. If something out there is singing, I'd rather know before dark finds us on open water.\""]
-              ],
-              []
-            ]
+            ["say", "This is the Meres: reed-lakes north of Barrowmere, where the Keepers' first Hall stood on an island until the first Reeve's men came for the covenant, and the Keepers drowned it, and themselves, rather than give it up."]
           ],
           []
         ]
@@ -55,7 +23,7 @@
           "label": "get your bearings at the shore",
           "free": true,
           "fx": [
-            ["say", "North, the fog thins toward Lantern Holm's lantern-glow. Southeast, the causeway climbs back into the barrow downs and Barrowmere beyond them. Everywhere else, the Meres run on into reed and open water."]
+            ["say", "North, the fog thins toward Lantern Holm's lantern-glow. South, the causeway climbs back into the barrow downs and Barrowmere beyond them. Everywhere else, the Meres run on into reed and open water."]
           ]
         }
       ],
@@ -132,14 +100,13 @@
           "id": "me_read_shrine_scholar",
           "label": "read the birth-plaque outright",
           "free": true,
-          "if": [["class", "scholar"], ["!flag", "me_word_saint"]],
+          "if": [["class", "scholar"], ["!flag", "me_shrine_read"]],
           "fx": [
-            ["set", "me_word_saint"],
-            ["addvar", "me_covenant_words", 1],
+            ["set", "me_shrine_read"],
             ["score", 3],
             ["xp", 3],
             ["addvar", "rep_church", 1],
-            ["say", "The old hand gives itself up almost as fast as you can read it: the covenant's second word, worn into a saint's own plaque long before anyone thought to hide it there on purpose."]
+            ["say", "The old hand gives itself up almost as fast as you can read it: the same phrase the covenant itself carries, worn into a saint's own plaque long before anyone thought to hide it there."]
           ]
         }
       ],

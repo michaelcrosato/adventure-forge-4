@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByLabel, actionLabel, inTravelMode, journal, legalActions, newState, roomView, step, travelAvailable } from "../src/engine.ts";
+import { actionByLabel, actionLabel, bearingsHere, condOk, inTravelMode, journal, legalActions, newState, oddsHint, pathTo, roomView, step, travelAvailable } from "../src/engine.ts";
 import { render, renderStatus } from "../src/format.ts";
 import { validateWorld } from "../src/validate.ts";
 import { EPILOGUE_CAP, MENU_CAP } from "../src/types.ts";
@@ -75,6 +75,71 @@ test("travel is offered from an ordinary room too, but never with an aggressive 
   assert.ok(labels(world, state).includes("travel to a known place"), "a dead wolf keeps no one from leaving");
   world.rooms["r2"]!.noTravel = true;
   assert.ok(!labels(world, state).includes("travel to a known place"), "a noTravel room is walked out of");
+});
+
+/**
+ * Local travel: inside a region you have mapped, you can go back to anywhere
+ * you have stood, not only to its landmarks. A plain room has no travel name of
+ * its own, and the arrival line printed its room id at three regions' worth of
+ * players — "You travel to ir_miners_hall." — because the menu label had the
+ * name fallback and the event did not.
+ */
+test("travel inside a mapped region reaches plain rooms, and names them by name and never by id", () => {
+  const world = line(4, () => "vale");
+  world.regions = { vale: { name: "the Vale" } };
+  for (const i of [1, 2]) delete world.rooms[`r${i}`]!.landmark; // walked, mapped, but not landmarks
+  let { state } = newState(world, 1);
+  for (const _ of [0, 1, 2]) state = doLabel(world, state, "go east"); // r0 -> r3, standing in all four
+  state = doLabel(world, state, "travel to a known place");
+  // the two landmarks are on the top list, and so is the way back into this region
+  assert.deepEqual(labels(world, state), ["to place 0", "toward the Vale", "stay here"]);
+  state = doLabel(world, state, "toward the Vale");
+  assert.deepEqual(labels(world, state), ["to place 0", "to Room 1", "to Room 2", "back"], "every room stood in, plain ones included — a landmark under its travel name, a plain room under its own");
+  const out = step(world, state, actionByLabel(world, state, "to Room 1")!);
+  assert.equal(out.state.room, "r1");
+  assert.match(out.events.join(" "), /You travel to Room 1\./);
+  assert.doesNotMatch(out.events.join(" "), /\br1\b/, "a room id must never reach the player");
+});
+
+/**
+ * `region` — where you are, not what you carry.
+ *
+ * A hold's arrival was authored as a chain of `if inParty` says inside one
+ * `onEnterOnce`, so a full party answered it all in the same breath: 1,448
+ * characters at Mootcombe's Cairn-Track, one companion speaking twice. The
+ * engine has always spoken at most one companion remark a turn, in rotation —
+ * what a remark could not say was "while we are here", so the lines had nowhere
+ * to move to. Now they do.
+ */
+test("region: reads the room's own region, has its negated twin, and the validator knows the codes", () => {
+  const world = line(3, (i) => (i === 0 ? "west" : "east"));
+  world.regions = { west: { name: "the West" }, east: { name: "the East" } };
+  let { state } = newState(world, 1);
+  assert.ok(condOk(world, state, ["region", "west"]), "r0 is in the west");
+  assert.ok(!condOk(world, state, ["region", "east"]));
+  assert.ok(condOk(world, state, ["!region", "east"]), "and the twin disagrees, like every other op in the DSL");
+  assert.ok(!condOk(world, state, ["!region", "west"]));
+  state = doLabel(world, state, "go east");
+  assert.ok(condOk(world, state, ["region", "east"]), "walking there changes the answer");
+  assert.ok(condOk(world, state, ["!region", "west"]));
+
+  // a room with no region at all is in no region, rather than in every one
+  const nowhere = line(2);
+  const s2 = newState(nowhere, 1).state;
+  assert.ok(!condOk(nowhere, s2, ["region", "west"]));
+  assert.ok(condOk(nowhere, s2, ["!region", "west"]));
+
+  // a typo reads as "nowhere" and would simply never fire, so the validator catches it
+  const bad = line(2, () => "west");
+  bad.regions = { west: { name: "the West" } };
+  bad.rooms["r0"]!.actions = [{ id: "x", label: "x", if: [["region", "wset"]], fx: [["say", "ok"]] }];
+  assert.ok(
+    validateWorld(bad).some((e) => e.includes("unknown region wset")),
+    validateWorld(bad).join("\n"),
+  );
+  bad.regions = { west: { name: "the West" }, east: { name: "the East" } };
+  bad.rooms["r0"]!.actions = [{ id: "x", label: "x", if: [["region", "west"], ["!region", "east"]], fx: [["say", "ok"]] }];
+  assert.deepEqual(validateWorld(bad).filter((e) => /region/.test(e)), [], "and a real code, negated or not, is accepted");
 });
 
 test("with more known landmarks than the menu holds, travel groups them by region, and 'back' steps out", () => {
@@ -379,16 +444,34 @@ test("the first time fast travel is on the menu, one hint says so — and never 
   assert.ok(state.flags["_seenTravel"]);
 });
 
-test("the first unexplored side-trip exit earns a one-time legend for the * marker", () => {
+test("an unexplored side trip says so on the option itself, and needs no legend", () => {
+  // It used to be a "*" on the exits line plus a one-time legend explaining the
+  // symbol, once per region. The exits line is gone (it restated the menu under
+  // it) and the marker moved onto the `go` option in words, so the legend now
+  // explained a symbol nobody would ever see.
   const world = line(3);
   world.rooms["r1"]!.exits!["north"] = { to: "r2", sideTrip: true };
   let { state } = newState(world, 1);
   const first = step(world, state, actionByLabel(world, state, "go east")!);
-  assert.match(first.events.join(" "), /\* marks an optional side path not yet visited/);
+  assert.doesNotMatch(first.events.join(" "), /marks an optional side path/);
   state = first.state;
+  const shown = (s: State) => legalActions(world, s).map((a) => `${actionLabel(world, a, s)}${oddsHint(world, s, a)}`);
+  // r2 carries a landmark, so the option names where it goes and that nobody has been
+  assert.ok(shown(state).includes("go north (toward place 2, not yet walked)"), shown(state).join(" | "));
+  // and once walked, it reads as an ordinary exit again
+  state = doLabel(world, state, "go north");
   state = doLabel(world, state, "go west");
-  const again = step(world, state, actionByLabel(world, state, "go east")!);
-  assert.doesNotMatch(again.events.join(" "), /side path/);
+  assert.ok(shown(state).includes("go north (toward place 2)"), shown(state).join(" | "));
+
+  // an unwalked side trip into a room with no landmark of its own still says so
+  const plain = line(3);
+  plain.rooms["r2"]!.landmark = undefined;
+  plain.rooms["r1"]!.exits!["north"] = { to: "r2", sideTrip: true };
+  let p = newState(plain, 1).state;
+  p = step(plain, p, actionByLabel(plain, p, "go east")!).state;
+  assert.ok(
+    legalActions(plain, p).map((a) => `${actionLabel(plain, a, p)}${oddsHint(plain, p, a)}`).includes("go north (a way not yet walked)"),
+  );
 });
 
 test("a travel list past the cap turns pages: 'more places' is free and wraps, 'stay here' stays on every page", () => {
@@ -416,4 +499,167 @@ test("a travel list past the cap turns pages: 'more places' is free and wraps, '
   assert.equal(labels(world, state)[0], "toward Region 1", "the pages wrap");
   state = doLabel(world, state, "toward Region 3");
   assert.deepEqual(labels(world, state), ["to place 3", "back"]);
+});
+
+/**
+ * The way to where a quest points, walked rather than authored.
+ *
+ * All three players of wave seven asked for this, independently, and two put a
+ * number on its absence: 30-60 turns each lost "wandering undifferentiated
+ * spoil/mound/reed rooms" and "blindly exploring Fenmarch's side-rooms". A
+ * third reported the authored direction was simply wrong — "'two stands west,
+ * then in' didn't match the actual room-exit labels; the real path required
+ * going east" — which is the same failure as the coordinate bearings before
+ * them: a grid has walls, so a hop count is not a route. A room id cannot be
+ * wrong about the way there.
+ */
+test("pathTo walks the real exits, folds a straight run into one leg, and gives up rather than guess", () => {
+  const world = line(5);
+  // a branch off the line so the shortest walk is not the only walk
+  world.rooms["r0"]!.exits!["north"] = { to: "attic" };
+  world.rooms["attic"] = { name: "Attic", desc: "Up top.", exits: { south: { to: "r0" } } };
+  world.rooms["cellar"] = { name: "Cellar", desc: "No way in." }; // reachable from nowhere
+  const { state } = newState(world, 1);
+  assert.equal(pathTo(world, state, "r3"), "three east", "three steps the same way are one leg");
+  assert.equal(pathTo(world, state, "attic"), "one north");
+  assert.equal(pathTo(world, state, "r0"), "", "standing there already");
+  assert.equal(pathTo(world, state, "cellar"), null, "no chain of exits reaches it");
+  assert.equal(pathTo(world, state, "nowhere_at_all"), null, "and a room that does not exist is not a route either");
+  // two legs: east along the line, then north at the end
+  world.rooms["r4"]!.exits!["north"] = { to: "roof" };
+  world.rooms["roof"] = { name: "Roof", desc: "Sky.", exits: { south: { to: "r4" } } };
+  assert.equal(pathTo(world, state, "roof"), "four east, then one north");
+  // a locked door is still the way: the door is the quest, and pretending the
+  // place is unreachable would be the same lie the old directions told
+  world.rooms["r0"]!.exits!["east"] = { to: "r1", if: [["flag", "never"]], hint: "the door is barred" };
+  assert.equal(pathTo(world, state, "r3"), "three east");
+});
+
+test("a quest stage with a destination carries the way there into the status check", () => {
+  const world = line(4);
+  world.quests = {
+    q: {
+      name: "The Sunk Chapel",
+      start: [],
+      done: [["flag", "found"]],
+      stages: [{ if: [], text: "Something sings under the water.", at: "r3" }],
+    },
+  };
+  let { state } = newState(world, 1);
+  assert.match(renderStatus(world, state), /The Sunk Chapel: Something sings under the water\. \(the way there: three east\)/, renderStatus(world, state));
+  assert.equal(journal(world, state)[0]!.at, "r3", "the journal carries the destination, so any client can use it");
+  state = doLabel(world, state, "go east");
+  assert.match(renderStatus(world, state), /\(the way there: two east\)/, "and it shortens as you walk");
+  state = doLabel(world, state, "go east");
+  state = doLabel(world, state, "go east");
+  assert.match(renderStatus(world, state), /\(you are standing there\)/);
+
+  // a stage with no destination says nothing extra, and an unreachable one says
+  // nothing rather than something wrong
+  world.quests["q"]!.stages = [{ if: [], text: "Somewhere." }];
+  assert.doesNotMatch(renderStatus(world, state), /the way there/);
+  world.quests["q"]!.stages = [{ if: [], text: "Somewhere.", at: "r0" }];
+  world.rooms["r1"]!.exits = {}; // cut the line behind us
+  world.rooms["r2"]!.exits = {};
+  assert.doesNotMatch(renderStatus(world, state), /the way there/);
+
+  // and a destination that names no room is a validator error, not a silent nothing
+  const bad = line(2);
+  bad.quests = { q: { name: "Q", stages: [{ if: [], text: "t", at: "r7" }] } };
+  assert.ok(validateWorld(bad).some((e) => e.includes("at names no room (r7)")), validateWorld(bad).join("\n"));
+});
+
+/**
+ * "get your bearings" was 315 hand-written strings — one per wilderness cell,
+ * each its own chance to be wrong about a grid that has walls. The `bearings`
+ * effect leaves content deciding *where* a player can take them and lets the
+ * engine say what the answer is, walking the real exits to places the player
+ * has not been, which is the whole reason for asking.
+ */
+test("bearings names this region's places nearest first, walked, and only this region's", () => {
+  const world = line(6, (i) => (i < 4 ? "vale" : "downs"));
+  world.regions = { vale: { name: "the Vale" }, downs: { name: "the Downs" } };
+  for (const id of Object.keys(world.rooms)) delete world.rooms[id]!.landmark;
+  world.rooms["r1"]!.landmark = "the mill";
+  world.rooms["r3"]!.landmark = "the ford";
+  world.rooms["r5"]!.landmark = "the beacon"; // another region: not this answer
+  const { state } = newState(world, 1);
+  assert.equal(bearingsHere(world, state), "As the ground runs: the mill, one east; the ford, three east.");
+  assert.doesNotMatch(bearingsHere(world, state), /beacon/, "a place in the next region is not a bearing from here");
+
+  // it names places never visited: that is the question being asked
+  assert.deepEqual(state.visited, ["r0"]);
+
+  // and the effect is what content reaches it by
+  world.rooms["r0"]!.actions = [{ id: "look", label: "get your bearings", free: true, fx: [["bearings"]] }];
+  const out = step(world, state, actionByLabel(world, state, "get your bearings")!);
+  assert.ok(out.events.some((e) => e.includes("the mill, one east")), out.events.join(" | "));
+  assert.deepEqual(validateWorld(world).filter((e) => /bearings/.test(e)), [], "a closed DSL has to accept it");
+
+  // and what the player is carrying leads, named as what it is. Wave six's
+  // player abandoned two side quests unfound: "'get your bearings' never
+  // actually named the two active side-quest destinations after the first
+  // mention, so both were abandoned unfound despite real effort."
+  // (`world.quests` is read through a per-world index built on first use, so a
+  // quest added to a world already walked would not be seen — each case below
+  // gets its own world, which is also how content is actually loaded)
+  const withQuest = (at: string): World => {
+    const w = line(6, (i) => (i < 4 ? "vale" : "downs"));
+    w.regions = { vale: { name: "the Vale" }, downs: { name: "the Downs" } };
+    for (const id of Object.keys(w.rooms)) delete w.rooms[id]!.landmark;
+    w.rooms["r1"]!.landmark = "the mill";
+    w.rooms["r3"]!.landmark = "the ford";
+    w.rooms["r5"]!.landmark = "the beacon";
+    w.quests = { sentry: { name: "The Lost Sentry", start: [], done: [["flag", "found"]], stages: [{ if: [], text: "Out here.", at }] } };
+    return w;
+  };
+  const near = withQuest("r3");
+  assert.equal(
+    bearingsHere(near, newState(near, 1).state),
+    "As the ground runs: the ford — The Lost Sentry, three east; the mill, one east.",
+    bearingsHere(near, newState(near, 1).state),
+  );
+  // a destination in the next region is not a bearing from here, and a quest
+  // already done is not something you are looking for
+  const far = withQuest("r5");
+  assert.doesNotMatch(bearingsHere(far, newState(far, 1).state), /Lost Sentry/);
+  const done: State = { ...newState(near, 1).state, flags: { found: true } };
+  assert.doesNotMatch(bearingsHere(near, done), /Lost Sentry/);
+
+  // a region with nothing named, and a room in no region at all, both say so
+  // rather than printing an empty list
+  const bare = line(2, () => "vale");
+  bare.regions = { vale: { name: "the Vale" } };
+  for (const id of Object.keys(bare.rooms)) delete bare.rooms[id]!.landmark;
+  assert.match(bearingsHere(bare, newState(bare, 1).state), /nothing hereabouts has a name/i);
+  const nowhere = line(2);
+  for (const id of Object.keys(nowhere.rooms)) delete nowhere.rooms[id]!.landmark;
+  assert.match(bearingsHere(nowhere, newState(nowhere, 1).state), /nothing hereabouts has a name/i);
+});
+
+/**
+ * All three players of wave six walked through the Pass Gate leaving companion
+ * quests behind, and one named why the warning already there did not land:
+ * "this is stated once in passing dialogue but easy to miss, and irreversible".
+ * A sentence is easy to read past. A number is not — the walkthrough itself
+ * reaches that gate with eleven threads still open.
+ */
+test("questsopen counts what is still open, and says so rather than naming what might be ahead", () => {
+  const world = line(3);
+  world.quests = {
+    a: { name: "A", start: [], done: [["flag", "a_done"]], stages: [{ if: [], text: "one" }] },
+    b: { name: "B", start: [], done: [["flag", "b_done"]], stages: [{ if: [], text: "two" }] },
+  };
+  world.rooms["r0"]!.actions = [{ id: "gate", label: "look at the gate", free: true, fx: [["questsopen"]] }];
+  let { state } = newState(world, 1);
+  let out = step(world, state, actionByLabel(world, state, "look at the gate")!);
+  assert.match(out.events.join(" "), /2 threads of yours are still open/, out.events.join(" | "));
+  assert.match(out.events.join(" "), /whichever lie behind you stay open for good/);
+  // deliberately no names: which of them lie behind the door is not something
+  // the engine can know yet, and naming one that is ahead would be its own lie
+  assert.doesNotMatch(out.events.join(" "), /\bA\b|\bB\b/);
+
+  state = { ...out.state, flags: { ...out.state.flags, a_done: true, b_done: true } };
+  out = step(world, state, actionByLabel(world, state, "look at the gate")!);
+  assert.match(out.events.join(" "), /Nothing of yours is still open/);
 });

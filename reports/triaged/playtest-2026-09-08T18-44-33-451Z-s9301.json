@@ -1,0 +1,45 @@
+{
+  "verdict": "stuck",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 480,
+  "receipt": "",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "A d20 check roll came up as exactly 4 three times in a row (steward's shade will checks, strongbox might check) and later 5 twice in a row (Hundred Gallery will checks) in quick succession, before finally varying — felt suspiciously non-random for a short streak, though not provably broken.",
+      "where": "Barrow — King's Strongroom / Iron Downs — Hundred Gallery Fall"
+    },
+    {
+      "sev": "P2",
+      "what": "Companion mediation prompts ('call it a draw', 'not yours to grade') that are explicitly framed as the safe/neutral choice actually carry real fail chance and, on failure, cost regard with BOTH companions at once — worse than just picking a side. The framing undersells the risk.",
+      "where": "various companion dispute dialogues (Lys/Tamsin, Osk/Tamsin, Osk/Vell)"
+    },
+    {
+      "sev": "P1",
+      "what": "A single hold (Iron Downs/Cinderhall) with all its side content consumed ~85 turns; three holds plus companion recruitment plus Act I consumed the full 480-turn allowance before Act III's Hollow Throne could be resolved, despite pursuing the game's own recommended 'three hollows' minimum path efficiently and skipping most of the 15 available holds entirely.",
+      "where": "pacing, Act II holds generally"
+    }
+  ],
+  "confusions": [
+    "Early on, the reeve/priest barrow-door quest and the 'first Reeve's confession' requirement for the best ending were mentioned but never clearly pointed to a specific place to find that confession — I never located it and ran out of turns before Act III made it explicit.",
+    "Directional travel within a hold (e.g. 'three north, three east' from an NPC) required manually counting hops through many unnamed transit rooms; easy to lose count and no in-room confirmation of progress toward the stated target."
+  ],
+  "suggestions": [
+    "Either raise the default turn budget for a full playthrough or telegraph earlier that '480 turns' really only supports Act I + ~3 holds + reaching Marrowgate, not resolving Act III — a mid-game status hint like 'at this pace you can rest N more holds before Coldpass closes' would help pacing decisions.",
+    "Make companion-mediation dialogue explicitly show the odds/stakes (like combat and skill checks already do) instead of implying 'draw' options are the safe/neutral pick when they can double-fail.",
+    "Add a lightweight on-screen breadcrumb (e.g. 'you are now 2 of 3 north') when following multi-hop NPC directions through a wilderness area.",
+    "Surface where to find 'the first Reeve's confession' proactively once the three-hollow/king-rested prerequisites are met, since it's the last missing piece for the best-flagged ending and easy to miss in a large hub city like Marrowgate."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-08T18-44-33-451Z",
+  "seed": 9301,
+  "build": {
+    "rev": "e166432",
+    "world": "3c55e8a4"
+  },
+  "cost_usd": 16.966356200000014,
+  "verified": false
+}

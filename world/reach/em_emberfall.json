@@ -72,14 +72,7 @@
         }
       ],
       "actions": [
-        {
-          "id": "em_bearings",
-          "label": "get your bearings",
-          "free": true,
-          "fx": [
-            ["say", "North, the glassworks. South, the priory. West, the charcoal yards and Corrin's scale beyond them. Through the hearth, Ash Row keeps its own two griefs. Past the last roofs, the flats climb toward the singing ridge."]
-          ]
-        },
+        { "id": "em_bearings", "label": "get your bearings", "free": true, "fx": [["bearings"]] },
         {
           "id": "em_notice_board",
           "label": "read the order-board",
@@ -622,7 +615,7 @@
           "label": "the singing's quieter",
           "if": [["flag", "em_hollow_bargained"]],
           "once": true,
-          "say": "Quieter, not rested. I said the words and the world did not end for my saying them. Small mercy, but I've had smaller.",
+          "say": "Quieter, not rested. Someone struck our own worst evidence off a stone, at its asking, and I still don't know if that was mercy or one more year of the same lie.",
           "fx": [["xp", 2], ["addvar", "rep_church", 1]]
         },
         {
@@ -638,7 +631,7 @@
           "label": "word from the mother-house",
           "if": [["flag", "em_hollow_bargained"], ["!flag", "sv_em_bargained_asked"]],
           "once": true,
-          "say": "The mother-house has heard what I said, or heard the bell, and sent word: I'm to answer for one or the other. I could recant it all as grief talking loose, and keep my collar. I find I don't want to lie a second time.",
+          "say": "Word's reached the mother-house that the ridge went quiet, and how. I'm to answer for it. I could call it grief talking loose and keep my collar. I find I don't want to lie a second time.",
           "fx": [["set", "sv_em_bargained_asked"], ["xp", 2]]
         },
         {
@@ -1002,8 +995,19 @@
           "label": "the valley, now it's rested",
           "if": [["flag", "em_hollow_rested"]],
           "once": true,
-          "say": "The valley finally used the verse for what it was kept for. I can stop hiding, if I want to. I find I don't quite know how, after this long.",
-          "fx": [["xp", 2], ["addvar", "appr_vell", 1]]
+          "say": "The valley's finally rested. I can stop hiding, if I want to. I find I don't quite know how, after this long.",
+          "fx": [
+            ["xp", 2],
+            ["addvar", "appr_vell", 1],
+            [
+              "if",
+              [["flag", "em_verse_known"]],
+              [
+                ["say", "And you gave it my verse besides, in your refusal — not the way I meant it taught, but into the truth all the same."]
+              ],
+              []
+            ]
+          ]
         },
         {
           "id": "after_bargained",
@@ -1288,13 +1292,18 @@
       "stages": [
         {
           "if": [["flag", "em_prior_confessed"]],
-          "text": "Wenlock admitted it. The chapel above town may need to hear it too."
+          "text": "Wenlock admitted it, plainly, to you. Word of it will travel on its own now."
         },
         {
           "if": [["flag", "em_priory_clue"]],
-          "text": "The priory's plaque hints at a hidden date. Press Prior Wenlock on it."
+          "text": "The priory's plaque hints at a hidden date. Press Prior Wenlock on it.",
+          "at": "em_priory"
         },
-        { "if": [], "text": "Something about Emberfall's founding doesn't add up. The priory might know more." }
+        {
+          "if": [],
+          "text": "Something about Emberfall's founding doesn't add up. The priory might know more.",
+          "at": "em_priory"
+        }
       ]
     },
     "em_q_debt": {
@@ -1318,7 +1327,11 @@
           "if": [["flag", "em_knows_debt"]],
           "text": "Sorra owes Corrin more than the furnace earns. Pay it, expose his tally (wits), or ask Pike to smuggle her fuel."
         },
-        { "if": [], "text": "Something's wrong with the glassworks' books, if Sorra will say so." }
+        {
+          "if": [],
+          "text": "Something's wrong with the glassworks' books, if Sorra will say so.",
+          "at": "em_glassworks"
+        }
       ]
     },
     "em_q_lost": {
@@ -1328,17 +1341,20 @@
       "stages": [
         {
           "if": [["flag", "em_neave_closure"]],
-          "text": "Neave has her answer, one way or another. Ash Row is quieter for it."
+          "text": "Neave has her answer, one way or another. Ash Row is quieter for it.",
+          "at": "em_ash_row"
         },
         {
           "if": [["has", "em_lost_token"]],
-          "text": "You found something of Neave's brother in the ash flats. Bring it to Ash Row."
+          "text": "You found something of Neave's brother in the ash flats. Bring it to Ash Row.",
+          "at": "em_ash_row"
         },
         {
           "if": [["flag", "em_neave_asked"]],
-          "text": "Try the Glass Orchard, in the ash flats — a scrap of scorched cloth still hangs there, snagged on a low branch."
+          "text": "Try the Glass Orchard, in the ash flats — a scrap of scorched cloth still hangs there, snagged on a low branch.",
+          "at": "em_ash_1_2"
         },
-        { "if": [], "text": "A woman on Ash Row still watches the mine road." }
+        { "if": [], "text": "A woman on Ash Row still watches the mine road.", "at": "em_ash_row" }
       ]
     },
     "em_q_keeper": {
@@ -1348,19 +1364,23 @@
       "stages": [
         {
           "if": [["flag", "em_verse_known"]],
-          "text": "Brenna's rest-verse is yours. Carry it to the roofless chapel with Wenlock's confession."
+          "text": "Brenna's rest-verse is yours. It can ease a refusal at the roofless chapel, though it isn't required.",
+          "at": "em_choir_nave"
         },
         {
           "if": [["flag", "em_heard_brenna"]],
-          "text": "Brenna hides from the Church, not from you. Ask her to teach the rest-verse she was told to bury."
+          "text": "Brenna hides from the Church, not from you. Ask her to teach the rest-verse she was told to bury.",
+          "at": "em_sunken_cellar"
         },
         {
           "if": [["flag", "em_cellar_found"]],
-          "text": "A hidden cellar opens under Ash Row. Someone is keeping out of sight down there."
+          "text": "A hidden cellar opens under Ash Row. Someone is keeping out of sight down there.",
+          "at": "em_sunken_cellar"
         },
         {
           "if": [],
-          "text": "Ash Row hides something under its own floor, if you look for it (wits, grace, or might)."
+          "text": "Ash Row hides something under its own floor, if you look for it (wits, grace, or might).",
+          "at": "em_ash_row"
         }
       ]
     },
@@ -1371,11 +1391,13 @@
       "stages": [
         {
           "if": [["has", "em_pip_keepsake"]],
-          "text": "You found a whole bell-shaped shard in the ash flats. Bring it back to Pip on Ash Row."
+          "text": "You found a whole bell-shaped shard in the ash flats. Bring it back to Pip on Ash Row.",
+          "at": "em_ash_row"
         },
         {
           "if": [["flag", "em_pip_orphan"]],
-          "text": "Pip wants proof the ash isn't only ever bad news: one whole piece of bell-shaped glass from the flats."
+          "text": "Pip wants proof the ash isn't only ever bad news: one whole piece of bell-shaped glass from the flats.",
+          "at": "em_ash_3_2"
         },
         { "if": [], "text": "A child on Ash Row sorts glass by color, looking for something in particular." }
       ]
@@ -1391,27 +1413,33 @@
         },
         {
           "if": [["flag", "sv_em_rested_asked"], ["!flag", "sv_em_rested_done"]],
-          "text": "Pip is waiting on your word, on Ash Row."
+          "text": "Pip is waiting on your word, on Ash Row.",
+          "at": "em_ash_row"
         },
         {
           "if": [["flag", "sv_em_bargained_asked"], ["!flag", "sv_em_bargained_done"]],
-          "text": "Wenlock is waiting on your word, at the priory."
+          "text": "Wenlock is waiting on your word, at the priory.",
+          "at": "em_priory"
         },
         {
           "if": [["flag", "sv_em_burned_asked"], ["!flag", "sv_em_burned_done"]],
-          "text": "Neave is waiting on your word, on Ash Row."
+          "text": "Neave is waiting on your word, on Ash Row.",
+          "at": "em_ash_row"
         },
         {
           "if": [["flag", "em_hollow_rested"]],
-          "text": "Pip wonders what quiet is supposed to mean. Find him, Ash Row, Glasswick."
+          "text": "Pip wonders what quiet is supposed to mean. Find him, Ash Row, Glasswick.",
+          "at": "em_ash_row"
         },
         {
           "if": [["flag", "em_hollow_bargained"]],
-          "text": "Word from the mother-house troubles Wenlock. Find him at the priory."
+          "text": "Word from the mother-house troubles Wenlock. Find him at the priory.",
+          "at": "em_priory"
         },
         {
           "if": [["flag", "em_hollow_burned"]],
-          "text": "Neave's done watching the mine road. Find her, Ash Row, Glasswick."
+          "text": "Neave's done watching the mine road. Find her, Ash Row, Glasswick.",
+          "at": "em_ash_row"
         },
         { "if": [], "text": "Glasswick isn't done with the ridge yet." }
       ]
@@ -1421,7 +1449,11 @@
       "start": [["has", "em_lost_token"]],
       "done": [["flag", "em_neave_closure"]],
       "stages": [
-        { "if": [], "text": "Neave, at Ash Row in Glasswick, would want to know the scorched cloth token was found." }
+        {
+          "if": [],
+          "text": "Neave, at Ash Row in Glasswick, would want to know the scorched cloth token was found.",
+          "at": "em_ash_row"
+        }
       ]
     }
   },

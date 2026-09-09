@@ -61,7 +61,7 @@
             ["addvar", "rep_iron", -2],
             ["addvar", "appr_lys", 1],
             ["addvar", "appr_tamsin", -1],
-            ["score", 20],
+            ["score", 25],
             ["xp", 8],
             ["say", "Garrow chews on it, then nods slow. \"One night's fear a year, against a warrant and a coppice both. My clamp-men have paid worse for less.\" He spits and shakes on it, guild-fashion, and the bargain is struck."]
           ]
@@ -527,7 +527,7 @@
         {
           "id": "kw_coax_call",
           "label": "coax the old call out of him (will)",
-          "if": [["flag", "kw_woodward_bg"], ["!flag", "kw_note_woodward"]],
+          "if": [["flag", "kw_woodward_bg"], ["!flag", "kw_woodward_hummed"]],
           "say": "Ask me to hum it plain, and you're asking me to try the note that's failed me my whole life. Go on, then, if you mean it.",
           "fx": [
             [
@@ -535,27 +535,24 @@
               "will",
               10,
               [
-                ["set", "kw_note_woodward"],
-                ["addvar", "kw_notes_known", 1],
+                ["set", "kw_woodward_hummed"],
                 ["score", 3],
                 ["xp", 3],
                 ["say", "He hums it slow, and you catch what he never could: the third note isn't higher, like the first two — it drops, low and short, easy to lose if you're listening for a rise. He goes quiet a long moment after."]
               ],
               [
-                [
-                  "if",
-                  [["!flag", "kw_woodward_missed"]],
-                  [
-                    ["set", "kw_woodward_missed"],
-                    ["say", "He hums the two notes true and the third comes out wrong again, same as it always has. \"Sixty years,\" he says, \"and I've never once landed it.\" It can be tried again."]
-                  ],
-                  [
-                    ["say", "The third note slips away from him again. He shakes his head, more tired than frustrated. It can be tried again."]
-                  ]
-                ]
+                ["say", "He hums the two notes true and the third comes out wrong again, same as it always has. \"Sixty years,\" he says, \"and I've never once landed it.\" It can be tried again."]
               ]
             ]
           ]
+        },
+        {
+          "id": "kw_woodward_round",
+          "label": "what a hunt's morning actually took",
+          "if": [["flag", "kw_hollow_grievance"], ["flag", "said_kw_woodward_greet"]],
+          "once": true,
+          "say": "More than a muster and a horn. A beater works the coverts, a gun holds a stand downwind of them, and hounds get cast at every crossing till the line's found again. That hunt rode none of it.",
+          "fx": [["xp", 2]]
         },
         {
           "id": "kw_wood_wild_declare",
@@ -585,7 +582,7 @@
           "label": "the recall, now it's sounded",
           "if": [["flag", "kw_hollow_rested"]],
           "once": true,
-          "say": "Whole, at last. Sixty years I carried two notes and a hole where the third should be. Whoever finished it — thank them for me, if you ever get the chance.",
+          "say": "Sixty years I carried two notes and a hole where the third should be, certain that hole was the whole of the trouble. It never was. Whoever finally rode that morning through — thank them for me, if you get the chance.",
           "fx": [["xp", 1]]
         },
         {
@@ -873,13 +870,12 @@
           "fx": [["set", "kw_child_worried"], ["xp", 2]]
         },
         {
-          "id": "kw_note_rhyme",
+          "id": "kw_child_rhyme",
           "label": "ask for the burners' rhyme",
-          "if": [["flag", "kw_child_worried"], ["!flag", "kw_note_rhyme"]],
+          "if": [["flag", "kw_child_worried"]],
+          "once": true,
           "say": "Every child in Hornhallow learns it before they can walk far — so we know the notes to never answer. Funny, I suppose, that I answered them anyway.",
           "fx": [
-            ["set", "kw_note_rhyme"],
-            ["addvar", "kw_notes_known", 1],
             ["score", 3],
             ["xp", 3],
             ["say", "She sings it through in one breath, sing-song and word-perfect, the kind of rhyme that's survived four hundred years by being simple enough for a child to keep: two notes rising, and a third that drops away."]

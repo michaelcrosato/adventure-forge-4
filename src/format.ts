@@ -9,7 +9,7 @@
  * brief line (revisit) is the caller's memo (per-session, not game state), so
  * traces replay identically no matter how the text was rendered.
  */
-import { actionLabel, checkMod, checkModParts, combatMods, condOk, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, oddsHint, receipt, roomIsDark, roomView } from "./engine.ts";
+import { actionLabel, checkMod, checkModParts, combatMods, companyHere, condOk, FAILED_CHECKS_MAX, failedChecks, hashState, inClassPhase, inCompanyMode, inPerkPickPhase, inTalkMode, inTravelMode, itemHint, journal, legalActions, menuNumbers, oddsHint, pathTo, receipt, roomIsDark, roomPageOf, roomView , wildBearing} from "./engine.ts";
 import { ATTRS, EPILOGUE_CAP, EPILOGUE_CHARS } from "./types.ts";
 import type { Action, Cond, State, World } from "./types.ts";
 
@@ -19,12 +19,16 @@ const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 export const VISITED_FULL = 12;
 export const VISITED_RECENT = 5;
 
-export function renderMenu(world: World, s: State, opts: { itemHints?: boolean } = {}): { text: string; actions: Action[] } {
+export function renderMenu(world: World, s: State, opts: { itemHints?: boolean } = {}): { text: string; actions: Action[]; numbers: number[] } {
   const actions = legalActions(world, s);
+  // the number is the entry's place in the room's whole option list, not on
+  // the page showing — see menuNumbers, and the two players who pressed a
+  // number that had meant something else a page ago
+  const numbers = menuNumbers(world, s);
   const text = actions
-    .map((a, i) => `${i + 1} ${actionLabel(world, a, s)}${oddsHint(world, s, a, opts)}`)
+    .map((a, i) => `${numbers[i]} ${actionLabel(world, a, s)}${oddsHint(world, s, a, opts)}`)
     .join("\n");
-  return { text, actions };
+  return { text, actions, numbers };
 }
 
 /**
@@ -43,30 +47,12 @@ export function matchesMenuLabel(line: string, canonical: string): boolean {
   return a === b || (a.startsWith(`${b} (`) && a.endsWith(")"));
 }
 
-// Compass abbreviations for the "exits:" orientation line — every direction
-// word a world actually uses (see world/*.json); anything else falls back to
-// its capitalized self.
-const DIR_ABBR: Record<string, string> = {
-  north: "N",
-  south: "S",
-  east: "E",
-  west: "W",
-  up: "U",
-  down: "D",
-  in: "In",
-  out: "Out",
-};
-
-function exitAbbr(dir: string): string {
-  return DIR_ABBR[dir] ?? dir.charAt(0).toUpperCase() + dir.slice(1);
-}
-
 export function render(
   world: World,
   s: State,
   events: string[],
   opts: { full?: boolean } = {},
-): { text: string; actions: Action[] } {
+): { text: string; actions: Action[]; numbers: number[] } {
   if (s.ended) {
     const e = s.ended;
     // how the world remembers what you did: every epilogue line whose
@@ -95,7 +81,7 @@ export function render(
       `(score is a bonus tally of discoveries and choices; status tells the rest of the tale)`,
       `receipt:${receipt(world, s)}`,
     ];
-    return { text: lines.join("\n"), actions: [] };
+    return { text: lines.join("\n"), actions: [], numbers: [] };
   }
 
   if (inClassPhase(world, s)) {
@@ -109,7 +95,7 @@ export function render(
     }
     const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push(menu.text);
-    return { text: lines.join("\n"), actions: menu.actions };
+    return { text: lines.join("\n"), actions: menu.actions, numbers: menu.numbers };
   }
 
   const room = world.rooms[s.room];
@@ -118,10 +104,30 @@ export function render(
   const lines: string[] = [];
   const lvl = world.classes ? ` L${s.level}` : "";
   const hud = (world.hud ?? []).map((h) => ` ${h.label}${s.vars[h.var] ?? 0}`).join("");
+  // active conditions, compact: " [winded 2 braced 1]" — costs nothing when none are active
+  const condTxt = Object.keys(s.conds).sort().map((id) => `${world.conditions?.[id]?.name ?? id} ${s.conds[id]}`).join(" ");
+  const conds = condTxt ? ` [${condTxt}]` : "";
+  // No running score in the turn header. The tally moved to `status`, where the
+  // line that says what the denominator means lives (two blind players read
+  // "198/366" as a share of the realm), and the turn a deed earns anything says
+  // so itself — applyFx pushes "(+3)" as an event. A total restated on every
+  // screen in between was 2,328 characters along the realm's walkthrough, on a
+  // budget with a thousand to spare, to tell a player something no turn of
+  // theirs had changed.
+  // which page of a crowded room is showing: the ways out stay on every page,
+  // so the numbers under them move when the page does
+  const pg = roomPageOf(world, s);
+  const page = pg ? ` p${pg.page}/${pg.pages}` : "";
   lines.push(
-    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} score${s.score} t${s.turn}${hud}`,
+    `=${view.name} | hp${s.hp}/${s.maxHp}${lvl} t${s.turn}${hud}${conds}${page}`,
   );
-  if (events.length) lines.push(`[${events.join(" ")}]`);
+  // One event per line inside the one bracket. Arriving in a hold with a full
+  // party prints the hold's own arrival text and then each companion's reaction
+  // to it — good content, and it was being run together into a single
+  // 1,043-character bracket at the Cairn-Track, the widest screen on any proven
+  // road. A newline where a space was costs nothing and gives each voice its
+  // own line; with one event it reads exactly as it did.
+  if (events.length) lines.push(`[${foldNotices(events).join("\n")}]`);
   if (world.progress) {
     const v = s.vars[world.progress.var] ?? 0;
     lines.push(`${world.progress.label}: ${v}/${world.progress.max}`);
@@ -137,7 +143,7 @@ export function render(
     const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push("Level up. Pick 1 perk/lvl for fights & checks (perm).");
     lines.push(menu.text);
-    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions, numbers: menu.numbers };
   }
 
   // an open conversation: the npc's line is in the events; the room waits
@@ -145,7 +151,7 @@ export function render(
     const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push(`talking with ${world.npcs[s.talking!]?.name ?? s.talking}`);
     lines.push(menu.text);
-    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions, numbers: menu.numbers };
   }
 
   // the travel menu: known places, nothing else
@@ -153,14 +159,14 @@ export function render(
     const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push("Travel — places you know:");
     lines.push(menu.text);
-    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions, numbers: menu.numbers };
   }
   // the company list: who is with you, nothing else
   if (inCompanyMode(world, s)) {
     const menu = renderMenu(world, s, { itemHints: !!opts.full });
     lines.push("Your company:");
     lines.push(menu.text);
-    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+    return { text: lines.filter(Boolean).join("\n"), actions: menu.actions, numbers: menu.numbers };
   }
 
   if (dark) {
@@ -184,31 +190,54 @@ export function render(
         const tail = opts.full && d.desc ? ` — ${d.desc}` : "";
         if (hp <= 0) return `${d.name} (${s.flags[`laid_${id}`] ? "at rest" : "dead"})`;
         const pierce = d.pierce ? ", armor useless" : "";
+        // active conditions, folded into the existing parenthetical (or a new one, if it carried none) — empty when it holds none
+        const condTag = Object.keys(s.npcConds[id] ?? {}).sort().map((cid) => `${world.conditions?.[cid]?.name ?? cid} ${s.npcConds[id]![cid]}`).join(", ");
+        const withCond = condTag ? `, ${condTag}` : "";
         // a standoff content has ended (`calm`) reads as the peace it is
-        if ((d.aggressive || d.hostile) && s.flags[`calm_${id}`]) return `${d.name} is here (stood down)${tail}`;
-        if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1}${pierce})${tail}`;
+        if ((d.aggressive || d.hostile) && s.flags[`calm_${id}`]) return `${d.name} is here (stood down${withCond})${tail}`;
+        if (d.aggressive) return `${d.name} (hostile, attacks on sight, hp${hp}/${d.hp ?? 1}${pierce}${withCond})${tail}`;
         // a hostile that is not aggressive never strikes first: say so, so walking past reads as the choice it is
-        if (d.hostile) return `${d.name} (hostile, holds its ground, hp${hp}/${d.hp ?? 1}${pierce}${talks.has(id) ? ", will hear you out" : ""})${tail}`;
-        return `${d.name} is here${tail}`;
+        if (d.hostile) return `${d.name} (hostile, holds its ground, hp${hp}/${d.hp ?? 1}${pierce}${talks.has(id) ? ", will hear you out" : ""}${withCond})${tail}`;
+        return condTag ? `${d.name} is here (${condTag})${tail}` : `${d.name} is here${tail}`;
       });
     if (npcs.length) lines.push(npcs.join("; "));
-    const party = s.party.map((id) => world.npcs[id]?.name ?? id);
-    if (party.length) lines.push(`with you: ${party.join(", ")}`);
+    // Only the companions the menu does not already name as company. With two
+    // or more to speak with, "speak with the company (Vell, Tamsin, Brother
+    // Osk, Lys)" is right there on the menu and this line repeated it word for
+    // word — forty characters on every screen of the full-party road, to say
+    // what the screen already said.
+    //
+    // Below two it stays, all of it. A lone "talk to Lys" does not say she is
+    // travelling with you: an npc merely standing in the room reads the same
+    // way, and the difference is the whole point of the line. Only the word
+    // "company" makes it unambiguous, and that only appears at two or more. A
+    // companion with nothing to say is on no menu entry at all and always
+    // belongs here.
+    const named = new Set(companyHere(world, s));
+    const quiet = s.party.filter((id) => !named.has(id) || named.size < 2);
+    if (quiet.length) lines.push(`with you: ${quiet.map((id) => world.npcs[id]?.name ?? id).join(", ")}`);
   }
 
-  const exitDirs = Object.keys(room?.exits ?? {});
-  if (exitDirs.length) {
-    const marked = exitDirs.map((dir) => {
-      const ex = room!.exits![dir]!;
-      const unexplored = ex.sideTrip && !s.visited.includes(ex.to);
-      return exitAbbr(dir) + (unexplored ? "*" : "");
-    });
-    lines.push(`exits: ${marked.join(" ")}`);
+  // Deep in a generated wilderness, where you stand counted from the nearest
+  // named place you have already been. Three playtest reports asked for this:
+  // the bearings are right, but following "three north, then two east" meant
+  // counting hops by hand. Nothing prints next door to a place you know, or
+  // where you have not yet stood in one.
+  if (!dark) {
+    const bearing = wildBearing(world, s);
+    if (bearing) lines.push(bearing);
   }
+
+  // No "exits: N W E S" line. legalActions offers every exit as its own numbered
+  // `go <dir>` — locked ones included — so the line restated the menu directly
+  // under it, at 2,569 characters along the realm's walkthrough, on a budget with
+  // twenty to spare. Its one piece of its own, the "*" on an unwalked side trip,
+  // moved into the `go` line, where it says what it means: two playtest reports
+  // asked what the asterisk was and nothing on the screen ever answered.
 
   const menu = renderMenu(world, s, { itemHints: !!opts.full });
   lines.push(menu.text);
-  return { text: lines.filter(Boolean).join("\n"), actions: menu.actions };
+  return { text: lines.filter(Boolean).join("\n"), actions: menu.actions, numbers: menu.numbers };
 }
 
 /**
@@ -219,6 +248,52 @@ export function render(
  * check/combat modifier totals, so a player can confirm their build right
  * before committing to a major choice instead of re-summing perks by hand.
  */
+/** A bare mechanical notice: "(+5)", "(-2)", "(+3xp)", "(the Watch +2)", "(Lys -1)". */
+const NOTICE = /^\((?:[+-]\d+(?:xp)?|.{1,28} [+-]\d+)\)$/;
+
+/**
+ * A turn's mechanical notices fold onto one line, and its score and xp add up.
+ *
+ * One action can earn score twice and xp twice, and each pushed its own event.
+ * Given a line each (which is what makes four companions answering a hold
+ * legible) that became "(+5)", "(+3xp)", "(+5xp)", "(+5)" down the screen —
+ * four lines to say two numbers. A run of them now reads "(+10, +8xp)".
+ *
+ * Only adjacent runs fold. A notice sits directly after the thing that earned
+ * it, and prose between two of them means they belong to different moments;
+ * merging across that would move a number away from its cause.
+ */
+function foldNotices(events: string[]): string[] {
+  const out: string[] = [];
+  let run: string[] = [];
+  const flush = () => {
+    if (!run.length) return;
+    if (run.length === 1) out.push(run[0]!);
+    else {
+      let score = 0, xp = 0;
+      const named: string[] = [];
+      for (const e of run) {
+        const body = e.slice(1, -1);
+        const num = /^([+-]\d+)(xp)?$/.exec(body);
+        if (num) { if (num[2]) xp += Number(num[1]); else score += Number(num[1]); continue; }
+        named.push(body);
+      }
+      const parts: string[] = [];
+      if (score) parts.push(`${score > 0 ? "+" : ""}${score}`);
+      if (xp) parts.push(`${xp > 0 ? "+" : ""}${xp}xp`);
+      parts.push(...named);
+      out.push(`(${parts.join(", ")})`);
+    }
+    run = [];
+  };
+  for (const e of events) {
+    if (NOTICE.test(e)) run.push(e);
+    else { flush(); out.push(e); }
+  }
+  flush();
+  return out;
+}
+
 export function renderStatus(world: World, s: State): string {
   const lines: string[] = [];
   // the recap follows the story: a staged objectives list shows its first entry whose conditions hold
@@ -231,7 +306,12 @@ export function renderStatus(world: World, s: State): string {
   // the turn, so a player counting a budget need not cross-reference the last screen's header
   if (s.turn > 0) lines.push(`Turn ${s.turn}.`);
   if (world.maxScore !== undefined)
-    lines.push(`Score: ${s.score}/${world.maxScore} (a bonus tally of discoveries and choices; it can fill long before the tale ends)`);
+    // Two blind players in one wave read "198/366" as how much of the realm
+    // they had seen and concluded they were two-thirds done. The old note said
+    // the tally "can fill long before the tale ends", which is not true of any
+    // proven route — the walkthrough reaches 366 on its last turn — so it
+    // misled twice over. Say what the denominator actually is.
+    lines.push(`Score: ${s.score} (deeds and discoveries; ${world.maxScore} is what one whole route pays, and there is more realm than one route)`);
   if (s.ended) {
     // the ending screen fits six lines; here the whole telling is free
     const told = (world.epilogue ?? []).filter((ep) => ep.if.every((c) => condOk(world, s, c))).map((ep) => `- ${ep.text}`);
@@ -259,14 +339,45 @@ export function renderStatus(world: World, s: State): string {
   if (world.quests) {
     const q = journal(world, s);
     const active = q.filter((x) => x.status === "active");
+    /**
+     * The way to where a stage points, walked through the real exits.
+     *
+     * Three blind players in one wave asked for exactly this and two of them
+     * put a number on its absence: 30-60 turns each spent "wandering
+     * undifferentiated spoil/mound/reed rooms" and "blindly exploring
+     * Fenmarch's side-rooms". A third asked for it in the quest log itself,
+     * which is where this is — status costs no turn, so a line here costs
+     * nothing on the screens a player is actually reading.
+     *
+     * Only for a stage whose author gave it an `at`. There is no guessing from
+     * the stage text: hand-written directions are the thing this replaces.
+     */
+    // The way there, for somewhere in this region; the region's name for
+    // anywhere else. A journal carrying fifteen threads was printing 234
+    // characters a line, and the long half of that was a nine-leg walk to a
+    // hold two regions away — which is not the answer to "where do I go next",
+    // it is a wall in front of it. `bearingsHere` has always drawn the same
+    // line at the region border, and the region name is what a player actually
+    // routes by at that distance. It also skips the whole breadth-first walk
+    // for every thread that is nowhere near, which `status` was paying for on
+    // every call.
+    const way = (x: (typeof active)[number]) => {
+      if (!x.at) return "";
+      const here = world.rooms[s.room]?.region;
+      const there = world.rooms[x.at]?.region;
+      if (here && there && here !== there) return ` (in ${world.regions?.[there]?.name ?? there})`;
+      const legs = pathTo(world, s, x.at);
+      if (legs === null) return ""; // nothing said rather than something wrong
+      return legs === "" ? " (you are standing there)" : ` (the way there: ${legs})`;
+    };
     // the road (quests marked main) reads first, apart from the side threads
     const road = active.filter((x) => world.quests?.[x.id]?.main);
     const side = active.filter((x) => !world.quests?.[x.id]?.main);
-    if (road.length) lines.push(`${s.ended ? "The road, as it ended" : "The road"}:\n${road.map((x) => `- ${x.name}: ${x.text}`).join("\n")}`);
+    if (road.length) lines.push(`${s.ended ? "The road, as it ended" : "The road"}:\n${road.map((x) => `- ${x.name}: ${x.text}${way(x)}`).join("\n")}`);
     // a hold's grief — the quest that settles its hollow — is named as such, so
     // a town's side threads never read as the thing the hold is waiting on
     const grief = (id: string) => /_hollow_|hollows_|hollow_(resolved|done|good)/.test(JSON.stringify(world.quests?.[id]?.done ?? []));
-    if (side.length) lines.push(`${s.ended ? "Left undone" : "Quests"}:\n${side.map((x) => `- ${x.name}${grief(x.id) ? " (this hold's grief)" : ""}: ${x.text}`).join("\n")}`);
+    if (side.length) lines.push(`${s.ended ? "Left undone" : "Quests"}:\n${side.map((x) => `- ${x.name}${grief(x.id) ? " (this hold's grief)" : ""}: ${x.text}${way(x)}`).join("\n")}`);
     const done = q.filter((x) => x.status === "done").map((x) => x.name);
     if (done.length) lines.push(`Done: ${done.join(", ")}`);
     const failed = q.filter((x) => x.status === "failed").map((x) => x.name);
@@ -309,11 +420,75 @@ export function renderStatus(world: World, s: State): string {
     lines.push(`Party: ${party.join(", ")}${hurt ? " — a rest at any hearth heals them" : ""}`);
   }
   if (s.perks?.length) {
+    // Names alone where the totals below carry the effects, name and effect
+    // where they do not.
+    //
+    // Every perk in the Reach buys attribute checks, to-hit, damage, armor or
+    // max hp, and all five are totalled further down — `Checks:` even
+    // attributes each one by name ("grace+3 (+2 Fleetfoot, +1 Sure Foot)").
+    // Nine perks with their descriptions ran 235 characters of every `status`
+    // call restating that. But those totals only print for a world with a
+    // character system (`world.classes && s.attrs`), and in a world without
+    // one this line is the only place a perk's effect appears at all — so the
+    // condition here is the same condition, and the two can never drift into
+    // saying it twice or not at all.
+    const summed = !!(world.classes && s.attrs);
     const perks = s.perks.map((id) => {
       const p = world.perks?.[id];
-      return p ? `${p.name} (${p.desc})` : id;
+      if (!p) return id;
+      return summed ? p.name : `${p.name} (${p.desc})`;
     });
     lines.push(`Perks: ${perks.join(", ")}`);
+  }
+  // optional-chained like party/perks above: a caller that predates this field stays valid
+  if (Object.keys(s.conds ?? {}).length) {
+    // remaining turns, plus the condition's own hint if it carries one — the
+    // same numbers the HUD tag and the Checks/Combat totals below already count
+    const conds = Object.keys(s.conds)
+      .sort()
+      .map((id) => {
+        const def = world.conditions?.[id];
+        const n = s.conds[id]!;
+        return `${def?.name ?? id} (${n} turn${n === 1 ? "" : "s"} left)${def?.hint ? ` — ${def.hint}` : ""}`;
+      });
+    lines.push(`Conditions: ${conds.join("; ")}`);
+  }
+  // A check that has cost a retry is worth surfacing somewhere: the odds
+  // preview already shows the raised DC on the room/topic itself, but a
+  // player who has walked away from one (or three) has no other way to
+  /**
+   * Where the player stands with each faction, and the rank they hold.
+   *
+   * `world.factions` existed only to name a faction inside an event — "(the
+   * Gray Church +2)" — and was never shown anywhere as a total. Six factions,
+   * two ranks each, payoffs for those ranks wired into all sixteen regions,
+   * and a player had no way to learn they were at +13 with the Church, that a
+   * rank existed at all, or how close they were to one. The fourth wave's
+   * three players reached keepers +25, church +13, watch +6 and free +5
+   * between them, every one of those past a threshold, and collected two
+   * ranks in total.
+   *
+   * The rank comes off the flags content already sets by convention —
+   * `rep_keepers` pairs with `keepers_trusted` and `keepers_sworn` — so this
+   * needs nothing new in the world data. Standing at zero is left out: it
+   * means the faction has not entered the story yet.
+   */
+  const standing = Object.entries(world.factions ?? {})
+    .map(([v, name]) => ({ v, name, n: s.vars[v] ?? 0, code: v.replace(/^rep_/, "") }))
+    .filter((f) => f.n !== 0)
+    .sort((a, b) => b.n - a.n)
+    .map((f) => {
+      const rank = s.flags[`${f.code}_sworn`] ? " sworn" : s.flags[`${f.code}_trusted`] ? " trusted" : "";
+      return `${f.name} ${f.n > 0 ? "+" : ""}${f.n}${rank}`;
+    });
+  if (standing.length) lines.push(`Standing: ${standing.join(", ")}`);
+  // recall that later. Worst-tried first; past FAILED_CHECKS_MAX, a plain
+  // count for the rest rather than a line that grows without bound.
+  const tried = failedChecks(world, s);
+  if (tried.length) {
+    const shown = tried.slice(0, FAILED_CHECKS_MAX).map((f) => `${f.label} (${f.attempts}x, now DC ${f.dc})`);
+    const more = tried.length > FAILED_CHECKS_MAX ? `, +${tried.length - FAILED_CHECKS_MAX} more` : "";
+    lines.push(`Failed before: ${shown.join(", ")}${more}`);
   }
   // Only worlds with a character system carry attrs/perks worth summing; a
   // classless world's s.attrs stays empty all game, so this would be an
@@ -333,6 +508,23 @@ export function renderStatus(world: World, s: State): string {
     // name the weapon and armor that count, so a second piece is known not to stack
     const by = (id: string | null) => (id ? ` (${world.items[id]?.name ?? id})` : "");
     lines.push(`Combat: hit${signed(cm.hit)} dmg${signed(cm.dmg)}${by(cm.weapon)} armor${signed(cm.armor)}${by(cm.armorItem)}`);
+    // An ability spends a pool, and until now nothing anywhere said how much was
+    // left in it — not the menu, not here. A Warden could press "break them"
+    // twice and find out the third time by its absence. Only pools this
+    // character's abilities can actually spend are listed, so a Scholar is not
+    // shown the Warden's.
+    const mine = new Map<string, string>(); // pool -> the class whose ability spends it
+    for (const ab of Object.values(world.abilities ?? {})) {
+      const forMe = (ab.if ?? []).every((c) => !(c[0] === "class" && c[1] !== s.classId) && !(c[0] === "!class" && c[1] === s.classId));
+      if (!forMe) continue;
+      const cls = (ab.if ?? []).find((c) => c[0] === "class")?.[1];
+      const named = typeof cls === "string" ? (world.classes?.[cls]?.name ?? "") : "";
+      for (const c of ab.if ?? []) if (c[0] === "var" && typeof c[1] === "string" && c[1] in (world.resources ?? {})) mine.set(c[1], named);
+      for (const f of ab.fx ?? []) if (f[0] === "addvar" && typeof f[1] === "string" && f[1] in (world.resources ?? {})) mine.set(f[1], named);
+    }
+    const pools = [...mine].sort(([a], [b]) => a.localeCompare(b))
+      .map(([v, named]) => `${named ? `${named} ` : ""}${s.vars[v] ?? 0}/${world.resources![v]}`);
+    if (pools.length) lines.push(`Ready to spend: ${pools.join(", ")} (a rest fills it)`);
   }
   return lines.length ? lines.join("\n") : "No progress to report.";
 }
@@ -341,12 +533,20 @@ export function renderIntro(
   world: World,
   s: State,
   events: string[],
-): { text: string; actions: Action[] } {
+): { text: string; actions: Action[]; numbers: number[] } {
   const body = render(world, s, events, { full: true });
   const head = [
     `${world.title} (seed ${s.seed})`,
     world.intro,
-    `Goal: reach an ending. hp0 = death. One action per turn: act(s, n) with a menu number. look(s)/status(s): free scene/quest/items recap incl. every path, no turn spent. hash ${hashState(s)}.`,
+    // The escalation rule states itself here rather than on every check
+    // preview. Wave eight, seed 9903: "DC-escalation-on-failure isn't flagged
+    // before the first failure, so a player can commit to a check without
+    // knowing repeated attempts get harder." Saying it per option would be 513
+    // option lines across the proven roads; saying it once is a rule of the
+    // world, and rules belong on the line that states the rules. The clause
+    // that prints the raised number ("raised 2 by failed tries, and stops at
+    // 24") then reads as the reminder it is.
+    `Goal: reach an ending. hp0 = death. One action per turn: act(s, n) with a menu number. look(s)/status(s): free recap: scene, quests, items, every path — no turn. A forced try gets harder each miss; talk never does. hash ${hashState(s)}.`,
   ].join("\n");
-  return { text: `${head}\n${body.text}`, actions: body.actions };
+  return { text: `${head}\n${body.text}`, actions: body.actions, numbers: body.numbers };
 }

@@ -235,10 +235,18 @@
         {
           "id": "react_hollow_rested",
           "label": "the field, now the truce is called",
-          "if": [["flag", "sh_hollow_rested"]],
+          "if": [["flag", "sh_hollow_rested"], ["!flag", "sh_daughter_answered_back"]],
           "once": true,
           "say": "I haven't heard the pull since. Not silence, exactly — more like a question that finally got its answer, and doesn't need to ask again.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "react_hollow_rested_merle",
+          "label": "the field, now the truce is called",
+          "if": [["flag", "sh_hollow_rested"], ["flag", "sh_daughter_answered_back"]],
+          "once": true,
+          "say": "I haven't heard the pull since — and I like to think that's partly mine to claim. Nobody else answered them before I did. Somebody had to go first.",
+          "fx": [["xp", 1], ["addvar", "appr_lys", 1]]
         },
         {
           "id": "react_hollow_bargained",

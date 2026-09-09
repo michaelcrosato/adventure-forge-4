@@ -101,6 +101,17 @@
             ["move", "va_keeper_token", "inv"],
             ["say", "Right where the tally said: the stone lifts, and the gap beneath is worn smooth by years of someone's knees. Wedged in it, a worn half-token."]
           ]
+        },
+        {
+          "id": "va_prior_rite",
+          "label": "press the Priory's rite to the doors",
+          "if": [["!flag", "va_barrow_open"], ["any", [["flag", "church_trusted"], ["has", "fd_priors_rite"]]]],
+          "fx": [
+            ["set", "va_barrow_open"],
+            ["set", "va_barrow_blessed"],
+            ["xp", 2],
+            ["say", "You need no local blessing: the Priory's own seal is warrant enough. The doors give without a sound, the way they might for a bishop, or Halm himself."]
+          ]
         }
       ]
     },
@@ -115,7 +126,20 @@
         "down": { "to": "va_crypt", "sideTrip": true },
         "east": { "to": "va_vault", "sideTrip": true }
       },
-      "onEnterOnce": [["xp", 2], ["say", "These niches once held tokens for the dead. Someone took them all."]]
+      "onEnterOnce": [["xp", 2], ["say", "These niches once held tokens for the dead. Someone took them all."]],
+      "actions": [
+        {
+          "id": "va_antechamber_niches",
+          "label": "search the empty niches",
+          "if": [["class", "scout"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "Not looted — emptied. Each niche swept clean, no chip or scratch from a hurried hand. Whoever took these tokens took their time, and meant to."]
+          ]
+        }
+      ]
     },
     "va_vault": {
       "name": "The King's Strongroom",
@@ -423,7 +447,7 @@
             ["addvar", "appr_vell", 1],
             ["npcgo", "va_hollow_king", null],
             ["say", "You set the crown in his hands. He stands, bows once, and lies down at last. The gray goes out of the trees like a tide. The doors wait on your word."],
-            ["say", "(The crown stays in the Vale now; the gray seat in Marrowgate will have none to wear.)"]
+            ["say", "(The crown is his again, and no one in Marrowgate will wear it.)"]
           ]
         },
         {
@@ -722,6 +746,14 @@
           "fx": [["xp", 2]]
         },
         {
+          "id": "crown_already_read",
+          "label": "you already read the crown's own words",
+          "if": [["flag", "va_read_crown"]],
+          "once": true,
+          "say": "\"You read it, then,\" he says. \"Then you already know the whole of my grievance. There is nothing left for me to add.\"",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "scout_quiet",
           "label": "let him see how quiet you can be",
           "if": [["class", "scout"], ["flag", "va_heard_grievance"]],
@@ -756,7 +788,8 @@
       "stages": [
         {
           "if": [["flag", "va_king_resolved"]],
-          "text": "The king is settled. The doors are yours to seal or leave open, from the throne."
+          "text": "The king is settled. The doors are yours to seal or leave open, from the throne.",
+          "at": "va_throne"
         },
         {
           "if": [["flag", "va_promised_seal"]],
@@ -764,7 +797,8 @@
         },
         {
           "if": [],
-          "text": "The reeve wants the barrow sealed after; the priest wants it open. Promise, or don't — you decide at the throne."
+          "text": "The reeve wants the barrow sealed after; the priest wants it open. Promise, or don't — you decide at the throne.",
+          "at": "va_throne"
         }
       ]
     },
@@ -775,35 +809,43 @@
       "stages": [
         {
           "if": [["var", "va_verses_known", "=", 3]],
-          "text": "All three verses are yours. Speak them over the king at the throne."
+          "text": "All three verses are yours. Speak them over the king at the throne.",
+          "at": "va_throne"
         },
         {
           "if": [["flag", "va_verse_stone"], ["flag", "va_verse_wind"], ["!flag", "va_verse_water"]],
-          "text": "Stone and wind are yours. One verse left: the sunken shrine, in the wood east of the village."
+          "text": "Stone and wind are yours. One verse left: the sunken shrine.",
+          "at": "va_drowned_chapel"
         },
         {
           "if": [["flag", "va_verse_stone"], ["flag", "va_verse_water"], ["!flag", "va_verse_wind"]],
-          "text": "Stone and water are yours. One verse left: the old watchtower, east of the wood."
+          "text": "Stone and water are yours. One verse left: the old watchtower.",
+          "at": "va_watchtower"
         },
         {
           "if": [["flag", "va_verse_water"], ["flag", "va_verse_wind"], ["!flag", "va_verse_stone"]],
-          "text": "Water and wind are yours. One verse left: the barrow's own hall."
+          "text": "Water and wind are yours. One verse left: the barrow's own hall.",
+          "at": "va_hall_of_verses"
         },
         {
           "if": [["flag", "va_verse_stone"], ["!flag", "va_verse_water"], ["!flag", "va_verse_wind"]],
-          "text": "Stone verse known. Two more: the sunken shrine and the old watchtower, both east of the wood."
+          "text": "Stone verse known. Two more: the sunken shrine first, then the old watchtower.",
+          "at": "va_drowned_chapel"
         },
         {
           "if": [["flag", "va_verse_water"], ["!flag", "va_verse_stone"], ["!flag", "va_verse_wind"]],
-          "text": "Water verse known. Two more: the old watchtower, east of the wood, and the barrow's own hall."
+          "text": "Water verse known. Two more: the old watchtower first, then the barrow's own hall.",
+          "at": "va_watchtower"
         },
         {
           "if": [["flag", "va_verse_wind"], ["!flag", "va_verse_stone"], ["!flag", "va_verse_water"]],
-          "text": "Wind verse known. Two more: the sunken shrine, east of the wood, and the barrow's own hall."
+          "text": "Wind verse known. Two more: the sunken shrine first, then the barrow's own hall.",
+          "at": "va_drowned_chapel"
         },
         {
           "if": [],
-          "text": "Three verses were cut for the king: the sunken shrine and the old watchtower east of the wood, and the barrow's hall."
+          "text": "Three verses were cut for the king: the sunken shrine first, then the old watchtower, then the barrow's own hall.",
+          "at": "va_drowned_chapel"
         }
       ]
     },
@@ -815,15 +857,18 @@
       "stages": [
         {
           "if": [["has", "va_crown"]],
-          "text": "The crown is yours. Return it to the king at the throne — or decide otherwise."
+          "text": "The crown is yours. Return it to the king at the throne — or decide otherwise.",
+          "at": "va_throne"
         },
         {
           "if": [["flag", "va_heard_grievance"]],
-          "text": "You have heard the king's grief. Press it on the elder, or bring her the king's seal from the barrow's strongroom."
+          "text": "You have heard the king's grief. Press it on the elder, or bring her the king's seal from the barrow's strongroom.",
+          "at": "va_elder_house"
         },
         {
           "if": [],
-          "text": "The elder keeps the crown in a locked coffer, and will not open it until you have heard the king grieve himself."
+          "text": "The elder keeps the crown in a locked coffer, and will not open it until you have heard the king grieve himself.",
+          "at": "va_throne"
         }
       ]
     }
@@ -863,6 +908,26 @@
       "if": [["flag", "or_scout_va_king_tread"]],
       "text": "The Hollow King, in his last hour of grief, said a Scout's tread reminded him of a thief he'd once forgiven.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "va_kneel_warned"]],
+      "text": "Once, at the throne, you let yourself get close enough to feel its weight, and stepped back before it was yours.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "va_read_token"]],
+      "text": "The worn half-token you found at the barrow door: cold iron, a raised hand, one of a keeper's line long lapsed.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "va_wight_passed"]],
+      "text": "You never crossed blades with the barrow-wight at all — you kept to the shadow and left it guarding nothing.",
+      "weight": 0
+    },
+    {
+      "if": [["flag", "va_read_seal"]],
+      "text": "The king's seal told you plainly, in his own hand, that he only ever wanted the crown given back.",
+      "weight": 0
     }
   ]
 }

@@ -84,6 +84,14 @@ for (const [qid, q] of Object.entries(world.quests ?? {})) {
   bucket(qid).quests++;
   for (const st of q.stages) check(`quest ${qid}`, "stage", st.text);
 }
+// `world.clock` concatenates from the part files, so a scheduled event is a
+// region author's content like any other — and it was written and shipped
+// before any of these tools looked at it. The Ironbound march's sixteen lines
+// had their say budget enforced by hand because this walk did not exist.
+for (const entry of world.clock ?? []) {
+  if (!want(entry.id)) continue;
+  walkFx(`clock ${entry.id}`, entry.fx, bucket(entry.id).totals);
+}
 for (const [i, ep] of (world.epilogue ?? []).entries()) check(`epilogue ${i}`, "epilogue", ep.text);
 for (const st of world.stamps ?? []) if (want(st.id)) bucket(st.id).stamps++;
 

@@ -181,7 +181,7 @@ test("a spot can be a landmark and carry variants and onEnter", () => {
   const w = expandWorld({
     ...base(),
     gen: [region({
-      spots: [{ cell: [2, 2], name: "The Cairn", landmark: "the cairn", onEnter: [["set", "at_cairn"]], variants: [{ if: [["flag", "x"]], desc: "Changed." }] }],
+      spots: [{ cell: [2, 2], name: "The Cairn", landmark: "the cairn", onEnter: [["set", "at_cairn"]], variants: [{ if: [["flag", "at_cairn"]], desc: "Changed." }] }],
     })],
   });
   const cairn = w.rooms["wild_2_2"]!;
@@ -236,6 +236,7 @@ test("validator: a room nothing leads to is an error; a goto or an exit (even ga
   let errs = validateWorld(w);
   assert.ok(errs.some((e) => e.includes("room island: unreachable")), errs.join("\n"));
   w.rooms["home"]!.exits = { east: { to: "island", if: [["flag", "boat"]] } };
+  (w.rooms["home"]!.actions ??= []).push({ id: "find_boat", label: "find a boat", fx: [["set", "boat"]] });
   assert.deepEqual(validateWorld(w), []);
   delete w.rooms["home"]!.exits;
   w.rooms["home"]!.actions!.push({ id: "swim", label: "swim", fx: [["goto", "island"]] });

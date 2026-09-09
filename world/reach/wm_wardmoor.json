@@ -178,6 +178,18 @@
             ["xp", 1],
             ["say", "The quartermaster counts every rivet twice, and still missed this: three coin, dropped behind the racks years back and never chased."]
           ]
+        },
+        {
+          "id": "wm_trusted_arm",
+          "label": "be armed as one of the Watch's own",
+          "if": [["flag", "watch_trusted"], ["!has", "wm_trusted_kit"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["move", "wm_trusted_kit", "inv"],
+            ["score", 3],
+            ["say", "The quartermaster doesn't ledger this one. \"Issued, not sold,\" she says, fitting the mail herself. \"You're accounted Watch now, whatever else you are.\""]
+          ]
         }
       ]
     },
@@ -194,6 +206,29 @@
           "fx": [
             ["hp", 10],
             ["say", "You sleep in someone else's bedroll, boots paired at the foot of it, and wake steadier."]
+          ]
+        },
+        {
+          "id": "wm_heave_pell",
+          "label": "heave the pell off its post, 2hp risk",
+          "if": [["!flag", "wm_pell_heaved"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              15,
+              [
+                ["set", "wm_pell_heaved"],
+                ["score", 5],
+                ["xp", 4],
+                ["addvar", "rep_watch", 1],
+                ["say", "Out back a practice-pell stands chalked with a dare-line nobody's beaten this season. You get under it, plant, and put it flat on the ground before your breath gives out. Word reaches the parade before you do."]
+              ],
+              [
+                ["hp", -2],
+                ["say", "You get the pell to a lean and no further, and it comes back down where you were standing half a breath ago. The dare-line stays chalked. It can be tried again."]
+              ]
+            ]
           ]
         }
       ],
@@ -588,6 +623,42 @@
             ["xp", 1],
             ["say", "Neither of them so much as reaches for the rope. \"Go on,\" the nearer one says. \"You'd have stopped the same way in our place.\""]
           ]
+        },
+        {
+          "id": "wm_checkpoint_trusted",
+          "label": "pass the checkpoint on your name alone",
+          "if": [["flag", "watch_trusted"], ["!flag", "wm_checkpoint_resolved"]],
+          "free": true,
+          "fx": [
+            ["set", "wm_checkpoint_resolved"],
+            ["say", "\"Trusted,\" the nearer one says, reading it off you before you speak. \"Go on.\" Neither of them so much as touches the rope."]
+          ]
+        },
+        {
+          "id": "wm_checkpoint_seal",
+          "label": "show the Regent's own seal",
+          "if": [["has", "mg_regent_seal"], ["!flag", "wm_checkpoint_resolved"]],
+          "free": true,
+          "fx": [
+            ["set", "wm_checkpoint_resolved"],
+            ["addvar", "rep_watch", 1],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "The nearer one goes still at the seal, then straightens further than she ever did for a writ. \"That's not the Regent's hand. That's the Regent's own mark.\" She waves you through herself."]
+          ]
+        },
+        {
+          "id": "wm_checkpoint_command",
+          "label": "post the checkpoint watch yourself",
+          "if": [["flag", "watch_sworn"], ["!flag", "wm_checkpoint_commanded"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "wm_checkpoint_commanded"],
+            ["score", 3],
+            ["xp", 2],
+            ["say", "You set who stands the rope and when, and neither of the two on duty thinks to argue a Serjeant's order. Small, as commands go. Still yours to give."]
+          ]
         }
       ]
     }
@@ -601,6 +672,12 @@
       "hint": "better balanced than anything the Vale forge turns out"
     },
     "wm_watch_mail": { "name": "watch-pattern mail", "loc": "nowhere", "armor": 2, "hint": "heavier than it looks; it holds" },
+    "wm_trusted_kit": {
+      "name": "watch-issued mail, unledgered",
+      "loc": "nowhere",
+      "armor": 3,
+      "hint": "issued, not sold — the quartermaster's own mark of trust"
+    },
     "wm_field_dressing": {
       "name": "field dressing",
       "loc": "nowhere",
@@ -620,7 +697,7 @@
       "name": "the true founding record",
       "loc": "nowhere",
       "takeable": true,
-      "hint": "read it at the oath-stone: four stands north of Highward to the moor's top, one east to the Last Cairn, then north — Wardmoor's own founding; the realm's ledger is a different book, chained in Marrowgate",
+      "hint": "read it at the oath-stone: four stands north of Highward to the moor's top, one east to the Last Cairn, then north — Wardmoor's own founding; the realm's ledger is a different book, chained in Marrowgate; the first Reeve's own confession is a third thing again — said aloud, not written, and owed in his tomb",
       "use": [
         {
           "if": [["!flag", "wm_read_founding_record"]],
@@ -698,6 +775,28 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "wm_trust_offer",
+          "label": "ask to be trusted with the Watch",
+          "if": [["flag", "said_wm_sgt_rook_duty"], ["!flag", "watch_trusted"]],
+          "say": "You ask what it would take to be trusted with the Watch's own road, not just its gate.",
+          "fx": [
+            [
+              "if",
+              [["var", "rep_watch", ">=", 5]],
+              [
+                ["set", "watch_trusted"],
+                ["addvar", "rep_free", -1],
+                ["score", 6],
+                ["xp", 3],
+                ["say", "\"You've earned that,\" Hale says. \"Quartermaster's told to arm you proper, the checkpoint waved through, and the muster hollow's open to you now. The Companies won't love it.\""]
+              ],
+              [
+                ["say", "\"Not yet,\" Hale says. \"Trust here is earned road by road, hold by hold. Come back when you've done more than pass through.\""]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "beacon",
           "label": "the dark beacon",
           "if": [["flag", "said_wm_sgt_rook_duty"]],
@@ -773,6 +872,7 @@
     },
     "wm_quartermaster": {
       "name": "the quartermaster",
+      "dialogue": true,
       "room": "wm_armoury",
       "topics": [
         {
@@ -899,6 +999,7 @@
     },
     "wm_corporal_fenn": {
       "name": "Corporal Fenn",
+      "dialogue": true,
       "room": "wm_barracks",
       "desc": "Off duty, boots still laced, staring at the middle distance the way soldiers do who've seen a bad shift.",
       "topics": [
@@ -1064,6 +1165,35 @@
           "fx": [["xp", 1]]
         },
         {
+          "id": "wm_sworn_offer",
+          "label": "ask to be made Serjeant",
+          "if": [["flag", "said_wm_captain_general_founding"], ["!flag", "watch_sworn"], ["!flag", "wm_oathsworn"]],
+          "say": "You ask her plainly what it would take to hold a rank here, not just a stranger's welcome.",
+          "fx": [
+            [
+              "if",
+              [["var", "rep_watch", ">=", 9]],
+              [
+                ["set", "watch_sworn"],
+                ["score", 10],
+                ["xp", 5],
+                ["say", "She doesn't hesitate. \"Serjeant of the Reach, then — my own commission, no board to second-guess it. You've more than earned a command.\" She writes it while you stand there."]
+              ],
+              [
+                ["say", "\"A rank isn't a welcome,\" she says. \"Four hundred years of Captain-Generals didn't hand theirs out for a good turn. Serve this Watch longer, and ask me again.\""]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "wm_sworn_offer_bound",
+          "label": "ask to be made Serjeant",
+          "if": [["flag", "said_wm_captain_general_founding"], ["!flag", "watch_sworn"], ["flag", "wm_oathsworn"]],
+          "once": true,
+          "say": "She looks up before you finish asking. \"You already hold a commission older than mine, out on that moor,\" she says. \"I won't put my seal on the first Reeve's. Wear the one you've got.\" She means it plainly.",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "unseal",
           "label": "ask leave to see the sealed record",
           "once": true,
@@ -1141,6 +1271,22 @@
             ]
           ]
         },
+        {
+          "id": "wm_sworn_ear",
+          "label": "ask her honest read of the Reach",
+          "if": [["flag", "watch_sworn"]],
+          "once": true,
+          "say": "\"Off the record,\" she says, and for once means it. \"The Companies buy roads open, the Keepers open barrows, the Ironbound just burns what won't behave. This Watch is the only one that stays after.\"",
+          "fx": [["xp", 3], ["score", 2]]
+        },
+        {
+          "id": "wm_sworn_regent",
+          "label": "ask who rules after the Regent",
+          "if": [["flag", "watch_sworn"]],
+          "once": true,
+          "say": "\"Not mine to answer,\" she says, \"but I'll give you the Watch's answer anyway: whoever sits the Hollow Throne, the road still needs holding. We held it without a crown once. We'll do it again if we must.\"",
+          "fx": [["xp", 3], ["score", 2]]
+        },
         { "id": "bye", "label": "leave her to her dispatches", "say": "Mind the cairns after dark.", "end": true },
         {
           "id": "old_ground",
@@ -1201,28 +1347,41 @@
           "fx": [
             [
               "if",
-              [["var", "hollows_burned", ">=", 1]],
+              [["flag", "watch_sworn"]],
               [
                 ["set", "regent_writ"],
                 ["score", 6],
                 ["xp", 3],
                 ["addvar", "rep_crown", 1],
-                ["say", "One hollow burned clean is proof enough by the Regent's own measure. The writ is yours."]
+                ["say", "\"Serjeant of the Reach doesn't wait on my ledger.\" He seals it without a single question. \"No conditions. You're well past needing them.\""]
               ],
               [
                 [
                   "if",
-                  [["var", "rep_watch", ">=", 2]],
+                  [["var", "hollows_burned", ">=", 1]],
                   [
                     ["set", "regent_writ"],
                     ["score", 6],
                     ["xp", 3],
                     ["addvar", "rep_crown", 1],
-                    ["say", "Two honest services to this Watch — its standing with you at +2, the Regent's own measure; status keeps that tally. Highward vouches for you twice over. The writ is yours."]
+                    ["say", "One hollow burned clean is proof enough by the Regent's own measure. The writ is yours."]
                   ],
                   [
-                    ["set", "said_wm_envoy_writ_no"],
-                    ["say", "Not yet, then. One hollow burned, or two services done — I keep count either way."]
+                    [
+                      "if",
+                      [["var", "rep_watch", ">=", 2]],
+                      [
+                        ["set", "regent_writ"],
+                        ["score", 6],
+                        ["xp", 3],
+                        ["addvar", "rep_crown", 1],
+                        ["say", "Two honest services to this Watch — its standing with you at +2, the Regent's own measure; status keeps that tally. Highward vouches for you twice over. The writ is yours."]
+                      ],
+                      [
+                        ["set", "said_wm_envoy_writ_no"],
+                        ["say", "Not yet, then. One hollow burned, or two services done — I keep count either way."]
+                      ]
+                    ]
                   ]
                 ]
               ]
@@ -1237,26 +1396,39 @@
           "fx": [
             [
               "if",
-              [["var", "hollows_burned", ">=", 1]],
+              [["flag", "watch_sworn"]],
               [
                 ["set", "regent_writ"],
                 ["score", 6],
                 ["xp", 3],
                 ["addvar", "rep_crown", 1],
-                ["say", "One hollow burned settles it, the Regent's own count. The writ is yours."]
+                ["say", "\"A Serjeant's commission,\" he says, already sealing it. \"No conditions attached to that one. There never were going to be.\""]
               ],
               [
                 [
                   "if",
-                  [["var", "rep_watch", ">=", 2]],
+                  [["var", "hollows_burned", ">=", 1]],
                   [
                     ["set", "regent_writ"],
                     ["score", 6],
                     ["xp", 3],
                     ["addvar", "rep_crown", 1],
-                    ["say", "Two services to the Watch settles it. The writ is yours."]
+                    ["say", "One hollow burned settles it, the Regent's own count. The writ is yours."]
                   ],
-                  [["say", "Not yet."]]
+                  [
+                    [
+                      "if",
+                      [["var", "rep_watch", ">=", 2]],
+                      [
+                        ["set", "regent_writ"],
+                        ["score", 6],
+                        ["xp", 3],
+                        ["addvar", "rep_crown", 1],
+                        ["say", "Two services to the Watch settles it. The writ is yours."]
+                      ],
+                      [["say", "Not yet."]]
+                    ]
+                  ]
                 ]
               ]
             ]
@@ -1579,6 +1751,11 @@
       "text": "Highward's record-house keeps a fresh shelf for what came loose from other holds' old, sealed truths."
     },
     {
+      "if": [["flag", "wm_pell_heaved"]],
+      "text": "Word reached the parade of a stranger who beat the barracks' dare-line. The chalk's been redrawn higher twice since.",
+      "weight": 0
+    },
+    {
       "if": [["flag", "rb_fd_wm_home"]],
       "text": "Perrin went over the wall for Reedholm and his mother's made bed. The Watch never chased him past the west road.",
       "weight": 1
@@ -1676,6 +1853,31 @@
       "if": [["flag", "or_scout_wm_quartermaster_wary"]],
       "text": "Highward's quartermaster still counts the armoury racks slower than usual, and has never said why.",
       "weight": 1
+    },
+    {
+      "if": [["flag", "watch_sworn"]],
+      "text": "Highward still calls you Serjeant of the Reach. The commission hangs in the record-house, no conditions written anywhere on it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "watch_trusted"], ["!flag", "watch_sworn"]],
+      "text": "Highward's quartermaster still arms you first when you pass through, and the checkpoint never asks your business twice.",
+      "weight": 1
+    }
+  ],
+  "statusPaths": [
+    {
+      "label": "Your rank with the Watch",
+      "var": "rep_watch",
+      "if": [["any", [["flag", "watch_trusted"], ["flag", "watch_sworn"], ["flag", "wm_oathsworn"]]]],
+      "states": [
+        { "if": [["flag", "watch_sworn"]], "text": "Serjeant of the Reach — commissioned, a command yours to give" },
+        {
+          "if": [["flag", "wm_oathsworn"]],
+          "text": "sworn to the old oath yourself, out on the moor — bound for good, past any commission now"
+        },
+        { "if": [["flag", "watch_trusted"]], "text": "trusted with the Watch's own road" }
+      ]
     }
   ],
   "quests": {
@@ -1686,11 +1888,13 @@
       "stages": [
         {
           "if": [["flag", "ir_entered"]],
-          "text": "You're in the Iron Downs. Mirren keeps the ring, and the ledger, locked at Cinderhall's company store."
+          "text": "You're in the Iron Downs. Mirren keeps the ring, and the ledger, locked at Cinderhall's company store.",
+          "at": "ir_company_store"
         },
         {
           "if": [],
-          "text": "Corporal Fenn pawned a dead partner's ring to Cinderhall's company store, years back. Find it there."
+          "text": "Corporal Fenn pawned a dead partner's ring to Cinderhall's company store, years back. Find it there.",
+          "at": "ir_company_store"
         }
       ]
     },
@@ -1714,15 +1918,18 @@
       "stages": [
         {
           "if": [["flag", "wm_hollow_rested"]],
-          "text": "The Captain-General wants your word on the old oath-ground. Find her in the hall."
+          "text": "The Captain-General wants your word on the old oath-ground. Find her in the hall.",
+          "at": "wm_hall"
         },
         {
           "if": [["flag", "wm_hollow_bargained"]],
-          "text": "The quartermaster has a bill for the new oath's cost. Find her in the armoury."
+          "text": "The quartermaster has a bill for the new oath's cost. Find her in the armoury.",
+          "at": "wm_armoury"
         },
         {
           "if": [["flag", "wm_hollow_burned"]],
-          "text": "Corporal Fenn has word of peat-cutters eyeing the burned ground. Find him in the barracks."
+          "text": "Corporal Fenn has word of peat-cutters eyeing the burned ground. Find him in the barracks.",
+          "at": "wm_barracks"
         }
       ]
     }

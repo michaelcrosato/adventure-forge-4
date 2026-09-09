@@ -18,6 +18,18 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "fl_search_bank",
+          "label": "search the bank at the road's end",
+          "once": true,
+          "fx": [
+            ["move", "fl_burying_spade", "inv"],
+            ["xp", 2],
+            ["say", "Half-sunk in the settled earth, a spade nobody came back to clean off. Whoever dug this furrow left everything here but themselves."]
+          ]
+        }
       ]
     },
     "fl_furrow_walk": {
@@ -33,6 +45,19 @@
           "desc": "Walking its length takes longer than it should. Near the southern end, the ground is newer than the rest by decades — grass only just taking hold. Someone's father, most likely, waiting on a name.",
           "brief": "The long walk. One newer stretch, at the south end."
         }
+      ],
+      "actions": [
+        {
+          "id": "fl_mark_unmarked",
+          "label": "raise a marker over bare ground",
+          "once": true,
+          "fx": [
+            ["score", 1],
+            ["xp", 2],
+            ["addvar", "appr_osk", 1],
+            ["say", "You set a stone over one stretch that never got one, for whoever it was and whoever they had. It costs an afternoon and nothing else."]
+          ]
+        }
       ]
     },
     "fl_furrow_heart": {
@@ -41,26 +66,7 @@
       "brief": "The cairn, the only tended thing here.",
       "region": "fl",
       "exits": { "north": { "to": "fl_furrow_walk" } },
-      "onEnterOnce": [
-        ["xp", 3],
-        ["score", 2],
-        [
-          "if",
-          [["inParty", "osk"]],
-          [
-            ["say", "Brother Osk: \"A fever, the record says. I have stood at the edge of this and I do not believe the record ever once. Someone wrote that word down to make the silence afterward easier to keep.\""]
-          ],
-          []
-        ],
-        [
-          "if",
-          [["inParty", "tamsin"]],
-          [
-            ["say", "Tamsin: \"Forty years of somebody stacking one stone at a time because nobody would send more hands. That's not neglect. That's a whole hold being told to manage on its own.\""]
-          ],
-          []
-        ]
-      ],
+      "onEnterOnce": [["set", "fl_furrow_heart_seen"], ["xp", 3], ["score", 2]],
       "actions": [
         {
           "id": "fl_rest_furrow",
@@ -93,6 +99,20 @@
           ]
         },
         {
+          "id": "fl_speak_great_rite",
+          "label": "speak the Great Rite over the furrow",
+          "if": [["flag", "keepers_sworn"], ["!flag", "fl_hollow_done"]],
+          "fx": [
+            ["set", "fl_hollow_rested"],
+            ["set", "fl_hollow_done"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no two hundred names and no rite begged from Fenmarch. The furrow settles at last; the cairn needs no other stone."]
+          ]
+        },
+        {
           "id": "fl_bargain_vow",
           "label": "swear the land stays theirs (will)",
           "if": [["flag", "fl_hollow_grievance"], ["!flag", "fl_hollow_done"]],
@@ -110,7 +130,7 @@
                 ["addvar", "rep_free", -2],
                 ["addvar", "appr_lys", 1],
                 ["addvar", "appr_tamsin", 1],
-                ["score", 20],
+                ["score", 25],
                 ["xp", 8],
                 ["say", "You swear it plain over the cairn: this ground stays the Fallows' own, no stakes, no muster, for as long as the promise holds. Something in the air over the furrow settles, and does not test you twice."],
                 [
@@ -159,7 +179,7 @@
                 ["addvar", "rep_free", -2],
                 ["addvar", "appr_lys", 1],
                 ["addvar", "appr_tamsin", 1],
-                ["score", 20],
+                ["score", 25],
                 ["xp", 8],
                 ["say", "You spend a day setting a stone over every unmarked stretch, until the whole length is tended, not only the cairn. It isn't a rite. It's care, plainly given, and the furrow takes it as close enough."],
                 [
@@ -193,14 +213,14 @@
         {
           "id": "fl_burn_furrow",
           "label": "burn it with cinder-oil (1hp on fail)",
-          "if": [["has", "fl_cinder_oil"], ["!flag", "fl_hollow_done"]],
+          "if": [["any", [["has", "fl_cinder_oil"], ["flag", "iron_trusted"]]], ["!flag", "fl_hollow_done"]],
           "fx": [
             [
               "check",
               "might",
               9,
               [
-                ["move", "fl_cinder_oil", "nowhere"],
+                ["if", [["has", "fl_cinder_oil"]], [["move", "fl_cinder_oil", "nowhere"]], []],
                 ["set", "fl_hollow_burned"],
                 ["set", "fl_hollow_done"],
                 ["addvar", "hollows_burned", 1],
@@ -208,7 +228,7 @@
                 ["addvar", "rep_church", -2],
                 ["addvar", "appr_osk", -1],
                 ["addvar", "appr_tamsin", 1],
-                ["score", 15],
+                ["score", 25],
                 ["xp", 8],
                 ["say", "The oil takes fast along the cut, and the furrow burns a night and a day. By morning there is nothing left to rest, bargain, or grieve over — only cleared black ground, and a cairn standing pointlessly over it."]
               ],
@@ -270,7 +290,7 @@
             ["say", "The bargain stands ready either way: swear the land stays theirs (will), or raise stones the whole length (might)."],
             [
               "if",
-              [["has", "fl_cinder_oil"]],
+              [["any", [["has", "fl_cinder_oil"], ["flag", "iron_trusted"]]]],
               [["say", "The burn stands ready: Ironbound cinder-oil is yours (might; a failed try costs 1 hp)."]],
               [
                 ["say", "The burn wants Ironbound cinder-oil — Lay-brother Cobb will give it, at the cart lot, for the asking."]
@@ -289,39 +309,48 @@
       "stages": [
         {
           "if": [["var", "fl_names_known", ">=", 3], ["flag", "fl_church_rite_known"], ["flag", "fl_keeper_verse_known"]],
-          "text": "Names, rite, and verse are all yours. Speak them together at the cairn to rest the furrow whole."
+          "text": "Names, rite, and verse are all yours. Speak them together at the cairn to rest the furrow whole.",
+          "at": "fl_furrow_heart"
         },
         {
           "if": [["var", "fl_names_known", ">=", 3], ["flag", "fl_church_rite_known"], ["!flag", "fl_keeper_verse_known"]],
-          "text": "Names and rite are yours. The verse is Frey's: hear the Winter from Ede, press Frey on what she is, then ask her."
+          "text": "Names and rite are yours. The verse is Frey's: hear the Winter from Ede, press Frey on what she is, then ask her.",
+          "at": "fl_wickstead_cross"
         },
         {
           "if": [["var", "fl_names_known", ">=", 3], ["flag", "fl_keeper_verse_known"], ["!flag", "fl_church_rite_known"]],
-          "text": "Names and verse are yours. The rite is Sister Merrow's: hear her doubts about the Church, then ask her for it."
+          "text": "Names and verse are yours. The rite is Sister Merrow's: hear her doubts about the Church, then ask her for it.",
+          "at": "fl_chapel"
         },
         {
           "if": [["var", "fl_names_known", ">=", 3], ["!flag", "fl_church_rite_known"], ["!flag", "fl_keeper_verse_known"]],
-          "text": "The names are whole. The rite is Merrow's, once she owns her doubts; the verse is Frey's, once you press her."
+          "text": "The names are whole. The rite is Merrow's, once she owns her doubts; the verse is Frey's, once you press her.",
+          "at": "fl_chapel"
         },
         {
           "if": [["flag", "fl_church_rite_known"], ["flag", "fl_keeper_verse_known"], ["var", "fl_names_known", "<", 3]],
-          "text": "Rite and verse are yours. The names still want three sources: Ede's memory, the parish roll, the headland's markers."
+          "text": "Rite and verse are yours. The names still want three sources: Ede's memory, the parish roll, the headland's markers.",
+          "at": "fl_wicker_house"
         },
         {
           "if": [["has", "fl_cinder_oil"]],
-          "text": "You carry Ironbound cinder-oil. Burn the furrow at the cairn, if that's the ending you'll answer for."
+          "text": "You carry Ironbound cinder-oil. Burn the furrow at the cairn, if that's the ending you'll answer for.",
+          "at": "fl_furrow_heart"
         },
         {
           "if": [["flag", "fl_hollow_grievance"]],
-          "text": "Rest it (names, rite, verse), bargain it (a vow or raised stones), or burn it (Ironbound oil) — all at the cairn."
+          "text": "Rest it (names, rite, verse), bargain it (a vow or raised stones), or burn it (Ironbound oil) — all at the cairn.",
+          "at": "fl_furrow_heart"
         },
         {
           "if": [["flag", "fl_found_furrow"]],
-          "text": "The Bone Road south of the crossroads leads to the headland, and past it, the furrow itself."
+          "text": "The Bone Road runs from the crossroads to the headland, and past it, the furrow itself.",
+          "at": "fl_furrow_end"
         },
         {
           "if": [],
-          "text": "South from the crossroads, jogging round one blocked stretch, to the Bone Road and the furrow's headland."
+          "at": "fl_fallow_2_5",
+          "text": "The Long Furrow lies out past the crossroads, at the far end of the Bone Road."
         }
       ]
     },
@@ -329,34 +358,42 @@
       "name": "Names for the Rite",
       "start": [["flag", "fl_heard_winter"]],
       "done": [["var", "fl_names_known", ">=", 3]],
+      "failed": [["flag", "fl_hollow_done"], ["var", "fl_names_known", "<", 3]],
       "stages": [
         {
           "if": [["flag", "fl_names_ede"], ["flag", "fl_names_roll"], ["!flag", "fl_names_markers"]],
-          "text": "Ede's names and the parish roll are yours. The last are cut on the headland's markers, south by the Bone Road."
+          "text": "Ede's names and the parish roll are yours. The last are cut on the headland's markers, out by the Bone Road.",
+          "at": "fl_fallow_3_5"
         },
         {
           "if": [["flag", "fl_names_ede"], ["flag", "fl_names_markers"], ["!flag", "fl_names_roll"]],
-          "text": "Ede's names and the markers are yours. The rest are in the parish roll — Sister Merrow's chapel, or a Scout's own look."
+          "text": "Ede's names and the markers are yours. The rest are in the parish roll — Sister Merrow's chapel, or a Scout's own look.",
+          "at": "fl_chapel"
         },
         {
           "if": [["flag", "fl_names_roll"], ["flag", "fl_names_markers"], ["!flag", "fl_names_ede"]],
-          "text": "The roll and the markers are yours. The rest live only in Old Ede's memory; ask her to name the dead, for a rite."
+          "text": "The roll and the markers are yours. The rest live only in Old Ede's memory; ask her to name the dead, for a rite.",
+          "at": "fl_wicker_house"
         },
         {
           "if": [["flag", "fl_names_ede"], ["!flag", "fl_names_roll"], ["!flag", "fl_names_markers"]],
-          "text": "Ede's names are yours. Two sources left: the parish roll at the chapel, and the headland's markers by the Bone Road."
+          "text": "Ede's names are yours. Two sources left: the parish roll at the chapel, and the headland's markers by the Bone Road.",
+          "at": "fl_chapel"
         },
         {
           "if": [["flag", "fl_names_roll"], ["!flag", "fl_names_ede"], ["!flag", "fl_names_markers"]],
-          "text": "The parish roll is yours. Two sources left: Old Ede's memory, and the headland's markers by the Bone Road."
+          "text": "The parish roll is yours. Two sources left: Old Ede's memory, and the headland's markers by the Bone Road.",
+          "at": "fl_wicker_house"
         },
         {
           "if": [["flag", "fl_names_markers"], ["!flag", "fl_names_ede"], ["!flag", "fl_names_roll"]],
-          "text": "The markers are yours. Two sources left: Old Ede's memory, and the parish roll at Sister Merrow's chapel."
+          "text": "The markers are yours. Two sources left: Old Ede's memory, and the parish roll at Sister Merrow's chapel.",
+          "at": "fl_wicker_house"
         },
         {
           "if": [],
-          "text": "The rite needs the names whole: some from Ede's memory, more from the parish roll, the rest from the headland's markers."
+          "text": "The rite needs the names whole: some from Ede's memory, more from the parish roll, the rest from the headland's markers.",
+          "at": "fl_wicker_house"
         }
       ]
     }
@@ -444,5 +481,13 @@
       "text": "Old Ede keeps her wicker house, watched now, and the dead man's cloak she kept forty years has gone to someone who'll grow into it.",
       "weight": 1
     }
-  ]
+  ],
+  "items": {
+    "fl_burying_spade": {
+      "name": "a grave-digger's spade, rusted through",
+      "loc": "nowhere",
+      "takeable": true,
+      "hint": "half-sunk at the bank's foot, left by whoever cut this ground open forty years gone"
+    }
+  }
 }

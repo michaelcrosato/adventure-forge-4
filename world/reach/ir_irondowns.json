@@ -21,6 +21,21 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "ir_sworn_waymark_east",
+          "label": "mark the east road, chapterhouse-fashion",
+          "if": [["flag", "iron_sworn"], ["!flag", "ir_waymark_east"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "ir_waymark_east"],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "You cut the iron-sun into the waymarker, plain and small. Whatever dies unburied on this stretch toward Wardmoor is chapterhouse business now."]
+          ]
+        }
       ]
     },
     "ir_south_track": {
@@ -44,6 +59,21 @@
           ],
           []
         ]
+      ],
+      "actions": [
+        {
+          "id": "ir_sworn_waymark_south",
+          "label": "mark the south track, iron-fashion",
+          "if": [["flag", "iron_sworn"], ["!flag", "ir_waymark_south"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "ir_waymark_south"],
+            ["score", 2],
+            ["xp", 1],
+            ["say", "You cut the same mark into the dead tree by the toll-notice. Whatever dies unburied toward Thornwold answers to the chapterhouse now — and to you."]
+          ]
+        }
       ]
     },
     "ir_tally_gate": {
@@ -307,6 +337,11 @@
         {
           "if": [["flag", "or_warden_ir_frank_truth"]],
           "brief": "Banked forges. Aldous still meets a soldier's eye without flinching."
+        },
+        { "if": [["flag", "iron_sworn"]], "brief": "Banked forges. The forges know you for an oath-brother now." },
+        {
+          "if": [["flag", "iron_trusted"]],
+          "brief": "Banked forges. The racks are yours, same as any chapterhouse hand."
         }
       ],
       "actions": [
@@ -328,6 +363,28 @@
             ["move", "ir_oil", "inv"],
             ["say", "Nobody left minds the chapterhouse stores closely. You take what you came for."]
           ]
+        },
+        {
+          "id": "ir_draw_oil",
+          "label": "draw oil from the chapterhouse stores",
+          "if": [["flag", "iron_trusted"], ["!has", "ir_oil"]],
+          "free": true,
+          "fx": [
+            ["move", "ir_oil", "inv"],
+            ["say", "Nobody stops you at the racks anymore. You take what the chapterhouse keeps for its own."]
+          ]
+        },
+        {
+          "id": "ir_trusted_hauberk",
+          "label": "take a hauberk off the racks",
+          "if": [["flag", "iron_trusted"], ["!has", "ir_ironbound_hauberk"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["move", "ir_ironbound_hauberk", "inv"],
+            ["score", 3],
+            ["say", "Nobody rings it up. \"Chapterhouse issue,\" someone says, not looking up from the forge. \"You're accounted ours now.\""]
+          ]
         }
       ]
     },
@@ -343,7 +400,7 @@
           "id": "ir_bearings",
           "label": "get your bearings from the head-frame",
           "fx": [
-            ["say", "North two, then west three: the Old Cairn. North three, then east three: the flooded quarry and the slag-hound's den. North four, then east one: the Hundred Gallery."]
+            ["say", "From up here the downs lie open: the Old Cairn out to the north-west, the flooded quarry north-east with the slag-hound's den in it, and the Hundred Gallery beyond both."], ["bearings"]
           ],
           "free": true
         }
@@ -548,6 +605,20 @@
           ]
         },
         {
+          "id": "ir_hundred_great_rite",
+          "label": "speak the Great Rite over the Hundred",
+          "if": [["flag", "keepers_sworn"], ["!flag", "ir_hollow_resolved"]],
+          "fx": [
+            ["set", "ir_hollow_rested"],
+            ["set", "ir_hollow_resolved"],
+            ["addvar", "hollows_rested", 1],
+            ["addvar", "rep_keepers", 2],
+            ["score", 25],
+            ["xp", 8],
+            ["say", "You speak the Rite whole, needing no confession dragged out of the collapse. The gray goes out of the deep like a breath let go. The chapterhouse notes the office, and says nothing more about it."]
+          ]
+        },
+        {
           "id": "ir_hundred_bargain",
           "label": "declare the miners' hall's claim (will)",
           "if": [["flag", "ir_hall_backing"], ["!flag", "ir_hollow_resolved"]],
@@ -561,7 +632,7 @@
                 ["addvar", "hollows_bargained", 1],
                 ["set", "ir_hollow_resolved"],
                 ["addvar", "hollows_rested", 1],
-                ["score", 20],
+                ["score", 25],
                 ["xp", 8],
                 ["addvar", "rep_free", 2],
                 ["addvar", "rep_iron", -2],
@@ -592,7 +663,7 @@
             ["set", "ir_hollow_burned"],
             ["set", "ir_hollow_resolved"],
             ["addvar", "hollows_burned", 1],
-            ["score", 15],
+            ["score", 25],
             ["xp", 8],
             ["addvar", "rep_iron", 2],
             ["addvar", "rep_keepers", -2],
@@ -627,7 +698,7 @@
                 ["set", "ir_hollow_burned"],
                 ["set", "ir_hollow_resolved"],
                 ["addvar", "hollows_burned", 1],
-                ["score", 15],
+                ["score", 25],
                 ["xp", 8],
                 ["addvar", "rep_iron", 2],
                 ["addvar", "rep_keepers", -2],
@@ -639,6 +710,19 @@
                 ["say", "The prop holds, and the roof with it. Whatever's owed here, brute strength alone isn't going to collect it."]
               ]
             ]
+          ]
+        },
+        {
+          "id": "ir_sworn_claim",
+          "label": "claim the Hundred for the chapterhouse",
+          "if": [["flag", "iron_sworn"], ["flag", "ir_hollow_resolved"], ["!flag", "ir_hundred_claimed"]],
+          "once": true,
+          "free": true,
+          "fx": [
+            ["set", "ir_hundred_claimed"],
+            ["score", 4],
+            ["xp", 2],
+            ["say", "You say it plain, the way the oath asks: whatever's left of the Hundred is chapterhouse business now, however this grief was settled. Nobody down here argues with you."]
           ]
         },
         {
@@ -709,6 +793,11 @@
       ]
     },
     "ir_oil": { "name": "a cask of Ironbound oil", "loc": "nowhere", "hint": "meant for burning a hollow clean" },
+    "ir_oath_token": {
+      "name": "an iron-sun oath-token",
+      "loc": "nowhere",
+      "hint": "chapterhouse-stamped — proof you swore the Preceptor's oath, brand and all"
+    },
     "ir_marked_pick": {
       "name": "Hob's marked pick",
       "loc": "nowhere",
@@ -782,12 +871,57 @@
           "fx": [["xp", 2]]
         },
         {
+          "id": "ir_trust_offer",
+          "label": "ask to be trusted with the forges",
+          "if": [["flag", "said_ir_aldous_bg_ironbound"], ["!flag", "iron_trusted"]],
+          "say": "You ask him plainly what it would take to be trusted here, not just tolerated.",
+          "fx": [
+            [
+              "if",
+              [["var", "rep_iron", ">=", 5]],
+              [
+                ["set", "iron_trusted"],
+                ["score", 6],
+                ["xp", 3],
+                ["say", "\"Trusted,\" he says, like he's deciding it out loud. \"Draw oil from our own stores whenever you need it. Take a hauberk off the racks. This chapterhouse minds its own.\""]
+              ],
+              [
+                ["say", "\"Not yet,\" he says. \"I've watched strangers turn on this chapterhouse before. Prove it a while longer.\""]
+              ]
+            ]
+          ]
+        },
+        {
           "id": "bg_hundred",
           "label": "the Hundred Gallery",
           "if": [["flag", "said_ir_aldous_bg_ironbound"]],
           "once": true,
           "say": "Came down on bad ground. Rock doesn't ask permission before it falls. I've heard every theory since, and none of them change what's under that hill.",
           "fx": [["xp", 2]]
+        },
+        {
+          "id": "ir_sworn_offer",
+          "label": "ask to swear the Preceptor's oath",
+          "if": [["flag", "said_ir_aldous_bg_hundred"], ["!flag", "iron_sworn"]],
+          "say": "You ask him what it costs to swear in properly, not just to be trusted.",
+          "fx": [
+            [
+              "if",
+              [["var", "rep_iron", ">=", 9]],
+              [
+                ["set", "iron_sworn"],
+                ["addvar", "rep_keepers", -3],
+                ["addvar", "rep_church", -3],
+                ["move", "ir_oath_token", "inv"],
+                ["score", 10],
+                ["xp", 5],
+                ["say", "\"Then swear it,\" he says, and brands the iron-sun into your hand himself, no ceremony past the burn. \"Every grief left unburied in this Reach is chapterhouse business now. Yours too.\""]
+              ],
+              [
+                ["say", "\"An oath isn't trust with a better name,\" he says. \"You're not chapterhouse yet. Earn the rest of it first.\""]
+              ]
+            ]
+          ]
         },
         {
           "id": "oil",
@@ -829,6 +963,76 @@
               ]
             ]
           ]
+        },
+        {
+          "id": "ir_march_words",
+          "label": "talk him down off the column (will)",
+          "if": [
+            ["flag", "iron_march"],
+            ["!flag", "iron_march_stopped"],
+            ["!npcDead", "ir_aldous"],
+            ["!flag", "ir_aldous_gone"]
+          ],
+          "say": "You mean to talk him off it — call the column home before it reaches anyone else.",
+          "fx": [
+            [
+              "check",
+              "will",
+              12,
+              [
+                ["set", "iron_march_stopped"],
+                ["score", 8],
+                ["xp", 3],
+                ["say", "He hears you out, jaw tight, and doesn't like a word of it. 'Held,' he says at last, and sends the order himself."]
+              ],
+              [
+                ["say", "He doesn't move. 'The column doesn't stop because a stranger doesn't care for fire,' he says, and goes back to his ledger."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "ir_march_rank",
+          "label": "order the column stood down",
+          "if": [
+            ["flag", "iron_march"],
+            ["!flag", "iron_march_stopped"],
+            ["any", [["flag", "watch_sworn"], ["flag", "regent_writ"]]]
+          ],
+          "say": "You put your rank on the table — writ or commission, whichever you carry — and tell him the column turns around.",
+          "fx": [
+            ["set", "iron_march_stopped"],
+            ["score", 5],
+            ["xp", 2],
+            ["say", "He reads it twice, and doesn't ask a third time. Word goes out before evening: the column comes home."]
+          ]
+        },
+        {
+          "id": "ir_march_spare",
+          "label": "buy the column's mercy for Thornwold",
+          "if": [
+            ["flag", "iron_march"],
+            ["flag", "iron_sworn"],
+            ["!flag", "th_hollow_done"],
+            ["!flag", "ir_march_spare_th"],
+            ["var", "gold", ">=", 10]
+          ],
+          "say": "You mean to spend the chapterhouse's trust in you on Thornwold's account, and nowhere else.",
+          "fx": [
+            ["addvar", "gold", -10],
+            ["set", "ir_march_spare_th"],
+            ["score", 4],
+            ["xp", 2],
+            ["say", "Aldous doesn't ask why Thornwold. He marks the column's road around it, and says nothing of where it goes instead."]
+          ]
+        },
+        {
+          "id": "ir_march_spare_ack",
+          "label": "about Thornwold, since",
+          "if": [["flag", "ir_march_spare_th"]],
+          "once": true,
+          "say": "You already know the column swings wide of Thornwold. Everywhere else, it doesn't.",
+          "fx": [["xp", 1]]
         },
         {
           "id": "confront",
@@ -1343,7 +1547,7 @@
               "will",
               10,
               [
-                ["set", "sv_ir_rested_stone_broker"],
+                ["set", "sv_ir_rested_broker"],
                 ["set", "sv_ir_rested_done"],
                 ["set", "sv_ir_after_done"],
                 ["addvar", "rep_watch", 1],
@@ -1445,7 +1649,7 @@
             ["score", 3],
             ["xp", 2],
             ["addvar", "rep_free", 1],
-            ["say", "Word goes round the hall quiet and quick. If it comes to declaring the claim, they're behind you."]
+            ["say", "Word runs through the camps on coin, faster than any hall ledger. There's paid steel behind the claim now — as long as the coin keeps coming."]
           ]
         },
         {
@@ -1458,7 +1662,7 @@
             ["score", 3],
             ["xp", 2],
             ["addvar", "rep_watch", 1],
-            ["say", "Word goes round the hall quiet and quick. If it comes to declaring the claim, they're behind you."]
+            ["say", "It goes onto the record, slow and by the book. Once the Watch has it written, that's a claim the company will find hard to unmake."]
           ]
         },
         {
@@ -1589,6 +1793,25 @@
           "once": true,
           "say": "Mirren. Everything here's priced fair for what it cost the company to bring up from Wardmoor. Which is to say, not cheap.",
           "fx": [["xp", 1]]
+        },
+        {
+          "id": "ir_march_coin",
+          "label": "hire the Companies against the column",
+          "if": [
+            ["flag", "iron_march"],
+            ["!flag", "iron_march_stopped"],
+            ["var", "rep_free", ">=", 1],
+            ["var", "gold", ">=", 20]
+          ],
+          "say": "You want the Companies to make the column's road difficult, until it simply stops.",
+          "fx": [
+            ["addvar", "gold", -20],
+            ["set", "iron_march_stopped"],
+            ["addvar", "rep_free", 1],
+            ["score", 5],
+            ["xp", 2],
+            ["say", "Mirren doesn't blink, and doesn't ask what it's for. Paid steel finds reasons to slow an Ironbound column on every road out of Cinderhall, and inside a week it simply stops."]
+          ]
         },
         {
           "id": "bribe",
@@ -1799,14 +2022,7 @@
           "desc": "Spoil banked into a second hill, wind-scoured to a hard gray crust. Nothing has rooted here in living memory.",
           "brief": "Wind-scoured spoil.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_1_0",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is one east and five south. The Chapel of Iron: one south, two west."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_1_0", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [2, 0],
@@ -1825,14 +2041,7 @@
               []
             ]
           ],
-          "actions": [
-            {
-              "id": "ir_bearings_2_0",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is five south. The Hundred Gallery: one south, one east, then in."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_2_0", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [3, 0],
@@ -1840,14 +2049,7 @@
           "desc": "Cinder track underfoot, packed hard by cart-wheels that stopped running before you were born. The forge-smell of Cinderhall carries on the wind, from somewhere behind you.",
           "brief": "Cinder track, forge-smell on the wind.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_3_0",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is one west and five south. The Hundred Gallery: one south, then in."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_3_0", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [4, 0],
@@ -1855,16 +2057,7 @@
           "desc": "Pit-pony bones, tipped out with the tailings and bleached white against the gray. Whoever kept the tally here stopped caring which pile was which.",
           "brief": "Bones in the tailings.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_4_0",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [
-                ["say", "From here, the head-frame is two west and five south. The Hundred Gallery: one south, one west, then in."]
-              ]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_4_0", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [0, 1],
@@ -1872,14 +2065,7 @@
           "desc": "A path of fused clinker runs west to a squat chapel built entirely of scrap iron, its narrow windows rust-red in the low light.",
           "brief": "Clinker path. The iron chapel west.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_0_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is two east and four south. The Chapel of Iron: one west."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_0_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [1, 1],
@@ -1887,14 +2073,7 @@
           "desc": "Crushed ore-waste underfoot, packed hard and gray as a road going nowhere anyone chose to go.",
           "brief": "Packed ore-waste.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_1_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is one east and four south. The Chapel of Iron: two west."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_1_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [2, 1],
@@ -1962,12 +2141,7 @@
                 ]
               ]
             },
-            {
-              "id": "ir_bearings_2_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is four south. The Hundred Gallery: one east, then in."]]
-            }
+            { "id": "ir_bearings_2_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] }
           ],
           "variants": [
             {
@@ -1983,14 +2157,7 @@
           "desc": "The old workings show plainest here: rail, prop-timber, and a gallery mouth shored with iron, standing open. Cold air breathes out of it, and does not smell of ash.",
           "brief": "The old gallery mouth, open.",
           "onEnterOnce": [["xp", 2]],
-          "actions": [
-            {
-              "id": "ir_bearings_3_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is one west and four south. The Hundred Gallery: right in."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_3_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [4, 1],
@@ -1998,14 +2165,7 @@
           "desc": "Waste rock terraced in shallow steps, each one a season's dumping. A fox's prints cross it, the only living thing that's bothered.",
           "brief": "Terraced spoil, fox-tracks.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_4_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is two west and four south. The Hundred Gallery: one west, then in."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_4_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [5, 1],
@@ -2013,14 +2173,7 @@
           "desc": "The ground drops away east into a narrow cut, and at its head a gibbet-frame leans black against the sky, chain still hanging, empty.",
           "brief": "A gibbet-frame, east, chain empty.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_5_1",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is three west and four south. The Gibbet Tower: one east."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_5_1", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [1, 2],
@@ -2028,14 +2181,7 @@
           "desc": "A shallow bowl scoured clean by wind, ash drifted into its lee like old snow that never melts.",
           "brief": "Ash drifted in a hollow.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_1_2",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is one east and three south. The Old Cairn: one south, two west."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_1_2", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [2, 2],
@@ -2043,14 +2189,7 @@
           "desc": "Tailings bank in a ridge running further than the eye wants to follow it, gray shading to black where the older dumping is.",
           "brief": "A long ridge of tailings.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_2_2",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is three south. The Hundred Gallery: one north, one east, then in."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_2_2", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [3, 2],
@@ -2058,14 +2197,7 @@
           "desc": "Coiled winding-rope, rotted through, stacked where a cart last left it. Rust has fused the coils into one shape.",
           "brief": "Rotted, fused rope-coils.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_3_2",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is one west and three south. The Hundred Gallery: one north, then in."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_3_2", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [4, 2],
@@ -2073,14 +2205,7 @@
           "desc": "The ground opens east into a flooded cut, water black as the stone around it. Something has worn a path down to the waterline, and back up again, more than once.",
           "brief": "The flooded quarry's rim, east.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_4_2",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is two west and three south. The Flooded Quarry: one east."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_4_2", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [0, 3],
@@ -2099,14 +2224,7 @@
               []
             ]
           ],
-          "actions": [
-            {
-              "id": "ir_bearings_0_3",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is two east and two south. The Old Cairn: one west."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_0_3", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [1, 3],
@@ -2125,12 +2243,7 @@
                 ["say", "The cart's box has rotted through, but a tin cup and a few coins have sat undisturbed since it went over."]
               ]
             },
-            {
-              "id": "ir_bearings_1_3",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is one east and two south. The Old Cairn: two west."]]
-            }
+            { "id": "ir_bearings_1_3", "label": "get your bearings", "free": true, "fx": [["bearings"]] }
           ]
         },
         {
@@ -2162,12 +2275,7 @@
                 ["say", "Beneath the company's confident lettering, worn near to nothing: a Barrow-Keeper's raised hand, cut long before any company claimed this ground. Cinderhall's boundary stone was somebody's shrine first."]
               ]
             },
-            {
-              "id": "ir_bearings_2_3",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is two south. The Old Cairn: three west."]]
-            }
+            { "id": "ir_bearings_2_3", "label": "get your bearings", "free": true, "fx": [["bearings"]] }
           ]
         },
         {
@@ -2176,14 +2284,7 @@
           "desc": "Flat, black ground, packed by feet that came this way in numbers once and haven't since.",
           "brief": "Packed black ground.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_3_3",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is one west and two south. The Hundred Gallery: two north, then in."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_3_3", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [4, 3],
@@ -2191,14 +2292,7 @@
           "desc": "A gap between two heaps just wide enough to walk, walled in gray on both sides like a passage that was never meant to be one.",
           "brief": "A gap between spoil-heaps.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_4_3",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is two west and two south. The Scrappers' Camp: two east."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_4_3", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [5, 3],
@@ -2206,14 +2300,7 @@
           "desc": "Boot-worn ground leads east toward a thread of woodsmoke and the clank of someone sorting scrap by hand.",
           "brief": "Woodsmoke and scrap-sorting, east.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_5_3",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is three west and two south. The Scrappers' Camp: one east."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_5_3", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [1, 4],
@@ -2221,14 +2308,7 @@
           "desc": "The last rise before the flat, slag fused to glass in patches that catch what little light there is.",
           "brief": "Glass-fused slag.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_1_4",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is one east and one south. The Old Cairn: one north, two west."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_1_4", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [2, 4],
@@ -2236,14 +2316,7 @@
           "desc": "The downs give way south to Cinderhall's slag hill and the smoke above it. A cairn of broken pick-heads marks where the track becomes a road again.",
           "brief": "The downs' edge. Cinderhall south.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_2_4",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is one south. The Old Cairn: one north, three west."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_2_4", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [3, 4],
@@ -2251,14 +2324,7 @@
           "desc": "Deep-cut ruts, dry and hard, from carts that ran this ground longer than the company has kept count.",
           "brief": "Deep, dry cart-ruts.",
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_3_4",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is one west and one south. The Hundred Gallery: three north, then in."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_3_4", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         },
         {
           "cell": [4, 4],
@@ -2267,14 +2333,7 @@
           "brief": "A worn stone seat, facing the hill.",
           "items": ["ir_faded_ribbon"],
           "onEnterOnce": [["xp", 1]],
-          "actions": [
-            {
-              "id": "ir_bearings_4_4",
-              "label": "get your bearings",
-              "free": true,
-              "fx": [["say", "From here, the head-frame is two west and one south. The Scrappers' Camp: one north, two east."]]
-            }
-          ]
+          "actions": [{ "id": "ir_bearings_4_4", "label": "get your bearings", "free": true, "fx": [["bearings"]] }]
         }
       ],
       "cellFx": {
@@ -2285,7 +2344,7 @@
             [
               [
                 "if",
-                [["!npcDead", "ir_slaghound"]],
+                [["!npcDead", "ir_slaghound"], ["!flag", "watch_trusted"], ["!flag", "crown_trusted"]],
                 [
                   ["npcgo", "ir_slaghound", "here"],
                   ["say", "A slag-hound breaks from the spoil-heaps, low and fast, and has your scent before you have its measure."]
@@ -2377,6 +2436,245 @@
       }
     }
   ],
+  "clock": [
+    {
+      "id": "iron_march_begins",
+      "if": [["any", [["var", "hollows_burned", ">=", 1], ["flag", "regent_writ"]]], ["!flag", "iron_march"]],
+      "once": true,
+      "fx": [["set", "iron_march"], ["say", "The Ironbound have their answer now, and they mean to use it."]]
+    },
+    {
+      "id": "iron_march_warned",
+      "if": [["flag", "iron_march"], ["since", "iron_march", ">=", 10], ["!flag", "iron_march_stopped"]],
+      "once": true,
+      "fx": [["say", "Word on the road: an Ironbound column is moving west, and it is not stopping at Cinderhall."]]
+    },
+    {
+      "id": "iron_march_burn_th",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 500],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "th_hollow_done"],
+        ["!flag", "ir_march_spare_th"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "th_hollow_burned"],
+        ["set", "th_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have put Camp Gallows to the torch, Free Company and all."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_wm",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 580],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "wm_oath_resolved"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "wm_hollow_burned"],
+        ["set", "wm_oath_resolved"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the oath-stone at Highward, standards and all."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_kw",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 60],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "kw_hollow_done"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "kw_hollow_burned"],
+        ["set", "kw_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the Hunt's Stand, and Hornhallow's wood with it."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_mc",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 100],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "mc_hollow_done"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "mc_hollow_burned"],
+        ["set", "mc_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have put Mootcombe's Long Table to the torch."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_em",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 140],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "em_hollow_done"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "em_hollow_burned"],
+        ["set", "em_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have lit the Choir of Ash again, over Glasswick."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_hb",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 180],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "hb_kingsrest_resolved"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "hb_hollow_burned"],
+        ["set", "hb_kingsrest_resolved"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the Kings' Rest, and Barrowmere's mound with it."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_sk",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 540],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "sk_hollow_resolved"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "sk_hollow_burned"],
+        ["set", "sk_hollow_resolved"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the wreck off Gullhaven, admiral and all."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_hl",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 460],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "hl_hollow_done"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "hl_hollow_burned"],
+        ["set", "hl_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have put the Hunger Barn to the torch, and Tithing with it."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_fd",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 220],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "fd_hollow_done"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "fd_hollow_burned"],
+        ["set", "fd_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned Reedholm's drowned nave, bell and all."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_fl",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 260],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "fl_hollow_done"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "fl_hollow_burned"],
+        ["set", "fl_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the Long Furrow, Wickstead's dead a second time."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_me",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 300],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "me_hollow_done"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "me_hollow_burned"],
+        ["set", "me_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have cracked the Drowned Hall's stone, and Lantern Holm gone quiet."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_sh",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 340],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "sh_hollow_done"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "sh_hollow_burned"],
+        ["set", "sh_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the Truce Field, both lines' dead at once."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_pw",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 380],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "pw_hollow_done"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "pw_hollow_burned"],
+        ["set", "pw_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned through the Old Vault, Pennywell's coin with it."]
+      ]
+    },
+    {
+      "id": "iron_march_burn_ff",
+      "if": [
+        ["flag", "iron_march"],
+        ["since", "iron_march", ">=", 420],
+        ["!flag", "iron_march_stopped"],
+        ["!flag", "ff_hollow_done"]
+      ],
+      "once": true,
+      "fx": [
+        ["set", "ff_hollow_burned"],
+        ["set", "ff_hollow_done"],
+        ["addvar", "hollows_burned", 1],
+        ["say", "Word reaches you: the Ironbound have burned the Schoolroom at Slatefold, and the writ with it."]
+      ]
+    }
+  ],
   "quests": {
     "ir_hollow": {
       "name": "The Hundred",
@@ -2385,19 +2683,23 @@
       "stages": [
         {
           "if": [["flag", "tamsin_mine_truth"]],
-          "text": "The truth is out: Aldous signed the order that doomed the Hundred. Decide the gallery's fate, and his, in Cinderhall."
+          "text": "The truth is out: Aldous doomed the Hundred. Decide the gallery's fate first, in its deep — his own fate can wait.",
+          "at": "ir_hundred_deep"
         },
         {
           "if": [["flag", "ir_hall_backing"]],
-          "text": "The miners' hall is ready to claim the gallery from the company. Declare it at the Hundred Gallery, north of Cinderhall."
+          "text": "The miners' hall is ready to claim the gallery from the company. Declare it at the Hundred Gallery.",
+          "at": "ir_hundred_adit"
         },
         {
           "if": [["flag", "ir_hundred_passed"]],
-          "text": "Past the fall: read the true ledger at the working face, or win the miners' hall's backing in Cinderhall."
+          "text": "Past the fall: read the true ledger at the working face, or win the miners' hall's backing in Cinderhall.",
+          "at": "ir_hundred_face"
         },
         {
           "if": [],
-          "text": "A hundred miners died when the Hundred Gallery fell. Its adit: north from Tally Rise to the Cracked Adit, then east."
+          "at": "ir_hundred_adit",
+          "text": "A hundred miners died when the Hundred Gallery fell. Its adit is still open, out on the downs."
         }
       ]
     },
@@ -2408,7 +2710,8 @@
       "stages": [
         {
           "if": [["var", "hollows_burned", ">=", 2]],
-          "text": "Two hollows burned in the Reach. Ask Preceptor Aldous for the Regent's writ, at Cinderhall's chapterhouse."
+          "text": "Two hollows burned in the Reach. Ask Preceptor Aldous for the Regent's writ, at Cinderhall's chapterhouse.",
+          "at": "ir_chapterhouse"
         },
         {
           "if": [["var", "hollows_burned", "=", 1]],
@@ -2427,15 +2730,18 @@
       "stages": [
         {
           "if": [["has", "ir_marked_pick"]],
-          "text": "Return Hob's marked pick to Old Crick, at the miners' hall in Cinderhall."
+          "text": "Return Hob's marked pick to Old Crick, at the miners' hall in Cinderhall.",
+          "at": "ir_miners_hall"
         },
         {
           "if": [["flag", "ir_crick_hook"]],
-          "text": "Hob's marked pick is still down in the Hundred Gallery, north of Cinderhall, past the fall."
+          "text": "Hob's marked pick is still down in the Hundred Gallery, past the fall.",
+          "at": "ir_hundred_face"
         },
         {
           "if": [],
-          "text": "Old Crick survived the Hundred. His friend Hob did not. Ask him about it, at Cinderhall's miners' hall."
+          "text": "Old Crick survived the Hundred. His friend Hob did not. Ask him about it, at Cinderhall's miners' hall.",
+          "at": "ir_miners_hall"
         }
       ]
     },
@@ -2446,13 +2752,19 @@
       "stages": [
         {
           "if": [["npcDead", "ir_slaghound"], ["!npcDead", "ir_cave1_beast"]],
-          "text": "A slag-hound lies dead on the spoil, but the den is the flooded quarry: three north of the head-frame, three east."
+          "text": "A slag-hound lies dead on the spoil, but the den is the flooded quarry.",
+          "at": "ir_cave1_den"
         },
         {
           "if": [["flag", "said_ir_ness_bounty"]],
-          "text": "A slag-hound dens three north of the head-frame, then three east, where the downs open into the flooded quarry."
+          "text": "A slag-hound dens where the downs open into the flooded quarry.",
+          "at": "ir_cave1_den"
         },
-        { "if": [], "text": "Miners at the head-frame complain of something prowling the downs after dark." }
+        {
+          "if": [],
+          "text": "Miners at the head-frame complain of something prowling the downs after dark.",
+          "at": "ir_headframe"
+        }
       ]
     },
     "ir_wenna": {
@@ -2462,11 +2774,13 @@
       "stages": [
         {
           "if": [["flag", "ir_knows_wenna"]],
-          "text": "Speak Wenna's name at the Hundred Gallery, north of Cinderhall, for Sella."
+          "text": "Speak Wenna's name at the Hundred Gallery, for Sella.",
+          "at": "ir_hundred_adit"
         },
         {
           "if": [["flag", "ir_entered"]],
-          "text": "An old woman on Cinderhall's shanty row still grieves a friend lost in the Hundred. Ask after her."
+          "text": "An old woman on Cinderhall's shanty row still grieves a friend lost in the Hundred. Ask after her.",
+          "at": "ir_shanty_row"
         },
         {
           "if": [],
@@ -2481,12 +2795,18 @@
       "stages": [
         {
           "if": [["flag", "sk_berin_debt"], ["!flag", "ir_asked_berin"]],
-          "text": "Berin, on Gullhaven's quay, owes Rennick 6 gold and won't go home owing it. His grandfather Crick waits at Cinderhall."
+          "text": "Crick, at Cinderhall, doesn't know yet: his grandson Berin owes Rennick 6 gold on Gullhaven's quay, and won't come home.",
+          "at": "ir_miners_hall"
         },
-        { "if": [["flag", "sk_entered"]], "text": "You're in the Saltkerns. Ask after Berin at Gullhaven's quay." },
+        {
+          "if": [["flag", "sk_entered"]],
+          "text": "You're in the Saltkerns. Ask after Berin at Gullhaven's quay.",
+          "at": "sk_settlement"
+        },
         {
           "if": [],
-          "text": "Old Crick's grandson Berin took the coin road to Gullhaven, in the Saltkerns, past Thornwold."
+          "text": "Old Crick's grandson Berin took the coin road to Gullhaven, in the Saltkerns, past Thornwold.",
+          "at": "sk_settlement"
         }
       ]
     },
@@ -2501,29 +2821,51 @@
         },
         {
           "if": [["flag", "sv_ir_rested_asked"], ["!flag", "sv_ir_rested_done"]],
-          "text": "Old Crick is waiting on your word about the stone."
+          "text": "Old Crick is waiting on your word about the stone.",
+          "at": "ir_miners_hall"
         },
         {
           "if": [["flag", "sv_ir_bargained_asked"], ["!flag", "sv_ir_bargained_done"]],
-          "text": "Ness is waiting on your word about the vigil."
+          "text": "Ness is waiting on your word about the vigil.",
+          "at": "ir_headframe"
         },
         {
           "if": [["flag", "sv_ir_burned_asked"], ["!flag", "sv_ir_burned_done"]],
-          "text": "Sella is waiting on your word about the plaque."
+          "text": "Sella is waiting on your word about the plaque.",
+          "at": "ir_shanty_row"
         },
         {
           "if": [["flag", "ir_hollow_rested"]],
-          "text": "The hall wants your word on a stone for the Hundred. Find Old Crick, at the miners' hall."
+          "text": "The hall wants your word on a stone for the Hundred. Find Old Crick, at the miners' hall.",
+          "at": "ir_miners_hall"
         },
         {
           "if": [["flag", "ir_hollow_burned"]],
-          "text": "Word of a chapterhouse plaque troubles Sella. Find her on shanty row."
+          "text": "Word of a chapterhouse plaque troubles Sella. Find her on shanty row.",
+          "at": "ir_shanty_row"
         },
         {
           "if": [["flag", "ir_hollow_bargained"]],
-          "text": "The claim's vigil weighs on the hall. Find Ness, at the head-frame."
+          "text": "The claim's vigil weighs on the hall. Find Ness, at the head-frame.",
+          "at": "ir_headframe"
         },
         { "if": [], "text": "Cinderhall isn't done with the Hundred yet." }
+      ]
+    },
+    "ir_march": {
+      "name": "The Column",
+      "start": [["flag", "iron_march"]],
+      "done": [["flag", "iron_march_stopped"]],
+      "stages": [
+        {
+          "if": [["flag", "iron_march_stopped"]],
+          "text": "The column that marched out of Cinderhall has been called home."
+        },
+        {
+          "if": [],
+          "text": "An Ironbound column burns its way down the Reach unbidden. Find Aldous at Cinderhall, or beat it to the next hold.",
+          "at": "ir_chapterhouse"
+        }
       ]
     }
   },
@@ -2597,7 +2939,7 @@
       "weight": 1
     },
     {
-      "if": [["flag", "sv_ir_rested_stone_broker"]],
+      "if": [["flag", "sv_ir_rested_broker"]],
       "text": "The Marker Stone lists the Hundred's names now, company coin behind half the lettering.",
       "weight": 1
     },
@@ -2670,6 +3012,37 @@
       "if": [["flag", "or_scout_ir_ness"]],
       "text": "A Scout showed Ness a quieter way to shave the company tally, and neither of them logged it.",
       "weight": 0
+    },
+    {
+      "if": [["flag", "iron_sworn"]],
+      "text": "Cinderhall's chapterhouse still calls you oath-sworn. The Reach's unburied dead are chapterhouse business now, and yours.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "iron_trusted"], ["!flag", "iron_sworn"]],
+      "text": "Cinderhall's chapterhouse still keeps its racks open to you, oil and iron both, no asking twice required.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "iron_march_stopped"]],
+      "text": "The column that marched out of Cinderhall came home again, called back before it finished what it started.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "ir_march_spare_th"]],
+      "text": "Thornwold never learned whose word kept the column off its road, or what that word cost everywhere else.",
+      "weight": 1
+    }
+  ],
+  "statusPaths": [
+    {
+      "label": "Your rank with the Ironbound",
+      "var": "rep_iron",
+      "if": [["any", [["flag", "iron_trusted"], ["flag", "iron_sworn"]]]],
+      "states": [
+        { "if": [["flag", "iron_sworn"]], "text": "oath-sworn — the chapterhouse's dead, and yours" },
+        { "if": [["flag", "iron_trusted"]], "text": "trusted at the forges" }
+      ]
     }
   ]
 }
