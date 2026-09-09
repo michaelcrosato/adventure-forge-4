@@ -2687,7 +2687,8 @@
         },
         {
           "if": [["flag", "ir_hall_backing"]],
-          "text": "The miners' hall is ready to claim the gallery from the company. Declare it at the Hundred Gallery, north of Cinderhall."
+          "text": "The miners' hall is ready to claim the gallery from the company. Declare it at the Hundred Gallery, north of Cinderhall.",
+          "at": "ir_hundred_adit"
         },
         {
           "if": [["flag", "ir_hundred_passed"]],
@@ -2706,7 +2707,8 @@
       "stages": [
         {
           "if": [["var", "hollows_burned", ">=", 2]],
-          "text": "Two hollows burned in the Reach. Ask Preceptor Aldous for the Regent's writ, at Cinderhall's chapterhouse."
+          "text": "Two hollows burned in the Reach. Ask Preceptor Aldous for the Regent's writ, at Cinderhall's chapterhouse.",
+          "at": "ir_chapterhouse"
         },
         {
           "if": [["var", "hollows_burned", "=", 1]],
@@ -2725,11 +2727,13 @@
       "stages": [
         {
           "if": [["has", "ir_marked_pick"]],
-          "text": "Return Hob's marked pick to Old Crick, at the miners' hall in Cinderhall."
+          "text": "Return Hob's marked pick to Old Crick, at the miners' hall in Cinderhall.",
+          "at": "ir_miners_hall"
         },
         {
           "if": [["flag", "ir_crick_hook"]],
-          "text": "Hob's marked pick is still down in the Hundred Gallery, north of Cinderhall, past the fall."
+          "text": "Hob's marked pick is still down in the Hundred Gallery, north of Cinderhall, past the fall.",
+          "at": "ir_hundred_face"
         },
         {
           "if": [],
@@ -2744,11 +2748,13 @@
       "stages": [
         {
           "if": [["npcDead", "ir_slaghound"], ["!npcDead", "ir_cave1_beast"]],
-          "text": "A slag-hound lies dead on the spoil, but the den is the flooded quarry: three north of the head-frame, three east."
+          "text": "A slag-hound lies dead on the spoil, but the den is the flooded quarry.",
+          "at": "ir_cave1_den"
         },
         {
           "if": [["flag", "said_ir_ness_bounty"]],
-          "text": "A slag-hound dens three north of the head-frame, then three east, where the downs open into the flooded quarry."
+          "text": "A slag-hound dens where the downs open into the flooded quarry.",
+          "at": "ir_cave1_den"
         },
         { "if": [], "text": "Miners at the head-frame complain of something prowling the downs after dark." }
       ]
@@ -2760,11 +2766,13 @@
       "stages": [
         {
           "if": [["flag", "ir_knows_wenna"]],
-          "text": "Speak Wenna's name at the Hundred Gallery, north of Cinderhall, for Sella."
+          "text": "Speak Wenna's name at the Hundred Gallery, north of Cinderhall, for Sella.",
+          "at": "ir_hundred_adit"
         },
         {
           "if": [["flag", "ir_entered"]],
-          "text": "An old woman on Cinderhall's shanty row still grieves a friend lost in the Hundred. Ask after her."
+          "text": "An old woman on Cinderhall's shanty row still grieves a friend lost in the Hundred. Ask after her.",
+          "at": "ir_shanty_row"
         },
         {
           "if": [],
@@ -2781,7 +2789,11 @@
           "if": [["flag", "sk_berin_debt"], ["!flag", "ir_asked_berin"]],
           "text": "Berin, on Gullhaven's quay, owes Rennick 6 gold and won't go home owing it. His grandfather Crick waits at Cinderhall."
         },
-        { "if": [["flag", "sk_entered"]], "text": "You're in the Saltkerns. Ask after Berin at Gullhaven's quay." },
+        {
+          "if": [["flag", "sk_entered"]],
+          "text": "You're in the Saltkerns. Ask after Berin at Gullhaven's quay.",
+          "at": "sk_settlement"
+        },
         {
           "if": [],
           "text": "Old Crick's grandson Berin took the coin road to Gullhaven, in the Saltkerns, past Thornwold."
@@ -2799,27 +2811,33 @@
         },
         {
           "if": [["flag", "sv_ir_rested_asked"], ["!flag", "sv_ir_rested_done"]],
-          "text": "Old Crick is waiting on your word about the stone."
+          "text": "Old Crick is waiting on your word about the stone.",
+          "at": "ir_miners_hall"
         },
         {
           "if": [["flag", "sv_ir_bargained_asked"], ["!flag", "sv_ir_bargained_done"]],
-          "text": "Ness is waiting on your word about the vigil."
+          "text": "Ness is waiting on your word about the vigil.",
+          "at": "ir_headframe"
         },
         {
           "if": [["flag", "sv_ir_burned_asked"], ["!flag", "sv_ir_burned_done"]],
-          "text": "Sella is waiting on your word about the plaque."
+          "text": "Sella is waiting on your word about the plaque.",
+          "at": "ir_shanty_row"
         },
         {
           "if": [["flag", "ir_hollow_rested"]],
-          "text": "The hall wants your word on a stone for the Hundred. Find Old Crick, at the miners' hall."
+          "text": "The hall wants your word on a stone for the Hundred. Find Old Crick, at the miners' hall.",
+          "at": "ir_miners_hall"
         },
         {
           "if": [["flag", "ir_hollow_burned"]],
-          "text": "Word of a chapterhouse plaque troubles Sella. Find her on shanty row."
+          "text": "Word of a chapterhouse plaque troubles Sella. Find her on shanty row.",
+          "at": "ir_shanty_row"
         },
         {
           "if": [["flag", "ir_hollow_bargained"]],
-          "text": "The claim's vigil weighs on the hall. Find Ness, at the head-frame."
+          "text": "The claim's vigil weighs on the hall. Find Ness, at the head-frame.",
+          "at": "ir_headframe"
         },
         { "if": [], "text": "Cinderhall isn't done with the Hundred yet." }
       ]
