@@ -421,7 +421,8 @@
             ["any", [["flag", "ff_writ_ended"], ["has", "ff_writ"]]],
             ["flag", "ff_letters_freed"]
           ],
-          "text": "Everything's ready: ring the bell in the dame's study, past the porch and the dormitory."
+          "text": "Everything's ready: ring the bell in the dame's study, past the porch and the dormitory.",
+          "at": "ff_dame_study"
         },
         {
           "if": [
@@ -429,11 +430,13 @@
             ["any", [["flag", "ff_writ_ended"], ["has", "ff_writ"]]],
             ["!flag", "ff_letters_freed"]
           ],
-          "text": "The roll is read and the writ is ended. Only the letters remain: work or read the letter-box free, at the porch."
+          "text": "The roll is read and the writ is ended. Only the letters remain: work or read the letter-box free, at the porch.",
+          "at": "ff_porch"
         },
         {
           "if": [["flag", "ff_roll_read"], ["!flag", "ff_writ_ended"], ["!has", "ff_writ"], ["flag", "ff_letters_freed"]],
-          "text": "The roll is read and the letters are free. Only the writ remains: Bailiff Rowe, at the tally-house."
+          "text": "The roll is read and the letters are free. Only the writ remains: Bailiff Rowe, at the tally-house.",
+          "at": "ff_tally_house"
         },
         {
           "if": [
@@ -441,7 +444,8 @@
             ["any", [["flag", "ff_writ_ended"], ["has", "ff_writ"]]],
             ["flag", "ff_letters_freed"]
           ],
-          "text": "The writ is ended and the letters are free. Only the ward-roll remains: to Tuck, at the recorder's loft."
+          "text": "The writ is ended and the letters are free. Only the ward-roll remains: to Tuck, at the recorder's loft.",
+          "at": "ff_recorder_loft"
         },
         {
           "if": [["flag", "ff_roll_read"], ["!flag", "ff_writ_ended"], ["!has", "ff_writ"], ["!flag", "ff_letters_freed"]],
@@ -473,19 +477,23 @@
       "stages": [
         {
           "if": [["flag", "ff_dame_agrees"], ["flag", "ff_hold_word"], ["flag", "ff_rent_turned"]],
-          "text": "Everything's ready: tell Garth, at the walled lane, that the lesson is kept."
+          "text": "Everything's ready: tell Garth, at the walled lane, that the lesson is kept.",
+          "at": "ff_walled_lane"
         },
         {
           "if": [["flag", "ff_dame_agrees"], ["flag", "ff_hold_word"], ["!flag", "ff_rent_turned"]],
-          "text": "The dame agrees and the hold's given its word. Only the rent remains: Bailiff Rowe, at the tally-house."
+          "text": "The dame agrees and the hold's given its word. Only the rent remains: Bailiff Rowe, at the tally-house.",
+          "at": "ff_tally_house"
         },
         {
           "if": [["flag", "ff_dame_agrees"], ["!flag", "ff_hold_word"], ["flag", "ff_rent_turned"]],
-          "text": "The dame agrees and the rent's turned. Only the hold's word remains: Freda, at the hearth-house."
+          "text": "The dame agrees and the rent's turned. Only the hold's word remains: Freda, at the hearth-house.",
+          "at": "ff_hearth_house"
         },
         {
           "if": [["!flag", "ff_dame_agrees"], ["flag", "ff_hold_word"], ["flag", "ff_rent_turned"]],
-          "text": "The hold's given its word and the rent's turned. Only the dame remains: Dame Sisley, at the chantry."
+          "text": "The hold's given its word and the rent's turned. Only the dame remains: Dame Sisley, at the chantry.",
+          "at": "ff_chantry"
         },
         {
           "if": [["flag", "ff_dame_agrees"], ["!flag", "ff_hold_word"], ["!flag", "ff_rent_turned"]],
@@ -528,11 +536,13 @@
         },
         {
           "if": [["flag", "ff_hollow_bargained"], ["!flag", "ff_wardlands_settled"]],
-          "text": "Fosterfell promised the wardlands' rent to the school. Settling it another way, at the fold-green, breaks that word."
+          "text": "Fosterfell promised the wardlands' rent to the school. Settling it another way, at the fold-green, breaks that word.",
+          "at": "ff_fold_green"
         },
         {
           "if": [["flag", "ff_hollow_done"], ["!flag", "ff_wardlands_settled"]],
-          "text": "The Schoolroom's fate is settled. The wardlands question is still open: declare it at the fold-green."
+          "text": "The Schoolroom's fate is settled. The wardlands question is still open: declare it at the fold-green.",
+          "at": "ff_fold_green"
         },
         { "if": [], "text": "Whose the wardlands are waits on the Schoolroom's own fate being settled first." }
       ]
@@ -544,7 +554,8 @@
       "stages": [
         {
           "if": [["flag", "ff_lane_known"]],
-          "text": "The fell-lane's line is known. Carry Coster's stakes to the fell road and cut the bound by that line."
+          "text": "The fell-lane's line is known. Carry Coster's stakes to the fell road and cut the bound by that line.",
+          "at": "ff_fells_3_5"
         },
         {
           "if": [],
@@ -559,7 +570,8 @@
       "stages": [
         {
           "if": [["flag", "ff_roll_read"], ["!flag", "ff_reeve_ward_known"]],
-          "text": "The roll's read once, against the Book of Houses. Read it again with Tuck for what the first pass missed."
+          "text": "The roll's read once, against the Book of Houses. Read it again with Tuck for what the first pass missed.",
+          "at": "ff_recorder_loft"
         },
         {
           "if": [],
@@ -585,15 +597,18 @@
       "stages": [
         {
           "if": [["flag", "ff_hollow_bargained"], ["!flag", "said_ff_bell_keeper_sv_ff_bargain_ask"]],
-          "text": "The lesson's kept. Garth, at the walled lane, wonders who should keep the school's first lesson now."
+          "text": "The lesson's kept. Garth, at the walled lane, wonders who should keep the school's first lesson now.",
+          "at": "ff_walled_lane"
         },
         {
           "if": [["flag", "ff_hollow_rested"], ["!flag", "said_ff_recorder_sv_ff_rested_ask"]],
-          "text": "The wards are sent home. Tuck, at the recorder's loft, has word of a rider come up asking after one."
+          "text": "The wards are sent home. Tuck, at the recorder's loft, has word of a rider come up asking after one.",
+          "at": "ff_recorder_loft"
         },
         {
           "if": [["flag", "ff_hollow_burned"], ["!flag", "said_ff_bailiff_sv_ff_burn_ask"]],
-          "text": "The schoolroom is ash. Bailiff Rowe, at the tally-house, wonders what the Crown's claim rests on now."
+          "text": "The schoolroom is ash. Bailiff Rowe, at the tally-house, wonders what the Crown's claim rests on now.",
+          "at": "ff_tally_house"
         },
         { "if": [], "text": "Fosterfell settles back into itself, whatever the Schoolroom's fate cost it." }
       ]
