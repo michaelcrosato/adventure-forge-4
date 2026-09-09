@@ -9,19 +9,21 @@ and choice-consequence of Baldur's Gate 3.
 
 ## Where the realm actually stands
 
-The sprawl is done. 18 regions, 905 rooms, 265 npcs, 321 items, 129 quests,
-68 stamped places, 5 companions, **7 endings and 10 replay-proofs**, 12 class
-abilities, 301 tests green. Skyrim has about 340 named places. **Adding a
-nineteenth region is not the work** — three blind players just walked eight of
+The sprawl is done. 18 regions, 905 rooms, 265 npcs, 321 items, 135 quests,
+68 stamped places, 5 companions, **7 endings and 13 replay-proofs**, 12 class
+abilities, 313 tests green. Skyrim has about 340 named places. **Adding a
+nineteenth region is not the work** — three blind players just walked nine of
 the eighteen that exist. These are:
 
-Three waves in a row have now won three of three, fun 5/5 every time, at 520
-to 640 turns; the last of them scored 554, 570 and 578 against a one-route
-baseline of 366, which is the first hard evidence that uncapping the score
-changed how much of the realm a player walks. What those waves ask for has
-also changed shape: wave four's list was broken mechanics, and wave seven's
-is legibility — every finding was about the game failing to say something it
-already knew.
+Four waves in a row have now won three of three, fun 5/5 every time, at 520
+to 640 turns; wave seven scored 554, 570 and 578 against a one-route baseline
+of 366, which is the first hard evidence that uncapping the score changed how
+much of the realm a player walks. What those waves ask for has also changed
+shape: wave four's list was broken mechanics, wave seven's was legibility, and
+wave eight's most useful findings did not come from the reports at all — they
+came from replaying the players' own traces, which contradicted two of them.
+Clarity has sat at 4/5 for three waves, and the open item behind that number
+is not a wording problem but the act gate (item 11).
 
 ## 1. The realm's breadth does not pay
 
@@ -424,13 +426,14 @@ instead of the game.
    pass**~~ — all three landed, all sixteen regions wired. The march keeps
    its own clock now (`since`), so setting it moving late no longer drops ten
    holds in ten turns. What that work revealed is item 3.
-3. **A rank a player earns and never collects.** Twelve ranks, each granted
-   by one npc in one hold behind a topic that also wants an earlier
-   conversation with that same npc. The wave crossed four thresholds and
-   collected two ranks. `status` shows standing now; the collecting is the
-   open half, and `world.clock` is the obvious instrument — it can notice a
-   crossing and say where the rank waits without throwing away the twelve
-   scenes where a faction's own voice tells you what you have become.
+3. ~~**A rank a player earns and never collects**~~ — done, and not with the
+   clock. Twelve ranks, each granted by one npc in one hold, and three blind
+   players collected two of twelve between them across 1,669 turns. Six quest
+   ladders (`world/reach/ranks.json`) name the person and point at their door,
+   which keeps all twelve of the scenes where a faction's own voice tells you
+   what you have become. The standing-gated three start on the standing **and**
+   on having met the granter — a rank is collected from a person, and that also
+   kept the Scout road inside an allowance with 0.07 characters of headroom.
 4. ~~**Conditions, the clock, abilities, disengage, `since`, negated
    conditions, room paging**~~ — landed. Rooms turn pages now, so the menu
    cap stopped being a limit on how deep a room may go, and it caught three
@@ -460,21 +463,38 @@ instead of the game.
    it was done is the pattern: 1,448 to 812, not by cutting a word but by
    moving the four companions' answers out of one `onEnterOnce` and into
    region-gated remarks, which the engine has always spoken one a turn. The
-   words are all still there. 78 more of those chains wait in 20 files, and
-   the widest screen in the realm is now hl_north_lane at 1,377, which is one
-   of them. mg_hollow_throne (1,162) and va_throne (1,125) are the story's
-   climaxes and want careful cutting, not gating — the throne already lost 38
+   words are all still there. hl_north_lane (1,504) went the same way. The
+   worst on any proven road is now `crowned_hollow#bloodied` at 1,295, and it
+   is a fight screen — narration, a companion going down, and the menu — which
+   is the one place width buys something. The widest the random crawler finds
+   is 1,013 (hl_fields_0_1, 147 of 905 rooms in 60 walks). What is left is the
+   climax screens off every proven road and every crawl walk: mg_hollow_throne
+   and va_throne want careful cutting, not gating — the throne already lost 38
    characters that were its quest line re-listing four endings the menu shows
-   with "(ends the tale)" on each.
-9. **Three classes of four, not four.** This line read "proven" and was wrong,
-   which `scripts/audit-abilities.ts` found by asking a different question:
-   nine proofs, six Scholar, two Warden, one Envoy, and **no Scout has ever
-   been played to an ending here**. So three of the twelve abilities cannot
-   appear in any measurement, and the whole grace road — locks, ledges, carved
-   stone — is unverified. The class skew in *play* did break: the wave picked
-   Envoy twice of three unprompted. The skew in the *bar* did not.
+   with "(ends the tale)" on each. **Nothing measures an off-path screen
+   today**, which is the real gap: `crawl --worst` prints the widest it
+   happens to reach, and the climaxes are not reachable by a random walk.
+9. ~~**Three classes of four, not four**~~ — four of four now, and twelve of
+   twelve abilities. `reach_at_rest#scout` put a Scout on the grace road —
+   locks, ledges, carved stone — and `crowned_hollow#envoy` is the first
+   proven route to spend an Envoy's kit rather than carry it: `parley` on a
+   gray husk, and seven gold walked into Wolf Scrape so `buy_off` could pay a
+   wolf to stand down. `test/abilities.test.ts`'s `UNPROVEN` table is empty
+   for the first time. Its last line had claimed "no proven route ever holds 5
+   gold", which was true of the eleven routes measured and false of the
+   realm's coin — the debt was never the gold, it was that no Envoy road had
+   carried it past something that would kill it.
 10. **A sixteenth hold, last** — and one whose problem is not a grief-hollow
     at all.
+11. **The act gate, which is why three runs saw the same half of the realm.**
+    Not a map problem: the region graph is a proper sprawl, 0-4 hops across,
+    and six regions appear in all three wave-eight runs while five appear in
+    none. The pilgrim stair at Coldpass opens on **any three holds rested**,
+    Coldpass is two hops from the start through Wardmoor, and Marrowgate is
+    through Coldpass — so a player rests the three nearest holds and walks
+    into the endgame having seen a quarter of the realm. Unseen content in a
+    large world is fine; three runs seeing the *same* unseen half is not. The
+    lever is what the gate counts, not where the roads go.
 
 ## What landed on 2026-09-09, and the one thing it says
 
@@ -622,13 +642,161 @@ players and taken none: an ability that spends a charge to soften one blow in
 five is not worth the charge. **The next combat change should be about what
 scales against a crowd, not about what the abilities say.**
 
-## The bar, unchanged
+## The afternoon, and three surfaces nobody was measuring
 
-`npm run verify` green: typecheck, tests, validator, crawler twice, and now
-`mock` and `measure` as well — CI ran those two as separate steps, so a green
-local verify was a false negative for them, and it cost a red bar to find out.
-The walkthrough
-replays to a full-score win, every other ending carries its own replay-proof,
-the token budget holds (avg act-response ≤ 450 chars, max ≤ 1100), menus stay
-at or under 12, and determinism is sacred. Never weaken it. A change that
-reads well and replays wrong is not done.
+The morning's work came out of reading blind players' traces. The afternoon's
+came out of noticing that three of the things a player touches most were not
+on the bar at all: the turn counter, the journal, and the free `status` screen.
+
+**A turn was being charged for opening a door.** `spentTurn` has always
+exempted a `BROWSING` set — the travel menu, picking a region, backing out —
+and the rule was written on the line above the code. `talkto` and `endtalk`
+were missing from it, and both do exactly one thing: set or clear
+`s.talking`. The topic you pick afterwards is the action. Leaving them out
+cost two things that looked unrelated until they were the same bug:
+
+- A folded npc's conversation was a turn dearer than an unfolded one's, for
+  nothing but how the author laid the menu out.
+- **A "+N for 2 turns" ability could never reach a check inside a topic.**
+  Press on turn N, open the conversation on N+1, pick the topic on N+2 — and
+  a two-turn buff granted at N is already gone. 65% of the realm's will checks
+  live inside a topic (134 of 205). That is why `envoy_press` was offered 77
+  times across two blind waves and pressed 0, and why the Envoy road written
+  an hour earlier recorded `WILL d20:6+3=9 vs DC 11` on the very check it had
+  just paid a charge to boost. The same die on the same road now reads
+  `WILL d20:6+7 (+2 base, +1 Silver Tongue, +4 resolved)=13 vs DC 11 — success`,
+  and clears it. That is the first time in this project's history that ability
+  has done anything.
+
+The realm's own walkthrough wins in **240 turns instead of 255** — fifteen
+turns that were being spent opening doors to conversations — with the
+act-response average unmoved at 439.48. A turn-economy bug is invisible to a
+character budget, which is why it survived eight waves.
+
+The road that exposed it is worth its own line. `crowned_hollow#envoy` is the
+first proven route walked by an Envoy that spends its own kit rather than
+carrying it: `parley` calms the gray husk at the Gray Cairn instead of
+fighting it, a grace gamble and two searches carry seven gold into Wolf Scrape,
+and `buy_off` pays a gaunt wolf to stand down — the first proven route ever to
+hold five gold next to a live hostile. With it, `test/abilities.test.ts`'s
+`UNPROVEN` table is **empty for the first time**: twelve abilities, twelve
+proven. The table's last line had claimed "no proven route ever holds 5 gold",
+which was true of the eleven routes it was measured against and false of the
+realm's coin — `reach_bargained` already peaks at 8. The debt was never the
+gold. It was that no Envoy road had ever carried it past something that would
+kill it.
+
+**Twelve ranks, and not one of them had a thread.** Six factions, two tiers
+each, every rank granted by exactly one npc topic in exactly one room — and
+nothing in the game told you which room. Three blind players collected two of
+twelve between them across 1,669 turns. `world/reach/ranks.json` gives each
+faction one ladder: the first stage names who can trust you and points at
+their door, and once trusted it names who can swear you (for the Watch, a
+different person in a different hall). The standing-gated three start on the
+standing **and** on having met the granter — a rank is collected from a
+person, so that is the right rule on its own, and it is also what kept the
+Scout road inside its allowance, which had 0.07 characters of headroom. Twelve
+of twelve have threads now. The file is a new part and the root's `include` is
+a glob, so a system can be given its own file with no edit to the root at all.
+
+**The free screen had grown to nine times the paid one.** `status` costs no
+turn, a blind player reads it constantly, and nothing was measuring it: along
+the walkthrough it averaged **3,924 characters and peaked at 6,705** against
+an act-response held to 450 and 1,100. The largest single piece was the way to
+somewhere far off — a journal carrying fifteen threads printed 234 characters
+a line, and the long half was a nine-leg walk to a hold two regions away,
+which is not the answer to "where do I go next" but a wall in front of it.
+`bearingsHere` has always drawn the line at the region border, and a region's
+name is what a player routes by at that distance, so a distant thread now
+reads `(in Fenmarch)` and a near one keeps its walk. That also skips a
+breadth-first search per distant thread on every call, fifteen times a look.
+
+The surface has a ratchet now, in `test/format.test.ts` — **3,650 average,
+5,650 worst**, currently 3,644 and 5,621. The numbers are deliberately large:
+most of what is in there was asked for by name in three separate waves, so the
+test holds *growth* rather than a small number, and may only turn down. It
+exists because `status` grew twice in one day without anything noticing — the
+`at` that 372 stages now carry (from 0 this morning) and six rank threads both
+print there.
+
+**A hold's grief now opens when you arrive, and closes on whatever you did.**
+The morning gave 131 stages the room they point at; the afternoon closed the
+other end. All fifteen holds open a thread on arriving now, rather than on
+stumbling into one particular room. And eight of fifteen had no quest whose
+`done` was the hold's own fate, so a player who bargained or burned could leave
+the announced-grief thread open in their journal for the rest of the run.
+Fourteen of fifteen close on the fate now — twelve read the three fate flags
+directly, and the Iron Downs' reads a `resolved` flag that every one of its
+five fate-setting actions raises in the same breath, verified by walking every
+`fx` in the realm that touches an Irondowns fate rather than by reading the
+one that looked authoritative. Pennywell is left alone on purpose: its open
+thread tracks whose face strikes the coin, a question neither the rest nor the
+burn road answers, so closing it on the hold's fate would print "done" over a
+choice the player has not made. One dead stage fell out of the pass —
+Wardmoor's default, unreachable since its two neighbours started partitioning
+every state the quest can be open in.
+
+**Three things the realm promised and never asked for.** `audit-items` learned
+that a hint naming a place is a promise too, which turned one broken promise
+into four; three were real. A notched belt knife pointed at a horse eight
+stands west that was already written and never connected. A prior's altar
+candle named an altar with no socket for it. Vell's cipher said it "might
+unlock more of theirs, if you find any" — and nothing anywhere placed any, so
+no player could ever have held one; it lies on the Keepers' Hall shelves now,
+and the leaf Vell hands over at +8 regard can finally be read with them rather
+than behind their back. Items read by something: 230 → 233 of 321. Broken
+promises: 4 → 1, and the one left is a keepsake naming a place in order to say
+the thing is finished, which is what a keepsake is allowed to do.
+
+**The backlog, verified rather than trusted.** 130 open findings, read against
+the code and content as they stand rather than against this file or the commit
+log — both of which carry retractions and at least one corrected tool. 82 no
+longer reproduce, most of them killed by a handful of systemic engine changes
+rather than one fix each. 15 match the design once read carefully. 9 restate a
+defect another item covers better. **23 are still real and stay open**, one of
+them concretely re-verified in the process: an npc-given direction to
+Thornwold's Rope Larder is unwalkable as stated. No file's contents changed —
+every move is a rename, so the original report survives as its own evidence.
+
+And four small ones, each found by something larger:
+- "The blight rats stands down." One hostile in the realm is named plurally.
+  A name test cannot fix that — three of the four hostiles whose names end in
+  "s" are people — so the name is the object of the sentence now: "No more
+  fight from the blight rats." Found by the Envoy road that finally spends
+  `parley` on something.
+- `scholars_tip` was a perk parked at `require: {level: 99}` with nothing
+  anywhere granting it: defined, out of the rotation, holdable by nobody. Its
+  description was wrong too. Deleted — `old_lore` and `keen_eye` already offer
+  its effect twice over. Found while checking whether `status` could stop
+  printing each perk's effect twice, which required reading all twenty-two.
+- A companion you tell to wait here leaves your company; one who has had
+  enough of you *walks out*, which is the word the menu preview has always
+  used. The event now matches the warning that preceded it.
+- `horrorHere`'s missing negated twin has been described in a comment for
+  weeks. The two content uses want opposite quantifiers, so no negation fixes
+  it — and of the 58 rooms holding something that strikes back, **one** is
+  mixed. One room does not earn an op in a closed DSL. Left alone, with the
+  number written down so the next author does not have to re-derive it.
+
+## The bar, and the two surfaces it grew to cover
+
+`npm run verify` green — 313 tests: typecheck, tests, validator, crawler twice,
+and `mock` and `measure` as well. CI ran those last two as separate steps, so a
+green local verify was a false negative for them, and it cost a red bar to find
+out. The walkthrough replays to a full-score win in 240 turns, every other
+ending carries its own replay-proof, the token budget holds (avg act-response
+≤ 450 chars, max ≤ 1100, currently 439.48 and 1,076), menus stay at or under
+12, and determinism is sacred.
+
+Two things it now holds that it did not this morning, both of them surfaces
+that were free and therefore unwatched:
+
+- **A fight.** `crowned_hollow#bloodied` strikes blows, takes them, has a
+  companion go down and hauls her back up. Before it, 3,022 proven screens had
+  offered 125 fights and struck 0.
+- **The status screen**, at 3,650 average and 5,650 worst along the
+  walkthrough. A ratchet on growth rather than a small number, because most of
+  what is on that screen was asked for by name in three playtest waves — and,
+  like every ratchet here, it may only turn down.
+
+Never weaken it. A change that reads well and replays wrong is not done.
