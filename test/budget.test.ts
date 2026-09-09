@@ -116,7 +116,19 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // companions' answers moved out of one `onEnterOnce` and into region-gated
   // remarks of their own, which the engine has always spoken one a turn. The
   // average barely moved, which is the point — the words are all still there.
-  "reach:reach_at_rest#devoted": { avg: 477, max: 1155 },
+  // Then 16 more came off the day the company entry stopped reciting itself.
+  // "speak with the company (Vell, Tamsin, Brother Osk, Lys)" stood on 227 of
+  // this road's 350 screens — 20.4 characters a screen of names that had not
+  // changed in a hundred turns. It names everyone for five places after the
+  // company changes and counts them after that; opening it costs no turn and
+  // names them all, and status carries the roster for free at any time. 477.75
+  // -> 461.23, and the worst screen (va_throne) 1,155 -> 1,131.
+  //
+  // What is left of the overage is the companions talking: 83 distinct spoken
+  // lines on this road, none of them said twice, 19 characters a screen. That
+  // is what a four-companion road is for, and it is the one thing here that
+  // should not be trimmed to meet a number.
+  "reach:reach_at_rest#devoted": { avg: 461, max: 1131 },
 };
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));

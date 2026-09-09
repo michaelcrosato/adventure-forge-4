@@ -1379,6 +1379,10 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
       case "party": {
         const [, npc, how] = fx;
         const name = world.npcs[npc]?.name ?? npc;
+        // when the company last changed, on the same clock `freshlyGot` uses:
+        // the company entry names everyone for a few places after that and
+        // counts them afterwards (see oddsHint's "company" case)
+        s.vars["_company_at"] = s.visited.length;
         if (how === "join") {
           if (!s.party.includes(npc)) {
             s.party.push(npc);
@@ -2700,7 +2704,18 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
       ? ` (${w.name} is watching: taking it is theft, and ${also} will remember it)`
       : ` (${w.name} is watching: taking it is theft)`;
   }
-  if (a.kind === "company") return ` (${companyHere(world, s).map((id) => world.npcs[id]?.name ?? id).join(", ")})`;
+  if (a.kind === "company") {
+    // Four names is 33 characters, and this entry stands on 227 of the 350
+    // screens of the road that carries four — 20.4 characters a screen on the
+    // most expensive proof in the realm, for a list that does not change
+    // between two of them. So: everyone by name while the company is new,
+    // which is when a player is still learning who is with them, and the
+    // count once it has settled. Opening the entry costs no turn and names
+    // them all, and status carries the roster for free at any time.
+    const here = companyHere(world, s).map((id) => world.npcs[id]?.name ?? id);
+    const fresh = s.visited.length - (s.vars["_company_at"] ?? 0) <= HINT_PLACES;
+    return fresh ? ` (${here.join(", ")})` : ` (${here.length})`;
+  }
   if (a.kind === "travelmore") return ` (${travelMore(world, s)} more)`;
   if (a.kind === "roommore") {
     // how much of the room is on the other pages
