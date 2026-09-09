@@ -369,7 +369,8 @@
         },
         {
           "if": [["!has", "pw_reverse_die"], ["has", "pw_obverse_die"]],
-          "text": "The obverse die is yours. The reverse waits with Sarel, at the Hammer Hearth — given, taken, or found."
+          "text": "The obverse die is yours. The reverse waits with Sarel, at the Hammer Hearth — given, taken, or found.",
+          "at": "pw_hearth"
         },
         {
           "if": [],
@@ -384,15 +385,18 @@
       "stages": [
         {
           "if": [["flag", "pw_name_assayer"], ["flag", "pw_name_tithe"], ["!flag", "pw_name_child"]],
-          "text": "Two names are known: Doran's and Meva's. The last is Robin's river penny, read, in the mint yard."
+          "text": "Two names are known: Doran's and Meva's. The last is Robin's river penny, read, in the mint yard.",
+          "at": "pw_mint_yard"
         },
         {
           "if": [["flag", "pw_name_assayer"], ["!flag", "pw_name_tithe"], ["flag", "pw_name_child"]],
-          "text": "Two names are known: Doran's and the river penny's. The last waits in Meva's ledger, at the tithe-house."
+          "text": "Two names are known: Doran's and the river penny's. The last waits in Meva's ledger, at the tithe-house.",
+          "at": "pw_tithe_house"
         },
         {
           "if": [["!flag", "pw_name_assayer"], ["flag", "pw_name_tithe"], ["flag", "pw_name_child"]],
-          "text": "Two names are known: Meva's and the river penny's. The last waits in Doran's record, at the assayer's cot."
+          "text": "Two names are known: Meva's and the river penny's. The last waits in Doran's record, at the assayer's cot.",
+          "at": "pw_assayer_cot"
         },
         {
           "if": [["flag", "pw_name_assayer"], ["!flag", "pw_name_tithe"], ["!flag", "pw_name_child"]],
@@ -456,7 +460,8 @@
       "stages": [
         {
           "if": [["flag", "pw_ford_line_known"]],
-          "text": "The ford's safe line is known. Carry Dray's chest across it, at dusk."
+          "text": "The ford's safe line is known. Carry Dray's chest across it, at dusk.",
+          "at": "pw_bank_0_3"
         },
         {
           "if": [],
@@ -471,15 +476,18 @@
       "stages": [
         {
           "if": [["flag", "pw_hollow_bargained"], ["!flag", "said_pw_warden_sv_pw_bargain_ask"]],
-          "text": "The bargain's come due. Averil, at the counting-house, has news you won't like."
+          "text": "The bargain's come due. Averil, at the counting-house, has news you won't like.",
+          "at": "pw_counting_house"
         },
         {
           "if": [["flag", "pw_hollow_rested"], ["!flag", "said_pw_descendant_sv_pw_rested_ask"]],
-          "text": "The rite is settled. Sarel, at the Hammer Hearth, wonders what becomes of the dies now."
+          "text": "The rite is settled. Sarel, at the Hammer Hearth, wonders what becomes of the dies now.",
+          "at": "pw_hearth"
         },
         {
           "if": [["flag", "pw_hollow_burned"], ["!flag", "said_pw_smelter_sv_pw_burn_ask"]],
-          "text": "The vault is ash and melt. Slade, at the furnace-yard, wants to know where the silver goes."
+          "text": "The vault is ash and melt. Slade, at the furnace-yard, wants to know where the silver goes.",
+          "at": "pw_furnace_yard"
         },
         { "if": [], "text": "Pennywell settles back into itself, whatever the Old Vault's fate cost it." }
       ]
