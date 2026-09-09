@@ -455,15 +455,18 @@
       "stages": [
         {
           "if": [["flag", "wm_oath_heard"]],
-          "text": "Rest it, bargain it, or burn it — the choice at the oath-stone is yours to make now."
+          "text": "Rest it, bargain it, or burn it — the choice at the oath-stone is yours to make now.",
+          "at": "wm_oathstone_circle"
         },
         {
           "if": [["flag", "wm_oath_found"]],
-          "text": "You've found the ring of standing men on the moor. Something there still waits to be heard out."
+          "text": "You've found the ring of standing men on the moor. Something there still waits to be heard out.",
+          "at": "wm_oathstone_circle"
         },
         {
           "if": [["flag", "wm_gate_notice_2"]],
-          "text": "The oath-stone: north from Highward to the moor's top (four stands), one east to the Last Cairn, then north."
+          "text": "The oath-stone waits on the moor, north of Highward.",
+          "at": "wm_oathstone_circle"
         },
         {
           "if": [],
@@ -478,7 +481,8 @@
       "stages": [
         {
           "if": [["has", "wm_founding_record"]],
-          "text": "The record is yours. Read it at the oath-stone: four stands north of Highward, one east (the Last Cairn), then north."
+          "text": "The record is yours. Read it at the oath-stone.",
+          "at": "wm_oathstone_circle"
         },
         {
           "if": [["flag", "wm_founding_known"]],
@@ -497,11 +501,13 @@
       "stages": [
         {
           "if": [["var", "hollows_burned", ">=", 1]],
-          "text": "Word of a burned hollow travels fast. The envoy in the hall will have the writ ready."
+          "text": "Word of a burned hollow travels fast. The envoy in the hall will have the writ ready.",
+          "at": "wm_hall"
         },
         {
           "if": [["var", "rep_watch", ">=", 2]],
-          "text": "Twice over you've served this Watch. Claim the writ from the envoy in the hall."
+          "text": "Twice over you've served this Watch. Claim the writ from the envoy in the hall.",
+          "at": "wm_hall"
         },
         {
           "if": [["var", "rep_watch", ">=", 1]],
