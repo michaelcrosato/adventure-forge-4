@@ -1,6 +1,6 @@
 # The Gray Reach — where the work is, and why
 
-Date: 2026-09-08. Owner: project lead. Every number here was measured, and
+Date: 2026-09-09. Owner: project lead. Every number here was measured, and
 the command that measures it is given so the next reader can re-check rather
 than trust.
 
@@ -10,10 +10,18 @@ and choice-consequence of Baldur's Gate 3.
 ## Where the realm actually stands
 
 The sprawl is done. 18 regions, 905 rooms, 265 npcs, 321 items, 129 quests,
-68 stamped places, 5 companions, 6 endings and 9 replay-proofs, 325 tests
-green. Skyrim has about 340 named places. **Adding a nineteenth region is not
-the work** — three blind players just walked eight of the eighteen that
-exist. These are:
+68 stamped places, 5 companions, **7 endings and 10 replay-proofs**, 12 class
+abilities, 301 tests green. Skyrim has about 340 named places. **Adding a
+nineteenth region is not the work** — three blind players just walked eight of
+the eighteen that exist. These are:
+
+Three waves in a row have now won three of three, fun 5/5 every time, at 520
+to 640 turns; the last of them scored 554, 570 and 578 against a one-route
+baseline of 366, which is the first hard evidence that uncapping the score
+changed how much of the realm a player walks. What those waves ask for has
+also changed shape: wave four's list was broken mechanics, and wave seven's
+is legibility — every finding was about the game failing to say something it
+already knew.
 
 ## 1. The realm's breadth does not pay
 
@@ -432,32 +440,95 @@ instead of the game.
    witness, trade, an act left undone, a sequence, a refusal, a sacrifice, a
    name, and now substitution (Pennywell, chained to the Shieldings) and a
    stand-down (the Shieldings, a real check where an auto-trigger was).
-6. **The fates.** §2. Two thirds of every hold's climax is strictly
-   dominated and three players proved it 24 times out of 24. Score must stop
-   ranking the fates, and something the realm wants must read each one.
-   Re-gating `reach_burned` on a burned realm — and capturing the proof that
-   road has never had — is in flight. Everything else in this list is
-   smaller than this.
+6. ~~**The fates**~~ — done, all three roads. Score stopped ranking them
+   (0 of 15 holds, where it was 15 of 15); `reach_burned` wants a burned realm
+   rather than a jar of oil and has the proof to show it; and `reach_bargained`
+   is a seventh ending, gated on three holds bargained and nothing else,
+   proven at 255 turns and **the only non-walkthrough proof in the realm that
+   passes both real ceilings without an allowance**. Finishing it found the
+   defect underneath: five holds settle their grief in an npc's topic, and
+   both `audit-fates.ts` and its test scanned only room actions, so both
+   showed a clean bar while those five paid +20 for a bargain against +25 for
+   a rest. A blind spot in a measuring tool is worse than no tool.
 7. ~~**The bar's gaps**~~ — the validator now rejects a gate whose key the
    world never cuts (it found one: a Kingswood quest stage that could never
    clear, one letter wrong) and an ability spending a pool nobody declared;
    the crawler holds a room's own option load to the cap; and the budget
    walks **every** proven road, not just the walkthrough, which found five
    over the ceiling and now ratchets each one down.
-8. **The four rooms still over the ceiling** — mc_north_road (1,448: a
-   hold's arrival text plus all four companions answering in the same
-   breath), th_wood_3_1 (1,243), mg_hollow_throne (1,170) and va_throne
-   (1,125). The last two are the story's climaxes and want careful cutting,
-   not gating.
-9. ~~**Prove the other three classes**~~ — proven, and the wave picked Envoy
-   twice of three unprompted, so the class skew has broken. The region skew
-   has not: see §1.
+8. **The rooms still over the ceiling** — mc_north_road is done and the way
+   it was done is the pattern: 1,448 to 812, not by cutting a word but by
+   moving the four companions' answers out of one `onEnterOnce` and into
+   region-gated remarks, which the engine has always spoken one a turn. The
+   words are all still there. 78 more of those chains wait in 20 files, and
+   the widest screen in the realm is now hl_north_lane at 1,377, which is one
+   of them. mg_hollow_throne (1,162) and va_throne (1,125) are the story's
+   climaxes and want careful cutting, not gating — the throne already lost 38
+   characters that were its quest line re-listing four endings the menu shows
+   with "(ends the tale)" on each.
+9. **Three classes of four, not four.** This line read "proven" and was wrong,
+   which `scripts/audit-abilities.ts` found by asking a different question:
+   nine proofs, six Scholar, two Warden, one Envoy, and **no Scout has ever
+   been played to an ending here**. So three of the twelve abilities cannot
+   appear in any measurement, and the whole grace road — locks, ledges, carved
+   stone — is unverified. The class skew in *play* did break: the wave picked
+   Envoy twice of three unprompted. The skew in the *bar* did not.
 10. **A sixteenth hold, last** — and one whose problem is not a grief-hollow
     at all.
 
+## What landed on 2026-09-09, and the one thing it says
+
+Fourteen changes, and reading them together says something the individual
+commits do not: **every one of them was the game failing to tell a player
+something it already knew.**
+
+- A conversation stopped getting harder for being had. A lock gets harder as
+  you work at it; a topic's DC now reads what was written, and the compound
+  two waves reported — a dispute check costing regard with both companions on
+  a miss, with the DC creeping under you — is gone.
+- Every class got something to do outside a fight. Something stands there to
+  fight on **4.1% of screens**, and nine of ten abilities required one, so a
+  Warden's and a Scholar's whole kit sat behind a door that opens one screen
+  in twenty-five. `scholar_name` wanted four conditions at once and stood on 1
+  screen in 1,760; it now stands on 21, which is 29% of its road's fights and
+  in line with every other class.
+- A menu number means the same thing on every page, and the front end stopped
+  refusing one it had shown a screen earlier.
+- An option that sends a companion away says so before the turn is spent —
+  and at the Oath-Ground, that it happens even if you *pass* the check.
+- A check at the head of a live `if` branch is previewed, so "run the sacks
+  past the tithe (will)" names its DC to the player who has to roll and stays
+  quiet for the one who cannot fail.
+- A standing cost already spent is not promised again.
+- A room id stopped reaching the player: "You travel to ir_miners_hall."
+- **286 hand-written bearing strings became one that cannot be wrong**, and
+  2,621 lines went with them. Content still owns where a player can take their
+  bearings, and the words the answer opens with; the engine owns the
+  directions, because a grid has walls and a hop count is not a route.
+- A quest stage can name the room it points at, and the free status check
+  walks there. Every player of wave seven asked for this and two lost 30-60
+  turns of a 620-turn run for want of it.
+- The point of no return says how much you are leaving: eleven threads, on the
+  realm's own walkthrough. The warning was already there; what it lacked was
+  a number.
+- Standing something down stopped implying the way is clear when it is not.
+- Three companion lines stopped repeating on every entry, and the validator
+  will not let a fourth.
+- The blessing that vanished says why it is gone.
+- The company says once that nobody caps it.
+
+The measurement that made most of them possible is the pattern worth keeping:
+`scripts/audit-abilities.ts` reads a share against the fight count rather than
+against 100%, and read that way seven of nine abilities were fine and three
+were broken for three different reasons. The vague number ("eight of nine
+never offered") was true and useless.
+
 ## The bar, unchanged
 
-`npm run verify` green: typecheck, tests, validator, crawler. The walkthrough
+`npm run verify` green: typecheck, tests, validator, crawler twice, and now
+`mock` and `measure` as well — CI ran those two as separate steps, so a green
+local verify was a false negative for them, and it cost a red bar to find out.
+The walkthrough
 replays to a full-score win, every other ending carries its own replay-proof,
 the token budget holds (avg act-response ≤ 450 chars, max ≤ 1100), menus stay
 at or under 12, and determinism is sacred. Never weaken it. A change that
