@@ -431,6 +431,39 @@ export function validateWorld(world: World): string[] {
     }
   }
 
+  /**
+   * A named voice saying one specific thing on EVERY entry.
+   *
+   * `onEnter` runs each time; `onEnterOnce` runs once. A companion's reaction
+   * belongs in the second, or behind a flag it sets — three lines in Coldpass
+   * were in the first with neither, so Vell praised the scriptorium's rite-texts
+   * afresh every time the player walked back through. Weather in an `onEnter`
+   * is fine and stays fine; this is only the case where the line is gated on a
+   * *person* being there and nothing stops it repeating.
+   */
+  const repeatsForever = (fxs: Fx[] | undefined, person: boolean, held: boolean, hits: string[]): void => {
+    for (const fx of fxs ?? []) {
+      if (fx[0] === "say") {
+        if (person && !held) hits.push(String(fx[1]).slice(0, 48));
+      } else if (fx[0] === "if") {
+        const conds = fx[1] ?? [];
+        const p = person || conds.some((c) => c[0] === "inParty" || c[0] === "npcHere");
+        const h = held || conds.some((c) => c[0] === "flag" || c[0] === "!flag" || c[0] === "since");
+        repeatsForever(fx[2], p, h, hits);
+        repeatsForever(fx[3], person, h, hits); // the else branch is not the person's line
+      } else if (fx[0] === "check" || fx[0] === "chance") {
+        repeatsForever(fx[3] as Fx[], person, held, hits);
+        repeatsForever(fx[4] as Fx[], person, held, hits);
+      }
+    }
+  };
+  for (const [rid, room] of Object.entries(world.rooms)) {
+    const hits: string[] = [];
+    repeatsForever(room.onEnter, false, false, hits);
+    for (const h of hits)
+      err(`room ${rid}: onEnter says "${h}…" whenever someone is in the party, with nothing to stop it repeating — put it in onEnterOnce, or guard it with a flag it sets`);
+  }
+
   if (!roomOk(world.start)) err(`start: unknown room ${world.start}`);
   for (const [rid, room] of Object.entries(world.rooms)) {
     for (const [dir, ex] of Object.entries(room.exits ?? {})) {

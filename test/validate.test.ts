@@ -173,3 +173,45 @@ test("an ability may not spend or gate on a pool world.resources does not declar
   declared.abilities = { shove: { label: "shove", if: [["var", "res_yes", ">=", 1]], fx: [["addvar", "res_yes", -1], ["say", "Oof."]] } };
   assert.deepEqual(validateWorld(declared), []);
 });
+
+/**
+ * `onEnter` runs on every entry; `onEnterOnce` runs once. A companion's
+ * reaction belongs in the second, or behind a flag it sets. Three lines in
+ * Coldpass were in the first with neither, so Vell praised the scriptorium's
+ * rite-texts afresh every time the player walked back through — found by an
+ * agent sent to fix a different wall of companion text, and worth a rule
+ * because nothing else would ever have said it out loud.
+ */
+test("a named voice cannot say the same thing on every entry", () => {
+  const world = {
+    id: "m",
+    title: "M",
+    intro: "x",
+    start: "a",
+    hp: 10,
+    maxScore: 5,
+    rooms: { a: { name: "A", desc: "A." } },
+    items: {},
+    npcs: { vell: { name: "Vell", room: "a", companion: {} } },
+    walkthrough: [],
+  } as unknown as World;
+  world.rooms["a"]!.onEnter = [["if", [["inParty", "vell"]], [["say", 'Vell: "Rite-texts, under a monastery roof."']], []]];
+  assert.ok(
+    validateWorld(world).some((e) => e.includes("nothing to stop it repeating")),
+    validateWorld(world).join("\n"),
+  );
+
+  // the two ways to say it properly
+  world.rooms["a"]!.onEnter = [
+    ["if", [["inParty", "vell"], ["!flag", "said_it"]], [["set", "said_it"], ["say", 'Vell: "Rite-texts."']], []],
+  ];
+  assert.deepEqual(validateWorld(world).filter((e) => /repeating/.test(e)), []);
+  world.rooms["a"]!.onEnter = undefined;
+  world.rooms["a"]!.onEnterOnce = [["if", [["inParty", "vell"]], [["say", 'Vell: "Rite-texts."']], []]];
+  assert.deepEqual(validateWorld(world).filter((e) => /repeating/.test(e)), []);
+
+  // and weather is not a person: an unguarded onEnter line nobody speaks is fine
+  world.rooms["a"]!.onEnterOnce = undefined;
+  world.rooms["a"]!.onEnter = [["say", "The wind picks up off the spine."]];
+  assert.deepEqual(validateWorld(world).filter((e) => /repeating/.test(e)), []);
+});

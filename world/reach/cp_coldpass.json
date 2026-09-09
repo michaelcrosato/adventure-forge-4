@@ -237,8 +237,9 @@
       "onEnter": [
         [
           "if",
-          [["inParty", "vell"]],
+          [["inParty", "vell"], ["!flag", "cp_vell_scriptorium"]],
           [
+            ["set", "cp_vell_scriptorium"],
             ["say", "Vell: \"Rite-texts, under a monastery roof, kept from a Church that half-forgot them — now that's worth a closer look.\""]
           ],
           []
@@ -336,8 +337,11 @@
       "onEnter": [
         [
           "if",
-          [["inParty", "lys"]],
-          [["say", "Lys: \"Goats and a windbreak — she's got a hunter's sense for shelter. I like her already.\""]],
+          [["inParty", "lys"], ["!flag", "cp_lys_ness"]],
+          [
+            ["set", "cp_lys_ness"],
+            ["say", "Lys: \"Goats and a windbreak — she's got a hunter's sense for shelter. I like her already.\""]
+          ],
           []
         ]
       ],
@@ -1520,8 +1524,9 @@
           "onEnter": [
             [
               "if",
-              [["inParty", "tamsin"]],
+              [["inParty", "tamsin"], ["!flag", "cp_tamsin_spine"]],
               [
+                ["set", "cp_tamsin_spine"],
                 ["say", "Tamsin: \"Snow did this, not neglect. Different kind of grief. Still ought to dig properly, if we've time.\""]
               ],
               []

@@ -1534,12 +1534,31 @@ function applyRest(world: World, s: State, fxs: Fx[], events: string[]): void {
   for (const [v, full] of Object.entries(world.resources ?? {})) s.vars[v] = full;
 }
 
+/**
+ * The exits of this room that are still shut, named the way the "leave it be"
+ * line names them — because standing something down is not a key either.
+ *
+ * "" when nothing here is locked. Wave seven, seed 8801: "Pacifying a hostile
+ * creature with 'name it' sets it to 'stood down' but the blocked passage still
+ * requires a second explicit interaction to actually open — the stand-down
+ * message implies the path is clear when it isn't." The wide-berth line learned
+ * this two waves earlier; `calm` never did, and now that a Scholar is actually
+ * offered `name it` on a third of that road's fights, players meet it.
+ */
+function lockedWaysHere(world: World, s: State): string {
+  const locked = Object.entries(world.rooms[s.room]?.exits ?? {}).filter(([, e]) => e.if && !condsOk(world, s, e.if));
+  if (!locked.length) return "";
+  return locked.map(([dir, e]) => `the way ${dir} stays locked${e.hint ? ` (${e.hint})` : ""}`).join(", and ");
+}
+
 /** A hostile stands down for good — the `calm` effect. No longer blocks travel, reads "stood down", listed last as an attack target. */
 function calmNpc(world: World, s: State, npcId: string, events: string[]): void {
   if (s.flags[`calm_${npcId}`]) return;
   setFlag(s, `calm_${npcId}`);
   const who = world.npcs[npcId];
-  if (who && s.npcRoom[npcId] === s.room && !npcDead(world, s, npcId)) events.push(`${TheName(who.name)} stands down.`);
+  if (!who || s.npcRoom[npcId] !== s.room || npcDead(world, s, npcId)) return;
+  const ways = lockedWaysHere(world, s);
+  events.push(ways ? `${TheName(who.name)} stands down; ${ways}.` : `${TheName(who.name)} stands down.`);
 }
 
 /** Put a timed condition on an npc — the `npccond` effect. Re-applying refreshes to the longer remaining duration. */
@@ -2913,11 +2932,9 @@ export function step(world: World, prev: State, action: Action): StepOut {
       const plural = /^[A-Z]/.test(name) || (/(men|folk|s)$/.test(name) && !/ss$/.test(name));
       const holds = plural ? "They hold their ground" : "It holds its ground";
       // a wide berth is not a key: an exit still locked here is named, so the line never promises the way past
-      const locked = Object.entries(world.rooms[s.room]?.exits ?? {}).filter(([, e]) => e.if && !condsOk(world, s, e.if));
-      if (locked.length) {
-        const ways = locked.map(([dir, e]) => `the way ${dir} stays locked${e.hint ? ` (${e.hint})` : ""}`).join(", and ");
-        events.push(`You give ${name} a wide berth. ${holds}; ${ways}.`);
-      } else events.push(`You give ${name} a wide berth. ${holds} and ${plural ? "let" : "lets"} you pass.`);
+      const ways = lockedWaysHere(world, s);
+      if (ways) events.push(`You give ${name} a wide berth. ${holds}; ${ways}.`);
+      else events.push(`You give ${name} a wide berth. ${holds} and ${plural ? "let" : "lets"} you pass.`);
       break;
     }
     case "perkpick": {
