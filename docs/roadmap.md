@@ -11,7 +11,7 @@ and choice-consequence of Baldur's Gate 3.
 
 The sprawl is done. 18 regions, 905 rooms, 265 npcs, 321 items, 135 quests,
 68 stamped places, 5 companions, **7 endings and 13 replay-proofs**, 12 class
-abilities, 314 tests green. Skyrim has about 340 named places. **Adding a
+abilities, 315 tests green. Skyrim has about 340 named places. **Adding a
 nineteenth region is not the work** — three blind players just walked nine of
 the eighteen that exist. These are:
 
@@ -865,9 +865,82 @@ is what makes the free `status` screen affordable, so teaching it about gates
 is a real change with a budget consequence rather than a line edit. Recorded
 rather than rushed.
 
-## The bar, and the two surfaces it grew to cover
+## "All flags true" is not an upper bound, and four rooms were over the cap
 
-`npm run verify` green — 314 tests: typecheck, tests, validator, crawler twice,
+A suggested task claimed `hb_mere_shore`'s menu "grows to 13 options in some
+reachable state (over MENU_CAP 12) — which the standard verify bar's shallow
+crawl never samples deeply enough to catch". Both halves of the claim were
+wrong. The gap it pointed at was real, and bigger than 13.
+
+The first two measurements said there was nothing to find:
+
+- `crawl --fork --deep`: **0 over cap in 48,868 steps across 564 of 905
+  rooms.**
+- Every room, every class, with **every flag in the world forced true** — the
+  most permissive state anything could be read in: worst load **11**.
+
+Both were honest and both were useless, because of one thing worth writing
+down: **a state with every flag set is not an upper bound on a menu.** A topic
+gated on `["!flag", x]` *disappears* when x is true. Forcing all flags on hides
+as many options as it reveals, so that sweep measures one arbitrary corner of
+the space, not its ceiling. It felt exhaustive, which is what made it
+dangerous.
+
+Hill-climbing the flag space instead — 4,000 iterations per class per room,
+keeping any flip that does not lower the load — found four rooms over:
+
+    th_quartermaster  16      wm_armoury   16
+    th_muster         14      wm_barracks  14
+
+One cause behind all four: an npc listing ten or twelve topics **flat** rather
+than folded behind `talk to <name>`. Quartermaster Bray carries 12, Sergeant
+Coe and Wardmoor's quartermaster and Corporal Fenn 10 each, Bram Otts 9. **132
+npcs in the realm already fold**; these five had simply never been given
+`dialogue: true`. Folding them:
+
+    th_quartermaster 16 -> 9     wm_armoury  16 -> 11
+    th_muster        14 -> 7     wm_barracks 14 -> 7
+    sk_drowned_bell  13 -> 5
+
+and the walkthrough got *cheaper* doing it — 439.4796 to 438.8699 — because
+the proven road walks rooms that were printing those lines flat. Folding cost
+nothing anywhere else either: none of the five is named by the walkthrough or
+any of the 13 proofs, and since opening a conversation became browsing this
+morning, a fold no longer costs the player a turn. That is the second time in
+one day the browsing fix paid for something it was not aimed at.
+
+**The test is the half that matters**, because the thing that failed here was
+the bar, not the content. A hill-climb is far too slow to run on every push,
+so `test/content.test.ts` bounds each room statically: exits, the travel entry,
+every custom, everything that can end up on its floor, and per npc either one
+folded entry or every topic it owns. It **over-counts on purpose** — mutually
+exclusive options are counted together — which is what makes a bound within
+the cap a *proof* that no state can exceed it rather than a sample that missed.
+899 of 905 rooms are provably under the cap now, in every state that will ever
+exist.
+
+Getting the floor term right took two attempts, and the typechecker caught the
+first. `ItemDef` has no `room` field — an item's start is `loc` — so the draft
+silently counted zero items in every room and read clean. The corrected term
+also walks `["move", item, dest]`, resolving `"here"` against the room whose
+action or npc fires it, and that found three more rooms the first version had
+passed.
+
+Six rooms keep an argued allowance, each a climax whose customs are the endings
+of one choice, each carrying the worst load the hill-climb could actually
+build: `va_throne` 16/6, `mg_hollow_throne` 16/3, `fd_drowned_nave` 15/10,
+`ir_company_store` 14/11, `va_inn` 13/11, `hb_kingsrest_throne` 13/9,
+`me_hollow_chamber` 13/5 — and, in the Vale of Ash, `square` 27/11 and
+`throne` 32/10. Like `crawl.ts`'s `CROWDED` and `budget.test.ts`'s
+`PROOF_BUDGET`, the list may only ever shrink.
+
+`va_inn` is the one flat-topic room left standing on purpose: the walkthrough
+asks `"ask innkeep: rumors"` by name, so folding it would rewrite the proven
+road to tidy a room that measures 11 against a cap of 12.
+
+## The bar, and the three surfaces it grew to cover
+
+`npm run verify` green — 315 tests: typecheck, tests, validator, crawler twice,
 and `mock` and `measure` as well. CI ran those last two as separate steps, so a
 green local verify was a false negative for them, and it cost a red bar to find
 out. The walkthrough replays to a full-score win in 240 turns, every other
@@ -875,8 +948,8 @@ ending carries its own replay-proof, the token budget holds (avg act-response
 ≤ 450 chars, max ≤ 1100, currently 439.48 and 1,076), menus stay at or under
 12, and determinism is sacred.
 
-Two things it now holds that it did not this morning, both of them surfaces
-that were free and therefore unwatched:
+Three things it now holds that it did not this morning, each of them a surface
+that was free, or unsampled, and therefore unwatched:
 
 - **A fight.** `crowned_hollow#bloodied` strikes blows, takes them, has a
   companion go down and hauls her back up. Before it, 3,022 proven screens had
@@ -885,5 +958,9 @@ that were free and therefore unwatched:
   walkthrough. A ratchet on growth rather than a small number, because most of
   what is on that screen was asked for by name in three playtest waves — and,
   like every ratchet here, it may only turn down.
+- **Every room's menu load**, bounded statically rather than sampled, so a
+  crowded room cannot hide in a state no crawl walk reaches. 899 of 905 rooms
+  are provably inside the cap; the six that are not are argued for by name with
+  the worst load a flag search could build.
 
 Never weaken it. A change that reads well and replays wrong is not done.

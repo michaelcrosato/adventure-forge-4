@@ -303,7 +303,14 @@ nobody's business but the player's.
 ```
 
 - **Inline npcs** (no `dialogue`) list every visible topic in the room menu as
-  `ask <name>: <label>`. Use for npcs with 1–3 topics.
+  `ask <name>: <label>`. Use for npcs with 1–3 topics. **This is enforced now**,
+  by the room-load bound in `test/content.test.ts`: an inline npc's topics all
+  count against `MENU_CAP` at once, so a fourth one usually pushes its room
+  over and fails the bar. Five npcs had drifted past it unnoticed (Bray at 12
+  topics, Coe and Wardmoor's quartermaster and Corporal Fenn at 10, Bram Otts
+  at 9) and took four rooms to 14–16 in flag states no crawl walk ever reached.
+  Folding is free to the player — opening a conversation spends no turn — so
+  there is no reason to leave a talkative npc inline.
 - **Conversation mode** (`"dialogue": true`) folds them behind one `talk to
   <name>` entry; inside, the menu is the topics plus `end conversation`, and
   the room's menu waits. Use for anyone with 4+ topics. A topic with
