@@ -107,7 +107,7 @@ test("renderStatus: omits the visited line when nothing has been visited yet", (
   assert.equal(renderStatus(world, state), "Find the crown.");
 });
 
-test("renderStatus: lists held perks with their effects, so a player can recall what each does", () => {
+test("renderStatus: a world with no character system lists perks with their effects, since nothing else sums them", () => {
   const world = {
     objectives: "Find the crown.",
     perks: {
@@ -148,7 +148,12 @@ test("renderStatus: totals check and combat modifiers for worlds with a characte
   } as unknown as State;
   assert.equal(
     renderStatus(world, state),
-    "Find the crown.\ncarrying: sword\nPerks: Keen Edge (+1 to hit), Old Lore (+1 wits)\n" +
+    // names alone here: this world has a character system, so the two lines
+    // below already carry every perk's effect — Old Lore inside the wits
+    // total by name, Keen Edge inside hit. The classless fixture above still
+    // gets the descriptions, because there they are the only place the effect
+    // is written down.
+    "Find the crown.\ncarrying: sword\nPerks: Keen Edge, Old Lore\n" +
       "Checks: might+2 grace+0 wits+2 (+1 base, +1 Old Lore) will+0\nCombat: hit+4 dmg+3 (sword) armor+0",
   );
 });
@@ -284,8 +289,8 @@ test("prose between two notices keeps them apart — a number belongs to what ea
  * call.
  */
 test("the free status screen stays inside its own ratchet along the walkthrough", () => {
-  const AVG_MAX = 3750;
-  const WORST_MAX = 5750;
+  const AVG_MAX = 3650;
+  const WORST_MAX = 5650;
   const world = loadWorld("world/reach.json");
   let { state } = newState(world, 1);
   let sum = 0, n = 0, worst = 0, worstRoom = "";

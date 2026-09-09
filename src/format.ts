@@ -420,9 +420,23 @@ export function renderStatus(world: World, s: State): string {
     lines.push(`Party: ${party.join(", ")}${hurt ? " — a rest at any hearth heals them" : ""}`);
   }
   if (s.perks?.length) {
+    // Names alone where the totals below carry the effects, name and effect
+    // where they do not.
+    //
+    // Every perk in the Reach buys attribute checks, to-hit, damage, armor or
+    // max hp, and all five are totalled further down — `Checks:` even
+    // attributes each one by name ("grace+3 (+2 Fleetfoot, +1 Sure Foot)").
+    // Nine perks with their descriptions ran 235 characters of every `status`
+    // call restating that. But those totals only print for a world with a
+    // character system (`world.classes && s.attrs`), and in a world without
+    // one this line is the only place a perk's effect appears at all — so the
+    // condition here is the same condition, and the two can never drift into
+    // saying it twice or not at all.
+    const summed = !!(world.classes && s.attrs);
     const perks = s.perks.map((id) => {
       const p = world.perks?.[id];
-      return p ? `${p.name} (${p.desc})` : id;
+      if (!p) return id;
+      return summed ? p.name : `${p.name} (${p.desc})`;
     });
     lines.push(`Perks: ${perks.join(", ")}`);
   }
