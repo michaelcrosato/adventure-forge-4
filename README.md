@@ -28,7 +28,7 @@ queue/*-issue-*.json ───────────────────�
 
 ```bash
 npm install
-npm run verify        # the whole bar: typecheck + tests + validator + crawler
+npm run verify        # the whole bar: typecheck + tests + validator + crawler + mock + measure
 npm run play          # play The Vale of Ash in your terminal
 npm run turn -- new 7 # one command per turn (for players that live in a shell)
 npm run mcp           # MCP server (stdio); .mcp.json wires it into Claude Code
@@ -74,10 +74,13 @@ whole 34-turn session is ~18k chars (~4.7k tokens) of game text.
   content everywhere: a scholar reads the verses outright, a scout finds the
   crack in the barrow doors, an envoy talks the coffer open. Every obstacle is
   meant to have a force, a craft, and a words route, so no class is ever
-  locked out — and by this repo's own standard that is a promise, not a proof:
-  all six of the Reach's replay-proven routes play a Scholar, so nothing yet
-  checks that a Warden, a Scout or an Envoy can finish. Proofs for the others
-  are owed.
+  locked out — and by this repo's own standard that has to be proven, not
+  promised. It is: of the Reach's thirteen replay-proofs, one plays a Warden
+  road that kills three wolves and a barrow-wight and hauls a downed companion
+  back up, one plays a Scout through locks and ledges, and one plays an Envoy
+  who talks a husk down and buys a wolf off with seven gold. All twelve class
+  abilities are offered on some proven road; `test/abilities.test.ts` keeps a
+  table of the ones that are not, and it is empty.
 - **Dice.** One die, the d20. Checks roll d20 + attribute + perk bonuses
   against a difficulty, and the menu previews the odds before you spend the
   turn. Attacks roll d20 + weapon + might against defense. Armor reduces
@@ -119,23 +122,31 @@ whole 34-turn session is ~18k chars (~4.7k tokens) of game text.
 
 ## Proof over promises
 
-`npm run verify` (~10s) enforces:
+`npm run verify` (~85s) enforces:
 
 - **Typecheck** — strict, no unchecked indexing.
-- **Tests** (227) — determinism (same seed = byte-identical run, and an engine
+- **Tests** (313) — determinism (same seed = byte-identical run, and an engine
   core that provably never reads the clock), the character layer,
   conversations and companions, travel and the journal, templates and
   stamps, worlds in parts, worldgen scale, triage promotion rules, the fleet
   driver and its report honesty check, content rules the shipped worlds must
-  keep, and the token budget along every world's walkthrough (the realm
-  draft included).
+  keep, the token budget along every proven road (not just the walkthrough),
+  and the free `status` screen, which is the largest surface in the game and
+  went unmeasured until it had grown to nine times the response bar. Every
+  budget is a ratchet: it holds the number that road actually reads today,
+  and it may only turn down.
 - **Validator** — every reference resolves, the DSL is closed, every room is
   reachable, no class ever faces a perk menu bigger than the cap, the primary
   walkthrough replays to a win with score === maxScore, and **every other
   ending carries its own replay-proof**. "Choice matters" is checked, not
   claimed.
 - **Crawler** — seeded random walks over the real engine checking crash,
-  empty-menu, purity, bounds, and template-hole invariants every step.
+  empty-menu, purity, bounds, and template-hole invariants every step, once
+  in-process and once forked.
+- **Mock player and measurement** — a zero-token structural player and the
+  full walkthrough, both over the real MCP server. CI ran these as separate
+  steps for a while, so a green local `verify` was a false negative for them
+  until it learned to chain all three.
 
 Every session writes a trace. A playtest report's receipt must equal an
 engine replay of that trace, or the report files as unverified. No playtest
@@ -178,6 +189,11 @@ node --import tsx scripts/audit-choices.ts world/reach.json  # what the world re
 node --import tsx scripts/audit-shape.ts world/reach.json    # corridors per class, each hold's fingerprint, and how its grief is rested
 node --import tsx scripts/audit-echo.ts world/reach.json     # sentences the realm has written twice, and names it uses twice
 node --import tsx scripts/audit-bearings.ts world/reach.json # walks every "get your bearings" and says which ones lie
+node --import tsx scripts/audit-abilities.ts world/reach.json # where each class ability can appear, against the fight count
+node --import tsx scripts/audit-fates.ts world/reach.json    # what each hold's three fates pay, and how its grief opens at all
+node --import tsx scripts/audit-items.ts world/reach.json    # items nothing reads, and hints that promise a place
+node --import tsx scripts/audit-fights.ts world/reach.json   # what a fight costs at party 0, 2 and 4, simulated through step()
+node --import tsx scripts/audit-play.ts world/reach.json trace.json  # replay a blind player's own run
 node --import tsx scripts/walk.ts world/reach.json steps.json  # label list -> walkthrough, perk picks inserted
 node scripts/fmt-json.mjs world/reach/*.json                  # compact, stable content formatting
 ```
@@ -200,7 +216,7 @@ world/reach/      its parts — the Vale rebuilt, companions, templates, and sev
 world/vale.json   The Vale of Ash, the original compact world
 world/lighthouse.json  the small regression world
 scripts/          author tools: lint, choice audit, walk, stubs, land, fmt
-test/             227 tests, including the token budget and determinism rules
+test/             313 tests, including the token budget and determinism rules
 loop/             playtest wave, dev cycle, mock player, report checker
 queue/ done/      the one inbox (issues) and its archive
 docs/             design specs, the authoring guide, review findings
