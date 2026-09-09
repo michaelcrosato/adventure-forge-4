@@ -913,5 +913,24 @@ able to tell which is which, so the tool separates the honest keepsakes (a
 `hint` that reads as one) from the two kinds that are wrong: an item whose
 hint **promises** a use nothing ever asks for, and one with no hint at all.
 The realm currently runs 230 of 321 read, wielded, worn or carried for light,
-90 honest keepsakes, one broken promise and nothing mute. **The cheap fix for
-a silent item is a hint, not a use.**
+87 honest keepsakes, four broken promises and nothing mute. **The cheap fix
+for a silent item is a hint, not a use.** A hint that names a real place is
+counted as a promise too, because naming a room is telling the player to take
+the thing there — one of the four is a false positive that names a place in
+order to say the thing is finished, which is why this prints candidates to
+read rather than a verdict.
+
+And what a fight costs, before you write another one:
+
+```bash
+npx tsx scripts/audit-fights.ts world/reach.json
+```
+
+It puts one fixed build against every hostile that strikes back, at party
+sizes 0, 2 and 4, through the engine's own `step`. The realm currently reads
+7 rounds and 14 hp alone (46 of 68 fights kill the player), 3 rounds and 2 hp
+with two companions, 2 rounds and 2 hp with four. Every companion standing
+with you swings on your turn and the enemy's one blow rotates between all of
+you, so a party multiplies what you deal and divides what you take, and
+nothing on the other side scales with the crowd it faces. Write a fight
+knowing which of those two games it will be played in.
