@@ -788,7 +788,8 @@
       "stages": [
         {
           "if": [["flag", "va_king_resolved"]],
-          "text": "The king is settled. The doors are yours to seal or leave open, from the throne."
+          "text": "The king is settled. The doors are yours to seal or leave open, from the throne.",
+          "at": "va_throne"
         },
         {
           "if": [["flag", "va_promised_seal"]],
@@ -807,19 +808,23 @@
       "stages": [
         {
           "if": [["var", "va_verses_known", "=", 3]],
-          "text": "All three verses are yours. Speak them over the king at the throne."
+          "text": "All three verses are yours. Speak them over the king at the throne.",
+          "at": "va_throne"
         },
         {
           "if": [["flag", "va_verse_stone"], ["flag", "va_verse_wind"], ["!flag", "va_verse_water"]],
-          "text": "Stone and wind are yours. One verse left: the sunken shrine, in the wood east of the village."
+          "text": "Stone and wind are yours. One verse left: the sunken shrine, in the wood east of the village.",
+          "at": "va_drowned_chapel"
         },
         {
           "if": [["flag", "va_verse_stone"], ["flag", "va_verse_water"], ["!flag", "va_verse_wind"]],
-          "text": "Stone and water are yours. One verse left: the old watchtower, east of the wood."
+          "text": "Stone and water are yours. One verse left: the old watchtower, east of the wood.",
+          "at": "va_watchtower"
         },
         {
           "if": [["flag", "va_verse_water"], ["flag", "va_verse_wind"], ["!flag", "va_verse_stone"]],
-          "text": "Water and wind are yours. One verse left: the barrow's own hall."
+          "text": "Water and wind are yours. One verse left: the barrow's own hall.",
+          "at": "va_hall_of_verses"
         },
         {
           "if": [["flag", "va_verse_stone"], ["!flag", "va_verse_water"], ["!flag", "va_verse_wind"]],
@@ -847,7 +852,8 @@
       "stages": [
         {
           "if": [["has", "va_crown"]],
-          "text": "The crown is yours. Return it to the king at the throne — or decide otherwise."
+          "text": "The crown is yours. Return it to the king at the throne — or decide otherwise.",
+          "at": "va_throne"
         },
         {
           "if": [["flag", "va_heard_grievance"]],
