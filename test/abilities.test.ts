@@ -15,9 +15,9 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByLabel, condOk, legalActions, newState, step } from "../src/engine.ts";
+import { actionByLabel, condOk, legalActions, newState, oddsHint, step } from "../src/engine.ts";
 import { loadWorld } from "../src/validate.ts";
-import type { State, World } from "../src/types.ts";
+import type { Action, State, World } from "../src/types.ts";
 
 const world: World = loadWorld("world/reach.json");
 
@@ -101,4 +101,42 @@ test("every class has something of its own to spend a charge on outside a fight"
     const outside = own.filter(([id]) => !combatOnly(id));
     assert.ok(outside.length, `class ${classId} can only act in a fight: ${own.map(([id]) => id).join(", ")}`);
   }
+});
+
+/**
+ * An ability says what it does, not only what it costs.
+ *
+ * Every other option in this realm states its price before the turn is spent:
+ * the odds, the standing, the regard, which way a hold's grief settles, who
+ * walks out over it. An ability stated the price alone — "press him (1 of 2
+ * left)" — and two blind waves offered `envoy_press` **77 times between them
+ * and pressed it 0**. The reason is legible once you read the line: a charge
+ * spent on an unnamed effect. Brace against what, for how much, for how long?
+ * The only way to find out cost a charge.
+ */
+test("an ability's line names the effect, the duration and the price", () => {
+  const world = loadWorld("world/reach.json");
+  const { state } = newState(world, 1);
+  const line = (id: string) => oddsHint(world, { ...state, classId: world.abilities![id]!.if?.find((c) => c[0] === "class")?.[1] as string } as State, { kind: "ability", id } as Action);
+
+  // a timed condition reads as what the condition actually does, from world.conditions
+  assert.match(line("envoy_press"), /\+4 will, 2 turns/, line("envoy_press"));
+  assert.match(line("warden_brace"), /\+2 armor, 2 turns/, line("warden_brace"));
+  assert.match(line("scout_mark"), /\+3 to hit, 2 turns/, line("scout_mark"));
+  // damage, a condition laid on the other side, a standoff ended, a companion up
+  assert.match(line("warden_break"), /3 damage, winded on it, 2 turns/, line("warden_break"));
+  assert.match(line("scholar_name"), /it stands down/, line("scholar_name"));
+  assert.match(line("warden_weight"), /they get back up/, line("warden_weight"));
+  // and a price paid in something the player watches in the header
+  assert.match(line("envoy_buy_off"), /5 gold/, line("envoy_buy_off"));
+  // the pool it spends is still named, after what it buys
+  assert.match(line("envoy_press"), /\+4 will, 2 turns; \d+ of 2 left/, line("envoy_press"));
+
+  // every ability that spends a charge says something it does for it: a charge
+  // spent on an unnamed effect is the defect this test exists for
+  const silent = Object.entries(world.abilities ?? {})
+    .filter(([, a]) => (a.fx ?? []).some((f) => f[0] === "addvar" && String(f[1]).startsWith("res_")))
+    .filter(([id]) => !/\d+ turns?|damage|stands down|back up|hp\b|gold/.test(line(id)))
+    .map(([id]) => id);
+  assert.deepEqual(silent, [], `these charge a pool and name no effect:\n  ${silent.join("\n  ")}`);
 });

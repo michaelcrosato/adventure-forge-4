@@ -2488,6 +2488,55 @@ function bestWeapon(world: World, s: State): { hit: number; dmg: number; item: s
   return best;
 }
 
+/**
+ * What an ability does, in the fewest words that are still true.
+ *
+ * Every other option in this realm states its price before the turn is spent —
+ * the odds, the standing, the regard, which way a hold's grief settles, who
+ * walks out over it. An ability stated only its price: "press him (1 of 2
+ * left)". Two blind waves offered `envoy_press` **77 times between them and
+ * pressed it 0**, and the reason is legible once you look at the line: the
+ * player is asked to spend a charge on an unnamed effect. `brace for it (2 of 2
+ * left)` — brace against what, for how much, for how long? The only way to
+ * find out cost a charge.
+ *
+ * So read the effects the way the odds line reads a check: the timed condition
+ * it lays on (with what the condition actually does, from `world.conditions`),
+ * the damage it deals, the standoff it ends, the companion it gets up.
+ */
+function abilityEffect(world: World, fxs: Fx[] | undefined): string {
+  const parts: string[] = [];
+  const conditionSays = (id: string): string => {
+    const c = world.conditions?.[id];
+    if (!c) return id;
+    const bits: string[] = [];
+    for (const [skill, n] of Object.entries(c.checks ?? {})) if (n) bits.push(`${n > 0 ? "+" : ""}${n} ${skill}`);
+    if (c.hit !== undefined) bits.push(`${c.hit > 0 ? "+" : ""}${c.hit} to hit`);
+    if (c.armor !== undefined) bits.push(`${c.armor > 0 ? "+" : ""}${c.armor} armor`);
+    if (c.dmg !== undefined) bits.push(`${c.dmg > 0 ? "+" : ""}${c.dmg} damage`);
+    if (c.hpPerTurn !== undefined) bits.push(`${c.hpPerTurn}hp a turn`);
+    return bits.length ? bits.join(", ") : c.name;
+  };
+  const turns = (n: number) => `${n} turn${n === 1 ? "" : "s"}`;
+  for (const fx of fxs ?? []) {
+    if (fx[0] === "cond") parts.push(`${conditionSays(fx[1])}, ${turns(fx[2])}`);
+    // a condition on the other side is named rather than spelled out: its own
+    // room line already shows what it does, and this line is short of room
+    else if (fx[0] === "condhostile") parts.push(`${world.conditions?.[fx[1]]?.name ?? fx[1]} on it, ${turns(fx[2])}`);
+    else if (fx[0] === "harmhostile") parts.push(`${fx[1]} damage`);
+    else if (fx[0] === "calmhostile" || fx[0] === "calm") parts.push("it stands down");
+    else if (fx[0] === "revive") parts.push("they get back up");
+    else if (fx[0] === "hp" && fx[1] !== 0) parts.push(`${fx[1] > 0 ? "+" : ""}${fx[1]}hp`);
+    // a price paid in something the player watches in the header — "buy him
+    // off" spends five coin, and said only "it stands down"
+    else if (fx[0] === "addvar" && fx[2] < 0) {
+      const hud = (world.hud ?? []).find((h) => h.var === fx[1]);
+      if (hud) parts.push(`${-fx[2]} ${hud.label}`);
+    }
+  }
+  return parts.join(", ");
+}
+
 /** New places seen since a thing came into the pack, over which its hint still shows in the menu. */
 const HINT_PLACES = 5;
 /** Whether an item is still new enough to explain itself in the menu (see oddsHint's `use` case). */
@@ -2705,6 +2754,8 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   // "free" (below) is the turn, not the price, so an ability can read both
   // "free" and this in the same line: no turn, but a real point of the pool
   if (a.kind === "ability") {
+    const does = abilityEffect(world, fx);
+    if (does) parts.push(does);
     const cost = abilityCost(world, fx);
     if (cost) parts.push(`${s.vars[cost.pool] ?? 0} of ${world.resources![cost.pool]} left`);
   }
