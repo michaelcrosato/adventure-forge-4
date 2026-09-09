@@ -91,3 +91,51 @@ test("nothing that buys armor is offered where armor counts for nothing", () => 
   }
   assert.ok(checked, "no ability buys armor — this test has stopped watching anything");
 });
+
+/**
+ * A grid coordinate is not a name.
+ *
+ * `worldgen` falls back to `<region> <x>,<y>` for a cell with no spot name, no
+ * scene and no leftover from `pools.names`. That fallback is right for a
+ * 25,600-room generated overworld and wrong here: the Reach's own standard
+ * (docs/authoring.md §9) is that every cell is a distinct named place, and two
+ * cells of Marrowgate's Warrens reached players as "the Warrens 1,2" and "the
+ * Warrens 2,2" — the same class of leak as "You travel to ir_miners_hall."
+ *
+ * So the rule lives here, with the realm's other density bars, rather than in
+ * the validator where it would fail every minimal fixture.
+ */
+test("no room in the Reach is named after its grid coordinate", () => {
+  const world = loadWorld(path);
+  const bad = Object.entries(world.rooms)
+    .filter(([, r]) => /\b\d+,\d+$/.test(r.name))
+    .map(([id, r]) => `${id}: "${r.name}"`);
+  assert.deepEqual(
+    bad,
+    [],
+    `a gen ran out of scenes and names for its open cells — add to its pools.names:\n  ${bad.join("\n  ")}`,
+  );
+});
+
+/**
+ * Two rooms of one region sharing a name is a navigation trap: a travel menu,
+ * a bearings line and the visited list all have nothing but the name to tell
+ * them apart. Kingswood had two "The East Track" and two "The South Track"
+ * before this.
+ *
+ * Across regions it is only geography — England is full of fords — so this
+ * holds the realm to the tighter rule where it matters and leaves the rest.
+ */
+test("no two rooms of one region share a name", () => {
+  const world = loadWorld(path);
+  const seen = new Map<string, string[]>();
+  for (const [id, r] of Object.entries(world.rooms)) {
+    if (!r.region) continue;
+    const key = `${r.region}|${r.name.toLowerCase()}`;
+    seen.set(key, [...(seen.get(key) ?? []), id]);
+  }
+  const clashes = [...seen.entries()]
+    .filter(([, ids]) => ids.length > 1)
+    .map(([key, ids]) => `${key.split("|")[1]} (${key.split("|")[0]}): ${ids.join(", ")}`);
+  assert.deepEqual(clashes, [], `one region, one name each:\n  ${clashes.join("\n  ")}`);
+});
