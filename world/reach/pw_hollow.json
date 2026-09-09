@@ -365,7 +365,8 @@
       "stages": [
         {
           "if": [["has", "pw_reverse_die"], ["!has", "pw_obverse_die"]],
-          "text": "The reverse die is yours. The obverse waits in the outer strong-room, in Slade's scrap, or on the gravel spit."
+          "text": "The reverse die is yours. The obverse waits in the outer strong-room, in Slade's scrap, or on the gravel spit.",
+          "at": "pw_outer_strongroom"
         },
         {
           "if": [["!has", "pw_reverse_die"], ["has", "pw_obverse_die"]],
@@ -374,7 +375,8 @@
         },
         {
           "if": [],
-          "text": "Two dies are wanted: the reverse from Sarel, the obverse from the strong-room, the scrap, or the spit."
+          "text": "Two dies are wanted: the reverse from Sarel, the obverse from the strong-room, the scrap, or the spit.",
+          "at": "pw_hearth"
         }
       ]
     },
@@ -400,17 +402,20 @@
         },
         {
           "if": [["flag", "pw_name_assayer"], ["!flag", "pw_name_tithe"], ["!flag", "pw_name_child"]],
-          "text": "One name is known: Doran's record. Two remain: Meva's ledger and Robin's river penny."
+          "text": "One name is known: Doran's record. Two remain: Meva's ledger and Robin's river penny.",
+          "at": "pw_tithe_house"
         },
         {
           "if": [["!flag", "pw_name_assayer"], ["flag", "pw_name_tithe"], ["!flag", "pw_name_child"]],
-          "text": "One name is known: Meva's ledger. Two remain: Doran's record and Robin's river penny."
+          "text": "One name is known: Meva's ledger. Two remain: Doran's record and Robin's river penny.",
+          "at": "pw_assayer_cot"
         },
         {
           "if": [["!flag", "pw_name_assayer"], ["!flag", "pw_name_tithe"], ["flag", "pw_name_child"]],
-          "text": "One name is known: the river penny's. Two remain: Doran's record and Meva's ledger."
+          "text": "One name is known: the river penny's. Two remain: Doran's record and Meva's ledger.",
+          "at": "pw_assayer_cot"
         },
-        { "if": [], "text": "Three names are wanted: Doran's record, Meva's ledger, and Robin's river penny, read." }
+        { "if": [], "text": "Three names are wanted: Doran's record, Meva's ledger, and Robin's river penny, read.", "at": "pw_assayer_cot" }
       ]
     },
     "pw_q_penny": {
@@ -420,7 +425,8 @@
       "stages": [
         {
           "if": [],
-          "text": "Robin's river penny still hears hammers. Read it for a name, give it to Meva's ledger, or tell her to keep it unread."
+          "text": "Robin's river penny still hears hammers. Read it for a name, give it to Meva's ledger, or tell her to keep it unread.",
+          "at": "pw_mint_yard"
         }
       ]
     },
@@ -431,11 +437,13 @@
       "stages": [
         {
           "if": [["flag", "pw_coin_crown"]],
-          "text": "Pennywell strikes the Crown's face now, the first Reeve's own, from the counting-house."
+          "text": "Pennywell strikes the Crown's face now, the first Reeve's own, from the counting-house.",
+          "at": "pw_counting_house"
         },
         {
           "if": [["flag", "pw_coin_free"]],
-          "text": "Pennywell's silver runs faceless now, weighed and not counted, out of the paymaster's chest-room."
+          "text": "Pennywell's silver runs faceless now, weighed and not counted, out of the paymaster's chest-room.",
+          "at": "pw_chest_room"
         },
         {
           "if": [["flag", "pw_coin_broker"]],
@@ -443,13 +451,15 @@
         },
         {
           "if": [["flag", "pw_coin_king"]],
-          "text": "Pennywell strikes the old king's face now, the Keepers' answer, settled at the assayer's cot or by the bargain itself."
+          "text": "Pennywell strikes the old king's face now, the Keepers' answer, settled at the assayer's cot or by the bargain itself.",
+          "at": "pw_assayer_cot"
         },
         {
           "if": [["flag", "pw_hollow_done"]],
-          "text": "The vault's fate is settled. Pennywell's coin is still open: the counting-house, the chest-room, or the assayer's cot."
+          "text": "The vault's fate is settled. Pennywell's coin is still open: the counting-house, the chest-room, or the assayer's cot.",
+          "at": "pw_counting_house"
         },
-        { "if": [], "text": "Whose face Pennywell strikes waits on the vault's own fate being settled first." }
+        { "if": [], "text": "Whose face Pennywell strikes waits on the vault's own fate being settled first.", "at": "pw_vault" }
       ]
     },
     "pw_q_paymaster": {

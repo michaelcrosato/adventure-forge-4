@@ -797,7 +797,8 @@
         },
         {
           "if": [],
-          "text": "The reeve wants the barrow sealed after; the priest wants it open. Promise, or don't — you decide at the throne."
+          "text": "The reeve wants the barrow sealed after; the priest wants it open. Promise, or don't — you decide at the throne.",
+          "at": "va_throne"
         }
       ]
     },
@@ -828,19 +829,23 @@
         },
         {
           "if": [["flag", "va_verse_stone"], ["!flag", "va_verse_water"], ["!flag", "va_verse_wind"]],
-          "text": "Stone verse known. Two more: the sunken shrine and the old watchtower."
+          "text": "Stone verse known. Two more: the sunken shrine first, then the old watchtower.",
+          "at": "va_drowned_chapel"
         },
         {
           "if": [["flag", "va_verse_water"], ["!flag", "va_verse_stone"], ["!flag", "va_verse_wind"]],
-          "text": "Water verse known. Two more: the old watchtower and the barrow's own hall."
+          "text": "Water verse known. Two more: the old watchtower first, then the barrow's own hall.",
+          "at": "va_watchtower"
         },
         {
           "if": [["flag", "va_verse_wind"], ["!flag", "va_verse_stone"], ["!flag", "va_verse_water"]],
-          "text": "Wind verse known. Two more: the sunken shrine and the barrow's own hall."
+          "text": "Wind verse known. Two more: the sunken shrine first, then the barrow's own hall.",
+          "at": "va_drowned_chapel"
         },
         {
           "if": [],
-          "text": "Three verses were cut for the king: the sunken shrine, the old watchtower, and the barrow's own hall."
+          "text": "Three verses were cut for the king: the sunken shrine first, then the old watchtower, then the barrow's own hall.",
+          "at": "va_drowned_chapel"
         }
       ]
     },
@@ -857,11 +862,13 @@
         },
         {
           "if": [["flag", "va_heard_grievance"]],
-          "text": "You have heard the king's grief. Press it on the elder, or bring her the king's seal from the barrow's strongroom."
+          "text": "You have heard the king's grief. Press it on the elder, or bring her the king's seal from the barrow's strongroom.",
+          "at": "va_elder_house"
         },
         {
           "if": [],
-          "text": "The elder keeps the crown in a locked coffer, and will not open it until you have heard the king grieve himself."
+          "text": "The elder keeps the crown in a locked coffer, and will not open it until you have heard the king grieve himself.",
+          "at": "va_throne"
         }
       ]
     }
