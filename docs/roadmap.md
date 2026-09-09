@@ -523,6 +523,98 @@ against 100%, and read that way seven of nine abilities were fine and three
 were broken for three different reasons. The vague number ("eight of nine
 never offered") was true and useless.
 
+## Wave eight, and what a trace says that a report cannot
+
+Three blind players, three seeds, two classes. All three won. All three rated
+it fun 5/5 and clarity 4/5, which is where clarity has sat for three waves
+running. Their reports were useful; replaying their own traces through
+`scripts/audit-play.ts` was better, and in two places it contradicted them.
+
+**What the traces said, that no report did.** Six regions appear in all three
+runs — the Vale, Thornwold, Fenmarch, Wardmoor, Coldpass, Marrowgate. Nine of
+eighteen were touched by any run; five were touched by none. Each player saw
+117-146 rooms of 905 and finished with the same full party of four and the
+same ending. The map is not the reason: the region graph is a proper sprawl,
+0-4 hops across. **The exit is the reason.** The pilgrim stair at Coldpass
+opens on any three holds rested, Coldpass is two hops from the Vale through
+Wardmoor, and Marrowgate is through Coldpass — so a player rests the three
+nearest holds and walks into the endgame having seen a quarter of the realm.
+Unseen content in a large world is fine; three runs seeing the *same* unseen
+half is not. That one is still open, and the lever is the act gate, not the
+map.
+
+**Confirmed, and fixed.**
+
+- A hold's grief is the thing a hold is built around, and **21 of 27 hold-grief
+  quests gave no destination in the line a player reads first** — while their
+  side quests routinely did. Seed 9901 finished two of the Hearthlands' side
+  quests and left reporting the hold had no grief site at all. It has one, at
+  the threshing floor, behind a flag set by entering the barn doors. Two region
+  passes gave 131 quest stages the room they point at; the debt is 2 now, and
+  both of those are stages waiting on a different quest to settle first.
+- **Ten of fifteen holds could be walked without their grief ever opening** —
+  the quest starts on standing in one particular room, or on one other flag.
+  `audit-fates.ts` prints which, per hold, now.
+- Directions written by hand: 52 quest stages carried a compass word, twelve of
+  them a whole route. Two were plainly wrong — Camp Gallows' "west to the
+  cook-fire, south to the scout line" (west is open wood, south is the South
+  Track) and Cal buried "east of Camp Gallows" when he dies in the fire at the
+  Gallows Glade, eight stands west. Seven remain, all of them place names.
+- A single step through a door reads as the menu's own word now ("two west,
+  then in"), not as a tally — a count answers "how many times do I press
+  this?", which only a compass run raises.
+- The escalation rule is stated once, on the line that states the rules, rather
+  than after the first failure that teaches it.
+- The Oath-Ground's "bring a living oath to the stone" was gated on
+  `rep_watch >= 1` and its own miss spent `rep_watch -1`, so a missed roll at
+  exactly 1 closed one of Wardmoor's three fates off the road with no
+  explanation. `audit-choices` learned to find that shape, and to tell it from
+  a spend that cannot cross its own gate.
+- The first regard change had been printing "at -2 they are near leaving" for
+  three waves. The floors live in each companion's `leaves` list: -5 plain, -2
+  if you sided against them in a quarrel. The line says the shape now and
+  leaves the number to the content that owns it.
+
+**Retracted, with evidence.** Seed 9902 reported "non-Euclidean loop
+connections" in the Ashwood. The grid is Euclidean: 1,423 compass exits between
+generated cells, 0 that disagree with the geometry. What was real in that
+report was the sentence after it — they could not route to the sunken shrine or
+the old watchtower, because those stages named two places and pointed at
+neither.
+
+## The bar finally throws a punch
+
+Measured across the walkthrough and every ending proof: **3,022 screens, 125 of
+them offering a fight, 0 blows struck.** Hp, armor, damage, aggression, the
+down-and-revive path and the disengage gate were enforced by nothing the bar
+replays. Blind players fight — 13 attacks across the three wave-eight runs — so
+this was a hole in the measurement, not in the content.
+
+`crowned_hollow#bloodied` closes it: a Warden road that kills three wolves, a
+gray husk and the barrow-wight guarding the crypt passage, has its companion
+struck down mid-fight and hauls her back up with `warden_weight` before the
+killing blow, and crosses the `lowHp` line doing it. That retired the last
+"no companion has ever gone down on a proven route" debt. A disengage is still
+unproven, and honestly so: nothing on that road ever goes badly enough.
+
+What the road exposed is bigger than the road. `scripts/audit-fights.ts` runs
+one fixed build against all 68 hostiles that strike back, through the engine's
+own `step`:
+
+    with 0 companions: median 7 rounds, 14 hp lost, 46 of 68 fights kill the player
+    with 2 companions: median 3 rounds,  2 hp lost,  0 of 68 fights kill the player
+    with 4 companions: median 2 rounds,  2 hp lost,  0 of 68 fights kill the player
+
+Every companion standing with you swings on your turn, and the enemy's one blow
+rotates between all of you: a party of four multiplies what you deal by five and
+divides what you take by five, and nothing on the other side scales with the
+crowd it faces. The realm tells the player "everyone who will come may come",
+every blind player recruits all four, and from then on a fight is a formality.
+That is why `warden_brace` and `warden_break` were offered 24 times to blind
+players and taken none: an ability that spends a charge to soften one blow in
+five is not worth the charge. **The next combat change should be about what
+scales against a crowd, not about what the abilities say.**
+
 ## The bar, unchanged
 
 `npm run verify` green: typecheck, tests, validator, crawler twice, and now
