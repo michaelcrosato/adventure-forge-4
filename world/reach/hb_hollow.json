@@ -561,7 +561,9 @@
     "hb_q_kingsrest": {
       "name": "The Kings' Rest",
       "start": [["flag", "hb_entered"]],
-      "done": [["flag", "hb_kingsrest_resolved"]],
+      "done": [
+        ["any", [["flag", "hb_hollow_rested"], ["flag", "hb_hollow_bargained"], ["flag", "hb_hollow_burned"]]]
+      ],
       "stages": [
         {
           "if": [["!flag", "hb_found_kingsrest"]],

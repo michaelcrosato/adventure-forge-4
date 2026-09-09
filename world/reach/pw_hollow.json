@@ -362,6 +362,7 @@
       "name": "The Two Dies",
       "start": [["flag", "pw_hollow_grievance"]],
       "done": [["has", "pw_reverse_die"], ["has", "pw_obverse_die"]],
+      "failed": [["flag", "pw_hollow_done"], ["any", [["!has", "pw_reverse_die"], ["!has", "pw_obverse_die"]]]],
       "stages": [
         {
           "if": [["has", "pw_reverse_die"], ["!has", "pw_obverse_die"]],
@@ -384,6 +385,7 @@
       "name": "The Moneyers' Names",
       "start": [["flag", "pw_hollow_grievance"]],
       "done": [["var", "pw_names_known", ">=", 3]],
+      "failed": [["flag", "pw_hollow_done"], ["var", "pw_names_known", "<", 3]],
       "stages": [
         {
           "if": [["flag", "pw_name_assayer"], ["flag", "pw_name_tithe"], ["!flag", "pw_name_child"]],

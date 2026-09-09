@@ -405,6 +405,7 @@
       "name": "The Truce-Words",
       "start": [["flag", "sh_hollow_grievance"]],
       "done": [["var", "sh_words_known", ">=", 3]],
+      "failed": [["flag", "sh_hollow_done"], ["var", "sh_words_known", "<", 3]],
       "stages": [
         {
           "if": [["flag", "sh_word_roll"], ["flag", "sh_word_count"], ["!flag", "sh_word_book"]],
@@ -446,7 +447,7 @@
     "sh_q_rod": {
       "name": "The White Rod",
       "start": [["flag", "sh_entered"]],
-      "done": [["flag", "sh_rod_shaft_known"], ["flag", "sh_rod_ferrule_known"]],
+      "done": [["flag", "sh_hollow_done"]],
       "stages": [
         {
           "if": [["!flag", "sh_hollow_grievance"]],

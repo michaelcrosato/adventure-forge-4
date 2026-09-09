@@ -540,7 +540,7 @@
     "mc_q_prepare": {
       "name": "Setting the Feast",
       "start": [["flag", "mc_entered"]],
-      "done": [["var", "mc_toasts_known", ">=", 3], ["flag", "mc_last_course"]],
+      "done": [["flag", "mc_hollow_done"]],
       "stages": [
         {
           "if": [["!flag", "mc_hollow_grievance"]],
@@ -567,8 +567,7 @@
           "text": "The Feast of Wax broke off unfinished. Wanted: the king's, Church's, and guests' toasts, and a last course.",
           "at": "mc_recorder_loft"
         }
-      ],
-      "failed": [["flag", "mc_hollow_done"], ["any", [["var", "mc_toasts_known", "<", 3], ["!flag", "mc_last_course"]]]]
+      ]
     },
     "mc_q_order": {
       "name": "The Feast's Order",
