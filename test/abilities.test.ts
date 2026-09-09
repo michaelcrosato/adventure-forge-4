@@ -134,3 +134,47 @@ test("an ability's line names the effect, the duration and the price", () => {
     .map(([id]) => id);
   assert.deepEqual(silent, [], `these charge a pool and name no effect:\n  ${silent.join("\n  ")}`);
 });
+
+/**
+ * Where an ability is offered is part of what it says.
+ *
+ * `scout_ground` ("read the ground") was gated on `["class", "scout"]` and
+ * nothing else — no charge, no room test — so it stood on 197 of the 271
+ * screens of its own proven road, and on the ones where the region held
+ * nothing unseen it answered "You have found every place marked hereabouts."
+ * That is an option that does nothing, which is the defect
+ * `scripts/audit-abilities.ts` was written to find, and it cost this road 16
+ * characters a screen of a 450 budget for the privilege.
+ */
+test("read the ground is offered on open ground with something left to find, and not otherwise", () => {
+  const { state } = newState(world, 1);
+  const scout = (room: string, seen: string[] = []): State => ({ ...state, classId: "scout", room, visited: [room, ...seen] });
+  const offers = (s: State) => legalActions(world, s).some((l) => l.kind === "ability" && l.id === "scout_ground");
+
+  assert.ok(offers(scout("va_wood_0_2")), "offered out on open ground with places unseen");
+  // the same region, the same unseen places, but there is no ground in a hall
+  assert.ok(!offers(scout("va_throne")), "not offered indoors");
+  // and out on that same ground once every marked place in the region is stood in
+  const marked = Object.entries(world.rooms)
+    .filter(([, r]) => r.region === "va" && r.landmark)
+    .map(([id]) => id);
+  assert.ok(marked.length > 1, "the Vale has marked places to stand in");
+  assert.ok(!offers(scout("va_wood_0_2", marked)), "not offered with nothing left to name");
+});
+
+test("the ground reading names the way there, nearest first, and counts the rest", () => {
+  const { state } = newState(world, 1);
+  const out = step(world, { ...state, classId: "scout", room: "va_wood_0_2", visited: ["va_wood_0_2"] } as State, {
+    kind: "ability",
+    id: "scout_ground",
+  } as Action);
+  const said = out.events.find((e) => e.startsWith("Not yet seen near here:"));
+  assert.ok(said, `no reading in ${JSON.stringify(out.events)}`);
+  // a place, then the walk to it — the whole point of the Scout's own version
+  // of a bearing, since `bearings` names the three nearest whether or not you
+  // have stood in them
+  assert.match(said!, /Not yet seen near here: [^,;]+, (one|two|three|four|five|six|seven|eight|nine|ten|\d+) (north|south|east|west|up|down|in|out)/, said!);
+  // bounded: two named with their legs, and the rest counted rather than listed
+  assert.ok(said!.split(";").length <= 3, `the reading lists too much: ${said}`);
+  assert.match(said!, /; and (one|two|three|four|five|six|seven|eight|nine|ten|\d+) more\.$/, said!);
+});

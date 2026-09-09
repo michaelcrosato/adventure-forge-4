@@ -76,6 +76,8 @@ Every `if` is a list; all must pass. An empty list always passes.
 | `["checkHere", skill, dc]` / `["!checkHere", skill, dc]` | a room action or npc topic visible right now previews a `check` of `skill` at `dc` or higher, as its first effect (§4's preview rule) — `dc` here is the check's current, possibly-escalated one (§4), not always the authored number |
 | `["lowHp"]` / `["!lowHp"]` | the player's hp is at half of maxHp or less — "a fight is going badly," the same threshold `leave` uses against an aggressive npc (§7) |
 | `["region", code]` / `["!region", code]` | the player stands in a room of this region (a key of `world.regions`) — "while we are in this hold", which is what a companion's arrival remark wants. A code that names no region is a validator error, because a typo reads as "nowhere" and the condition simply never fires |
+| `["unseenHere"]` / `["!unseenHere"]` | this region still holds a landmarked place the player has not stood in. The gate for anything that offers to name one: it reads the same list `["sayunvisited"]` says out loud, so the two cannot drift apart |
+| `["inWild"]` / `["!inWild"]` | the player stands in a generated wilderness cell (a `gen` grid room) rather than an authored interior — "out on the ground", for a thing that only makes sense outdoors |
 | `["any", [cond, cond, ...]]` | passes when at least one listed condition passes — the one OR inside an all-of list |
 
 These six are room- or player-scoped rather than naming an id: no target, so no unknown-id check — they read the room or the player as they stand, which is what an ability's `if` (§14) usually needs instead of a specific npc it cannot know in advance. Each has its negated twin, like every other op above; without them there is no way to say "only when nothing in this room ignores armor", which is exactly what a `brace for it` needs.
@@ -113,7 +115,7 @@ Effects run in order and stop the moment the game ends.
 | `["condhostile", id, turns]` | `npccond` applied to every currently-hostile npc in the room |
 | `["calmhostile"]` | `calm` applied to every currently-hostile npc in the room |
 | `["revive"]` | every party member currently down (flag `down_<id>`) gets back up now, at half their max hp — the same recovery a cleared fight grants on its own (§7), just not waiting for the room to clear |
-| `["sayunvisited"]` | names this room's region's landmarks not yet visited (or says there are none left) — for a free, informational ability |
+| `["sayunvisited"]` | names the nearest landmarks of this region not yet visited, with the way there, and counts the rest (or says there are none left) — for a free, informational ability. Gate it on `["unseenHere"]` so it is never offered with nothing to say |
 | `["bearings"]` | says the way to this region's three nearest named places, walked through the real exits and folded into legs ("Slatefold, four south, then one down"), opening with `regions[code].bearing` if the region has one. Content still decides *where* a player can take their bearings; the directions are not the author's to write — see §9 |
 | `["questsopen"]` | says how many quests the player still has open, and sends them to `status` for the list — for a point of no return. Deliberately no names: which threads lie *behind* the door is not something the engine knows, and naming one that is ahead would be its own lie |
 | `["end", "win"|"lose", endingId, text]` | ends the game (every ending id needs a proof — see §12) |

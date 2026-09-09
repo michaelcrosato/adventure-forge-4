@@ -226,7 +226,7 @@
       "if": [["class", "scout"], ["var", "res_scout", ">=", 1]],
       "fx": [["addvar", "res_scout", -1], ["cond", "honed", 2], ["say", "You mark the spot before you move."]]
     },
-    "scout_ground": { "label": "read the ground", "free": true, "if": [["class", "scout"]], "fx": [["sayunvisited"]] },
+    "scout_ground": { "label": "read the ground", "free": true, "if": [["class", "scout"], ["inWild"], ["unseenHere"]], "fx": [["sayunvisited"]] },
     "scout_hands": {
       "label": "steady your hands",
       "if": [["class", "scout"], ["var", "res_scout", ">=", 1], ["checkHere", "grace", 11]],

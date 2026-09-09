@@ -89,19 +89,24 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // regent_deposed#warden_crown was here at max 1141, then 1131; the same
   // change took it to 1,092 and its average to 445, so it meets the real bar
   // on both counts and needs no allowance at all. Two roads down, eight to go.
-  // The Scout road (reach_at_rest, first proven by this class): 466 avg, and
-  // the max stays under the real bar at 1076 — the same screen every other
-  // reach_at_rest road tops out at, since the ending itself does not branch on
-  // class. The overage is not verbosity spread across the road; it is one
-  // line. `scout_ground` ("read the ground") is the only class ability in the
-  // realm gated by nothing but `["class", "scout"]` — no resource cost, no
-  // room check — so it is a legal menu option on every screen a Scout ever
-  // sees (197 of this road's 271, the rest being screens with no open menu at
-  // all: the ending, and mid-repeat check rolls). Rerunning this same road
-  // with that one ability's gate disabled reads 447.99 avg, under the real
-  // bar — so the 16-character debt is that ability's own always-on presence,
-  // not the road being wordier than its siblings.
-  "reach:reach_at_rest#scout": { avg: 465, max: MAX_CHARS_MAX },
+  // The Scout road (reach_at_rest, first proven by this class), and the one
+  // ratchet entry that was traced to a single menu line and then mostly paid
+  // off. It arrived at 466 avg — 16 over — and the max was never the problem
+  // (1076, the same screen every other reach_at_rest road tops out at, since
+  // the ending does not branch on class). `scout_ground` ("read the ground")
+  // was the only class ability in the realm gated by nothing but
+  // `["class", "scout"]`: no resource, no room check, so it was a legal option
+  // on 197 of this road's 271 screens, and on the ones where the region held
+  // nothing unseen it answered "You have found every place marked
+  // hereabouts." — an option that does nothing, which is the defect the realm
+  // already has a rule against.
+  //
+  // It is gated on `["inWild"], ["unseenHere"]` now: you read ground, not
+  // floorboards, and only where there is something the reading can name. 466
+  // -> 451.79, so 14 of the 16 came back. The last two are the ability doing
+  // its job on the wilderness screens that remain, and the honest price of the
+  // Scout's one distinctive line. This is 5 chars a screen, not 16.
+  "reach:reach_at_rest#scout": { avg: 451, max: MAX_CHARS_MAX },
   // The full-party road: four companions travelling, the most expensive proof
   // in the realm, and the ratchet turned down three times on the day it was
   // written. It arrived at 506 average and a 1,489-character screen at

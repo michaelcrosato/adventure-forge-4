@@ -5,7 +5,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { newState, wildBearing } from "../src/engine.ts";
+import { condOk, newState, step, wildBearing } from "../src/engine.ts";
 import { validateWorld } from "../src/validate.ts";
 import { expandWorld } from "../src/worldgen.ts";
 import type { State, World } from "../src/types.ts";
@@ -214,4 +214,48 @@ test("the nearest landmark by walking wins, and only the ones you have stood in 
   const w = wilds();
   assert.equal(wildBearing(w, standing("wild_4_4", ["wild_0_0", "wild_5_5"])), "Gallows Green: one south, then one east", "two steps to Gallows Green against eight to the Rope Larder");
   assert.equal(wildBearing(w, standing("wild_2_2", ["wild_5_5"])), "Gallows Green: three south, then three east", "with the Rope Larder unvisited, the far anchor is the one there is");
+});
+
+/**
+ * `inWild` and `unseenHere`: the two conds that tell an ability where it has
+ * anything to say.
+ *
+ * `scout_ground` ("read the ground") was gated on the class alone, so it stood
+ * in the menu of a hall, a crypt and a ship's hold, and in regions whose every
+ * marked place the player had already stood in it answered "You have found
+ * every place marked hereabouts." Both halves of that are the same defect —
+ * an option offered where it does nothing — and both halves are a cond now.
+ */
+test("inWild and unseenHere read the ground the player is standing on", () => {
+  const w = expandWorld({
+    ...base(),
+    regions: { wild: { name: "the Wild" } },
+    // the gated reading, and an ungated one to reach the line the gate exists
+    // to keep a player from ever seeing
+    abilities: {
+      read: { label: "read the ground", free: true, if: [["inWild"], ["unseenHere"]], fx: [["sayunvisited"]] },
+      readAnyway: { label: "read it regardless", free: true, fx: [["sayunvisited"]] },
+    },
+    gen: [region({ region: "wild", spots: [{ cell: [3, 2], name: "The Bound-Stone", brief: "The stone.", landmark: "the bound-stone" }] })],
+  });
+  const { state } = newState(w, 1);
+
+  // the authored room the grid links back to is not ground
+  assert.ok(!condOk(w, state, ["inWild"]), "an authored room is not a wilderness cell");
+  assert.ok(condOk(w, state, ["!inWild"]));
+  const cell: State = { ...state, room: "wild_0_0", visited: ["home", "wild_0_0"] };
+  assert.ok(condOk(w, cell, ["inWild"]), "a generated cell is");
+  assert.ok(!condOk(w, cell, ["!inWild"]));
+
+  // one marked place in the region, not yet stood in
+  assert.ok(condOk(w, cell, ["unseenHere"]));
+  assert.ok(!condOk(w, cell, ["!unseenHere"]));
+  const after: State = { ...cell, visited: [...cell.visited, "wild_3_2"] };
+  assert.ok(!condOk(w, after, ["unseenHere"]), "and once you have stood there, there is nothing left to name");
+  assert.ok(condOk(w, after, ["!unseenHere"]));
+
+  // the reading itself: the place, then the walk to it, folded into legs
+  const said = step(w, cell, { kind: "ability", id: "read" } as never).events.join(" ");
+  assert.match(said, /Not yet seen near here: the bound-stone, two south, then three east\./, said);
+  assert.match(step(w, after, { kind: "ability", id: "readAnyway" } as never).events.join(" "), /You have found every place marked hereabouts\./);
 });

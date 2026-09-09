@@ -220,6 +220,39 @@ function setFlag(s: State, key: string): void {
   }
 }
 
+/**
+ * The landmarked places of this region the player has not stood in yet.
+ *
+ * One definition, read twice: `sayunvisited` names them, and `unseenHere`
+ * gates on there being any. They were written apart at first, and that is
+ * exactly the shape of an ability offered where it does nothing — the Scout's
+ * "read the ground" was gated on `["class","scout"]` and nothing else, so it
+ * sat in the menu of every screen a Scout ever saw (197 of 271 on its proven
+ * road) and answered "You have found every place marked hereabouts" on the
+ * ones where it had nothing to say. A gate that reads the same list as the
+ * line cannot drift from it.
+ */
+function unseenHere(world: World, s: State): string[] {
+  const region = world.rooms[s.room]?.region;
+  if (!region) return [];
+  // nearest-first, and only what a chain of exits actually reaches: a place
+  // the ground cannot lead you to is not a place the ground should name
+  return walkFrom(world, s.room).order.filter((id) => {
+    const r = world.rooms[id];
+    return r?.region === region && r.landmark && !s.visited.includes(id);
+  });
+}
+
+/**
+ * True while the player stands in a generated wilderness cell — ground, not
+ * floorboards. Reading the ground is a thing you do on open moor, not in the
+ * Keepers' Hall, and an ability offered where its fiction does not hold is the
+ * same defect as one offered where its effect does nothing.
+ */
+function inWild(world: World, s: State): boolean {
+  return (world.gen ?? []).some((g) => new RegExp(`^${g.id}_\\d+_\\d+$`).test(s.room));
+}
+
 export function condOk(world: World, s: State, c: Cond): boolean {
   switch (c[0]) {
     case "has":
@@ -315,6 +348,14 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return world.rooms[s.room]?.region === c[1];
     case "!region":
       return world.rooms[s.room]?.region !== c[1];
+    case "unseenHere":
+      return unseenHere(world, s).length > 0;
+    case "!unseenHere":
+      return unseenHere(world, s).length === 0;
+    case "inWild":
+      return inWild(world, s);
+    case "!inWild":
+      return !inWild(world, s);
     case "any":
       return c[1].some((x) => condOk(world, s, x));
   }
@@ -603,6 +644,8 @@ function legsOf(from: Map<string, [string, string]>, start: string, target: stri
 
 /** Most places one "get your bearings" names: past a few it stops being an answer and becomes a list. */
 const BEARINGS_CAP = 3;
+/** How many unseen places one reading of the ground names with their legs, before it starts counting. */
+const GROUND_CAP = 2;
 
 /**
  * The way to the named places of this region, nearest first, walked.
@@ -1415,13 +1458,20 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
         break;
       }
       case "sayunvisited": {
-        const region = world.rooms[s.room]?.region;
-        const names = region
-          ? Object.entries(world.rooms)
-              .filter(([id, r]) => r.region === region && r.landmark && !s.visited.includes(id))
-              .map(([, r]) => r.landmark!)
-          : [];
-        events.push(names.length ? `Not yet seen near here: ${names.join(", ")}.` : "You have found every place marked hereabouts.");
+        // The way there, not just the name — the reading is the Scout's own,
+        // and `bearings` already names the three nearest places whether or not
+        // you have stood in them. Two with their legs and a count of the rest,
+        // because a list of eight landmarks was the same sentence every time
+        // and told a player nothing they could act on.
+        const ids = unseenHere(world, s);
+        if (!ids.length) {
+          events.push("You have found every place marked hereabouts.");
+          break;
+        }
+        const { legs } = walkFrom(world, s.room);
+        const named = ids.slice(0, GROUND_CAP).map((id) => `${world.rooms[id]!.landmark}, ${legs.get(id)}`);
+        const rest = ids.length - named.length;
+        events.push(`Not yet seen near here: ${named.join("; ")}${rest ? `; and ${countWord(rest)} more` : ""}.`);
         break;
       }
       case "end":
