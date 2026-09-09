@@ -565,22 +565,26 @@
       "stages": [
         {
           "if": [["flag", "hb_heard_grievance"], ["has", "hb_keepers_key"]],
-          "text": "You hold the Keeper's Key. Use it at the hearth-stone to rest the old court outright."
+          "text": "You hold the Keeper's Key. Use it at the hearth-stone to rest the old court outright.",
+          "at": "hb_kingsrest_throne"
         },
         {
           "if": [
             ["flag", "hb_heard_grievance"],
             ["any", [["flag", "hb_belief_caelrin"], ["flag", "hb_belief_roderic"], ["flag", "hb_belief_ossian"]]]
           ],
-          "text": "You've settled on a name. Speak it at the great mound's heart — a wrong one costs you."
+          "text": "You've settled on a name. Speak it at the great mound's heart — a wrong one costs you.",
+          "at": "hb_kingsrest_throne"
         },
         {
           "if": [["flag", "hb_heard_grievance"], ["has", "hb_grave_good"]],
-          "text": "You have a grave-good to return. Bring it to the hearth-stone to bargain the old court's rest."
+          "text": "You have a grave-good to return. Bring it to the hearth-stone to bargain the old court's rest.",
+          "at": "hb_kingsrest_throne"
         },
         {
           "if": [["flag", "hb_heard_grievance"], ["has", "hb_pitch_jar"]],
-          "text": "You have pitch enough to burn the old court out for good, if that is the road you choose."
+          "text": "You have pitch enough to burn the old court out for good, if that is the road you choose.",
+          "at": "hb_kingsrest_throne"
         },
         {
           "if": [["flag", "hb_heard_grievance"]],
@@ -588,7 +592,8 @@
         },
         {
           "if": [["flag", "hb_found_kingsrest"]],
-          "text": "The great mound stands before you. Go in and hear the old court before deciding anything."
+          "text": "The great mound stands before you. Go in and hear the old court before deciding anything.",
+          "at": "hb_kingsrest_throne"
         },
         {
           "if": [],
@@ -604,7 +609,8 @@
       "stages": [
         {
           "if": [["var", "hb_evidence_known", ">=", 3]],
-          "text": "You have every piece. Settle on a name at the great mound, and speak it."
+          "text": "You have every piece. Settle on a name at the great mound, and speak it.",
+          "at": "hb_kingsrest_throne"
         },
         {
           "if": [["var", "hb_evidence_known", ">=", 1]],
@@ -623,7 +629,8 @@
       "stages": [
         {
           "if": [["flag", "said_hb_keeper_wren_order"]],
-          "text": "Force the Hall's old chest, pick its lock, or earn enough of Keeper Wren's trust to ask her outright."
+          "text": "Force the Hall's old chest, pick its lock, or earn enough of Keeper Wren's trust to ask her outright.",
+          "at": "hb_keepers_hall"
         },
         {
           "if": [],
