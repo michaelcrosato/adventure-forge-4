@@ -423,10 +423,15 @@
   "quests": {
     "hl_q_order": {
       "name": "The Barn-Reeve's Order",
-      "start": [["flag", "hl_hollow_grievance"]],
+      "start": [["flag", "hl_entered"]],
       "done": [["flag", "hl_order_known"]],
       "failed": [["flag", "hl_hollow_done"], ["!flag", "hl_order_known"]],
       "stages": [
+        {
+          "if": [["!flag", "hl_hollow_grievance"]],
+          "text": "The Hunger Barn was barred on the crofters who filled it. Its doors still stand, out in Tithing's fields.",
+          "at": "hl_barn_doors"
+        },
         {
           "if": [["flag", "hl_bailiff_order_known"]],
           "text": "Vance keeps a title-copy, at the counting-house — buy, force, or argue it loose. Or search the loft's chest instead.",

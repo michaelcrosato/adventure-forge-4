@@ -500,10 +500,15 @@
     },
     "kw_q_round": {
       "name": "The Hunt's Unfinished Round",
-      "start": [["flag", "kw_hollow_grievance"]],
+      "start": [["flag", "kw_entered"]],
       "done": [["var", "kw_ridings_worked", ">=", 3]],
       "failed": [["flag", "kw_hollow_done"], ["var", "kw_ridings_worked", "<", 3]],
       "stages": [
+        {
+          "if": [["!flag", "kw_hollow_grievance"]],
+          "text": "The king's hunt rode out the morning the crown was stolen and never came home. It still musters at the Hunt's Stand.",
+          "at": "kw_muster_court"
+        },
         {
           "if": [["var", "kw_ridings_worked", ">=", 2]],
           "text": "Two ridings are worked. Whichever's left waits untouched, out in the wood — the brake, the thicket, or the crossing."

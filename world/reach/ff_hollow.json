@@ -411,10 +411,15 @@
   "quests": {
     "ff_q_sent_for": {
       "name": "Sent For",
-      "start": [["flag", "ff_hollow_grievance"]],
+      "start": [["flag", "ff_entered"]],
       "done": [["flag", "ff_hollow_rested"]],
       "failed": [["any", [["flag", "ff_hollow_bargained"], ["flag", "ff_hollow_burned"]]]],
       "stages": [
+        {
+          "if": [["!flag", "ff_hollow_grievance"]],
+          "text": "Thirty-one wards were sent to Fosterfell's schoolroom, and never sent for. Its porch stands off the walled lane.",
+          "at": "ff_porch"
+        },
         {
           "if": [
             ["flag", "ff_roll_read"],

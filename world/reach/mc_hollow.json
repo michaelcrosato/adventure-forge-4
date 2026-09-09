@@ -539,9 +539,14 @@
   "quests": {
     "mc_q_prepare": {
       "name": "Setting the Feast",
-      "start": [["flag", "mc_hollow_grievance"]],
+      "start": [["flag", "mc_entered"]],
       "done": [["var", "mc_toasts_known", ">=", 3], ["flag", "mc_last_course"]],
       "stages": [
+        {
+          "if": [["!flag", "mc_hollow_grievance"]],
+          "text": "The Feast of Wax's guests were never freed to rise. The doors stand barred, at the Long Table.",
+          "at": "mc_hall_doors"
+        },
         {
           "if": [["var", "mc_toasts_known", ">=", 3]],
           "text": "All three toasts are known. The last course remains: persuade Hedda, work the press yourself, or buy a jar from Fulk.",
