@@ -313,3 +313,57 @@ if (all) {
     }
   }
 }
+
+/**
+ * A door that shuts behind a failed try.
+ *
+ * An option gated on a standing — `["var", "rep_watch", ">=", 1]` — whose own
+ * miss branch takes that standing away can leave the player at exactly the
+ * value where the option disappears from the menu, with no line saying why.
+ * Wave eight, seed 9902, at the Oath-Ground: "one resolution option ('bring a
+ * living oath to the stone') silently disappeared from the menu after a single
+ * failed attempt, while a same-DC alternative stayed — no explanation given
+ * for why one path closes and another doesn't after a fail." That option is
+ * one of the Wardmoor hold's three fates, so a missed roll closed a whole
+ * ending off the road with no announcement.
+ *
+ * The realm's rule is that a price is said before the die is thrown, and the
+ * miss's standing cost IS previewed. What is not previewable is that the cost
+ * falsifies the option's own gate. Cheaper than an engine clause for a shape
+ * this rare: find them, and write the content so the cost never crosses the
+ * gate (spend the standing only when there is standing to spare).
+ */
+const selfClosing: string[] = [];
+{
+  const moved = (fxs: Fx[] | undefined, out: Map<string, number> = new Map()): Map<string, number> => {
+    for (const f of fxs ?? []) {
+      if (f[0] === "addvar") out.set(String(f[1]), (out.get(String(f[1])) ?? 0) + Number(f[2]));
+      else if (f[0] === "if") { moved(f[2] as Fx[], out); moved(f[3] as Fx[], out); }
+      else if (f[0] === "check") { moved(f[3] as Fx[], out); moved(f[4] as Fx[], out); }
+      else if (f[0] === "chance") { moved(f[2] as Fx[], out); moved(f[3] as Fx[], out); }
+    }
+    return out;
+  };
+  const look = (where: string, label: string, ifs: Cond[] | undefined, fxs: Fx[] | undefined) => {
+    const chk = fxs?.[0];
+    if (!chk || chk[0] !== "check") return; // only a leading check has a miss branch of its own
+    const miss = moved(chk[4] as Fx[]);
+    for (const c of ifs ?? []) {
+      if (c[0] !== "var" || !String(c[2]).startsWith(">")) continue;
+      const d = miss.get(String(c[1])) ?? 0;
+      if (d < 0) selfClosing.push(`  ${where}\n    "${label}"\n    gated on ${c[1]} ${c[2]} ${c[3]}, and a miss moves ${c[1]} by ${d}`);
+    }
+  };
+  for (const [rid, r] of Object.entries(world.rooms)) for (const a of r.actions ?? []) look(`room ${rid}`, a.label, a.if, a.fx);
+  for (const [nid, npc] of Object.entries(world.npcs)) for (const t of npc.topics ?? []) look(`npc  ${nid}`, t.label, t.if, t.fx);
+}
+if (!only) {
+  console.log();
+  if (selfClosing.length) {
+    const one = selfClosing.length === 1;
+    console.log(`${selfClosing.length} option${one ? "" : "s"} can close ${one ? "its" : "their"} own door on a miss — the cost of failing is the thing the gate asks for:`);
+    for (const l of selfClosing) console.log(l);
+  } else {
+    console.log("No option in the realm closes its own door on a miss: no gate reads a standing its own failure spends.");
+  }
+}
