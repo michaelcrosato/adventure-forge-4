@@ -451,7 +451,7 @@
     "wm_q_founding": {
       "name": "The Oath That Never Ended",
       "start": [["flag", "wm_entered"]],
-      "done": [["flag", "wm_oath_resolved"]],
+      "done": [["any", [["flag", "wm_hollow_rested"], ["flag", "wm_hollow_bargained"], ["flag", "wm_hollow_burned"]]]],
       "stages": [
         {
           "if": [["!flag", "wm_gate_notice_2"]],
@@ -472,10 +472,6 @@
           "if": [["flag", "wm_gate_notice_2"]],
           "text": "The oath-stone waits out on the moor.",
           "at": "wm_oathstone_circle"
-        },
-        {
-          "if": [],
-          "text": "Serve Highward long enough and you'll hear of the oath the Watch still keeps somewhere out on the moor."
         }
       ]
     },
