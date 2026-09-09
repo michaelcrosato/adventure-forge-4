@@ -24,6 +24,9 @@
  *                     rooms in 20 seconds**, and the only mode that reaches
  *                     real endings — six of them at --deep, where every other
  *                     mode has only ever reached "dead". In `npm run verify`.
+ *   --worst           print the widest screen it found, not just its size —
+ *                     the number says where and not why, and the text is
+ *                     already in hand
  *   --deep            400 walks of 300 steps, or forks every fifth step of
  *                     80: 541 rooms in 87 seconds with --fork. A diagnostic,
  *                     not part of verify.
@@ -136,7 +139,7 @@ export type CrawlResult = {
   roomsSeen: Set<string>;
   endingsSeen: Set<string>;
   steps: number;
-  worst: { chars: number; room: string; turn: number };
+  worst: { chars: number; room: string; turn: number; text: string };
   overCap: { count: number; worstN: number; room: string; menu: string };
 };
 const emptyResult = (): CrawlResult => ({
@@ -144,7 +147,7 @@ const emptyResult = (): CrawlResult => ({
   roomsSeen: new Set<string>(),
   endingsSeen: new Set<string>(),
   steps: 0,
-  worst: { chars: 0, room: "", turn: 0 },
+  worst: { chars: 0, room: "", turn: 0, text: "" },
   overCap: { count: 0, worstN: 0, room: "", menu: "" },
 });
 
@@ -213,7 +216,7 @@ function walkFrom(world: World, start: State, seed: number, maxSteps: number, sw
       // ...and the honest render for the size, the way a player would see it:
       // the long desc only the first time this walk reached the room
       const asPlayed = firstHere ? full : render(world, state, out.events, {}).text;
-      if (asPlayed.length > r.worst.chars) r.worst = { chars: asPlayed.length, room: state.room, turn: state.turn };
+      if (asPlayed.length > r.worst.chars) r.worst = { chars: asPlayed.length, room: state.room, turn: state.turn, text: asPlayed };
     }
   }
 }
@@ -318,6 +321,15 @@ if (process.argv[1]?.endsWith("crawl.ts")) {
     console.log(
       `crawl ${world.id}${fork ? " (forked off the proven routes)" : sweep ? " (sweeping)" : ""}: ${fork ? "" : `${walks} walks, `}${r.steps} steps, ${Date.now() - t0}ms | rooms ${r.roomsSeen.size}/${rooms} | endings seen: ${[...r.endingsSeen].join(",") || "none"} | biggest screen ${r.worst.chars} (${r.worst.room || "-"}) | over-cap menus ${r.overCap.count}${r.overCap.count ? ` (worst ${r.overCap.worstN} in ${r.overCap.room})` : ""} | walkthrough: ${wt.error ?? `win in ${wt.turns}t`}`,
     );
+    // `--worst` prints the widest screen it actually found, because "biggest
+    // screen 1424 (va_throne)" says where and not why, and every investigation
+    // that number starts otherwise begins with guessing at the state that
+    // produced it. The crawler already had the text in hand.
+    if (args.includes("--worst") && r.worst.text) {
+      console.log(`\n  --- the widest screen: ${r.worst.chars} chars in ${r.worst.room} on turn ${r.worst.turn} ---`);
+      for (const line of r.worst.text.split("\n")) console.log(`  ${line}`);
+      console.log();
+    }
     if (r.findings.length) {
       bad++;
       for (const f of r.findings) console.error(`  ✗ ${f}`);
