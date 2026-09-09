@@ -717,6 +717,12 @@
           "say": "You've promised the reeve to seal him in. I'll not open a door for a man who means to shut it on grief. Force it, or find another way, or come back released from your word."
         },
         {
+          "id": "blessing_moot",
+          "label": "a blessing for the barrow",
+          "if": [["flag", "va_heard_oldking"], ["flag", "va_barrow_open"], ["!flag", "va_barrow_blessed"]],
+          "say": "The doors are already open — I can hear it in how you ask. A blessing opens what is shut; it does not follow a man through a door he has already put his shoulder to. Say the words yourself at the seat, if you mean them."
+        },
+        {
           "id": "release",
           "label": "break my word to the reeve: release me",
           "if": [["flag", "va_promised_seal"], ["!flag", "va_doors_decided"]],
