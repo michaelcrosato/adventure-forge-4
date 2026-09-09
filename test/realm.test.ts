@@ -596,6 +596,36 @@ test("bearings names this region's places nearest first, walked, and only this r
   assert.ok(out.events.some((e) => e.includes("the mill, one east")), out.events.join(" | "));
   assert.deepEqual(validateWorld(world).filter((e) => /bearings/.test(e)), [], "a closed DSL has to accept it");
 
+  // and what the player is carrying leads, named as what it is. Wave six's
+  // player abandoned two side quests unfound: "'get your bearings' never
+  // actually named the two active side-quest destinations after the first
+  // mention, so both were abandoned unfound despite real effort."
+  // (`world.quests` is read through a per-world index built on first use, so a
+  // quest added to a world already walked would not be seen — each case below
+  // gets its own world, which is also how content is actually loaded)
+  const withQuest = (at: string): World => {
+    const w = line(6, (i) => (i < 4 ? "vale" : "downs"));
+    w.regions = { vale: { name: "the Vale" }, downs: { name: "the Downs" } };
+    for (const id of Object.keys(w.rooms)) delete w.rooms[id]!.landmark;
+    w.rooms["r1"]!.landmark = "the mill";
+    w.rooms["r3"]!.landmark = "the ford";
+    w.rooms["r5"]!.landmark = "the beacon";
+    w.quests = { sentry: { name: "The Lost Sentry", start: [], done: [["flag", "found"]], stages: [{ if: [], text: "Out here.", at }] } };
+    return w;
+  };
+  const near = withQuest("r3");
+  assert.equal(
+    bearingsHere(near, newState(near, 1).state),
+    "As the ground runs: the ford — The Lost Sentry, three east; the mill, one east.",
+    bearingsHere(near, newState(near, 1).state),
+  );
+  // a destination in the next region is not a bearing from here, and a quest
+  // already done is not something you are looking for
+  const far = withQuest("r5");
+  assert.doesNotMatch(bearingsHere(far, newState(far, 1).state), /Lost Sentry/);
+  const done: State = { ...newState(near, 1).state, flags: { found: true } };
+  assert.doesNotMatch(bearingsHere(near, done), /Lost Sentry/);
+
   // a region with nothing named, and a room in no region at all, both say so
   // rather than printing an empty list
   const bare = line(2, () => "vale");

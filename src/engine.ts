@@ -620,46 +620,69 @@ const BEARINGS_CAP = 3;
  * `wildBearing`'s way back to somewhere you know.
  */
 /**
- * Cached per world and room, because the answer depends on nothing else: the
- * region, the exits, the landmarks and the region's opening words are all
- * static, and locks are conditions rather than missing exits (a barred door is
- * still the way — see `pathTo`). Without it every press paid a whole-realm
- * breadth-first walk, and it is a free action a lost player presses again and
- * again. Measured on the forked crawl it bought about half a second of 28 —
- * the walk is cheaper than it looks — so this is here for the player pressing
- * it in one room, not for the bar.
+ * Every room reachable from here, nearest first, with the legs to reach it.
+ *
+ * Cached per world and room, because it depends on nothing else: the exits are
+ * static and locks are conditions rather than missing exits (a barred door is
+ * still the way — see `pathTo`). What is built ON this depends on quest state,
+ * so only the walk is cached, never the sentence.
  */
-const bearingsCache = new WeakMap<World, Map<string, string>>();
+const walkCache = new WeakMap<World, Map<string, { order: string[]; legs: Map<string, string> }>>();
 
-export function bearingsHere(world: World, s: State): string {
-  let cache = bearingsCache.get(world);
-  if (!cache) bearingsCache.set(world, (cache = new Map()));
-  const hit = cache.get(s.room);
-  if (hit !== undefined) return hit;
-  const answer = computeBearings(world, s.room);
-  cache.set(s.room, answer);
-  return answer;
-}
-
-function computeBearings(world: World, room: string): string {
-  const s = { room } as State;
-  const region = world.rooms[s.room]?.region;
-  if (!region) return "Nothing hereabouts has a name to steer by.";
+function walkFrom(world: World, room: string): { order: string[]; legs: Map<string, string> } {
+  let cache = walkCache.get(world);
+  if (!cache) walkCache.set(world, (cache = new Map()));
+  const hit = cache.get(room);
+  if (hit) return hit;
   const from = new Map<string, [string, string]>();
   const order: string[] = [];
-  const queue = [s.room];
+  const queue = [room];
   for (let head = 0; head < queue.length; head++) {
     const at = queue[head]!;
     for (const [dir, ex] of Object.entries(world.rooms[at]?.exits ?? {})) {
-      if (from.has(ex.to) || ex.to === s.room) continue;
+      if (from.has(ex.to) || ex.to === room) continue;
       from.set(ex.to, [at, dir]);
       order.push(ex.to); // breadth-first, so this is nearest-first already
       queue.push(ex.to);
     }
   }
-  const named = order.filter((id) => world.rooms[id]?.region === region && world.rooms[id]?.landmark).slice(0, BEARINGS_CAP);
-  if (!named.length) return "Nothing hereabouts has a name to steer by.";
-  const parts = named.map((id) => `${world.rooms[id]!.landmark}, ${legsOf(from, s.room, id)}`);
+  const legs = new Map(order.map((id) => [id, legsOf(from, room, id)]));
+  const out = { order, legs };
+  cache.set(room, out);
+  return out;
+}
+
+export function bearingsHere(world: World, s: State): string {
+  const region = world.rooms[s.room]?.region;
+  if (!region) return "Nothing hereabouts has a name to steer by.";
+  const { order, legs } = walkFrom(world, s.room);
+  const here = (id: string) => world.rooms[id]?.region === region;
+
+  /**
+   * What the player is actually carrying, first.
+   *
+   * Wave six's player abandoned two side quests unfound — the Lost Sentry at
+   * Boot-Track Hollow, the Dark Beacon — and said why: "'get your bearings'
+   * never actually named the two active side-quest destinations after the first
+   * mention, so both were abandoned unfound despite real effort." Three named
+   * places are an answer to "where am I"; they are not an answer to "where is
+   * the thing I am looking for", which is the question a player with an open
+   * journal has. A stage's `at` is what makes the second answerable.
+   */
+  const wanted = new Map<string, string>();
+  for (const q of journal(world, s)) {
+    if (q.status !== "active" || !q.at || q.at === s.room || !here(q.at) || !legs.has(q.at)) continue;
+    if (!wanted.has(q.at)) wanted.set(q.at, q.name);
+  }
+  const quests = order.filter((id) => wanted.has(id)).slice(0, BEARINGS_CAP - 1);
+  const named = order.filter((id) => here(id) && world.rooms[id]?.landmark && !wanted.has(id));
+  const picked = [...quests, ...named].slice(0, BEARINGS_CAP);
+  if (!picked.length) return "Nothing hereabouts has a name to steer by.";
+  const parts = picked.map((id) => {
+    const place = world.rooms[id]!.landmark ?? world.rooms[id]!.name;
+    const why = wanted.get(id);
+    return `${why ? `${place} — ${why}` : place}, ${legs.get(id)}`;
+  });
   // the region's own voice for it — "As the fell runs", "As the rides run" —
   // which is the half of these lines that was worth keeping
   return `${world.regions?.[region]?.bearing ?? "As the ground runs"}: ${parts.join("; ")}.`;
