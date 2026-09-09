@@ -887,3 +887,19 @@ companion's remark. A fork whose branch is read nowhere but where it was made
 is a choice the world forgets: give it a line somewhere else (the asker's
 thanks, a variant, an epilogue line, a remark), or make it plain the choice
 was only flavour. Gates opened by several routes are fine to leave alone.
+
+And the same question about the things a player carries:
+
+```bash
+npx tsx scripts/audit-items.ts world/reach.json --dead
+```
+
+An item nothing reads is not a defect — a keepsake is allowed to be a
+keepsake, and the realm is better for the knot of sea-glass "smoothed by years
+in the tide; a small thing to keep". What a player cannot forgive is not being
+able to tell which is which, so the tool separates the honest keepsakes (a
+`hint` that reads as one) from the two kinds that are wrong: an item whose
+hint **promises** a use nothing ever asks for, and one with no hint at all.
+The realm currently runs 230 of 321 read, wielded, worn or carried for light,
+90 honest keepsakes, one broken promise and nothing mute. **The cheap fix for
+a silent item is a hint, not a use.**
