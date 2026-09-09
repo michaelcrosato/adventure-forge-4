@@ -579,6 +579,8 @@ function journalEvents(world: World, before: State, after: State, events: string
 }
 
 // ---------- where you stand in a wilderness ----------
+/** The four ways a leg can run more than one step in a line; `in`, `out`, `up` and `down` are doors. */
+const COMPASS = new Set(["north", "south", "east", "west"]);
 const COUNT_WORDS = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
 const countWord = (n: number) => COUNT_WORDS[n] ?? String(n);
 
@@ -636,7 +638,12 @@ function legsOf(from: Map<string, [string, string]>, start: string, target: stri
   for (let i = 0; i < dirs.length; ) {
     let n = 1;
     while (dirs[i + n] === dirs[i]) n++;
-    legs.push(`${countWord(n)} ${dirs[i]}`);
+    // A count answers "how many times do I press this?" — which only compass
+    // runs raise. Wave eight, seed 9903: "'one west, then one out, then two
+    // west, then one in' were sometimes ambiguous about which room-exit label
+    // ('out' vs a compass direction) they referred to." A single step through
+    // a door reads as the menu's own word for it, `go in`, not as a tally.
+    legs.push(n === 1 && !COMPASS.has(dirs[i]!) ? dirs[i]! : `${countWord(n)} ${dirs[i]}`);
     i += n;
   }
   return legs.join(", then ");

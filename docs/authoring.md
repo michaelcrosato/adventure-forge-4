@@ -116,7 +116,7 @@ Effects run in order and stop the moment the game ends.
 | `["calmhostile"]` | `calm` applied to every currently-hostile npc in the room |
 | `["revive"]` | every party member currently down (flag `down_<id>`) gets back up now, at half their max hp — the same recovery a cleared fight grants on its own (§7), just not waiting for the room to clear |
 | `["sayunvisited"]` | names the nearest landmarks of this region not yet visited, with the way there, and counts the rest (or says there are none left) — for a free, informational ability. Gate it on `["unseenHere"]` so it is never offered with nothing to say |
-| `["bearings"]` | says the way to this region's three nearest named places, walked through the real exits and folded into legs ("Slatefold, four south, then one down"), opening with `regions[code].bearing` if the region has one. Content still decides *where* a player can take their bearings; the directions are not the author's to write — see §9 |
+| `["bearings"]` | says the way to this region's three nearest named places, walked through the real exits and folded into legs ("Slatefold, four south, then down" — a single step through a door reads as the menu's own word, not as a count), opening with `regions[code].bearing` if the region has one. Content still decides *where* a player can take their bearings; the directions are not the author's to write — see §9 |
 | `["questsopen"]` | says how many quests the player still has open, and sends them to `status` for the list — for a point of no return. Deliberately no names: which threads lie *behind* the door is not something the engine knows, and naming one that is ahead would be its own lie |
 | `["end", "win"|"lose", endingId, text]` | ends the game (every ending id needs a proof — see §12) |
 
