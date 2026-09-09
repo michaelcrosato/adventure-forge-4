@@ -71,6 +71,45 @@ const words = (p: Pay): string => {
   return out.join(" ") || "nothing";
 };
 
+
+/**
+ * How a hold's grief reaches the player's journal at all.
+ *
+ * A fate nobody can find is not a choice either. Wave eight, seed 9901 walked
+ * the Hearthlands, finished two of its side quests and left reporting that the
+ * hold had no grief site: `hl_hollow_grievance` is set by entering one room,
+ * `hl_barn_doors`, and the two quests that lead to the threshing floor start on
+ * that flag, so the whole grief stayed invisible. Five holds open theirs on
+ * arriving in the region, which is the shape that cannot be missed.
+ */
+/** Every flag an effect list sets, however nested — the vocabulary a quest's `done` can be written in. */
+function flagsSet(fxs: Fx[] | undefined, out: Set<string> = new Set()): Set<string> {
+  for (const f of fxs ?? []) {
+    if (f[0] === "set") out.add(String(f[1]));
+    else if (f[0] === "if") { flagsSet(f[2] as Fx[], out); flagsSet(f[3] as Fx[], out); }
+    else if (f[0] === "check") { flagsSet(f[3] as Fx[], out); flagsSet(f[4] as Fx[], out); }
+    else if (f[0] === "chance") { flagsSet(f[2] as Fx[], out); flagsSet(f[3] as Fx[], out); }
+  }
+  return out;
+}
+
+function opensHow(code: string, settling: Set<string>): string {
+  const kinds: string[] = [];
+  for (const [, q] of Object.entries(world.quests ?? {})) {
+    // this hold's grief quest by what closes it, not by what it is called:
+    // Wardmoor's ends on `wm_oath_resolved` and Hollowbrook's on
+    // `hb_kingsrest_resolved`, and a name test calls neither of them a grief
+    const blob = JSON.stringify([q.start, q.done, q.failed]);
+    const own = blob.includes(`${code}_hollow_`) || [...settling].some((f) => blob.includes(`"${f}"`));
+    if (!own) continue;
+    const start = JSON.stringify(q.start ?? []).replace(/\s/g, "");
+    if (start.includes(`"flag","${code}_entered"`)) return "opens on arriving in the region";
+    kinds.push(start.includes(`${code}_hollow_grievance`) ? "one room" : "one flag");
+  }
+  if (!kinds.length) return "no quest leads to it at all";
+  return `opens only after ${kinds.includes("one room") ? "standing in one room" : "one flag is set"}`;
+}
+
 const codes = new Set<string>();
 for (const id of Object.keys(world.rooms)) { const m = /^([a-z]{2})_/.exec(id); if (m) codes.add(m[1]!); }
 
@@ -79,6 +118,7 @@ const lines: string[] = [];
 for (const code of [...codes].sort()) {
   const best: Partial<Record<Fate, number>> = {};
   const rows: string[] = [];
+  const settling = new Set<string>();
   for (const fate of FATES) {
     const flag = `${code}_hollow_${fate}`;
     // Rooms AND conversations. This scanned only room actions for its first
@@ -101,6 +141,7 @@ for (const code of [...codes].sort()) {
     }
     for (const a of offers) {
       if (!setsFlag(a.fx, flag)) continue;
+      for (const f of flagsSet(a.fx)) settling.add(f);
       const p = payOf(a.fx);
       best[fate] = Math.max(best[fate] ?? -Infinity, p.score);
       rows.push(`    ${fate.padEnd(9)} ${String(a.label).slice(0, 42).padEnd(42)} ${words(p)}`);
@@ -115,7 +156,8 @@ for (const code of [...codes].sort()) {
   if (strictlyRanked) ranked++;
   const shown = FATES.filter((f) => best[f] !== undefined);
   const sep = shown.every((f) => best[f] === best[shown[0]!]) ? "  =  " : "  >  ";
-  lines.push(`\n${code}: ${shown.map((f) => `${f} ${best[f]}`).join(sep)}${strictlyRanked ? "   RANKED" : ""}`);
+  const opens = opensHow(code, settling);
+  lines.push(`\n${code}: ${shown.map((f) => `${f} ${best[f]}`).join(sep)}${strictlyRanked ? "   RANKED" : ""}${opens ? `   [${opens}]` : ""}`);
   if (!terse) lines.push(...rows);
 }
 
@@ -130,6 +172,11 @@ console.log(
         `What is left is what each fate pays INSTEAD — standing, regard, and an ending that reads it. All three\n` +
         `fates now have a seat: reach_at_rest wants three holds rested, reach_burned three burned, reach_bargained\n` +
         `three bargained, and each is proven by a route that actually does it. The open question is no longer\n` +
-        `whether a fate has a reader but whether a player can tell, before choosing, what it will cost them.`,
+        `whether a fate has a reader but whether a player can tell, before choosing, what it will cost them.\n\n` +
+        `And whether they can find it at all. Seven holds put their grief in the journal the moment you cross\n` +
+        `into the region; five wait until you have stood in one particular room, and three until one other flag\n` +
+        `is set. Wave eight's seed 9901 walked the Hearthlands, finished two of its side quests, and left\n` +
+        `reporting the hold had no grief site — it has one, at the threshing floor, behind a flag set by\n` +
+        `entering the barn doors and nothing else. A fate nobody can find is not a choice either.`,
 );
 process.exit(0);
