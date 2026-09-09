@@ -11,7 +11,7 @@ and choice-consequence of Baldur's Gate 3.
 
 The sprawl is done. 18 regions, 905 rooms, 265 npcs, 321 items, 135 quests,
 68 stamped places, 5 companions, **7 endings and 13 replay-proofs**, 12 class
-abilities, 315 tests green. Skyrim has about 340 named places. **Adding a
+abilities, 320 tests green. Skyrim has about 340 named places. **Adding a
 nineteenth region is not the work** — three blind players just walked nine of
 the eighteen that exist. These are:
 
@@ -938,9 +938,104 @@ build: `va_throne` 16/6, `mg_hollow_throne` 16/3, `fd_drowned_nave` 15/10,
 asks `"ask innkeep: rumors"` by name, so folding it would rewrite the proven
 road to tidy a room that measures 11 against a cap of 12.
 
+## An outside reviewer, ten findings, and the one that invalidated our numbers
+
+Taking the pull request out of draft triggered an automated code review of the
+whole branch. It returned ten findings, all P2. **All ten were real.** That is
+worth sitting with, because this file is otherwise a record of measurement
+overturning claims — and here the claims that needed overturning were the
+project's own, in the parts of the toolchain nobody points a tool at.
+
+Nine were fixed as described. Five of those share one shape, and it is a shape
+to watch for in a closed DSL: **a check written for one spelling of an op,
+while the DSL grew a second.**
+
+- `clear` counted as a flag *write*, so content reading `["flag","opened"]`
+  while only ever clearing it validated clean — precisely the gate-with-no-key
+  the "reads with no writer" check exists to find.
+- `!checkHere` validated neither its skill nor its DC. A misspelled skill is
+  worse in the negated form: the nonexistent positive check is false
+  everywhere, so the condition reads **true** everywhere and the ability it
+  gates is offered across the realm.
+- `turn` checked its comparator but not that its threshold was a number;
+  `since` checked neither. World JSON is cast rather than type-checked, so
+  `["since","march","=>",60]` loaded clean and fell through to equality — a
+  scheduled event that fires on one exact turn, or never.
+- the repeated-line check gave `chance` a `check`'s tuple offsets, but
+  `["chance", pct, okFx, failFx]` keeps its branches one index left. The
+  success branch was never searched, and index 4 was `undefined`.
+- ending coverage demanded an exact `proofs[id]` key while the replay
+  normalized `id#label` — so a world whose only witness for an ending carried
+  a label was told it had none. The `#label` syntax was added here in this
+  same push cycle; the coverage check was never taught about it.
+
+All five now have tests, and two of those tests were checked by reverting the
+fix to watch them fail first. That is the habit worth keeping: a test written
+after a fix, and never seen to fail, is decoration.
+
+Two were display counts. `travelMore` derived its total from the *already
+paged* `travelActions`, so the top-level travel menu read "(0 more)" however
+many regions were waiting — and the give-away was a dead `knownLandmarks` call
+left in the function, the fingerprint of the refactor that broke it. The room
+pager counted *itself* as content, reporting four hidden options as five. And
+one was a phantom step per fork in the crawler, which put 253 imaginary steps
+into the number every coverage comparison is read off (10,218 → 9,965).
+
+**Where the reviewer's diagnosis was right and its prescription was wrong.**
+It found that a `free` ability spends no turn but still runs the companion
+remark pass, and proposed gating remarks on `spentTurn`. That gate would also
+silence companions on free *customs* — deliberate acts, not page turns — and
+`reach_at_rest#devoted` turns on exactly one of them, a remark answering
+"weigh the doors of the seat". The real defect was narrower and was ours from
+that morning: `talkto` and `endtalk` joined `BROWSING` (so they stopped costing
+a turn) without joining the remark-silencing list, which made opening and
+closing a conversation a **free, unlimited harvest of the remark pool** and of
+whatever regard those remarks carry. A conversation can be reopened forever; an
+ability spends a charge. So the exploit was in the half the report did not name.
+`NAVIGATION` is derived from `BROWSING` now — one source of truth, so they
+cannot drift again — with `leave` the single argued exception.
+
+That broke the devoted road, which had been taking its paired Vell-and-Osk
+remark from `talk to Vell` itself. Repaired with a `repeat`/`until` step, and
+the two extra screens **paid for rather than ratcheted up**: weighing the
+throne doors reprinted all six lines of its reckoning on every press, and now
+explains what is missing once and thereafter confirms only what stands ready.
+462.8 → 460.69. That is the fourth time this pattern has paid a bill — after
+the item that explained itself in every room, the company that recited itself,
+and the standing cost promised twice.
+
+**And the one that invalidated our numbers.** The report said the budget *tool*
+seeded its "seen" set with the start room even though a class-phase intro
+describes no room, hiding that room's one full-description screen. True. What
+the report could not see is that **`test/budget.test.ts` had the same bug in
+three places** — so every budget figure this project has ever published was
+short by one screen, and the ratchets were all set against under-measured
+values. Correcting it adds ~700 characters to each road, and every delta is
+700/screens to the character, which is the strongest possible evidence of a
+single cause:
+
+    reach_burned            318 screens  448.9 -> 451.1
+    gray_crown              261 screens  451.0 -> 452.4
+    reach_at_rest#devoted   352 screens  460.7 -> 462.4
+    crowned_hollow#bloodied  50 screens  510.6 -> 524.5
+
+**Four ratchets went up.** A ratchet may only turn down, so this needs saying
+plainly rather than quietly: the bar now measures strictly *more* than it did,
+no content got wordier, and leaving the old numbers would have left the bar
+asserting something false. Raising a ceiling to match a corrected measurement
+is not the same act as raising one to let content through. `reach_burned` is
+the one that stings — it met the real 450 ceiling with no allowance at all, and
+honestly measured it is 451.1, one character over.
+
+The lesson is not "the tools were buggy". It is that **eight of these ten live
+in the bar itself** — the validator, the crawler, the budget tool, the budget
+test. Everything in this project is measured except the things that do the
+measuring, and they had been accumulating exactly the kind of quiet error the
+measurements exist to catch.
+
 ## The bar, and the three surfaces it grew to cover
 
-`npm run verify` green — 315 tests: typecheck, tests, validator, crawler twice,
+`npm run verify` green — 320 tests: typecheck, tests, validator, crawler twice,
 and `mock` and `measure` as well. CI ran those last two as separate steps, so a
 green local verify was a false negative for them, and it cost a red bar to find
 out. The walkthrough replays to a full-score win in 240 turns, every other
