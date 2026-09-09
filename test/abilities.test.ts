@@ -26,11 +26,7 @@ const world: World = loadWorld("world/reach.json");
  * the content can fix today. Every entry is a debt: `scripts/audit-abilities.ts`
  * prints the same list with its numbers, and this set may only shrink.
  */
-const UNPROVEN: Record<string, string> = {
-  // Gold peaks at exactly 3 on all eleven routes, while real blind players finish
-  // holding 17-36. The proofs walk past the realm's coin; the price is not wrong.
-  envoy_buy_off: "no proven route ever holds 5 gold",
-};
+const UNPROVEN: Record<string, string> = {};
 
 test("every ability a proven route can reach is offered on it at least once", () => {
   const ids = Object.keys(world.abilities ?? {});
