@@ -9,6 +9,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { actionByLabel, newState, step } from "../src/engine.ts";
 import { loadWorld } from "../src/validate.ts";
+import { MENU_CAP } from "../src/types.ts";
 import type { Fx, World } from "../src/types.ts";
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));
@@ -246,4 +247,117 @@ test("reach: a hold-grief quest's default stage names the room it points at", ()
     `a hold's grief must say where it is — give the default stage an \`at\`:\n  ${pointless.join("\n  ")}`,
   );
   assert.deepEqual(fixed, [], `these point somewhere now — drop them from UNPOINTED:\n  ${fixed.join("\n  ")}`);
+});
+
+/**
+ * A room's menu load, bounded statically rather than sampled.
+ *
+ * `MENU_CAP` exists so a turn stays a choice rather than a search. Paging
+ * guarantees the *page* a player sees is always within it, and `src/crawl.ts`
+ * checks the room's whole load — but only in the states a random walk happens
+ * to reach. A wave-nine suggestion claimed `hb_mere_shore` grew to 13 and that
+ * "the standard verify bar's shallow crawl never samples deeply enough to
+ * catch" it. The claim's room and number were both wrong (hb_mere_shore stands
+ * at exactly 12, and the deep forked crawl finds 0 over cap in 48,868 steps),
+ * but the gap it named was real: four *other* rooms could reach 14-16, and
+ * nothing in the bar would have said so.
+ *
+ * So this counts what a room could ever offer, with every gated entry assumed
+ * showable at once. That over-counts on purpose — mutually exclusive options
+ * are counted together — which makes a bound within the cap a proof that no
+ * state can exceed it, and makes the exception list below the only place a
+ * room's crowding can hide. Every entry is a climax whose customs are the
+ * endings of one choice, so at most one or two can ever stand together; each
+ * carries the worst load a 4,000-iteration flag search could actually build.
+ *
+ * Like the crawler's CROWDED and budget.test.ts's PROOF_BUDGET, this list may
+ * only ever shrink. A new name on it needs an argument, not a number.
+ */
+const LOOSE_BOUND: Record<string, { bound: number; measured: number }> = {
+  // ten ways the Vale's barrow throne can end the tale; the verses, the crown
+  // returned, broken, both, kneeling, walking away — one state offers 6
+  "reach:va_throne": { bound: 16, measured: 6 },
+  // twelve customs for one drowned nave: the rite, the refusal, the burning
+  "reach:fd_drowned_nave": { bound: 15, measured: 10 },
+  "reach:hb_kingsrest_throne": { bound: 13, measured: 9 },
+  // an Ironbound company store: five ways to settle a tab, and a floor things
+  // get left on. Its customs are the alternatives to each other.
+  "reach:ir_company_store": { bound: 14, measured: 11 },
+  // the Vale's inn: six innkeep topics that the walkthrough itself asks by
+  // name ("ask innkeep: rumors"), so folding them would rewrite the proven
+  // road. Most are `once` and gone after the asking.
+  "reach:va_inn": { bound: 13, measured: 11 },
+  "reach:me_hollow_chamber": { bound: 13, measured: 5 },
+  "reach:mg_hollow_throne": { bound: 16, measured: 3 },
+  // The Vale of Ash, the compact original. Its square is the whole first act's
+  // hub — every errand in the village is a custom on it — and its throne is
+  // the room crawl.ts's CROWDED list already argues for by name.
+  "vale:square": { bound: 27, measured: 11 },
+  "vale:throne": { bound: 32, measured: 10 },
+};
+
+/**
+ * Every item that could ever rest on a room's floor: the ones the world starts
+ * there, the ones some `["move", item, <room>]` puts there, and — for
+ * `["move", item, "here"]`, whose destination is wherever it fires — the room
+ * whose own action or npc ran it.
+ */
+function droppable(world: World): Map<string, Set<string>> {
+  const out = new Map<string, Set<string>>();
+  const add = (room: string, item: string): void => {
+    if (!out.has(room)) out.set(room, new Set());
+    out.get(room)!.add(item);
+  };
+  for (const [id, def] of Object.entries(world.items ?? {})) if (def.loc && def.loc !== "inv") add(def.loc, id);
+  // an explicit destination is reachable from anywhere; "here" only from the
+  // room that owns the fx, so the two are walked differently
+  const scan = (node: unknown, here: string | null): void => {
+    if (Array.isArray(node)) {
+      if (node[0] === "move" && typeof node[1] === "string" && typeof node[2] === "string") {
+        const dest = node[2] === "here" ? here : node[2];
+        if (dest && dest !== "inv") add(dest, node[1]);
+      }
+      for (const v of node) scan(v, here);
+    } else if (node && typeof node === "object") {
+      for (const v of Object.values(node)) scan(v, here);
+    }
+  };
+  for (const [rid, room] of Object.entries(world.rooms)) scan(room, rid);
+  for (const npc of Object.values(world.npcs ?? {})) scan(npc, npc.room);
+  // quests, items and the clock can move things too, and none of them is tied
+  // to a room, so their "here" is unknowable — an explicit destination still counts
+  scan({ q: world.quests, i: world.items, c: world.clock }, null);
+  return out;
+}
+
+test("no room could ever offer more than the menu cap, counting every gated entry at once", () => {
+  const over: string[] = [];
+  for (const world of worlds) {
+    const floors = droppable(world);
+    for (const [rid, room] of Object.entries(world.rooms)) {
+      const exits = Object.keys(room.exits ?? {}).length;
+      const customs = (room.actions ?? []).length;
+      const items = floors.get(rid)?.size ?? 0;
+      let npcEntries = 0;
+      for (const npc of Object.values(world.npcs ?? {})) {
+        if (npc.room !== rid) continue;
+        // a talkative npc folds behind one "talk to <name>"; an unfolded one
+        // lists every topic it has, and that is where crowding comes from
+        npcEntries += npc.dialogue ? 1 : (npc.topics ?? []).length;
+        if (npc.hp !== undefined) npcEntries += 2; // attack, and leaving it be
+      }
+      const bound = exits + 1 /* travel */ + customs + items + npcEntries;
+      const allowed = LOOSE_BOUND[`${world.id}:${rid}`];
+      if (bound <= MENU_CAP) continue;
+      if (!allowed) {
+        over.push(
+          `${world.id}:${rid} could offer ${bound} (${exits} exits, ${customs} customs, ${items} items, ${npcEntries} npc) > ${MENU_CAP}` +
+            ` — fold a talkative npc with "dialogue": true, or argue for it in LOOSE_BOUND`,
+        );
+      } else if (bound > allowed.bound) {
+        over.push(`${world.id}:${rid} grew to ${bound} > its allowance ${allowed.bound} — the list only shrinks`);
+      }
+    }
+  }
+  assert.deepEqual(over, [], `a room got too crowded to read:\n  ${over.join("\n  ")}`);
 });
