@@ -352,8 +352,20 @@ export function renderStatus(world: World, s: State): string {
      * Only for a stage whose author gave it an `at`. There is no guessing from
      * the stage text: hand-written directions are the thing this replaces.
      */
+    // The way there, for somewhere in this region; the region's name for
+    // anywhere else. A journal carrying fifteen threads was printing 234
+    // characters a line, and the long half of that was a nine-leg walk to a
+    // hold two regions away — which is not the answer to "where do I go next",
+    // it is a wall in front of it. `bearingsHere` has always drawn the same
+    // line at the region border, and the region name is what a player actually
+    // routes by at that distance. It also skips the whole breadth-first walk
+    // for every thread that is nowhere near, which `status` was paying for on
+    // every call.
     const way = (x: (typeof active)[number]) => {
       if (!x.at) return "";
+      const here = world.rooms[s.room]?.region;
+      const there = world.rooms[x.at]?.region;
+      if (here && there && here !== there) return ` (in ${world.regions?.[there]?.name ?? there})`;
       const legs = pathTo(world, s, x.at);
       if (legs === null) return ""; // nothing said rather than something wrong
       return legs === "" ? " (you are standing there)" : ` (the way there: ${legs})`;

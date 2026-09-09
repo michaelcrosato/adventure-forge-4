@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { newState } from "../src/engine.ts";
+import { actionByLabel, condOk, newState, step } from "../src/engine.ts";
 import { matchesMenuLabel, render, renderStatus } from "../src/format.ts";
+import { loadWorld } from "../src/validate.ts";
 import type { State, World } from "../src/types.ts";
 
 test("matchesMenuLabel: a rendered menu line is its canonical label, alone or with one trailing display hint", () => {
@@ -260,4 +261,68 @@ test("prose between two notices keeps them apart — a number belongs to what ea
   // and the sums read in a fixed order — score, then xp, then whatever names
   // its own subject — however the effects happened to push them
   assert.deepEqual(block, ["[(+5)", "The stair lets out behind the guards.", "(+2, +3xp)]"], text);
+});
+
+/**
+ * The status screen is the largest surface in the game and the only one no
+ * ceiling was watching.
+ *
+ * The act response is held to 450 characters on average and 1,100 at its
+ * worst, measured on every proven road. `status` is free — no turn, and blind
+ * players read it constantly — so nothing measured it, and it had quietly
+ * grown to **3,924 characters on average and 6,705 at its worst** along the
+ * proven walkthrough, nine times the response bar in both dimensions. Most of
+ * that is information a player asked for (their threads, their standing, the
+ * epilogue at the end), so this is a ratchet on growth rather than a small
+ * number: it may only turn down, and it exists so the next thing added to
+ * `status` is added on purpose.
+ *
+ * What came off first was the way to a thread two regions away: a nine-leg
+ * walk is not the answer to "where do I go next", and the region's name is
+ * what a player routes by at that distance. 3,924 -> 3,713 average, 6,705 ->
+ * 5,743 worst, and it skips a breadth-first walk per distant thread on every
+ * call.
+ */
+test("the free status screen stays inside its own ratchet along the walkthrough", () => {
+  const AVG_MAX = 3750;
+  const WORST_MAX = 5750;
+  const world = loadWorld("world/reach.json");
+  let { state } = newState(world, 1);
+  let sum = 0, n = 0, worst = 0, worstRoom = "";
+  const note = () => {
+    const t = renderStatus(world, state);
+    sum += t.length;
+    n++;
+    if (t.length > worst) {
+      worst = t.length;
+      worstRoom = state.room;
+    }
+  };
+  note();
+  for (const w of world.walkthrough) {
+    const label = typeof w === "string" ? w : w.repeat;
+    let k = 0;
+    do {
+      const a = actionByLabel(world, state, label);
+      if (!a) break;
+      state = step(world, state, a).state as State;
+      note();
+    } while (typeof w !== "string" && !condOk(world, state, w.until) && ++k < w.max && !state.ended);
+    if (state.ended) break;
+  }
+  const avg = sum / n;
+  assert.ok(avg <= AVG_MAX, `status averages ${avg.toFixed(0)} > ${AVG_MAX} over ${n} turns — the ratchet only turns down`);
+  assert.ok(worst <= WORST_MAX, `status peaks at ${worst} in ${worstRoom} > ${WORST_MAX} — the ratchet only turns down`);
+});
+
+test("a journal line names the region for a thread outside this one, and the walk for one inside it", () => {
+  const world = loadWorld("world/reach.json");
+  const { state } = newState(world, 1);
+  // the Vale's own barrow field, from the Vale's gate: a walk
+  const inside = renderStatus(world, { ...state, room: "va_gate" } as State);
+  assert.match(inside, /the way there: |you are standing there/, inside.slice(0, 400));
+  // and Act I from inside Marrowgate, two regions on: the region, not nine legs
+  const away = renderStatus(world, { ...state, room: "mg_south_gate" } as State);
+  assert.match(away, /\(in the Vale of Ash\)/, away.slice(0, 400));
+  assert.doesNotMatch(away, /the way there: [^)]*, then [^)]*, then [^)]*, then/, "no nine-leg walk to another region");
 });
