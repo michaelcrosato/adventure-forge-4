@@ -972,3 +972,28 @@ with you swings on your turn and the enemy's one blow rotates between all of
 you, so a party multiplies what you deal and divides what you take, and
 nothing on the other side scales with the crowd it faces. Write a fight
 knowing which of those two games it will be played in.
+
+And whether the way you point at can actually be walked:
+
+```bash
+npx tsx scripts/audit-routes.ts world/reach.json
+```
+
+A stage's `at` makes the free `status` screen print the walk to that room, and
+that walk comes from the same breadth-first search `bearings` uses — which
+crosses every exit in the graph, gated ones included. That is right for a
+bearing: a locked door does not move the barrow, and a bearing says where a
+place *is*. It is not always right for a route a player is being told to
+follow.
+
+The split is the whole point. A route whose **last** leg is shut is the design
+working — the door is the objective, and you are being sent to open it. A route
+shut **before** the last leg sends the player through a door that is not the
+point, and following it costs them the walk back. The realm currently prints
+1,120 routes along its walkthrough; 111 cross a shut exit and 80 of those are
+shut before the last leg, all of them at three doors (the barrow doors, the
+honour guard's passage under Marrowgate, and the pilgrim's door). Wave nine
+reported this as bearings that "didn't match the actual room-to-room
+connections" — every leg leads exactly where it says, which `audit-bearings`
+confirms across all 293 rooms that offer them; what the player hit was a shut
+door mid-route.

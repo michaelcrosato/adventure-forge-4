@@ -11,19 +11,22 @@ and choice-consequence of Baldur's Gate 3.
 
 The sprawl is done. 18 regions, 905 rooms, 265 npcs, 321 items, 135 quests,
 68 stamped places, 5 companions, **7 endings and 13 replay-proofs**, 12 class
-abilities, 313 tests green. Skyrim has about 340 named places. **Adding a
+abilities, 314 tests green. Skyrim has about 340 named places. **Adding a
 nineteenth region is not the work** — three blind players just walked nine of
 the eighteen that exist. These are:
 
-Four waves in a row have now won three of three, fun 5/5 every time, at 520
+Five waves in a row have now won three of three, fun 5/5 every time, at 505
 to 640 turns; wave seven scored 554, 570 and 578 against a one-route baseline
 of 366, which is the first hard evidence that uncapping the score changed how
 much of the realm a player walks. What those waves ask for has also changed
 shape: wave four's list was broken mechanics, wave seven's was legibility, and
-wave eight's most useful findings did not come from the reports at all — they
-came from replaying the players' own traces, which contradicted two of them.
-Clarity has sat at 4/5 for three waves, and the open item behind that number
-is not a wording problem but the act gate (item 11).
+the useful findings of waves eight and nine did not come from the reports at
+all — they came from replaying the players' own traces and from re-measuring
+what the reports claimed, which between them contradicted three findings and
+sharpened two others into different bugs than the ones filed. Clarity has sat
+at 4/5 for four waves, and the two open items behind that number are not
+wording problems: the act gate (item 11) and the router that prefers the
+shortest path over the walkable one (item 12).
 
 ## 1. The realm's breadth does not pay
 
@@ -495,6 +498,18 @@ instead of the game.
     into the endgame having seen a quarter of the realm. Unseen content in a
     large world is fine; three runs seeing the *same* unseen half is not. The
     lever is what the gate counts, not where the roads go.
+12. **The router gives the shortest way, not the open one, and never says
+    which.** A stage's `at` prints the walk to it from the same breadth-first
+    search `bearings` uses, and that search crosses gated exits — right for a
+    bearing, which says where a place *is*, and not always right for a route a
+    player is told to follow. `scripts/audit-routes.ts`: of 1,120 routes
+    printed along the walkthrough, 111 cross a shut exit and **80 are shut
+    before the last leg** — sent through a door that is not the objective. All
+    80 are at three doors, one of which is the honour guard's passage that
+    wave nine's stand-down reports were also standing at. `walkFrom` is cached
+    per room and state-independent, which is what makes the free `status`
+    screen affordable, so this is a change with a budget consequence rather
+    than a line edit.
 
 ## What landed on 2026-09-09, and the one thing it says
 
@@ -778,9 +793,79 @@ And four small ones, each found by something larger:
   mixed. One room does not earn an op in a closed DSL. Left alone, with the
   number written down so the next author does not have to re-derive it.
 
+## Wave nine, and the door three reports were standing at
+
+Seeds 9911-9913, 505/565/568 turns. Three of three won, fun 5/5, clarity
+**4/5 for the fourth wave running** — which now makes clarity the most stable
+number in the project, and the one worth reading hardest.
+
+23 new findings, 5 already known. Every player filed every one of its own
+severities as P2; triage promoted eight to P1 on corroboration, and the
+promotion is the interesting part, because three players hit the same thing
+from three directions:
+
+- the barrow-wight parleyed into standing down, and the passage it guarded
+  still locked;
+- the honour guard *named* into standing down, and then, the report says,
+  attacking anyway;
+- and in the confusions, plainly: "expected a stood-down enemy to no longer
+  block a locked exit".
+
+"Standing something down is not a key either" landed **this morning**, as a
+line on the door naming which way stays locked. Three players read that line
+and still expected the door to open. That makes it a design question, not a
+wording one, and it is the strongest single signal this wave produced.
+
+**One half of it was a real lie, and is fixed.** `scholar_name` calms the
+honour guard; `aggressiveNow` reads `calm_<id>` and refuses a calmed npc its
+turn, so nothing ever struck that player. But the rest-rite's own miss said
+"It comes for you regardless" — about a thing that was never coming. The
+player believed the line over the state, which is the right way round: the
+line was wrong, and the miss reads the state now. Scanned before fixing:
+exactly one action in the whole realm narrated an attack inside a branch a
+calmed hostile could reach, and this was it.
+
+**Retracted, with the measurement.** Menu pagination "cycling back to page 1
+instead of advancing" is the intended cycle. `pageRoom` takes
+`s.roomPage % pages`, the header prints `p2/3`, and `roomPage` resets on
+entering a room. What that report actually wants is a way to know a two-page
+room *has* two pages — which the marker gives, and which the player did not
+mention seeing.
+
+**Reframed, and it turned out to be the same door.** A player reported that
+bearings "described paths that didn't match the actual room-to-room
+connections encountered while following them, causing backtracking".
+`audit-bearings` walks every leg in all 293 rooms that offer bearings: **0
+lead anywhere but where they say.** So the legs are not the defect. But the
+walk a stage's `at` prints comes from a breadth-first search that crosses
+every exit in the graph, *gated ones included* — right for a bearing, which
+says where a place is, and not always right for a route a player is told to
+follow.
+
+`scripts/audit-routes.ts` measures the split along the walkthrough:
+
+    1,120 routes printed
+      111 cross an exit shut at that moment (9.9%)
+       80 shut somewhere other than the last leg (7.1%)
+
+A shut **last** leg is the design working: the door is the objective. A shut
+leg **before** it sends the player through a door that is not the point, and
+costs them the walk back. All 80 are at three doors — the barrow doors under
+the Vale, the pilgrim's door at Marrowgate, and **the honour guard's passage
+in the Old Crypts**, which is the same door the stand-down reports were
+standing at. Two findings filed by two players against two systems are one
+place in the map.
+
+The fix is not the content's: it is that the router prefers the shortest path
+over the walkable one, and never says which it gave you. That wants its own
+cycle — `walkFrom` is cached per room and state-independent by design, which
+is what makes the free `status` screen affordable, so teaching it about gates
+is a real change with a budget consequence rather than a line edit. Recorded
+rather than rushed.
+
 ## The bar, and the two surfaces it grew to cover
 
-`npm run verify` green — 313 tests: typecheck, tests, validator, crawler twice,
+`npm run verify` green — 314 tests: typecheck, tests, validator, crawler twice,
 and `mock` and `measure` as well. CI ran those last two as separate steps, so a
 green local verify was a false negative for them, and it cost a red bar to find
 out. The walkthrough replays to a full-score win in 240 turns, every other
