@@ -279,19 +279,23 @@
       "stages": [
         {
           "if": [["flag", "mg_entered"]],
-          "text": "Marrowgate. The Hollow Throne lies under the palace; the Regent will not want you there."
+          "text": "Marrowgate. The Hollow Throne lies under the palace; the Regent will not want you there.",
+          "at": "mg_hollow_throne"
         },
         {
           "if": [["flag", "act2_open"], ["var", "hollows_rested", ">=", 3]],
-          "text": "Three hollows rested: the pilgrim stair at Coldpass opens for you. Highward's north road leaves from its record-house."
+          "text": "Three hollows rested: the pilgrim stair at Coldpass opens for you. Highward's north road leaves from its record-house.",
+          "at": "cp_pass"
         },
         {
           "if": [["flag", "act2_open"], ["flag", "regent_writ"]],
-          "text": "The Regent's writ is yours. Coldpass will let you through to Marrowgate."
+          "text": "The Regent's writ is yours. Coldpass will let you through to Marrowgate.",
+          "at": "cp_pass"
         },
         {
           "if": [["flag", "act2_open"], ["flag", "free_passage"]],
-          "text": "The Free Companies will take you under the pass, by the Saltkerns caves."
+          "text": "The Free Companies will take you under the pass, by the Saltkerns caves.",
+          "at": "cp_pass"
         },
         {
           "if": [["flag", "act2_open"]],
@@ -299,15 +303,18 @@
         },
         {
           "if": [["flag", "va_king_rested"]],
-          "text": "The king rests. See who comes to Last Light square now that he does."
+          "text": "The king rests. See who comes to Last Light square now that he does.",
+          "at": "va_square"
         },
         {
           "if": [["flag", "va_king_slain"]],
-          "text": "The king is dust. See who comes to Last Light square now that he is."
+          "text": "The king is dust. See who comes to Last Light square now that he is.",
+          "at": "va_square"
         },
         {
           "if": [["flag", "va_king_forsaken"]],
-          "text": "You left him grieving. See who comes to Last Light square anyway."
+          "text": "You left him grieving. See who comes to Last Light square anyway.",
+          "at": "va_square"
         },
         {
           "if": [],
@@ -323,11 +330,13 @@
       "stages": [
         {
           "if": [["flag", "va_heard_grievance"]],
-          "text": "Settle the Hollow King: speak his verses, return or break his crown, or end him. The doors after are yours too."
+          "text": "Settle the Hollow King: speak his verses, return or break his crown, or end him. The doors after are yours too.",
+          "at": "va_throne"
         },
         {
           "if": [["flag", "va_barrow_open"]],
-          "text": "The barrow is open. Hear the king at the throne before you decide anything."
+          "text": "The barrow is open. Hear the king at the throne before you decide anything.",
+          "at": "va_throne"
         },
         {
           "if": [],

@@ -1915,9 +1915,14 @@
       "stages": [
         {
           "if": [["any", [["flag", "rb_fd_wm_home"], ["flag", "rb_fd_wm_hidden"], ["flag", "rb_fd_wm_reported"]]]],
-          "text": "Perrin's fate is settled. Tell his mother in Reedholm, as you promised her."
+          "text": "Perrin's fate is settled. Tell his mother in Reedholm, as you promised her.",
+          "at": "fd_settlement"
         },
-        { "if": [["flag", "wm_entered"]], "text": "You're in Wardmoor. Ask after Perrin at Highward's barracks." },
+        {
+          "if": [["flag", "wm_entered"]],
+          "text": "You're in Wardmoor. Ask after Perrin at Highward's barracks.",
+          "at": "wm_barracks"
+        },
         {
           "if": [],
           "text": "A Reedholm mother wants word of her son, pressed into the Watch at Highward, in Wardmoor."
@@ -1944,15 +1949,18 @@
       "stages": [
         {
           "if": [["flag", "fd_hollow_rested"]],
-          "text": "The old sexton has a name the rite missed. He's at the Priory cloister."
+          "text": "The old sexton has a name the rite missed. He's at the Priory cloister.",
+          "at": "fd_priory_cloister"
         },
         {
           "if": [["flag", "fd_hollow_bargained"]],
-          "text": "Prior Halm has word of the first tithe. Find him at the Priory."
+          "text": "Prior Halm has word of the first tithe. Find him at the Priory.",
+          "at": "fd_priory"
         },
         {
           "if": [["flag", "fd_hollow_burned"]],
-          "text": "The eel-trader has an idea about the burned water. Find her at the market."
+          "text": "The eel-trader has an idea about the burned water. Find her at the market.",
+          "at": "fd_eel_market"
         }
       ]
     }

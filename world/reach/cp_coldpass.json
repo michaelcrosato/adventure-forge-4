@@ -1755,7 +1755,8 @@
         },
         {
           "if": [["flag", "cp_shrine1_done"]],
-          "text": "The frozen pilgrim's vigil is ended. A crypt beneath the nave still waits, unsearched."
+          "text": "The frozen pilgrim's vigil is ended. A crypt beneath the nave still waits, unsearched.",
+          "at": "cp_shrine1_crypt"
         },
         {
           "if": [["any", [["flag", "said_cp_enna_lore_shrine"], ["flag", "said_cp_abbot_about_shrine"]]]],
@@ -1783,7 +1784,8 @@
         },
         {
           "if": [["flag", "said_cp_crell_demand"]],
-          "text": "Crell wants the Keeper texts Brother Fost hides in the scriptorium. Refuse him, or don't."
+          "text": "Crell wants the Keeper texts Brother Fost hides in the scriptorium. Refuse him, or don't.",
+          "at": "cp_scriptorium"
         },
         {
           "if": [],
@@ -1805,7 +1807,11 @@
           "if": [["flag", "cp_bell_sold"]],
           "text": "The clapper is gone, sold. The bell will hang silent from here on."
         },
-        { "if": [["has", "cp_bell_clapper"]], "text": "You have the clapper. Ring the bell in the tower — or don't." },
+        {
+          "if": [["has", "cp_bell_clapper"]],
+          "text": "You have the clapper. Ring the bell in the tower — or don't.",
+          "at": "cp_bell_tower"
+        },
         {
           "if": [],
           "text": "Abbot Corvin wants the tower bell rung again. Old Maud, on the Goat Track, has kept the spare clapper for years."
@@ -1827,7 +1833,8 @@
         },
         {
           "if": [["flag", "cp_found_cleft"]],
-          "text": "You've found the cleft the boot-scuffs led to. Bray, at the south stair, wants to hear what you saw."
+          "text": "You've found the cleft the boot-scuffs led to. Bray, at the south stair, wants to hear what you saw.",
+          "at": "cp_south_stair"
         },
         {
           "if": [],

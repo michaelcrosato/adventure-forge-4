@@ -381,7 +381,8 @@
         },
         {
           "if": [["flag", "fd_read_tablet"]],
-          "text": "A grave-tablet in the Priory's cloister hints at a hidden fault. Press Prior Halm on it."
+          "text": "A grave-tablet in the Priory's cloister hints at a hidden fault. Press Prior Halm on it.",
+          "at": "fd_priory"
         },
         { "if": [], "text": "Something about the flood doesn't add up. The Priory's cloister might know more." }
       ]
@@ -411,7 +412,8 @@
         },
         {
           "if": [["flag", "fd_ironbound_sided"]],
-          "text": "You took their pitch. The nave will burn, if you carry it there."
+          "text": "You took their pitch. The nave will burn, if you carry it there.",
+          "at": "fd_nave_approach"
         },
         {
           "if": [["flag", "fd_knows_ironbound_plan"]],
@@ -431,11 +433,13 @@
         },
         {
           "if": [["has", "fd_grief_token"]],
-          "text": "You found something of her husband's in the drowned nave. Bring it to Mara on Stilt Row."
+          "text": "You found something of her husband's in the drowned nave. Bring it to Mara on Stilt Row.",
+          "at": "fd_stilt_row"
         },
         {
           "if": [["flag", "fd_mara_asked"]],
-          "text": "Mara's husband never came home from the flood. If the drowned nave holds anything of his, she wants to know."
+          "text": "Mara's husband never came home from the flood. If the drowned nave holds anything of his, she wants to know.",
+          "at": "fd_nave_approach"
         },
         { "if": [], "text": "A woman on Stilt Row still watches the water some evenings." }
       ]
@@ -447,15 +451,18 @@
       "stages": [
         {
           "if": [["flag", "fd_bog_charm_paid"], ["!has", "fd_bog_hide"]],
-          "text": "The trader paid for the charm, but a bog-thing still tears her traps by the Eel-Run. Its hide would end it."
+          "text": "The trader paid for the charm, but a bog-thing still tears her traps by the Eel-Run. Its hide would end it.",
+          "at": "fd_fen_3_3"
         },
         {
           "if": [["any", [["has", "fd_bog_hide"], ["has", "fd_eelrun_loot"]]]],
-          "text": "You have proof from the fens. The eel-trader in Reedholm pays for either kind — bring it to her."
+          "text": "You have proof from the fens. The eel-trader in Reedholm pays for either kind — bring it to her.",
+          "at": "fd_eel_market"
         },
         {
           "if": [["flag", "fd_bog_bounty"]],
-          "text": "A bog-thing tears traps near the Eel-Run — one stand west, one south of the landing. Kill it, or raid its den for proof."
+          "text": "A bog-thing tears traps near the Eel-Run. Kill it, or raid its den for proof.",
+          "at": "fd_fen_3_3"
         },
         { "if": [], "text": "The eel-market's traps keep coming back torn." }
       ]
