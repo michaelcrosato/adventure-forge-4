@@ -237,6 +237,19 @@ menu: use it for flavour that reads like `look` — getting your bearings from a
 parapet, reading a notice board — so a player is never charged a turn for what
 the rules told them is free. Anything that changes the world keeps its cost.
 
+**Browsing is free by the engine's own rule**, and an author does not mark it:
+opening the travel menu, choosing a region, opening the company menu, turning
+a page, opening a conversation and backing out of one all cost nothing. Only
+the journey, the topic, the action is a turn. Two of those (`talkto`,
+`endtalk`) were missing from that list for a long time and cost two things: a
+folded npc's conversation was a turn dearer than an unfolded one's, for
+nothing but how the menu was laid out; and a "+N for 2 turns" ability could
+never reach a check inside a topic, because opening the conversation spent one
+of the two turns. 65% of the realm's will checks live inside a topic, which is
+why `envoy_press` was offered 77 times across two blind waves and pressed 0.
+If you write an ability whose buff is meant for a check, count the turns
+between them.
+
 A room action or topic with a top-level `["class", c]` condition shows
 "(as a Scholar)" after its label — "(free; as a Scout)" when it is also free —
 unless the label already names the class, so a player sees which of their
@@ -607,6 +620,20 @@ it standing somewhere.
   match the actual room-exit labels; the real path required going east." **So
   do not write directions into stage text** — name the room and delete the
   clause. An `at` that names no room is a validator error.
+
+  **A hold's grief quest opens on the region's own `<code>_entered` flag**, so
+  the thread is in the journal from the moment a player crosses the border,
+  with a hook line in the shape of `ir_hollow`'s — the wrong, and where to
+  begin, in one sentence: "A hundred miners died when the Hundred Gallery fell.
+  Its adit is still open, out on the downs." Eight of the fifteen holds used to
+  wait until the player had stood in one particular room or set one particular
+  flag, and a hold's grief could be missed entirely: wave eight's seed 9901
+  finished two of the Hearthlands' side quests and left reporting that the hold
+  had no grief at all. Gate the hook stage against whatever flag means "you
+  have been told" (`["!flag", "<code>_hollow_grievance"]` is the usual one) and
+  put it **first**, since the engine shows the first stage whose `if` holds.
+  `npx tsx scripts/audit-fates.ts world/reach.json --terse` prints, per hold,
+  whether its grief opens on arrival or waits.
 
   **A hold's grief quest must carry an `at` on the line a player reads before
   the quest has moved** — `test/content.test.ts` holds that as a named ratchet,
