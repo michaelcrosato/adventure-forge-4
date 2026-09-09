@@ -2940,11 +2940,22 @@ export function step(world: World, prev: State, action: Action): StepOut {
   const events: string[] = [];
   // opening the travel menu, picking a region, or backing out is browsing, not a turn;
   // only the journey itself (travelto) and everything else costs one
+  //
+  // `talkto` and `endtalk` belong in that list and were missing from it. Both
+  // do exactly one thing — set or clear `s.talking` — and the topic a player
+  // then picks is the action that spends the turn. Leaving them out cost two
+  // things. A folded npc's conversation was a turn dearer than an unfolded
+  // one's, for nothing but how the author chose to lay out the menu; and a
+  // "+4 will, 2 turns" ability could never reach the check it was for, because
+  // 65% of the realm's will checks live inside a topic: press on turn N, open
+  // the conversation on N+1, and the condition is gone before the topic can be
+  // picked on N+2. `envoy_press` was offered 77 times across two blind waves
+  // and pressed 0, and this is the arithmetic behind it.
   const freeCustom =
     (action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free) ||
     (action.kind === "ability" && !!world.abilities?.[action.id]?.free);
-  const spentTurn =
-    !freeCustom && action.kind !== "leave" && action.kind !== "travel" && action.kind !== "travelregion" && action.kind !== "traveldone" && action.kind !== "company" && action.kind !== "companydone" && action.kind !== "talkmore" && action.kind !== "travelmore" && action.kind !== "roommore";
+  const BROWSING = new Set(["leave", "travel", "travelregion", "traveldone", "travelmore", "company", "companydone", "talkto", "endtalk", "talkmore", "roommore"]);
+  const spentTurn = !freeCustom && !BROWSING.has(action.kind);
   if (spentTurn) s.turn += 1;
   let attacked: string | null = null; // the npc that already struck back this turn
 

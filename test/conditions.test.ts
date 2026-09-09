@@ -12,8 +12,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { armorOf, checkMod, checkModParts, combatMods, condOk, hashState, legalActions, newState, oddsHint, receipt, step } from "../src/engine.ts";
 import { render, renderStatus } from "../src/format.ts";
-import { validateWorld } from "../src/validate.ts";
-import type { Action, World } from "../src/types.ts";
+import { loadWorld, validateWorld } from "../src/validate.ts";
+import type { Action, State, World } from "../src/types.ts";
 
 const world = (): World => ({
   id: "cond",
@@ -411,4 +411,38 @@ test("validator: cond and npccond effects require their turns argument to be a n
   const errs = validateWorld(w);
   assert.ok(errs.some((e) => e.includes("bad10") && e.includes("cond turns must be a number")), errs.join("\n"));
   assert.ok(errs.some((e) => e.includes("bad11") && e.includes("npccond turns must be a number")), errs.join("\n"));
+});
+
+/**
+ * A buff must survive the menu moves between taking it and using it.
+ *
+ * Opening a conversation and backing out of one do exactly one thing each —
+ * set and clear `s.talking` — and the topic a player picks afterwards is the
+ * action that spends the turn. They were nonetheless counted as spent turns,
+ * and that quietly broke every "+N for 2 turns" ability aimed at a check
+ * inside a topic: press on turn N, open the conversation on N+1, and the
+ * condition was gone before the topic could be picked on N+2. 65% of the
+ * realm's will checks live inside a topic, and `envoy_press` was offered 77
+ * times across two blind playtest waves and pressed 0. On the Envoy road that
+ * finally spends it, the same die now reads "+4 resolved" and clears the DC it
+ * used to miss.
+ *
+ * It also meant a folded npc's conversation cost a turn more than an unfolded
+ * one's, for nothing but how the author had laid out the menu.
+ */
+test("opening and leaving a conversation spends no turn", () => {
+  const w = loadWorld("world/reach.json");
+  const start = newState(w, 1).state;
+  // a folded npc — one whose topics sit behind "talk to <name>" — is where the
+  // extra turn used to be spent
+  let state: State = { ...start, classId: "scholar", room: "hb_keepers_hall", visited: ["hb_keepers_hall"] };
+  const open = legalActions(w, state).find((a) => a.kind === "talkto");
+  assert.ok(open, "Keeper Wren stands in the Keepers' Hall to talk to");
+  const before = state.turn;
+  state = step(w, state, open!).state;
+  assert.equal(state.turn, before, "opening a conversation is browsing, not a turn");
+  // the generic "end conversation" is free by the same rule; it is not asserted
+  // here because Wren carries an authored farewell topic instead, and a line of
+  // dialogue is an action rather than a menu move
+  assert.ok(legalActions(w, state).some((a) => a.kind === "talk"), "and the topics are what cost a turn");
 });
