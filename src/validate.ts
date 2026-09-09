@@ -25,7 +25,7 @@ const COND_OPS = new Set([
   "has", "!has", "flag", "!flag", "npcDead", "!npcDead", "var", "class", "!class", "perk", "!perk", "inParty", "!inParty", "npcHere", "!npcHere", "cond", "!cond", "npccond", "!npccond", "turn", "since", "horrorHere", "!horrorHere", "holdsGround", "!holdsGround", "companionDown", "!companionDown", "checkHere", "!checkHere", "lowHp", "!lowHp", "region", "!region", "any",
 ]);
 const FX_OPS = new Set([
-  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "calm", "calmhostile", "cond", "npccond", "condhostile", "uncond", "unnpccond", "harm", "harmhostile", "bearings", "revive", "sayunvisited", "end",
+  "say", "set", "clear", "score", "hp", "move", "goto", "npcgo", "setvar", "addvar", "check", "xp", "perk", "chance", "party", "if", "slay", "calm", "calmhostile", "cond", "npccond", "condhostile", "uncond", "unnpccond", "harm", "harmhostile", "bearings", "questsopen", "revive", "sayunvisited", "end",
 ]);
 /** Fields a `conditions` entry may carry — `name` required, everything else optional. Closed, like the rest of the DSL. */
 const CONDITION_FIELDS = new Set(["name", "hit", "dmg", "armor", "checks", "hpPerTurn", "hint"]);

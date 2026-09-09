@@ -1357,6 +1357,29 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
       case "bearings":
         events.push(bearingsHere(world, s));
         break;
+      /**
+       * What the player still has open, by name, at a door that does not open
+       * back. The Pass Gate already said "past this gate the holds fall behind
+       * you… stays unfinished unless you walk back for it" and all three
+       * players of wave six walked through it anyway; one of them named why —
+       * "this is stated once in passing dialogue but easy to miss, and
+       * irreversible". A sentence is easy to read past. Three of your own
+       * quests by name is not.
+       */
+      case "questsopen": {
+        const open = journal(world, s).filter((q) => q.status === "active").length;
+        // The count, not the names. Which of them lie *behind* the door is not
+        // something the engine can know yet — a quest stage's `at` is new and
+        // most stages have none — and naming a thread that is actually ahead of
+        // the player would be its own lie. The number is what makes the warning
+        // land, and status has the list.
+        events.push(
+          open
+            ? `(${open} threads of yours are still open. Read them in your status before you cross: whichever lie behind you stay open for good.)`
+            : "(Nothing of yours is still open. Cross when you like.)",
+        );
+        break;
+      }
       case "sayunvisited": {
         const region = world.rooms[s.room]?.region;
         const names = region

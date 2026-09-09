@@ -606,3 +606,30 @@ test("bearings names this region's places nearest first, walked, and only this r
   for (const id of Object.keys(nowhere.rooms)) delete nowhere.rooms[id]!.landmark;
   assert.match(bearingsHere(nowhere, newState(nowhere, 1).state), /nothing hereabouts has a name/i);
 });
+
+/**
+ * All three players of wave six walked through the Pass Gate leaving companion
+ * quests behind, and one named why the warning already there did not land:
+ * "this is stated once in passing dialogue but easy to miss, and irreversible".
+ * A sentence is easy to read past. A number is not — the walkthrough itself
+ * reaches that gate with eleven threads still open.
+ */
+test("questsopen counts what is still open, and says so rather than naming what might be ahead", () => {
+  const world = line(3);
+  world.quests = {
+    a: { name: "A", start: [], done: [["flag", "a_done"]], stages: [{ if: [], text: "one" }] },
+    b: { name: "B", start: [], done: [["flag", "b_done"]], stages: [{ if: [], text: "two" }] },
+  };
+  world.rooms["r0"]!.actions = [{ id: "gate", label: "look at the gate", free: true, fx: [["questsopen"]] }];
+  let { state } = newState(world, 1);
+  let out = step(world, state, actionByLabel(world, state, "look at the gate")!);
+  assert.match(out.events.join(" "), /2 threads of yours are still open/, out.events.join(" | "));
+  assert.match(out.events.join(" "), /whichever lie behind you stay open for good/);
+  // deliberately no names: which of them lie behind the door is not something
+  // the engine can know yet, and naming one that is ahead would be its own lie
+  assert.doesNotMatch(out.events.join(" "), /\bA\b|\bB\b/);
+
+  state = { ...out.state, flags: { ...out.state.flags, a_done: true, b_done: true } };
+  out = step(world, state, actionByLabel(world, state, "look at the gate")!);
+  assert.match(out.events.join(" "), /Nothing of yours is still open/);
+});

@@ -67,6 +67,7 @@ export type Fx =
   | ["harmhostile", number] // `harm` applied to every currently-hostile npc in the player's room (usually exactly one) instead of one named id
   | ["condhostile", string, number] // `npccond` applied to every currently-hostile npc in the player's room
   | ["calmhostile"] // `calm` applied to every currently-hostile npc in the player's room
+  | ["questsopen"] // name what the player still has open, and how many — for a point of no return, where a warning without a number is easy to read past
   | ["bearings"] // say the way to this region's named places, nearest first, walked through the real exits (see bearingsHere) — replaces a hand-written direction, which a grid with walls makes a guess
   | ["revive"] // every party member currently down (flag `down_<id>`) gets back up now, at half strength — the same recovery recoverDowned grants once a fight clears, just not waiting for that
   | ["sayunvisited"] // names this room's region's landmarks not yet visited (or says there are none left) — for a free "what haven't I seen near here" ability
