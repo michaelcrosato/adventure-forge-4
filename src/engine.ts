@@ -1554,7 +1554,12 @@ function partyRemarks(world: World, s: State, events: string[]): void {
     events.push(speaks(def.name, gone.say));
     s.party = s.party.filter((x) => x !== id);
     setFlag(s, `${id}_left`);
-    events.push(`${def.name} leaves your company.`);
+    // "walks out", the words the menu preview uses for exactly this ("Vell -2;
+    // Vell walks out"), and not the "leaves your company" of a dismissal — a
+    // companion who has had enough of you and a companion you told to wait
+    // here are not the same event, and the player was reading one sentence for
+    // both. Nine characters shorter, on the screens where it lands hardest.
+    events.push(`${def.name} walks out.`);
   }
   if (s.ended || s.party.length === 0) return;
 

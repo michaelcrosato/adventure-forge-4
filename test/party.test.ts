@@ -599,7 +599,7 @@ test("a companion with a matching `leaves` entry walks out after the turn, sets 
   state = doLabel(world, state, "kick a dog");
   assert.deepEqual(state.party, ["lys"], "one strike is not enough");
   const out = step(world, state, actionByLabel(world, state, "kick a dog")!);
-  assert.match(out.events.join(" "), /Lys: "I've seen enough of you\." Lys leaves your company\./);
+  assert.match(out.events.join(" "), /Lys: "I've seen enough of you\." Lys walks out\./);
   assert.deepEqual(out.state.party, []);
   assert.ok(out.state.flags["lys_left"]);
   const moved = doLabel(world, out.state, "go east");
