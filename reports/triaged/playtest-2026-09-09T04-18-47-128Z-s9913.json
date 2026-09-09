@@ -1,0 +1,41 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 505,
+  "receipt": "reach.9913.505.537.reach_at_rest.e5868c65",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "Menu option numbers shift every turn (e.g. after an enemy dies or an item is consumed), so a number chosen based on the previous screen can silently map to a different action if not re-read carefully (I once meant to attack but hit 'use dried herbs' because the list had shrunk).",
+      "where": "Barrow Crypt combat, and generally any combat/interaction with a dynamic menu"
+    },
+    {
+      "sev": "P2",
+      "what": "Pursuing one path to a hold's grief (the True Pardon for the Hanged Company) silently foreclosed an unrelated side quest (The Hidden Root) with no warning beforehand.",
+      "where": "Camp Gallows / Gallows Glade, Thornwold"
+    }
+  ],
+  "confusions": [
+    "Finding a specific named sub-location (e.g. the Hundred Gallery, the Drowned Nave, the oath-stone) often required blind directional wandering across several unnamed rooms before the target appeared in 'get your bearings' — bearings is free and great once discovered, but it's easy to not think to use it right away in a new hold.",
+    "The permanence of crossing the Pass Gate ('17 threads... stay open for good') is only revealed at the gate itself, after most of the map has already been explored — a hint earlier (e.g. when Coldpass first opens) would help players plan which loose ends to tie up first.",
+    "It's not always obvious whether resolving a hold's grief via a 'bargain' counts toward the '3 hollows rested' win condition; status text clarifies this ('a bargain counts') but the in-scene choice text doesn't say so explicitly."
+  ],
+  "suggestions": [
+    "Keep frequently-used actions (attack, talk, travel) pinned to stable numbers/letters across turns so menu shifts don't cause misclicks.",
+    "Surface a first-visit 'get your bearings' automatically (or a nudge to use it) when entering a new hold, since it's free and very useful.",
+    "Warn players earlier (e.g. at Coldpass' outer approach, not just the final gate) that crossing locks out unresolved threads permanently.",
+    "Label 'bargain' outcomes inline as counting toward the hollow-rested tally, matching what status already says, so the choice text and win-condition math agree."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-09T04-18-47-128Z",
+  "seed": 9913,
+  "build": {
+    "rev": "de27dd6",
+    "world": "a4e2459a"
+  },
+  "cost_usd": 22.1568428,
+  "verified": true
+}
