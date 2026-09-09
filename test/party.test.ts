@@ -811,7 +811,7 @@ test("calm: a hostile who stands down no longer blocks travel, reads as at peace
   assert.ok(!menu.includes("travel to a known place"), "a standoff blocks travel");
   assert.match(render(world, state, []).text, /Rook \(hostile, holds its ground/);
   const out = step(world, state, actionByLabel(world, state, "ask Rook: trade him respect")!);
-  assert.ok(out.events.some((e) => /Rook stands down\./.test(e)), out.events.join(" | "));
+  assert.ok(out.events.some((e) => /No more fight from Rook\./.test(e)), out.events.join(" | "));
   state = out.state;
   menu = labels(world, state);
   assert.ok(menu.includes("travel to a known place"), "the standoff is over: travel is back");

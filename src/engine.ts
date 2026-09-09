@@ -1699,7 +1699,14 @@ function calmNpc(world: World, s: State, npcId: string, events: string[]): void 
   const who = world.npcs[npcId];
   if (!who || s.npcRoom[npcId] !== s.room || npcDead(world, s, npcId)) return;
   const ways = lockedWaysHere(world, s);
-  events.push(ways ? `${TheName(who.name)} stands down; ${ways}.` : `${TheName(who.name)} stands down.`);
+  // Not "<name> stands down": one hostile in the realm is named plurally
+  // ("blight rats") and read "The blight rats stands down." A name test cannot
+  // fix that — of the four hostiles here whose names end in "s", three are
+  // people (Doss, Lys, Preceptor Aldous) — and the next plural swarm an author
+  // writes would trip over it again. The name is the object of this sentence
+  // instead, which agrees with anything, and the "(stood down)" the room
+  // listing and the odds preview use is untouched.
+  events.push(ways ? `No more fight from ${theName(who.name)}; ${ways}.` : `No more fight from ${theName(who.name)}.`);
 }
 
 /** Put a timed condition on an npc — the `npccond` effect. Re-applying refreshes to the longer remaining duration. */
