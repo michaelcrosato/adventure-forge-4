@@ -309,15 +309,18 @@
       "stages": [
         {
           "if": [["var", "fl_names_known", ">=", 3], ["flag", "fl_church_rite_known"], ["flag", "fl_keeper_verse_known"]],
-          "text": "Names, rite, and verse are all yours. Speak them together at the cairn to rest the furrow whole."
+          "text": "Names, rite, and verse are all yours. Speak them together at the cairn to rest the furrow whole.",
+          "at": "fl_furrow_heart"
         },
         {
           "if": [["var", "fl_names_known", ">=", 3], ["flag", "fl_church_rite_known"], ["!flag", "fl_keeper_verse_known"]],
-          "text": "Names and rite are yours. The verse is Frey's: hear the Winter from Ede, press Frey on what she is, then ask her."
+          "text": "Names and rite are yours. The verse is Frey's: hear the Winter from Ede, press Frey on what she is, then ask her.",
+          "at": "fl_wickstead_cross"
         },
         {
           "if": [["var", "fl_names_known", ">=", 3], ["flag", "fl_keeper_verse_known"], ["!flag", "fl_church_rite_known"]],
-          "text": "Names and verse are yours. The rite is Sister Merrow's: hear her doubts about the Church, then ask her for it."
+          "text": "Names and verse are yours. The rite is Sister Merrow's: hear her doubts about the Church, then ask her for it.",
+          "at": "fl_chapel"
         },
         {
           "if": [["var", "fl_names_known", ">=", 3], ["!flag", "fl_church_rite_known"], ["!flag", "fl_keeper_verse_known"]],
@@ -329,15 +332,18 @@
         },
         {
           "if": [["has", "fl_cinder_oil"]],
-          "text": "You carry Ironbound cinder-oil. Burn the furrow at the cairn, if that's the ending you'll answer for."
+          "text": "You carry Ironbound cinder-oil. Burn the furrow at the cairn, if that's the ending you'll answer for.",
+          "at": "fl_furrow_heart"
         },
         {
           "if": [["flag", "fl_hollow_grievance"]],
-          "text": "Rest it (names, rite, verse), bargain it (a vow or raised stones), or burn it (Ironbound oil) — all at the cairn."
+          "text": "Rest it (names, rite, verse), bargain it (a vow or raised stones), or burn it (Ironbound oil) — all at the cairn.",
+          "at": "fl_furrow_heart"
         },
         {
           "if": [["flag", "fl_found_furrow"]],
-          "text": "The Bone Road south of the crossroads leads to the headland, and past it, the furrow itself."
+          "text": "The Bone Road south of the crossroads leads to the headland, and past it, the furrow itself.",
+          "at": "fl_furrow_end"
         },
         {
           "if": [],
@@ -353,15 +359,18 @@
       "stages": [
         {
           "if": [["flag", "fl_names_ede"], ["flag", "fl_names_roll"], ["!flag", "fl_names_markers"]],
-          "text": "Ede's names and the parish roll are yours. The last are cut on the headland's markers, south by the Bone Road."
+          "text": "Ede's names and the parish roll are yours. The last are cut on the headland's markers, south by the Bone Road.",
+          "at": "fl_fallow_3_5"
         },
         {
           "if": [["flag", "fl_names_ede"], ["flag", "fl_names_markers"], ["!flag", "fl_names_roll"]],
-          "text": "Ede's names and the markers are yours. The rest are in the parish roll — Sister Merrow's chapel, or a Scout's own look."
+          "text": "Ede's names and the markers are yours. The rest are in the parish roll — Sister Merrow's chapel, or a Scout's own look.",
+          "at": "fl_chapel"
         },
         {
           "if": [["flag", "fl_names_roll"], ["flag", "fl_names_markers"], ["!flag", "fl_names_ede"]],
-          "text": "The roll and the markers are yours. The rest live only in Old Ede's memory; ask her to name the dead, for a rite."
+          "text": "The roll and the markers are yours. The rest live only in Old Ede's memory; ask her to name the dead, for a rite.",
+          "at": "fl_wicker_house"
         },
         {
           "if": [["flag", "fl_names_ede"], ["!flag", "fl_names_roll"], ["!flag", "fl_names_markers"]],
