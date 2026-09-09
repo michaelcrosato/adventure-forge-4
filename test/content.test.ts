@@ -200,3 +200,50 @@ test("a hold's fates pay the same score, whichever road the deed is done by", ()
   }
   assert.ok(holds >= 15, `the realm should have fifteen holds with more than one fate, found ${holds}`);
 });
+
+/**
+ * A hold's grief says where it is.
+ *
+ * Wave eight, seed 9901 — a blind player who won and rated it fun 5/5 —
+ * finished two of the Hearthlands' side quests and never found the hold's
+ * grief at all: "Hearthlands/Tithing never exposed an explicit 'settle this
+ * hold's grief' action/location the way every other hold did... the 'Hollows
+ * rested' counter never incremented for it." The site exists and pays like
+ * every other hold's (`scripts/audit-fates.ts`: hl rests, bargains and burns
+ * for 25 each, at the threshing floor). Nothing pointed at it: `hl_q_due` and
+ * `hl_q_order` are the hold's two critical-path quests and neither named a
+ * room, while five of its side quests did. The player followed the signposted
+ * content, and all of the signposted content was optional.
+ *
+ * So: the stage a player reads before a hold-grief quest has moved must name
+ * the room they are meant to reach. The list below is the debt as it stood
+ * when this test was written, and it may only shrink — an entry that has
+ * gained an `at` is a line to delete, and a quest not on the list that loses
+ * one fails.
+ */
+test("reach: a hold-grief quest's default stage names the room it points at", () => {
+  const world = worlds.find((w) => w.id === "reach")!;
+  const UNPOINTED = new Set([
+    "em_q_keeper", "em_q_choir", "fd_q_congregation", "fd_q_ironbound", "ff_q_sent_for", "ff_q_lesson",
+    "ff_q_wardlands", "fl_q_names", "hl_q_due", "hl_q_order", "kw_q_round", "kw_q_horn", "mc_q_prepare",
+    "mc_q_order", "mc_q_orchard", "me_q_witness", "pw_q_dies", "pw_q_names", "sh_q_truce_words",
+    "sh_q_rod", "th_q_pardon",
+  ]);
+  const pointless: string[] = [];
+  const fixed: string[] = [];
+  for (const [qid, q] of Object.entries(world.quests ?? {})) {
+    // a hold's grief path: its start, done or failed reads one of the hold's own `<code>_hollow_*` flags
+    if (!/_hollow_/.test(JSON.stringify([q.start, q.done, q.failed]))) continue;
+    // the line shown before anything has happened is the first unconditioned stage
+    const def = q.stages.find((st) => (st.if ?? []).length === 0);
+    if (!def) continue; // every stage gated: there is no "before it moves" line to fix
+    if (!def.at && !UNPOINTED.has(qid)) pointless.push(qid);
+    if (def.at && UNPOINTED.has(qid)) fixed.push(qid);
+  }
+  assert.deepEqual(
+    pointless,
+    [],
+    `a hold's grief must say where it is — give the default stage an \`at\`:\n  ${pointless.join("\n  ")}`,
+  );
+  assert.deepEqual(fixed, [], `these point somewhere now — drop them from UNPOINTED:\n  ${fixed.join("\n  ")}`);
+});
