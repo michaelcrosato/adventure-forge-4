@@ -33,25 +33,10 @@
       "brief": "Roofless walls, black glass, the Choir singing.",
       "exits": { "down": { "to": "em_choir_approach" }, "in": { "to": "em_choir_vestry" } },
       "onEnterOnce": [
+        ["set", "em_choir_seen"],
         ["score", 5],
         ["xp", 4],
-        ["say", "Count the ash bands in the broken sill and you count the fires: three, maybe four, going back further than any mason's mark left standing. Each one left the singing louder than it found it."],
-        [
-          "if",
-          [["inParty", "osk"]],
-          [
-            ["say", "Brother Osk: \"This is us. The Church did this — not let it happen, did it. I have never said that thought aloud before now.\""]
-          ],
-          []
-        ],
-        [
-          "if",
-          [["inParty", "tamsin"]],
-          [
-            ["say", "Tamsin: \"Four fires and it's still standing, still singing. That's not a fire that failed once. That's a fire that doesn't work here at all.\""]
-          ],
-          []
-        ]
+        ["say", "Count the ash bands in the broken sill and you count the fires: three, maybe four, going back further than any mason's mark left standing. Each one left the singing louder than it found it."]
       ],
       "onEnter": [
         [
