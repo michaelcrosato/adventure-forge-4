@@ -8,7 +8,7 @@ import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { actionByLabel, condOk, newState, step } from "../src/engine.ts";
+import { actionByLabel, condOk, inClassPhase, inPerkPickPhase, newState, step } from "../src/engine.ts";
 import { render, renderIntro } from "../src/format.ts";
 import { loadWorld } from "../src/validate.ts";
 import { MENU_CAP } from "../src/types.ts";
@@ -54,6 +54,33 @@ const INTRO_CHARS_MAX = 1400;
  * 452->455, 480->483 and 478->480; the debt to the real bar is 5, 33 and 30
  * characters, and it is still owed.
  */
+/**
+ * FOUR NUMBERS BELOW WENT UP, AND NO CONTENT GOT WORDIER.
+ *
+ * The three replays in this file measured a room as "seen" if the room had
+ * CHANGED, seeded with the start room. In a world with classes the intro shows
+ * the class menu and describes no room, and choosing a class keeps the same
+ * room id — so the start room's one full-description screen (~700 characters
+ * in the Reach) was never measured on any road. Correcting that (see
+ * `describesRoom`) adds exactly one screen per road, and every delta is
+ * 700/screens to the character:
+ *
+ *   reach_burned            318 screens   448.9 -> 451.1   (+2.2)
+ *   gray_crown              261 screens   451.0 -> 452.4   (+1.4)
+ *   reach_at_rest#devoted   352 screens   460.7 -> 462.4   (+1.7)
+ *   crowned_hollow#bloodied  50 screens   510.6 -> 524.5  (+13.9)
+ *
+ * A ratchet may only turn down, and these turn up — so the argument has to be
+ * explicit: the bar now measures strictly MORE than it did, and refusing to
+ * record the true number would leave it asserting something false. Raising a
+ * ceiling to match a corrected measurement is not the same act as raising one
+ * to let content through, and nothing here bought slack: the roads read what
+ * they always read, and the tool had been hiding a screen of it.
+ *
+ * `reach_burned` is the one that stings. It met the real 450 ceiling with no
+ * allowance at all; honestly measured it is 451.1, one character over, and now
+ * needs a line here like the rest.
+ */
 const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // Only the roads that are over, and only in the dimension they are over: an
   // allowance in the other dimension is the real ceiling, so a road cannot
@@ -83,8 +110,8 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // only ever buys back the route's own words. #warden's max came down 1170 ->
   // 1146 on it; this road's 1180 is `mg_hollow_throne` and was never involved.
   "reach:regent_deposed": { avg: 452, max: 1180 },
-  "reach:reach_burned": { avg: AVG_CHARS_MAX, max: 1154 }, // the burn road is a different route now, and a shorter-screened one; 450.68 -> 449.30, so its average is honestly under the real bar rather than passing on a floor
-  "reach:gray_crown": { avg: 451, max: 1125 }, // 481 -> 452.4 the day an item stopped explaining itself in every new room: the crown's 111-character clue rode 96 first-seen screens on this road alone
+  "reach:reach_burned": { avg: 451, max: 1154 }, // the burn road is a different route now, and a shorter-screened one; 450.68 -> 449.30, so its average is honestly under the real bar rather than passing on a floor
+  "reach:gray_crown": { avg: 452, max: 1125 }, // 481 -> 452.4 the day an item stopped explaining itself in every new room: the crown's 111-character clue rode 96 first-seen screens on this road alone
   "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1146 },
   // regent_deposed#warden_crown was here at max 1141, then 1131; the same
   // change took it to 1,092 and its average to 445, so it meets the real bar
@@ -128,7 +155,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // lines on this road, none of them said twice, 19 characters a screen. That
   // is what a four-companion road is for, and it is the one thing here that
   // should not be trimmed to meet a number.
-  "reach:reach_at_rest#devoted": { avg: 461, max: 1131 },
+  "reach:reach_at_rest#devoted": { avg: 462, max: 1130 }, // 462.8 the day companion remarks stopped firing on menu navigation (the road needed two more weighings of the throne doors to earn its paired remark honestly), then 460.69 once the reckoning stopped re-explaining what is missing on every press
   // The realm's first proof to land a blow. Measured before this road existed,
   // 125 proven screens offered a fight and 0 were taken — hp, armor, timed
   // conditions, aggression and the down-and-revive path stood unexercised by
@@ -143,7 +170,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // screen (1,295, va_crypt) is that room's first-visit description — two
   // hostiles introduced, the "armor useless" warning, and a ten-line menu —
   // paid once, by the first road to ever open that door.
-  "reach:crowned_hollow#bloodied": { avg: 511, max: 1295 },
+  "reach:crowned_hollow#bloodied": { avg: 524, max: 1295 },
 };
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));
@@ -151,10 +178,25 @@ const worlds: World[] = readdirSync(dir)
   .filter((f) => f.endsWith(".json"))
   .map((f) => loadWorld(join(dir, f)));
 
+/**
+ * Has this screen described its room? `render`'s `full` flag reveals a room's
+ * description once, and the ceiling is about that screen — so "seen" has to
+ * mean "described", not "stood in".
+ *
+ * Three replays here got that wrong the same way: they seeded `seen` with the
+ * start room and asked whether the room had CHANGED. In a world with classes
+ * the intro is the class menu and describes no room, and choosing a class keeps
+ * the same room id — so the start room's one full-desc screen was invisible to
+ * every number this file asserts. A large start description could break the
+ * ceiling without ever appearing. `inPerkPickPhase`'s own comment warns about
+ * the same trap for a level-up landing on room entry.
+ */
+const describesRoom = (world: World, s: State): boolean => !inClassPhase(world, s) && !inPerkPickPhase(world, s);
+
 for (const world of worlds) {
   test(`observation budget holds along the walkthrough (${world.id})`, () => {
     let { state, events } = newState(world, 1);
-    const seen = new Set<string>([state.room]);
+    const seen = new Set<string>(describesRoom(world, state) ? [state.room] : []);
     const intro = renderIntro(world, state, events);
     assert.ok(intro.text.length <= INTRO_CHARS_MAX, `intro ${intro.text.length} > ${INTRO_CHARS_MAX}`);
 
@@ -165,8 +207,8 @@ for (const world of worlds) {
       const before: State = state;
       const out = step(world, state, a);
       state = out.state;
-      const first = state.room !== before.room && !seen.has(state.room);
-      seen.add(state.room);
+      const first = describesRoom(world, state) && !seen.has(state.room);
+      if (first) seen.add(state.room);
       const r = render(world, state, out.events, { full: first });
       sizes.push(r.text.length);
       if (!state.ended) {
@@ -259,14 +301,13 @@ test("a full party never breaks the observation budget, in combat or on a plain 
     state.npcHp[id] = arena.npcs[id]!.hp ?? 20;
   }
 
-  const seen = new Set<string>([state.room]);
+  const seen = new Set<string>(describesRoom(arena, state) ? [state.room] : []);
   const screens: { kind: string; text: string; events: string[] }[] = [];
   const turn = (action: Action, kind: string) => {
-    const before = state;
     const out = step(arena, state, action);
     state = out.state;
-    const first = state.room !== before.room && !seen.has(state.room);
-    seen.add(state.room);
+    const first = describesRoom(arena, state) && !seen.has(state.room);
+    if (first) seen.add(state.room);
     const r = render(arena, state, out.events, { full: first });
     screens.push({ kind, text: r.text, events: out.events });
   };
@@ -319,7 +360,7 @@ for (const world of worlds) {
     const over: string[] = [];
     for (const [key, steps] of proofs) {
       let { state } = newState(world, 1);
-      const seen = new Set<string>([state.room]);
+      const seen = new Set<string>(describesRoom(world, state) ? [state.room] : []);
       const sizes: { chars: number; room: string }[] = [];
       const doLabel = (label: string) => {
         const a = actionByLabel(world, state, label);
@@ -327,8 +368,8 @@ for (const world of worlds) {
         const before: State = state;
         const out = step(world, state, a);
         state = out.state;
-        const first = state.room !== before.room && !seen.has(state.room);
-        seen.add(state.room);
+        const first = describesRoom(world, state) && !seen.has(state.room);
+        if (first) seen.add(state.room);
         sizes.push({ chars: render(world, state, out.events, { full: first }).text.length, room: state.room });
       };
       for (const w of steps) {

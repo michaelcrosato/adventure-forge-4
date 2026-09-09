@@ -215,3 +215,64 @@ test("a named voice cannot say the same thing on every entry", () => {
   world.rooms["a"]!.onEnter = [["say", "The wind picks up off the spine."]];
   assert.deepEqual(validateWorld(world).filter((e) => /repeating/.test(e)), []);
 });
+
+// ---------- five gaps a review found in the closed DSL ----------
+/**
+ * Each of these passed validation before, and each let content ship that could
+ * never work. They are grouped because they share one shape: a check written
+ * for one spelling of an op, while the DSL grew a second.
+ */
+test("clearing a flag is not the same as ever setting it", () => {
+  const w = ok();
+  // reads `opened`, and only ever clears it — so the gate is false forever
+  w.rooms["a"]!.actions![0]!.if = [["flag", "opened"]];
+  w.rooms["a"]!.actions![1]!.fx = [["clear", "opened"], ["end", "lose", "gave_in", "Lost."]];
+  const errs = validateWorld(w);
+  assert.ok(
+    errs.some((e) => e.includes("opened")),
+    `a flag only ever cleared is a gate with no key:\n${errs.join("\n")}`,
+  );
+});
+
+test("a negated checkHere validates its skill and dc like the positive one", () => {
+  const w = ok();
+  w.abilities = { a: { label: "x", context: "combat", if: [["!checkHere", "mgiht", 11]], fx: [["say", "x"]] } };
+  const errs = validateWorld(w);
+  assert.ok(
+    errs.some((e) => e.includes("mgiht")),
+    `a misspelled skill reads true everywhere in the negated form:\n${errs.join("\n")}`,
+  );
+});
+
+test("turn and since validate their comparator and their threshold", () => {
+  for (const [what, cond] of [
+    ["turn's threshold", ["turn", ">=", "60"]],
+    ["since's comparator", ["since", "gave_in", "=>", 60]],
+    ["since's threshold", ["since", "gave_in", ">=", "60"]],
+  ] as const) {
+    const w = ok();
+    w.rooms["a"]!.actions![0]!.if = [cond as never];
+    const errs = validateWorld(w);
+    assert.ok(errs.length > 0, `${what} should not load clean: ${JSON.stringify(cond)}`);
+  }
+});
+
+test("a chance's success branch is searched for a line that repeats forever", () => {
+  const w = ok();
+  w.npcs = { friend: { name: "Friend", room: "a", companion: { leaves: [] } } };
+  // ["chance", pct, okFx, failFx] — the repeating line sits in okFx, one index
+  // left of where a check keeps its branches
+  w.rooms["a"]!.onEnter = [
+    ["chance", 50, [["if", [["inParty", "friend"]], [["say", "Friend says the same thing every time."]], []]], []],
+  ];
+  const errs = validateWorld(w);
+  assert.ok(
+    errs.some((e) => e.includes("onEnter")),
+    `a repeating companion line inside a chance's success branch must be caught:\n${errs.join("\n")}`,
+  );
+});
+
+test("a labelled proof is coverage for its own ending", () => {
+  // the only witness for `gave_in` carries a label; it is still a proof of it
+  assert.deepEqual(validateWorld(twoEndings({ "gave_in#slow": ["give in"] })), []);
+});

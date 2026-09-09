@@ -911,99 +911,160 @@
           "fx": [
             [
               "if",
-              [["var", "hollows_rested", ">=", 3], ["flag", "va_king_rested"], ["flag", "mg_reeve_confessed"]],
-              [["say", "The rite stands ready: three hollows rested, the Vale's king at rest, his confession said."]],
-              []
-            ],
-            [
-              "if",
-              [["var", "hollows_rested", "<", 3]],
-              [["say", "The rite still wants more hollows rested — three, and you are short of it."]],
-              []
-            ],
-            [
-              "if",
-              [["!flag", "va_king_rested"]],
-              [["say", "The rite still wants the Vale's king truly at rest, not merely settled another way."]],
-              []
-            ],
-            [
-              "if",
-              [["!flag", "mg_reeve_confessed"]],
-              [["say", "The rite still wants the first Reeve's own confession, down in his tomb."]],
-              []
-            ],
-            [
-              "if",
-              [["var", "hollows_burned", ">=", 3]],
-              [["say", "The burn road stands ready: three holds already gone to the torch."]],
-              [["say", "The burn road still wants more holds burned — three, and you are short of it."]]
-            ],
-            [
-              "if",
-              [["var", "hollows_bargained", ">=", 3]],
-              [["say", "The bargain road stands ready: three holds already bargained with, and kept to."]],
-              [["say", "The bargain road still wants more holds bargained — three, and you are short of it."]]
-            ],
-            [
-              "if",
-              [
-                [
-                  "any",
-                  [
-                    ["flag", "mg_has_oil"],
-                    ["flag", "iron_trusted"],
-                    ["has", "ir_oil"],
-                    ["has", "em_cinder_oil"],
-                    ["has", "hl_cinder_oil"],
-                    ["has", "fl_cinder_oil"],
-                    ["has", "kw_cinder_oil"],
-                    ["has", "sh_cinder_oil"],
-                    ["has", "pw_cinder_oil"],
-                    ["has", "mc_cinder_oil"],
-                    ["has", "ff_cinder_oil"]
-                  ]
-                ]
-              ],
-              [["say", "The oil is yours, one cask or the other — enough to burn the seat clean."]],
-              [
-                ["say", "No oil yet: any Ironbound cask will do — Cinderhall keeps them, so do the lay-brothers in the holds — and the palace has its own."]
-              ]
-            ],
-            [
-              "if",
-              [
-                ["has", "mg_founding_ledger"],
-                ["any", [["var", "rep_watch", ">=", 2], ["var", "rep_church", ">=", 2], ["var", "rep_free", ">=", 2]]]
-              ],
-              [["say", "The ledger is yours, and someone trusts you enough to hear it read aloud."]],
+              [["!flag", "mg_weighed_seat"]],
               [
                 [
                   "if",
-                  [["!has", "mg_founding_ledger"]],
-                  [["say", "You do not carry the founding ledger — it is chained in the Hall of Ledgers."]],
+                  [["var", "hollows_rested", ">=", 3], ["flag", "va_king_rested"], ["flag", "mg_reeve_confessed"]],
+                  [["say", "The rite stands ready: three hollows rested, the Vale's king at rest, his confession said."]],
+                  []
+                ],
+                [
+                  "if",
+                  [["var", "hollows_rested", "<", 3]],
+                  [["say", "The rite still wants more hollows rested — three, and you are short of it."]],
+                  []
+                ],
+                [
+                  "if",
+                  [["!flag", "va_king_rested"]],
+                  [["say", "The rite still wants the Vale's king truly at rest, not merely settled another way."]],
+                  []
+                ],
+                [
+                  "if",
+                  [["!flag", "mg_reeve_confessed"]],
+                  [["say", "The rite still wants the first Reeve's own confession, down in his tomb."]],
+                  []
+                ],
+                [
+                  "if",
+                  [["var", "hollows_burned", ">=", 3]],
+                  [["say", "The burn road stands ready: three holds already gone to the torch."]],
+                  [["say", "The burn road still wants more holds burned — three, and you are short of it."]]
+                ],
+                [
+                  "if",
+                  [["var", "hollows_bargained", ">=", 3]],
+                  [["say", "The bargain road stands ready: three holds already bargained with, and kept to."]],
+                  [["say", "The bargain road still wants more holds bargained — three, and you are short of it."]]
+                ],
+                [
+                  "if",
+                  [
+                    [
+                      "any",
+                      [
+                        ["flag", "mg_has_oil"],
+                        ["flag", "iron_trusted"],
+                        ["has", "ir_oil"],
+                        ["has", "em_cinder_oil"],
+                        ["has", "hl_cinder_oil"],
+                        ["has", "fl_cinder_oil"],
+                        ["has", "kw_cinder_oil"],
+                        ["has", "sh_cinder_oil"],
+                        ["has", "pw_cinder_oil"],
+                        ["has", "mc_cinder_oil"],
+                        ["has", "ff_cinder_oil"]
+                      ]
+                    ]
+                  ],
+                  [["say", "The oil is yours, one cask or the other — enough to burn the seat clean."]],
+                  [
+                    ["say", "No oil yet: any Ironbound cask will do — Cinderhall keeps them, so do the lay-brothers in the holds — and the palace has its own."]
+                  ]
+                ],
+                [
+                  "if",
+                  [
+                    ["has", "mg_founding_ledger"],
+                    ["any", [["var", "rep_watch", ">=", 2], ["var", "rep_church", ">=", 2], ["var", "rep_free", ">=", 2]]]
+                  ],
+                  [["say", "The ledger is yours, and someone trusts you enough to hear it read aloud."]],
+                  [
+                    [
+                      "if",
+                      [["!has", "mg_founding_ledger"]],
+                      [["say", "You do not carry the founding ledger — it is chained in the Hall of Ledgers."]],
+                      []
+                    ],
+                    [
+                      "if",
+                      [
+                        ["has", "mg_founding_ledger"],
+                        ["var", "rep_watch", "<", 2],
+                        ["var", "rep_church", "<", 2],
+                        ["var", "rep_free", "<", 2]
+                      ],
+                      [
+                        ["say", "You have the ledger, but no one trusts you enough yet — Watch, Church, or Companies, to standing 2."]
+                      ],
+                      []
+                    ]
+                  ]
+                ],
+                [
+                  "if",
+                  [["has", "va_crown"]],
+                  [["say", "The crown is yours to wear, if you dare the seat."]],
+                  [["say", "You do not carry the Vale's crown."]]
+                ],
+                ["set", "mg_weighed_seat"]
+              ],
+              [
+                ["say", "You weigh the doors again."],
+                [
+                  "if",
+                  [["var", "hollows_rested", ">=", 3], ["flag", "va_king_rested"], ["flag", "mg_reeve_confessed"]],
+                  [["say", "The rite stands ready: three hollows rested, the Vale's king at rest, his confession said."]],
+                  []
+                ],
+                [
+                  "if",
+                  [["var", "hollows_burned", ">=", 3]],
+                  [["say", "The burn road stands ready: three holds already gone to the torch."]],
+                  []
+                ],
+                [
+                  "if",
+                  [["var", "hollows_bargained", ">=", 3]],
+                  [["say", "The bargain road stands ready: three holds already bargained with, and kept to."]],
+                  []
+                ],
+                [
+                  "if",
+                  [
+                    [
+                      "any",
+                      [
+                        ["flag", "mg_has_oil"],
+                        ["flag", "iron_trusted"],
+                        ["has", "ir_oil"],
+                        ["has", "em_cinder_oil"],
+                        ["has", "hl_cinder_oil"],
+                        ["has", "fl_cinder_oil"],
+                        ["has", "kw_cinder_oil"],
+                        ["has", "sh_cinder_oil"],
+                        ["has", "pw_cinder_oil"],
+                        ["has", "mc_cinder_oil"],
+                        ["has", "ff_cinder_oil"]
+                      ]
+                    ]
+                  ],
+                  [["say", "The oil is yours, one cask or the other — enough to burn the seat clean."]],
                   []
                 ],
                 [
                   "if",
                   [
                     ["has", "mg_founding_ledger"],
-                    ["var", "rep_watch", "<", 2],
-                    ["var", "rep_church", "<", 2],
-                    ["var", "rep_free", "<", 2]
+                    ["any", [["var", "rep_watch", ">=", 2], ["var", "rep_church", ">=", 2], ["var", "rep_free", ">=", 2]]]
                   ],
-                  [
-                    ["say", "You have the ledger, but no one trusts you enough yet — Watch, Church, or Companies, to standing 2."]
-                  ],
+                  [["say", "The ledger is yours, and someone trusts you enough to hear it read aloud."]],
                   []
-                ]
+                ],
+                ["if", [["has", "va_crown"]], [["say", "The crown is yours to wear, if you dare the seat."]], []]
               ]
-            ],
-            [
-              "if",
-              [["has", "va_crown"]],
-              [["say", "The crown is yours to wear, if you dare the seat."]],
-              [["say", "You do not carry the Vale's crown."]]
             ]
           ],
           "free": true

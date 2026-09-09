@@ -155,10 +155,21 @@ export function validateWorld(world: World): string[] {
         if (!npcOk(c[1])) err(`${where}: unknown npc ${c[1]}`);
         if (!conditionOk(c[2])) err(`${where}: unknown condition ${c[2]}`);
       }
-      else if (c[0] === "turn" && !["<", ">", "=", ">=", "<="].includes(c[1])) err(`${where}: bad turn comparator ${String(c[1])}`);
-      else if (c[0] === "checkHere") {
+      else if (c[0] === "turn" || c[0] === "since") {
+        // world JSON is cast, not type-checked, so a typo'd comparator such as
+        // "=>" loads cleanly and falls through to equality: a scheduled event
+        // that fires on one exact turn, or never. `turn` checked its comparator
+        // and not its threshold; `since` checked neither.
+        const [op, n] = c[0] === "turn" ? [c[1], c[2]] : [c[2], c[3]];
+        if (!["<", ">", "=", ">=", "<="].includes(String(op))) err(`${where}: bad ${c[0]} comparator ${String(op)}`);
+        if (typeof n !== "number") err(`${where}: ${c[0]} threshold must be a number`);
+      }
+      else if (c[0] === "checkHere" || c[0] === "!checkHere") {
+        // both forms, because a misspelled skill in the negated one is worse:
+        // the nonexistent positive check is false everywhere, so `!checkHere`
+        // reads true everywhere and the ability it gates is offered realm-wide
         if (!checkNameOk(c[1])) err(`${where}: unknown skill ${c[1]}`);
-        if (typeof c[2] !== "number") err(`${where}: checkHere dc must be a number`);
+        if (typeof c[2] !== "number") err(`${where}: ${c[0]} dc must be a number`);
       }
       else if ((c[0] === "region" || c[0] === "!region") && !(c[1] in (world.regions ?? {})))
         err(`${where}: unknown region ${c[1]} — a typo here reads as "nowhere" and the condition simply never fires`);
@@ -179,7 +190,11 @@ export function validateWorld(world: World): string[] {
   const checkFx = (where: string, fxs?: Fx[]) => {
     for (const fx of fxs ?? []) {
       const op = fx[0];
-      if (op === "set" || op === "clear") flagWrites.add(String(fx[1]));
+      // `set` only. Clearing a flag nothing ever sets leaves the gate that reads
+      // it permanently false, which is precisely the unreachable content the
+      // "reads with no writer" check below exists to find — so counting `clear`
+      // as a key defeated it.
+      if (op === "set") flagWrites.add(String(fx[1]));
       else if (op === "setvar" || op === "addvar") varWrites.add(String(fx[1]));
       if (!FX_OPS.has(op)) { err(`${where}: unknown fx op ${String(op)}`); continue; }
       if (op === "move" && !itemOk(fx[1])) err(`${where}: unknown item ${fx[1]}`);
@@ -451,9 +466,16 @@ export function validateWorld(world: World): string[] {
         const h = held || conds.some((c) => c[0] === "flag" || c[0] === "!flag" || c[0] === "since");
         repeatsForever(fx[2], p, h, hits);
         repeatsForever(fx[3], person, h, hits); // the else branch is not the person's line
-      } else if (fx[0] === "check" || fx[0] === "chance") {
+      } else if (fx[0] === "check") {
         repeatsForever(fx[3] as Fx[], person, held, hits);
         repeatsForever(fx[4] as Fx[], person, held, hits);
+      } else if (fx[0] === "chance") {
+        // ["chance", pct, okFx, failFx] — one index left of a check's branches.
+        // Sharing the check's offsets read the fail branch as the success one
+        // and index 4 as undefined, so a repeating companion line inside a
+        // chance's success branch was never looked at.
+        repeatsForever(fx[2] as Fx[], person, held, hits);
+        repeatsForever(fx[3] as Fx[], person, held, hits);
       }
     }
   };
@@ -639,9 +661,13 @@ export function validateWorld(world: World): string[] {
 
   // Ending proofs: every ending the content can reach must be replay-proven.
   // (The primary walkthrough covers its own ending; "dead" is the engine's.)
+  // `"regent_deposed#warden"` is a proof OF `regent_deposed`, so coverage is
+  // asked of the normalized ids rather than of the literal keys — a world whose
+  // only witness for an ending carries a label was being told it had none.
+  const provenEnds = new Set(Object.keys(world.proofs ?? {}).map((k) => k.split("#")[0]!));
   for (const id of endIds) {
     if (id === primaryEnd || id === "dead") continue;
-    if (!world.proofs?.[id]) err(`ending ${id}: no proof — add proofs.${id} or it is a claim, not a fact`);
+    if (!provenEnds.has(id)) err(`ending ${id}: no proof — add proofs.${id} or it is a claim, not a fact`);
   }
   // An ending may carry more than one witness: `"regent_deposed#warden"` is a
   // second proof of the same ending by a different road. Everything from the

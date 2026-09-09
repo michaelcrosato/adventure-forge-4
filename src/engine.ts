@@ -131,8 +131,27 @@ function sameValue(a: unknown, b: unknown): boolean {
   return true;
 }
 
-/** Actions that turn a menu page rather than the world: free, and no time for anyone to speak. */
-const MENU_KINDS = new Set(["travel", "travelregion", "travelmore", "traveldone", "company", "companydone", "talkmore", "roommore"]);
+/**
+ * Actions that cost no turn: turning a menu page, opening or leaving a
+ * conversation, and standing a hostile down. See `spentTurn` in `step` for why
+ * each is here.
+ */
+const BROWSING = new Set(["leave", "travel", "travelregion", "traveldone", "travelmore", "company", "companydone", "talkto", "endtalk", "talkmore", "roommore"]);
+
+/**
+ * Of those, the ones that are *only* navigation — nothing happened in the
+ * world, so nobody speaks. Derived from BROWSING rather than listed again,
+ * because the two were maintained separately and drifted: `talkto` and
+ * `endtalk` became free without being added here, which made opening and
+ * closing a conversation an unlimited companion-remark farm (free, repeatable,
+ * and it ran the whole remark pass every time).
+ *
+ * `leave` is the one exception and stays out: standing a hostile down is a
+ * choice a companion may answer, not a page turn. A `free` custom or ability
+ * is deliberate too and still speaks — `reach_at_rest#devoted` turns on
+ * exactly that, a remark answering "weigh the doors of the seat".
+ */
+const NAVIGATION = new Set([...BROWSING].filter((k) => k !== "leave"));
 
 /** Flags a quarrel sets that are outcomes, not the quarrel itself. */
 const QUARREL_TAILS = new Set(["done", "peace", "sour", "lys", "osk", "tamsin", "vell"]);
@@ -988,7 +1007,14 @@ function localTravel(world: World, s: State, region: string): string[] {
  */
 const regionName = (world: World, region: string): string => world.regions?.[region]?.name ?? region;
 
-function travelActions(world: World, s: State): Action[] {
+/**
+ * The whole travel list, before paging: the destinations (or regions) this
+ * screen is offering. Split out from `travelActions` because `travelMore` has
+ * to count what is NOT showing, and asking the paged function for a total gave
+ * it the page — so the top-level menu always read "(0 more)" however many
+ * regions were waiting.
+ */
+function travelList(world: World, s: State): Action[] {
   const known = knownLandmarks(world, s);
   let list: Action[];
   if (s.travelMenu === "") {
@@ -1014,6 +1040,11 @@ function travelActions(world: World, s: State): Action[] {
     // you have been.
     list = localTravel(world, s, s.travelMenu ?? "").map((id): Action => ({ kind: "travelto", room: id }));
   }
+  return list;
+}
+
+function travelActions(world: World, s: State): Action[] {
+  const list = travelList(world, s);
   // a list that has grown past the cap turns pages, like a long conversation:
   // "more places" (free, wrapping) and the way out stay on every page
   const paging = list.length + 1 > MENU_CAP;
@@ -1028,11 +1059,9 @@ function travelActions(world: World, s: State): Action[] {
 
 /** How many travel entries wait on the other pages of the current list. */
 function travelMore(world: World, s: State): number {
-  const known = knownLandmarks(world, s);
-  const total = s.travelMenu === ""
-    ? travelActions(world, s).filter((a) => a.kind === "travelto" || a.kind === "travelregion").length
-    : localTravel(world, s, s.travelMenu ?? "").length;
-  const shown = travelActions(world, s).filter((a) => a.kind === "travelto" || a.kind === "travelregion").length;
+  const destination = (a: Action): boolean => a.kind === "travelto" || a.kind === "travelregion";
+  const total = travelList(world, s).filter(destination).length;
+  const shown = travelActions(world, s).filter(destination).length;
   return total - shown;
 }
 
@@ -2753,9 +2782,13 @@ export function oddsHint(world: World, s: State, a: Action, opts: { itemHints?: 
   }
   if (a.kind === "travelmore") return ` (${travelMore(world, s)} more)`;
   if (a.kind === "roommore") {
-    // how much of the room is on the other pages
-    const shown = legalActions(world, s).length - 1; // this entry is not one of the things waiting
-    return ` (${Math.max(1, allActions(world, s).length - shown)} more)`;
+    // how much of the room is on the other pages. The pager itself is on
+    // neither side of the subtraction: `shown` drops it from this page, and
+    // `allActions` carries one too, so counting it as content reported four
+    // hidden options as five.
+    const shown = legalActions(world, s).length - 1;
+    const load = allActions(world, s).filter((x) => x.kind !== "roommore").length;
+    return ` (${Math.max(1, load - shown)} more)`;
   }
   if (a.kind === "talkmore" && s.talking) {
     // how many topics wait on the other pages
@@ -2966,7 +2999,6 @@ export function step(world: World, prev: State, action: Action): StepOut {
   const freeCustom =
     (action.kind === "custom" && !!world.rooms[action.room]?.actions?.find((x) => x.id === action.id)?.free) ||
     (action.kind === "ability" && !!world.abilities?.[action.id]?.free);
-  const BROWSING = new Set(["leave", "travel", "travelregion", "traveldone", "travelmore", "company", "companydone", "talkto", "endtalk", "talkmore", "roommore"]);
   const spentTurn = !freeCustom && !BROWSING.has(action.kind);
   if (spentTurn) s.turn += 1;
   let attacked: string | null = null; // the npc that already struck back this turn
@@ -3201,8 +3233,11 @@ export function step(world: World, prev: State, action: Action): StepOut {
     // the realm gets its own turn last: after the player's action, the aggressive
     // pass, and conditions — so a clock entry can react to anything any of them just did
     if (spentTurn) tickClock(world, s, events);
-    // the company speaks on a turn of the world, not while a menu is being turned
-    if (!MENU_KINDS.has(action.kind)) partyRemarks(world, s, events);
+    // The company speaks on a turn of the world, not while a menu is being
+    // turned. NAVIGATION is derived from BROWSING so the two cannot drift
+    // apart again — which they had, by three kinds, and the gap made opening a
+    // conversation an unlimited remark farm the morning `talkto` became free.
+    if (!NAVIGATION.has(action.kind)) partyRemarks(world, s, events);
   }
   journalEvents(world, prev, s, events);
   // Once, the first time fast travel is on the menu: a playtester walked the

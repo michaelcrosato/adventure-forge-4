@@ -269,7 +269,9 @@ export function crawlForks(world: World, every: number, forkSteps: number, sweep
       if (state.ended) break;
     }
   }
-  r.steps += forks; // the forks themselves are counted inside walkFrom
+  // Not `r.steps += forks`: walkFrom already counts every action each fork
+  // executes, so adding the fork count again put one phantom step per fork into
+  // the number every coverage and performance comparison is read off.
   return r;
 }
 

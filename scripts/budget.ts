@@ -13,7 +13,7 @@
  * `--terse` prints one line, for a before/after diff:
  *   avg 449.9257 max 1076 sum 121030 screens 269
  */
-import { actionByLabel, condOk, newState, step } from "../src/engine.ts";
+import { actionByLabel, condOk, inClassPhase, inPerkPickPhase, newState, step } from "../src/engine.ts";
 import { render, renderIntro } from "../src/format.ts";
 import { loadWorld } from "../src/validate.ts";
 import type { State, World } from "../src/types.ts";
@@ -37,17 +37,31 @@ type Screen = { n: number; chars: number; room: string; label: string };
 /** Replay one route (the walkthrough, or an ending proof) and measure every screen it renders. */
 function walk(steps: World["walkthrough"], what: string): { screens: Screen[]; intro: ReturnType<typeof renderIntro> } {
   let { state, events } = newState(world, 1);
-  const seen = new Set<string>([state.room]);
   const intro = renderIntro(world, state, events);
+  /**
+   * Which rooms have had their full description rendered — not which rooms the
+   * player has stood in. In a world with classes the intro is the class menu
+   * and shows no room at all, so pre-seeding this with the start room hid that
+   * room's one full-desc screen from every measurement: the class pick keeps
+   * the same room id, so a room-change test can never see it either. A large
+   * start description could break the ceiling without appearing here.
+   *
+   * The same goes for a level-up: `inPerkPickPhase`'s own comment says a
+   * caller deciding whether a room has been "seen" must treat it like the
+   * class phase, or a level-up on entry burns the reveal on a perk menu.
+   */
+  const shows = (st: State): boolean => !inClassPhase(world, st) && !inPerkPickPhase(world, st);
+  const seen = new Set<string>(shows(state) ? [state.room] : []);
   const screens: Screen[] = [];
   const doLabel = (label: string) => {
     const a = actionByLabel(world, state, label);
     if (!a) { console.error(`${what} is broken at screen ${screens.length + 1}: no action "${label}" in ${state.room}`); process.exit(1); }
-    const before: State = state;
     const out = step(world, state, a);
     state = out.state;
-    const first = state.room !== before.room && !seen.has(state.room);
-    seen.add(state.room);
+    // not "did the room change" — "has this room ever been described", which
+    // is what `full` renders and what the ceiling is about
+    const first = shows(state) && !seen.has(state.room);
+    if (first) seen.add(state.room);
     screens.push({ n: screens.length + 1, chars: render(world, state, out.events, { full: first }).text.length, room: state.room, label });
   };
   for (const w of steps) {
