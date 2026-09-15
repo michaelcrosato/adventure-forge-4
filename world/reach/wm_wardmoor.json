@@ -1065,6 +1065,7 @@
           "fx": [
             ["score", 6],
             ["xp", 3],
+            ["move", "wm_ir_keepsake", "nowhere"],
             [
               "if",
               [["flag", "rb_wm_ir_forced"]],
@@ -1078,7 +1079,7 @@
               "if",
               [["flag", "rb_wm_ir_cleared"]],
               [
-                ["say", "\"The debt was paid all along, and Mirren's own ledger says so.\" Fenn's jaw sets. \"Wish I'd known that before the guilt.\""],
+                ["say", "\"The debt was paid all along, and Mirren's own ledger says so.\" Fenn's jaw sets. \"Wish I'd known that before the guilt.\" He takes the ring from you without another word."],
                 ["addvar", "appr_tamsin", 1]
               ],
               []
@@ -1352,7 +1353,7 @@
           "id": "writ",
           "label": "ask for the Regent's writ",
           "if": [["!flag", "regent_writ"], ["!flag", "said_wm_envoy_writ_no"]],
-          "say": "Burn a hollow clean for the Ironbound, or earn this Watch's trust — two honest services, its standing at +2 — and I'll write you passage to Marrowgate myself. Have you done either yet?",
+          "say": "Burn a hollow clean for the Ironbound, or earn this Watch's trust — two honest services, its standing at +2 — and I'll write you passage to Marrowgate myself. Have you done either yet? (Either way, the Ironbound march.)",
           "fx": [
             [
               "if",

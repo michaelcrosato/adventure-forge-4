@@ -664,7 +664,11 @@
         {
           "id": "th_sergeant_rite",
           "label": "show him the Priory's sealed rite",
-          "if": [["!flag", "th_gate_passed"], ["!flag", "calm_th_sergeant"], ["any", [["flag", "church_trusted"], ["has", "fd_priors_rite"]]]],
+          "if": [
+            ["!flag", "th_gate_passed"],
+            ["!flag", "calm_th_sergeant"],
+            ["any", [["flag", "church_trusted"], ["has", "fd_priors_rite"]]]
+          ],
           "fx": [
             ["set", "th_gate_passed"],
             ["npcgo", "th_sergeant", null],
@@ -2659,6 +2663,7 @@
           "brief": "Spoil-dust drifting south.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            { "id": "th_wood_bearings_1_0", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_spoil_sift",
               "label": "sift the spoil for anything dropped",
@@ -2678,6 +2683,7 @@
           "brief": "The sunken holloway.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            { "id": "th_wood_bearings_2_0", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_holloway_dig",
               "label": "dig at a loose root",
@@ -2698,6 +2704,7 @@
           "brief": "Old grave-shapes in the leaf-mold.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            { "id": "th_wood_bearings_3_0", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_cairn_honor",
               "label": "leave a word for the old dead",
@@ -2733,6 +2740,7 @@
           "brief": "Broken ground, a view north.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            { "id": "th_wood_bearings_4_0", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_ridge_look",
               "label": "down the scree (grace, 1hp on fail)",
@@ -2876,7 +2884,8 @@
           "desc": "Roots break the ground in every direction, thick as a man's waist, off a tree too tall to see the top of from here. Bitter bark peels loose where the wood has scarred over an old wound.",
           "brief": "Roots thick as a waist.",
           "items": ["th_bitter_bark"],
-          "onEnterOnce": [["xp", 1]]
+          "onEnterOnce": [["xp", 1]],
+          "actions": [{ "id": "th_wood_bearings_1_2", "label": "get your bearings", "fx": [["bearings"]], "free": true }]
         },
         {
           "cell": [2, 2],
@@ -2901,6 +2910,7 @@
             }
           ],
           "actions": [
+            { "id": "th_wood_bearings_3_2", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_fox_search",
               "label": "check what the fox left behind",
@@ -2939,6 +2949,7 @@
           "brief": "Bramble and a dark crack west.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            { "id": "th_wood_bearings_0_3", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_clawed_search",
               "label": "turn over what the bramble caught",
@@ -2958,6 +2969,7 @@
           "brief": "Softening ground, water near.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            { "id": "th_wood_bearings_1_3", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_ford_test",
               "label": "cross soft ground (grace, 1hp on fail)",
@@ -2990,6 +3002,7 @@
           "brief": "The cold ford.",
           "onEnterOnce": [["xp", 2], ["score", 2]],
           "actions": [
+            { "id": "th_wood_bearings_2_3", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_river_fish",
               "label": "fish the shallows (wits)",
@@ -3018,6 +3031,7 @@
           "brief": "Thick, thorned bramble.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            { "id": "th_wood_bearings_3_3", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_bramble_force",
               "label": "force the thorn (might, 1hp on fail)",
@@ -3046,6 +3060,7 @@
           "brief": "Old growth gives to scrub.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            { "id": "th_wood_bearings_4_3", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_laststand_look",
               "label": "look over the old scrub for sign",
@@ -3065,6 +3080,7 @@
           "brief": "Salt on the wind.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            { "id": "th_wood_bearings_1_4", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_gull_search",
               "label": "see what the gulls are working at",
@@ -3084,6 +3100,7 @@
           "brief": "A muffling carpet of needles.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            { "id": "th_wood_bearings_2_4", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_pine_dig",
               "label": "dig under the needle carpet",
@@ -3103,6 +3120,7 @@
           "brief": "A tower's crown, south.",
           "onEnterOnce": [["xp", 1]],
           "actions": [
+            { "id": "th_wood_bearings_3_4", "label": "get your bearings", "fx": [["bearings"]], "free": true },
             {
               "id": "th_bluff_scrap",
               "label": "check what's caught on the dead pine",

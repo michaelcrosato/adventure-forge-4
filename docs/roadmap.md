@@ -6293,3 +6293,415 @@ assigned tickets, but leaving a just-corroborated, identically-reasoned
 finding split between an open file and a closed one would recreate exactly
 what that precedent exists to avoid. No `src/` or `world/` file touched;
 `npm run verify` untouched.
+
+### `P1-issue-99234e3c` + `P2-issue-f8d507af`: the ring quest's real resolution fires at the Company Store, but the physical prop was never released
+
+Both tickets are the same seed-11043 report split in two: "the 'Aldric's Ring'
+quest completed via a ledger check at the Company Store (Cinderhall), but I
+still carried the physical 'Aldric's iron ring' item for the rest of the
+game with no dialogue option to actually hand it to Corporal Fenn" (P1), and
+the general ask that follows from it — auto-resolve or flag leftover
+quest-items instead of letting them persist silently (P2).
+
+Read the whole `wm_q_ring` shape first rather than assuming the ledger check
+and "hand it to Fenn" are the same step the player skipped. They are not:
+`world/reach/ir_irondowns.json:222-302` (Company Store) gives three
+alternate ways to get the ring off Mirren — force the strongbox (might,
+`:222-244`), read the paid-off ledger line (wits, `:246-267`, what this
+player did), or persuade her plainly (will, `:269-302`) — and all three
+`move` the ring into inventory and set one of `rb_wm_ir_forced` /
+`rb_wm_ir_cleared` / `rb_wm_ir_bought`. `wm_q_ring`'s own `done` condition
+(`world/reach/wm_wardmoor.json:1896`) fires on any of those three flags —
+retrieval, not delivery, is this quest's real, scored consequence, same as
+its debt-settled reactions read elsewhere (`world/reach/mg_marrowgate.json:
+2802-2808`, `world/reach/companions.json:2912-2916`, both keyed to the same
+three flags, about the debt's *method*, independent of the prop). So the
+ledger check is one of three ways to reach the *one* subsequent step, not a
+second path around it.
+
+That one subsequent step already exists: `fenn_ring_done`
+(`world/reach/wm_wardmoor.json:1057-1095`), gated on `wm_asked_ring` plus any
+of the three retrieval flags, fires once, pays score 6/xp 3, and gives
+resolution-specific dialogue — this is the "debt-info line" the report
+found, and it is in fact Fenn's side of taking the ring back. What it never
+did was `move` the ring out of the player's inventory, so the "physical
+prop" half of the quest just never closed; the player is holding an item
+whose own hint (`world/reach/ir_irondowns.json:818`, "Corporal Fenn... would
+want this back") promises exactly the destination this conversation reaches
+without ever paying it off. Confirmed no other topic anywhere gates on
+`["has", "wm_ir_keepsake"]` either (grepped the whole `world/`), so this
+was not a case of a correctly-gated delivery topic sitting unreachable
+behind a wrong id — the topic that should close the loop already existed
+and ran, it just forgot the one effect that would have ended the item's
+story.
+
+Checked the realm's own convention before writing anything, per this
+session's usual rule of not inventing a shape nobody else uses. Three
+siblings, all "physical item, single destination, `hint` promising it back"
+quests: `ir_marked_pick` ("Old Crick would want this back" —
+`world/reach/ir_irondowns.json:804-808`) resolves at
+`world/reach/ir_irondowns.json:1438-1465`, gated on `["has",
+"ir_marked_pick"]`, and both branches `["move", "ir_marked_pick",
+"nowhere"]`; `cp_bell_clapper` ("Abbot Corvin would want this back at the
+bell tower" — `world/reach/cp_coldpass.json:405`) resolves at
+`world/reach/cp_coldpass.json:306-320`, gated on `["has", "cp_bell_clapper"]`,
+and moves it to `nowhere` too; `em_pip_keepsake` resolves at
+`world/reach/em_emberfall.json:1076-1089`, same shape again. All three pay a
+modest, one-time score/xp (4-5 / 2-3) on the same beat that clears the item.
+`wm_q_ring` is the one quest in this family that skipped the `move` — not a
+different, intentional design (a "keepsake" ring would need a hint that
+reads that way, like `wm_oath_seal`'s "a curiosity now, nothing more"; this
+one's hint is a live promise, not a closed one).
+
+Fix matches the sibling shape and the task's own instruction not to invent a
+second reward: added `["move", "wm_ir_keepsake", "nowhere"]` to
+`fenn_ring_done`'s (unconditional) `fx`, right after the existing `score`/
+`xp` (`world/reach/wm_wardmoor.json:1068`), so it fires on all three
+resolution branches without touching any of them individually. Also gave the
+`rb_wm_ir_cleared` branch's line a half-sentence of physical handover
+("He takes the ring from you without another word.",
+`world/reach/wm_wardmoor.json:1082`) — the `forced` and `bought` branches
+already said "he turns it over"; `cleared` (this reporter's own path) was
+the one branch that talked only about the debt and never the ring, which
+likely made the missing payoff read even more like a dead end than the other
+two would have. No `wm_q_ring` `done`/`stages` change: the quest's real
+consequence is still the debt's method, resolved at the store, exactly as
+the task brief anticipated ("if the ledger path already fully resolved the
+quest's REAL consequence... this would just be closing the physical prop").
+Confirmed via `node` against the bundled `world/reach.json` that neither the
+master walkthrough nor any of its thirteen named `proofs` touches
+`wm_asked_ring`/`fenn_ring_done`/`wm_ir_keepsake` at all (nor, for that
+matter, `Corporal Fenn`/`Aldric` anywhere by name) — this content sits
+entirely off the scored critical path, so the fix needed no walkthrough or
+proof update.
+
+For `f8d507af`'s general ask: checked how common this actually is before
+treating "leftover quest item" as a realm-wide defect class, using a
+scratch pass over every item in the bundled world (327 total) for the exact
+false-negative shape `scripts/audit-items.ts` cannot see — an item granted
+into inventory by authored content (`["move", id, "inv"]`) with zero
+`has`/`!has` gates, zero targets, zero own-uses, and zero moves back out.
+That tool's own `moves` tally is undirected, so an item's *acquisition* move
+already counts as a "read" and hides it from the `--dead`/broken-promise
+check that would otherwise have caught exactly this bug — worth noting as a
+tool gap in its own right, since it's why `npx tsx scripts/audit-items.ts
+world/reach.json --dead` reports 0 broken promises realm-wide despite the
+ring (before this fix) being one. 87 items matched the shape. All but a
+handful are the templated hollow-dungeon `*_loot` trophies (`cp_shrine1_loot`,
+`em_cairn_loot`, `ir_barrow1_loot`, and ~70 more across every region), and
+every one of those already carries an explicit closing hint — "a keepsake,
+nothing more is owed on it," "a parting gift; nothing is owed on it," "past
+its owner's needing... nothing is owed on it" — the exact "honest keepsake"
+pattern `docs/authoring.md:966-978` already describes and already prices as
+not a defect. A few one-off narrative tokens (`ir_oath_token`,
+`va_wight_relic`, `va_fenfolk_carving`, `wm_oath_seal`, `th_free_chit`,
+`mc_wax_lump`, `pw_hoard_silver`, `me_covenant_stone_cracked`) are the same:
+descriptive trophies, no destination promised, nothing to close. Read every
+one of them rather than trusting the hint regex alone.
+
+Exactly one other item in the entire 327 matched the ring's actual bug
+shape, not the keepsake shape: `kw_horn` ("the huntsman's horn",
+`world/reach/kw_hollow.json:458-463`, hint "sound it whole at the Hunt's
+Stand's horn-post..."). It has a fully-written closure conversation — Sabel
+asking what should become of it, branching into "hang it at the post" or
+"send it to the Keepers' Hall" (`world/reach/kw_folk.json:806-842`), both
+narrating the horn leaving the player's hands — that never actually moves
+`kw_horn` out of inventory either. Same bug, different region, also off the
+walkthrough/every proof (checked the same way). Two confirmed instances out
+of 327 items is a one-off pattern repeated once, not a realm-wide epidemic —
+proportionate evidence against building `f8d507af`'s literal ask (a generic
+engine-level auto-resolve/flag mechanism), which would mean loosening
+"content before engine" and growing the DSL for a defect rate under 1%, each
+instance cheaply fixable in its own content file the way this one was. Tried
+twice to file the `kw_horn` finding as a follow-up task via `spawn_task`
+(both calls timed out after 60s rather than returning an error or a task
+id); it is written up in full above with exact file:line references in case
+neither attempt actually landed. `queue/P1-issue-99234e3c.json` and
+`queue/P2-issue-f8d507af.json` both move to `done/` on this basis — the
+first fixed, the second answered with the survey it asked for rather than
+the generic mechanism it proposed.
+
+One more thing worth a reader's attention: mid-session, a concurrent change
+to `src/engine.ts` (not this entry's own — already present in the shared
+tree before this entry started, alongside an in-progress `test/fx.test.ts`
+and `world/reach/hb_hollow.json`) now emits a generic "`<item>`: gone."
+event whenever a `move` fx takes an item out of inventory to anywhere but
+`"inv"`. That means this entry's `["move", "wm_ir_keepsake", "nowhere"]`
+will itself now surface as a visible "Aldric's iron ring: gone." line when
+`fenn_ring_done` fires — a nice, unplanned confirmation that the item's
+departure is no longer silent, in the spirit of `f8d507af`'s ask, from a
+mechanism this entry didn't build and isn't claiming credit for.
+
+One content change this entry (`world/reach/wm_wardmoor.json`, the
+`fenn_ring_done` `fx` and its `rb_wm_ir_cleared` line). `npm run verify` was
+red partway through this entry — `test/budget.test.ts`, "the observation
+budget holds along every other proven route (reach)", three routes over cap
+in `mg_hollow_throne`/`va_throne`/`regent_deposed`'s average — confirmed via
+`git stash` that the failure was byte-identical with and without this
+entry's `wm_wardmoor.json` change, so it belonged to the concurrent
+`src/engine.ts` work described above (plausibly its new "gone." event
+pushing those specific screens over budget), mid-flight in the shared tree,
+not to this entry. That sibling work reached its own green before this one
+finished: a full `npm run verify` re-run just now (typecheck, all 337
+tests, all three worlds validate and win-prove clean, both crawls clean, 0
+over-cap menus, mock and measure both complete) is clean end to end with
+this entry's change included.
+
+### `P1-issue-30e9b264.json` and `P2-issue-687e8b63.json`: the Regent's Writ now names its cost before the envoy seals it
+
+Same wave-7 report (`s11043`), bug half and suggestion half of one finding:
+claiming the Regent's Writ at Highward "retroactively spawned an
+urgent-sounding 'Ironbound column burning the Reach' consequence quest with
+no prior warning," and the fix should "surface the consequence... before
+confirming it, not after" — the same "flag the tradeoff at the point of
+choice" shape this document has fixed before (the crown's `va_full_rite`,
+`:4155-4218`; the barrow's hunter's-gap shortcut, `:4447-4495`).
+
+**The mechanism is the Ironbound march, working exactly as designed and
+already documented**
+(`docs/superpowers/specs/2026-09-08-the-realm-moves.md:30-34`; landed per
+`:428-431`). `wm_envoy`'s "writ" topic (`world/reach/wm_wardmoor.json:1352-
+1400`) grants `regent_writ` on any of three routes — `watch_sworn`,
+`hollows_burned >= 1`, or `rep_watch >= 2` — and `ir_irondowns.json:2444-
+2447`'s clock entry `iron_march_begins` fires the instant either
+`hollows_burned >= 1` OR `flag regent_writ` is true, setting `iron_march`
+and saying "The Ironbound have their answer now, and they mean to use it."
+Picking a dialogue topic spends a turn (`talk` is not in `engine.ts`'s
+`BROWSING` set, `:139`, so `spentTurn` is true, `:3233-3237`), and the
+world's clock runs in the same `step()` call right after the player's own
+action (`:1996-2009`) — so for a player who already qualifies, that
+announcement, plus quest `ir_march` ("The Column") starting with its own
+stage text "An Ironbound column burns its way down the Reach unbidden"
+(`ir_irondowns.json:2855-2868`, the exact "Ironbound column burning the
+Reach" language the report quotes), lands in the very same response as the
+grant. That is the "retroactively spawned" feeling: not a bug in the
+clock, which is doing precisely what `the-realm-moves.md` designed it to
+do, but zero forward signal anywhere in the only text the player reads
+before that response arrives.
+
+**It is not mechanically urgent, only tonally so.** `iron_march_warned`'s
+general notice fires 10 turns after the march starts
+(`ir_irondowns.json:2450-2453`); the earliest any hold actually burns is
+`iron_march_burn_kw` at `since iron_march >= 60` (`:2489-2493`), and the
+Preceptor can be stopped outright any time before that. A player who reacts
+within about 60 turns loses nothing — but the writ's own text says nothing
+about that either, so a player has no way to read "urgent" against "there
+is real time to act" without already knowing the clock's internals.
+
+**The gap was real and exactly where the report puts it.** Read all six of
+the writ's grant lines (`wm_wardmoor.json:1352-1445` — three routes each
+for the first ask and the retry) and the shared prompt above them: none
+mentions the Ironbound, a march, or any cost, only reward framing ("I'll
+write you passage to Marrowgate myself... The writ is yours"). Unlike
+burning a hollow — already legible as an aggressive act with its own
+well-known fallout — the `watch_sworn`/`rep_watch>=2` routes have nothing
+to do with the Ironbound at all, so a player working the peaceful path has
+no contextual hook to infer the tie.
+
+**Checked the established convention before writing anything.** This
+engine has no confirm/cancel step for a dialogue choice; `va_full_rite`'s
+fix (`va_barrow.json:438`) and the hunter's-gap fix (`va_barrow.json:102`)
+both flag the tradeoff inside the same action's own text, at the point the
+choice resolves, rather than behind a separate gate that does not exist
+here. What this ticket doesn't share with those: the writ's grant sits
+three `if`-branches deep, in six separate `say` lines (three qualifying
+routes times ask/retry). Patching all six would cost six times the text
+for one fact and drift the moment any branch's wording changed later. The
+topic's shared outer `say` (`:1356`, topic id `writ`) is read exactly once
+per playthrough, before the nested `if` resolves — for a player not yet
+eligible, strictly before they go earn the requirement; for a player
+already eligible, the first sentence of the same response as the grant.
+Because `writ_retry`'s own condition (`:1404`, flag
+`said_wm_envoy_writ_no`) can only ever be reached by having already asked
+via `writ` once, every writ recipient sees this one line at least once, at
+or before the grant, on every route — one edit, full coverage, no drift
+risk across the six grant lines.
+
+**Fix:** appended seven words to `wm_wardmoor.json:1356`: "...Have you done
+either yet?" → "...Have you done either yet? (Either way, the Ironbound
+march.)" — "either way" is doing the real work, naming that the tie holds
+regardless of which of the two requirements the player actually satisfied.
+184 → 219 characters, inside the 220-char topic-`say` cap
+(`docs/authoring.md:911`) with one character to spare.
+
+**Budget.** This screen is not on the main walkthrough and is reached by
+exactly one proof, `regent_deposed#warden_crown`
+(`world/reach.json:2838-2991`) — confirmed by grep that no other proof and
+not the walkthrough itself ever visits `wm_envoy`'s "writ"/"writ_retry"
+topics. That proof carries no `PROOF_BUDGET` entry
+(`test/budget.test.ts:247-249` notes it already "meets the real bar on both
+counts... needs no allowance at all"), so it is held to the live 450 avg /
+1100 max, same as an unlisted road. The status ratchet
+(`test/format.test.ts`) is untouched and unaffected: this fix is a
+one-time topic `say`, not anything `renderStatus` prints. The shared
+working tree while this was in progress also carried unrelated, in-flight
+work from other agents on this same file and on `src/engine.ts` (a new
+generic item-departure event, landed and reconciled by the entry just
+above this one) that moved several *other* proofs' numbers around — none
+of it touches `wm_envoy` or `regent_writ`. Isolated this change the same
+way this document's own precedent does (`:4280-4299`): `git worktree add
+--detach` at HEAD, `node_modules` symlinked in, only this one-line diff
+applied. There: `npm run verify` exit 0, 336/336 tests, all three worlds
+validate and win-prove, both crawls clean; `scripts/budget.ts
+world/reach.json` — walkthrough unchanged (439.7546 avg, 1076 max; this
+screen isn't on it), `regent_deposed#warden_crown` 448.77 → 448.99 avg
+(+0.22, the expected ~35 added characters spread over 159 screens), max
+unchanged at 1092.
+
+`queue/P1-issue-30e9b264.json` and `queue/P2-issue-687e8b63.json` moved to
+`done/`.
+
+### Wave 7's bearings-content claim: Thornwold's wood corroborates Ashwood's gap and pays for 14 of its 21 missing cells; Wardmoor's cluster isn't a coverage gap at all
+
+`P1-issue-69ba212f` ("Thornwold's Split Beech/Deer Break/Black Thorn Stand
+cluster, Wardmoor's Peat Score/Tower Rise cluster... bearings often didn't
+list the specific landmark being sought until much closer to it") and
+`P2-issue-76307816` (same report, "a lightweight compass/quest-arrow... that
+always points toward the nearest unresolved quest marker, even from a
+distance") are wave 7's own version of ground this session has already
+settled: exit reciprocity (confirmed not a bug, `:4530-4629`), the
+deliberately-deferred compass/waypoint-angle ask (`3ddba1f3`, `:4061-4068`,
+`:6014-6018`), and the Iron-Downs/Wardmoor-gateway placement-gap pattern
+(`:4052-4153`, `:6071-6114`) against Ashwood's real-but-not-cheap grid gap
+(`2246e5db`, `:6020-6069`). The new question was narrower than "is the
+mechanism missing somewhere": does `bearingsHere` itself have a distance
+cutoff that would make the report's specific mechanism claim literally true,
+and are the two named clusters cheap fixes (Iron-Downs-shaped) or expensive
+ones (Ashwood-shaped)?
+
+**`bearingsHere` (`src/engine.ts:753-787`) has no radius or "how far away"
+cutoff, but two other things add up to the same experience.** First,
+`BEARINGS_CAP = 3` (`:701`): at most 3 places named per call, quest
+destinations first (up to 2 slots, `wanted`/`quests`, `:770-775`), then the
+nearest landmark-tagged rooms filling what's left (`named`, `:776`), all
+drawn from `walkFrom`'s unrestricted, gate-blind, whole-region BFS
+(`:730-751`) — nearest-first ordering, but no distance limit on what *can*
+be named, only on how many *are*. Second, a non-quest destination is only
+ever named if `world.rooms[id].landmark` is set (`:776`, checked against the
+room, not the exit flavor text that sometimes carries a similar-looking
+`landmark` field of its own) — an authorial tag, not automatic from having a
+`name`. A quest's own `.at` room is exempt from that tag requirement and
+carries no distance limit either — confirmed by rendering, not inference
+(below). So the report's literal claim, a hard "too far away" cutoff, does
+not hold; what does hold is that `BEARINGS_CAP`'s nearest-3 ranking lets a
+tagged landmark get crowded out by closer competition until the player is
+close enough to outrank it, which *reads* like "didn't list it until much
+closer" even though nothing computes a radius.
+
+**Thornwold's cluster is a genuine coverage gap, the same shape as
+Ashwood's, not a `BEARINGS_CAP` side effect.** `th_wood`
+(`world/reach/th_thornwold.json:2629-3136`, w=5 h=5, 3 walls, 22 open cells)
+carried exactly one `["bearings"]` action on its whole grid —
+`th_heartwood_bearings` at the dead-center cell `th_wood_2_2` (`:2888`) —
+plus the region's own gate hub, `th_gate_bearings` at Camp Gallows (`:180`).
+All three of the report's named rooms (Black Thorn Stand `th_wood_0_1`,
+Deer Break `th_wood_1_1`, The Split Beech `th_wood_2_1`) had none. That's 21
+of 22 cells without the mechanism every sibling grid carries — worse
+coverage than Ashwood's 0 of 16, not better. None of these three names, nor
+Wardmoor's Tower Rise or Peat Score, is ever referenced by any quest, NPC
+line, or other room's text anywhere in the realm (grepped each across
+`world/reach/` individually) — they are plain flavor spots, and of the five
+only Black Thorn Stand carries a `landmark` tag at all
+(`th_thornwold.json:2768`); Deer Break, Split Beech, Tower Rise and Peat
+Score were never nameable regardless of distance, being both untagged and
+un-quested.
+
+Replayed the walkthrough and all 13 proofs through `th_wood` directly
+(`replayWalkthrough` against `state.visited`, not guessed): only 7 of the 21
+missing cells are touched by any proven route at all —
+`th_wood_0_1/1_1/2_1/3_1/4_1` (the report's whole named row, edge to edge)
+plus `0_2` and `4_2` — and every single proof that enters the grid touches
+exactly that same 7-cell row, a straight crossing from Camp Gallows west to
+the region's far side. The other 14 cells are touched by none of the
+walkthrough's or any proof's `visited` list. Added the sibling-grid
+`["bearings"]` action to those 14 untouched cells only
+(`world/reach/th_thornwold.json`, `th_wood_bearings_x_y` ids, the same
+`{"free": true, "fx": [["bearings"]]}` pattern every other grid uses, then
+`scripts/fmt-json.mjs` on the file). Confirmed with `git stash` on just this
+file that `scripts/budget.ts --terse` is byte-identical with and without it
+(`avg 439.7509 max 1076 sum 118293 screens 269`, both times) — these cells
+are entirely off the walkthrough, the same "free" shape as Wardmoor's
+gateway-road fix.
+
+Tried the identical fix on the other 7 (the row the report actually names)
+and it is not affordable, measured directly rather than assumed: all 21
+cells together broke 5 of `test/budget.test.ts`'s ratchets —
+`regent_deposed` avg 452.8 > 451, `reach_burned` avg 452.2 > 451,
+`gray_crown` avg 453.4 > 452, `reach_at_rest#scout` avg 453.6 > 452, and a
+new max violation, `reach_at_rest#warden` max 1177 in `th_wood_3_1` > 1100.
+Walked the cost down cell by cell to see how far "some of the row" could go:
+dropping just the max offender (`th_wood_3_1`, Rope Larder — an NPC room
+already once trimmed to fit these same ratchets, for an unrelated reason,
+per `test/budget.test.ts:96-114`) cleared the max violation but left all 4
+avg overages; dropping to just the report's own 3 named cells (`0_1/1_1/2_1`)
+still failed `regent_deposed` and `gray_crown`; dropping to a single cell
+(Black Thorn Stand alone, keeping the other 20) still failed `regent_deposed`
+by 1.2 avg characters. Only "none of the 7" clears every ratchet. Checked for
+a free trim before writing this off, the way the Iron Downs fix did first:
+`scripts/audit-echo.ts world/reach.json` finds nothing on this route beyond
+one unrelated cross-region name reuse ("Wood's Edge," also used in
+`ff_fells`) — no in-scope redundant text to cut and pay for it. This is the
+same real-but-not-yet-affordable class of gap `2246e5db` already tracks for
+Ashwood — smaller in degree here (single-digit average characters over, not
+Ashwood's several-hundred-character bill) but the same shape, so it is not
+filed as a second, parallel ticket: `2246e5db` (still open in `queue/`) now
+covers both regions in substance; this entry is the record of Thornwold's
+half of it.
+
+**Wardmoor's Peat Score/Tower Rise half does not reproduce as a coverage gap
+at all.** `wm_moor` (`world/reach/wm_wild.json`, w=6 h=5, 4 walls, 26 open
+cells) already carries a `["bearings"]` action on all 26 of its cells
+(`wm_bearings_x_y`, confirmed by direct count, not sampling) — this grid has
+been fully covered since at least wave 4 (`:4078-4082` already lists
+`wm_wild` among the grids done). Tower Rise (`wm_moor_1_1`) and Peat Score
+(`wm_moor_2_1`) are exactly like Deer Break and Split Beech: named flavor
+cells, no `landmark` tag, never a quest target, so `bearingsHere` never
+prints their names verbatim at any distance — but the mechanism around them
+is fully present, including at the two things a player standing in that
+exact corner might plausibly be seeking: Beacon Hill, the Dark Beacon
+quest's destination (`wm_moor_0_2`, `landmark`-tagged,
+`world/reach/wm_hollow.json:527-537`, `.at: "wm_moor_0_2"`), and Boot-Track
+Hollow, the Lost Sentry's (`wm_moor_3_1`, untagged but quest-named,
+`:539-549`, `.at: "wm_moor_3_1"`). Rendered `bearingsHere` at all 26
+`wm_moor` cells with both quests set active (`wm_beacon_known` and
+`wm_wight_known` flags, no `done` condition met) to check this directly
+rather than assume the wave-six fix still covers it: both destinations name
+themselves in the sentence from every one of the 26 cells, nearest and
+farthest alike — e.g. from `wm_moor_5_2` (Cliff Edge, the single farthest
+cell from Beacon Hill from this stretch of moor), "the beacon hill — The
+Dark Beacon, five west" and "Boot-Track Hollow — The Lost Sentry, one north,
+then two west" both still print. Nothing here reproduces "didn't list it
+until much closer" — the quest-priority fix from wave six has no distance
+horizon, and the two names the report itself picked out were never going to
+be sought by anything in the game.
+
+**`P2-issue-76307816`** ("a lightweight compass/quest-arrow... that always
+points toward the nearest unresolved quest marker, even from a distance") is
+confirmed to be the same shape as `3ddba1f3`'s already-deferred
+compass/waypoint-angle ask, and a larger one: `3ddba1f3` wants a static
+angle toward one known place; this wants the engine to rank every currently
+open quest's location by distance from wherever the player stands and
+always surface the nearest — which needs everything `3ddba1f3` needs (a
+bearing *angle* toward a place, since `bearingsHere`/`wildBearing` both work
+in leg-counts through the graph the player has actually walked, never a
+compass-rose angle) plus live multi-target ranking on top of it. Not
+narrower on inspection, so it is superseded the same way `15a4244d` was
+(`:6116-6134`): the ask is real, already tracked, and this entry doesn't
+reopen it a second time under a new id.
+
+One content change this entry (`world/reach/th_thornwold.json`, 14 new
+`["bearings"]` actions on `th_wood`'s untouched cells). `npm run verify`
+green in the shared tree (337/337 tests, all three worlds validate and
+win-prove clean, both crawls clean, 0 over-cap menus) — run fresh at the end
+of this entry, after the concurrent `wm_wardmoor.json`/`companions.json`/
+`va_barrow.json`/`hb_hollow.json` work landing alongside it. `node --import
+tsx scripts/audit-bearings.ts world/reach.json`: realm-wide 0 of 928 legs
+wrong; `--prefix th` alone went from 2 bearings actions / 6 legs walked (0
+wrong) before this entry to 16 actions / 48 legs (0 wrong) after — exactly
+the 14 new actions × 3 legs each (`BEARINGS_CAP`) this entry added, measured
+before and after with `git stash` on just `th_thornwold.json`, not assumed
+from the diff. `queue/P1-issue-69ba212f.json` and
+`queue/P2-issue-76307816.json` moved to `done/`; `queue/P1-issue-2246e5db.json`
+stays in `queue/`, open, now understood to cover Thornwold's `th_wood`
+alongside Ashwood's `va_wood` as the same class of gap.
+
