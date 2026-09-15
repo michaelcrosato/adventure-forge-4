@@ -627,8 +627,34 @@
           "at": "hb_kingsrest_throne"
         },
         {
-          "if": [["var", "hb_evidence_known", ">=", 1]],
-          "text": "The evidence doesn't agree with itself yet. Settle on a name, or keep looking."
+          "if": [["flag", "hb_evidence_ringditch"], ["flag", "hb_evidence_causeway"], ["!flag", "hb_evidence_merestone"]],
+          "text": "The causeway and the ring-ditch agree. One piece left: what the mere might say.",
+          "at": "hb_wild_3_3"
+        },
+        {
+          "if": [["flag", "hb_evidence_ringditch"], ["flag", "hb_evidence_merestone"], ["!flag", "hb_evidence_causeway"]],
+          "text": "The ring-ditch and the mere agree. One piece left: the causeway stone.",
+          "at": "hb_wild_2_0"
+        },
+        {
+          "if": [["flag", "hb_evidence_causeway"], ["flag", "hb_evidence_merestone"], ["!flag", "hb_evidence_ringditch"]],
+          "text": "The causeway and the mere agree. One piece left: the ring-ditch's roll.",
+          "at": "hb_wild_1_3"
+        },
+        {
+          "if": [["flag", "hb_evidence_ringditch"], ["!flag", "hb_evidence_causeway"], ["!flag", "hb_evidence_merestone"]],
+          "text": "The ring-ditch's roll is yours. Two more: the causeway first, then the mere.",
+          "at": "hb_wild_2_0"
+        },
+        {
+          "if": [["flag", "hb_evidence_causeway"], ["!flag", "hb_evidence_ringditch"], ["!flag", "hb_evidence_merestone"]],
+          "text": "The causeway stone is yours. Two more: the ring-ditch first, then the mere.",
+          "at": "hb_wild_1_3"
+        },
+        {
+          "if": [["flag", "hb_evidence_merestone"], ["!flag", "hb_evidence_causeway"], ["!flag", "hb_evidence_ringditch"]],
+          "text": "The mere's answer is yours. Two more: the causeway first, then the ring-ditch.",
+          "at": "hb_wild_2_0"
         },
         {
           "if": [],
@@ -639,7 +665,12 @@
     },
     "hb_q_ledger": {
       "name": "Keeper Wren's Trust",
-      "start": [["any", [["flag", "said_hb_keeper_wren_greet"], ["flag", "hb_wren_chest_forced"], ["flag", "hb_kingsrest_resolved"]]]],
+      "start": [
+        [
+          "any",
+          [["flag", "said_hb_keeper_wren_greet"], ["flag", "hb_wren_chest_forced"], ["flag", "hb_kingsrest_resolved"]]
+        ]
+      ],
       "done": [["flag", "hb_keepers_key_found"], ["!flag", "hb_wren_chest_forced"]],
       "stages": [
         {
@@ -669,7 +700,9 @@
     },
     "hb_q_mound_robber": {
       "name": "The Robbed Mounds",
-      "start": [["any", [["flag", "said_hb_mound_robber_greet"], ["flag", "hb_robber_stopped"], ["flag", "hb_robber_bribed"]]]],
+      "start": [
+        ["any", [["flag", "said_hb_mound_robber_greet"], ["flag", "hb_robber_stopped"], ["flag", "hb_robber_bribed"]]]
+      ],
       "done": [["flag", "hb_robber_stopped"]],
       "failed": [["flag", "hb_robber_bribed"]],
       "stages": [
