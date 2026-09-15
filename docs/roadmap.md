@@ -2526,3 +2526,24 @@ rather than assumed.
 Measured against all 13 roads and the walkthrough: no number moved; none
 of the sixteen orderings sits on a proven path. `npm run verify` green
 (331 tests).
+
+**The lead that closed the vein.** `world/reach/ir_irondowns.json` carries
+the realm's only `clock` entries (16, all of them — no other file defines
+any), one silent auto-burn per hold, 40 turns apart starting at 60. Two of
+the twenty-two fixes above were this clock's doing (`hb_q_ledger`;
+`me_q_dams`, from the earlier done-side wave, not the sixteen). Checked
+whether it was owed a third: every quest gating `start` on a hollow flag
+fires on an unconditional room-entry trigger the clock never touches;
+every `done`/`failed` that reads one already reads the umbrella
+`_done`/`_resolved` flag or names `_burned` explicitly, the clock's
+own vocabulary is `set`/`addvar`/`say` only — never `npcgo`, never a room
+or exit edit — so it cannot itself delete access to anything. One
+quest that looked like a candidate at a glance, `mc_q_order`, traced
+clean: its prerequisites come from ordinary village dialogue with no gate
+on the hollow's state at all. One genuine but minor loose end, not this
+shape of bug: four holds' own "grief npc" (`wm_oath_captain`,
+`me_maren`, `hb_eldest_king`/`hb_grave_wight`, `sk_admiral`) stays put and
+fully talkable after a silent auto-burn, where a player-driven resolution
+would have moved them on — narrative continuity, not a dead end, since
+nothing reads their presence in a `done`/`failed`. Nothing to fix. The
+march clock is checked and clean.
