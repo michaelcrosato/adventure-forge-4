@@ -2131,3 +2131,59 @@ inconsistency that degrades without locking.**
 `test/realm.test.ts`'s quest-lock test grows its fifth case. Measured
 against all 13 roads and the walkthrough: no number moved. `npm run
 verify` green throughout.
+
+### `scholar_read` and `scout_hands`, unstarved
+
+Two more class abilities close to dead, found the way `scout_ground` and
+`envoy_press`'s odds-preview were: not from a report, from replaying the
+traces this session's own playtest waves already paid for.
+`scripts/audit-play.ts`, replaying both real blind sessions against the
+world, showed `scholar_read` — the Scholar's "read it twice" — offered 0
+times, pressed 0 times, across either run: "never once offered," the
+tool's own label for a menu line a real player's trace never once put in
+front of them. `scripts/audit-abilities.ts` then measured it exactly, on
+the menu 13 of 2,038 scholar screens (0.6%), and the Scout's matching
+ability, `scout_hands` ("steady your hands"), 2 of 271 (0.7%). The
+Warden's `warden_set` and the Envoy's `envoy_press` — the same shape of
+ability, a resource spent to force a check — stood at 10 of 481 (2.1%)
+and 7 of 342 (2.0%) by the same measure.
+
+All four gate on `checkHere <skill> 11`: a check of that skill at DC 11
+or higher legally available in the room, right now. The gate was never
+the problem — the DC was. A census of every `check` fx in the world by
+skill and DC: wits runs 181 checks total, 16 of them (8.8%) at DC>=11,
+the mode at DC9; grace runs 126, 9 (7.1%) at DC>=11, also DC9-dominant;
+will runs 229, 95 (41.5%) at DC>=11; might runs 148, 32 (21.6%) at
+DC>=11. The realm's own authored content asks wits and grace at DC 9-10
+almost everywhere it asks them at all, and asks will and might
+considerably harder — not a decision anyone made about these two
+abilities, a fact about the other content they happened to be measured
+against.
+
+Both thresholds dropped one point, DC 11 to DC 10 — the smallest change
+that closes the gap without touching the DSL, the fx, or either
+ability's cost. Measured again: `scholar_read` 50 of 2,038 (2.5%),
+`scout_hands` 10 of 271 (3.7%), both now the same order of magnitude as
+`warden_set` and `envoy_press` rather than a fourth of it. Replayed
+against the same two real traces: `scholar_read` now offered 3 times
+(still pressed 0 — "offered and never taken" is a different, honest
+outcome from never being shown the choice at all). Neither trace ever
+ran a Scout, so `scout_hands` stays unexercised by these two specifically;
+the proof-level measurement is what speaks for it.
+
+An ability legally available on more screens is legally offered on more
+screens, and the menu line costs width there. Looked for the money
+first, the way fast travel's did — no repeated boilerplate to trim here,
+since the added text is the option itself, not a redundant word inside
+it. Four proven roads moved, all still clear of the real 1,100 max:
+`reach_burned` 450.3 -> 451.2, `gray_crown` 451.8 -> 452.7,
+`reach_at_rest#scout` 450.9 -> 452.5, `reach_at_rest#devoted` 461.5 ->
+462.3 — the last two are the Scout and Scholar roads specifically, the
+only two that carry a resourced companion of the matching class for the
+whole route, so they were the two expected to move, and did. Recorded
+in `test/budget.test.ts`'s ratchet table rather than hidden or worked
+around: `PROOF_BUDGET` only ever moves down except when a change like
+this one earns the exception honestly, the same standard fast travel's
+three-road bump set.
+
+`npm run verify` green throughout.

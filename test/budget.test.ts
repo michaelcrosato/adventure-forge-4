@@ -119,6 +119,46 @@ const INTRO_CHARS_MAX = 1400;
  * out" below). A general off-path scanner — something that could have found
  * this without being told where to look — is still not built.
  */
+/**
+ * scholar_read AND scout_hands, UNSTARVED.
+ *
+ * Both abilities spend a class resource on `checkHere <skill> 11`: a check of
+ * that skill at DC 11 or higher legally available in the room, right now.
+ * Both were close to dead content. `scripts/audit-play.ts` replayed this
+ * session's own two blind-playtest traces and found scholar_read never once
+ * offered across either run; `scripts/audit-abilities.ts` then measured it
+ * exactly — on the menu 0.6% of scholar screens (13 of 2,038) and
+ * scout_hands 0.7% of scout screens (2 of 271), against warden_set's 2.1%
+ * (10 of 481) and envoy_press's 2.0% (7 of 342), the same shape of ability
+ * on the other two classes, by the same measure.
+ *
+ * The cause was not the ability, it was the realm's own DC mix. A census of
+ * every `check` in the world: wits runs 181 checks total with 16 (8.8%) at
+ * DC>=11, dominant mode DC9; grace runs 126 with 9 (7.1%) at DC>=11, also
+ * DC9-dominant; will runs 229 with 95 (41.5%) at DC>=11; might runs 148 with
+ * 32 (21.6%). Wits and grace content skews low almost everywhere it is
+ * authored, so a DC-11 floor was asking for a check the realm rarely writes.
+ * Both thresholds dropped to DC 10 — the smallest change that fixes the mix
+ * without touching the DSL, the fx, or either ability's cost.
+ *
+ * That makes the check legally available on more screens, which is the whole
+ * point, and it costs width wherever a resourced Scholar or Scout carries the
+ * road: the option is now offered where it legally can be, and an offered
+ * option is exactly the content this fix exists to add. Looked for the money
+ * first, the way fast travel's did — there is no repeated boilerplate to trim
+ * here the way "to " was for travel labels, since the added text is the
+ * option itself. Four roads move, all still well clear of the real 1,100 max
+ * (worst is 1,094, mg_hollow_throne, unchanged):
+ *
+ *   reach_burned            318 screens   450.3 -> 451.2   (+0.9)
+ *   gray_crown              261 screens   451.8 -> 452.7   (+0.9)
+ *   reach_at_rest#scout     271 screens   450.9 -> 452.5   (+1.6)
+ *   reach_at_rest#devoted   352 screens   461.5 -> 462.3   (+0.8)
+ *
+ * reach_at_rest#devoted plays a Scholar and reach_at_rest#scout plays a
+ * Scout — the two roads that carry a resourced companion of the matching
+ * class the whole way, so they were the two expected to move, and did.
+ */
 const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // Only the roads that are over, and only in the dimension they are over: an
   // allowance in the other dimension is the real ceiling, so a road cannot
@@ -149,10 +189,11 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // 1146 on it; this road's 1180 is `mg_hollow_throne` and was never involved.
   "reach:regent_deposed": { avg: 451, max: MAX_CHARS_MAX }, // max cleared 1,180 -> 1,092 cutting mg_hollow_throne (item 8); avg still owed
   // reach_burned cleared BOTH the real avg and the real max cutting
-  // mg_hollow_throne for item 8 (450.7 avg, 1,094 max) and needs no entry at
-  // all now — the second road, after regent_deposed#warden_crown, to ask
-  // nothing of this ratchet.
-  "reach:gray_crown": { avg: 451, max: MAX_CHARS_MAX }, // max cleared 1,125 -> 1,097 cutting va_throne (item 8); avg (481 -> 452.4, above) still owed, down to 451.8 as a side effect of the th_wood_3_1 cut (this road passes through it too)
+  // mg_hollow_throne for item 8 (450.7 avg, 1,094 max) and asked nothing of
+  // this ratchet for one change — back below with an entry of its own now,
+  // unstarving scholar_read/scout_hands (above).
+  "reach:reach_burned": { avg: 451, max: MAX_CHARS_MAX }, // 450.3 -> 451.2 unstarving scholar_read/scout_hands (above)
+  "reach:gray_crown": { avg: 452, max: MAX_CHARS_MAX }, // max cleared 1,125 -> 1,097 cutting va_throne (item 8); avg (481 -> 452.4, above) still owed, down to 451.8 as a side effect of the th_wood_3_1 cut (this road passes through it too), then 452.7 unstarving scholar_read/scout_hands (above)
   // reach_at_rest#warden's max came down 1170 -> 1146 above, then, cutting
   // th_wood_3_1 for item 8, 1146 -> 1097: a gray boar's 8%-a-cell wilderness
   // ambush happened to land on the same cell as Rook, the room's own scripted
@@ -181,7 +222,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // -> 451.79, so 14 of the 16 came back. The last two are the ability doing
   // its job on the wilderness screens that remain, and the honest price of the
   // Scout's one distinctive line. This is 5 chars a screen, not 16.
-  "reach:reach_at_rest#scout": { avg: 450, max: MAX_CHARS_MAX }, // 451.79 -> 450.95 as a side effect of the th_wood_3_1 cut (item 8; this road passes through it too)
+  "reach:reach_at_rest#scout": { avg: 452, max: MAX_CHARS_MAX }, // 451.79 -> 450.95 as a side effect of the th_wood_3_1 cut (item 8; this road passes through it too), then 450.92 -> 452.49 unstarving scholar_read/scout_hands (above) — the Scout road, so scout_hands is what moved it
   // The full-party road: four companions travelling, the most expensive proof
   // in the realm, and the ratchet turned down three times on the day it was
   // written. It arrived at 506 average and a 1,489-character screen at
@@ -203,7 +244,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // lines on this road, none of them said twice, 19 characters a screen. That
   // is what a four-companion road is for, and it is the one thing here that
   // should not be trimmed to meet a number.
-  "reach:reach_at_rest#devoted": { avg: 461, max: MAX_CHARS_MAX }, // 462.8 the day companion remarks stopped firing on menu navigation (the road needed two more weighings of the throne doors to earn its paired remark honestly), then 460.69 once the reckoning stopped re-explaining what is missing on every press; max cleared 1,130 -> 1,076 cutting mg_hollow_throne (item 8)
+  "reach:reach_at_rest#devoted": { avg: 462, max: MAX_CHARS_MAX }, // 462.8 the day companion remarks stopped firing on menu navigation (the road needed two more weighings of the throne doors to earn its paired remark honestly), then 460.69 once the reckoning stopped re-explaining what is missing on every press; max cleared 1,130 -> 1,076 cutting mg_hollow_throne (item 8); 461.51 -> 462.33 unstarving scholar_read/scout_hands (above) — the Scholar road, so scholar_read is what moved it (max also moved, 1,076 -> 1,087 em_priory, still clear of the real bar)
   // The realm's first proof to land a blow. Measured before this road existed,
   // 125 proven screens offered a fight and 0 were taken — hp, armor, timed
   // conditions, aggression and the down-and-revive path stood unexercised by
