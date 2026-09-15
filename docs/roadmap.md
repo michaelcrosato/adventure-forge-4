@@ -2368,3 +2368,16 @@ by hand against the actual topic text and its npc's own
 
 Zero of fourteen were an authoring gap. `npm run verify` green throughout
 (329 tests).
+
+**One more from the same sweep, the other kind of name reuse.** Of the
+realm's 14 `tower` stamps, 13 give `WATCHER` its own role tied to what
+that specific tower was for — "a bell-ringer's shade", "a toll-keeper's
+shade", "the shade of a hanged tallyman", and so on. `mc_beacon` and
+`sh_beacon` both used "a beacon-keeper's shade" verbatim — the one exact
+duplicate among fourteen otherwise-distinct lines, and unlike the
+Chantry/Recorder's-Loft/Tally-House case (above), nothing else about
+these two towers is shared: different `NAME`, `VIEW`, `SIGN` and `LOOT`
+throughout, just this one field left uncustomized. `sh_beacon`'s is now
+"a levy-caller's shade", matching what "the Levies' Beacon" and the
+cavalry gear already scattered around it (`sh_wild.json`) are about.
+`npm run verify` green (no proven road passes through either tower).
