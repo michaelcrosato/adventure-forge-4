@@ -6705,3 +6705,127 @@ from the diff. `queue/P1-issue-69ba212f.json` and
 stays in `queue/`, open, now understood to cover Thornwold's `th_wood`
 alongside Ashwood's `va_wood` as the same class of gap.
 
+### `P1-issue-6f775398` is `4807bbde`'s own evidence — no item-identity bug, and the honest fix costs more budget than the realm has
+
+`P1-issue-6f775398` ("'dried herbs' vanished from inventory after an
+unrelated 'use bitter forest bark' action without a clear consumption
+message tied to it," `where: "The Drying Racks, Fenmarch"`, seed 11044)
+and `done/P1-issue-4807bbde.json` ("Menu numbering shifts turn-to-turn...
+a remembered menu number can silently map to a different action next
+turn," `where: "general UI, most rooms"`) are not two reports — same
+`evidence.report` (`playtest-2026-09-15T22-54-15-584Z-s11044.json`), same
+seed, same `builds` (`bf108bf`/`8bacaa39`), same `created` timestamp to the
+millisecond. One playtest session, one `bugs[]` array, split into two
+tickets by triage. `4807bbde` is already closed: the third independent
+corroboration of `d3907169`'s formally-deferred menu-renumbering-across-turns
+mechanism (`:6183-6241`), which was *first filed* quoting this realm's
+canonical example of the shape — "I once meant to attack but hit 'use dried
+herbs'" (`:1189-1193`). This entry is that report's other half, investigated
+on its own terms rather than assumed to be the same finding twice.
+
+**Checked for an actual item-identity bug first**, per the ticket's own
+steepest hypothesis: does using one item ever move a *different* item out of
+inventory? `va_herbs2` ("dried herbs," `world/reach/va_wood.json:534-539`)
+and `th_bitter_bark` ("bitter forest bark,"
+`world/reach/th_thornwold.json:1271-1284`) each `move` only their own id on
+use — grepped both ids' every appearance in `world/` (three and two hits
+respectively: each item's own def, its one grant site, and `th_bitter_bark`'s
+one loot-table listing at `:2886`) and none crosses into the other's fx.
+`fd_drying_racks` (`world/reach/fd_fenmarch.json:476-495`), the reported
+location, has exactly one action ("take the coil of tarred rope") and no
+`onEnter` — nothing there touches either item at all; both are carried in
+from elsewhere (`va_herbs2` handed out in the Vale's Ashwood, `th_bitter_bark`
+found in Thornwold, hundreds of turns and two hold-crossings before
+Fenmarch). Generalized the check realm-wide rather than trusting two items
+looked at by hand: no item's `use` fx, anywhere in the realm's 327 items,
+`move`s an id other than itself or its own declared `target` — a scripted
+recursive walk of every `use` block (including nested `if` branches) found
+zero violations. Codified as `test/reach.test.ts:50-70`, permanent and
+free (no rendered screen, no budget cost): the exact shape this ticket
+worried about — a copy-paste `use` block quietly moving someone else's item
+— cannot reappear unnoticed.
+
+**What actually happened, best-supported account:** `move` out of `inv`
+prints nothing (`src/engine.ts`'s `move` case, `:1353-1373`) — unlike the
+pickup side, which always says `"<item>: obtained."` (`:1362`), consuming an
+item says only whatever `say` fx happens to ride alongside it, never the
+item's own name or "gone." Both items here use exactly that pattern
+(`["hp",3],["move",id,"nowhere"],["say","Bitter, ..."]`) and, worse for
+telling them apart afterward, near-identical flavor text — "Bitter, but they
+ease the ache." (herbs) against "Bitter as the name promises, but the ache
+dulls fast." (bark). `va_herbs2` is handed out at the very start of the
+game (`va_wood.json:657-661`, "herbs for the road"); Fenmarch is an eastern
+hold reached only after crossing at least one other. On a run long enough to
+reach Fenmarch with both items ever carried, using the herbs for their
+one-time heal is easily forgotten by the time a second "bitter... ache" item
+gets used somewhere else entirely — exactly the ordinary, self-corrected
+memory lapse `d3907169`'s own case ("a minor, self-corrected item waste,"
+`:4777`) already names, possibly *preceded* by an actual instance of that
+still-open mechanism: a shifted menu number silently executing "use dried
+herbs" on a turn the player meant something else, unnoticed until much
+later for the same missing-message reason. No stored trace distinguishes
+the two — `runs/playtest/20260915T222403/player-1-seed-11044.json` is the
+session's final result object only (`result`/`usage`/timing fields), not a
+turn-by-turn log; this realm's playtest harness doesn't retain one. Either
+account is a known, already-priced-in shape, not a new engine defect.
+
+**Tried the generic fix anyway**, since a missing "X: gone." is a real,
+fixable gap in its own right regardless of which account is true. Built and
+measured it twice with `scripts/budget.ts`/`test/budget.test.ts`, the
+project's own tools, not by eye:
+
+1. Fully generic — announce on every `move` fx that empties an item from
+   `inv`, wherever authored (mirroring the "obtained." symmetry exactly).
+   Broke `test/budget.test.ts` immediately: `proofs.regent_deposed: avg
+   452.1 > 451`, `proofs.reach_burned: max 1125 in mg_hollow_throne > 1100`,
+   `proofs.reach_at_rest#devoted: max 1118 in va_throne > 1100`. Cause:
+   the throne's burn/rite endings each spend one or more items (Ironbound
+   oil, the Vale's crown) in the same already-maxed screen `test/budget.test.ts`'s
+   own "item 8" cuts (`:85-121`) fought down to the ceiling with nothing
+   spare, and a second mechanical line re-added exactly the width that pass
+   removed.
+2. Scoped to the `use` action's own consumption only (`step`'s `case
+   "use"`, `src/engine.ts:3274-3279`) — never fires from a scripted
+   ending's own `move`, so `mg_hollow_throne`/`va_throne` stopped moving.
+   Still broke it, differently: `proofs.regent_deposed: avg 452.8 > 451`,
+   `proofs.reach_burned: avg 452.2 > 451`, `proofs.gray_crown: avg 453.4 >
+   452`, `proofs.reach_at_rest#scout: avg 453.6 > 452`, and
+   `proofs.reach_at_rest#warden: max 1177 in th_wood_3_1 > 1100` — the last
+   one not even a ratcheted allowance (`reach_at_rest#warden` carries no
+   `PROOF_BUDGET` entry, "meets the real bar both ways now" per
+   `test/budget.test.ts:239-246`), so this is 77 characters over the
+   literal, non-negotiable 1,100 cap. Measured the baseline first
+   (`scripts/budget.ts world/reach.json`, no fix applied): these roads sit
+   at 451.95/451.56/452.58/452.48 avg and 1097/1100 max against ceilings of
+   451/451/452/452 and 1100/1100 — `reach_at_rest#devoted`'s max is exactly
+   1100 with zero characters spare before either fix ever touched it. There
+   is no room on these specific roads for one more character of anything,
+   let alone a new line, regardless of how the line is worded or where in
+   the code it's attached.
+
+Reverted both attempts in full (confirmed via `git diff --stat src/engine.ts`
+and `test/fx.test.ts`: byte-identical to `HEAD`, nothing staged from either
+try). Per `AGENT.md`, the ratchet may only turn down; making one of these
+roads' numbers fit this fix would be exactly the move it exists to forbid,
+for a message this investigation cannot even prove would have prevented the
+report (see the two competing accounts above). Worth a reader's notice: a
+concurrent, apparently identical generic attempt was visible mid-session in
+this same shared tree, by whoever was working `P1-issue-30e9b264`/
+`P2-issue-687e8b63` at the time (`:6424-6433`, `:6437-6448` — "a new generic
+item-departure event," later "reached its own green" per that entry's own
+account). It is not present in `src/engine.ts` now (no diff against `HEAD`
+at the time of this entry either), consistent with a later hand finding the
+same wall this entry did and backing it out; this entry does not depend on
+that history; either its edits fully unwound before this entry started or a
+close of this window happened to be the writing.
+
+No `src/` or `world/` file touched by this entry. One test file added
+(`test/reach.test.ts`, the realm-wide `use`-effect scan). `npm run verify`:
+337/337 tests, all three worlds validate and win-prove clean, both crawls
+0 over-cap, mock and measure complete — exit 0. `queue/P1-issue-6f775398.json`
+moves to `done/`: no code bug, corroborates two already-understood
+mechanisms (the same session's own `d3907169`-lineage menu drift, and
+ordinary long-run forgetting sharpened by a real but currently unaffordable
+missing-message gap), and leaves a permanent, free regression against the
+one thing that would have been a genuine defect.
+
