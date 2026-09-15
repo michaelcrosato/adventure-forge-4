@@ -1384,3 +1384,50 @@ already in the line, and the deterministic "side with" option prints its
 own exact effect right beside it — a direct comparison, not a guess.
 Neither finding's premise survives a live check of the current build.
 Superseded.
+
+### Four P2s about weighing an irreversible choice
+
+`P2-issue-c1c437de` and `P2-issue-748f4551` are the same ask twice: warn
+about the Pass Gate's permanence earlier than the gate itself — "when
+Coldpass first opens" or "at Coldpass' outer approach." `P2-issue-79614253`
+wants binding, character-altering oaths flagged more distinctly from
+ordinary rank grants. `P2-issue-85d9c61a` wants "wait here (leaves the
+party for now)" renamed or confirmed, since it "reads as reversible small
+talk."
+
+Checked `85d9c61a` first, since it's the cheapest to settle: "wait here"
+*is* reversible small talk. `["party", id, "leave"]` only clears
+`inParty`; rejoining is the same generic "join" topic that first recruited
+them, gated on nothing but being met and not having actually walked out
+(`!flag <id>_left`, a completely different, unconditional event). The
+label already says "for now" and means it literally. No change — the
+premise doesn't hold.
+
+Checked `79614253` against the Ironbound oath (the clearest binding,
+faction-switching choice in the realm): live, mid-conversation with
+Preceptor Aldous, "ask to swear the Preceptor's oath" already renders as
+"(costs standing with the Barrow-Keepers and the Gray Church)" — the same
+generic outright-cost preview every action gets, reaching inside the `if`
+branch that gates the oath on `rep_iron >= 9` to find it. A two-faction
+standing hit previewed before the turn is spent is a real, quantified
+signal that this is not a small choice, even without a literal
+"irreversible" tag; building a second, separate distinctness marker on
+top of an already-working generic mechanism isn't a small change for one
+single-report suggestion.
+
+`c1c437de`/`748f4551` are the one real, actionable half of this cluster —
+and the one this session already has hard evidence about. `cp_south_stair`
+(Coldpass' own entry) is on the same shape of problem as `va_gate` two
+entries above: a quick replay check found it on 9 of 11 proofs that could
+be simulated cleanly (the other two, `reach_burned` and `reach_bargained`,
+didn't replay in the quick check but are full-realm endings that reach
+Marrowgate and so almost certainly cross it too) — a near-universal
+critical-path room, exactly the shape that broke eight ratchets for one
+sentence at `va_gate`. Worse here: `status`'s own separate ratchet, the
+one surface with a different budget pool a hint could hide in, was
+measured at 3,644/3,650 average and 5,621/5,650 worst the day it was
+written — six characters of slack. Any new line, conditional or not,
+sized to fit either pool is not a realistic ask right now. Not re-run as
+a second experiment (the mechanism and the numbers are already on the
+record above); left open rather than superseded, since both reports are
+correct that the warning arrives late.
