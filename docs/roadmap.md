@@ -1245,3 +1245,23 @@ different turn (226 instead of 398) — expected, not a regression: it's a
 structural player whose choices follow menu position, and the menu itself
 changed shape; determinism (same seed, same code, same result) is what
 `test/determinism.test.ts` guards, and it still passes.
+
+### Two P2s the stand-down and travel fixes already covered
+
+`P2-issue-71bf34bb` asked for "a consistent, telegraphed signal for whether
+a 'stood down'/'named' undead enemy is actually pacified or just delayed."
+`calm_<id>` is now permanent (a plain flag, never a timed `cond`) and
+`hostileNow` treats a calmed npc as not hostile at all, the same as dead;
+the passage it guarded now opens on that same flag, and the room's own
+description says so ("stood down now and no longer minded to stop you").
+The signal is no longer just a line — it's the door. Superseded.
+
+`P2-issue-dd0b35f1` asked to pin attack, talk, and travel to stable
+numbers across turns. Travel's own case is fixed above, by the same
+mechanism a room's menu has used since wave six (`allActions` off the
+whole list, not the page). Attack and talk are the harder, still-open
+half — a target dying or a topic being answered isn't a page boundary,
+it's the legal-action set itself changing, and item 13 above records why
+that needs more than this cycle. Half fixed, half tracked; closed here
+since the travel half was this finding's own best evidence and the rest
+is item 13's now.
