@@ -5243,3 +5243,409 @@ within budget"). `node --import tsx scripts/budget.ts world/reach.json
 `50d10bc2`/`f8e8fbae`/`d1633b19` trio account for all five queue items
 this entry covers; `be79b069` and `fc1a4039` were re-read, not
 re-investigated, and stay exactly as `docs/roadmap.md:3959-3989` left them.
+
+### Wave six's stuck player: an escalation cap re-derived from first principles, and a corridor's dry stretch found and left alone a second time
+
+Four tickets, one report: a wave-six player who never reached an ending
+(verdict `stuck`, 600 turns, `verified_reports: 0` on all four — the
+trace-check has nothing to confirm them against, so each is weighed as a
+single unconfirmed account rather than a proven repro). Two themes, both
+already-examined mechanics in this session's own history, checked again from
+scratch against the live code rather than assumed settled.
+
+**Theme 1 — `P1-issue-8f4a284d` and `P2-issue-987e24b0`, DC creep "with no
+way to walk away… besides switching stats."** `escalatedDc`
+(`src/engine.ts:1207-1231`) is keyed on `s.checkAttempts[sourceId]`
+(`src/types.ts:556`), and that counter genuinely never resets: it is only
+ever incremented, on a miss (`engine.ts:1486`), starts empty at a fresh game
+(`:2040`), and is carried forward untouched by every state clone
+(`:3123`) — no code path anywhere deletes or decrements an entry, so leaving
+a room, resting, or any other in-game event never rolls it back. This is not
+an oversight; `docs/authoring.md:146-147` says it outright: "The counter
+never resets (a success does not clear it, and neither does leaving and
+coming back), but it is capped, not open-ended." The cap
+(`baseDc > reachable ? raised : Math.min(raised, reachable)`, `reachable =
+mod + 20`, `engine.ts:1225-1231`) is the actual answer to "can this spiral
+out of reach": `checkMod` (`:448-453`) sums `world.skills` (unset anywhere in
+`world/reach.json`, so 0), the player's own attribute, and perk/condition
+bonuses, and a realm-wide grep for a negative `checks`/`bonus.check` entry
+came back empty — nothing in `world/` ever pushes a check modifier below its
+base attribute. `reachable` is therefore never less than 20, so any check
+authored at or under DC 20 (which covers the wind-carvings and water-verse
+puzzles at DC 9 and DC 8) can never rise past "a natural 20 still lands it" —
+worst case is a floor of 5% per attempt, forever, not zero. The one way a
+check ever exceeds the cap is a base DC the author already set above
+`reachable` before any failure ever happened — a pre-existing "not without
+help" gate, unrelated to escalation and not what either ticket describes.
+
+Checked the named example directly rather than trust the report's framing:
+the wind-carvings puzzle (`world/reach/va_wood.json`, room `va_watchtower`,
+lines 446-517) offers three independent routes to the same reward, not one —
+a Scholar's free auto-success with no roll at all (`va_wind_read`, :456-467),
+a grace check (`va_wind_trace`, DC 9, :468-487), and a wits check
+(`va_wind_puzzle`, DC 9, :488-507) — and the latter two key on separate
+`checkSourceId`s (`act:va_wind_trace` vs `act:va_wind_puzzle`,
+`engine.ts:1172-1185`), so failed attempts on one never escalate the other,
+and both sit in the same room's menu at the same time (their `if` clauses
+are identical, `:471`/`:491`). The Sunken Shrine's water-verse puzzle
+(`va_drowned_chapel`, :382-445) is built exactly the same way. A player
+"bad at" one of the two stats already has a same-turn, zero-travel,
+zero-rebuild fallback printed in the very menu they're looking at — not a
+build change, and not something that needs leaving the room at all.
+
+This exact mechanism has now been raised and independently re-settled three
+times this session, not once: the "skiff-drag… escalating to 22 with no
+warning" finding (`docs/roadmap.md:2564-2572`) and "wave five's" two tickets
+on the companion-dispute spiral and the missing upfront ceiling
+(`:4630-4716`) both worked through the same cap, the same
+`tp:`-checks-are-exempt carve-out (`engine.ts:1222`, for conversations
+specifically), and the same conclusion: the rule prints once before class
+pick (`format.ts:536-553`), the numeric ceiling prints from the first
+failure ("raised N by failed tries, and stops at {ceiling}",
+`engine.ts:3024-3028`), and printing the ceiling on every check's *first*
+preview (escalating or not) was priced out and declined as a budget spend
+for no new information (`:4699-4716`). Nothing about this wave's framing —
+"leaving and returning," "a stat perk" — survives contact with the code: the
+counter's persistence is deliberate, the cap already guarantees the check
+stays winnable, and the flagship cited puzzle already ships the exact
+"different approach" the report says isn't telegraphed, sitting in its own
+menu next to the option that's failing. Left alone: no code or content
+change. `queue/P1-issue-8f4a284d.json` and `queue/P2-issue-987e24b0.json`
+moved to `done/`.
+
+**Theme 2 — `P1-issue-9ff64821` and `P2-issue-647fde1b`, "only self-targeted
+heal items exist" in a mid-dungeon corridor.** Not quite accurate, checked
+against the DSL directly: no fx op targets a *named* companion's hp at all
+(the full effects table, `docs/authoring.md:93-121`, has nothing like
+`["nphp", npc, n]`). What exists instead is a general side effect,
+`applyRest` (`engine.ts:1781-1803`): any room action or ability whose fx
+list carries a positive `hp` entry heals every living, present, standing
+companion by that same amount and refreshes every ability-resource pool to
+full — called from the `"custom"` and `"ability"` branches
+(`engine.ts:3320`, `:3328`) but never from `"use"` (`:3199-3204`, which only
+ever touches the player's own `s.hp`, `:1342-1351`). So the true shape isn't
+"items are deliberately selfish" — it's that healing a companion was never
+given its own primitive; it rides along on whatever room/ability content
+already grants the player hp. `docs/authoring.md:402-406` documents exactly
+this: "the hearth's `rest`, an empty bunk — heals the companions… An item's
+use heals only whoever takes it." Also found, and worth the report's
+"no in-fiction way" claim being narrowed rather than accepted whole: a
+Warden-only ability, `warden_weight` ("take the weight",
+`world/reach.json:202-207`), already revives any downed party member
+mid-fight (`["revive"]`, gated on `["companionDown"]`) for one `res_warden`
+point — an existing, no-hearth, in-fiction recovery path, just class-gated —
+and a companion struck to 0hp is never killed by it: they're held at 1hp,
+flagged down, "crawl clear of the fight" (`companionStruck`,
+`:1736-1753`), and automatically get back up at half their max hp the
+moment the room holds nothing hostile and alive (`recoverDowned`/
+`reviveDowned`, `:1755-1779`) — no hearth, item or ability needed. What does
+*not* self-resolve is a companion left standing at critically low hp (the
+report's own 1/9 example) without having gone down; they stay there until
+the next qualifying rest.
+
+Checked the named corridor directly against the current file rather than
+the report's geography: the honour guard (`mg_hollow_guard`, hp 16/atk
+4/df 12, `"pierce": true` — the "armor useless" undead,
+`world/reach/mg_marrowgate.json:4329-4345`) stands in `mg_old_crypts`
+(`:780-852`), reached from the surface only through
+`mg_undercity_stair` → `mg_cistern` → `mg_old_crypts`
+(`:660-666`, `:691-718`, `:780-793`). Neither the stair, the cistern, the
+smugglers' cut nor the crypts themselves carry a rest action. The nearest
+ones on either side are `mg_hanged_man`'s "take a room and sleep"
+(`:84-96`, full heal — two rooms from the Coldpass gate, but on the
+surface, off `mg_lower_town`, not on the undercity route itself) and
+`mg_first_reeves_tomb`'s "rest a while by the lid" (`:853-872`), which sits
+*past* the guard, locked behind passing or calming it. The undercity stretch
+genuinely has no rest point on it — confirmed fresh, not assumed.
+
+This is, in substance, the same finding this session already investigated
+in depth and deferred once already, under `P2-issue-a5686d21`
+(`docs/roadmap.md:4905-4978`, "Rest exists in every region's own hearth, and
+none of them ever say so") — same corridor, same guard, same two rest
+points, same conclusion, and that ticket carried `verified_reports: 1`
+against this wave's 0. The realm's own design spec states the convention
+this reflects outright: `docs/superpowers/specs/2026-09-05-realm-design.md:74`,
+"a settlement (6-10 authored rooms, with an inn that heals)" — resting lives
+in town, a dungeon is the unrested stretch that spends what you rested up,
+realm-wide by design, not a Marrowgate-specific gap. The prior entry weighed
+fixing the *discoverability* angle there and found it disproportionate
+against `mg_old_crypts` already sitting at 919/1100 characters, one of the
+walkthrough's own tightest screens.
+
+Weighed the cheap-unlock angle directly rather than defer on instinct: could
+`applyRest` simply also fire on item use, so existing self-heal items
+(`va_herbs`, `mg_herbs`, …) reach the party too? Reading `applyRest` in full
+answers it — the same call that heals the company also "refreshes every
+ability-resource pool to full" (`engine.ts:1802`, "reused by any
+fx-running action, a room's or an ability's, so no inn needs separate
+authoring for the two"). Wiring item use into it would silently turn every
+existing 3-4hp snack item into a full ability-resource refill too, a
+materially bigger and unasked-for change to the combat-resource economy, not
+a narrow companion-heal; hand-splitting just the healing loop out for items
+alone would be a genuinely new code path, not a trivial unlock of something
+already wired. Neither fork clears "clearly cheap, narrow, already
+half-built." Left alone, on weaker evidence than the ticket that already
+covered this ground: no code or content change. `queue/P1-issue-9ff64821.json`
+and `queue/P2-issue-647fde1b.json` moved to `done/`.
+
+No `world/*.json` or `src/*.ts` file changed by this entry (`docs/roadmap.md`
+and the four queue→done moves only), so `npm run verify` was not required
+and was not run for it.
+
+### Wave 6: the blessing/promise tension's one silent side closed; the odds-preview format and the companion-regard ask both hold up as already-served
+
+Three more of wave 6's findings (`P2-issue-0f4d5511`, `P1-issue-ba53c432`,
+`P2-issue-54776c8d`), all `verified_reports: 1` from the same won run
+(`playtest-2026-09-15T21-30-52-283Z-s6784.json`, seed 6784). One content fix,
+two declines with the reasoning that closes them out.
+
+**`P2-issue-0f4d5511.json`** — "Whether accepting the priest's blessing
+(opening the barrow) would conflict with a later promise to the reeve
+(sealing it) wasn't fully clear until both NPCs and the innkeeper were
+consulted." Different from two already-settled Vale-barrow findings: the
+hunter's-gap shortcut making the blessing moot (`docs/roadmap.md:4447-4528`,
+a physical-bypass problem) and `va_doors`'s own fallback-stage "you decide
+at the throne" ambiguity (`docs/roadmap.md:3832-3857`, a decision-*timing*
+problem). This one asks whether the two asks are flagged as being in
+tension with each other at the moment either is offered.
+
+Read both NPCs' full topic trees in `world/reach/va_village.json`. The
+reeve's side already does this well, in the one topic that has to be seen
+before a promise is even offered: `va_reeve`'s `doors` topic (`:412-419`,
+gated on `va_heard_reeve_blight`, a prerequisite of the `promise` topic
+itself) says outright, "the priest wants the opposite, and he won't bless a
+door sworn shut, so see him first if you want both," and `promise`
+(`:420-438`) repeats it ("The priest won't bless a door sworn shut, mind —
+ask him first if you want both"). Because `promise` requires
+`va_heard_reeve_ask` (set only by `doors`), a player cannot reach the
+promise blind from the reeve's own tree. `va_innkeep`'s `factions` topic
+(`:591-597`), ungated and available from turn one, states the same rule
+even more plainly: "Ask his blessing before promising the reeve — both
+wishes hold. Promise first, and he wants his own way past it." And the
+priest's own `blessing_refused` variant (`:713-718`, live once
+`va_promised_seal` is set) explains the reverse-order lockout in full at
+the exact moment it bites.
+
+Checked the actual mechanics, not just the text: promising the reeve
+*first* is the only direction that forecloses anything (`blessing_refused`'s
+gate, `:716`) — taking the blessing first never blocks the promise.
+`va_reeve`'s `promise` topic has no `va_barrow_open`/`va_barrow_blessed`
+gate at all, and `reeve_blessed_open` (`:537-543`) confirms blessing-then-
+promise is a fully supported, non-contradictory path ("The priest opened it
+for you... Shut them after, as you said, and we'll have no quarrel"). So the
+one real lockout is already well-telegraphed from both the reeve and the
+innkeeper; the gap was narrower than the report's framing suggests, but
+real: the priest's own `blessing` accept variant (`:705-712`, live when
+`va_heard_oldking` is set and the player has *not* promised) said nothing
+about the reeve at all — "No promise binds them shut; whether they close
+again behind you is yours to decide at the seat" reassures about the
+throne-side seal/open choice but never names the reeve, so a player who
+reaches the chapel before the square (or without ever visiting the
+innkeeper) had no way to know, from the priest alone, that taking this
+blessing leaves the reeve's promise still open to give.
+
+Fixed there only — the one topic that was silent on the side of the tension
+the reeve and innkeeper already cover from the other direction:
+`world/reach/va_village.json:710`, `"...No promise binds them shut; whether
+they close again behind you is yours to decide at the seat. Go when you're
+ready."` -> `"...No promise binds them shut — you can still give the reeve
+yours, and decide the rest at the seat. Go when you're ready."` — 195 to 197
+characters, both well inside the 220-char `say` budget
+(`scripts/lint-world.ts:22`). `old_king` (`:698-704`, the topic that
+introduces the blessing) and `blessing_refused`/`release` were left
+untouched: `old_king` is backstory, not the decision point, and the other
+two already explain themselves fully.
+
+`node scripts/fmt-json.mjs world/reach/va_village.json` — only the edited
+line changed. `node --import tsx scripts/lint-world.ts world/reach.json` —
+"all text within budget." `node --import tsx scripts/budget.ts
+world/reach.json --terse` — `avg 440.7955 max 1076 sum 118574 screens 269`,
+unchanged (this topic isn't on the proven walkthrough, which opens the
+barrow via the hunter's gap, not the blessing). The topic *is* on one proof,
+`crowned_hollow` ("be a Scholar," `world/reach.json:654`): measured directly
+at `avg 449.76 max 858`, both still under the real 450/1100 ceiling
+(`crowned_hollow` carries no allowance in `test/budget.test.ts`'s
+`PROOF_BUDGET` table — it's held to the bar outright). `queue/P2-issue-
+0f4d5511.json` moved to `done/`.
+
+**`P1-issue-ba53c432.json`** — "the initial DC/modifier math shown before
+rolling doesn't always make the true odds obvious... DC vs total-needed
+phrasing took a few tries to parse confidently." Both named checks —
+`ir_push_fall` ("go through before nerve fails," will, DC 10,
+`world/reach/ir_irondowns.json:477-493`) and `fd_dike_shore` ("shore the
+dike," might, DC 9, `world/reach/fd_fenmarch.json:63-83`) — are plain
+`["check", skill, dc, onSuccess, onFail]` DSL ops with no custom preview
+text of their own; both render through the single shared `oddsHint`
+(`src/engine.ts:2902-3082`, the check branch at `:2991-3033`). There is no
+code path by which these two could render inconsistently with each other —
+same function, same template, and both labels end in `(skill)` so the
+skill-tag suffix is suppressed identically for both (`:3010-3011`).
+
+The one real asymmetry is in the format itself, not between the two
+examples: when a check's modifier is 0, `oddsHint` prints `DC {dc}, roll
+{dc}+ on the die` — the same number twice, with no modifier shown to
+explain why (`:3012-3016`, the `mod ? ... : ...` branch). With the Reach's
+four classes' base attrs (`world/reach.json:35`'s `classes`: Warden might
+2/will 1, Scout grace 2/wits 1, Scholar wits 2/will 1, Envoy will 2/wits 1),
+`fd_dike_shore` (might, DC 9) shows this duplicated-number form for three of
+four classes and the clear `DC 9, +2: roll 7+` form only for Warden;
+`ir_push_fall` (will, DC 10) shows it only for Scout. That is a genuine, if
+minor, source of "a few tries to parse" — but it is not a bug in either
+named check, and not a mismatch between them.
+
+Checked whether a cheap fix exists rather than assuming none does: it
+doesn't. This is the same ground a very recent, more specific finding
+already covered and declined (`docs/roadmap.md:4681-4713`, `P1-issue-
+d3652755`/`P2-issue-c0489d2e`) — "printing the exact number before ever
+attempting the check... was weighed and declined on purpose" because
+`oddsHint` renders on effectively every check option in the game, and the
+budget has almost nothing left to give it: `scripts/budget.ts
+world/reach.json --terse` measures `avg 440.7955/450` (9.2 characters of
+slack across all 269 walkthrough screens) and the intro sits at `1373/1400`
+(27 left) — confirmed fresh this session, not assumed. A per-check or
+per-rule addition here is exactly the shape of change the project has
+already priced out once (the redundant skill-tag suffix, "about 1.1
+characters a screen on every road at once," `test/budget.test.ts:210-214`)
+and found too expensive for the value. The general escalation rule is
+already stated once, economically, in the intro (`src/format.ts:553`,
+confirmed live) rather than repeated per-check — the same design answer
+would apply here if this were pursued, and the "state it once, let the
+player internalize it" pattern is the established one for exactly this
+kind of full-realm, low-severity clarity nuance. Left alone: no code or
+content change. `queue/P1-issue-ba53c432.json` moved to `done/`.
+
+**`P2-issue-54776c8d.json`** — a condensed per-companion "relationship
+history," since regard changes are easy to lose track of without
+repeatedly opening `status`. `renderStatus`'s Party section
+(`src/format.ts:410-424`) already prints exactly this, condensed to one
+number per companion, every time: `regard {+/-}{n}` plus `, near leaving`
+once it reaches -2 (`:415-418`), free of charge and current to the instant,
+since `status` costs no turn (per the intro's own line, `src/format.ts:553`,
+"status(s): free recap"). This is not a new mechanism to build; it already
+exists and already updates live.
+
+What doesn't exist, and what the report is more precisely asking for, is a
+chronological log of every individual approval/disapproval *event* (which
+choice moved a companion's regard, by how much, and when) rather than the
+live running total. That's a different, heavier feature — a new per-event
+history would need its own state field(s) tracked turn over turn (a
+determinism-sensitive addition, since `State` is asserted to be exhaustive
+plain JSON, `src/engine.ts:3084-3097`'s `cloneState` comment), plus new
+rendering and its own budget cost, for a single-corroboration P2
+`suggestion` (not a `bug` or `confusion`) that itself frames the ask as
+"consider a way," not a broken expectation. The project's own precedent for
+a related complaint points the same way: a companion nearing departure
+once surfaced "only... on the status screen" and got fixed by adding the
+same live signal to the *action preview* (`partyLeavesHint`, documented at
+`src/engine.ts:2237-2247`) rather than by building a history log —
+surfacing the current state proactively, not archiving the past.
+Disproportionate to build a log for this report alone; the live number
+plus its "near leaving" threshold already gives the condensed read the
+suggestion asks for. Left alone: no code or content change. `queue/P2-
+issue-54776c8d.json` moved to `done/`.
+
+**Verification.** `npm run verify` was run in full against the shared
+working tree and returned 332/333 tests green, one failure: "the
+observation budget holds along every other proven route (reach)",
+`proofs.crowned_hollow#bloodied: avg 524.6 > 523` (`test/budget.test.ts:5`).
+Isolated directly rather than assumed: `git stash push -- world/reach/
+va_village.json` (this entry's only content change) then re-running `node
+--import tsx --test test/budget.test.ts` reproduced the identical failure,
+`avg 524.6 > 523`, with this entry's edit entirely absent — and
+`crowned_hollow#bloodied`'s own proof steps never select "a blessing for
+the barrow" or talk to the gray priest at all (checked directly against
+`world/reach.json`'s `proofs`), so the edited line cannot reach that road
+regardless. The regression traces to concurrent, uncommitted work this
+entry did not make and does not touch: `src/engine.ts`, `test/party.test.ts`,
+`test/conditions.test.ts` and `world/reach/th_thornwold.json` all showed as
+modified in the shared tree (none edited by this entry). Running the
+crawler stages directly (skipped by `verify`'s `&&` chain once `test`
+fails) surfaced a second, unrelated problem in that same in-flight code:
+`npm run crawl:fork` throws `ReferenceError: talkMenuParts is not defined`
+at `src/engine.ts:2557`, a hard crash, not a budget miss —
+`npm run -s typecheck`, `npm run -s validate`, `npm run -s crawl`,
+`npm run -s mock` and `npm run -s measure` all passed cleanly on their own.
+Neither failure is caused by, or fixable within, this entry's three queue
+items; flagged here for whoever lands the `src/engine.ts` change in
+flight, not worked around. `queue/P2-issue-0f4d5511.json`, `queue/P1-issue-
+ba53c432.json` and `queue/P2-issue-54776c8d.json` all moved to `done/`.
+
+### `P1-issue-a5d492b0.json`/`P2-issue-a0ecfcf8.json`: the gray sergeant was the one guardian the stand-down fix missed
+
+Both reports, one corroborated finding: naming/pacifying a guardian ("name
+it," `scholar_name`) instantly opened the barrow-wight's passage at Barrow
+Crypt, but at The Waiting Bough the same move on the gray sergeant left the
+way "locked" and still needed a separate will/grace check afterward —
+inconsistent payoff for what reads as the same ability. Investigated as a
+mechanical-consistency question distinct from wave five's "name it reads
+last" entry above (`:4811-4903`), which is about menu position, not this.
+
+The realm already has a fix for exactly this shape, and it's why three of
+four guardians already behave the way the report expected. `f9a4150`
+("reach: standing something down is a key after all," `P1-issue-75515d1b`/
+`840b60d4` + three P2s) made `calm_<id>` join every guarded exit's unlock
+condition "wherever it can apply" — the honour guard (`mg_old_crypts`, exit
+at `world/reach/mg_marrowgate.json:789`), the Vale barrow-wight (`va_crypt`,
+`world/reach/va_barrow.json:308`), the Hollowbrook grave-wight
+(`hb_kingsrest_hall`, `world/reach/hb_hollow.json:118`), and all 32 stamps of
+the three shared templates (`templates.json:54`, `775`, `1015`) — because
+`calmhostile` (`src/engine.ts:1386-1390`, shared by `scholar_name`,
+`envoy_parley`, `envoy_buy_off`) only ever sets the flag; whether it actually
+opens anything is a per-room content decision, and a door held shut by
+convention against something the engine no longer considers a threat
+(`hostileNow`, `:904`) was that commit's own stated bug. The Waiting Bough's
+gray sergeant (`world/reach/th_thornwold.json:596-672`, npc at `:2425-2447`)
+is the fourth and last realm hostile carrying `pierce: true` behind a
+single fixed-room passage — the same four rooms wave five's menu-position
+entry above independently enumerated (`:4836-4843`) — but `f9a4150` never
+touched it: no report had named this specific room yet, only the honour
+guard and the barrow-wight. Its west exit checked only `th_gate_passed`
+(`:605`, pre-fix) — set by killing him, slipping past (grace), answering him
+plain (will), or the Priory's sealed rite, never by calming him — so "name
+it" read as success ("you speak its true name, and it remembers what it
+was") while the door stayed shut. Confirmed it isn't a deliberate
+difference: the room's own fiction is the same shape as the other three (one
+hostile bodily standing in a passage, no separate lock or mechanism to
+explain a split), and unlike the honour guard's and grave-wight's own
+`lockedMsg`/`hint`, the sergeant's never even offered "calm him" as a route
+past.
+
+Fixed by extending the exact existing convention rather than inventing a
+new one: `th_hollow_gate`'s west exit now ORs `calm_th_sergeant` alongside
+`th_gate_passed`; a new "calmed but not passed" variant renders, worded like
+the honour guard's/grave-wight's own ("stood down now, and no longer minded
+to stop you"); and the three actions that used to be the only way past
+(`th_slip_sergeant`, `th_answer_sergeant`, `th_sergeant_rite`) now also gate
+on `!flag calm_th_sergeant`, so a door already open stops offering redundant
+checks — same shape as `mg_old_crypts`'s own three-part fix in `f9a4150`'s
+diff. Left `lockedMsg`/`hint` wording alone (matching `va_crypt`'s own
+precedent, which never mentions "calm" either): a first pass that spelled
+out "stood him down" in both strings measured clean on `scripts/budget.ts`'s
+walkthrough-only view but broke `test/budget.test.ts`'s ratchet on five
+proofs that revisit the locked room under retry loops (up to +14.7 chars/turn
+on `crowned_hollow#bloodied`) — reverted the wording, kept the mechanism.
+Extended `test/conditions.test.ts` with "calming the gray sergeant opens the
+Waiting Bough outright..." mirroring the existing honour-guard test
+(`:470-496`), so the fourth guardian is now pinned the same way the other
+three already are.
+
+Verified in an isolated `git worktree` off this session's actual HEAD
+(`e904b41`) rather than trust the shared working tree, which several other
+agents were actively landing unrelated content into at the same time (queue
+moves, `src/engine.ts`, `world/reach/va_village.json`, this very file
+mid-edit) — one such in-flight change was independently tripping
+`test/budget.test.ts`'s ratchet on `crowned_hollow#bloodied`, a Warden proof
+that never leaves the Vale and never visits Thornwold, so it could not have
+been this entry's own doing. Applying only this entry's diff
+(`world/reach/th_thornwold.json`, `test/conditions.test.ts`) on top of clean
+HEAD in a scratch worktree: `npm run verify` green, 333/333 tests, all three
+worlds validate and win-prove, both crawls clean (0 over-cap menus).
+`scripts/lint-world.ts world/reach.json`: "all text within budget."
+`scripts/budget.ts world/reach.json --terse`: avg 439.7546/450, max
+1076/1100 — byte-identical before and after this entry's change, since no
+proven route ever calms the sergeant and the new variant text is therefore
+never rendered on one, the same "costs nothing where the measurement can't
+see it" this file's own rule already names.
+
+`queue/P1-issue-a5d492b0.json` and `queue/P2-issue-a0ecfcf8.json` moved to
+`done/` together — one mechanism, one fix, two reports of the same gap.

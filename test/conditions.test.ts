@@ -494,3 +494,42 @@ test("calming the honour guard opens its passage outright, and its own checks st
     "calmed, the way north is simply open",
   );
 });
+
+/**
+ * P1-issue-a5d492b0 / P2-issue-a0ecfcf8: the same gap as above, at a fourth
+ * `pierce` guardian the f9a4150 pass never reached. The gray sergeant
+ * (`th_hollow_gate`) is the same shape as the honour guard — a single hostile
+ * standing in a doorway, calmable by `scholar_name`/`envoy_parley` — but its
+ * exit was left checking only `th_gate_passed`, so naming him read as success
+ * while the Waiting Bough stayed locked, still wanting a separate will/grace
+ * check. No report had named this specific room when f9a4150 landed; one
+ * since has. `calm_th_sergeant` now joins `th_gate_passed` on the west exit,
+ * matching the honour guard/barrow-wight/grave-wight convention exactly.
+ */
+test("calming the gray sergeant opens the Waiting Bough outright, and its own checks stand down with it", () => {
+  const w = loadWorld("world/reach.json");
+  const start = newState(w, 1).state;
+  const uncalmed: State = { ...start, classId: "scholar", room: "th_hollow_gate", visited: ["th_hollow_gate"] };
+  const calmed: State = { ...uncalmed, flags: { ...uncalmed.flags, calm_th_sergeant: true } };
+
+  assert.ok(
+    legalActions(w, uncalmed).some((a) => actionLabel(w, a, uncalmed).startsWith("answer the sergeant plainly")),
+    "uncalmed, answering him plain is still how a scholar gets past",
+  );
+  assert.equal(
+    step(w, uncalmed, { kind: "go", dir: "west" }).state.room,
+    "th_hollow_gate",
+    "uncalmed, the sergeant still bars the way",
+  );
+
+  const calmedLabels = legalActions(w, calmed).map((a) => actionLabel(w, a, calmed));
+  assert.ok(
+    !calmedLabels.some((l) => l.startsWith("answer the sergeant plainly") || l.startsWith("slip past him along the bough")),
+    `a door already open offers no other way to open it:\n${calmedLabels.join("\n")}`,
+  );
+  assert.equal(
+    step(w, calmed, { kind: "go", dir: "west" }).state.room,
+    "th_hollow_glade",
+    "calmed, the way west is simply open",
+  );
+});

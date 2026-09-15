@@ -602,7 +602,7 @@
         "east": { "to": "th_hollow_approach" },
         "west": {
           "to": "th_hollow_glade",
-          "if": [["flag", "th_gate_passed"]],
+          "if": [["any", [["flag", "th_gate_passed"], ["flag", "calm_th_sergeant"]]]],
           "lockedMsg": "The gray sergeant will not step aside for anyone who hasn't answered him.",
           "hint": "fight him, slip past (grace), or answer him plain (will)"
         }
@@ -612,13 +612,18 @@
           "if": [["flag", "th_gate_passed"]],
           "desc": "The bough stands empty now, the old rope swaying with nothing in it. Whatever kept its post here has finally stood down.",
           "brief": "The bough, empty now."
+        },
+        {
+          "if": [["flag", "calm_th_sergeant"], ["!flag", "th_gate_passed"]],
+          "desc": "A bough arches low over the path, and one of the hanged still keeps his post beneath it, forty years gray. He hasn't moved, but the fight's gone out of him — stood down now, and no longer minded to stop you.",
+          "brief": "The bough. The sergeant stands down."
         }
       ],
       "actions": [
         {
           "id": "th_slip_sergeant",
           "label": "slip past him along the bough (grace)",
-          "if": [["!flag", "th_gate_passed"]],
+          "if": [["!flag", "th_gate_passed"], ["!flag", "calm_th_sergeant"]],
           "fx": [
             [
               "check",
@@ -638,7 +643,7 @@
         {
           "id": "th_answer_sergeant",
           "label": "answer the sergeant plainly (will)",
-          "if": [["!flag", "th_gate_passed"]],
+          "if": [["!flag", "th_gate_passed"], ["!flag", "calm_th_sergeant"]],
           "fx": [
             [
               "check",
@@ -659,7 +664,7 @@
         {
           "id": "th_sergeant_rite",
           "label": "show him the Priory's sealed rite",
-          "if": [["!flag", "th_gate_passed"], ["any", [["flag", "church_trusted"], ["has", "fd_priors_rite"]]]],
+          "if": [["!flag", "th_gate_passed"], ["!flag", "calm_th_sergeant"], ["any", [["flag", "church_trusted"], ["has", "fd_priors_rite"]]]],
           "fx": [
             ["set", "th_gate_passed"],
             ["npcgo", "th_sergeant", null],
