@@ -2802,3 +2802,33 @@ edit), both crawls clean, 0 over-cap menus. `budget.ts`'s own walkthrough
 average moved 439.53 -> 439.45, a small real improvement from the same
 edit landing on the walkthrough's own path through the stage, separate
 from the forced-state numbers above.
+
+### A fresh audit-echo/audit-choices pass against today's whole batch
+
+Neither tool had run since today's twenty-two quest-logic fixes, the DC and
+combat-scaling changes, or the bearings-macro fix — all real edits across
+many files, any one of which could in principle have introduced a new
+duplicate sentence or a newly-dead flag. Ran both fresh rather than assume.
+
+`audit-echo.ts`: 7 echoes at or above its own 0.5 threshold, out of 3,801
+authored lines, all epilogue/room-desc pairs that are parallel writing by
+design (the same sentence shape for two different companions, two variants
+of one room's desc before/after a later event) — the same character the
+tool already reports as expected, not new. The room/npc-name-reuse list (11
+room names, 1 npc name) is entirely generic functional names — "The Trade
+Counter," "The South Track," "barrow-wight" — the tool's own distinction
+("a road name may be fine; a distinctive one is not") already covers these;
+none read as a name collision the way the beacon-keeper case earlier this
+session did. Nothing new.
+
+`audit-choices.ts`: the forgotten-fork list is unchanged in kind from the
+tool's own documented limitation (same-container reads don't count — see
+`em_heard_history` above), and the new "standings and tallies" section it
+also prints — reputation and approval vars that keep accumulating past the
+highest threshold anything reads — is a reputation-system property, not a
+defect; nothing reads it as a bug signal and the tool doesn't flag it as
+one. "No option in the realm closes its own door on a miss" still holds.
+
+No code or content changed this section — a verification pass, confirming
+today's batch introduced no new echo or choice-consequence regressions;
+no verify needed.
