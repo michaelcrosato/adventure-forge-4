@@ -1697,3 +1697,41 @@ The next attempt at this item should start from a status-budget trim
 sized to actually clear ~100 characters of average headroom — or from a
 lever that does not cost a new "Left undone" line at all, if one can be
 found — not from re-deriving the numbers above.
+
+### Item 12: the router, and the three doors that were never the objective
+
+`pathTo` — the search behind a quest stage's `(the way there: ...)`, the one
+thing `way()` in `format.ts` calls it for — now tries a currently-open route
+first and only falls back to one that crosses a shut exit when no open route
+exists at all. `bearingsHere` is untouched: it still uses the older,
+gate-blind `walkFrom`, correctly, because a bearing answers "where is this
+place", not "how do I get there right now", and crossing a locked door
+doesn't move the barrow.
+
+**The fix, and what it actually resolved.** `audit-routes.ts` now calls the
+real `pathTo` instead of re-implementing a bearing-style search of its own,
+so it measures what ships rather than a fixed baseline. Of the 80 routes
+along the walkthrough that crossed a shut exit before the last leg, only 6
+now resolve to an open alternative — not 80, because two of the three doors
+`audit-routes.ts` named (`mg_old_crypts north`, `mg_chapel_of_ash down`) lead
+to rooms whose only other entrances (`mg_hollow_throne`, `mg_cistern`) sit
+*behind the same gate*, later in the same dungeon: a proper from-here search
+correctly finds no way around, because narratively there isn't one yet. The
+third (`va_barrow_field in`, into `va_antechamber`) has three other,
+genuinely ungated entrances, but all three are themselves locked this early
+in the Vale, so the same thing holds there too. The fix was never going to
+make the crypts non-linear; what it does is stop lying about it.
+
+**"Say which."** The remaining 74 are exactly the case a route search can't
+solve by searching harder — no open way exists, so the door has to be
+crossed — and `pathTo` now returns `{ text, blocked }` instead of a bare
+string so `way()` can tell the player rather than stay silent about it: `(the
+way there, shut: two south, then east)` in place of `(the way there: ...)`.
+Checked against the status ratchet the way item 11 should have been checked
+against sooner: the note is not free (104 occurrences along the
+walkthrough), landed at 3,650.03 average on the first phrasing tried and
+3,650.0 flat after trimming the added clause from ", past a shut door: " to
+", shut: " — a targeted, bounded cost (one short clause, only on the routes
+that actually cross something shut) rather than item 11's, which was a new
+quest thread staying in "Left undone" for the rest of the game. The
+difference is why this item closed in one session and the other didn't.

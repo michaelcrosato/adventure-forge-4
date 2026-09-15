@@ -786,17 +786,47 @@ export function bearingsHere(world: World, s: State): string {
   return `${world.regions?.[region]?.bearing ?? "As the ground runs"}: ${parts.join("; ")}.`;
 }
 
-export function pathTo(world: World, s: State, target: string): string | null {
-  if (target === s.room) return "";
+/**
+ * A route the player is told to follow (a quest stage's `at`), not a bearing
+ * that just says where a place is. `audit-routes.ts` found 80 of 1,120 routes
+ * along the walkthrough crossing a shut exit before the last leg — sent
+ * through a door that is not the objective, which costs the walk back. A
+ * shut LAST leg is the design (the door is the objective); this only avoids
+ * the ones that are not.
+ *
+ * Two passes: gates respected first, so a currently-open way is preferred
+ * when one exists (all three doors `audit-routes.ts` found have one — a
+ * second, ungated entrance to the room on the other side, though most of the
+ * time it is itself behind another gate this early and the open pass finds
+ * nothing better). Only when no open way exists at all does it fall back to
+ * the gate-blind search `bearingsHere` also uses, which can always answer
+ * with *some* route — `blocked` says which pass answered, so `way()` can
+ * still tell the player when the printed walk is not, in fact, walkable yet.
+ */
+export function pathTo(world: World, s: State, target: string): { text: string; blocked: boolean } | null {
+  if (target === s.room) return { text: "", blocked: false };
   if (!world.rooms[target]) return null;
+  const open = routeTo(world, s, target, true);
+  const from = open ?? routeTo(world, s, target, false);
+  return from && { text: legsOf(from, s.room, target), blocked: !open };
+}
+
+/**
+ * The predecessor map `pathTo` walks — exported past `pathTo`'s own
+ * formatted string so `audit-routes.ts` can inspect which pass answered
+ * (gates respected, or the gate-blind fallback) and which exact legs a
+ * route crosses, rather than re-parsing prose back into directions.
+ */
+export function routeTo(world: World, s: State, target: string, respectGates: boolean): Map<string, [string, string]> | null {
   const from = new Map<string, [string, string]>();
   const queue = [s.room];
   for (let head = 0; head < queue.length; head++) {
     const at = queue[head]!;
     for (const [dir, ex] of Object.entries(world.rooms[at]?.exits ?? {})) {
+      if (respectGates && ex.if && !condsOk(world, s, ex.if)) continue;
       if (from.has(ex.to) || ex.to === s.room) continue;
       from.set(ex.to, [at, dir]);
-      if (ex.to === target) return legsOf(from, s.room, target);
+      if (ex.to === target) return from;
       queue.push(ex.to);
     }
   }

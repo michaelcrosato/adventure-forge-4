@@ -520,19 +520,24 @@ test("pathTo walks the real exits, folds a straight run into one leg, and gives 
   world.rooms["attic"] = { name: "Attic", desc: "Up top.", exits: { south: { to: "r0" } } };
   world.rooms["cellar"] = { name: "Cellar", desc: "No way in." }; // reachable from nowhere
   const { state } = newState(world, 1);
-  assert.equal(pathTo(world, state, "r3"), "three east", "three steps the same way are one leg");
-  assert.equal(pathTo(world, state, "attic"), "one north");
-  assert.equal(pathTo(world, state, "r0"), "", "standing there already");
+  assert.deepEqual(pathTo(world, state, "r3"), { text: "three east", blocked: false }, "three steps the same way are one leg");
+  assert.deepEqual(pathTo(world, state, "attic"), { text: "one north", blocked: false });
+  assert.deepEqual(pathTo(world, state, "r0"), { text: "", blocked: false }, "standing there already");
   assert.equal(pathTo(world, state, "cellar"), null, "no chain of exits reaches it");
   assert.equal(pathTo(world, state, "nowhere_at_all"), null, "and a room that does not exist is not a route either");
   // two legs: east along the line, then north at the end
   world.rooms["r4"]!.exits!["north"] = { to: "roof" };
   world.rooms["roof"] = { name: "Roof", desc: "Sky.", exits: { south: { to: "r4" } } };
-  assert.equal(pathTo(world, state, "roof"), "four east, then one north");
-  // a locked door is still the way: the door is the quest, and pretending the
-  // place is unreachable would be the same lie the old directions told
+  assert.deepEqual(pathTo(world, state, "roof"), { text: "four east, then one north", blocked: false });
+  // a locked door is still the way when nothing else reaches the target: the
+  // door is the quest, and pretending the place is unreachable would be the
+  // same lie the old directions told — but now it says so, so a player is
+  // not surprised the printed walk does not open on its own
   world.rooms["r0"]!.exits!["east"] = { to: "r1", if: [["flag", "never"]], hint: "the door is barred" };
-  assert.equal(pathTo(world, state, "r3"), "three east");
+  assert.deepEqual(pathTo(world, state, "r3"), { text: "three east", blocked: true });
+  // ...but a way around a shut door is preferred over crossing it, when one exists
+  world.rooms["attic"]!.exits!["east"] = { to: "r1" }; // attic now offers a second, ungated way into r1
+  assert.deepEqual(pathTo(world, state, "r3"), { text: "one north, then three east", blocked: false });
 });
 
 test("a quest stage with a destination carries the way there into the status check", () => {
@@ -567,6 +572,22 @@ test("a quest stage with a destination carries the way there into the status che
   const bad = line(2);
   bad.quests = { q: { name: "Q", stages: [{ if: [], text: "t", at: "r7" }] } };
   assert.ok(validateWorld(bad).some((e) => e.includes("at names no room (r7)")), validateWorld(bad).join("\n"));
+});
+
+test("the way there says when it crosses a shut door, and stays quiet when it does not have to", () => {
+  const world = line(4);
+  world.quests = {
+    q: { name: "The Sunk Chapel", start: [], done: [["flag", "found"]], stages: [{ if: [], text: "Something sings under the water.", at: "r3" }] },
+  };
+  // r0's only way forward is gated: the printed route has nowhere else to go
+  world.rooms["r0"]!.exits!["east"] = { to: "r1", if: [["flag", "never"]] };
+  const { state } = newState(world, 1);
+  assert.match(renderStatus(world, state), /\(the way there, shut: three east\)/);
+
+  // an ungated second way into r1 exists: pathTo prefers it, and the note drops
+  world.rooms["r0"]!.exits!["north"] = { to: "attic" };
+  world.rooms["attic"] = { name: "Attic", desc: "Up top.", exits: { east: { to: "r1" } } };
+  assert.match(renderStatus(world, state), /\(the way there: one north, then three east\)/);
 });
 
 /**
