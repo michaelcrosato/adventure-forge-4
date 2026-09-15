@@ -1473,3 +1473,69 @@ back costs roughly what removing the score saved, multiplied across every
 turn rather than paid once. Left open rather than superseded — the ask is
 reasonable, but reintroducing the pattern the header was deliberately
 cleared of is a bigger call than this cycle should make alone.
+
+### One real bug, and six P2s whose content already answers them
+
+**A real, small bug, found running the realm's own tool rather than
+chasing a report.** `scripts/audit-items.ts` — which checks that every
+item's hint matches what the realm actually does with it — flagged
+`em_watch_castoff` ("a corroded bell-key") as the one item realm-wide
+whose hint promises a use nothing reads: it named Glasswick, and nothing
+in Glasswick answers to it. The hint already said "fits no bell anyone in
+Glasswick still owns," which is true and was the point — a dead
+watchman's discarded souvenir — but naming the place is what tripped the
+heuristic. Reworded to read unambiguously as a keepsake ("a dead
+watchman's souvenir, not a working key; a keepsake, nothing more"); the
+audit now reports 0 broken promises across all 321 items, 233 read by
+something and the other 88 correctly signaled as keepsakes.
+
+**`P2-issue-36c1f5b4`, `-52f2b4d2`, `-c99fbcd7`, `-5f43e89c`** all want
+clearer signposting of which items are functional keys before a player
+experiments. Ran the audit as the check: 233/321 items are mechanically
+read, and — after the fix above — every one of the 88 that aren't reads
+as a keepsake and only as a keepsake. The named example that still has
+real texture, the Prior's rite ("said to ease even a barrow's grief,
+once, wherever it's carried"), is deliberately less specific than the
+Keeper's Key ("the Kings' Rest door and the pilgrims' stair at Coldpass
+both know it") — some puzzle items name their lock outright and some
+don't, and that's a design choice about how much a hint pre-solves,
+not an oversight this tool catches. Superseded on the strength of the
+audit and the one fix it found.
+
+**`P2-issue-16a0c98c`** named its own example: "oath-stone pleas." Read it
+directly — `wm_oath_plea` ("plead the ring down, plain (will)") carries no
+`once`, only `["flag","wm_oath_heard"],["!flag","wm_oath_resolved"]`, so a
+miss leaves it standing exactly like every other retryable check in the
+realm (the fail text: "Whatever it's still waiting on, a plain ask wasn't
+it" — not "never again"). The finding's own named case doesn't reproduce.
+Superseded.
+
+**`P2-issue-3e37a3a3`** and **`P2-issue-4d5671a3`** are the reeve/priest
+barrow-doors sequencing, both saying it wasn't clear promising the reeve
+first forecloses the priest's blessing until after the fact. Read the
+reeve's own dialogue in the path to the promise: "the priest wants the
+opposite, and he won't bless a door sworn shut, so see him first if you
+want both" — said once on the way to the offer, and again, verbatim in
+substance, the moment the promise is actually made. Both are told inline,
+before commitment, not gated behind a side topic a player might miss.
+Superseded.
+
+**`P2-issue-7fcae6e7`** (companion grief vs. a hold's own grief-rite,
+unclear until `status` spells it out) and **`P2-issue-3a765580`** (a
+turn-pace indicator that "the status text mentions... but only if the
+player thinks to check it") are both the same shape as the six-report
+cluster closed earlier this session: real information, already in
+`status` (a quest whose `done` settles a hollow is marked "(this hold's
+grief)"; `world.objectives`' staged recap already carries pacing text),
+gated on a player choosing to look. That cluster's budget finding — a
+universal or near-universal hint costs more than the walkthrough or the
+status ratchet currently have room for — applies here without needing a
+second experiment. Superseded on the same evidence, not re-tested.
+
+Left open, not superseded: `P2-issue-85e6fcd4` (dialogue recognizing an
+answer learned elsewhere) and `P2-issue-5109e8d6` (flagging a one-time
+offer about to close) are genuine, broader mechanisms nothing in the
+realm does today, each touching many topics rather than one room; neither
+is a quick fix and neither has more than its own single report behind it.
+`P2-issue-1c7364d4` (an on-screen breadcrumb mid-walk) is the same shape
+as `3ddba1f3`'s compass note above — a real feature, not built.
