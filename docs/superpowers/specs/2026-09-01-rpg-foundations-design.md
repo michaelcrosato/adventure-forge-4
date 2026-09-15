@@ -172,15 +172,25 @@ spreads across the vale, and you are the one who walked in anyway.
 - **Wilderness:** generated Ashwood region between village and barrow, with
   placed sites: hunter's camp, drowned chapel, watchtower.
 - **Barrow:** authored dungeon — antechamber, hall of verses, crypt, throne.
-- **Three ways to win**, each favoring different classes but open to all:
+- **Five ways to win today** (three at launch; the intro note above already
+  tracks the id rename and the three additions — this list spells out what
+  they are), each favoring different classes but open to all:
   1. `king_slain` — go down and destroy him (fight path)
-  2. `blight_bound` — recover the three verses and bind him (lore path)
+  2. `king_at_rest` — recover the three verses and bind him (lore path;
+     this doc's original `blight_bound`)
   3. `debt_paid` — learn his grievance and return the stolen crown (talk path)
-- **Lose endings:** `dead`, and `crowned_hollow` — accept his offer.
+  4. `crown_broken` — break the crown before him instead of returning it
+     (talk path, no verses needed)
+  5. `true_rest` — return the crown and speak all three verses in the same
+     visit (needs both the lore and talk paths done)
+- **Lose endings:** `dead`, `crowned_hollow` — accept his offer, and
+  `king_forsaken` — pocket the crown and leave him without a word.
 - Rest at the inn heals. Herbs heal on use. (Direct answer to the playtest
   finding that hp loss had no recovery.)
 - Primary walkthrough: the lore path played thoroughly, reaching `maxScore`.
-  `proofs` carry the other three endings.
+  `proofs` carry the other six endings today, not three — confirmed
+  directly against `world/vale.json`'s own `proofs` object: `king_slain`,
+  `debt_paid`, `crown_broken`, `true_rest`, `crowned_hollow`, `king_forsaken`.
 
 ## What changes where
 
