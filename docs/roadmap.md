@@ -4405,3 +4405,41 @@ every one of its 271 screens). The sibling's own fix landed shortly after;
 re-ran `npm run verify` in the shared tree afterward and it is fully green
 (331/331, exit 0). `queue/P1-issue-c2846cc6.json` and
 `queue/P2-issue-7ae5e54e.json` moved to `done/`.
+
+### A loose end from the wave-4 cluster: `kw_q_round` was the same missing-`at` shape as the causeway stone
+
+The point-of-no-return/evidence agent flagged this in passing while
+auditing every hold's evidence-style quest for `at` coverage
+(`docs/roadmap.md:3920-`, "The crossing-warning refinement and the
+evidence-nearby hint") and filed it as its own follow-up rather than
+fold it into that fix — a different hold's content, out of scope for a
+ticket that wasn't about Kingswood. Picked up directly rather than left
+for later, since the diagnosis was already exact.
+
+`kw_q_round` ("The Hunt's Unfinished Round," `world/reach/kw_hollow.json:501-524`)
+tracks three ridings by individual flag (`kw_riding_beat`, `kw_riding_stand`,
+`kw_riding_cast` — set in `world/reach/kw_wild.json`'s wilderness spots at
+cells `[1,2]`, `[5,0]`, `[1,3]` respectively, i.e. rooms `kw_ridings_1_2`,
+`kw_ridings_5_0`, `kw_ridings_1_3`), same shape as `hb_q_evidence`'s three
+pieces and `va_verses`'s three verses — but its two middle stages read the
+aggregate `kw_ridings_worked` count instead of the individual flags, so
+neither could carry an `at`: a stage keyed on "how many" has no room to
+point at, only one keyed on "which ones" does. `status` gave no walking
+directions for the entire span between one riding worked and all three —
+the same bug shape as the causeway stone, confirmed live by the same kind
+of check that found it.
+
+Fixed by replacing the two count-based stages with six flag-based ones —
+every reachable two-of-three and one-of-three combination, matching
+`hb_q_evidence`/`va_verses`'s own pattern exactly — each naming the specific
+riding(s) left and carrying `at` for the nearest one. `kw_ridings_worked`
+itself is untouched (still incremented the same way, still read by
+`kw_hollow_grievance`-adjacent content elsewhere); only this quest's own
+stage list changed. Text: 58-68 chars, well inside the 120-char stage
+budget. `node scripts/fmt-json.mjs world/reach/kw_hollow.json` and
+`node --import tsx scripts/lint-world.ts world/reach.json` — all text
+within budget. `node --import tsx scripts/audit-choices.ts world/reach.json
+--prefix kw` — nothing new flagged. `node --import tsx scripts/budget.ts
+world/reach.json --terse` — avg 439.68/450, unchanged (this quest isn't on
+the proven walkthrough). `npm run verify` green (331 tests, all three
+worlds validate and win-prove clean, both crawls clean).
