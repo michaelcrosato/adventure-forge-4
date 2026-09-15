@@ -2547,3 +2547,69 @@ fully talkable after a silent auto-burn, where a player-driven resolution
 would have moved them on — narrative continuity, not a dead end, since
 nothing reads their presence in a `done`/`failed`. Nothing to fix. The
 march clock is checked and clean.
+
+### A fresh wave against all of today's changes, and six P1s that all check out clean
+
+Two blind players, seeds 84497 and 84498, first real play since today's
+DC-threshold, combat-scaling and twenty-two quest-logic fixes landed.
+Both won, both rated fun 5 and clarity 4, both reports verified against
+their own trace. `src/triage.ts` promotes every reported bug to P1
+regardless of the player's own rating — all six the wave filed as bugs
+were self-rated P2, worth knowing before reading "six P1s" as six severe
+findings. All six checked against the real trace (`runs/g1-84497-*.json`,
+`runs/g1-84498-*.json`) and the live code, not just the report text.
+**All six are not bugs**, filed to `done/` with the finding rather than
+a fix:
+
+- **Skiff-drag DC "escalating to 22 with no warning"** — the report's own
+  numbers were wrong (actual DC 14, not 10); the cap **was** previewed
+  ("raised 1 by failed tries, and stops at 22") before the player's 2nd
+  and 3rd press; the escalation is `checkSourceId`'s documented, deliberate
+  design for room actions ("a lock does get harder as you work at it"),
+  narrower in scope than the one DC-creep bug already fixed this project's
+  history (that one was `tp:` conversation checks compounding with a
+  double regard cost — a different mechanism this never touched); and the
+  skiff was never gating anything the player needed.
+- **"Never found a path to Iron Downs after 25 turns"** — the route
+  (`th_settlement`'s unconditional "north" exit) was offered to this exact
+  player twice and declined both times in favor of a dead-end side-wood.
+  The *other* player in the same wave saw the identical option and took
+  it, reaching Iron Downs without incident. Report vs. trace, cleanly.
+- **"Bearings sometimes don't match the room graph, Iron Downs/Barrowmere"**
+  — all three mechanisms it could mean, checked: `bearingsHere` (868/868,
+  unchanged from the fix above), the wilderness header line `wildBearing`
+  (not covered by `audit-bearings.ts` — a fresh, equivalent sweep across
+  all 461 gen cells realm-wide found 0 of 377 checkable renders wrong),
+  and hand-authored NPC hints (the report's own two cited examples, both
+  walked by hand against the live graph: correct, to the room). Nothing
+  wrong found anywhere the report could have meant.
+- **"Collected lore items with no action to consume them"** — every cited
+  item traced to a real payoff already in code: two evidence flags read
+  by a "settle on the name" action this same player used; a takeable item
+  this same player explicitly declined (a theft warning shown four times);
+  a two-part pickup (cipher notes plus a still-unfound second item) working
+  as designed, just not completed in this run.
+- **"Ambiguous 'costs standing, hit or miss' phrasing"** — centrally
+  generated (`costsStandingHint`, not hand-typed per room), worded that
+  way on purpose per its own code comment specifically to prevent this
+  exact misreading, and shown correctly alongside "a hit costs" and
+  "a miss costs" variants on the very same menu the trace captured.
+- **"Den/lair rooms feel copy-pasted"** — the `cave` template, seven
+  instances, exactly the same shared-structure tradeoff already accepted
+  for barrow/tower/camp/chapel; every instance-specific field checked by
+  hand and found distinct (unlike the beacon-keeper case above, which
+  *was* a real verbatim duplicate and got fixed).
+
+One claim surfaced and retracted in the same pass: investigating the
+bearings finding turned up a hand-authored hint (the eel-trader's bog-thing
+bounty, `world/reach/fd_fenmarch.json`) that looked wrong on a first
+programmatic check. Re-walked directly through the real engine —
+`newState` → clear class-pick → teleport to `fd_settlement` → legal-action
+lookups for `out`, `south`, `west` (not hand-built action objects, which is
+exactly where the first check went wrong: skipping class-pick leaves every
+`go` illegal and the room never moves, which reads as "broken" if the
+silent no-op isn't noticed) — and it lands exactly on "The Eel-Run," name
+and all. Correct. Not filed; the retraction is the record.
+
+No code or content changed this section — six queue files moved to
+`done/`, nothing else; no verify needed.
