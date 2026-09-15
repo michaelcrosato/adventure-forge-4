@@ -1002,5 +1002,5 @@ shut before the last leg, all of them at three doors (the barrow doors, the
 honour guard's passage under Marrowgate, and the pilgrim's door). Wave nine
 reported this as bearings that "didn't match the actual room-to-room
 connections" — every leg leads exactly where it says, which `audit-bearings`
-confirms across all 293 rooms that offer them; what the player hit was a shut
-door mid-route.
+confirms by walking all 868 legs across the 297 rooms that offer them (0
+wrong); what the player hit was a shut door mid-route.

@@ -2250,3 +2250,57 @@ six screens' worth of new struck-lines on one road, so the rest —
 than chased into a trim that would cut something no screen restates.
 
 `npm run verify` green throughout (329 tests).
+
+### A correction: `audit-bearings.ts` had been checking almost nothing
+
+Not from a report — a fresh sweep of every audit script, cold against the
+current tree, the same discipline "not from a report" always means here.
+This document has said, more than once, that `audit-bearings.ts` proves
+"the generated `[\"bearings\"]` system 0% wrong (293 rooms, every leg
+walked through real exits)". That sentence was true of its arithmetic and
+false of what it implied: the tool's leg-extractor only ever recognized
+`fx[0] === "say"` — literal text sitting in the JSON — and the engine
+rewrite that introduced the computed `[\"bearings\"]` macro (see "the bar
+finally throws a punch"'s neighbor, the turn-economy afternoon) moved 290
+of 297 bearings actions onto it. Those 290 went dark the day it landed:
+not wrong, just invisible, landing in neither the "legs" nor the "prose"
+bucket the tool prints, so "0 wrong" was 0 of a denominator that was
+effectively zero. Nobody checked the denominator before repeating the
+number; this is that check.
+
+Fixed at the tool, not the engine: `bearingsHere()` already has synthetic
+unit coverage and the crawler already exercises it at the real 936-room
+scale for crash-safety, so the missing piece was independent verification
+of its *rendered text* against the real graph — the same claim the tool
+always made about hand-authored prose, extended to the macro that replaced
+most of it. Its output is a fixed, deterministic template (not free-form
+prose), which makes this easier than the original job, not harder: a
+second grammar, parsed and walked through raw exits exactly like the first,
+sharing nothing with `bearingsHere`'s own internal BFS so a bug in that BFS
+would still be caught rather than checked against itself.
+
+Writing the second grammar found two real bugs — in the new check, not the
+game. First pass: `legsOf` counts a repeated non-compass step ("two in") the
+same as any compass one, but the new regex only allowed counted compass
+legs or a bare single non-compass word, so every multi-step "in"/"out" leg
+came back UNPARSEABLE — 45 of `kw`'s 90 legs alone. Second: Longford's ford
+crossing uses a ninth exit word, "across" (`world/reach/lf_ford.json`,
+`lf_longford.json`), never in this tool's `DIRS` list because nothing had
+ever needed it named. Both are exactly the class of thing an untested new
+check gets wrong on its first real data, which is what running it against
+the whole world immediately rather than a sample was for.
+
+Fixed both, and the real number: **868 legs walked across all 297 bearings
+actions, 0 wrong.** That is the first time this project has actually
+checked the generated system at scale rather than asserted it. What it
+still cannot check: `bearingsHere`'s other half, naming an active quest's
+own destination (`wanted` in the function), which needs a state with that
+specific quest mid-stage — not built here, the same honestly-unmeasured gap
+the old tool always had for prose. `docs/authoring.md` and
+`docs/region-brief.md` carried the same "0% wrong" framing and a stale
+room count; both corrected to the real numbers. The scattered mentions
+across this document's own earlier, dated entries are left as they were
+written — a record of what was believed then, not silently rewritten now.
+
+`npm run verify` green (script-only change; nothing in `src/` or `world/`
+moved).
