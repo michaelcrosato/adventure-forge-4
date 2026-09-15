@@ -2832,3 +2832,62 @@ one. "No option in the realm closes its own door on a miss" still holds.
 No code or content changed this section — a verification pass, confirming
 today's batch introduced no new echo or choice-consequence regressions;
 no verify needed.
+
+### Item 11, a second attempt: measure where the ratchet's budget goes before cutting
+
+The first pass at this item (above) found the lever — `["regions", ">=",
+6]` — and the wall: ~100 characters of status-ratchet average headroom
+needed, 6 in hand at the time, a day spent finding little more by trimming
+whatever was already in view. Its own advice for the next attempt was to
+start from a budget trim sized to actually matter, not re-derive the
+numbers. Took that literally: rather than keep reading quest text and
+guessing which line was worth cutting, built a tool that measures it —
+`scripts/audit-status-weight.ts`, walking the same walkthrough the ratchet
+test does, summing `text.length x timesShown` per quest stage via
+`journal()`. That is the same unit the ratchet itself is in, so the
+ranking says, directly, where a character actually pays and where it
+doesn't — a quest shown on 3 status calls and one shown on 130 cost the
+same per character but nothing alike in total, and nothing before this
+measured which was which.
+
+The single largest line in the realm, by that measure: `ir_writ`'s fallback
+stage (`world/reach/ir_irondowns.json`), 120 characters shown 130 times —
+every status call from entering Iron Downs until a first hold burns, which
+most roads never do. "The Regent's writ opens Coldpass: Highward's envoy
+writes it for one hollow burned, or two honest services to the Watch."
+Checked, not assumed: confirmed by direct replay that `main`'s own stage 4
+("Fifteen holds, fifteen griefs. Rest three, earn the Regent's writ, or buy
+the Companies' road — any opens Coldpass") is co-active for all 130 of
+those calls — the road quest is shown on every status screen this side
+quest is. Between the road quest already saying the writ opens Coldpass and
+the side quest's own name already being "The Regent's Writ" (`- The
+Regent's Writ:` prefixes every line of it), the side quest's text restating
+both was the same shape as `mg_hollow_throne`'s fix earlier today — one
+fact, said twice, on the same screen — just on a line worth 40x more than
+that one was. Trimmed to the one thing only this text says: who grants it,
+what it costs. "Highward's envoy writes it for one hollow burned, or two
+honest services to the Watch." Ratchet average: 3,632.5 -> 3,616.2 (one
+edit moved as much as the entire first pass's day did) and the headroom
+this item needs went from 17.5 to 33.9 characters — real progress, still
+short of ~100.
+
+Checked the next three biggest contributors by the same tool — `th_q_rook`
+(173 calls, the single most-shown side quest in the realm), `th_q_after`
+(148), `ir_q_after` (107) — against the same question (does this restate
+something already on screen?) and found no. Each is a self-contained line:
+a location plus named options, a person to find and why, nothing an
+adjacent quest or the road already says. Shortening any of them further
+would be cutting content for the sake of a number, which this project's
+own bar does not ask for and `mg_hollow_throne`'s residual note explicitly
+warned against doing. Left as they are.
+
+`npm run verify` green: 331 tests (including the ratchet test itself, now
+passing with more room than before), all three worlds validate unchanged
+(reach still wins at 240 turns), both crawls clean. `scripts/fmt-json.mjs`
+run on the one content file touched.
+
+Not closed — the tool this pass built is the more durable result. A future
+pass (this item's own, or whatever next needs the same headroom) can run
+`audit-status-weight.ts` and start from a ranked list instead of a blind
+read, the same way `audit-bearings.ts` now saves the next person from
+re-checking 868 legs by hand.
