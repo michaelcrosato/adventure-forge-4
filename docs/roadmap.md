@@ -462,21 +462,39 @@ instead of the game.
    the crawler holds a room's own option load to the cap; and the budget
    walks **every** proven road, not just the walkthrough, which found five
    over the ceiling and now ratchets each one down.
-8. **The rooms still over the ceiling** — mc_north_road is done and the way
-   it was done is the pattern: 1,448 to 812, not by cutting a word but by
-   moving the four companions' answers out of one `onEnterOnce` and into
-   region-gated remarks, which the engine has always spoken one a turn. The
-   words are all still there. hl_north_lane (1,504) went the same way. The
-   worst on any proven road is now `crowned_hollow#bloodied` at 1,295, and it
-   is a fight screen — narration, a companion going down, and the menu — which
-   is the one place width buys something. The widest the random crawler finds
-   is 1,013 (hl_fields_0_1, 147 of 905 rooms in 60 walks). What is left is the
-   climax screens off every proven road and every crawl walk: mg_hollow_throne
-   and va_throne want careful cutting, not gating — the throne already lost 38
-   characters that were its quest line re-listing four endings the menu shows
-   with "(ends the tale)" on each. **Nothing measures an off-path screen
-   today**, which is the real gap: `crawl --worst` prints the widest it
-   happens to reach, and the climaxes are not reachable by a random walk.
+8. **The rooms still over the ceiling** — mc_north_road and hl_north_lane
+   were done first (1,448 to 812, 1,504 down the same way), not by cutting a
+   word but by moving the companions' answers out of one `onEnterOnce` and
+   into region-gated remarks, which the engine has always spoken one a turn.
+   mg_hollow_throne and va_throne are cut now too: a desc clause restating the
+   exit line printed six lines beneath it, an ending's own prose saying a
+   thing twice, an npc desc repeating the engine's own pierce warning, and the
+   free "weigh the doors of the seat" action's nine readiness lines (written
+   out twice, byte-identical, for a first press and a repeat press) were all
+   carrying words the screen already said elsewhere. `regent_deposed`'s worst
+   screen came down 1,180 to 1,092, `reach_burned`'s 1,154 to 1,094 (its
+   ratchet entry is gone — it meets the real bar both ways now),
+   `gray_crown`'s 1,125 to 1,097, `reach_at_rest#devoted`'s 1,130 to 1,076 —
+   all four clear the real 1,100 with no allowance. What is still over:
+   `reach_at_rest#warden`'s 1,146 (th_wood_3_1, not yet touched) and
+   `crowned_hollow#bloodied`'s 1,295 (va_crypt, a fight screen — narration, a
+   companion going down, and the menu — which is the one place width buys
+   something, and not this pass's target).
+
+   **Nothing measures an off-path screen today** is half-answered, not closed.
+   `test/budget.test.ts` now forces mg_hollow_throne's "weigh the doors"
+   action to its worst case — every road ready, the founding ledger and the
+   Vale's crown both carried, a companion along — and holds it under the
+   ceiling by name: 1,040 and 1,064, a state no proof or `crawl --worst` has
+   ever rendered. But the same forced state entering the room *fresh*, rather
+   than pressing an action inside it, renders **1,344** even with no
+   companion: the room's own `onEnterOnce` text, a quest-stage-change notice,
+   the full desc, the Regent's npc desc, and two item hints each written for
+   its own screen all converge because every one of the throne's roads
+   happens to be open at once. That is content stacking, not a redundant
+   line — the same shape as item 11's act-gate exposure, not this pass's
+   cut-the-restatement fix. Recorded rather than rushed: measured, unfixed,
+   and not asserted anywhere yet.
 9. ~~**Three classes of four, not four**~~ — four of four now, and twelve of
    twelve abilities. `reach_at_rest#scout` put a Scout on the grace road —
    locks, ledges, carved stone — and `crowned_hollow#envoy` is the first

@@ -32,8 +32,8 @@ const INTRO_CHARS_MAX = 1400;
  * Each entry is that road as it stands, and **may only ever go down**. Raising
  * one to make a change fit is the single thing this test exists to stop. The
  * target for all of them is AVG_CHARS_MAX and MAX_CHARS_MAX; the rooms
- * standing in the way are mg_hollow_throne, th_wood_3_1, va_throne and
- * mc_north_road.
+ * standing in the way are th_wood_3_1 and va_crypt. mg_hollow_throne,
+ * va_throne and mc_north_road are cut down to size (see the block below).
  *
  * Per-road on purpose, and a road not listed here is held to the real bar. One
  * shared "worst of all roads" number would let a new road quietly license
@@ -81,6 +81,35 @@ const INTRO_CHARS_MAX = 1400;
  * allowance at all; honestly measured it is 451.1, one character over, and now
  * needs a line here like the rest.
  */
+/**
+ * mg_hollow_throne AND va_throne, CUT DOWN — ITEM 8 IN THE ORDER.
+ *
+ * Both were restating themselves: a desc clause repeating the two exits
+ * printed six lines below it (va_throne only, and the only room in the realm
+ * whose desc did this), an ending's own prose saying a thing twice, an npc
+ * desc saying what the engine's own pierce warning already says on the same
+ * screen, and — the one that mattered most — the free "weigh the doors of the
+ * seat" action's nine readiness lines, each carrying about twenty characters
+ * of "stands ready:" / "still wants ... and you are short of it" boilerplate,
+ * written out twice over (a first-press branch and a byte-identical
+ * repeat-press branch). No label, no companion's own voice, and no beat of
+ * the Regent's entrance or the barrow king's warnings were touched.
+ *
+ *   reach_burned           318 screens   450.7 avg  1,154 -> 1,094 max  (entry removed: meets the real bar both ways)
+ *   regent_deposed         271 screens   451.4 avg  1,180 -> 1,092 max
+ *   gray_crown             261 screens   452.1 avg  1,125 -> 1,097 max
+ *   reach_at_rest#devoted  352 screens   461.7 avg  1,130 -> 1,076 max
+ *
+ * `crowned_hollow#bloodied`'s average came down 524.5 -> 523.1 as a side
+ * effect, with no line of its own touched — that Warden road walks through
+ * va_throne on its way to va_crypt, its own real target.
+ *
+ * What stayed unmeasured until now: the same "weigh the doors" action, pressed
+ * with every road ready at once, a state no proof or the crawler ever reaches
+ * (see "the free weigh-the-doors action stays under the ceiling even maxed
+ * out" below). A general off-path scanner — something that could have found
+ * this without being told where to look — is still not built.
+ */
 const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // Only the roads that are over, and only in the dimension they are over: an
   // allowance in the other dimension is the real ceiling, so a road cannot
@@ -109,9 +138,12 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // status screen, which no ceiling measures, so trading a route for an `at`
   // only ever buys back the route's own words. #warden's max came down 1170 ->
   // 1146 on it; this road's 1180 is `mg_hollow_throne` and was never involved.
-  "reach:regent_deposed": { avg: 452, max: 1180 },
-  "reach:reach_burned": { avg: 451, max: 1154 }, // the burn road is a different route now, and a shorter-screened one; 450.68 -> 449.30, so its average is honestly under the real bar rather than passing on a floor
-  "reach:gray_crown": { avg: 452, max: 1125 }, // 481 -> 452.4 the day an item stopped explaining itself in every new room: the crown's 111-character clue rode 96 first-seen screens on this road alone
+  "reach:regent_deposed": { avg: 451, max: MAX_CHARS_MAX }, // max cleared 1,180 -> 1,092 cutting mg_hollow_throne (item 8); avg still owed
+  // reach_burned cleared BOTH the real avg and the real max cutting
+  // mg_hollow_throne for item 8 (450.7 avg, 1,094 max) and needs no entry at
+  // all now — the second road, after regent_deposed#warden_crown, to ask
+  // nothing of this ratchet.
+  "reach:gray_crown": { avg: 452, max: MAX_CHARS_MAX }, // max cleared 1,125 -> 1,097 cutting va_throne (item 8); avg (481 -> 452.4, above) still owed
   "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1146 },
   // regent_deposed#warden_crown was here at max 1141, then 1131; the same
   // change took it to 1,092 and its average to 445, so it meets the real bar
@@ -155,7 +187,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // lines on this road, none of them said twice, 19 characters a screen. That
   // is what a four-companion road is for, and it is the one thing here that
   // should not be trimmed to meet a number.
-  "reach:reach_at_rest#devoted": { avg: 462, max: 1130 }, // 462.8 the day companion remarks stopped firing on menu navigation (the road needed two more weighings of the throne doors to earn its paired remark honestly), then 460.69 once the reckoning stopped re-explaining what is missing on every press
+  "reach:reach_at_rest#devoted": { avg: 461, max: MAX_CHARS_MAX }, // 462.8 the day companion remarks stopped firing on menu navigation (the road needed two more weighings of the throne doors to earn its paired remark honestly), then 460.69 once the reckoning stopped re-explaining what is missing on every press; max cleared 1,130 -> 1,076 cutting mg_hollow_throne (item 8)
   // The realm's first proof to land a blow. Measured before this road existed,
   // 125 proven screens offered a fight and 0 were taken — hp, armor, timed
   // conditions, aggression and the down-and-revive path stood unexercised by
@@ -170,7 +202,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // screen (1,295, va_crypt) is that room's first-visit description — two
   // hostiles introduced, the "armor useless" warning, and a ten-line menu —
   // paid once, by the first road to ever open that door.
-  "reach:crowned_hollow#bloodied": { avg: 524, max: 1295 },
+  "reach:crowned_hollow#bloodied": { avg: 523, max: 1295 }, // avg 524.5 -> 523.1 as a side effect of cutting va_throne for item 8 (this road passes through it on the way to va_crypt); max is va_crypt's own first-visit fight screen and untouched, by design — see the comment above
 };
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));
@@ -346,6 +378,72 @@ test("a full party never breaks the observation budget, in combat or on a plain 
   const max = Math.max(...screens.map((s) => s.text.length));
   assert.ok(avg <= MAX_CHARS_MAX, `avg ${avg.toFixed(0)} chars > ${MAX_CHARS_MAX} across a full-party combat + plain-move turn`);
   assert.ok(max <= MAX_CHARS_MAX, `max ${max} chars > ${MAX_CHARS_MAX} across a full-party combat + plain-move turn`);
+});
+
+/**
+ * mg_hollow_throne's free "weigh the doors of the seat" action, maxed out —
+ * item 8 in the order, and the "nothing measures an off-path screen today"
+ * gap it names. Every proven road satisfies only ONE of the throne's three
+ * roads (rite, burn, bargain) before ending the tale there, so no walkthrough
+ * or proof ever presses this action with all three ready, the founding
+ * ledger AND the Vale's crown both carried, and a companion in tow — a state
+ * a Scholar who lingers at the seat can genuinely reach. `crawl --worst`
+ * cannot find it either: the room is `noTravel`, gated behind the whole
+ * Marrowgate admission chain, so a random walk that reaches it at all renders
+ * whatever flags it happens to be carrying, not the maximum.
+ *
+ * Forced here instead of walked, both branches (first press writes nine
+ * readiness lines, a repeat press writes eight and drops the explanations).
+ * Before the readiness lines were trimmed for item 8 this ran comfortably
+ * past 1,100 by hand; measured now at 1,040 and 1,064.
+ *
+ * What this does NOT cover: the room's own first-visit entry screen, in this
+ * same maxed state, is a different and larger problem — 1,344 chars even with
+ * no companion and the guard-flanked line withheld, from `onEnterOnce` text,
+ * a quest-stage-change notice, the full desc, the Regent's own npc desc, and
+ * two item hints (the founding ledger's and the iron crown's, each written
+ * for its own screen, not this one) all converging because every one of the
+ * throne's roads happens to be open at once — content stacking, the same
+ * shape as item 11's unresolved act-gate exposure, not a redundant line to
+ * cut. Left unmeasured and unfixed for a future pass; see docs/roadmap.md.
+ */
+test("the free weigh-the-doors action stays under the ceiling even maxed out (reach)", () => {
+  const reach = worlds.find((w) => w.id === "reach");
+  assert.ok(reach, "world/reach.json must ship among the worlds under test");
+
+  let { state } = newState(reach!, 1);
+  const classAction = actionByLabel(reach!, state, reach!.walkthrough[0] as string);
+  assert.ok(classAction, "walkthrough's first step must still be the class pick");
+  state = step(reach!, state, classAction!).state;
+
+  state.room = "mg_first_reeves_tomb";
+  state.flags["mg_entered"] = true;
+  state.flags["mg_admitted"] = true;
+  state.flags["free_sworn"] = true; // the company held the stair too — the flanked variant of the Regent's line
+  state.vars["hollows_rested"] = 3;
+  state.vars["hollows_burned"] = 3;
+  state.vars["hollows_bargained"] = 3;
+  state.vars["rep_watch"] = 2;
+  state.flags["va_king_rested"] = true;
+  state.flags["mg_reeve_confessed"] = true;
+  state.inv.push("mg_founding_ledger", "va_crown", "ir_oil");
+  state.party.push("lys");
+
+  const enterAction = actionByLabel(reach!, state, "go north");
+  assert.ok(enterAction, `mg_first_reeves_tomb must still open north onto the throne`);
+  // The entry screen itself is rendered (to advance state realistically) but
+  // deliberately not asserted on — see the doc comment above.
+  let out = step(reach!, state, enterAction!);
+
+  const weighAction = actionByLabel(reach!, out.state, "weigh the doors of the seat");
+  assert.ok(weighAction, `mg_hollow_throne must still offer "weigh the doors of the seat"`);
+  out = step(reach!, out.state, weighAction!);
+  const first = render(reach!, out.state, out.events, { full: false });
+  assert.ok(first.text.length <= MAX_CHARS_MAX, `weigh the doors, first press: ${first.text.length} > ${MAX_CHARS_MAX}\n${first.text}`);
+
+  out = step(reach!, out.state, actionByLabel(reach!, out.state, "weigh the doors of the seat")!);
+  const again = render(reach!, out.state, out.events, { full: false });
+  assert.ok(again.text.length <= MAX_CHARS_MAX, `weigh the doors, repeat press: ${again.text.length} > ${MAX_CHARS_MAX}\n${again.text}`);
 });
 
 /**
