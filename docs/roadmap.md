@@ -1197,3 +1197,51 @@ unevidenced beyond the report itself, doesn't clear the bar this project
 holds engine changes to. Left in `queue/` rather than superseded — it
 isn't false, it's real and larger than one cycle should attempt on this
 much evidence — and recorded as item 13 in the order above.
+
+### The travel menu gets the room menu's own fix
+
+`P1-issue-05f453ff`: travel-to-known-place menus "paginate in inconsistent
+groupings (sometimes by region, sometimes by recency)" and reaching a
+known, far-off place "require[s] several 'more places' clicks." The
+"inconsistent groupings" half is by design and stays: a short list of known
+landmarks shows flat, a long one groups by region first, because nothing
+fits fifteen-plus names under `MENU_CAP`. The "several blind clicks" half
+was real, and had a second bug hiding under it.
+
+Sorting the destinations alphabetically (`byTravelName`, dropping the
+leading article so it reads the way `actionLabel` already prints the name)
+turns hunting into guessing — a player can jump toward the right page by
+name instead of paging through the whole list once just to learn where
+discovery order put things. That alone broke two proofs
+(`reach_burned`, `reach_bargained`): `no legal action labeled "to the
+hunter's camp"`. The reason was `menuNumbers`'s own comment, read closely
+— "a conversation and a travel list page by their own older rules and
+number from 1 per page, so `allActions` holds only the page showing there."
+`allActions` is what `actionByLabel` and `step`'s legality check both
+judge against, and for travel it had only ever held the current page's
+worth. Sorting didn't create that gap; it just meant page 2 might now hold
+a name page 1 used to, which a walkthrough step frozen on the old order
+walked straight into.
+
+`allActions` now gives travel the same whole-list treatment the room menu
+already has (that comment, in fact, had already flagged it as "worth the
+same treatment when one of them is" reported — this is that report):
+`legalActions` still shows one page via `travelActions`'s existing bespoke
+pager, but `actionByLabel`, `actionByNumber`, and `menuNumbers` all read
+off the full, sorted list now, so a number under a travel destination
+means the same thing on every page, and a destination is legal whether or
+not its page happens to be showing — exactly how a room's own menu has
+worked since wave six. Confirmed live past the fix (walked the real
+walkthrough to turn 71 in `va_square`): the travel menu reads `to the
+barrow field / to the hunter's camp / to Last Light gate / to the old
+watchtower / to the sunken shrine / to the Vale's west road / toward the
+Vale of Ash / stay here` — alphabetical, landmarks first, the region
+fallback and "stay here" still last.
+
+verify green: 320 tests (`test/realm.test.ts`'s synthetic 13-region
+pagination test covers the wrap-and-cross-page-number case directly), all
+three worlds validate, crawler clean. `npm run mock`'s seed 7 now ends at a
+different turn (226 instead of 398) — expected, not a regression: it's a
+structural player whose choices follow menu position, and the menu itself
+changed shape; determinism (same seed, same code, same result) is what
+`test/determinism.test.ts` guards, and it still passes.

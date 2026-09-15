@@ -1008,6 +1008,28 @@ function localTravel(world: World, s: State, region: string): string[] {
 const regionName = (world: World, region: string): string => world.regions?.[region]?.name ?? region;
 
 /**
+ * A room's travel name, article dropped, for sorting a destination list —
+ * the same string `actionLabel`'s `travelto` case prints, so the order on
+ * screen matches the order a player would guess by reading the label.
+ */
+const travelSortName = (world: World, id: string): string => {
+  const r = world.rooms[id];
+  return (r?.landmark ?? r?.name ?? id).replace(/^the /i, "");
+};
+
+/**
+ * Alphabetical, not visit order. A travel list used to read in the order a
+ * place was first stood in — an accident of `s.visited`, not a choice — so
+ * two playtest reports two waves apart called the groupings inconsistent
+ * and said reaching a known, far-off place took several blind "more places"
+ * clicks. Sorted, a player can guess which page a name falls on the way a
+ * phonebook lets them, instead of paging through the whole list once to
+ * learn where discovery order put it.
+ */
+const byTravelName = (world: World, a: string, b: string): number =>
+  travelSortName(world, a).localeCompare(travelSortName(world, b));
+
+/**
  * The whole travel list, before paging: the destinations (or regions) this
  * screen is offering. Split out from `travelActions` because `travelMore` has
  * to count what is NOT showing, and asking the paged function for a total gave
@@ -1020,7 +1042,7 @@ function travelList(world: World, s: State): Action[] {
   if (s.travelMenu === "") {
     list =
       known.length <= MENU_CAP - 1
-        ? known.map((id): Action => ({ kind: "travelto", room: id }))
+        ? [...known].sort((a, b) => byTravelName(world, a, b)).map((id): Action => ({ kind: "travelto", room: id }))
         : travelRegions(world, s).map((r): Action => ({ kind: "travelregion", region: r }));
     // and the way back into the region you are standing in, when you have
     // walked more of it than its landmarks — the short list above cannot name
@@ -1038,16 +1060,21 @@ function travelList(world: World, s: State): Action[] {
     // the realm still goes landmark to landmark — you know the way to the mill
     // road — but inside a region you have mapped, you can go back to anywhere
     // you have been.
-    list = localTravel(world, s, s.travelMenu ?? "").map((id): Action => ({ kind: "travelto", room: id }));
+    list = localTravel(world, s, s.travelMenu ?? "")
+      .sort((a, b) => byTravelName(world, a, b))
+      .map((id): Action => ({ kind: "travelto", room: id }));
   }
   return list;
 }
+
+/** Whether a travel list needs to page — shared so `allActions` agrees with `travelActions` on when "more places" exists at all. */
+const travelPaging = (list: Action[]): boolean => list.length + 1 > MENU_CAP;
 
 function travelActions(world: World, s: State): Action[] {
   const list = travelList(world, s);
   // a list that has grown past the cap turns pages, like a long conversation:
   // "more places" (free, wrapping) and the way out stay on every page
-  const paging = list.length + 1 > MENU_CAP;
+  const paging = travelPaging(list);
   const pageSize = MENU_CAP - 2;
   const pages = paging ? Math.ceil(list.length / pageSize) : 1;
   const page = paging ? s.travelPage % pages : 0;
@@ -2318,9 +2345,9 @@ export function menuNumbers(world: World, s: State): number[] {
  * judged against `allActions`, every page of it, so this only says out loud
  * what the engine already allowed.
  *
- * A conversation and a travel list page by their own older rules and number
- * from 1 per page, so `allActions` holds only the page showing there and a
- * number off it correctly resolves to nothing.
+ * A conversation still pages by its own older rules and numbers from 1 per
+ * page (neither has been reported), but a travel list now gets the same
+ * whole-list treatment as an ordinary room — see `allActions`.
  */
 export function actionByNumber(world: World, s: State, n: number): Action | undefined {
   if (!Number.isInteger(n) || n < 1) return undefined;
@@ -2333,8 +2360,28 @@ export function actionByNumber(world: World, s: State, n: number): Action | unde
  * what `step` and `actionByLabel` judge an action against: turning a page
  * changes what you can see, never what you could do, so a walkthrough written
  * before a room grew crowded keeps working.
+ *
+ * Travel used to be the one list still numbered by the page showing rather
+ * than the whole list — `roomMenu`'s travel branch hands `legalActions` an
+ * already-paged result, `whole()`'d so `pageRoom` leaves it alone, and this
+ * function used to return that same paged result back out. A P1 later
+ * ("Travel-to-known-place menus... require several 'more places' clicks to
+ * reach a specific far-away location, even though the destination is already
+ * known"), sorting the list alphabetically (so a page could be guessed
+ * rather than hunted) surfaced the gap the `menuNumbers` comment had already
+ * flagged as worth fixing: sort or no sort, a label on page 2 was simply
+ * absent from `allActions` while page 1 showed, so `actionByLabel` — and a
+ * walkthrough step written when the same name sat on page 1 — found nothing.
+ * `travelList` is the fix: the whole list, unpaged, the same one `travelActions`
+ * pages for display. `legalActions` (via `roomMenu`) still shows one page at
+ * a time; `menuNumbers` numbers off this full list now, so a number under a
+ * travel destination means the same thing on every page, exactly like a room.
  */
 export function allActions(world: World, s: State): Action[] {
+  if (inTravelMode(world, s)) {
+    const list = travelList(world, s);
+    return travelPaging(list) ? [...list, { kind: "travelmore" }, { kind: "traveldone" }] : [...list, { kind: "traveldone" }];
+  }
   const { all, ways } = withMenuMemo(() => roomMenu(world, s));
   return roomPages(all, ways) ? [...all, { kind: "roommore" }] : all;
 }
