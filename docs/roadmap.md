@@ -2304,3 +2304,67 @@ written — a record of what was believed then, not silently rewritten now.
 
 `npm run verify` green (script-only change; nothing in `src/` or `world/`
 moved).
+
+### The rest of a fresh audit sweep: two non-findings, one tool blind spot, one dead flag
+
+The same cold sweep of every `scripts/audit-*.ts` that found the bearings
+gap above also surfaced smaller leads. Worked through in order:
+
+**The one echo `audit-echo.ts` still flags, and the region that reuses
+three names, are both intentional.** The Vale epilogue's two barrow-doors
+lines ("...the barrow doors stay shut, as you promised..." /
+"...as you chose...") score 0.60 similar because they are the same
+outcome — `va_king_rested` + `va_sealed` — reached two ways, distinguished
+by whether `va_promised_seal` was set beforehand; the differing clause is
+the whole point, not an accident. Fosterfell and Mootcombe each have their
+own "The Chantry", "The Recorder's Loft" and "The Tally-House" (`ff_chantry`
+etc., `mc_chantry` etc.) with entirely distinct desks, keepers and reveals
+underneath the shared labels — checked every in-fiction reference to any
+of the three names realm-wide (`ff_hollow.json`, `mc_hollow.json`,
+`sh_hollow.json` each reference only their own region's copy; a stray
+`hb_hollowbrook.json` line about "the chantry out past the damp hollow" is
+unplaced flavor, not a pointer to either), and none crosses regions. Twin
+market towns, not copy-paste.
+
+**`audit-choices.ts`'s "forgotten fork" list undercounts real payoffs by
+design, and it is worth knowing why.** The tool calls a flag forgotten
+when nothing outside the npc or room that set it ever reads it back — which
+is the right bar for *this* project's five-P2 wayfinding sweep and the
+`em_heard_history`/`ff_bell_keeper_bg` dead-flag cleanup above, both about
+flags nothing read at all. It is the wrong bar for "did this ever get a
+payoff", because a same-npc follow-up topic is a completely legitimate
+payoff and the tool cannot see it: `em_heard_history` itself, given exactly
+that shape of fix (`em_wenlock_vindicated`, above), still reads "0 reads
+outside" today and always will. Pennywell and Mootcombe's fourteen flagged
+forks turned out to be fourteen instances of this, checked one at a time
+by hand against the actual topic text and its npc's own
+`react_hollow_rested/bargained/burned` reaction:
+
+- Ten (`pw_warden_bg`, `pw_smelter_bg`, `pw_tithe_bg`, `pw_assayer_bg`,
+  `pw_descendant_bg`, `mc_hedda_bg`, `mc_rendel_bg`, `mc_aldith_bg`,
+  `mc_ingrith_bg`, `mc_oswin_bg`) are backstory an npc states once, and
+  every one of their region's holds already closes the loop in an
+  unconditional reaction line — Sarel's "I won't be the one who strikes a
+  lie with his work" (`pw_folk_b.json:311`) is answered, word for word, by
+  her own "Hann's own die, struck true at last, by someone who wasn't
+  lying with it" the day the hold rests (`:382`). Ten for ten, the
+  callback was already there. Left alone.
+- Two (`pw_knows_sh_debt`, `or_warden_pw_cold`) already have a real,
+  distinct same-npc payoff topic gated on the flag plus an external
+  condition — structurally identical to `em_wenlock_vindicated`, just
+  invisible to the tool for the reason above. Nothing to fix.
+- One (`mc_nell_closure`) was the exact dead-flag shape from "four small
+  defects" (above): a topic gated and marked by its own custom flag that
+  `once: true` was already handling by itself. Removed, text and topic
+  untouched — the fifteenth instance of a pattern this project has now
+  found and fixed three separate times.
+- One (`mc_trays_searched`) is a wits-gated loot pull with a mood line,
+  using its own flag instead of `once: true` on purpose so a *failed*
+  attempt can be retried. It only reads as a "fork" because the room's
+  other action doesn't share the flag — a side effect of how the tool
+  counts branches, not a narrative choice with nothing at the other end.
+  Nothing to pay off; it is a keepsake, the same carve-out the tool's own
+  docstring already grants one.
+
+Zero of fourteen were an authoring gap. `npm run verify` green throughout
+(329 tests).
