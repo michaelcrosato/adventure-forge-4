@@ -468,6 +468,11 @@
       "name": "Something in the Reed-Cuts",
       "start": [["flag", "fd_bog_bounty"]],
       "done": [["flag", "fd_bog_paid"]],
+      "failed": [
+        ["any", [["flag", "watch_trusted"], ["flag", "crown_trusted"]]],
+        ["!npcDead", "fd_bog_thing"],
+        ["!has", "fd_bog_hide"]
+      ],
       "stages": [
         {
           "if": [["flag", "fd_bog_charm_paid"], ["!has", "fd_bog_hide"]],

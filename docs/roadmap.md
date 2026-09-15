@@ -2077,3 +2077,57 @@ class-exclusive completion paths, the undercity/palace act-3 quests
 `barrow` (`tower`, `mine`, `camp`, `chapel`, `hut`) — `ir_hound` was
 exactly this class of bug, so the others are worth walking the same way.
 `npm run verify` green throughout.
+
+### The four unchecked areas, walked — one sixth quest, one template fix
+
+Reputation-threshold completions, class-exclusive paths, and the act-3
+undercity/palace quests: **nothing.** `rank_church`, `rank_free`,
+`rank_crown` each gate their only `done`-setter behind `rep_* >= 9`, but
+none of the three grantor npcs can die or leave, no flag ever hides the
+offer, and no faction pool is tight enough to be floored below 9 by
+anything the realm does (the tightest, `rep_crown`, has 66 positive sites
+totalling +84; the mutual quarrel penalties between the three cost at
+most 3). Class-gated completions are real in exactly one place
+(`va_sortie`, warden-only) and that quest's own `start` is equally
+warden-gated, so it simply never opens for the other three classes — not
+a lock. The act-3 quests are sound by a stronger property than the others
+checked so far: every action in `mg_hollow_throne` that resolves
+`mg_throne_resolved` also ends the run, so there is no continued play in
+which that journal entry could go stale.
+
+The five remaining stamp templates: **one more real bug, one template
+inconsistency that degrades without locking.**
+
+- **`fd_q_bog`** (`world/reach/fd_hollow.json`) is the sixth instance of
+  the pattern, on a `cave` stamp the first pass didn't reach. Earning
+  either the Watch's or the Crown's trust — `rank_watch`'s own stage-1
+  condition, a mainstream mid-game milestone — permanently stops the
+  bog-thing from ever spawning again (the spawn roll itself is gated
+  `!watch_trusted, !crown_trusted`), which is the only source of the hide
+  the bounty needs. The in-fiction "or raid its den for proof" alternative
+  doesn't save it either: that loot pays a *different* flag
+  (`fd_bog_charm_paid`), and the quest's own stage 0 is written for
+  exactly that gap — the author saw it and wrote around it, the same
+  shape as `me_q_dams`'s dead-end stage. Given the same `failed` form as
+  the others.
+- **`tower`, `mine`, `camp`, `hut`** are all correctly built — every
+  `done`-setter pairs with removing the tracked npc from the world in the
+  same effect list, so a quest can never be told an npc is gone before
+  the flag says so. `chapel` is the exception: `$rite` and `$read`, the
+  two peaceful, class-neutral endings, both carried `["!flag",
+  "calm_$saint_shade"]` — so an envoy who calms the shade (the one class
+  that can) loses every non-lethal way to finish it, `$rite_named` being
+  scholar-only. The `barrow` template's equivalent actions (`$read`,
+  `$oath`, `$verse_lintel`) carry no such gate, which is what makes this
+  read as an authoring slip rather than intent: calming an entity first
+  and then formally ending its vigil is not a contradiction, and the
+  fiction of both actions ("finally hears the end of its own vigil,"
+  "does not kneel again") reads the same whether the shade fought first
+  or not. Not a lock — `cp_q_shrine`, the one quest built on this
+  template, still closes by killing what was just calmed, which is the
+  worse outcome, not a stuck one. Fixed by deleting the gate from both
+  actions, matching `barrow`; one change, all 14 chapel stamps at once.
+
+`test/realm.test.ts`'s quest-lock test grows its fifth case. Measured
+against all 13 roads and the walkthrough: no number moved. `npm run
+verify` green throughout.

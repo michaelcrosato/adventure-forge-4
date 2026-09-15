@@ -287,7 +287,7 @@ test("the journal starts, advances, completes, or fails on conditions — and ev
 });
 
 /**
- * Four real quests, found by the same shape as va_verses (item 8's follow-up
+ * Five real quests, found by the same shape as va_verses (item 8's follow-up
  * session): `done` satisfied by only some of several mutually-exclusive ways
  * the underlying situation resolves, no `failed` for the rest, so status kept
  * naming a next step that had already become impossible. Each check forces
@@ -295,7 +295,7 @@ test("the journal starts, advances, completes, or fails on conditions — and ev
  * flags is a content fact, checked by hand against the actual actions that
  * set them, not by replaying a route to them here.
  */
-test("four quests close instead of staying active forever when their asker's situation resolves without them", () => {
+test("five quests close instead of staying active forever when their asker's situation resolves without them", () => {
   const world = loadWorld("world/reach.json");
   const status = (id: string) => journal(world, { ...newState(world, 1).state, flags: forced }).find((q) => q.id === id)?.status;
   let forced: Record<string, true>;
@@ -329,6 +329,18 @@ test("four quests close instead of staying active forever when their asker's sit
   // has the right shape (`any` with the stamp's own done flag); this mirrors it.
   forced = { said_ir_ness_greet: true, ir_cave1_done: true };
   assert.equal(status("ir_hound"), "done");
+
+  // fd_q_bog: earning either the Watch's or the Crown's trust (a mainstream
+  // mid-game milestone, and rank_watch's own stage-1 condition) permanently
+  // stops the bog-thing from ever spawning again — the only source of the
+  // hide the bounty needs. A player who reaches that trust without having
+  // met the creature first (the common case, at an 8%-a-cell spawn roll)
+  // finds the bounty forever unpayable.
+  forced = { fd_bog_bounty: true, watch_trusted: true };
+  assert.equal(status("fd_q_bog"), "failed");
+  // already holding the hide (or having already killed it) still pays it
+  forced = { fd_bog_bounty: true, watch_trusted: true, fd_bog_paid: true };
+  assert.equal(status("fd_q_bog"), "done");
 });
 
 test("validator: quests need stages with conditions and text", () => {
