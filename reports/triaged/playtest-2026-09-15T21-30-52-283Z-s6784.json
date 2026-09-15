@@ -1,0 +1,45 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 507,
+  "receipt": "reach.6784.507.514.reach_at_rest.ee8ab6e3",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "The 'name it (stands down)' pacify ability doesn't always unlock a blocked path immediately — at Barrow Crypt naming the wight/rats instantly opened the north passage, but at The Waiting Bough naming the gray sergeant left the way 'locked' and still required a separate will/grace check afterward. Inconsistent payoff for the same-looking ability made it unclear what 'stood down' actually guarantees.",
+      "where": "Barrow Crypt vs. The Waiting Bough (Thornwold)"
+    },
+    {
+      "sev": "P2",
+      "what": "Large outdoor wood/downs areas (Ashwood near the Vale, the Iron Downs approach to Cinderhall) have many similarly-described rooms (spoil, tailings, cairns) with directional exits that don't obviously connect back to the intended route, so it's easy to wander a few extra rooms before 'get your bearings' clarifies the path.",
+      "where": "Ashwood / Iron Downs overworld navigation"
+    },
+    {
+      "sev": "P2",
+      "what": "A handful of failed skill checks (e.g. 'go through before nerve fails' at the Hundred Gallery fall, 'shore the dike' at Fenmarch) raise the DC on retry, which is well-telegraphed, but the initial DC/modifier math shown before rolling doesn't always make the true odds obvious (e.g. DC 10 with +3 shown as 'roll 7+' is fine, but DC vs total-needed phrasing took a few tries to parse confidently)."
+    }
+  ],
+  "confusions": [
+    "Early on it wasn't clear that 'travel to a known place' only moves between visited landmark nodes, not arbitrary rooms, until the game explicitly called it out after the first two rooms.",
+    "Whether accepting the priest's blessing (opening the barrow) would conflict with a later promise to the reeve (sealing it) wasn't fully clear until both NPCs and the innkeeper were consulted — the game rewards asking everyone, but a first-time player could easily lock in a contradiction without knowing to ask around first.",
+    "The exact requirements for the final rite (3 hollows rested + Vale king rested + first Reeve's confession) were only fully spelled out via the `status` tool, not proactively surfaced — a player who never calls status could reach Marrowgate without realizing they were one step short."
+  ],
+  "suggestions": [
+    "Make 'name it' pacification consistently either fully clear a blocked path or clearly state 'a check is still needed' in the same message, so players don't have to learn the exception by trial.",
+    "Add a lightweight 'you've been here before, the way back to X is...' hint when re-entering a previously visited overworld node during backtracking, to reduce reliance on the free 'get bearings' action.",
+    "Surface the endgame rite requirements (3 hollows / king rested / confession) proactively the first time a player reaches Act II, not only on-demand via status.",
+    "The companion approval/disapproval banter after nearly every choice is excellent flavor — consider a way to review a condensed 'relationship history' per companion, since regard changes accumulate fast and are easy to lose track of without repeatedly opening status."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-15T21-30-52-283Z",
+  "seed": 6784,
+  "build": {
+    "rev": "b7530e9",
+    "world": "9ed00c9e"
+  },
+  "cost_usd": 21.057337000000008,
+  "verified": true
+}
