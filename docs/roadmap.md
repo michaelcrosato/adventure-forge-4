@@ -4048,3 +4048,360 @@ already modified in the working tree by other in-flight work before this
 entry was written; left exactly as found. `queue/P2-issue-5350baa3.json`
 and `queue/P2-issue-1e628263.json` moved to `done/`; `queue/P2-issue-be79b069.json`
 and `queue/P2-issue-fc1a4039.json` stay in `queue/`, open.
+
+### Cross-region bearings: Iron Downs' entrance was missing it, Wardmoor's wasn't
+
+`P1-issue-c6335eb5` (wave 4, `s98821`) names two crossings: "the unmarked
+path from Camp Gallows to the Iron Downs" and "Wardmoor's parade ground to
+the oath-stone/Boot-Track Hollow," both "blind directional wandering...
+with no 'get your bearings' available until deep inside the area, unlike
+the Vale's Ashwood which had it near the entrance." `P2-issue-c0084337` is
+the same report's own restatement ("surface a free 'get your bearings'
+option earlier in unfamiliar regions"). A third, older ticket,
+`P2-issue-3ddba1f3` (`s717`), sits next to these but asks for something
+else: a persistent compass/waypoint note ("the Iron Downs are roughly NNW
+of here") layered on top of the existing action, not a placement fix —
+already distinguished from this wayfinding cluster at
+`docs/roadmap.md:1382-1384` ("a real, separate feature... that nothing here
+builds"). The question this entry had to answer: is the new pair the same
+ask as `3ddba1f3`, or something narrower `3ddba1f3`'s own triage didn't
+already cover?
+
+`bearingsHere` (`src/engine.ts:753-787`) is the mechanism: free (`case
+"bearings"`, `:1570-1572`; `freeCustom`/`spentTurn`, `:3138-3142` — `free:
+true` skips `s.turn += 1` entirely), and every region places it the same
+way — one `{ "label": "get your bearings", "fx": [["bearings"]], "free":
+true }` action at the region's own entrance hub (`va_gate_bearings` at the
+Vale's gate, `world/reach/va_village.json:15`, one hop from the Ashwood
+itself; `th_gate_bearings` at Camp Gallows, `world/reach/th_thornwold.json:180`,
+one hop from all three of Thornwold's own entrance roads) plus one at every
+walkable cell of the region's procedurally-generated wilderness grid (292
+such calls now across `world/reach/*.json`, 290 before this change — one
+per grid cell in `em_wild`, `kw_wild`, `hl_wild`, `ff_wild`, `sh_wild`,
+`me_wild`, `mc_wild`, `pw_wild`, `wm_wild`, and Iron Downs' own embedded
+`ir_downs` grid).
+
+Iron Downs was the real gap. Its entrance hub, `ir_tally_gate` ("Cinderhall
+— Tally Gate," `world/reach/ir_irondowns.json:81`, where both of Iron
+Downs' entrance roads converge — `ir_south_track` from Thornwold's
+`th_north_track`, `ir_east_road` from Wardmoor's `wm_west_road`) carried no
+bearings action, and neither did either entrance room itself. The nearest
+one was three rooms in, at `ir_headframe` (`:393-410`, a lookout vantage
+with its own hand-written compass flavor stacked on a real `["bearings"]`
+call: "the Old Cairn out to the north-west, the flooded quarry
+north-east... beyond both") — so the pattern was not unknown to this
+region, just placed too deep — and the next nearest was the `ir_downs`
+wilderness grid beyond that. A player crossing "the unmarked path from Camp
+Gallows to the Iron Downs" lands on `ir_south_track` and had nothing to
+call on for three rooms, which is exactly the complaint and exactly what
+every sibling region already avoids.
+
+Wardmoor's own half of the report does not reproduce against the current
+tree. `wm_parade` — the parade ground itself, named in the report — already
+carries `wm_bearings`, "get your bearings from the parade"
+(`world/reach/wm_wardmoor.json:106-115`), free, reachable in 2-3 hops from
+every one of Wardmoor's entrance roads. It is hand-written rather than a
+`["bearings"]` call, but its directions ("Opened Cairn one stand north...
+four stands north of Highward... one east to the Last Cairn, then north" to
+the oath-stone) were independently swept and confirmed correct in an
+earlier pass (`docs/roadmap.md:1355-1360`). One hop past it, `wm_wild`
+carries the generated, quest-aware version at all 26 of its walkable cells
+— it would name Boot-Track Hollow directly the moment the Lost Sentry
+side-quest goes active, the one landmark `wm_bearings`'s fixed text doesn't
+mention. Whatever the world looked like at the report's filing build
+(`9b03554`/`00901427`), the current tree has bearings at Wardmoor's own
+gate already, and the report's Wardmoor half does not reproduce there.
+
+Fixed the real gap: added `ir_south_bearings` to `ir_south_track` and
+`ir_east_bearings` to `ir_east_road` (`world/reach/ir_irondowns.json:26,65`)
+— the exact `{ "label": "get your bearings", "fx": [["bearings"]], "free":
+true }` pattern used everywhere else, nothing new invented. Placed at the
+two entrance corridors rather than at `ir_tally_gate` itself (the room that
+actually plays the hub role `th_settlement`/`va_gate` play in their own
+regions) on cost, not principle: `ir_tally_gate` is a 6-7-visit-per-route
+convergence room on every proven route, and one extra menu line there
+pushed `proofs.regent_deposed` over its own already-elevated ratchet
+allowance — "`proofs.regent_deposed: avg 452.1 > 451`" against
+`test/budget.test.ts`'s `"reach:regent_deposed": { avg: 451 }` entry — with
+no clean, in-scope redundant text on that specific route to trim and pay
+for it (`scripts/audit-echo.ts` checked first; nothing it flags sits on
+this road's rooms). `ir_south_track` and `ir_east_road` are each visited
+once or not at all per proven route, sit at least as close to the region's
+border as any sibling region's hub sits to its own, and cost nothing on the
+ratchet: `npm run verify` green throughout (typecheck, 331/331 tests, all
+three worlds validate and win-prove clean, both crawls clean), and
+`scripts/audit-bearings.ts` shows `ir 0 of 81 legs wrong`, the two new ones
+included.
+
+Checked how much wider the underlying placement gap runs, per the task's
+own ask to look before concluding "one region." Hollowbrook
+(`world/reach/hb_hollowbrook.json`, `hb_wild.json`) and Saltkerns
+(`sk_saltkerns.json`, `sk_wild.json`) carry zero generated bearings actions
+anywhere — hold file or wilderness grid alike — despite `gen` grids the
+same shape as every region that does have them (5x5, 6x5). That is a wider
+gap than Iron Downs' own, but neither region is named by
+`c6335eb5`/`c0084337`, so fixing it is out of scope for this pass; left as
+a known gap rather than folded in unasked.
+
+Verdict: this pair was the narrower, cheaper reading — a placement gap in
+one region's entrance rooms, not the compass/mini-map feature `3ddba1f3`
+asks for. Applying the existing pattern to the two rooms that were missing
+it builds nothing toward a persistent bearing-angle note, so it leaves
+`3ddba1f3` exactly as open and exactly as unbuilt as before; the two
+findings only looked like one theme from the outside.
+`queue/P1-issue-c6335eb5.json` and `queue/P2-issue-c0084337.json` moved to
+`done/`; `queue/P2-issue-3ddba1f3.json` stays in `queue/`, open.
+
+### Wave 4's last three: a sharper flag on the crown's early choice, and why the hollow-category ask turns out to be realm-wide and already answered four other ways
+
+The last three items in this cluster, redone from scratch after the same
+container restart the entry above describes — this cluster's own progress
+on them did not survive it either. `queue/P2-issue-a84a2cff.json` and
+`queue/P2-issue-eb7652e3.json` are one finding filed twice from the same
+report (`s98821`, corroboration 1 each: the suggestion half and the
+confusion half of the same crown-tradeoff observation), investigated and
+fixed together. `queue/P2-issue-40797457.json` (`s98820`) is unrelated,
+investigated separately.
+
+**`a84a2cff` / `eb7652e3`** ("returning the Hollow King's crown... would
+later lock out the 'sit the hollow seat with a crown' option... isn't
+flagged until you reach the final room"). Walked the actual replay that
+filed it rather than guessing at intent: `runs/g1-98821-mu31ecjv.json`,
+actions[133] `va_weigh_king`, actions[157] `va_full_rite` ("give back the
+crown and speak the verses", `world/reach/va_barrow.json:412-440`),
+actions[718] `mg_weigh_doors`, ending `reach_at_rest` (receipt
+`reach.98821.586.625.reach_at_rest.4f66fa7b`). The player took the exact
+path the ticket names, and the game does already try to flag the tradeoff
+right there — `va_full_rite`'s fx already carried a second, parenthetical
+`say` on top of its main line, which is precisely the "one clarifying
+clause at the point of choice" this cluster is supposed to add when one is
+missing. Before this fix, `va_barrow.json:438` read: "(The crown stays in
+the Vale; Marrowgate's gray seat will have none.)" The actual gap: that
+phrasing is weaker than its sibling action's. `va_return_crown` (crown
+only, no verses, `:441-459`) says "(The crown is his again, and no one in
+Marrowgate will wear it.)" — a plain statement that nobody, the player
+included, will ever wear it there. `va_full_rite`'s version talks about the
+*seat* lacking a crown, in language ("Marrowgate's gray seat") the player
+has no context for yet — grep confirms "Hollow Throne" and "hollow seat"
+are never named anywhere in `va_barrow.json` or `va_village.json` before
+this point, so the proper noun doesn't exist for the player yet — and it
+never says *the player* is the one who loses the option. `va_weigh_king`
+(`:379-387`, the free pre-check the player also used, actions[133]) only
+hints at the same fact indirectly, under the *opposite* branch ("Keep the
+crown: he grieves on, and a crown can be worn on another seat"), and has no
+room to say more (213/220 chars already). This is not a realm-wide
+convention violation: the "flag the tradeoff at the point of choice"
+convention already exists here — both crown-disposal actions carry a
+parenthetical — it's just uneven between two sibling actions, and
+`va_full_rite` is also the one the walkthrough itself takes
+(`reach.json` `walkthrough[73]`, "give back the crown and speak the
+verses"), so this is the highest-traffic copy of the weaker version.
+Checked for a broader pattern before treating this as a one-off: no other
+cross-region "early item, late unique use" tradeoff exists in the realm to
+compare against — `me_covenant_stone` looked like a candidate but is an
+unconditional reward of resolving Lantern Holm's hollow, not a
+keep-or-give-up choice (`world/reach/me_hollow.json:96-304` moves it to
+inventory on every resolution path, cracked only if burned). The crown is
+the realm's only instance of this specific shape, so fixing it here doesn't
+create an expectation to touch anything else.
+
+Fixed by strengthening the weaker parenthetical to match what its sibling
+already says, made explicit about the "sit" action specifically
+(`va_barrow.json:438`): "(The crown stays in the Vale for good; you won't
+be able to sit Marrowgate's gray seat wearing it.)" — 99 chars, well inside
+the 220-char `say` budget (was 69/220), and now stating outright what
+`mg_sit_throne`'s own label says at the other end ("sit the throne, wearing
+the Vale's crown", `mg_marrowgate.json:1213`). `va_return_crown` and
+`va_break_crown` were left untouched: the former is already clear on its
+own terms, and the latter — physically destroying the crown underfoot —
+doesn't need a foreclosure notice the way "give it back" does, since
+nothing about breaking an object reads as reversible.
+
+**`40797457`** ("the distinction between 'rested', 'bargained', and
+'burned' hollows... wasn't crystal clear until checking status directly;
+the in-scene text sometimes just said 'settles this hold's grief'..."). No
+literal "settles this hold's grief" string exists anywhere in `world/` —
+read as the report's own paraphrase, not a quote — so went hunting for the
+pattern it describes instead of the exact words. Found it, and it's real:
+read every resolution `fx` across six holds chosen for spread
+(`ir_irondowns.json:591-675`, `fd_hollow.json:120-229`,
+`wm_hollow.json:55-266`, `hb_hollow.json:238-328`, `em_hollow.json:69-223`,
+`th_thornwold.json:721-899`), and none of their commit-time `say` text uses
+the words "rested", "bargained" or "burned" — every one is pure narrative
+prose ("The gray goes out of the deep like a held breath finally let go"
+for a rest; "eases, like a debt finally acknowledged" for a bargain; "burns
+fast and low" for a burn). `node --import tsx scripts/audit-shape.ts
+world/reach.json --rites` confirms this isn't cherry-picked: all fifteen
+holds share the identical "bargain/burn/rest... by contract" shape the tool
+prints for every one of them. Rewriting the moment-of-choice line at every
+hold to name its own category would mean touching on the order of 45+
+separate `say` strings across 15 files — the "bigger, less proportional
+fix" this cluster's own brief warned might be waiting here, for one wave's
+single P2 (corroboration 1).
+
+But the ambiguity isn't actually unanswered — it's answered four other
+ways, all realm-wide and all pre-existing:
+
+1. **Before the choice** — every one of the 15 holds has its own
+   `*_weigh_grief` free action (`fd_hollow.json:288`,
+   `ir_irondowns.json:730`, `wm_hollow.json:305`, `hb_hollow.json:440`,
+   `em_hollow.json:225`, and ten more, one per hold, same naming
+   convention throughout) that states "the rest stands ready", "the burn
+   wants...", "the bargain stands ready" in so many words, before the
+   player commits.
+2. **At the actual gates** — `mg_weigh_doors` (`mg_marrowgate.json:914-947`)
+   and the Coldpass stair texts (`cp_coldpass.json:165,826,959,1000`)
+   already spell out "three hollows rested" / "hollows burned" /
+   "hollows bargained" explicitly, every time; the *gating* language the
+   ticket's own title names ("Coldpass/Hollow Throne gating") was never
+   actually vague.
+3. **After the choice, on demand** — `statusTracks`
+   (`world/reach.json:3530-3539`) lists all three counters by exact label
+   ("Hollows rested (holds only; a bargain counts)", "Hollows burned",
+   "Hollows bargained") the instant `act2_open` is set (early game, at the
+   Vale) — exactly the mechanism the report itself says resolved its own
+   confusion ("checking status directly").
+4. **After the choice, in conversation** — at least one hold
+   (`th_thornwold.json:1444-1473`, the "ask what she makes of the glade
+   now" topic) has an opt-in NPC reaction that states the category outright
+   once asked ("Rested proper" / bargain language / "Burned").
+
+Given a mechanism this consistently built — four independent layers, all
+pre-dating this wave — the omission in the fifth layer, the emotional beat
+of the resolution line itself, reads as a deliberate choice to keep that
+one line free of mechanical vocabulary, not an oversight the other four
+layers were meant to cover for. Judged this intentional and out of
+proportion to fix at the scope a single wave's evidence justifies — the
+same reasoning this project already applied to
+`P2-issue-3c4440fb`/`7f9e043b`'s travel-menu pagination (above, "the
+honest fix costs more than it's worth"). No content changed for this item.
+`queue/P2-issue-40797457.json` moved to `done/` on that basis.
+
+`npm run verify`: the live working tree also carries two other agents'
+in-flight, unrelated edits (`world/reach/ir_irondowns.json`,
+`world/reach/wm_wardmoor.json` — the wave's Iron Downs bearings and
+Wardmoor checkpoint P2s, still being tuned), which pushed
+`proofs.regent_deposed`'s own ratchet (`test/budget.test.ts:232`, ceiling
+451) over on a combined run. Confirmed this wasn't this change's doing by
+re-running the full suite from a clean worktree at this branch's HEAD with
+only `va_barrow.json`'s one line applied (`git worktree add --detach`,
+`node_modules` symlinked in) — 331/331 green there, both crawls clean,
+every world's walkthrough still wins. In that isolation: `scripts/budget.ts
+world/reach.json --terse` — avg 439.9814/450 (was 439.8699, +0.11 over 269
+screens for the one +30-char line), max 1076/1100, unchanged.
+`proofs.regent_deposed` specifically (the one proof besides the walkthrough
+that also plays `va_full_rite`): 451.672 avg -> 451.782, `Math.floor` still
+451, still inside its 451 ceiling — now with zero characters of headroom
+left on that one road, worth knowing for whoever touches that screen next.
+The status ratchet (`test/format.test.ts`, "the free status screen stays
+inside its own ratchet") is untouched and still passes: this fix is a
+one-time scene `say`, not anything `renderStatus` prints. Left
+`ir_irondowns.json`/`wm_wardmoor.json` exactly as found, per this session's
+own precedent for the same situation, above. `queue/P2-issue-a84a2cff.json`
+and `queue/P2-issue-eb7652e3.json` moved to `done/`.
+
+### `P1-issue-c2846cc6.json` and `P2-issue-7ae5e54e.json`: the Watch Checkpoint pays off on nearly every path — the real gap was one uncapped rep cost, now capped at one
+
+Wave 4's `s98821` filed a bug and its own "suggestion" framing of the same
+finding against Wardmoor's Watch Checkpoint (`world/reach/wm_wardmoor.json:553-669`,
+a `sideTrip` off `wm_north_road`'s east exit, `:392`): "a pure toll/friction
+node with no reward or story payoff either way... can cost faction standing
+on a natural-1 fail." Read the room's full action list before taking either
+half of that at face value.
+
+**"No reward either way" does not hold up.** Four of its seven resolution
+actions grant score, xp and `rep_watch` outright: `wm_checkpoint_writ`
+(`:568-579`, rep_watch+1/score 2/xp 1), `wm_checkpoint_talk`'s pass branch
+(`:580-607`, rep_watch+1/score 3/xp 2), `wm_checkpoint_pay` (`:608-620`, -4
+gold for rep_watch-1/score 2/xp 1 — bribing the lawful Watch costs standing
+with them, the mirror of paying Thornwold's Free Company toll earning
+rep_free+1, `th_thornwold.json:1029-1043` — opposite meanings for the same
+coin changing hands, not an inconsistency), and `wm_checkpoint_seal`
+(`:642-654`, free, rep_watch+1/score 2/xp 1). The other two "free" passes
+are each a payoff of their own, read differently: `wm_checkpoint_trusted`
+(`:632-641`) is what an earlier-earned `watch_trusted` flag buys outright,
+and `wm_checkpoint_warden` (`:621-631`) sets `or_warden_wm_checkpoint`,
+which is read back as a genuine story beat in the realm's warden epilogue
+list — "Highward's checkpoint still waves a certain kind of stranger
+through without a word of the usual questioning" (`:1818-1820`).
+`wm_checkpoint_command` (`:655-667`) stacks a further score 3/xp 2 on top of
+any of these for a `watch_sworn` player, and entering the room at all grants
+xp 1 regardless (`:559`). The report reads as one path (a failed `talk`)
+generalized to "either way."
+
+**This shape is the realm's norm for toll `sideTrip`s, not an outlier.**
+`th_toll_stand` (`th_thornwold.json:1021-1102`) is the closest sibling: the
+same pay/bluff/standing/class/trusted resolution set, the same modest
+score/xp/rep payoff on every path. `wm_courier_hollow` two rooms over
+(`wm_wardmoor.json:467-551`) follows the same shape. A pure, payoff-free
+toll would be the exception on this road, not the rule, and this room isn't
+one.
+
+**The one claim that does hold up: `wm_checkpoint_talk`'s failure was
+genuinely uncapped.** Before this fix, its fail branch applied
+`["addvar", "rep_watch", -1]` without ever setting `wm_checkpoint_resolved`,
+so the action stayed on the menu and every retry could cost another point —
+contrast `th_toll_bluff`, the same-shaped action one region over, whose
+failure (`th_thornwold.json:1061`) costs nothing at all, or this file's own
+`wm_courier_read` (`:516-538`), whose failure also costs `rep_watch` but
+sets `wm_courier_resolved` in the same branch, capping it at one.
+`src/engine.ts:2186-2193` (a comment on `standingAtRisk`, written for a past
+regression) states the principle outright: "A failure taxed once is good
+design," and names the wave-seven report that came from a preview repeating
+a standing-cost warning while the underlying cost kept re-applying — the
+same shape. `docs/authoring.md:166-175` confirms action-sourced checks
+(unlike topic checks) already escalate their DC by 1 per failed attempt,
+capped at modifier+20 (`escalatedDc`, `src/engine.ts:1207-1231`) — retries
+get harder, but nothing capped the *rep* cost itself. This is squarely the
+task brief's own third outlier condition, "repeated failure keeps costing
+standing with no cap," confirmed by direct inspection of the JSON rather
+than inferred from the report alone.
+
+**The label is not dishonest, so it was left alone.**
+`docs/region-brief.md:166-167`'s "state the cost in the label" rule and
+`test/content.test.ts:34-47`'s enforcement are both scoped to a check
+falsely claiming hp-safety; `wm_checkpoint_talk` makes no such claim and the
+cost isn't hp. Separately, `docs/authoring.md:134-141` documents that the
+engine composes a standing-cost warning into the live menu preview
+automatically for any check whose branches move a named faction var
+(`costsStandingHint`/`standingAtRisk`, `src/engine.ts:2332-2348`, wired into
+`oddsHint` at `:3009-3012`, keyed off `rep_watch: "the Watch"` in
+`world/reach.json:3523`) — a player already sees "a miss costs standing
+with the Watch" before spending the turn, regardless of what the static
+`label` string says. `standingAtRisk` reads the *live* branch of a nested
+`if` via `condsOk` (`:2193`) — built to evaluate exactly the once-only-guard
+shape used below, so it correctly stops warning once the flag makes the
+cost branch dead, rather than going on quoting a cost that no longer
+applies.
+
+**Fix** (`world/reach/wm_wardmoor.json:596-604`): wrapped the fail branch's
+`addvar` in a one-time guard, the same `["if", [["!flag", "…"]], […], []]`
+idiom this file already uses for its onEnterOnce guards (`:371-380`) and
+self-read gates (`wm_pell_heaved`, `:211-233`):
+```
+["if", [["!flag", "wm_checkpoint_talk_failed"]], [["set", "wm_checkpoint_talk_failed"], ["addvar", "rep_watch", -1]], []]
+```
+First failure still costs `rep_watch` -1 (and the preview still warns about
+it beforehand, unchanged); every failure after that costs nothing further —
+matching `th_toll_bluff`'s free-retry norm and the engine's own "failure
+taxed once" principle. The `say` flavor line is untouched and still plays
+on every attempt. No reward invented on any pass/pay path, since those
+already have one; no label text changed, since the engine already states
+the cost live.
+
+`node scripts/fmt-json.mjs world/reach/wm_wardmoor.json` and `node --import
+tsx scripts/lint-world.ts world/reach.json` both clean ("all text within
+budget"). `node --import tsx scripts/audit-choices.ts world/reach.json
+--prefix wm` shows nothing new: the new flag is set and read in the same
+self-contained guard `wm_pell_heaved` already is, which the audit doesn't
+flag either. `npm run verify` in the shared working tree briefly went red
+on an unrelated concurrent edit (a sibling agent's in-flight
+`world/reach/ir_irondowns.json` change pushed `proofs.regent_deposed` over
+its ratchet, `test/budget.test.ts:606-610`) — isolated this change alone in
+a throwaway `git worktree` at HEAD to confirm it wasn't the cause (331/331
+tests, both crawls, mock and measure all clean, exit 0; a full replay of
+`regent_deposed` with and without this edit renders byte-identical text at
+every one of its 271 screens). The sibling's own fix landed shortly after;
+re-ran `npm run verify` in the shared tree afterward and it is fully green
+(331/331, exit 0). `queue/P1-issue-c2846cc6.json` and
+`queue/P2-issue-7ae5e54e.json` moved to `done/`.
