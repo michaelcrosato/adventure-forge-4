@@ -6829,3 +6829,207 @@ ordinary long-run forgetting sharpened by a real but currently unaffordable
 missing-message gap), and leaves a permanent, free regression against the
 one thing that would have been a genuine defect.
 
+### Wave 7: the settle-it DC and status-flag asks reconfirmed; a companion-deadline dropout, a silent quest journal, and a false "they agree" all closed
+
+Six items, each read in full and cross-referenced against wave 5/6 and this
+session's own prior work before anything was touched, per this wave's brief.
+Three close on cross-reference alone with no content change; the other three
+(one bundled pair, `dc7b6f14`/`1ccc55c0`, plus `7aa85f96` and `d9caff0e`) each
+turned up one genuinely new, narrow wrinkle the cited prior fixes hadn't
+reached, and all three are now fixed.
+
+**`P2-issue-0e243972.json`** — "consider lowering the DC or removing the
+double-disapproval penalty on a failed 'settle it' attempt, since it
+currently punishes the diplomatic option harder than just picking a side."
+Proposes the same two remedies `P1-issue-234f8306` (wave 5,
+`docs/roadmap.md:4630-4679`) already weighed against the realm's own numbers
+and declined: DC 11 is the realm's own modal will-check value (82 of 157
+checks, 52%), a free no-roll "leave it between them" safety valve sits on
+all 18 disputes, and a missed settle (-1/-1 regard) costs strictly less in
+expectation than a guaranteed side-pick's -2. Re-verified live rather than
+trusted: `src/engine.ts:1217-1221`'s own comment on `escalatedDc` still
+reads "the companion-dispute checks already cost regard with BOTH
+companions on a miss, by design... the double cost is the design," and the
+Lys/Osk pair's three settle/side/stay ids (`companions.json:1017`, `:2305`,
+`:2331`) are unchanged. This report (seed 11043) is a third data point on a
+mechanic already reaffirmed twice, not a new one. No content change.
+`queue/P2-issue-0e243972.json` moved to `done/`.
+
+**`P2-issue-2f3d20ac.json`** — "Let 'status' flag which open quests will
+become permanently unavailable soon, not just list them as open." Same wall
+as `be79b069`/`fc1a4039` (`docs/roadmap.md:3959-3989`, still open on
+purpose) and the "flagging *which* open threads are 'hold-local' versus
+'persist'" gap `5350baa3`'s own triage already named and left for them
+(`docs/roadmap.md:3950-3957`): the engine has no "which side of this
+point-of-no-return gate does this quest's content fall on" concept, whether
+the ask is phrased as a turn count or a boolean flag — both need the same
+not-yet-built per-quest metadata. A flag is a smaller ask than a full
+estimate in principle, but it hits the identical missing concept, not a
+cheaper version of it. Corroborates; doesn't reopen the feasibility case.
+`be79b069` and `fc1a4039` stay in `queue/` as the canonical open ask;
+`queue/P2-issue-2f3d20ac.json` moved to `done/` as a duplicate of it, the
+same disposition `5350baa3` got for the same reason.
+
+**`P2-issue-7aa85f96.json`** — "crossing into Coldpass/Marrowgate
+permanently locks out unfinished companion quests (Tamsin's mine grief
+never got closed) — the warning appears only at the Pass Gate itself." The
+Pass Gate's own wording is not the gap: `d1633b19` (wave 5) already added
+"own" to both crossings (`cp_coldpass.json:46`, `sk_saltkerns.json:103`,
+both currently read "A companion's own grief left unfinished there stays
+unfinished..."), and Tamsin's arc is real and exactly on point — `q_tamsin`,
+"What the Mine Took" (`companions.json:5318-5343`), is literally about a
+collapsed mine at Cinderhall, one of the four companion-arc quests the
+`d1633b19` write-up already confirmed name "before Coldpass" outright.
+
+That last clause is where the residual gap actually was, checked fresh
+rather than assumed from the citation: all four companion quests (`q_lys`,
+`q_osk`, `q_vell`, `q_tamsin`) name "before Coldpass" in only their *first*,
+no-progress-yet stage (`companions.json:5290-5293`, `:5312-5315`,
+`:5361-5364`, `:5337-5341`), and drop it from every later stage of the same
+quest — the `lys_brother_found`/`th_entered`, `osk_family_found`/
+`fd_entered`, `said_vell_bg_marrowgate`/`hb_entered`, and
+`tamsin_mine_truth`/`ir_entered` stages (8 across the 4 quests) all showed
+the ongoing state ("You're in the Iron Downs. Ask after the collapsed mine
+at Cinderhall.") with no deadline at all. `ir_entered`/`th_entered`/
+`fd_entered`/`hb_entered` are permanent onEnterOnce flags, never cleared
+anywhere in `world/reach/` (checked directly: zero `["clear", "*_entered"]`
+hits) — so one step into the target region, often the very next turn after
+first hearing the reminder, silences it for the rest of that quest's open
+life. From that point on, until the Pass Gate itself, the *only* remaining
+Coldpass warning a player sees for that specific thread is the generic gate
+text — which is exactly "the warning appears only at the Pass Gate itself,"
+just not for the reason a wording-only check would have found.
+
+Fixed by extending "before Coldpass" (or the connective each quest's own
+fallback stage already used) to all 8 open, not-yet-resolved stages:
+`companions.json:5282` (Lys, found), `:5287` (Lys, at Camp Gallows), `:5304`
+(Osk, found), `:5308` (Osk, in Fenmarch), `:5352` (Vell, in Hollowbrook),
+`:5357` (Vell, heard Marrowgate), `:5330` (Tamsin, knows the truth), `:5334`
+(Tamsin, in Iron Downs) — each a short appended clause, longest new string
+112/120 against the quest-stage budget (`scripts/lint-world.ts:22`). None
+of these four quests are on the proven walkthrough or in any proof (checked
+directly: no walkthrough or proof label touches Lys/Osk/Vell/Tamsin's
+personal-arc rooms or topics), so `scripts/budget.ts` and the status-ratchet
+test are unaffected by construction — confirmed after the fact rather than
+assumed. `queue/P2-issue-7aa85f96.json` moved to `done/`.
+
+**`P2-issue-d9caff0e.json`** — "The relationship between 'promise the
+reeve' and 'ask the priest's blessing' (order matters, but only revealed
+via an NPC hint at the inn) wasn't signposted in the quest text itself."
+`P2-issue-0f4d5511` (wave 6, `docs/roadmap.md:5402-5469`) already fixed the
+one silent NPC line (the priest's `blessing` accept variant,
+`va_village.json:710`) and confirmed the reeve's own `doors`/`promise`
+topics and the innkeeper's `factions` topic all state the order rule
+plainly. This ticket's framing points somewhere none of that touched: "the
+quest text itself," as a surface distinct from any NPC's dialogue — the
+`status`-visible quest journal.
+
+There is such a quest, and it was silent on exactly this. `va_doors` ("The
+Barrow Doors," `world/reach/va_barrow.json:790-811`) is a real,
+`status`-visible quest that starts the moment the reeve's `doors` topic
+fires. Its fallback stage (live from quest-start until the player promises
+or the king is resolved — potentially many turns, since declining or
+delaying leaves it active) read "The reeve wants the barrow sealed after;
+the priest wants it open. Promise, or don't — the doors wait at the
+throne." — true about the tension, silent on the order-lock. A player
+reading only `status`, never re-asking either NPC, would see two competing
+wants and no hint that sequencing is the actual mechanic (confirmed still
+true: only promising *first* forecloses anything, per `0f4d5511`'s own
+mechanics check, unchanged). Fixed at `va_barrow.json:807`: "...the priest
+wants it open — see him first if you want both. The doors wait at the
+throne." — reusing the reeve's own established phrase ("if you want both,"
+`va_village.json:417`, `:430`) rather than inventing new wording, and net
+**one character shorter** than the line it replaced (116 → 115), so no
+budget risk even though this stage sits on the main walkthrough (the
+"decline to promise" branch). `queue/P2-issue-d9caff0e.json` moved to
+`done/`.
+
+**`P2-issue-dc7b6f14.json`** and **`P2-issue-1ccc55c0.json`** (bundled, same
+underlying surface) — dc7b6f14: "Numeric evidence puzzles (mere-stone vs
+ring-ditch vs causeway for 'Which King') gave conflicting answers 2-vs-1
+with no in-fiction confirmation of which was authoritative until the naming
+succeeded." 1ccc55c0: "a brief recap of who said what evidence when
+multiple conflicting clues feed one decision." Different from the
+already-fixed hint-directionality gap (`P1-issue-c2b703e1`,
+`docs/roadmap.md:3722-3807`, which gave `hb_q_evidence` an `at` for every
+partial-evidence state) — that fix never touched what the stage *text*
+claims, only where it points.
+
+Read `hb_q_evidence` (`hb_hollow.json:618-664`) and all three evidence sites
+(`hb_wild.json`) in full rather than assuming "2-vs-1" was purely a
+legibility question. It is a real structure, and it is also a real bug, not
+only an unclear one: the causeway stone (`hb_wild.json:115`, and its
+grace/might/will variants at `:132`, `:152`, `:172`) and the ring-ditch
+(`:590`, variants `:607`, `:627`, `:647`) both independently name Caelrin;
+the mere-stone (`:711`, variants `:728`, `:748`) names Roderic, and its own
+text already flags that answer as folk-repetition rather than record ("Sure
+of itself, the way anything repeated long enough gets to sound"). Ossian
+has zero supporting evidence, openly admitted by its own "settle on Ossian"
+flavor text ("Nothing you've found points to him either way — it would be a
+plain guess," `hb_hollow.json:385`). `hb_speak_name`'s actual branching
+(`:396-437`) confirms Caelrin is simply the true answer outright,
+independent of how much evidence was gathered — this was never a computed
+majority vote, it's three discoverable hints (two true, one folk-belief,
+one decoy) toward a fixed fact, and a player can name any of them blind.
+
+But two of the three "exactly-2-of-3-found" quest stages misrepresented
+that structure. `hb_evidence_ringditch` + `hb_evidence_merestone` (Caelrin
++ Roderic — sources that disagree) was captioned "The ring-ditch and the
+mere agree" (`:636`, old text), and `hb_evidence_causeway` +
+`hb_evidence_merestone` (same conflict) was captioned "The causeway and the
+mere agree" (`:641`, old text) — both false. Only the pairing that
+genuinely agrees (causeway + ring-ditch, both Caelrin, `:631`) was worded
+correctly; the other two just reused the "X and Y agree" template without
+checking it against what either source actually said. A player who
+happened to find the mere-stone as one of their first two pieces would have
+been told outright, incorrectly, that it agreed with whatever else they'd
+found — a direct, mechanical explanation for "gave conflicting answers...
+with no in-fiction confirmation," stronger than a pure clarity complaint.
+
+Fixed: `:636` and `:641` now read "do not agree" in place of "agree" (76/120
+and 78/120 against the quest-stage budget). Also added a short, non-spoiling
+flag to the terminal "all three found" stage (`:626`): "You have every
+piece, and they do not all agree. Settle on a name at the great mound, and
+speak it." (99/120) — so the conflict is visible for free via `status` at
+the actual point of decision, not only through the eldest king's own
+once-only `about_evidence` topic (`:555`, gated on `hb_evidence_known >=
+1`, likely long since used up by the time all three pieces are found).
+Nothing here says which name is true; `hb_speak_name`'s own success/failure
+text (`:408` vs. `:425`/`:432`) still carries the entire payoff, so the
+gamble is untouched — only the game's own false claim about the sources is
+gone. This also serves `1ccc55c0`'s ask directly: the corrected mid-quest
+stages ("the ring-ditch and the mere do not agree — one piece left") are
+exactly the "recap that clues conflict" it wants, delivered at zero cost, at
+the moment it matters. A fuller "who said what" recap (naming Caelrin/
+Roderic per source together in one place) was considered and rejected:
+every site already states its own claimed name outright the instant it's
+found (`hb_wild.json:115,132,152,172,590,607,627,647,711,728,748` — eleven
+separate lines already do this), so the gap is about memory, not withheld
+information, and a persistent side-by-side tally would hand over the 2-vs-1
+shape outright rather than aid recall of something the game already said
+once. Both `queue/P2-issue-dc7b6f14.json` and `queue/P2-issue-1ccc55c0.json`
+moved to `done/`.
+
+Verified for real rather than assumed. `npm run verify` — typecheck,
+337/337 tests (including the status ratchet, `test/format.test.ts:291`,
+confirmed standalone as `ok 23`), all three worlds validate and win-prove,
+both crawls and both forked crawls clean (0 over-cap menus), both
+`mock-player` sessions complete. `node --import tsx scripts/lint-world.ts
+world/reach.json` — "all text within budget." `node --import tsx
+scripts/budget.ts world/reach.json --terse` — avg 439.7509/450, max
+1076/1100, sum 118293 over 269 screens, unchanged from the last-recorded
+baseline to four decimal places (`va_doors`'s edit is on the walkthrough but
+verified shorter, not longer; the rest — `hb_hollow.json` and the four
+companion quests' mid-stages — are off-walkthrough, bounded only by
+`scripts/lint-world.ts`'s per-string caps). `node scripts/fmt-json.mjs` run
+only on the three files actually touched (`world/reach/hb_hollow.json`,
+`world/reach/companions.json`, `world/reach/va_barrow.json`); the resulting
+diffs are exactly the edited lines, nothing else reformatted.
+`world/reach/th_thornwold.json`, `world/reach/wm_wardmoor.json` and
+`test/reach.test.ts` were already modified in the working tree by other
+in-flight work before this entry was written; left exactly as found.
+
+`queue/P2-issue-0e243972.json`, `queue/P2-issue-7aa85f96.json`,
+`queue/P2-issue-2f3d20ac.json`, `queue/P2-issue-d9caff0e.json`,
+`queue/P2-issue-dc7b6f14.json` and `queue/P2-issue-1ccc55c0.json` all moved
+to `done/`.
