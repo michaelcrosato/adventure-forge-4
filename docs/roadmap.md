@@ -3367,3 +3367,48 @@ figures, `npm run -s crawl` 0 over-cap menus on all three worlds. No game
 code or content changed this section — five queue files (`d8b33576`,
 `b0833856`, `3269f0aa`, `f3d5b35d`, `58169e05`) moved to `done/`, one
 (`39b85b76`) confirmed and left open in `queue/`.
+
+### Item 11, closing the redundancy hunt: a systematic pass, not just a manual one
+
+The `ir_writ` fix above came from reading the top of `audit-status-weight.ts`'s
+ranking by eye and recognizing a restated fact. Before calling that vein
+exhausted, ran the same question the other way: instead of a person reading
+ranked text and judging it, a script checking every pair of quest texts that
+are ever co-active on the same status call for any shared run of 3+
+consecutive words, weighted by how often the pair actually appears together
+— the same "measure, don't guess" discipline the ranking tool itself used,
+applied one level deeper.
+
+228 co-active pairs exist along the walkthrough; 10 share a run that long.
+None is a second `ir_writ`. The highest-weighted (`ir_q_after` vs.
+`th_q_after`, co-active 107 times, sharing "a stone for the") is the
+realm's own deliberate template for a hold's "after" quest — two different
+holds' two different grief-objects, both routed through the same sentence
+shape on purpose (item 4 in this document's order, "the fifteen holds
+rhyme"); cutting either would remove information, not repetition. The rest
+(`"at the throne"`, `"first then the"`, `"under the palace"`) are the same
+shape: connective phrasing two unrelated sentences happen to share, not one
+fact stated twice. The `main`/`mg_throne` pair ("under the palace," 6
+calls) is the only one that even reads as informational overlap on a
+second look, and at 6 calls its total weight (18) would move the ratchet
+by hundredths of a character — not worth the risk to a screen already cut
+twice today for touching it more than the evidence asks. Nothing here
+clears the bar `ir_writ` cleared. Checked, not left unlooked-at; the vein
+this specific technique can reach is exhausted for now.
+
+### A small, honest gap: scholar_read's fix, checked against real play, inconclusively
+
+The 11→10 DC drop for `scholar_read`/`scout_hands` (earlier today) aimed at
+starved content, not at making either ability universally chosen — so
+"did it work" was never going to be a clean yes/no from four traces. Still
+worth looking rather than assuming. All four blind players across waves
+two and three picked Scholar; none picked Scout, so `scout_hands`' half of
+the fix has no data to check against yet, real gap, not filled here.
+`scholar_read` fired once each in two of the four scholar traces (`s84498`,
+`s91554`) and zero times in the other two (`s84497`, `s91553`) — consistent
+with "now viable, not now favored," which is what the fix was for, but
+four data points at one-or-zero uses each cannot distinguish that from
+noise. Recorded as checked-and-thin rather than left silently unverified;
+a wave with a Scout player, whenever one happens, is worth the same look.
+
+No code or content changed across these two checks; no verify needed.
