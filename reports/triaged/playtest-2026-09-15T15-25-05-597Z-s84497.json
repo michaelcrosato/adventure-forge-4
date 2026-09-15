@@ -1,0 +1,46 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 601,
+  "receipt": "reach.84497.601.568.reach_at_rest.086ae9be",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "Multi-step directional hints ('three north, then two east') from bearings/quest text sometimes didn't match the actual room graph exactly (e.g. Iron Downs spoil-field detour, Flooded Quarry route), requiring an extra free 'get your bearings' call to re-orient.",
+      "where": "Iron Downs / Barrowmere overworld navigation"
+    },
+    {
+      "sev": "P2",
+      "what": "Den/lair encounters (wolf den, lynx Denhollow, slag-hound Flooded Quarry) reuse near-identical room names, descriptions and loot text across different hollows, making it feel copy-pasted rather than distinct.",
+      "where": "Thornwold Denhollow / Iron Downs Flooded Quarry"
+    },
+    {
+      "sev": "P2",
+      "what": "Several collected lore/evidence items (curling survey map, cipher notes, causeway-stone/mere's-answer evidence for the Kings' Rest name-puzzle) were flagged as relevant to quests but never had a clear action to actually consume them before the run ended, leaving it unclear if they were needed.",
+      "where": "Hollowbrook Kings' Rest / Wardmoor record-house"
+    }
+  ],
+  "confusions": [
+    "It's not obvious at first that 'travel to a known place' vs. raw compass directions cover different graphs (landmarks vs. every room) until you've used it a few times.",
+    "Some multi-step travel hints given by NPCs (e.g. 'two stands west, then one north') don't map 1:1 onto the single-step room links actually presented, causing a couple of wrong turns.",
+    "It's not signposted up front that crossing Coldpass permanently locks out unfinished companion/hold threads until you're already at the gate with the warning — by then most players will have accumulated many open threads."
+  ],
+  "suggestions": [
+    "Make 'get your bearings' hints match the actual per-room exit chain exactly, or auto-offer a multi-step 'travel to' option for named distant landmarks even before they're 'known'.",
+    "Vary the flavor text/room names for repeated den/lair mini-dungeons so they don't read as reused templates.",
+    "Add a one-line reminder earlier in Act II (not just at the Coldpass gate) that companion/faction threads close permanently after crossing, so players can pace exploration accordingly.",
+    "Surface a short in-fiction hint for exactly how/when collected 'evidence' items (survey maps, ciphers) get used, since some can be carried the whole game without an obvious consumption point."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-15T15-25-05-597Z",
+  "seed": 84497,
+  "build": {
+    "rev": "f839ed6",
+    "world": "49374d32"
+  },
+  "cost_usd": 30.652850400000005,
+  "verified": true
+}
