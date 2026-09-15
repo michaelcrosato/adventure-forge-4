@@ -12,7 +12,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByNumber, actionLabel, allActions, legalActions, menuLoad, menuNumbers, newState, step } from "../src/engine.ts";
+import { actionByLabel, actionByNumber, actionLabel, allActions, legalActions, menuLoad, menuNumbers, newState, step } from "../src/engine.ts";
 import { render } from "../src/format.ts";
 import { MENU_CAP } from "../src/types.ts";
 import type { Action, State, World } from "../src/types.ts";
@@ -266,4 +266,92 @@ test("the first crowded room says once that the numbers hold across its pages", 
   assert.ok(back.events.some((e) => e.includes("turns the page")), back.events.join(" | "));
   const again = step(world, back.state, pick(world, back.state, "more in this room"));
   assert.ok(!again.events.some((e) => e.includes("turns the page")), "said once, not on every page turn");
+});
+
+/**
+ * A conversation with more topics than the menu holds — the talk-mode twin of
+ * "an option keeps its number on whatever page it is showing" above.
+ *
+ * queue/P1-issue-4839330e.json ("a page-2 option list caused an unintended
+ * [wrong pick] instead of the intended dialogue pick"): unlike a room, a
+ * conversation still pages *itself* inside `roomMenu`, and `allActions` used
+ * to fall through to that same paged result for talk mode — so a page-2
+ * conversation numbered its own topics from 1, and a number that meant one
+ * topic on page 1 silently meant a different one on page 2. `talkList` gives
+ * conversations the same whole-list numbering rooms and travel already have.
+ */
+const chatty = (n: number): World =>
+  ({
+    id: "chat",
+    title: "chat",
+    intro: "An elder with a great deal to say.",
+    start: "hall",
+    hp: 10,
+    maxScore: 1,
+    rooms: { hall: { name: "The Hall", desc: "An elder waits.", exits: {} } },
+    items: {},
+    npcs: {
+      elder: {
+        name: "elder",
+        room: "hall",
+        dialogue: true,
+        topics: [
+          ...Array.from({ length: n }, (_, i) => ({ id: `t${i}`, label: `topic ${i}`, say: `About topic ${i}.` })),
+          { id: "bye", label: "farewell", say: "Go well.", end: true },
+        ],
+      },
+    },
+    walkthrough: [],
+  }) as unknown as World;
+
+test("a conversation topic keeps its number on whatever page it is showing", () => {
+  const world = chatty(24); // 24 topics + farewell, well past MENU_CAP
+  let { state } = newState(world, 1);
+  state = step(world, state, actionByLabel(world, state, "talk to elder")!).state;
+  const numbered = (s: State) => {
+    const acts = legalActions(world, s), nums = menuNumbers(world, s);
+    return new Map(acts.map((a, i) => [actionLabel(world, a, s), nums[i]!]));
+  };
+  const page1 = numbered(state);
+  assert.equal(page1.get("farewell"), 26, "the farewell sits one past every topic, not just this page's");
+  const talkmoreLabel = [...page1.keys()].find((l) => l !== "farewell" && !l.startsWith("topic"));
+  assert.equal(page1.get(talkmoreLabel!), 25, "\"more to ask\" sits right after every real topic");
+
+  state = step(world, state, actionByLabel(world, state, talkmoreLabel!)!).state;
+  const page2 = numbered(state);
+  assert.equal(page2.get("farewell"), 26, "the farewell keeps its number on page 2 too");
+  assert.equal(page2.get(talkmoreLabel!), 25, "so does \"more to ask\"");
+
+  // no label ever carries two different numbers, nor two labels one number
+  const seen = new Map<string, number>();
+  for (const page of [page1, page2])
+    for (const [label, n] of page) {
+      const had = seen.get(label);
+      if (had !== undefined) assert.equal(n, had, `"${label}" carried ${had} and then ${n}`);
+      seen.set(label, n);
+    }
+  const byNumber = new Map<number, string>();
+  for (const [label, n] of seen) {
+    const had = byNumber.get(n);
+    assert.ok(had === undefined || had === label, `number ${n} meant "${had}" and also "${label}"`);
+    byNumber.set(n, label);
+  }
+});
+
+test("a conversation number read on one page still names the same topic from another", () => {
+  const world = chatty(24);
+  let { state } = newState(world, 1);
+  state = step(world, state, actionByLabel(world, state, "talk to elder")!).state;
+  const onPageOne = new Map(legalActions(world, state).map((a, i) => [actionLabel(world, a, state), menuNumbers(world, state)[i]!]));
+  const topic0Number = onPageOne.get("topic 0")!;
+  const talkmoreLabel = [...onPageOne.keys()].find((l) => l !== "farewell" && !l.startsWith("topic"))!;
+
+  state = step(world, state, actionByLabel(world, state, talkmoreLabel)!).state;
+  assert.ok(!legalActions(world, state).some((a) => actionLabel(world, a, state) === "topic 0"), "sanity: page two is not showing it");
+
+  const a = actionByNumber(world, state, topic0Number);
+  assert.ok(a, `number ${topic0Number} still names something from page one`);
+  assert.equal(actionLabel(world, a!, state), "topic 0");
+  const out = step(world, state, a!);
+  assert.match(out.events.join(" "), /About topic 0\./, "and pressing it asks that topic, not a different one");
 });

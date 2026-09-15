@@ -1738,10 +1738,18 @@ function companionStruck(world: World, s: State, def: NpcDef, id: string, events
   const max = c.hp ?? 1;
   const hp = (s.npcHp[id] ?? max) - (def.atk ?? 1);
   if (hp <= 0) {
+    // a player who has never seen this before has no way to know a downed
+    // companion recovers rather than dies — told once, the first time it
+    // ever happens to anyone in the party, not on every knockdown after
+    const firstDown = !s.flags["down_explained"];
     s.npcHp[id] = 1;
     setFlag(s, `down_${id}`);
     setFlag(s, `fell_${id}`); // stays set: a remark or an epilogue line can recall the day they went down
-    events.push(`${TheName(def.name)} ${verb} at ${c.name} — ${c.name} goes down, and crawls clear of the fight.`);
+    if (firstDown) setFlag(s, "down_explained");
+    events.push(
+      `${TheName(def.name)} ${verb} at ${c.name} — ${c.name} goes down, and crawls clear of the fight.` +
+        (firstDown ? " Nobody dies of it." : ""),
+    );
     return;
   }
   s.npcHp[id] = hp;
@@ -2436,10 +2444,11 @@ export function legalActions(world: World, s: State): Action[] {
  * options carry the same number wherever they are showing — page two starts at
  * 10 or 13 or wherever page one stopped. A number means one thing per room.
  *
- * (The conversation and travel menus page by their own older rules and still
- * number from 1. Neither has been reported, and both replace the list rather
- * than keeping a sticky head, so a number there at least means one thing per
- * page. Worth the same treatment when one of them is.)
+ * (The conversation and travel menus page by their own older rules — they
+ * replace the list on every page rather than keeping a sticky head — but both
+ * now number off their own whole list too, `travelList` and `talkList`
+ * respectively, so a number means one thing per conversation or per travel
+ * list, not merely per page of one.)
  */
 export function menuNumbers(world: World, s: State): number[] {
   const all = allActions(world, s).map(canon);
@@ -2457,9 +2466,13 @@ export function menuNumbers(world: World, s: State): number[] {
  * judged against `allActions`, every page of it, so this only says out loud
  * what the engine already allowed.
  *
- * A conversation still pages by its own older rules and numbers from 1 per
- * page (neither has been reported), but a travel list now gets the same
- * whole-list treatment as an ordinary room — see `allActions`.
+ * A conversation and a travel list both page by their own older rules, but
+ * both now get the same whole-list numbering treatment as an ordinary room —
+ * see `allActions`, `talkList`, `travelList`. A P1 report (`queue/P1-issue-
+ * 4839330e.json`, "a page-2 option list caused an unintended [pick]") named
+ * Captain Vane's Tent, the one conversation in the shipped realm long enough
+ * to page (25 topics) — direct proof this was live, not merely theoretical;
+ * see `talkList`'s comment for the mechanism.
  */
 export function actionByNumber(world: World, s: State, n: number): Action | undefined {
   if (!Number.isInteger(n) || n < 1) return undefined;
@@ -2488,12 +2501,17 @@ export function actionByNumber(world: World, s: State, n: number): Action | unde
  * pages for display. `legalActions` (via `roomMenu`) still shows one page at
  * a time; `menuNumbers` numbers off this full list now, so a number under a
  * travel destination means the same thing on every page, exactly like a room.
+ *
+ * A conversation got the same treatment later still, for the same reason:
+ * `talkList` is a conversation's whole topic list, unpaged, the same shape
+ * `roomMenu`'s talk branch pages for display — see `talkList`.
  */
 export function allActions(world: World, s: State): Action[] {
   if (inTravelMode(world, s)) {
     const list = travelList(world, s);
     return travelPaging(list) ? [...list, { kind: "travelmore" }, { kind: "traveldone" }] : [...list, { kind: "traveldone" }];
   }
+  if (talkShowing(world, s)) return talkList(world, s, s.talking!);
   const { all, ways } = withMenuMemo(() => roomMenu(world, s));
   return roomPages(all, ways) ? [...all, { kind: "roommore" }] : all;
 }
@@ -2529,6 +2547,79 @@ function withMenuMemo<T>(build: () => T): T {
   }
 }
 
+/**
+ * True exactly when `roomMenu` would show the open conversation's own topics
+ * — `inTalkMode` alone is not enough, because a level gained mid-conversation
+ * (a topic's `fx` granting xp) leaves `s.talking` set while the perk it
+ * unlocked still has to be spent first, and `roomMenu` rightly shows *that*
+ * menu instead until it is (`s.perkPicks`, checked ahead of talk mode there).
+ * `allActions` needs the identical precedence — it very nearly didn't get it:
+ * the fix for numbering a conversation off its whole list very nearly shipped
+ * checking `inTalkMode` on its own, which would have made a level gained from
+ * a topic's `fx` (the walkthrough does this at the gray priest, va_chapel)
+ * hand back the *conversation's* topic list from `allActions` while
+ * `legalActions` was already showing the perk menu — the two disagreeing
+ * about what was legal is exactly the failure mode this whole fix exists to
+ * remove, so both now call this one predicate rather than each deciding for
+ * itself.
+ */
+function talkShowing(world: World, s: State): boolean {
+  if (s.ended || inClassPhase(world, s)) return false;
+  if (s.perkPicks > 0 && eligiblePerks(world, s).length) return false;
+  return inTalkMode(world, s);
+}
+
+/**
+ * The shape of an open conversation's menu — everything but which page is
+ * showing — shared by `roomMenu` (which slices `rest` to the current page for
+ * display) and `talkList` (which does not slice, for numbering; see there).
+ * Keeping this in one place means the two can never quietly drift apart on
+ * what counts as "the way out" or when a conversation pages at all.
+ */
+function talkMenuParts(world: World, s: State, npc: string) {
+  // a line that sends a companion away goes last, never in the slot the
+  // player has been pressing to carry the conversation on
+  // ... and so does a line that commits you to something (`commits: true`), so
+  // a menu that shrinks as questions are answered never slides a betrayal into
+  // the number the player has been pressing
+  const late = (t: TopicDef) => Number(partsWays(t) || !!t.commits);
+  const topics = visibleTopics(world, s, npc).sort((a, b) => late(a) - late(b));
+  // a farewell line (a topic with `end`) is the way out; the plain "end
+  // conversation" only appears when the npc offers none
+  const ends = topics.filter((t) => t.end);
+  const rest = topics.filter((t) => !t.end);
+  const outro: Action[] = ends.length ? ends.map((t): Action => ({ kind: "talk", npc, topic: t.id })) : [{ kind: "endtalk" }];
+  // a conversation that has grown past the cap turns pages: the farewell stays
+  // on every page, and "more to ask" (free) turns to the next
+  const paging = rest.length + outro.length > MENU_CAP;
+  const pageSize = Math.max(1, MENU_CAP - outro.length - 1);
+  const pages = paging ? Math.ceil(rest.length / pageSize) : 1;
+  return { rest, outro, paging, pageSize, pages };
+}
+
+/**
+ * Every topic a conversation offers, whichever page is showing — the
+ * conversation's half of what `allActions` numbers off, exactly as
+ * `travelList` is travel's. Before this, `allActions` had no talk-mode branch
+ * of its own and fell through to `roomMenu`, which — for a conversation —
+ * already returns only the *current page's* topics (`roomMenu` pages a
+ * conversation itself, unlike a room, which pageRoom pages from outside): a
+ * number was being handed out fresh from 1 on every page, so the same number
+ * meant a different topic depending which page happened to be showing, and a
+ * number read on page 1 was simply wrong, not merely absent, once the
+ * conversation had turned to page 2. Numbering off this whole list instead —
+ * every topic plus "more to ask" in its one fixed slot before the farewell —
+ * fixes it the same way `allActions`'s room and travel branches already were:
+ * a number means one topic for as long as the conversation's shape doesn't
+ * change, on whichever page you turn to read it.
+ */
+function talkList(world: World, s: State, npc: string): Action[] {
+  const { rest, outro, paging } = talkMenuParts(world, s, npc);
+  const out: Action[] = rest.map((t): Action => ({ kind: "talk", npc, topic: t.id }));
+  if (paging) out.push({ kind: "talkmore" });
+  return [...out, ...outro];
+}
+
 function roomMenu(world: World, s: State): { all: Action[]; ways: number } {
   // The menus below are not a room's own: each already holds itself within the
   // cap (a conversation and a travel list turn their own pages), so none of
@@ -2544,25 +2635,9 @@ function roomMenu(world: World, s: State): { all: Action[]; ways: number } {
     if (picks.length) return whole(picks.slice(0, MENU_CAP).map((id) => ({ kind: "perkpick", id })));
   }
   // an open conversation: only its topics, and the way out of it
-  if (inTalkMode(world, s)) {
+  if (talkShowing(world, s)) {
     const npc = s.talking!;
-    // a line that sends a companion away goes last, never in the slot the
-    // player has been pressing to carry the conversation on
-    // ... and so does a line that commits you to something (`commits: true`), so
-    // a menu that shrinks as questions are answered never slides a betrayal into
-    // the number the player has been pressing
-    const late = (t: TopicDef) => Number(partsWays(t) || !!t.commits);
-    const topics = visibleTopics(world, s, npc).sort((a, b) => late(a) - late(b));
-    // a farewell line (a topic with `end`) is the way out; the plain "end
-    // conversation" only appears when the npc offers none
-    const ends = topics.filter((t) => t.end);
-    const rest = topics.filter((t) => !t.end);
-    const outro: Action[] = ends.length ? ends.map((t): Action => ({ kind: "talk", npc, topic: t.id })) : [{ kind: "endtalk" }];
-    // a conversation that has grown past the cap turns pages: the farewell stays
-    // on every page, and "more to ask" (free) turns to the next
-    const paging = rest.length + outro.length > MENU_CAP;
-    const pageSize = Math.max(1, MENU_CAP - outro.length - 1);
-    const pages = paging ? Math.ceil(rest.length / pageSize) : 1;
+    const { rest, outro, paging, pageSize, pages } = talkMenuParts(world, s, npc);
     const page = paging ? s.talkPage % pages : 0;
     const shown = paging ? rest.slice(page * pageSize, (page + 1) * pageSize) : rest;
     const out: Action[] = shown.map((t): Action => ({ kind: "talk", npc, topic: t.id }));

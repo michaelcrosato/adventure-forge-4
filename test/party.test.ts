@@ -408,7 +408,13 @@ test("blows rotate onto standing companions; one struck to nothing falls back, s
   out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!); // the player again
   out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!);
   assert.match(out.events.join(" "), /Lys goes down, and crawls clear of the fight/);
+  assert.match(
+    out.events.join(" "),
+    /Nobody dies of it\./,
+    "the first knockdown ever says outright that it isn't permanent",
+  );
   assert.equal(out.state.flags["down_lys"], true);
+  assert.equal(out.state.flags["down_explained"], true);
   assert.equal(out.state.flags["fell_lys"], true, "the fall is remembered after she is back up");
   assert.match(renderStatus(world, out.state), /Party: Lys \(regard 0, hp 1\/4, down\)/);
   const idle = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!);
@@ -417,6 +423,21 @@ test("blows rotate onto standing companions; one struck to nothing falls back, s
   assert.match(back.events.join(" "), /Lys is back on their feet, shaken\./);
   assert.equal(back.state.npcHp["lys"], 2, "up again at half strength");
   assert.ok(!back.state.flags["down_lys"]);
+});
+
+test("the 'nobody dies of it' reassurance is told once per playthrough, not on every knockdown", () => {
+  const world = company();
+  world.npcs["lys"]!.hp = 4;
+  let { state } = newState(world, 1);
+  state = doLabel(world, state, "ask Lys: come with me");
+  state = doLabel(world, state, "go east");
+  state = { ...state, flags: { ...state.flags, down_explained: true } }; // already explained once, earlier in this playthrough
+  let out = step(world, state, actionByLabel(world, state, "attack troll with sword")!); // player
+  out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!); // Lys staggers
+  out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!); // player again
+  out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!); // Lys goes down
+  assert.match(out.events.join(" "), /Lys goes down, and crawls clear of the fight/);
+  assert.doesNotMatch(out.events.join(" "), /Nobody dies of it/, "already explained once; not repeated");
 });
 
 test("two standing companions draw two blows back in a round, not one", () => {

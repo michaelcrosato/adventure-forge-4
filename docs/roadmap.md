@@ -5649,3 +5649,533 @@ see it" this file's own rule already names.
 
 `queue/P1-issue-a5d492b0.json` and `queue/P2-issue-a0ecfcf8.json` moved to
 `done/` together — one mechanism, one fix, two reports of the same gap.
+
+### Wave 6, items 1-4: a ledger ending that already has its menu action, `ea62cecc`'s twin, and one real fix for a downed companion
+
+Four wave-six items, read whole before touching anything: `167e24a5` and
+`2f557ac5` (one report, filed twice — "surface the ledger-reading ending as a
+menu option at the throne room / palace court" and its confusion twin, "it's
+never offered as a menu action anywhere I found it"), `7c98c9c5` (verified=1,
+confirmed against a real winning trace — "the final rite's exact requirements
+are only spelled out via `status`, not proactively surfaced"), and `91731c0b`
+("does knocking a companion down in a forced fight kill them, or not — never
+stated").
+
+**`167e24a5` / `2f557ac5`** — checked the premise before assuming a gap: is
+"read the founding ledger aloud" really never a menu action? It isn't. It's a
+real, tested, selectable ending exactly where the ticket itself guesses it
+should be. `mg_hollow_throne` (`world/reach/mg_marrowgate.json:873-901`, "a
+throne room under the throne room: the true seat of the Reach") carries three
+concrete actions — `mg_depose_watch`/`mg_depose_church`/`mg_depose_free`
+(`:1157-1210`) — labeled exactly "read the ledger aloud to the Marshal/the
+Mother/the Companies," each gated on `has mg_founding_ledger` plus
+`rep_watch`/`rep_church`/`rep_free >= 2` and `!npcDead mg_regent`, each ending
+the game in `"win", "regent_deposed"`. That ending carries its own
+replay-proof (`world/reach.json`'s `proofs.regent_deposed`, exercised by
+`test/budget.test.ts`'s per-road ratchet), so it is exactly as real and
+reachable as the room's other five resolutions: the Great Rite
+(`mg_great_rite`), the burn (`mg_burn_throne`), the bargain
+(`mg_bargain_throne`), the crown (`mg_sit_throne` and three variants), and the
+kneel (`mg_kneel`/`mg_kneel_confirm`).
+
+Every one of those six stays invisible in the menu until its own precondition
+is met — that's the room's whole design, not a defect unique to the ledger.
+The same room already explains what's missing for all six at once, for free:
+`mg_weigh_doors` ("weigh the doors of the seat," `:902-1067`) is offered the
+whole time the throne stands unresolved, costs no turn, and spells out the
+ledger path in the same breath as the rest — "You do not carry the founding
+ledger, chained in the Hall of Ledgers" or "You have the ledger, but need
+standing 2 with Watch, Church, or Companies" (`:983-998`), the identical shape
+as "The rite wants three hollows rested" a few lines above it.
+
+The ticket's own suggested location undersells itself: "the throne room /
+palace court" names two rooms that are both real and both load-bearing here.
+`mg_palace_court` (`:416-433`, "The Palace Court") is the room the ledger's
+home branches off from — "a colonnade east leads to the Hall of Ledgers" — and
+`mg_hall_of_ledgers` (`:456` on) is where `mg_founding_ledger` is actually
+found; the ending itself is spoken at the throne, once the item is walked
+back. Two more places already tell the player this is a real ending,
+independent of ever reaching the throne room: Act 3's own objectives text
+(`world/reach.json:8`, shown by `status` from the moment Marrowgate opens)
+says outright "read the founding ledger aloud to those who trust you — each
+of those is an ending," naming it alongside the rite/fire/bargain/crown; and,
+earlier still, a Vale-village dialogue topic reachable from early in the game
+— "what waits under Marrowgate" (`world/reach/va_village.json:1091-1096`, open
+once `va_heard_decree` is set) — has an NPC describe all four non-kneel paths
+outright, including "the founding's truth read aloud."
+
+So the actual gap is narrower than either ticket states: a player who never
+visits the Hall of Ledgers, never gets any faction to standing 2, and never
+asks that one Vale topic will not personally see this specific action in
+their own menu — equally true of a player who never gets the crown, or never
+burns three holds, for those endings. That's the intended shape of a realm
+with six ways to end the same throne, not a hole unique to this path. Same
+"already-built, needs pointing at" shape as `ea62cecc`/`58169e05` below, not
+the "genuinely nothing built" shape this document holds
+`58397108`/`be79b069`/`fc1a4039` to. No content change. `queue/P2-issue-
+167e24a5.json` and `queue/P2-issue-2f557ac5.json` moved to `done/`.
+
+**`7c98c9c5`** (verified=1) restates `ea62cecc`'s own claim (`done/`,
+`docs/roadmap.md:5194-5233`) almost word for word — "the exact rite formula (3
+hollows rested + king rested + confession) is only fully spelled out via
+`status`" — adding one concrete consequence: "a player who never calls
+`status` could reach Marrowgate without realizing they were one step short."
+Checked whether that consequence changes the answer before treating this as
+the same ticket twice.
+
+It doesn't, and the realm's answer is stronger than `ea62cecc` even needed.
+`ea62cecc` already established the formula is stated well before Marrowgate,
+in the Act 2 objectives (`world/reach.json:12`, word for word "the Hollow
+Throne's rite wants those three, the Vale's king at rest, and the first
+Reeve's confession") and the Act 3 objectives (`:8`). Separately — and this is
+the piece that answers "a player who never calls status" specifically — the
+one true point of no return before Marrowgate, `cp_pass` ("the Pass Gate,"
+`world/reach/cp_coldpass.json:36-48`), fires an unconditional `onEnterOnce` on
+first arrival, no `status` call or free action required: a room-authored
+warning ("Past this gate the holds fall behind you...") plus `questsopen`
+(`src/engine.ts:1602-1615`), an engine effect built, per its own comment, for
+exactly this shape of report — a prior wave's player who "named why — 'this is
+stated once in passing dialogue but easy to miss, and irreversible.'"
+`questsopen` counts the player's open threads and says outright "Read them in
+your status before you cross: whichever lie behind you stay open for good."
+This is the same mechanism `docs/roadmap.md:3328-3360` already traced and
+closed as `58169e05` ("The Pass Gate already does what `P2-issue-58169e05` is
+asking for"), which also confirmed `mg_hollow_throne` gets the parallel
+treatment — the `mg_weigh_doors` free action cited above, under `167e24a5`.
+
+The one piece of this cluster genuinely still open is moving that warning
+earlier than `cp_pass` itself, or inlining the literal three-part formula into
+it — `docs/roadmap.md:1439-1454` (`c1c437de`/`748f4551`) asked for exactly
+that and left it open on purpose, not fixed: `status`'s own ratchet was
+measured at 6 characters of slack the day it was written, and `cp_south_stair`
+sits on 9 of 11 simulable proofs, "the same shape of problem as `va_gate`...
+exactly the shape that broke eight ratchets for one sentence." `7c98c9c5`
+doesn't name that specific new location — it restates the general "not
+proactively surfaced" claim — so it's answered by `ea62cecc` and `58169e05`
+rather than superseded by `c1c437de`/`748f4551`; re-flagging the identical
+residual under a fourth ticket number would be re-litigating, not
+investigating. No content change. `queue/P2-issue-7c98c9c5.json` moved to
+`done/`, cross-referenced to `ea62cecc` and `58169e05`; the genuinely-open
+residual stays exactly where `c1c437de`/`748f4551` already left it.
+
+**`91731c0b`** — "does a downed companion truly die, or recover" is, unlike
+the three above, a real gap, stated nowhere, and a cheap one to close. Checked
+`companionStruck` (`src/engine.ts:1736-1761`, the function every hostile
+NPC's counter-attack runs when its blow lands on a companion instead of the
+player): a companion struck to 0hp is never removed from the party or marked
+dead by this path — hp is held at 1, flag `down_<id>` is set, and the
+function's own doc comment already states the design intent outright:
+"Nobody dies of it: a companion's death is content's to write."
+`recoverDowned`/`reviveDowned` (`:1764-1787`), run every turn
+(`:3464`), automatically bring every downed companion back up — no hearth, no
+rest, no player action — the moment nothing aggressive is left in the room, at
+half their max hp, with its own event line ("{name} is back on their feet,
+shaken."). The honour guard the ticket names (`mg_hollow_guard`,
+`world/reach/mg_marrowgate.json:782-850`) is an ordinary hostile on this same
+generic combat path (`npcStrike`, `:1901` on, which rotates blows onto
+standing companions like any other fight), so a companion downed there
+recovers exactly the same way as anywhere else in the realm.
+
+None of this was ever stated to the player. Searched broadly for anything
+that already answers it (`world/*.json` for "crawls clear"/"back on their
+feet"/"permanent"; `docs/authoring.md`) before assuming a fix was needed: the
+only near-miss is the Warden's own `revive` ability ("You haul them up by the
+collar," `world/reach.json:206`), which is class-gated, reactive (only
+appears once a companion is already down), and never says "permanent" either
+way — not the general, anticipatory answer a player deciding whether to risk
+a forced fight needs. Genuinely nowhere, and the true answer is exactly as
+simple as a one-line fix wants: downed companions always recover from combat;
+only content the realm authors on purpose (none currently does, for a
+companion) could end one for good.
+
+Fixed with the minimum the ticket asks for: `companionStruck` now appends "
+Nobody dies of it." to the existing "goes down, and crawls clear of the
+fight" line, gated on a new one-time flag `down_explained` so it is told once
+per playthrough — the first time it ever happens to anyone in the party,
+never repeated after (`:1740-1752`). Reused the function's own
+already-committed language ("Nobody dies of it") rather than inventing new
+wording, and kept it to three words plus the period: the cheapest version of
+the true answer, not a fuller explanation of the recovery mechanic (which the
+player already sees for themselves, for free, the moment it happens, via
+`reviveDowned`'s own event line).
+
+Not free, and the honest cost is on record. The realm's only proof that ever
+swings a blow with a companion standing, `crowned_hollow#bloodied`
+(`test/budget.test.ts:181-182`, "the realm's only fight proof, carries just
+Lys"), knocks Lys down partway through, so the new clause is paid once, on one
+of that proof's 50 screens — the same near-zero-headroom road this document's
+own neighboring entry above just finished re-measuring for an unrelated
+reason (`crowned_hollow#bloodied` "up to +14.7 chars/turn" under the gray-
+sergeant fix, reverted there). First measured at 61 characters (a fuller
+"back on their feet once the fight's over" phrasing), which broke the ratchet
+(avg 524.6 > 523, `Math.floor` against `PROOF_BUDGET["reach:crowned_hollow#
+bloodied"]`, `test/budget.test.ts:304`); re-measured directly, not estimated,
+down to the three-word version, 19 characters, landing at avg 523.8 — floor
+523, at the ratchet with headroom to spare rather than exactly on the line.
+`test/party.test.ts` extended: the existing knockdown test (`:396-426`) now
+also asserts the line appears the first time, and a new test (`:428-441`)
+confirms it does not repeat once `down_explained` is already set.
+
+Verified in an isolated `git worktree add --detach` off this session's
+starting HEAD (`e904b41`) before trusting the shared tree, the same
+discipline this document's neighboring entries used today, since several
+other agents were landing unrelated work concurrently (queue moves, two
+unrelated `src/engine.ts` refactors, `world/reach/va_village.json`,
+`world/reach/wm_wardmoor.json`, `test/menu.test.ts`) — one in-flight change
+was independently and transiently tripping `va_chapel`'s perk-pick sequence on
+the shared tree while this entry's own testing was underway, unrelated to
+anything here and resolved by its own author before this entry finished.
+Applying only this entry's diff (`src/engine.ts`, `test/party.test.ts`) on top
+of clean HEAD: `npm run -s typecheck` clean, 333/333 tests, `npm run -s
+validate` all three worlds win-proven unchanged (240/38/27 turns), both `npm
+run -s crawl` and `crawl:fork` clean (0 over-cap menus on all three worlds),
+`scripts/lint-world.ts world/reach.json` "all text within budget,"
+`scripts/budget.ts world/reach.json --terse` byte-identical to the
+last-recorded walkthrough figures (avg 439.75/450, max 1076/1100 — the
+walkthrough itself never knocks a companion down, so it never pays this
+line). Re-run against the current shared tree afterward: `npm run verify`
+green end to end (typecheck, 336/336 tests, validate, both crawls, mock,
+measure).
+
+`queue/P2-issue-91731c0b.json` moved to `done/` with a shipped fix;
+`queue/P2-issue-167e24a5.json`, `queue/P2-issue-2f557ac5.json` and
+`queue/P2-issue-7c98c9c5.json` moved to `done/` alongside it, closed as
+already-answered. All four of this entry's items resolved; none left in
+`queue/`.
+
+### `P1-issue-4839330e`: an unverified report bundles two claims — cross-turn topic drift (already understood, left alone) and conversation-page renumbering (a real, previously-unconfirmed bug, now fixed)
+
+An unverified report — `verdict: "stuck"`, `receipt: ""`, `verified_reports: 0`
+(`reports/triaged/playtest-2026-09-15T21-36-56-764Z-s6785.json`, a session
+that hit the 600-turn cap with no ending, so the automated trace-verifier had
+nothing to check it against) — bundles two claims under one P1: a "free"
+action "sometimes silently advances the scene/turn counter," and menu
+numbering that "reshuffles... between pages, making a chosen number
+occasionally resolve to the wrong listed action," with two examples,
+"selecting 'the old king's steel' produced a farewell line instead" and "a
+page-2 option list caused an unintended 'go north' instead of the intended
+dialogue pick" (`where: "The Forge / Captain Vane's Tent multi-page menus"`).
+Weighed with the extra skepticism an unverified, no-receipt report earns, but
+investigated seriously rather than dismissed for being unverified — and one
+of the two claims turned out real.
+
+**Claim A ("free" actions silently cost a turn): does not hold.** `s.turn`
+has exactly one write site in the whole `src/` tree — `grep -rn '\.turn\s*(+=|=|++)' src/`
+finds only `engine.ts:3237`, gated by `spentTurn = !freeCustom &&
+!BROWSING.has(action.kind)` (`:3233-3237`). `freeCustom` reads the same
+room/ability `.free` flag the player-facing "(free)" label is built from
+(`oddsHint`'s `isFree`, `:2980-2982` — textually identical to `freeCustom`
+today; the two have never drifted apart). `BROWSING` (`:139`) covers every
+menu-navigation kind (`leave`, `travel*`, `company*`, `talkto`, `endtalk`,
+`talkmore`, `roommore`) unconditionally. `look` and `status` — "get your
+bearings"'s siblings as no-turn commands — are not `step()`-routed actions at
+all: `src/mcp.ts:161-187` registers them as separate MCP tools that call
+`view`/`renderStatus` directly and never touch `step`, so they are
+structurally incapable of moving `turn`.
+
+Rather than trust the static read alone, wrote a probe (scratchpad only, not
+committed) that replays all three shipped worlds' complete, real, winning
+`walkthrough`s end to end — `validate.ts`'s own `replayWalkthrough` label/
+repeat-loop logic, reimplemented around a clone taken at every single step so
+the real replay is left undisturbed — and at every turn applies every
+currently-legal action to a throwaway clone, checking the observed `turn`
+delta against a prediction independently rederived from the same BROWSING set
+and `.free` lookup. 1774 legal actions probed across `lighthouse`/`reach`/
+`vale`'s full winning routes (477 of them declared free): zero mismatches. A
+second probe called `va_gate_bearings` ("get your bearings") five times
+running from one state: `turn` sequence `1 → 1 → 1 → 1 → 1 → 1`. All three
+real, unmodified walkthrough replays still won cleanly afterward, confirming
+the clone-based probing never leaked into them. No `src/`/`world/` change for
+this claim — the mechanism holds.
+
+**Claim B (menu reshuffling): two different real mechanisms, correctly told
+apart.** Both named locations are real, verbatim content, not a confused or
+invented report. "The Forge" is `world/vale.json`'s `forge` room (and
+`world/reach/va_village.json`'s parallel `va_forge`); "the old king's steel"
+is a real topic label there (`vale.json:2366`, `va_village.json:654`, the
+village smith's conversation). "Captain Vane's Tent" is
+`world/reach/th_thornwold.json:261`, home to `th_vane` — and a scan of every
+NPC's topic count across all three worlds (`Object.values(world.npcs).map(n
+=> n.topics?.length)`) turned up exactly one NPC in the entire shipped realm
+with more topics than `MENU_CAP` (12): Captain Vane, at 25. Not a coincidence
+worth waving off.
+
+*"the old king's steel" → farewell* reproduces exactly, and is the same
+mechanism `done/P1-issue-65675d14.json`/`done/P1-issue-d3907169.json` already
+named and deliberately left unfixed (`:4718-4809` above: "the general fix...
+needs `State` to remember which number was whose... for a benefit that has
+never been measured against real players either"). `topicVisible` (`:2093`)
+drops a `once`-flagged topic (`said_<npc>_<id>`) the instant it's been asked;
+`roomMenu`'s conversation branch and `menuNumbers`/`actionByNumber` rebuild
+and renumber the list fresh from *current* state on every call, so nothing
+remembers what number a player last read. Probed live against `vale.json`
+(fresh game, smith conversation): screen 1 lists `steel for the barrow` /
+`the smith's trade` / `why she watches the road` / `the old king's steel`
+(#4) / `leave the smith to the forge` (#5). Asking the *first*, ordinary
+topic — nothing reckless, completely normal play — removes it (`once`);
+screen 2 renumbers, and "the old king's steel," never asked, slides from #4
+to #3, with "leave the smith to the forge" sliding into the vacated #4.
+Pressing "4" again (correct read from screen 1, stale by screen 2) resolves
+to the farewell and closes the conversation with "Mind the edge." verbatim —
+exactly the report's claim, exactly the mechanism the two prior tickets
+already priced out. Left alone, correctly: same low-stakes shape as
+`d3907169`'s "self-corrected item waste" (a free re-open of the conversation
+undoes the whole cost of the misclick), no new severe-consequence case to
+move the prior deferral's calculus.
+
+*page-2 → "go north"* does **not** reduce to that mechanism, and turned out
+to be a real, different, previously-unconfirmed bug: the conversation half of
+a class of bug the room menu, and later the travel menu, were already fixed
+for — `menuNumbers`/`actionByNumber`'s own doc comments said outright, before
+this change, that a conversation "still pages by its own older rules and
+numbers from 1 per page... neither has been reported" (a self-acknowledged,
+never-yet-exercised gap). Unlike the drift above, this one is wrong *within a
+single unchanged snapshot*, purely because the page turned — and no
+conversation in the shipped realm had ever been long enough to page until
+content grew Captain Vane's to 25 topics. Probed live (`reach.json`, Vane, a
+flag combination surfacing 16 topics — 2 pages, 10+5 real topics plus the
+farewell): number "1" meant "the hanging tree" on page 1 and "carve his name
+in shame beside theirs" on page 2 — all 7 numbers page 2 shares with page 1
+(1 through 7) named a different topic on each — and
+`actionByNumber`/`step` (which has always judged legality against
+`allActions`, never the page in front of the player, by design) silently
+accepted the stale number against the *new* page's item instead of rejecting
+it. The exact old room-menu bug (`menuNumbers`'s own comment: "a number stood
+for two different things in one room, and a player who had just pressed 7
+pressed 7 again"), just never fixed for conversations the way it was for
+rooms and, later, travel. The one specific detail that does not check out is
+"go north" itself: Captain Vane's Tent has only a south exit
+(`th_thornwold.json:265`), room exits are listed unconditionally and are
+never dynamic, and conversation mode never offers a `go`-kind action at all —
+so a direction cannot literally collide with a topic number by any mechanism
+this engine has, and that detail reads as the unverified session's own
+imprecision rather than as evidence against the finding. The general shape —
+a stale remembered number silently resolving to the wrong action once the
+menu changed shape — is confirmed twice over, at the report's own two named
+locations, by two different real mechanisms.
+
+**Fixed the second one.** Gave conversations the same whole-list numbering
+`allActions` already gives rooms and, later, travel lists, mirroring the
+existing `travelList` pattern: extracted the conversation-menu-shape logic
+`roomMenu` already had into `talkMenuParts` (`:2579-2598`, shared so
+`roomMenu`'s per-page display and the new full-list numberer can never
+quietly drift apart on what counts as the way out or when a conversation
+pages at all), added `talkList` (`:2616-2621`, the unpaged whole topic list —
+a conversation's `travelList`), and wired it into `allActions` (`:2514`).
+`menuNumbers` and `actionByNumber` inherit the fix automatically, since both
+already key off `allActions` alone. Updated the two doc comments that had
+documented this as a known, unfixed gap (`:2447-2452`, `:2469-2476`) to say
+so.
+
+This alone regressed a real, already-tested behavior, and the full suite
+caught it before it went anywhere. A level gained mid-conversation (a topic's
+`fx` granting xp) leaves `s.talking` set while `roomMenu` rightly shows the
+pending perk-pick menu instead (`s.perkPicks`, checked ahead of talk mode,
+`:2632-2636`) — but `inTalkMode` alone doesn't know that, so a first pass at
+this fix made `allActions` hand back the conversation's topics while
+`legalActions` was already showing the perk menu, the two disagreeing about
+what was legal. `test/party.test.ts:632`'s existing "the perk and class menus
+still take precedence over an open conversation" caught it immediately
+(`no action "perk: Second Wind (+3 max hp)" in va_chapel`) — and so did the
+`reach.json` walkthrough replay itself, which levels up mid-conversation with
+the gray priest at `va_chapel` for exactly this reason. Root-caused rather
+than patched around: added `talkShowing` (`:2566-2570`), one predicate
+mirroring `roomMenu`'s own class-phase/perk-pick precedence exactly, now
+called by both `roomMenu` (`:2638`) and `allActions` (`:2514`) so the two can
+no longer independently — and wrongly — disagree on what "in conversation"
+means.
+
+Added regression coverage two ways: `test/menu.test.ts:271-357` gets the
+conversation twin of the room-numbering tests already there — "a conversation
+topic keeps its number on whatever page it is showing" and "...still names
+the same topic from another," a synthetic 24-topic NPC mirroring `crowded()`'s
+existing room tests — and the pre-existing `test/party.test.ts:632` precedence
+test now doubles as a regression test for the interaction this fix could have
+broken.
+
+`npm run verify`: green. 336/336 tests (two added by this entry), all three
+worlds validate and win-prove (`lighthouse` 27t, `vale` 38t, `reach` 240t,
+every menu at or under the 12 cap, `reach` peaking exactly at it), both
+crawls clean (0 over-cap menus on either pass), mock-player and measure both
+completed. Re-ran the Claim-A probe against the fixed engine afterward too:
+still 0 mismatches across the same 1774 actions, confirming the conversation
+fix left turn-accounting untouched.
+
+`queue/P1-issue-4839330e.json` moves to `done/`: Claim A is not reproducible
+and is structurally ruled out; Claim B's first example is the already-
+deferred `65675d14`/`d3907169` mechanism, correctly left alone; Claim B's
+second example was a genuine, different, previously-unconfirmed bug, now
+fixed with tests and `npm run verify` green.
+
+### Wave 6's wayfinding cluster: Wardmoor's four gateway roads were the real gap, Ashwood's grid is a real gap that isn't cheap, three more already answered
+
+Five fresh wayfinding tickets, checked one at a time against what this session
+has already settled: wilderness exit reciprocity (`:4530-4629`, confirmed not
+a bug), the persistent compass/waypoint-note ask (`3ddba1f3`, real,
+deliberately deferred, still open — "`a real, separate feature... that
+nothing here builds`," `:1382-1384`), and the Iron Downs entrance-bearings
+placement fix (`:4052-4153`) as the model for "is the existing mechanism
+just missing somewhere it should be."
+
+**`P1-issue-2246e5db`** ("Ashwood... the Iron Downs approach to Cinderhall...
+many similarly-described rooms... exits that don't obviously connect back")
+is two claims in one ticket. The Iron Downs half is already fully answered:
+`ir_south_track`/`ir_east_road` carry `ir_south_bearings`/`ir_east_bearings`
+from the prior fix (`world/reach/ir_irondowns.json:26,65`), and the
+`ir_downs` grid itself already carries a `["bearings"]` action on every one
+of its 24 open cells (`w=6,h=5`, 6 walls at `:2014`, 24 `spots` counted
+directly against `w*h-walls` — exact). Nothing left to fix there.
+
+The Ashwood half is real, and it is not the density violation
+`docs/region-brief.md`'s own numeric rule would catch. `va_wood`
+(`world/reach/va_wood.json:2-303`) is `w=4,h=4`, zero walls, 16 open cells,
+16 hand-named `spots` — one per cell, the `scenes` pool left empty entirely
+— so it already exceeds "at least as many scenes as open cells," and every
+spot carries its own concrete detail (Widow's Well, Wolf Scrape, Twin
+Stones...), never a generic line. The actual gap: unlike every other
+wilderness grid in the realm (`em_wild`, `ir_downs`, `wm_wild`, `kw_wild`,
+etc., each confirmed carrying `<region>_bearings_x_y` on every cell),
+`va_wood`'s 16 cells carry **zero** `["bearings"]` actions. The only
+bearings anywhere near it are one hand-written line at the linked
+`va_watchtower` (`:508-515`, reached only via cell `[3,1]`'s own east exit)
+and `va_gate_bearings` one hop south at the village gate
+(`va_village.json:15`). A player deep in the grid — the corners are 4-5 hops
+from either — can wander several similarly-textured rooms before reaching
+anywhere that orients them, which is exactly the report and exactly the
+shape of gap the Iron Downs fix targeted.
+
+Applying the identical fix is not cheap here the way it was for Iron Downs'
+two low-traffic corridors. Replayed the walkthrough and all 13 proofs
+through the grid directly (`newState`/`step`, not guessed): 15 of `va_wood`'s
+16 cells sit on at least one proven route — only `va_wood_3_3` (Antler
+Stake) is touched by none — because the grid is small and several classes'
+proofs each cut a different diagonal through it. Added one `["bearings"]`
+action per cell (matching every sibling grid exactly) and ran `npm run
+verify`: the main walkthrough absorbs it fine (439.79 -> 440.80 against a
+450 cap), but five of the per-road ratchets, already living within a
+fraction of a character of their own ceiling, go over — `regent_deposed`
+451->453.0, `reach_burned` 451->452.3, `gray_crown` 452->453.7,
+`reach_at_rest#scout` 452->453.5, and `crowned_hollow#bloodied` (the realm's
+fight proof, which kills three of the grid's four hostiles) 523->536.5.
+Paying for that would mean trimming several hundred characters of prose off
+five different endings — several changes, not the one this cluster is
+supposed to be. Reverted (`git checkout -- world/reach/va_wood.json`;
+`scripts/budget.ts --terse` back to the pre-edit `avg 439.7546`). Left as a
+documented, real, not-yet-affordable gap — the same bar `be79b069`,
+`fc1a4039`, `3ddba1f3`, `5109e8d6` and `f5fa61c0` are already held to, not
+the density defect the brief's own rule would have caught. A one-of-sixteen
+partial (the single free cell) was considered and rejected: it would read as
+arbitrary, not as a fix. `queue/P1-issue-2246e5db.json` stays in `queue/`,
+open.
+
+**`P2-issue-6db154a1`** ("the path from the Vale to Coldpass/Marrowgate is
+not signposted... I wandered through the Kingswood... before finding the
+actual Wardmoor→Coldpass road") got the Iron-Downs-style trace the task
+asked for, and this time it found a real, fixable gap. Traced the actual
+shortest route first: the Vale connects to Wardmoor directly, one hop, via
+`va_barrow_field` (on Act 1's own critical path, unmissable — its own desc
+says "a road climbs north toward the moor," `va_barrow.json:5,18`) ->
+`va_north_road` ("The watch-stone. Wardmoor north," `va_village.json:307-313`)
+-> `wm_south_gate`. Wardmoor in turn has four gateway roads to its
+neighbors — `wm_south_gate` (Vale), `wm_west_road` (Iron Downs),
+`wm_east_road` (Hollowbrook), `wm_north_road` (literally "the north road to
+Coldpass") — checked all four the way the Iron Downs investigation checked
+its two. Three of the four (`wm_west_road`, `wm_east_road`, `wm_north_road`)
+carried no actions at all, bearings or otherwise; the fourth
+(`wm_south_gate`) had two read-a-notice finds but no bearings either. The
+region's own hub, `wm_parade`, does carry a hand-written `wm_bearings`
+action (`wm_wardmoor.json:106-115`) that already says the right thing —
+"Coldpass: the north road, from the record-house" — but it sits two hops
+from three of the four gateways (through `wm_armoury`/`wm_barracks`/
+`wm_record_house`, none of which carry bearings either), not the
+one-hop-from-every-entrance pattern the Vale's and Thornwold's own hubs
+keep. Same shape as the Iron Downs gap — a region's entrance corridors
+missing the mechanism every sibling entrance carries — just on four roads
+instead of two.
+
+Fixed with the exact existing pattern, nothing invented: added
+`wm_south_bearings`/`wm_west_bearings`/`wm_east_bearings`/`wm_north_bearings`
+(`{"label": "get your bearings", "fx": [["bearings"]], "free": true}`) to
+the four gateway rooms (`world/reach/wm_wardmoor.json`: into `wm_south_gate`'s
+existing `actions` array, and a new one-entry array each for the other
+three). Cost checked the same way as Ashwood above, not assumed: replayed
+the walkthrough and all 13 proofs through these rooms — the walkthrough and
+10 of 13 proofs never enter Wardmoor at all (the walkthrough reaches
+Coldpass via Saltkerns' smugglers' route instead, one of the four ways the
+game's own text names), and the three that do (`reach_burned`,
+`reach_bargained`, `regent_deposed#warden_crown`) visit each gateway once.
+`scripts/budget.ts --terse`: byte-identical, `avg 439.7546` both before and
+after — these rooms are entirely off the walkthrough. `npm run verify`:
+green (336/336 tests, all three worlds validate and win-prove, both crawls
+clean, 0 over-cap menus). `node --import tsx scripts/audit-bearings.ts
+world/reach.json` (whole realm, no filter): `wm` legs walked went 78 -> 90
+(measured both ways, by stashing and restoring the change), 0 wrong either
+time; realm-wide, 0 of 886 legs wrong. `queue/P2-issue-6db154a1.json` moved
+to `done/`.
+
+**`P2-issue-15a4244d`** ("add a direct 'toward Coldpass' bearing hint
+earlier... at the Vale gate or in Act 2's status text, once 3 hollows are
+rested") asks for content that already exists at the location it names.
+`world/reach.json`'s staged `objectives` (rendered free, any time, via
+`status` — `src/format.ts:297-300`) carries, for the whole of Act 2
+regardless of hollow count: "North — Wardmoor, and above it Coldpass and the
+road to the capital." That is the Wardmoor-then-Coldpass direction, in Act
+2's status text, already — not gated behind 3 hollows specifically, but
+present from the moment Act 2 opens, earlier than the ticket's own ask. The
+"Vale gate" alternative it names is a poorer fit on inspection: a hint keyed
+to "3 hollows rested" cannot fire before Act 2 exists, by which point a
+player is rarely still standing at the Vale's gate. The narrower, dynamic
+reading (compass-style output keyed to the exact hollow count, rather than
+static regional prose) is the same shape as `3ddba1f3`'s persistent compass
+note — real, but a different, larger feature than "point at what already
+exists," and already tracked there rather than duplicated here. Superseded
+on the same "the information is already free and already there" bar this
+session has closed several tickets on before (`:1544-1554`, `:3991-3999`);
+`queue/P2-issue-15a4244d.json` moved to `done/`.
+
+**`P2-issue-0e41b47a`** ("a lightweight 'you've been here before, the way
+back to X is...' hint when re-entering a previously visited overworld node")
+reads close to `3ddba1f3` but is a different ask, checked rather than
+assumed: `3ddba1f3` wants a bearing *angle* toward a place never visited
+("the Iron Downs are roughly NNW of here"); this ticket wants the way back
+to somewhere already stood in. The second one already ships. `wildBearing`
+(`src/engine.ts:836-888`) walks the player's visited landmarks inside
+whatever wilderness grid they stand in and prints the nearest one's name and
+legs — "Black Thorn Stand: one west" — and `src/format.ts:226-229` calls it
+unconditionally on every non-dark render, not gated behind a first-time flag
+or a player choosing to look. That is a stronger version of the ask (every
+screen, not just "when re-entering"), for exactly the case this report and
+`P1-issue-2246e5db` both center on: large outdoor grids. It does not extend
+to authored, non-grid rooms (settlements, hubs), but those are fewer,
+already distinctly named, and an always-on line added to every authored
+room realm-wide would hit the same "a universal hint costs more than the
+ratchet has" wall this session has measured more than once (most recently
+above, on Ashwood). Superseded; `queue/P2-issue-0e41b47a.json` moved to
+`done/`.
+
+**`P2-issue-52cb08d7`** ("'travel to a known place' only moves between
+visited landmarks... until the game explicitly called it out after the
+first two rooms") already fires at the earliest state permits, and already
+says the exact thing the report wanted said. `travelAvailable`/
+`knownLandmarks` (`src/engine.ts:892-1007`) require having actually stood in
+a second landmark room — there is no way to explain the feature's scope
+before that state exists, since the player has not yet seen the thing being
+scoped. `src/engine.ts:3412-3414` fires the one-time hint the very next step
+after the precondition first holds ("Once, the first time fast travel is on
+the menu: a playtester walked the whole map on foot for ninety turns before
+noticing the entry"), and its text already reads: "'travel to a known
+place' moves you between the landmarks you have seen, not every room, in
+one turn" — verbatim the clarification the ticket says was missing, just
+necessarily a room or two after the fact rather than before the feature
+exists to describe. Checked the fixed intro rules line too (`renderIntro`,
+`src/format.ts:536-556`): it does not mention travel at all, so there is no
+earlier, vaguer promise setting a wrong expectation either. Non-finding,
+working as designed; `queue/P2-issue-52cb08d7.json` moved to `done/`.
+
+One content change this entry (`world/reach/wm_wardmoor.json`); `npm run
+verify` green before and after it (336/336 tests, all three worlds validate
+and win-prove clean, both crawls clean, 0 over-cap menus), and
+`scripts/audit-bearings.ts world/reach.json` clean realm-wide, both re-run
+after the change and again just before finishing against the shared tree.
+`world/reach/va_wood.json` was edited and measured for the Ashwood finding
+above, then fully reverted — `git status` confirms it carries no diff.
