@@ -2749,7 +2749,7 @@
     "ir_hound": {
       "name": "The Slag-Hound",
       "start": [["flag", "said_ir_ness_greet"]],
-      "done": [["npcDead", "ir_cave1_beast"]],
+      "done": [["any", [["flag", "ir_cave1_done"], ["npcDead", "ir_cave1_beast"]]]],
       "stages": [
         {
           "if": [["npcDead", "ir_slaghound"], ["!npcDead", "ir_cave1_beast"]],

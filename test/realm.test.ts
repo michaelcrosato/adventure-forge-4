@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { actionByLabel, actionLabel, bearingsHere, condOk, inTravelMode, journal, legalActions, newState, oddsHint, pathTo, roomView, step, travelAvailable } from "../src/engine.ts";
 import { render, renderStatus } from "../src/format.ts";
-import { validateWorld } from "../src/validate.ts";
+import { loadWorld, validateWorld } from "../src/validate.ts";
 import { EPILOGUE_CAP, MENU_CAP } from "../src/types.ts";
 import type { RoomDef, State, World } from "../src/types.ts";
 
@@ -284,6 +284,51 @@ test("the journal starts, advances, completes, or fails on conditions — and ev
   const sold = step(world, state, actionByLabel(world, state, "sell the ring")!);
   assert.match(sold.events.join(" "), /Quest closed: The Widow's Ring\./);
   assert.match(renderStatus(world, sold.state), /Closed: The Widow's Ring/);
+});
+
+/**
+ * Four real quests, found by the same shape as va_verses (item 8's follow-up
+ * session): `done` satisfied by only some of several mutually-exclusive ways
+ * the underlying situation resolves, no `failed` for the rest, so status kept
+ * naming a next step that had already become impossible. Each check forces
+ * only the flags that name the killer condition — the reachability of those
+ * flags is a content fact, checked by hand against the actual actions that
+ * set them, not by replaying a route to them here.
+ */
+test("four quests close instead of staying active forever when their asker's situation resolves without them", () => {
+  const world = loadWorld("world/reach.json");
+  const status = (id: string) => journal(world, { ...newState(world, 1).state, flags: forced }).find((q) => q.id === id)?.status;
+  let forced: Record<string, true>;
+
+  // rank_watch: swearing the first Reeve's oath at the stone (wm_oathsworn)
+  // forecloses the Watch's own commission — the Captain-General refuses it
+  // outright ("I won't put my seal on the first Reeve's") and watch_sworn
+  // can never be set.
+  forced = { said_wm_sgt_rook_duty: true, wm_oathsworn: true };
+  assert.equal(status("rank_watch"), "failed");
+
+  // me_q_dams: the Ironbound's own march (iron_march_burn_me) can burn the
+  // Meres' hall without the player ever choosing what happens to the dams —
+  // me_hollow_burned sets with none of the three dam outcomes.
+  forced = { me_entered: true, me_hollow_burned: true };
+  assert.equal(status("me_q_dams"), "failed");
+  // the player's own burn (which sets me_dams_blown in the same fx) still completes it
+  forced = { me_entered: true, me_hollow_burned: true, me_dams_blown: true };
+  assert.equal(status("me_q_dams"), "done");
+
+  // rank_iron: exposing, cornering, denouncing, or killing Aldous (all four
+  // set ir_aldous_gone) removes him from the world before he can swear
+  // iron_sworn — a companion arc (Tamsin's mine) can strand a rank quest.
+  forced = { said_ir_aldous_bg_ironbound: true, ir_aldous_gone: true };
+  assert.equal(status("rank_iron"), "failed");
+
+  // ir_hound: the cave template's own non-lethal resolutions (slip past it,
+  // trace its spoor, feed it the carcass) all set the stamp's $done and move
+  // the beast out of the world — npcDead never becomes true, so a bare
+  // `done: [npcDead ir_cave1_beast]` could never close. kw_q_hounds already
+  // has the right shape (`any` with the stamp's own done flag); this mirrors it.
+  forced = { said_ir_ness_greet: true, ir_cave1_done: true };
+  assert.equal(status("ir_hound"), "done");
 });
 
 test("validator: quests need stages with conditions and text", () => {

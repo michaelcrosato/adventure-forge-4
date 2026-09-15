@@ -2025,3 +2025,55 @@ doesn't, already past it). Measured against all 13 roads and the
 walkthrough: every number unchanged — nothing currently proven crosses an
 implicit floor this way, so the fix is free today and only pays for
 itself the next time content does. `npm run verify` green throughout.
+
+### Four more quests with the same shape as `va_verses`, found by pattern
+
+`va_verses`'s bug — `done` satisfied by only some of several
+mutually-exclusive resolutions, no `failed` for the rest — was found by
+accident, chasing a different report. Once it had a name, it was
+checkable: every quest in the realm without a `failed` clause (106 of
+140), asking for each whether the situation it tracks has a resolution
+path that sets neither `done` nor anything else. Four real ones, all
+reachable, none of them the report that started the search:
+
+- **`rank_watch`** (`world/reach/ranks.json`) — swearing the first Reeve's
+  oath at the stone (`wm_oathsworn`) forecloses the Watch's own
+  commission outright; the Captain-General's reply is already written for
+  it ("I won't put my seal on the first Reeve's. Wear the one you've
+  got.") and sets nothing. `watch_sworn` could never follow.
+- **`me_q_dams`** (`world/reach/me_folk.json`) — the Ironbound's own march
+  (`iron_march_burn_me`, an automated `clock` event, not a player choice)
+  can burn the Meres' hall without the player ever picking what happens
+  to the dams. The quest already had a stage written for exactly this —
+  *"The Hall's burning already answered the dams' question. Nothing left
+  to decide there."* — the author saw the dead end and wrote around it
+  instead of closing it.
+- **`rank_iron`** (`world/reach/ranks.json`) — exposing, cornering,
+  denouncing, or killing Aldous (Tamsin's companion arc; all four set
+  `ir_aldous_gone`) removes him from the world before he can swear
+  `iron_sworn`. A companion's own arc stranding an unrelated rank quest
+  is the least obvious of the four.
+- **`ir_hound`** (`world/reach/ir_irondowns.json`) — `done` was a bare
+  `["npcDead", "ir_cave1_beast"]`, but the `cave` stamp's three
+  non-lethal resolutions (slip past it, trace its spoor, feed it the
+  carcass) all move the beast out of the world without killing it —
+  `npcDead` can never become true. The exact same stamp shape at
+  `kw_q_hounds` already has the right form, `["any", [["flag",
+  "kw_hound_barrow_done"], ["npcDead", "kw_hound_barrow_wight"]]]`;
+  `ir_hound` is the one quest in the realm that didn't accept its own
+  stamp's `$done`, so it was fixed to match rather than invented fresh.
+
+Three got a `failed` clause naming the foreclosing flag; `ir_hound` got
+its `done` widened to the stamp's own convention. `test/realm.test.ts`
+gets one test covering all four, forcing only the killer flags directly
+(the reachability of each is a content fact already traced by hand
+against the actual actions that set them, not re-proven by a route in the
+test). Measured against all 13 roads and the walkthrough: no number
+moved. What was **not** re-checked, and is worth a future pass: `var`/
+reputation-threshold completions (`rank_church`, `rank_free`, `rank_crown`
+all gate their only `done`-setter behind `rep_* >= 9`, unmodeled here),
+class-exclusive completion paths, the undercity/palace act-3 quests
+(width-only pass), and the five stamp templates besides `cave` and
+`barrow` (`tower`, `mine`, `camp`, `chapel`, `hut`) — `ir_hound` was
+exactly this class of bug, so the others are worth walking the same way.
+`npm run verify` green throughout.
