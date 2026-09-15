@@ -1431,3 +1431,45 @@ sized to fit either pool is not a realistic ask right now. Not re-run as
 a second experiment (the mechanism and the numbers are already on the
 record above); left open rather than superseded, since both reports are
 correct that the warning arrives late.
+
+### The choice text was lying about the win-condition math
+
+`P2-issue-c13e4bc4`: "Label 'bargain' outcomes inline as counting toward
+the hollow-rested tally, matching what status already says, so the choice
+text and win-condition math agree." Checked `hollowRoute` (`src/engine.ts`,
+the function behind every "(settles this hold's grief: …)" preview) — it
+matched a hold's `_hollow_bargained` flag and returned "a bargain:
+quieter, not rested" unconditionally, before ever looking at whether the
+same effect list also touched `hollows_rested`.
+
+It always does. Swept every fx array in the loaded world containing an
+`addvar hollows_bargained`: 21 sites, all fifteen holds, and every one
+also carries `addvar hollows_rested` in the same list — universal, not a
+sample. `status`'s own track label already said so ("Hollows rested
+(holds only; a bargain counts)"); the in-the-moment preview was the one
+piece of text that hadn't caught up. Fixed to "a bargain: quieter, but it
+counts" — three characters longer, accurate, and `test/party.test.ts`'s
+synthetic fixture (which had `hollows_rested` in its own "vow" action's fx
+the whole time, and asserted the old text anyway) updated to match.
+verify green, no proof or walkthrough budget moved measurably.
+
+`P2-issue-df45b972` wanted the "counts vs doesn't" distinction visible in
+the moment rather than only in `status`, for grief sites smaller than a
+whole hold. That contrast already exists two ways: `hollowRoute`'s tag
+appears only on actions that actually touch a hold's fate, so its absence
+on a side quest's own resolution is itself the signal, and the journal
+marks a quest whose `done` settles a hollow "(this hold's grief)" apart
+from a hold's ordinary side threads. Superseded on the strength of the
+bargain fix plus these two existing, already-contrasting signals.
+
+`P2-issue-f5fa61c0` wants the tally in the main HUD line, not just
+`status`. `world.hud` carries exactly one entry (`gold`) on purpose — the
+turn header used to also restate the running score and that cost 2,328
+characters along the walkthrough "to tell a player something no turn of
+theirs had changed," so it moved to `status`, where a whole telling is
+free. A hollows-rested counter is the same shape of always-present,
+rarely-changing number the header was already trimmed of once; adding it
+back costs roughly what removing the score saved, multiplied across every
+turn rather than paid once. Left open rather than superseded — the ask is
+reasonable, but reintroducing the pattern the header was deliberately
+cleared of is a bigger call than this cycle should make alone.
