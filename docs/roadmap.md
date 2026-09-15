@@ -1539,3 +1539,72 @@ realm does today, each touching many topics rather than one room; neither
 is a quick fix and neither has more than its own single report behind it.
 `P2-issue-1c7364d4` (an on-screen breadcrumb mid-walk) is the same shape
 as `3ddba1f3`'s compass note above — a real feature, not built.
+
+### Item 10: a sixteenth hold, and its problem is not a grief-hollow
+
+Longford (`lf`), a toll crossing on the Lastwater between Pennywell and the
+Shieldings. Per the order's own item 10, its crisis is deliberately not a
+grief-hollow: Captain Voss holds the last free ford behind a barred rail and
+a toll he keeps doubling, and nothing rests, burns, or bargains here —
+`hollows_rested/burned/bargained` are untouched by design, so Coldpass's
+three-hollow gate reads exactly as it did before this hold existed. The
+region still follows the brief's shape (a settlement, one wilderness grid,
+three stamps, an authored crisis site, a quest web, faction and companion
+consequences, an epilogue) built around a different verb: not *rested*, but
+*settled*.
+
+**The three roads**, all at `lf_tollgate`, mutually exclusive on a shared
+`lf_ford_done` gate:
+
+- **force** — break the rail (might 10), or kill Voss outright (both route
+  through the same flags). `lf_ford_broken`: score 15, `rep_crown` −2,
+  `rep_free` +2, Tamsin +1.
+- **bargain** — pay 8 gold, or talk him down (will 11). `lf_ford_bought`:
+  score 20, `rep_crown` +2, `rep_free` −2, Lys +1.
+- **words** — confront him with proof the toll was never his: the
+  keeping-fee grant (Nan's strong-box, wits 10 to find) or his own writ
+  (pressed out of him in conversation, gated on a hint from Marren).
+  Confronting is wits 8/11 alone, 6/9 with Corporal Nye backing (he needs
+  the same proof shown to him first). `lf_ford_freed`: score 25, `rep_crown`
+  −2, `rep_watch` +2, Vell +1, Osk +1. The highest-scoring road is also the
+  one that asks the most legwork — evidence, then a witness — same shape as
+  the fifteen holds' own rest-over-burn incentive.
+
+**Numbers**: 31 rooms (6 settlement, 16 wilderness cells all named, 2 in the
+crisis site, plus 3 stamped side-trips), 10 npcs (6 with dialogue, 29
+topics), 6 items, 5 quests (1 main, 4 side — the evidence thread, the
+corporal's arc, a pilgrim's deadline, the ferrywoman's closure), 3 stamps
+(cave, hut, chapel — the chapel is deliberately the pilgrim's own
+destination), 14 variants, 7 epilogue lines. Two gateway links, both
+declared from the neighbor's side for a reason below: Pennywell's south
+bank and the Shieldings' boundary hedge.
+
+Shipped at 0% corridors for every class (blind and per-class both), after
+the first pass came in at 26–35% per class — worse than any of the fifteen
+holds, because a 31-room region has less room to absorb a bare cell than a
+50-room one does. Fixed by giving every flagged cell either a free beat or a
+second, unguarded action alongside its original class-gated one, per the
+brief's "gate four ways or fill it for everyone." `audit-echo` caught two
+names reused from elsewhere in the realm (an npc "Sella" already in
+Ironholt, a "Ferry Chapel" already in Pennywell) — renamed to Marren and
+the Broken Oar Chapel rather than left to collide. `audit-choices` caught
+one genuinely dead flag (`lf_box_searched`, redundant with the item check
+that already gated the same topic) — deleted rather than kept for show.
+
+**The one thing the DSL didn't stop me from getting wrong**: a `gen`
+region's `links[].back` field adds the return exit onto the *target* room,
+but only if that room already exists — and `world.gen` expands in file
+order, alphabetical by filename. Longford's own wilderness file sorts
+before Pennywell's and the Shieldings', so a link declared from Longford's
+side reaching into either neighbor silently dropped its own back-exit: no
+error, just an unreachable region, because the neighbor's cell didn't exist
+yet when Longford's link tried to write to it. The fix that shipped is
+mechanical — declare the link from the later-sorting file instead, reaching
+back into the one already expanded — but the silence is a real gap:
+`worldgen.ts`'s own header promises "a world that cannot expand cannot
+load," and this was a world that half-expanded and loaded anyway.
+`expandRegion`'s back-link branch now throws by name when the target isn't
+there yet (`test/worldgen.test.ts`, "a back link into a gen region
+processed later throws instead of silently dropping the exit"), so the next
+region whose name sorts early gets a pointed error instead of a validator
+report three steps removed from the cause.

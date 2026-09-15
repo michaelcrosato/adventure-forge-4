@@ -1,0 +1,412 @@
+{
+  "regions": { "lf": { "name": "Longford" } },
+  "rooms": {
+    "lf_landing": {
+      "name": "Longford — the Landing",
+      "desc": "Packed gravel above the waterline, a rope corral for pack-mules, and a toll-board nailed to a post nobody stands near to read. The Lastwater runs wide and slow here, the ford a pale scar under the current. A camp of tents and a barred rail sit on the far bank.",
+      "brief": "The landing, a toll-board, the ford beyond.",
+      "region": "lf",
+      "landmark": "Longford",
+      "exits": {
+        "west": { "to": "lf_row" },
+        "east": { "to": "lf_inn" },
+        "south": { "to": "lf_ferry_house", "landmark": "the ferry house" },
+        "across": { "to": "lf_tollgate", "landmark": "the toll rail" }
+      },
+      "onEnterOnce": [
+        ["set", "lf_entered"],
+        ["xp", 2],
+        [
+          "if",
+          [["!flag", "lf_first_told"]],
+          [
+            ["set", "lf_first_told"],
+            ["say", "This is Longford: the last free crossing on the Lastwater, until it wasn't. A Crown captain sits the far bank now with a toll-board and a rail, and charges what the road will bear."]
+          ],
+          []
+        ]
+      ],
+      "variants": [
+        {
+          "if": [["flag", "lf_ford_broken"]],
+          "brief": "The landing. The far rail stands open, unguarded now.",
+          "desc": "Packed gravel above the waterline, a rope corral gone quiet. The Lastwater runs wide and slow. The far bank's rail hangs open on one hinge, and nobody has bothered to shut it."
+        },
+        {
+          "if": [["flag", "lf_ford_bought"]],
+          "brief": "The landing. A fixed toll, posted plain.",
+          "desc": "Packed gravel above the waterline. The toll-board carries a new notice, a fixed sum in a clerk's careful hand, and travelers pay it without the argument they used to have."
+        },
+        {
+          "if": [["flag", "lf_ford_freed"]],
+          "brief": "The landing. The toll-board's come down.",
+          "desc": "Packed gravel above the waterline. The toll-board lies face-down in the rope corral, pried loose, and the ford's traffic moves both ways without anyone standing over it."
+        }
+      ],
+      "actions": [
+        { "id": "lf_landing_bearings", "label": "get your bearings", "free": true, "fx": [["bearings"]] },
+        {
+          "id": "lf_read_board",
+          "label": "read the toll-board",
+          "free": true,
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "A crown-and-stag seal at the top, genuine enough, and under it a toll crossed out and rewritten twice, each time higher. Whoever set the last number didn't expect a literate reader."]
+          ]
+        }
+      ]
+    },
+    "lf_row": {
+      "name": "Rowan's Cross",
+      "desc": "A crossroads shrine gone informal: a fire-pit, bedrolls under an old rowan, and a dozen travelers who have been here longer than a night. Nobody sits at the fire who wanted to.",
+      "brief": "A stranded camp under a rowan tree.",
+      "region": "lf",
+      "npcs": ["lf_sella", "lf_aldric"],
+      "exits": { "east": { "to": "lf_landing" }, "west": { "to": "lf_watchpost" } },
+      "onEnterOnce": [["xp", 1]],
+      "actions": [
+        {
+          "id": "lf_row_count",
+          "label": "count who's waiting",
+          "free": true,
+          "once": true,
+          "if": [["class", "scout"]],
+          "fx": [
+            ["xp", 1],
+            ["say", "Fourteen bedrolls for eleven people, which means three left rather than pay and didn't take their gear. You mark the packs anyway — a scout reads a camp before he reads the people in it."]
+          ]
+        }
+      ]
+    },
+    "lf_inn": {
+      "name": "The Two Banks",
+      "desc": "A low common room built from a beached barge, timbers and all, with the tiller still mounted over the hearth for no reason anyone remembers. Eda keeps it, and keeps opinions to herself until asked twice.",
+      "brief": "An inn built from a beached barge.",
+      "region": "lf",
+      "npcs": ["lf_eda"],
+      "exits": { "west": { "to": "lf_landing" }, "east": { "to": "lf_dock" } },
+      "onEnterOnce": [["xp", 1]],
+      "actions": [
+        {
+          "id": "lf_rest",
+          "label": "rest here",
+          "fx": [["hp", 10], ["say", "You sleep to the sound of water you didn't cross."]]
+        }
+      ]
+    },
+    "lf_dock": {
+      "name": "The Fish Dock",
+      "desc": "A short pier over slack water, nets drying on racks that have held more nets than fish since the toll went up. Salt fish worth nothing on this bank waits on a market three days' walk around by the coast road.",
+      "brief": "A quiet fish dock, nets on the racks.",
+      "region": "lf",
+      "exits": { "west": { "to": "lf_inn" } },
+      "onEnterOnce": [["xp", 1]],
+      "actions": [
+        {
+          "id": "lf_dock_nets",
+          "label": "mend a net while you're here",
+          "free": true,
+          "once": true,
+          "if": [["class", "warden"]],
+          "fx": [
+            ["xp", 1],
+            ["say", "You've mended worse under worse orders. The dock-hand watching says nothing, but she stops watching the water for a minute."]
+          ]
+        },
+        {
+          "id": "lf_dock_count",
+          "label": "count the idle racks",
+          "free": true,
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "More racks than anyone's used this season, and salt fish worth carrying to a market three days round by the coast road nobody has three days to spare for."]
+          ]
+        }
+      ]
+    },
+    "lf_watchpost": {
+      "name": "The Watch Post",
+      "desc": "A lean-to and a cold fire-pit, the Crown stag painted on a shield gone gray with weather. Corporal Nye has been posted here to keep the road, and has spent most of the posting keeping his own counsel about the captain across the water.",
+      "brief": "A Watch lean-to, a corporal keeping his own counsel.",
+      "region": "lf",
+      "npcs": ["lf_nye"],
+      "exits": { "east": { "to": "lf_row" } },
+      "onEnterOnce": [["xp", 1]]
+    },
+    "lf_ferry_house": {
+      "name": "The Ferry House",
+      "desc": "A boat-shed gone quiet, oars racked and unused, a keel's worth of dust on the one skiff still seaworthy. Nan kept the crossing free for thirty years before the captain made her redundant.",
+      "brief": "A disused ferry-shed, one boat left.",
+      "region": "lf",
+      "npcs": ["lf_nan"],
+      "exits": { "north": { "to": "lf_landing" } },
+      "onEnterOnce": [["xp", 1]],
+      "actions": [
+        {
+          "id": "lf_ferry_look",
+          "label": "look over the last skiff",
+          "free": true,
+          "once": true,
+          "fx": [
+            ["xp", 1],
+            ["say", "Sound enough to float, oars sound enough to pull. Nan hasn't sold it, hasn't scuttled it. Whatever she's waiting for, she hasn't stopped waiting."]
+          ]
+        }
+      ]
+    }
+  },
+  "npcs": {
+    "lf_sella": {
+      "name": "Marren",
+      "room": "lf_row",
+      "dialogue": true,
+      "desc": "A trader who has done the sums on how many days her goods have left before the toll costs her more than the goods are worth.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Marren, out of Pennywell, three carts of salt fish going sour while I wait on a toll I can't pay and won't be robbed for. Ask me what you like; I've nothing left to do but talk.",
+          "fx": [["set", "said_lf_sella_greet"], ["xp", 1]]
+        },
+        {
+          "id": "toll",
+          "label": "what the captain's charging",
+          "if": [["flag", "said_lf_sella_greet"]],
+          "once": true,
+          "say": "Started at a fair toll, near as I remember it from three years back. Doubled last spring, doubled again this one. He calls it upkeep on the ford. I call it a man who found out nobody was going to stop him.",
+          "fx": [["set", "lf_heard_toll_history"], ["xp", 1]]
+        },
+        {
+          "id": "writ",
+          "label": "whether he has the right to it",
+          "if": [["flag", "lf_heard_toll_history"]],
+          "once": true,
+          "say": "He waves a seal at anyone who asks, and nobody's fool enough to ask twice with his toll-men standing there. If there's a true writ for what the Crown granted him, it isn't on that board — I've read every word on it.",
+          "fx": [["set", "lf_writ_hint"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "thanks",
+          "label": "the ford opens at last",
+          "if": [["any", [["flag", "lf_ford_broken"], ["flag", "lf_ford_bought"], ["flag", "lf_ford_freed"]]]],
+          "once": true,
+          "say": "Three carts of fish I can still sell, and a road I can still use. Whatever it cost you, it's paid for in more than fish. Safe roads, stranger.",
+          "fx": [
+            ["addvar", "gold", 3],
+            ["xp", 2],
+            ["say", "Marren presses three coin into your hand before you can decline it."]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave Marren to her carts",
+          "say": "Mind the toll-men on your way. They've less patience than I do, and I've none left.",
+          "end": true
+        }
+      ]
+    },
+    "lf_aldric": {
+      "name": "Aldric",
+      "room": "lf_row",
+      "dialogue": true,
+      "desc": "An old man with a shrine-token worn smooth by thumbing, walking to bury something for someone who can no longer walk it themselves.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Aldric. Carrying my sister's ashes to the Broken Oar Chapel, upriver — she asked for it before she died, and I've a month's grace from the Church before the rite window closes. Had a month. Have less of one now.",
+          "fx": [["set", "said_lf_aldric_greet"], ["xp", 1]]
+        },
+        {
+          "id": "toll",
+          "label": "why he doesn't just pay it",
+          "if": [["flag", "said_lf_aldric_greet"]],
+          "once": true,
+          "say": "Because what he's asking would empty what's left of what she left me, and I'll not spend my sister's last coin on a rail some captain hammered into the ground. I'll wait, or I'll swim it, one or the other.",
+          "fx": [["addvar", "appr_osk", 1], ["xp", 1]]
+        },
+        {
+          "id": "crossed",
+          "label": "the rite window closes soon",
+          "if": [
+            ["flag", "said_lf_aldric_greet"],
+            ["any", [["flag", "lf_ford_broken"], ["flag", "lf_ford_bought"], ["flag", "lf_ford_freed"]]]
+          ],
+          "once": true,
+          "say": "\"Three days left in the window,\" he says, already shouldering his pack. \"Three days and a clear road. I'll make it.\" He doesn't thank you in words. He doesn't need to.",
+          "fx": [["set", "lf_aldric_crossed"], ["addvar", "appr_osk", 1], ["score", 2], ["xp", 2]]
+        },
+        {
+          "id": "bye",
+          "label": "leave Aldric to the road",
+          "say": "He nods, already somewhere further up it in his head.",
+          "end": true
+        }
+      ]
+    },
+    "lf_eda": {
+      "name": "Eda",
+      "room": "lf_inn",
+      "dialogue": true,
+      "desc": "Keeps a barge-hull inn and a level head, the two skills that keep a crossing town fed when the crossing stops paying.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Eda. I feed whoever's stuck here, toll or no toll — bad business to starve your own custom. Ask what you like.",
+          "fx": [["set", "said_lf_eda_greet"], ["xp", 1]]
+        },
+        {
+          "id": "voss",
+          "label": "the captain across the water",
+          "if": [["flag", "said_lf_eda_greet"]],
+          "once": true,
+          "say": "Voss. Crown-commissioned, or was — I've served him supper and he never once let slip what his actual writ says. A man doesn't hide a fair number.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "nan",
+          "label": "the ferrywoman",
+          "if": [["flag", "said_lf_eda_greet"]],
+          "once": true,
+          "say": "Nan ran that crossing free thirty years, her mother before her. Voss put a rail up the week he arrived and told her the river belonged to the Crown. She hasn't said ten words to a stranger since. Might say more to you.",
+          "fx": [["set", "lf_heard_nan_hint"], ["xp", 1]]
+        },
+        {
+          "id": "resolved",
+          "label": "ask what business looks like now",
+          "if": [["any", [["flag", "lf_ford_broken"], ["flag", "lf_ford_bought"], ["flag", "lf_ford_freed"]]]],
+          "once": true,
+          "say": "\"Fuller tables and shorter tempers,\" Eda says, already pouring for someone new. \"Longford was always a crossing town. Feels like one again.\"",
+          "fx": [["addvar", "rep_free", 1], ["xp", 1]]
+        },
+        {
+          "id": "bye",
+          "label": "leave Eda to her hearth",
+          "say": "Mind yourself on the water. I'll have a bed made up either way.",
+          "end": true
+        }
+      ]
+    },
+    "lf_nan": {
+      "name": "Nan",
+      "room": "lf_ferry_house",
+      "dialogue": true,
+      "desc": "Thirty years of river work in her hands and none of it left to do. She watches the water the way other people watch a door they're waiting to be knocked on.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "if": [["flag", "lf_heard_nan_hint"]],
+          "once": true,
+          "say": "Nan. I crossed this water for anyone who asked, thirty years, no toll, no board. Then a captain came with a seal and a rail and I stopped being anyone the river needed.",
+          "fx": [["set", "said_lf_nan_greet"], ["xp", 1]]
+        },
+        {
+          "id": "record",
+          "label": "whether the crossing was ever chartered",
+          "if": [["flag", "said_lf_nan_greet"], ["flag", "lf_writ_hint"]],
+          "once": true,
+          "say": "Chartered, no — free crossings needed no charter. But the Crown granted my grandmother a keeping-fee once, in writing. That paper's in the old strong-box, under the ferry-house floor — if Voss's men never found it.",
+          "fx": [["set", "lf_box_hint"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "box",
+          "label": "search the ferry-house floor",
+          "if": [["flag", "lf_box_hint"], ["!has", "lf_keeping_grant"]],
+          "say": "You start counting floorboards.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              10,
+              [
+                ["move", "lf_keeping_grant", "inv"],
+                ["score", 3],
+                ["xp", 3],
+                ["say", "A loose plank, a tin box gone green, and inside it a single sheet in a clerk's old hand: the keeping-fee grant, sealed, naming the ford a free crossing the Crown pays to maintain, not a toll the Crown collects."]
+              ],
+              [
+                ["say", "You find the loose plank Nan means, and three others just like it. Whichever one hides the box, it isn't this one."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "resolved",
+          "label": "ask what she makes of it now",
+          "if": [["any", [["flag", "lf_ford_broken"], ["flag", "lf_ford_bought"], ["flag", "lf_ford_freed"]]]],
+          "once": true,
+          "say": "Nan looks at the water a long moment. \"Doesn't give me thirty years back. Gives the next thirty to somebody, though. That'll do.\"",
+          "fx": [["set", "lf_nan_closure"], ["addvar", "appr_lys", 1], ["xp", 2]]
+        },
+        {
+          "id": "bye",
+          "label": "leave Nan to the water",
+          "say": "She's already looking past you at the river again before you're out the door.",
+          "end": true
+        }
+      ]
+    },
+    "lf_nye": {
+      "name": "Corporal Nye",
+      "room": "lf_watchpost",
+      "dialogue": true,
+      "desc": "Young for the posting, and old enough already to have learned the difference between an order he has to follow and one he only has to pretend to.",
+      "topics": [
+        {
+          "id": "greet",
+          "label": "who are you",
+          "once": true,
+          "say": "Corporal Nye, Watch, posted to keep the road. I keep it fine. What happens on the far bank isn't road, technically, and I've found a lot of comfort in technically.",
+          "fx": [["set", "said_lf_nye_greet"], ["xp", 1]]
+        },
+        {
+          "id": "orders",
+          "label": "whose orders the captain answers to",
+          "if": [["flag", "said_lf_nye_greet"]],
+          "once": true,
+          "say": "His own, far as I've seen. Highward would want to know if his writ's stretched — the Watch doesn't love a captain making the Crown look like extortion. But it's only a feeling, and a feeling doesn't move anyone.",
+          "fx": [["set", "lf_heard_nye_hint"], ["xp", 1]]
+        },
+        {
+          "id": "proof",
+          "label": "what proof would move him",
+          "if": [["flag", "lf_heard_nye_hint"], ["any", [["has", "lf_keeping_grant"], ["flag", "lf_writ_seen"]]]],
+          "once": true,
+          "say": "That. That would move him. Bring me a true writ that says what he's owed against what he's taking, and I'll carry it to Highward myself — or stand behind you while you carry it. Either way, it stops being a feeling.",
+          "fx": [["set", "lf_nye_will_back"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "resolved",
+          "label": "ask what he makes of it now",
+          "if": [["any", [["flag", "lf_ford_broken"], ["flag", "lf_ford_bought"], ["flag", "lf_ford_freed"]]]],
+          "once": true,
+          "say": "\"Wrote it up plain, for once,\" he says, tapping a fresh page.",
+          "fx": [
+            ["addvar", "rep_watch", 1],
+            ["xp", 1],
+            [
+              "if",
+              [["flag", "lf_ford_freed"]],
+              [
+                ["say", "\"A captain's own writ, turned against his own toll. Highward will want this one twice over. Feels strange, an honest report I didn't have to squint at.\""]
+              ],
+              [["say", "\"Feels strange, an honest report. I could get used to it.\""]]
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "leave Nye to his post",
+          "say": "\"Mind how you go,\" he says, already back to watching the far bank.",
+          "end": true
+        }
+      ]
+    }
+  }
+}

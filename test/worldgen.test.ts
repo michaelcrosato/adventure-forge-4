@@ -102,6 +102,25 @@ test("malformed gen throws instead of loading a broken world", () => {
   assert.throws(() => expandWorld({ ...base(), gen: [region(), region()] }), /already exists/);
 });
 
+test("a back link into a gen region processed later throws instead of silently dropping the exit", () => {
+  // gen regions expand in world.gen order; a link declared from the
+  // earlier-processed region reaching into the later one's cells cannot
+  // place its back-exit there yet, since that room does not exist until its
+  // own region expands. This used to no-op quietly, leaving the target room
+  // reachable one-way only.
+  assert.throws(
+    () =>
+      expandWorld({
+        ...base(),
+        gen: [
+          region({ id: "first", links: [{ cell: [0, 0], dir: "west", to: "second_0_0", back: "east" }] }),
+          region({ id: "second", links: [] }),
+        ],
+      }),
+    /back link east targets second_0_0, which does not exist yet/,
+  );
+});
+
 test("scale: a 25,600-room overworld expands and validates in seconds", () => {
   // 160x160 cells. At 500m a cell that is 6,400 km^2 - Skyrim's map is ~37.
   const t0 = performance.now();
