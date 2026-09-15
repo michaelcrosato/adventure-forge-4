@@ -1265,3 +1265,48 @@ it's the legal-action set itself changing, and item 13 above records why
 that needs more than this cycle. Half fixed, half tracked; closed here
 since the travel half was this finding's own best evidence and the rest
 is item 13's now.
+
+### Six suggestions about a free action nobody thinks to use
+
+`P2-issue-b3560b65`, `-b3855a6a`, `-ee5147e3` want "weigh what this grief
+asks" surfaced earlier or automatically — at a hold's first room, not just
+its grief-site, since a player route-planning a 40-70 turn hold has no way
+to compare its three fates without walking there first. `-fe69d78e`,
+`-61819ef7`, `-38d23d53` want the same for "get your bearings" — offered
+in every hub, on every hold's first entry, on a loop-back — since it was
+"the single most useful navigation tool in the game."
+
+Checked what's already true before designing anything: both actions
+already render with a literal `(free)` tag (`oddsHint`, confirmed live —
+"weigh what this grief asks (free)", "get your bearings (free)" — at
+`th_hollow_glade` and a Thornwold wilderness cell respectively), `bearings`
+is offered 287 times across every wilderness and settlement file, and
+`weigh what this grief asks` (or a hold's own equivalent phrasing) already
+exists in all fifteen holds. The "is it free" and "does every hold have
+one" halves of these six reports are already true; what's left is "a
+player has to already be standing at the site to learn what it asks."
+
+Tried the obvious fix: one `onEnterOnce` line at `va_gate` — the literal
+first room of the game, where `get your bearings` already sits in the
+menu — teaching both mechanics once, to every player, on turn one. It
+broke budget on eight of the thirteen proofs simultaneously
+(`crowned_hollow#bloodied: avg 528.9 > 524`, six others each 1-2 over),
+because `va_gate` sits on all thirteen paths and several were already
+inside a character or two of their own ceiling. A universal hint is only
+free at the point it's shown if every proof that passes through has room
+for it, and eight of them didn't. Reverted rather than pay for it by
+trimming eight unrelated screens to make space — a bigger, separate change
+this cluster doesn't justify on six single-corroboration suggestions.
+
+Left as-is, on the evidence above: the specific "is this safe to try"
+uncertainty these reports raise is already answered by the `(free)` tag
+wherever the action is standing in front of a player, and both actions are
+already about as widely placed as the fifteen-hold, single-hostile-per-room
+conventions allow. What the reports actually want — knowing before the
+walk — is a real, unclosed gap, but the fix is bigger than a line (it's
+budget room that has to come from somewhere, or a mechanism that doesn't
+cost a screen at all, like a `status` addition measured against its own,
+different ratchet) and six reports at one each don't clear the bar this
+project holds a cross-cutting content change to. Superseded, with the
+attempt and its budget cost on the record so the next pass doesn't retry
+the same shape.
