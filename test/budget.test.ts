@@ -31,9 +31,10 @@ const INTRO_CHARS_MAX = 1400;
  *
  * Each entry is that road as it stands, and **may only ever go down**. Raising
  * one to make a change fit is the single thing this test exists to stop. The
- * target for all of them is AVG_CHARS_MAX and MAX_CHARS_MAX; the rooms
- * standing in the way are th_wood_3_1 and va_crypt. mg_hollow_throne,
- * va_throne and mc_north_road are cut down to size (see the block below).
+ * target for all of them is AVG_CHARS_MAX and MAX_CHARS_MAX; the one room
+ * still standing in the way is va_crypt, a fight screen kept at width by
+ * design (see the comment on crowned_hollow#bloodied, below). mg_hollow_throne,
+ * va_throne, th_wood_3_1 and mc_north_road are all cut down to size.
  *
  * Per-road on purpose, and a road not listed here is held to the real bar. One
  * shared "worst of all roads" number would let a new road quietly license
@@ -82,9 +83,9 @@ const INTRO_CHARS_MAX = 1400;
  * needs a line here like the rest.
  */
 /**
- * mg_hollow_throne AND va_throne, CUT DOWN — ITEM 8 IN THE ORDER.
+ * mg_hollow_throne, va_throne AND th_wood_3_1, CUT DOWN — ITEM 8 IN THE ORDER.
  *
- * Both were restating themselves: a desc clause repeating the two exits
+ * All three were restating themselves: a desc clause repeating the two exits
  * printed six lines below it (va_throne only, and the only room in the realm
  * whose desc did this), an ending's own prose saying a thing twice, an npc
  * desc saying what the engine's own pierce warning already says on the same
@@ -92,17 +93,25 @@ const INTRO_CHARS_MAX = 1400;
  * seat" action's nine readiness lines, each carrying about twenty characters
  * of "stands ready:" / "still wants ... and you are short of it" boilerplate,
  * written out twice over (a first-press branch and a byte-identical
- * repeat-press branch). No label, no companion's own voice, and no beat of
- * the Regent's entrance or the barrow king's warnings were touched.
+ * repeat-press branch). th_wood_3_1 was a different shape of the same defect:
+ * an 8%-a-cell wilderness ambush (a gray boar) happened to land, on the
+ * road's own proven seed, on the same cell as Rook, the room's own scripted
+ * encounter — a coincidence, not a line either one owns, so both npc descs
+ * and the quest stage's redundant restatement of its own name got trimmed
+ * rather than either encounter gated away. No label, no companion's own
+ * voice, and no beat of the Regent's entrance or the barrow king's warnings
+ * were touched anywhere.
  *
  *   reach_burned           318 screens   450.7 avg  1,154 -> 1,094 max  (entry removed: meets the real bar both ways)
- *   regent_deposed         271 screens   451.4 avg  1,180 -> 1,092 max
- *   gray_crown             261 screens   452.1 avg  1,125 -> 1,097 max
- *   reach_at_rest#devoted  352 screens   461.7 avg  1,130 -> 1,076 max
+ *   regent_deposed         271 screens   451.1 avg  1,180 -> 1,092 max
+ *   gray_crown             261 screens   451.8 avg  1,125 -> 1,097 max
+ *   reach_at_rest#devoted  352 screens   461.5 avg  1,130 -> 1,076 max
+ *   reach_at_rest#warden   272 screens   445.2 avg  1,146 -> 1,097 max  (entry removed: meets the real bar both ways)
  *
- * `crowned_hollow#bloodied`'s average came down 524.5 -> 523.1 as a side
- * effect, with no line of its own touched — that Warden road walks through
- * va_throne on its way to va_crypt, its own real target.
+ * Several roads moved a few tenths of a character with no line of their own
+ * touched, just from walking through a cut room on the way to somewhere
+ * else: `crowned_hollow#bloodied` 524.5 -> 523.1 (va_throne, on the way to
+ * va_crypt), `reach_at_rest#scout` 451.3 -> 451.0 (th_wood_3_1).
  *
  * What stayed unmeasured until now: the same "weigh the doors" action, pressed
  * with every road ready at once, a state no proof or the crawler ever reaches
@@ -143,8 +152,15 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // mg_hollow_throne for item 8 (450.7 avg, 1,094 max) and needs no entry at
   // all now — the second road, after regent_deposed#warden_crown, to ask
   // nothing of this ratchet.
-  "reach:gray_crown": { avg: 452, max: MAX_CHARS_MAX }, // max cleared 1,125 -> 1,097 cutting va_throne (item 8); avg (481 -> 452.4, above) still owed
-  "reach:reach_at_rest#warden": { avg: AVG_CHARS_MAX, max: 1146 },
+  "reach:gray_crown": { avg: 451, max: MAX_CHARS_MAX }, // max cleared 1,125 -> 1,097 cutting va_throne (item 8); avg (481 -> 452.4, above) still owed, down to 451.8 as a side effect of the th_wood_3_1 cut (this road passes through it too)
+  // reach_at_rest#warden's max came down 1170 -> 1146 above, then, cutting
+  // th_wood_3_1 for item 8, 1146 -> 1097: a gray boar's 8%-a-cell wilderness
+  // ambush happened to land on the same cell as Rook, the room's own scripted
+  // encounter, so two full hostile descriptions and both their opening lines
+  // rendered together — a coincidence, not a line either encounter owns, so
+  // the cut trimmed both npc descs, the quest stage's redundant restatement
+  // of its own name, and the boar's one-time ambush line rather than gating
+  // either encounter away. Meets the real bar both ways now; entry gone.
   // regent_deposed#warden_crown was here at max 1141, then 1131; the same
   // change took it to 1,092 and its average to 445, so it meets the real bar
   // on both counts and needs no allowance at all. Two roads down, eight to go.
@@ -165,7 +181,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // -> 451.79, so 14 of the 16 came back. The last two are the ability doing
   // its job on the wilderness screens that remain, and the honest price of the
   // Scout's one distinctive line. This is 5 chars a screen, not 16.
-  "reach:reach_at_rest#scout": { avg: 451, max: MAX_CHARS_MAX },
+  "reach:reach_at_rest#scout": { avg: 450, max: MAX_CHARS_MAX }, // 451.79 -> 450.95 as a side effect of the th_wood_3_1 cut (item 8; this road passes through it too)
   // The full-party road: four companions travelling, the most expensive proof
   // in the realm, and the ratchet turned down three times on the day it was
   // written. It arrived at 506 average and a 1,489-character screen at

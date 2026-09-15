@@ -475,11 +475,17 @@ instead of the game.
    screen came down 1,180 to 1,092, `reach_burned`'s 1,154 to 1,094 (its
    ratchet entry is gone — it meets the real bar both ways now),
    `gray_crown`'s 1,125 to 1,097, `reach_at_rest#devoted`'s 1,130 to 1,076 —
-   all four clear the real 1,100 with no allowance. What is still over:
-   `reach_at_rest#warden`'s 1,146 (th_wood_3_1, not yet touched) and
-   `crowned_hollow#bloodied`'s 1,295 (va_crypt, a fight screen — narration, a
-   companion going down, and the menu — which is the one place width buys
-   something, and not this pass's target).
+   all four clear the real 1,100 with no allowance. th_wood_3_1 followed the
+   same day: an 8%-a-cell wilderness ambush (a gray boar) happened to land,
+   on this road's own proven seed, on the same cell as Rook, the room's own
+   scripted encounter — two full hostile descriptions and both their opening
+   lines on one screen by coincidence, not by either encounter's own design.
+   Both npc descs and the quest stage's redundant restatement of its own name
+   came down; `reach_at_rest#warden`'s worst screen 1,146 to 1,097, entry gone
+   too. What is still over the real bar, realm-wide: `crowned_hollow#bloodied`
+   at `va_crypt`, 1,295 — a fight screen, narration and a companion going down
+   and the menu, which is the one place width buys something, kept at size on
+   purpose rather than left uncut.
 
    **Nothing measures an off-path screen today** is half-answered, not closed.
    `test/budget.test.ts` now forces mg_hollow_throne's "weigh the doors"
