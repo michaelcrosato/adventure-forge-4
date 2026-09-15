@@ -1719,6 +1719,20 @@ sized to actually clear ~100 characters of average headroom — or from a
 lever that does not cost a new "Left undone" line at all, if one can be
 found — not from re-deriving the numbers above.
 
+**One candidate lever, checked and ruled out (2026-09-15, later the same
+day):** does every region's border have to cost a quest thread, or would
+touching just the outermost wilderness cell — without walking on to the
+region's own settlement — dodge it? Checked directly: it does not.
+`ff_south_road` and `ff_east_road`, Fosterfell's two outermost border
+rooms (literally named for the boundary — "The Bound-Stone," "The
+Goat-Track's Foot"), each carry their own `onEnterOnce` setting
+`ff_entered` and opening `ff_hollow`'s quest on the first step across,
+before any settlement is in sight. There is no undefended edge to brush
+past; the region-entry cost above is priced at the border itself, for
+Fosterfell and (per the same survey, unre-checked here) presumably every
+region alongside it. Doesn't change the verdict, saves the next reader
+from checking the same thing.
+
 ### Item 12: the router, and the three doors that were never the objective
 
 `pathTo` — the search behind a quest stage's `(the way there: ...)`, the one
