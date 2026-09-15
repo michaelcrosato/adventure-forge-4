@@ -343,6 +343,33 @@ test("five quests close instead of staying active forever when their asker's sit
   assert.equal(status("fd_q_bog"), "done");
 });
 
+/**
+ * The same shape one level earlier: not a `done` a foreclosed situation can
+ * never satisfy, but a `start` a foreclosed situation can never trigger, so
+ * the quest never appears at all — not even as failed, its own `failed`
+ * flag notwithstanding. th_q_cal started only on `lys_brother_found`, set
+ * exclusively by meeting Cal at the scout line; burning Thornwold's hollow
+ * (th_burn, gated only on carrying the oil, nothing Cal-related) can kill
+ * him first — th_cal_dead and lys_brother_lost/buried, never found — and
+ * the quest was invisible forever, ready-made stage text for exactly that
+ * outcome sitting unreachable in its own `stages` array.
+ */
+test("th_q_cal starts (and shows failed) even when Cal dies before ever being found", () => {
+  const world = loadWorld("world/reach.json");
+  const status = (flags: Record<string, true>) =>
+    journal(world, { ...newState(world, 1).state, flags }).find((q) => q.id === "th_q_cal")?.status;
+
+  assert.equal(status({ th_cal_dead: true, lys_brother_lost: true }), "failed");
+  assert.equal(status({ th_cal_dead: true, lys_brother_buried: true }), "failed");
+
+  // meeting him first still starts it the original way
+  assert.equal(status({ lys_brother_found: true }), "active");
+  assert.equal(status({ lys_brother_found: true, lys_brother_home: true }), "done");
+
+  // neither has happened yet: correctly not started at all
+  assert.equal(status({}), undefined);
+});
+
 test("validator: quests need stages with conditions and text", () => {
   const world = questWorld();
   world.quests!["empty"] = { name: "Empty", stages: [] };

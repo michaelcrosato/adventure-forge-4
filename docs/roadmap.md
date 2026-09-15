@@ -2402,3 +2402,60 @@ zero of them boring, all three invisible to `--rites` for the reason its
 own comment names. Nothing to fix in the world; nothing to fix in the
 tool either — it was tried once and correctly reverted. Closes the audit
 sweep this document has been working through since the bearings fix.
+
+### The same shape, one step earlier: a quest that never starts
+
+Every quest this session had fixed so far shared one shape: `done`
+satisfied by only some of several ways a situation resolves, no `failed`
+for the rest, so the quest sits "active" forever. `journal()` checks
+`start` before any of that (`src/engine.ts` — a quest whose `start` never
+passes never shows, not active, not done, not failed, regardless of what
+its `done`/`failed` later become). That is a *second*, worse-shaped
+version of the same bug: not stuck open, gone before it ever opened.
+
+`th_q_cal` ("Cal's Reckoning", `world/reach/th_thornwold.json`) started on
+`lys_brother_found` — set in exactly one place, Cal's own `greet` topic at
+the scout line. `th_burn` (gated only on carrying pitch-oil, nothing
+Cal-related) can resolve his fate first: `th_cal_dead`,
+`lys_brother_lost` or `_buried`, `npcgo th_cal null`, all with no
+dependency on ever having met him. A player who buys the oil and burns
+Thornwold's hollow before finding the scout line — a wholly separate
+branch of the room graph, no shared prerequisite — gets Cal killed with
+`lys_brother_found` never set, and `th_q_cal` never starts. Not stuck:
+absent. Its own `failed` clause (`th_cal_dead`) and two stages of
+ready-written text for exactly this outcome (`lys_brother_buried` at
+line 3282, `lys_brother_lost` at 3286) sat there, permanently unreachable
+through this quest, for as long as the quest has existed.
+
+What kept this from being a total blackout: `q_lys` ("A Brother in the
+Company," `world/reach/companions.json`), the overarching companion-arc
+quest, starts on `lys_joined` alone and already lists every one of Cal's
+outcomes correctly across its own `done`/`failed`. `th_q_cal` is a second,
+Thornwold-local quest layered on top of it (it adds room directions via
+`at`), and it is specifically that duplicate whose gate was too narrow —
+a player burning first would still see Cal's fate through `q_lys`, just
+lose the local one.
+
+Fixed the same way the six `done`-side cases were: widened, not
+rewritten. `start` is now `["any", [["flag", "lys_brother_found"],
+["flag", "th_cal_dead"]]]` — the same flag `failed` already reads, so the
+quest becomes visible the instant its failure condition would apply.
+`done`, `failed` and every stage are untouched; they already covered
+every outcome correctly, they just never got the chance to run.
+`test/realm.test.ts` gets a dedicated case (distinct from the six-quest
+one above — that test is about quests that show and never close, this one
+about a quest that never showed at all) forcing the burn-first state
+directly and confirming `failed`, plus a sanity check that meeting Cal
+first and the not-yet-resolved case both still read exactly as before.
+Neither the walkthrough nor any of the 13 proofs visits Thornwold in this
+order, so no number moved.
+
+Found by the same discipline as the first six, aimed one level earlier:
+not from a report, a `start`-side pattern search across all 140 quests'
+`start` conditions, checked by hand against the actual actions that set
+each relevant flag rather than asserted from the shape of the JSON alone.
+About twenty more quests start on a `said_<npc>_greet`-style flag and
+share the *shape* of risk (an npc who could resolve or leave before ever
+being greeted) without yet being individually traced; left open rather
+than claimed clean, the same honest incompleteness the six-quest sweep
+above already models. `npm run verify` green (330 tests).
