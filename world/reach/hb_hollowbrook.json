@@ -1484,6 +1484,12 @@
       "name": "Two Keepers, One Covenant",
       "start": [["flag", "hb_asked_rowan"]],
       "done": [["any", [["flag", "rb_hb_th_verse"], ["flag", "rb_hb_th_token"], ["flag", "rb_hb_th_refused"]]]],
+      "failed": [
+        ["flag", "th_hollow_done"],
+        ["!flag", "rb_hb_th_verse"],
+        ["!flag", "rb_hb_th_token"],
+        ["!flag", "rb_hb_th_refused"]
+      ],
       "stages": [
         {
           "if": [["flag", "th_entered"]],

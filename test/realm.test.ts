@@ -412,6 +412,37 @@ test("sixteen more quests start (rather than staying invisible) when their situa
   assert.equal(statusOf("rank_church", { church_sworn: true }, { rep_church: 4 }), undefined);
 });
 
+/**
+ * A third sibling for the "settle the grief and the quest never closes"
+ * shape (wave 5, corroboration 1): `hb_q_covenant` ("Two Keepers, One
+ * Covenant") sends the player from Hollowbrook to Keeper Rowan in
+ * Thornwold's Understory, and its `done` only ever sets through her own
+ * dialogue (`rb_hb_th_verse`/`_token`/`_refused`). Thornwold's own
+ * `th_q_understory` and `th_q_pardon` (same file) already treat
+ * `th_hollow_done` as the point past which their own unmet `done` flag
+ * counts as failed; `hb_q_covenant` was the one Rowan-anchored quest that
+ * never got the same clause, so resolving the glade any way but through
+ * her — reading the hanged names, the Great Rite, the rest-oath, the
+ * bargain, the burn — left it "active" and pointing at her hall forever.
+ */
+test("hb_q_covenant closes like its Thornwold siblings when the glade is settled without Rowan's answer", () => {
+  const world = loadWorld("world/reach.json");
+  const statusOf = (flags: Record<string, true>) =>
+    journal(world, { ...newState(world, 1).state, flags }).find((q) => q.id === "hb_q_covenant")?.status;
+
+  // the report's own path: asked Wren, then read the names cut into the tree
+  assert.equal(statusOf({ hb_asked_rowan: true, th_hollow_done: true, th_hollow_rested: true }), "failed");
+  // every other way to settle the glade without Rowan forecloses it the same way
+  assert.equal(statusOf({ hb_asked_rowan: true, th_hollow_done: true, th_hollow_burned: true }), "failed");
+  assert.equal(statusOf({ hb_asked_rowan: true, th_hollow_done: true, th_hollow_bargained: true }), "failed");
+  // reaching Rowan first (any of her three answers) still completes it normally
+  assert.equal(statusOf({ hb_asked_rowan: true, rb_hb_th_verse: true }), "done");
+  assert.equal(statusOf({ hb_asked_rowan: true, rb_hb_th_token: true }), "done");
+  assert.equal(statusOf({ hb_asked_rowan: true, rb_hb_th_refused: true }), "done");
+  // still in progress, glade untouched: correctly active, not failed
+  assert.equal(statusOf({ hb_asked_rowan: true, th_entered: true }), "active");
+});
+
 test("validator: quests need stages with conditions and text", () => {
   const world = questWorld();
   world.quests!["empty"] = { name: "Empty", stages: [] };

@@ -4443,3 +4443,606 @@ within budget. `node --import tsx scripts/audit-choices.ts world/reach.json
 world/reach.json --terse` — avg 439.68/450, unchanged (this quest isn't on
 the proven walkthrough). `npm run verify` green (331 tests, all three
 worlds validate and win-prove clean, both crawls clean).
+
+### The hunter's-gap shortcut into the barrow now says what it costs — the priest's dead-end line was already there and already correct
+
+Two wave-5 P1s, genuinely double-corroborated (`P1-issue-5bf78603.json` and
+`P1-issue-8d38bba1.json`, one per player, seeds s3499 and s3498): using the
+"hunter's-camp secret gap" to open the Vale barrow doors made the gray
+priest's "a blessing for the barrow" topic retroactively moot ("the doors
+are already open... say the words yourself") with no warning beforehand.
+`P2-issue-a8d0926c.json`, the general framing of the same incident (same
+report, s3499 — not independent evidence of a wider pattern), asked for the
+standard fix: flag that the standard path is closing *before* the player
+commits to the shortcut, not just after.
+
+**The dead end itself is not a bug.** `va_gray_priest` in
+`world/reach/va_village.json` has four mutually-exclusive variants of "a
+blessing for the barrow" (`:706-724`), gated on `va_heard_oldking` /
+`va_barrow_open` / `va_promised_seal` / `va_barrow_blessed`. `blessing_moot`
+(`:720-724`, the exact line both reports quote) fires precisely when the
+doors are already open by some other means and the blessing wasn't it — a
+deliberate, already-written acknowledgment that covers every bypass
+(force, loose stone, the hunter's gap, a Warden's shoulder) uniformly, and
+it explains itself in-fiction rather than reading as broken. Checked the one
+thing that would have mattered more: whether the blessing was ever supposed
+to set some quest flag beyond opening the doors, which the shortcut then
+silently skipped. It wasn't — `va_prior_rite` (`:105-115`, the Priory's own
+equivalent of a blessing) sets exactly the same two flags the normal
+`blessing` topic does (`va_barrow_open`, `va_barrow_blessed`), nothing more.
+"No mechanical effect" in the reports is accurate and is not a bug to fix;
+per the brief, no new consequence was invented here.
+
+**The real gap was upstream.** `va_barrow_field`'s four self-serve ways in —
+`va_force_doors`, `va_force_doors_warden`, `va_loose_stone`, and
+`va_hunters_gap` (`world/reach/va_barrow.json:42-115`) — none of their `say`
+text mentioned foreclosing the priest's blessing, unlike this same content's
+counterpart in `world/vale.json`, where every equivalent action already says
+so ("no need for the priest's blessing", `world/vale.json:1089,1110,1142,
+1160,1176`). `va_hunters_gap` is the one both reports name and the one on
+the world's own walkthrough (`"use the hunter's gap under the stone"` —
+`world/reach.json`'s `walkthrough` and 11 of 12 endings' `proofs`). Fixed
+there only, matching the sibling world's established phrasing: `world/reach/
+va_barrow.json:102`, `"Right where the tally said: the stone lifts, and the
+gap beneath is worn smooth by years of someone's knees. Wedged in it, a worn
+half-token."` -> `"Right where the tally said: the stone lifts and a gap
+opens beneath — no need for the priest's blessing. Wedged in it, a worn
+half-token."` — 141 chars to 137, so every road that walks this screen got
+*cheaper*, not costlier: this screen sits on the tightest ratchet in the
+file (`reach:regent_deposed`, 32 characters of slack before this change, 36
+after) as well as `reach_burned`, `gray_crown`, `reach_at_rest#scout`, and
+`reach_at_rest#devoted`. `crowned_hollow`/`crowned_hollow#bloodied` (a
+Warden road) never take this action at all and are untouched.
+
+**Checked and cleared, not touched:** `va_weigh_king` ("weigh what each
+choice would mean", `world/reach/va_barrow.json:378-387`, named alongside
+the blessing in `8d38bba1`) is the throne-room pre-check for the king's own
+fate (rest/slay/keep-crown) — gated on `va_heard_grievance`/
+`!va_king_resolved`, no reference anywhere to barrow doors, `va_barrow_open`,
+or blessing state. It doesn't go moot from this shortcut; the report names
+it because the player used it in the same room on the same run, not because
+it shares the bug.
+
+**Left alone, on purpose, scoped to the evidence:** `va_force_doors`,
+`va_force_doors_warden`, and `va_loose_stone` have the identical missing
+clause and neither report named them — one finding, one focused change, per
+the cycle contract. `world/vale.json`'s own "blessing" topic
+(`:2250-2256`) doesn't gate on `barrow_open` at all, so revisiting the
+priest after a bypass there just repeats the normal opening line harmlessly
+rather than dead-ending — a milder relative of the same category, also
+unreported, and not the world either quote matches (both are verbatim
+`world/reach/va_village.json` text; Reach has been the MCP default since
+2026-09-09). Worth a look if a future wave reports any of these by name;
+not rebuilt on speculation here.
+
+`node scripts/fmt-json.mjs world/reach/va_barrow.json` (formatter changed
+nothing but the edited line). `node --import tsx scripts/lint-world.ts
+world/reach.json` — "all text within budget." `node --import tsx
+scripts/budget.ts world/reach.json --terse` — `avg 439.6803 max 1076 sum
+118274` -> `avg 439.6654 max 1076 sum 118270` (sum down exactly 4, matching
+the edit). `npm run verify` green in the shared working tree (331/331
+tests, all three worlds validate and win-prove clean, both crawls clean, 0
+over-cap menus) — run twice, once before and once after
+`fmt-json`, both exit 0. `queue/P1-issue-5bf78603.json`,
+`queue/P1-issue-8d38bba1.json`, and `queue/P2-issue-a8d0926c.json` moved to
+`done/`.
+
+### `P2-issue-b9bfe109.json`: wilderness compass directions are reciprocal by construction — all 152 core exit pairs checked directly, not just the bearings text
+
+Wave 5's `s3499` (single report, corroboration 1): "south" from one node in
+Iron Downs' `ir_downs` grid or Wardmoor's `wm_moor` grid "sometimes led back
+the way I'd come rather than continuing a logical loop," making cardinal
+backtracking unreliable and "get your bearings" needed constantly. A specific,
+checkable claim about exit reciprocity, not this wave's usual UX complaint, so
+it got a direct measurement rather than a bearings-audit rerun and a shrug.
+
+**`scripts/audit-bearings.ts` does not check this claim, and says so of
+itself.** Its own opening line is "Does 'get your bearings' actually lead
+where it says?" (`:2`) — it walks each room's `["bearings"]` macro (or
+hand-authored prose) and checks whether the *text a room prints* lands you at
+the place it names, in two ways only, NO EXIT and ELSEWHERE (`:25-31`). That
+is "does the sign tell the truth," not "is the room graph itself symmetric" —
+whether walking `south` and then `north` returns you to where you started is
+a different claim the tool never makes. It also already knows this shape of
+complaint from three earlier waves (`:4-9`, `done/P1-issue-6e43ac6b`,
+`-965d6864`, and a third) — but those were hand-typed bearing strings that
+overshot, fixed by replacing them with a computed BFS macro; nothing about
+that fix touches raw exit reciprocity. Ran it anyway for context:
+`--prefix ir` → 0 of 81 legs wrong; `--prefix wm` → 0 of 78 legs wrong. Real
+information (the bearings text this player leaned on "constantly" was
+accurate every time it was checked), but it does not clear this report on its
+own, exactly as the task brief warned.
+
+**`src/worldgen.ts`'s grid exits are reciprocal by construction, not by
+luck.** `expandRegion` assigns a `gen` grid's `north`/`south`/`east`/`west`
+exits from one symmetric `open(x,y)` predicate (`:52`): cell `[x,y]` gets a
+`south` exit to `[x,y+1]` iff `open(x,y+1)`, and `[x,y+1]` gets a `north`
+exit back to `[x,y]` iff `open(x,y)` (`:75-78`) — the same predicate, called
+with the two cells swapped, so one can never hold without the other. `links`
+(`:84-107`) cannot silently break this: adding an exit throws if the
+direction already exists on the origin cell (`:88`), and a `back` exit throws
+if it would overwrite one on the target (`:105`) — a link can only occupy a
+direction the core grid left empty (a grid edge, or a wall-adjacent side).
+
+**Measured it directly rather than trusting the proof.** A throwaway script
+(not committed) loaded the merged, expanded world the same way
+`audit-bearings.ts` does (`loadWorld`), read `ir_downs` and `wm_moor`'s own
+`gen` defs, and for every open-cell exit checked whether the destination's
+exit in the exact opposite direction points back to the origin:
+
+    ir_downs (w=6 h=5, 6 wall cells, 24 open): 70 core N/S/E/W exit pairs checked, 70 reciprocal, 0 broken
+    wm_moor  (w=6 h=5, 4 wall cells, 26 open): 82 core N/S/E/W exit pairs checked, 82 reciprocal, 0 broken
+
+152 of 152 (100%). Cross-checked by hand against each grid's own wall layout
+too (undirected edges × 2 directions: 19 horizontal + 16 vertical for
+`ir_downs`, 21 + 20 for `wm_moor` — 35×2=70 and 41×2=82, exact). Both grids
+are irregular walled shapes, not plain rectangles — `ir_irondowns.json:2014`'s
+six wall cells notch both edge columns out of the middle row, `wm_wild.json:10`'s
+four wall cells notch only the corners — genuinely harder to hold in your head
+than a rectangle, but every cardinal pair inside either one goes exactly where
+its opposite direction says it will.
+
+**All 7 links (4 `ir_downs`, 3 `wm_moor`) checked individually too**, since a
+link is exactly the mechanism that *could* legitimately pair a cardinal word
+with a non-opposite return (`docs/region-brief.md:56` allows links to the
+settlement, gateways, hollow and stamps by design). Three pair a cardinal
+`dir` with its exact opposite as `back`: `ir_downs_2_0`→`north`→
+`kw_south_track`/back `south` (`ir_irondowns.json:2018`); `wm_moor_3_0`→
+`north`→`wm_oathstone_approach`/back `south` (`wm_wild.json:18-24`);
+`wm_moor_0_1`→`west`→`kw_east_track`/back `east` (`wm_wild.json:25`). Two use
+the realm's standard non-cardinal `in`/`out` (or `down`/`north`) site-entrance
+convention: `ir_downs_3_1`→`in`→`ir_hundred_adit`, `out` back
+(`ir_irondowns.json:2017`, `:418`); `ir_downs_0_3`→`down`→`mc_north_road`,
+`north` back (`ir_irondowns.json:2019`, `mc_mootcombe.json:300-318`). One
+(`ir_downs_2_4`→`south`→`ir_headframe`, `ir_irondowns.json:2016`) carries no
+`back` field at all, but `ir_headframe`'s own hand-authored `north` exit
+(`ir_irondowns.json:399`) returns to `ir_downs_2_4` exactly — still the
+precise cardinal opposite, just authored directly instead of through the
+link's `back` shorthand.
+
+**The one asymmetric case is a settlement gate, and it's the opposite shape
+of the complaint.** `wm_moor_2_4`→`south`→`wm_parade` (Highward's gate)
+returns via `out`, not `north` (`wm_wild.json:17`) — and `wm_parade`
+separately has its own, unrelated `north` exit to `wm_hall`
+(`wm_wardmoor.json:70`), the Captain-General's hall inside town. So the one
+place a naive cardinal opposite doesn't lead back is: walk `south` out of the
+moor into Highward, then `north` from the parade ground does *not* return you
+to the moor, it takes you deeper into town. That is a false expectation
+failing to pay off, on crossing into a settlement, where every other gate in
+the realm resets the same way (`ir_hundred_adit`, all four `wm_wild.json`
+stamped sites) — not "south led back the way I came," which is what the
+report actually describes, and not between two wilderness cells at all.
+
+With the core grids provably and empirically 100% reciprocal (152/152) and
+every link either a matching cardinal opposite or the realm's standard
+non-cardinal gate convention, there is no exit-reciprocity bug here to fix.
+The report reads as genuine disorientation dead-reckoning two irregular,
+walled 24- and 26-cell shapes — exactly the situation `get your bearings`
+exists for, and "needed constantly to reorient" is that tool being used as
+designed, not failing it: its own output was independently confirmed
+accurate, 0 of 159 legs wrong across both regions combined.
+
+No `world/*.json` or `src/*.ts` changed, so no `npm run verify` was required;
+`loadWorld` re-expanded both worlds cleanly as part of the check above (no
+thrown errors), and `audit-bearings.ts --prefix ir`/`--prefix wm` ran clean
+for the record (0/81, 0/78). `queue/P2-issue-b9bfe109.json` moved to `done/`.
+
+### Wave five's two P1s: a quarrel's DC checked against the realm's own numbers, and an escalation cap checked against why it already waits for a failure
+
+`P1-issue-234f8306`: the companion "settle it" dispute checks (will, DC 11)
+failed 3 of 5 attempts for one player, each miss costing regard with two
+companions at once, "right after major grief-resolution beats." `P1-issue-
+d3652755` and `P2-issue-c0489d2e` (same report): retrying a forced-try check
+raises its DC — well-telegraphed — but the cap it stops at ("stops at
+20/23/27") only shows after a failure; asks for "a single upfront mention of
+the scaling rule."
+
+**The dispute DC is the realm's own median, not a hard outlier.** Every
+companion pair's `try to settle the X (will)` topic — 18 pairs, `_settle` and
+its mirror `_settle_b`, one per pair, e.g. `quarrel_lys_osk_settle_b`,
+`world/reach/companions.json:1264-1273` — rolls DC 11. A realm-wide census of
+every `["check", "will", n]` (157 of them, across `world/*.json` and
+`world/reach/*.json`) puts DC 11 at 82 (52%), the single most common value —
+DC 9: 8, DC 10: 55, DC 12: 9, DC 13: 3. It is the norm the rest of the
+realm's will checks set, not a spike above it.
+
+Each of the 18 disputes offers the same three-way choice, confirmed by exact
+count (18 `_settle`/`_settle_b`/`_stay` ids, 18 occurrences of "leave it
+between them"): side with one companion outright, guaranteed +2/-2
+(`quarrel_lys_osk_side_lys`, `companions.json:1017-1027`); try to settle it,
+DC 11 will, success moving nobody's regard and failure costing -1/-1 to both
+(`quarrel_lys_tamsin_settle`, `companions.json:1043-1067`); or "leave it
+between them," a free, no-roll option that moves no regard and pays 1 xp
+(`quarrel_lys_tamsin_stay`, `companions.json:1069-1074`) — the safety valve
+this file's own prior entries describe, present on all 18, not a subset. A
+missed settle attempt (-1/-1) is strictly cheaper than the guaranteed cost
+of picking a side (-2 to the other companion), so attempting it is never the
+worse play in expectation, only the higher-variance one.
+
+The double regard cost on a miss is not an oversight — it is the specific
+thing two earlier blind waves already litigated. `escalatedDc`'s own comment
+(`src/engine.ts:1217-1221`) and `docs/authoring.md:166-175` record it: DC
+escalation used to apply to these checks too, and "the companion-dispute
+checks already cost regard with BOTH companions on a miss, by design," so a
+creeping DC on top of that was the actual trap — the fix that shipped was
+exempting every topic-sourced check (`tp:`, `engine.ts:1222`) from
+escalation, not touching the DC or the dual cost, both kept on purpose. This
+same check's preview was separately re-verified live by this session two
+tickets ago (`P2-issue-8d096dce`/`b9dd9dd4`, "A companion quarrel already
+shows its odds," this file, line 1386): the odds and both companions at risk
+already render before the turn is spent. Against a DC 11 check, 3-of-5
+failures needs nothing unusual — binomial at a fair 50% gives ~50% odds of
+seeing 3+ fails in 5 tries, and even at the "decent" +1/+2 modifiers the
+report claims (55-60% success) it's still ~41%/~32%. Left alone: no premise
+error, no outlier DC, an unused free off-ramp on every instance, and a
+double-cost shape this project already weighed and kept once. `queue/P1-
+issue-234f8306.json` moved to `done/`, no code or content change.
+
+**The escalation cap already tells the general rule upfront, and the exact
+ceiling from the first failure that makes it real.** Two things, not one.
+The rule that a forced try gets harder is stated once, in the game's very
+first line, before a class is even chosen — confirmed live this session,
+seed 3498: `"...A forced try gets harder each miss; talk never does. hash
+b51c7f6d."` (`src/engine.ts` via `renderIntro`, `src/format.ts:536-553`).
+That line exists for the same complaint filed once before: the comment right
+above it (`format.ts:546-552`) quotes "Wave eight, seed 9903:
+'DC-escalation-on-failure isn't flagged before the first failure...'", and
+`docs/roadmap.md:641-642` already records the fix as shipped: "The
+escalation rule is stated once, on the line that states the rules, rather
+than after the first failure that teaches it." The numeric ceiling itself
+("raised N by failed tries, and stops at {ceiling}") prints starting the
+*first* time a check's DC has actually climbed — `tries > 0 && dc > chk[2]`
+(`src/engine.ts:3004-3007`) — which is what `P2-issue-c0489d2e` literally
+asks for, "the first time a forced-try check's DC has scaled past a
+threshold." Both halves of this cluster's ask are already shipped.
+
+What's left is the stronger reading of `d3652755`'s title: the exact number
+*before* ever attempting the check, not from the first failure. That was
+weighed and declined on purpose, not missed — `oddsHint`'s own comment
+(`engine.ts:3001-3003`): "Only prints on a check already failed, which is
+exactly when it is worth the characters." A related, smaller addition
+(repeating a check's skill tag) was found to cost "more slack than four [of
+the proven roads] had left" (`engine.ts:2984-2986`) against the same budget
+`test/format.test.ts`'s status ratchet has almost none of; printing the
+ceiling on every forced-try check's *first* preview, escalating or not,
+lands on every one of those screens along the measured walkthrough (which by
+construction never retries a failed check), where today's placement only
+spends characters on the rarer off-path retry. A per-room one-time hint
+before the first attempt — the cheaper middle ground worth naming — would
+just repeat the rule the intro already states once for the whole game, for
+budget cost with no new information. Left alone: `queue/P1-issue-d3652755.json`
+and `queue/P2-issue-c0489d2e.json` moved to `done/`, no code or content
+change; `npm run verify` not re-run since nothing in `world/` or `src/`
+changed for either ticket in this entry.
+
+### `P1-issue-65675d14` is `d3907169`'s second corroboration — same mechanism, still not a cheap fix
+
+`P1-issue-65675d14` ("'speak with the company' moved from slot 6 to 5 after
+a quest completed") reads at first like a fresh, narrower report: a
+different trigger (a quest completing, not combat) and a different room
+("General UI, multiple rooms" rather than "Barrow Crypt combat"). Checked
+whether it is genuinely the same mechanism as `P1-issue-d3907169` — deferred
+at `docs/roadmap.md:1187-1220`, "One report, its own proposed fix
+unevidenced beyond the report itself, doesn't clear the bar this project
+holds engine changes to" — rather than trusting the surface difference.
+
+It is the same mechanism, now evidenced by two different triggers.
+`allActions` (`src/engine.ts:2472-2479`) rebuilds a room's whole option list
+fresh from the state *now* on every call; `menuNumbers` (`:2424-2427`)
+numbers `legalActions` off that fresh list's positions. Whatever condition
+makes an earlier-listed action disappear — a quest completing (`65675d14`),
+an enemy dying or an item being consumed (`d3907169`) — shifts everything
+after it down by one, and a player who presses a number from the previous
+screen without re-reading gets whatever now sits there instead.
+`d3907169`'s own framing ("generally any combat/interaction with a dynamic
+menu") already predicted the broader mechanism `65675d14` now confirms
+outside combat entirely. Two independent players — different seeds,
+different sessions, different specific triggers — landed on the same code
+path. `corroboration` moves from 1 to 2, genuinely independent.
+
+Re-checked whether anything changed the fix's cost since the original
+deferral, rather than assuming the old analysis still holds untouched. The
+general problem hasn't gotten cheaper, but the picture is more complete than
+"nothing exists to help": the project already ships a proven, narrow
+mitigation for the *dangerous* version of this exact bug. A conversation
+topic marked `"commits": true`, or one that sends a companion away
+(`partsWays`), sorts to the end of the conversation's own menu specifically
+so a shrinking topic list can never slide it into the number a player has
+been pressing (`docs/authoring.md:324-332`, `src/engine.ts:2526-2534`).
+Checked one instance live rather than trusting the doc comment alone:
+`done/P1-issue-09a3d3db.json` (in `done/` with no roadmap write-up, but it
+predates this branch's own history — `c6a1665`, the commit that introduces
+it, also introduces `AGENT.md` and `docs/roadmap.md`'s original 535 lines in
+the same pass, at Sep 9 01:47 UTC, before `d3907169` was even filed at Sep 9
+04:21 UTC — this is the branch's starting baseline, not a casualty of this
+wave's restart) quoted exactly this failure on "bury the burn-order (breaks
+the oath)." That option is `tanners_proof` in Regent Ysolde's conversation
+and carries `"commits": true` today (`world/reach/mg_marrowgate.json:1830-1849`).
+The mechanism is live, not aspirational (several other conversation-mode
+dialogue tickets already in `done/` from before this branch's history begins
+read like the same story; not individually re-audited here, out of scope for
+this entry). `roomMenu`'s general, non-conversation branch has the same idea
+in miniature: an attack on a peaceable npc is pushed to a `late` list and
+appended last (`:2563`, `:2586-2591`, `:2613`), so turning a stranger
+hostile can't slide into a pressed number either.
+
+Neither `d3907169` nor `65675d14` is a case either mechanism reaches.
+`d3907169`'s collision is an in-combat "attack" against an *already*-hostile
+npc versus an ordinary "use dried herbs" — an already-hostile attack sits in
+plain document order, not `late` (`:2590`), and item-use entries carry no
+sort at all (`:2601-2610`). `65675d14`'s "speak with the company" is the
+folded company entry (`:2559-2576`, label at `:2711`), also unsorted,
+positioned wherever the first companion falls in room order. Neither report
+names an irreversible or costly consequence of the wrong click —
+`d3907169`'s is a minor, self-corrected item waste; `65675d14`'s states none
+beyond "an accidental wrong selection once." There is no specific high-stakes
+action in either report for the `commits`/`late` pattern to attach to, even
+if it were extended to ordinary room and combat menus — building that
+extension now would be an engine change in search of a finding, not one
+grounded in the two reports actually in hand, and exactly the kind of DSL
+surface AGENT.md holds to "validator + tests in the same change" for a
+change with nothing concrete yet to validate against.
+
+The general fix — non-positional numbering that survives a turn — is
+unchanged in size from the original triage: it needs `State` to remember
+which number was whose, which touches determinism (`State` must stay a
+plain, hashable, replayable value), the crawler and the mock player (both
+index the menu positionally), for a benefit that has never been measured
+against real players either (`docs/roadmap.md:1209-1218`). A second
+independent report of the same low-stakes shape is one more data point, not
+a change in what the fix costs — the same conclusion this session already
+reached when a third report repeated an infeasible ask (`docs/roadmap.md:3974-3989`,
+"one more data point, not a change in what it would cost to build") and when
+the travel menu's pagination drift was confirmed real but left alone because
+the honest fixes "cost more than this is worth" (`docs/roadmap.md:3869-3918`).
+What would move this: a report naming a specific severe or irreversible
+consequence from a wrong click in a non-conversation menu — a narrow,
+evidence-grounded case the `late`/`commits` pattern could extend to as
+cheaply as it already covers conversation topics. Neither report in hand is
+that.
+
+Formally re-affirming the deferral with two independent reports now on
+record, not fixing. No `src/` or `world/` file touched by this entry;
+`npm run verify` untouched (same basis the travel-menu entry used).
+`queue/P1-issue-65675d14.json` and `queue/P1-issue-d3907169.json` move to
+`done/` together — the same finding, closed on the same reasoning, not left
+split between an open ticket and a closed one.
+
+### "Name it" reads last on every guardian's own menu, and it is never behind the fold
+
+Wave five's `P2-issue-62da3e5d`, `P2-issue-909f52a3` and `P2-issue-a6f8313d`
+(two seeds, s3498 and s3499) all describe the same thing from three angles:
+the Scholar's "name it" (`scholar_name`) reads as buried — "found it by
+scrolling to 'more in this room'," "found it by trial," "consider surfacing
+it... on the first page." A different complaint from the same ability's
+earlier history, "'Name it' isn't the universal free pass it reads as"
+(`:3070-3116`, above), was about how OFTEN and how POWERFUL it is; this
+wave's three are about where it sits on the screen. Checked as its own
+question rather than assumed answered by that entry.
+
+It doesn't paginate. `legalActions`/`allActions` only turn a page once a
+room's own list exceeds `MENU_CAP` (12, `src/types.ts:217`, matching
+`docs/region-brief.md:165-166`'s "Room menus ≤ 12 always") — `roomPages` is
+`out.length > MENU_CAP && ways + 2 <= MENU_CAP` (`src/engine.ts:2642`).
+Checked all four fixed-room `pierce` hostiles directly (of the realm's
+eight; the other four — `hb_wandering_wight`, `wm_lost_sentry`, the hound of
+the hunt, the glass-ash wraith — are `room: null` chance-ambushes that land
+in whatever generic wilderness cell the player already stands in, not a
+fixed room to audit the same way) by constructing a Scholar's state at each
+room and calling the engine's own menu functions directly (`legalActions`,
+`allActions`), cross-checked live in the mcp surface at the actual reported
+seed, 3498, for `va_crypt`:
+
+- `va_crypt` (barrow-wight, `world/reach/va_barrow.json:299-345`, wight at
+  `:648-664`): 9 of 9, no page.
+- `mg_old_crypts` (honour guard, `world/reach/mg_marrowgate.json:780-852`,
+  guard at `:4329-4345`): 6 of 6.
+- `th_hollow_gate` (gray sergeant, `world/reach/th_thornwold.json:596-672`,
+  sergeant at `:2425-2447`): 7 of 7.
+- `hb_kingsrest_hall` (grave-wight, `world/reach/hb_hollow.json:490-512`): 7
+  of 7.
+
+All four sit 3 to 6 slots under the cap. "Found it by scrolling to more in
+this room" does not reproduce in any of them.
+
+What is true: "name it" is the literal last line on all four menus, after
+"attack" every time. Not a per-room accident — `scholar_name` is a
+`world.abilities` entry (`world/reach.json:238-247`, spending `res_scholar`,
+capped 2, `:183`), and `roomMenu` appends every ability after all of a
+room's own content on purpose: "abilities are not tied to this room, so they
+read last: a room's own content — its actions, its people, its things —
+always comes first" (`src/engine.ts:2614-2615`). A room's own authored
+peaceful checks — `va_slip_past`, `mg_slip_guard`/`mg_guard_will`,
+`th_slip_sergeant`/`th_answer_sergeant` — are `room.actions`, pushed before
+the npc loop (`:2570-2571` vs. the attack push at `:2590`), so they already
+land ahead of "attack" everywhere; only the engine-appended items ("leave X
+be," `:2598-2599`, and every ability) land after it. There is no per-room
+list to reorder `scholar_name` on — its position is set once, realm-wide, by
+the ability-appending rule itself, exactly the "engine-wide sorting
+behaviour" this pass was told to leave alone.
+
+("Pilgrim," in `62da3e5d`'s list, isn't a fourth `pierce` guardian — no npc
+by that name carries `pierce`. The nearest match is the Pilgrims' Shrine's
+frozen pilgrim, a `$saint_shade` chapel stamp (`world/reach/templates.json:1162`,
+dressed in at `world/reach/cp_coldpass.json:1699-1713`), which the earlier
+"universal free pass" entry already confirmed carries no `pierce` field at
+all — its own peaceful path is a different mechanism, `$rite_named` ("end
+the vigil by its true name," `templates.json:1086-1098`), gated on a
+Scholar having read the sill first (`$sill`, `:992-1003`). Thematically the
+same idea, mechanically unrelated; the report most likely folds both under
+"lore-based pacification.")
+
+Looked for a cheaper lever than reordering an engine-wide rule before giving
+up: the realm already has a one-time, engine-level hint for exactly these
+npcs — the first time ever a `pierce` hostile stands in the player's room,
+`_seenPierce` fires once and never again (`src/engine.ts:3405-3417`), almost
+always at `va_crypt` on turn 1's own content. Extending its text to point a
+Scholar at "name it" would touch one string in one place rather than eight
+rooms — except `va_crypt` is the single tightest room in the whole budget
+economy, not an ordinary one to spend on. `test/budget.test.ts`'s own ledger
+names it outright: "the one room still standing in the way is `va_crypt`, a
+fight screen kept at width by design," and `scripts/budget.ts world/reach.json`
+(this session, before any change here) shows why — `crowned_hollow#bloodied`,
+one of the nine proven roads it ratchets, already sits at 1295/1100
+characters on that exact room, 195 over its own ceiling. Every past addition
+to this budget (fast travel's labels, the wits/grace DC9 floor, the
+`mg_hollow_throne` redundancy cut) needed its own paid-for-elsewhere offset
+recorded in that file; a hint extension here would need the same, for three
+single-corroboration reports about one class of encounter. Not spent.
+
+Real, on all three counts (name it does read last; that is by a deliberate,
+realm-wide rule; and the one cheap-looking lever costs more than it looks
+like), and disproportionate to fix from here: the only two levers that would
+actually move it are an engine-wide ability-ordering change (explicitly out
+of scope) or budget surgery elsewhere in the file to afford touching the
+realm's tightest room — the same "real feature, disproportionate to one
+wave's evidence" bar the Hollow Throne and original "name it" entries above
+were already held to. No `src/` or `world/` file changed by this entry.
+`queue/P2-issue-62da3e5d.json`, `queue/P2-issue-909f52a3.json` and
+`queue/P2-issue-a6f8313d.json` move to `done/` together — the same finding
+from three angles, closed on the same reasoning.
+
+### Rest exists in every region's own hearth, and none of them ever say so
+
+`P2-issue-a5686d21`: the party-heal-at-rest mechanic is never surfaced
+before a wounded party can walk into something like the honour guard. The
+ticket's own framing pointed at `world/vale.json` for where this is taught;
+checked first, since it changes where the rest of the investigation looks.
+That file is the realm's retired prototype — "the original compact world,"
+kept only for regression (`README.md:217-218`, loaded in
+`test/player.test.ts:25` alongside `lighthouse.json` and nowhere else) — not
+what any playtester, including this wave's, has played since 2026-09-09
+(`docs/roadmap.md:3696`, above). The seed this ticket cites (3498) is a
+`world/reach.json` run, confirmed by replaying it: `new_game(seed: 3498)`
+opens on "The Gray Reach," not "The Vale of Ash." The Vale's actual
+settlement, in the live world, is `world/reach/va_village.json`.
+
+It's there, and it works exactly like the ticket describes wanting:
+`va_inn`'s "rest by the fire" (`world/reach/va_village.json:106-119`, full
+heal) sits two rooms from the game's own start (`va_gate:3-23` south to
+`va_square:24-105`, west to `va_inn`). Marrowgate carries the same
+convention, not a gap unique to the honour guard's own approach:
+`mg_hanged_man`'s "take a room and sleep" (`world/reach/mg_marrowgate.json:84-97`,
+also a full heal) is that region's equivalent.
+
+Neither is ever named before a player finds it by walking in. Replayed seed
+3498 from turn 1 as Scholar to check directly: the intro names hp0 as death
+and nothing else about recovering it; the one free, contextual hint offered
+at the very first room, "get your bearings" (`bearingsHere`,
+`src/engine.ts:753-787`), names up to `BEARINGS_CAP` (`:701`, 3) nearby
+landmark rooms and open quest destinations — and `va_inn` carries no
+`landmark` field, so bearings never names it even in passing. The one other
+general mechanism that reads the player's own hp, `lowHp` (`fightGoingBadly`,
+hp at half or less, `src/engine.ts:379-382`), gates exactly two lines of
+companion dialogue, approval-locked behind `appr_lys`/`appr_tamsin >= 8`
+(`world/reach/companions.json:146,2863`) — not a general "you're hurt"
+nudge anybody reaches early or reliably.
+
+Checked the honour guard's own doorstep directly rather than assume it's
+silent the way the ticket frames it: `mg_old_crypts`
+(`world/reach/mg_marrowgate.json:780-852`) already names the guardian in its
+own desc — "A shape in gray mail stands where the gray runs thickest: the
+first Reeve's honour guard, four hundred years at his post" — so a
+first-time visitor is told a fight is there, just not that rest exists
+nearby; the fallback fix on the table was conditioned on a room giving zero
+danger signal, which this one doesn't. Its immediate approach, `mg_cistern`
+(`:691-718`), gives neither. And the nearest rest actually reachable from
+this branch, `mg_first_reeves_tomb`'s "rest a while by the lid"
+(`:853-872`), sits PAST the guard, locked behind
+`mg_guard_passed`/`calm_mg_hollow_guard` — not a rest stop before the fight
+at all. The region's real pre-fight rest, `mg_hanged_man`, is several rooms
+away on the surface streets, off `mg_lower_town`, not on the undercity route
+into the crypts — so the locally-scoped version of the fix ("a short
+clause... reminding the player rest exists") would have to send the player
+several rooms backward across the map, a weaker and muddier hint than
+"nearby" suggested before checking the map.
+
+Budget checked before weighing any of this further: `scripts/budget.ts
+world/reach.json --terse` (this session) reads avg 439.6654/450, max
+1076/1100 over 269 screens — 2,780 characters of total slack before the
+average ratchet breaks, in principle room for a short clause. But
+`mg_old_crypts` is already one of the walkthrough's five biggest single
+screens (919/1100, its own "go north" step) and, per the entry above,
+guardian rooms are demonstrably the most budget-contested screens in the
+realm. Spending any of that on a geographically weak hint, for one
+uncorroborated report, isn't the trade this budget has been kept tight for.
+
+The real shape of the finding is realm-wide, not honour-guard-specific:
+every region's own hearth is a walk-in-and-discover mechanic, and none of
+them announce themselves anywhere, consistent with how this realm generally
+teaches everything else (including "name it," above) — one report about one
+encounter doesn't justify a realm-wide tutorial addition, and the
+locally-scoped fallback on the table turns out, once the map is checked, not
+to actually sit next to the fight it would be warning about. Real,
+disproportionate to fix from here. No `src/` or `world/` file changed.
+`queue/P2-issue-a5686d21.json` moves to `done/`.
+
+### The twenty-third: `hb_q_covenant` was the one Rowan-anchored quest in Thornwold that never inherited its siblings' `failed` clause
+
+`queue/P1-issue-2af81992.json` (wave 5, corroboration 1): Keeper Wren's "Two
+Keepers, One Covenant" quest (find Rowan in Thornwold's Understory) "became
+uncompletable after I settled Thornwold's grief by reading the hanged names
+instead of visiting Rowan, but the quest log still lists it as open/pending
+rather than marking it closed." Same shape as this session's other
+twenty-two done/failed-asymmetry fixes (`docs/roadmap.md`, "The Three Verses
+could stay 'active'..." and "Four more quests with the same shape"): `done`
+satisfied by only one branch of several mutually-exclusive resolutions, no
+`failed` for the rest.
+
+`hb_q_covenant` (`world/reach/hb_hollowbrook.json:1483-1497`, "Two Keepers,
+One Covenant") starts on `hb_asked_rowan` (set by Keeper Wren's own
+`wren_rowan` topic, `:938`, "ask if any keepers remain elsewhere") and its
+`done` was a bare `["any", [rb_hb_th_verse, rb_hb_th_token,
+rb_hb_th_refused]]` — three flags set only through Keeper Rowan's own reply
+to Wren's question (`world/reach/th_thornwold.json:2518-2554`, the
+`rowan_send_verse`/`rowan_lesser_token`/`rowan_owe_nothing` topics), no
+`failed` at all. `th_rest_names` ("read the names cut into the tree",
+`:771-805`) — the report's own "hanged names" — sets `th_hollow_done` like
+every one of the Gallows Glade's other six resolutions (pardon, Great Rite,
+verse, rest-oath, bargain, burn, `:722-932`), none of which touch any
+`rb_hb_th_*` flag or Rowan at all, so settling the glade this way left the
+covenant question permanently unasked.
+
+The exact convention this family established already exists in the same
+file, for the same npc: `th_q_understory` ("The Hidden Root", Rowan's own
+verse-teaching quest) and `th_q_pardon` ("The True Pardon") both already
+carry `"failed": [["flag", "th_hollow_done"], ["!flag", "<their own done
+flag>"]]` (`th_thornwold.json:3202`, `:3225`) — pre-existing design, not one
+of this session's 22, but the identical shape: once the glade's grief is
+settled any other way, a still-open Rowan/Understory thread closes rather
+than dangling. `hb_q_covenant` is a third quest anchored on the same room
+(`th_understory_hall`) and the same npc, laid on top from a different
+region's file, and was the one sibling that never got the same clause.
+Confirmed live rather than assumed, with the engine's own `journal()`:
+forcing `hb_asked_rowan` + `th_hollow_done` + `th_hollow_rested` (the
+report's exact path) and no `rb_hb_th_*` flag left status reading
+`"active"`, hinting at Understory Hall forever — precisely the report's
+complaint, and true of the other two non-Rowan resolutions (burn, bargain)
+as well, not only the one the report happened to name.
+
+Fixed by extending `done`'s own three flags into the sibling shape:
+`"failed": [["flag", "th_hollow_done"], ["!flag", "rb_hb_th_verse"],
+["!flag", "rb_hb_th_token"], ["!flag", "rb_hb_th_refused"]]`
+(`hb_hollowbrook.json:1487-1492`) — `th_hollow_done` anded with the negation
+of every `done` disjunct, plain top-level conjunction rather than an
+`all`/`any` wrapper, matching `condsOk`'s own array-is-AND semantics
+(`src/engine.ts:412-413`). `done` is still checked before `failed` in
+`journal()` (`src/engine.ts:585-586`), so a player who reaches Rowan even
+after settling the glade another way still completes the quest normally
+instead of staying stuck "closed" — checked directly, not assumed: forcing
+`th_hollow_done` + `th_hollow_burned` + `rb_hb_th_verse` together still
+reads `"done"`.
+
+`test/realm.test.ts:428-443` gets the dedicated forced-state case the
+family's earlier fixes used (`:298-344`, `:383-413`): the report's own
+hanged-names path, the two other non-Rowan resolutions, all three of
+Rowan's own answers still completing it, and the ordinary in-progress state
+still reading `"active"`. `npm run verify` green (332 tests, all three
+worlds validate and win-prove clean, both crawls clean — `world/reach.json`
+walkthrough unchanged at 240 turns since `hb_q_covenant` sits off the
+proven path). `node --import tsx src/crawl.ts world/reach.json` clean on
+its own. `node scripts/fmt-json.mjs world/reach/hb_hollowbrook.json` and
+`node --import tsx scripts/lint-world.ts world/reach.json` — all text
+within budget (the fix adds conditions only, no `say`/text).
+`node --import tsx scripts/budget.ts world/reach.json --terse` — avg
+440.16/450, unchanged. `queue/P1-issue-2af81992.json` moves to `done/`.
