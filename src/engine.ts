@@ -2188,12 +2188,33 @@ function standingAtRisk(world: World, s: State, fxs: Fx[] | undefined): string[]
  * — which is what reaches this one: the departure sits behind `if inParty vell`.
  * A departure behind a die (`check`, `chance`) is deliberately not previewed:
  * this line is a fact about the choice, not a guess about the roll.
+ *
+ * That closed the scripted half. A second report found the other half: "Vell
+ * hit 'near leaving' at -2 after one story choice... the status screen was
+ * the only place this surfaced." Nothing here scripted Vell's departure —
+ * `partyRemarks` walks every companion's own `leaves` list each turn and
+ * sends them off the moment it reads true, which is how a plain `addvar
+ * appr_vell -2` can end a party membership with no `["party", "vell",
+ * "leave"]` anywhere in the fx that caused it. Same fact-not-a-guess
+ * standard as above: the delta is deterministic the instant the fx is
+ * chosen, so it is checked against each present companion's own floor, not
+ * simulated by re-running the turn.
  */
 function partyLeaves(world: World, s: State, fxs: Fx[] | undefined): string[] {
   const out: string[] = [];
   for (const fx of fxs ?? []) {
     if (fx[0] === "party" && fx[2] === "leave" && s.party.includes(fx[1])) out.push(fx[1]);
     if (fx[0] === "if") out.push(...partyLeaves(world, s, (condsOk(world, s, fx[1]) ? fx[2] : fx[3]) ?? []));
+  }
+  const deltas = new Map<string, number>();
+  for (const [, apprVar, delta] of regardMoves(world, s, fxs ?? [])) deltas.set(apprVar, (deltas.get(apprVar) ?? 0) + delta);
+  for (const [apprVar, delta] of deltas) {
+    const id = apprVar.slice(5);
+    if (out.includes(id) || !s.party.includes(id)) continue;
+    const leaves = world.npcs[id]?.companion?.leaves;
+    if (!leaves?.length || leaves.some((l) => condsOk(world, s, l.if))) continue; // already about to walk regardless of this fx
+    const after: State = { ...s, vars: { ...s.vars, [apprVar]: (s.vars[apprVar] ?? 0) + delta } };
+    if (leaves.some((l) => condsOk(world, after, l.if))) out.push(id);
   }
   return out;
 }

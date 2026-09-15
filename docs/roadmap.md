@@ -1994,8 +1994,34 @@ same design-level ask five earlier P2s already lost to the same budget
 argument (`docs/roadmap.md`, "One real bug, and six P2s"). Filed to
 `done/` with this reasoning rather than left to confuse a future pass.
 
-Two P2s stay open, genuinely uninvestigated rather than deferred on
-weighed evidence: a companion's regard crossing its leaving threshold
-from a single large story choice, rather than a run of small ones, may or
-may not trip the existing pre-action warning (`partyLeavesHint`) the same
-way — not checked this pass. `npm run verify` green throughout.
+Two P2s were left open above, "not checked this pass" — checked immediately
+after, and they were real. `partyLeavesHint`'s own docstring already
+recorded the design intent (wave six: "Regard is a number that goes back
+up; a companion walking out is not, and the preview said the same kind of
+thing about both") but the implementation only ever covered half of it:
+`partyLeaves` scanned an action's own `fx` for an explicit `["party", id,
+"leave"]`, which is what the Oath-Ground uses and what that wave-six fix
+closed. It never checked whether a plain `addvar appr_vell` — no scripted
+departure anywhere — would cross the companion's own `leaves` floor, the
+thing `partyRemarks` checks automatically, every turn, for every
+companion present, and acts on the moment it reads true. A regard drop
+that happens to land exactly on that floor sent the companion off with no
+warning at all, the label reading only "(Vell -2)" the same as any other
+turn. That is the wave-ten report, precisely: "the status screen was the
+only place this surfaced, and only when explicitly checked."
+
+Fixed the same way the scripted half was: `partyLeaves` now also nets
+every `appr_*` delta an effect list moves (reusing `regardMoves`, which
+already follows the same `if`-branch logic) and checks each present
+companion's own `leaves` conditions against that hypothetical total,
+skipping anyone already past their floor regardless of this fx (that
+departure has a different cause and does not need a second warning). No
+die roll involved — a plain `addvar`'s result is a fact the instant the fx
+is chosen, the same "not a guess about the roll" standard the docstring
+already held itself to for the scripted case. `test/party.test.ts` gets
+the sibling test the original was missing: a companion with a real
+`leaves` floor and zero scripted departure, three cases (crosses it,
+doesn't, already past it). Measured against all 13 roads and the
+walkthrough: every number unchanged — nothing currently proven crosses an
+implicit floor this way, so the fix is free today and only pays for
+itself the next time content does. `npm run verify` green throughout.

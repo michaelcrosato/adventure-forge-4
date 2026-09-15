@@ -1066,6 +1066,57 @@ test("an option that makes a companion walk out says so, and a dismissal does no
   assert.doesNotMatch(oddsHint(world, alone, { kind: "custom", room: "a", id: "swear" } as Action), /walks out/);
 });
 
+/**
+ * Wave ten's report: "Vell hit 'near leaving' at -2 after one story choice;
+ * the status screen was the only place this surfaced." The Oath-Ground fix
+ * above closed the scripted half — a `["party", id, "leave"]` sitting in the
+ * same fx as the regard drop. This is the other half: a plain `addvar
+ * appr_vell` that crosses Vell's own `leaves` floor with no departure
+ * scripted anywhere in the action at all. `partyRemarks` would send Vell off
+ * the very next turn regardless; the preview should say so before the turn
+ * is spent, not after.
+ */
+test("a regard drop that crosses a companion's own leaving floor says so, with no departure scripted anywhere", () => {
+  const world = mini({
+    npcs: {
+      vell: {
+        name: "Vell",
+        room: "a",
+        companion: { leaves: [{ if: [["var", "appr_vell", "<", -1]], say: "Enough." }] },
+      },
+      osk: { name: "Brother Osk", room: "a", companion: {} },
+    },
+    rooms: {
+      a: {
+        name: "A",
+        desc: "Room A.",
+        actions: [
+          // no ["party", ..., "leave"] anywhere — the floor alone does it
+          { id: "choice", label: "make the choice", fx: [["addvar", "appr_vell", -2]] },
+          { id: "small", label: "a smaller cost", fx: [["addvar", "appr_vell", -1]] },
+          { id: "already_low", label: "one more push", fx: [["addvar", "appr_vell", -1]] },
+        ],
+      },
+    },
+  });
+  let { state } = newState(world, 1);
+  state = { ...state, party: ["vell", "osk"] };
+  const hint = (id: string) => oddsHint(world, state, { kind: "custom", room: "a", id } as Action);
+
+  assert.match(hint("choice"), /Vell -2; Vell walks out\)$/, hint("choice"));
+  // -1 alone (appr_vell 0 -> -1) does not cross the < -1 floor
+  assert.match(hint("small"), /Vell -1\)$/, hint("small"));
+  assert.doesNotMatch(hint("small"), /walks out/, hint("small"));
+
+  // already at the floor: the fx that follows is not what sends them off, so it says nothing new
+  const atFloor = { ...state, vars: { ...state.vars, appr_vell: -2 } };
+  assert.doesNotMatch(
+    oddsHint(world, atFloor, { kind: "custom", room: "a", id: "already_low" } as Action),
+    /walks out/,
+    "already leaving regardless of this fx is not the same warning as this fx being the cause",
+  );
+});
+
 test("the company says once that nobody caps it", () => {
   const world = mini({
     npcs: {
