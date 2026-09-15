@@ -305,7 +305,7 @@
         "up": { "to": "va_antechamber" },
         "north": {
           "to": "va_throne",
-          "if": [["flag", "va_wight_passed"]],
+          "if": [["any", [["flag", "va_wight_passed"], ["flag", "calm_va_barrow_wight"]]]],
           "lockedMsg": "The wight bars the way north. Fight it, slip past it, or go up and around through the hall of verses.",
           "hint": "defeat it, slip past it (grace), or go around"
         }
@@ -314,12 +314,19 @@
         ["xp", 2],
         ["say", "Whoever wore this mail last never got clear of the barrow. The blight pools thickest right here."]
       ],
-      "variants": [{ "if": [["npcDead", "va_barrow_wight"]], "brief": "Low vaults. The wight is rag and bone." }],
+      "variants": [
+        { "if": [["npcDead", "va_barrow_wight"]], "brief": "Low vaults. The wight is rag and bone." },
+        {
+          "if": [["any", [["flag", "va_wight_passed"], ["flag", "calm_va_barrow_wight"]]], ["!npcDead", "va_barrow_wight"]],
+          "desc": "Low vaults and stone boxes, the air gone sour and the mold black instead of green. Blight-rats scatter between the boxes. A mail shirt is draped over one box. The wight stands off the passage now, north clear.",
+          "brief": "Low vaults. The wight stands off the passage."
+        }
+      ],
       "actions": [
         {
           "id": "va_slip_past",
           "label": "slip past the wight — a fail costs 1hp",
-          "if": [["!flag", "va_wight_passed"], ["!npcDead", "va_barrow_wight"]],
+          "if": [["!flag", "va_wight_passed"], ["!flag", "calm_va_barrow_wight"], ["!npcDead", "va_barrow_wight"]],
           "fx": [
             [
               "check",

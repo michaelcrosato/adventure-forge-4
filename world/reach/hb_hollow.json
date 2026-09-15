@@ -115,17 +115,24 @@
         "out": { "to": "hb_kingsrest_mouth" },
         "in": {
           "to": "hb_kingsrest_throne",
-          "if": [["flag", "hb_wights_passed"]],
+          "if": [["any", [["flag", "hb_wights_passed"], ["flag", "calm_hb_grave_wight"]]]],
           "lockedMsg": "The grave-wight bars the passage, patient as stone.",
-          "hint": "defeat it, slip past it (grace), or face it down (will)"
+          "hint": "defeat it, calm it, slip past it (grace), or face it down (will)"
         }
       },
-      "variants": [{ "if": [["flag", "hb_wights_passed"]], "brief": "The cold hall. The passage stands open now." }],
+      "variants": [
+        { "if": [["flag", "hb_wights_passed"]], "brief": "The cold hall. The passage stands open now." },
+        {
+          "if": [["flag", "calm_hb_grave_wight"], ["!flag", "hb_wights_passed"]],
+          "desc": "A long hall, cold enough to see your own breath. Old shields hang from the walls, rusted to lace. The grave-wight still stands square in the passage, stood down now and no longer minded to stop you.",
+          "brief": "The cold hall. The grave-wight stands down."
+        }
+      ],
       "actions": [
         {
           "id": "hb_slip_wight",
           "label": "slip past it — a fail costs 1hp (grace)",
-          "if": [["!flag", "hb_wights_passed"], ["!npcDead", "hb_grave_wight"]],
+          "if": [["!flag", "hb_wights_passed"], ["!flag", "calm_hb_grave_wight"], ["!npcDead", "hb_grave_wight"]],
           "fx": [
             [
               "check",
@@ -143,7 +150,7 @@
         {
           "id": "hb_face_wight",
           "label": "stand fast and face it down (will)",
-          "if": [["!flag", "hb_wights_passed"], ["!npcDead", "hb_grave_wight"]],
+          "if": [["!flag", "hb_wights_passed"], ["!flag", "calm_hb_grave_wight"], ["!npcDead", "hb_grave_wight"]],
           "fx": [
             [
               "check",
@@ -561,9 +568,7 @@
     "hb_q_kingsrest": {
       "name": "The Kings' Rest",
       "start": [["flag", "hb_entered"]],
-      "done": [
-        ["any", [["flag", "hb_hollow_rested"], ["flag", "hb_hollow_bargained"], ["flag", "hb_hollow_burned"]]]
-      ],
+      "done": [["any", [["flag", "hb_hollow_rested"], ["flag", "hb_hollow_bargained"], ["flag", "hb_hollow_burned"]]]],
       "stages": [
         {
           "if": [["!flag", "hb_found_kingsrest"]],

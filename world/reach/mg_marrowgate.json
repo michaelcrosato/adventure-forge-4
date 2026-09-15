@@ -786,9 +786,9 @@
         "south": { "to": "mg_cistern" },
         "north": {
           "to": "mg_first_reeves_tomb",
-          "if": [["flag", "mg_guard_passed"]],
-          "lockedMsg": "The honour guard bars the way north. Kill it, slip past it, or turn back.",
-          "hint": "kill it, or slip past it (grace)"
+          "if": [["any", [["flag", "mg_guard_passed"], ["flag", "calm_mg_hollow_guard"]]]],
+          "lockedMsg": "The honour guard bars the way north. Kill it, calm it, speak the old rest-rite (will), or slip past it (grace).",
+          "hint": "kill it, calm it, speak the rest-rite (will), or slip past it (grace)"
         }
       },
       "onEnterOnce": [["xp", 3]],
@@ -802,13 +802,18 @@
           "if": [["flag", "mg_guard_passed"], ["!npcDead", "mg_hollow_guard"]],
           "desc": "The crypts of the kings before the Reeves, robbed to the bone. The honour guard has gone back to its post in the dark, facing the way you did not come. The way north is open.",
           "brief": "Robbed crypts. The guard stands aside."
+        },
+        {
+          "if": [["flag", "calm_mg_hollow_guard"], ["!flag", "mg_guard_passed"], ["!npcDead", "mg_hollow_guard"]],
+          "desc": "The crypts of the kings before the Reeves, robbed to the bone. The honour guard stands exactly where it always has, gray mail unmoving — calmed, not moved, and no longer minded to stop you. The way north is open.",
+          "brief": "Robbed crypts. The guard stands down, unmoving."
         }
       ],
       "actions": [
         {
           "id": "mg_slip_guard",
           "label": "slip past the guard — fail costs 2hp",
-          "if": [["!flag", "mg_guard_passed"], ["!npcDead", "mg_hollow_guard"]],
+          "if": [["!flag", "mg_guard_passed"], ["!flag", "calm_mg_hollow_guard"], ["!npcDead", "mg_hollow_guard"]],
           "fx": [
             [
               "check",
@@ -827,7 +832,7 @@
         {
           "id": "mg_guard_will",
           "label": "speak the old rest-rite at it (will)",
-          "if": [["!flag", "mg_guard_passed"], ["!npcDead", "mg_hollow_guard"]],
+          "if": [["!flag", "mg_guard_passed"], ["!flag", "calm_mg_hollow_guard"], ["!npcDead", "mg_hollow_guard"]],
           "fx": [
             [
               "check",
@@ -839,16 +844,7 @@
                 ["xp", 3],
                 ["say", "You don't run and you don't reach for a blade. You speak the old rest-rite instead, the one every honour guard was sworn under before it forgot everything else. Something in it remembers enough to stand down."]
               ],
-              [
-                [
-                  "if",
-                  [["flag", "calm_mg_hollow_guard"]],
-                  [
-                    ["say", "Whatever's left of it doesn't remember rites anymore. It doesn't come for you either; it only holds the way north, the way it has for four hundred years."]
-                  ],
-                  [["say", "Whatever's left of it doesn't remember rites anymore, only orders. It comes for you regardless."]]
-                ]
-              ]
+              [["say", "Whatever's left of it doesn't remember rites anymore, only orders. It comes for you regardless."]]
             ]
           ]
         }

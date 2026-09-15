@@ -51,7 +51,7 @@
             "out": { "to": "$passage" },
             "in": {
               "to": "$rest",
-              "if": [["flag", "$done"]],
+              "if": [["any", [["flag", "$done"], ["flag", "calm_$wight"]]]],
               "lockedMsg": "{{WIGHT}} bars the way, unmoving but not gone.",
               "hint": "deal with {{WIGHT}} first"
             }
@@ -61,6 +61,11 @@
               "if": [["flag", "$done"]],
               "desc": "The burial chamber of {{NAME}}. The verse-stone stands bare now, and the dust where {{WIGHT}} kept its watch has begun to settle.",
               "brief": "The chamber, quiet now."
+            },
+            {
+              "if": [["flag", "calm_$wight"], ["!flag", "$done"]],
+              "desc": "The burial chamber of {{NAME}}. {{WIGHT}} still crouches before the verse-stone, stood down and unmoving — it no longer stirs at your step, and the way past is clear.",
+              "brief": "The chamber: {{WIGHT}}, stood down."
             }
           ],
           "actions": [
@@ -165,7 +170,11 @@
         }
       },
       "items": {
-        "$loot": { "name": "{{LOOT}}", "hint": "a grave-good out of {{NAME}}, a keepsake; nothing more is owed for it", "loc": "nowhere" }
+        "$loot": {
+          "name": "{{LOOT}}",
+          "hint": "a grave-good out of {{NAME}}, a keepsake; nothing more is owed for it",
+          "loc": "nowhere"
+        }
       },
       "npcs": {
         "$wight": {
@@ -325,7 +334,11 @@
             }
           ]
         },
-        "$loot": { "name": "{{LOOT}}", "hint": "past its owner's needing, out of {{NAME}}; nothing is owed on it", "loc": "nowhere" }
+        "$loot": {
+          "name": "{{LOOT}}",
+          "hint": "past its owner's needing, out of {{NAME}}; nothing is owed on it",
+          "loc": "nowhere"
+        }
       },
       "npcs": {
         "$beast": {
@@ -463,7 +476,11 @@
         }
       },
       "items": {
-        "$loot": { "name": "{{LOOT}}", "hint": "worth the climb up {{NAME}}; a keepsake, nothing more is owed on it", "loc": "nowhere" }
+        "$loot": {
+          "name": "{{LOOT}}",
+          "hint": "worth the climb up {{NAME}}; a keepsake, nothing more is owed on it",
+          "loc": "nowhere"
+        }
       },
       "npcs": {
         "$watcher": {
@@ -667,7 +684,11 @@
         }
       },
       "items": {
-        "$loot": { "name": "{{LOOT}}", "hint": "small mercy out of {{NAME}}, and yours now; nothing is owed on it", "loc": "nowhere" }
+        "$loot": {
+          "name": "{{LOOT}}",
+          "hint": "small mercy out of {{NAME}}, and yours now; nothing is owed on it",
+          "loc": "nowhere"
+        }
       },
       "npcs": {
         "$foreman": {
@@ -751,9 +772,9 @@
             "out": { "to": "$palisade" },
             "in": {
               "to": "$tent",
-              "if": [["flag", "$done"]],
+              "if": [["any", [["flag", "$done"], ["flag", "calm_$captain"]]]],
               "lockedMsg": "{{CAPTAIN}} isn't done with you yet.",
-              "hint": "pay, fight, talk, or slip past {{CAPTAIN}} first"
+              "hint": "pay, fight, talk, calm, or slip past {{CAPTAIN}} first"
             }
           },
           "variants": [
@@ -761,13 +782,18 @@
               "if": [["flag", "$done"]],
               "desc": "Bedrolls and a cookpot ring {{NAME}}'s fire, banked low for the night. {{CAPTAIN}} waves you through without looking up this time.",
               "brief": "The fire-ring, banked low now."
+            },
+            {
+              "if": [["flag", "calm_$captain"], ["!flag", "$done"]],
+              "desc": "Bedrolls and a cookpot ring the fire. {{CAPTAIN}} has gone quiet, hand off the belt-knife, and does not name a price at all now.",
+              "brief": "The fire-ring. {{CAPTAIN}} has gone quiet."
             }
           ],
           "actions": [
             {
               "id": "$pay",
               "label": "pay the toll (gold)",
-              "if": [["!flag", "$done"], ["var", "gold", ">=", 6]],
+              "if": [["!flag", "$done"], ["!flag", "calm_$captain"], ["var", "gold", ">=", 6]],
               "fx": [
                 ["addvar", "gold", -6],
                 ["set", "$done"],
@@ -780,7 +806,7 @@
             {
               "id": "$slip",
               "label": "slip through unseen (grace)",
-              "if": [["!flag", "$done"]],
+              "if": [["!flag", "$done"], ["!flag", "calm_$captain"]],
               "fx": [
                 [
                   "check",
@@ -800,7 +826,7 @@
             {
               "id": "$slip_rounds",
               "label": "slip through on the watch's blind turn",
-              "if": [["class", "scout"], ["flag", "$rounds_marked"], ["!flag", "$done"]],
+              "if": [["class", "scout"], ["flag", "$rounds_marked"], ["!flag", "$done"], ["!flag", "calm_$captain"]],
               "fx": [
                 [
                   "check",
@@ -868,7 +894,7 @@
             {
               "id": "$talk",
               "label": "talk the toll down (will)",
-              "if": [["!flag", "$done"]],
+              "if": [["!flag", "$done"], ["!flag", "calm_$captain"]],
               "say": "Go on, then. Make your case.",
               "fx": [
                 [
@@ -986,9 +1012,9 @@
             "out": { "to": "$porch" },
             "in": {
               "to": "$crypt",
-              "if": [["flag", "$done"]],
+              "if": [["any", [["flag", "$done"], ["flag", "calm_$saint_shade"]]]],
               "lockedMsg": "{{SAINT}} kneels across the crypt stair, and will not be stepped around.",
-              "hint": "rite, reading, or force past {{SAINT}} first"
+              "hint": "rite, reading, calm, or force past {{SAINT}} first"
             }
           },
           "variants": [
@@ -996,13 +1022,18 @@
               "if": [["flag", "$done"]],
               "desc": "Pews of {{NAME}} gone to moss. The altar stands empty now that {{SAINT}} has risen, and the flagstones hold a little less cold than they did.",
               "brief": "The nave, the altar empty now."
+            },
+            {
+              "if": [["flag", "calm_$saint_shade"], ["!flag", "$done"]],
+              "desc": "Pews of {{NAME}} gone to moss, and at the altar {{SAINT}} kneels still, quiet now, and does not look up again.",
+              "brief": "The nave. {{SAINT}} kneels, gone quiet."
             }
           ],
           "actions": [
             {
               "id": "$rite",
               "label": "speak the rite for it (will)",
-              "if": [["!flag", "$done"]],
+              "if": [["!flag", "$done"], ["!flag", "calm_$saint_shade"]],
               "fx": [
                 [
                   "check",
@@ -1034,7 +1065,7 @@
             {
               "id": "$read",
               "label": "read the vigil-plaque (wits)",
-              "if": [["!flag", "$done"]],
+              "if": [["!flag", "$done"], ["!flag", "calm_$saint_shade"]],
               "fx": [
                 [
                   "check",
@@ -1121,7 +1152,11 @@
         }
       },
       "items": {
-        "$loot": { "name": "{{LOOT}}", "hint": "a keepsake out of {{NAME}}, however it came; nothing is owed on it", "loc": "nowhere" }
+        "$loot": {
+          "name": "{{LOOT}}",
+          "hint": "a keepsake out of {{NAME}}, however it came; nothing is owed on it",
+          "loc": "nowhere"
+        }
       },
       "npcs": {
         "$saint_shade": {

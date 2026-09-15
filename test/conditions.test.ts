@@ -448,50 +448,49 @@ test("opening and leaving a conversation spends no turn", () => {
 });
 
 /**
- * Wave nine, seed 9911: "The 'name it (it stands down)' peaceful option on the
- * honour guard at The Old Crypts reported 'You speak its true name, and it
- * remembers what it was' but the way remained locked and a follow-up 'speak the
- * old rest-rite' check failed and the guard attacked anyway."
+ * Wave nine, seeds 9911/9912, and P2-issue-195be48f/74b45e30/fa597745 after it:
+ * five independent reports that standing a guardian down (`scholar_name`,
+ * `envoy_parley` — both just `calmhostile`) read as success ("it remembers
+ * what it was" / "you talk it down") while the passage it blocked stayed
+ * locked, still wanting its own separate check. An earlier cycle called this
+ * the design working as intended and fixed only the narration (a calmed
+ * guard's own miss no longer claims an attack `aggressiveNow` cannot land) —
+ * and the same wave still expected the door to open regardless.
  *
- * Half of that is the design saying no: standing something down is not a key,
- * and the exit says so. The other half was a line telling the player something
- * that could not happen. `scholar_name` calms the guard; `aggressiveNow` reads
- * `calm_<id>` and refuses it its turn — so the rest-rite's miss said "It comes
- * for you regardless" about a thing that was never coming. The player believed
- * the line over the state, which is the right way round: the line was wrong.
- *
- * One action in the realm narrated an attack in a branch a calmed hostile could
- * reach. It reads what the state says now.
+ * Five reports agreeing is the design being wrong, not under-explained. A
+ * calmed hostile is not `hostileNow` at all (engine.ts), so a passage it
+ * "guards" by standing there has nothing left to enforce it. `calm_<id>` now
+ * joins the passed/done flag on every guarded exit that can be calmed —
+ * the honour guard, the barrow-wight, the Hollowbrook grave-wight, and the
+ * three shared templates with a guardian in the doorway (barrow, camp,
+ * chapel) — and the actions that used to be the only way through gate on
+ * `!calm_<id>` too, since a door already open has nothing left for them to
+ * open.
  */
-test("a calmed hostile's own room stops promising an attack it cannot make", () => {
+test("calming the honour guard opens its passage outright, and its own checks stand down with it", () => {
   const w = loadWorld("world/reach.json");
   const start = newState(w, 1).state;
-  const base: State = {
-    ...start,
-    classId: "scholar",
-    room: "mg_old_crypts",
-    visited: ["mg_old_crypts"],
-    flags: { ...start.flags, calm_mg_hollow_guard: true },
-  };
-  let misses = 0;
-  for (let seed = 1; seed <= 40; seed++) {
-    let state: State = { ...base, rngA: seed, seed };
-    const rite = legalActions(w, state).find((a) => actionLabel(w, a, state).startsWith("speak the old rest-rite"));
-    assert.ok(rite, "the rest-rite is still offered to someone who has already named the guard");
-    const out = step(w, state, rite!);
-    const line = out.events.find((e) => e.startsWith("WILL d20:"));
-    if (!line || !line.endsWith("fail.")) continue;
-    misses++;
-    const said = out.events.join("\n");
-    assert.ok(
-      !/comes for you/.test(said),
-      `a calmed guard cannot come for anyone, and the miss must not say it does:\n${said}`,
-    );
-    assert.ok(
-      /doesn't come for you either/.test(said),
-      `the miss should say what actually happens:\n${said}`,
-    );
-    assert.equal(out.state.hp, base.hp, "and nothing struck the player");
-  }
-  assert.ok(misses > 0, "at least one of forty seeds misses a DC 12 will check");
+  const uncalmed: State = { ...start, classId: "scholar", room: "mg_old_crypts", visited: ["mg_old_crypts"] };
+  const calmed: State = { ...uncalmed, flags: { ...uncalmed.flags, calm_mg_hollow_guard: true } };
+
+  assert.ok(
+    legalActions(w, uncalmed).some((a) => actionLabel(w, a, uncalmed).startsWith("speak the old rest-rite")),
+    "uncalmed, the rest-rite is still how a scholar gets past",
+  );
+  assert.equal(
+    step(w, uncalmed, { kind: "go", dir: "north" }).state.room,
+    "mg_old_crypts",
+    "uncalmed, the guard still bars the way",
+  );
+
+  const calmedLabels = legalActions(w, calmed).map((a) => actionLabel(w, a, calmed));
+  assert.ok(
+    !calmedLabels.some((l) => l.startsWith("speak the old rest-rite") || l.startsWith("slip past the guard")),
+    `a door already open offers no other way to open it:\n${calmedLabels.join("\n")}`,
+  );
+  assert.equal(
+    step(w, calmed, { kind: "go", dir: "north" }).state.room,
+    "mg_first_reeves_tomb",
+    "calmed, the way north is simply open",
+  );
 });

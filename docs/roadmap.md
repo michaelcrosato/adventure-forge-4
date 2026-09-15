@@ -1081,3 +1081,56 @@ wood, past five stands, at its far corner" also holds: five wests from the
 gate lands on `th_wood_0_2`, the grid's west edge, which continues on into
 `th_hollow_approach`. Superseded — moved to `queue/superseded/` by rename,
 contents untouched, the way the pagination finding was.
+
+### Standing something down is a key after all
+
+Wave nine's stand-down findings never closed. `fbe235e` (2026-09-09) fixed
+the honour guard's own lie — a calmed guard's failed rest-rite no longer
+claimed an attack `aggressiveNow` had already made impossible — and left the
+mechanic alone on purpose: *"standing something down is not a key, and the
+exit says so."* The same wave still expected the door to open regardless,
+and called it "a design question, not a wording one." Three more reports
+arrived after that fix landed, not before: `P2-issue-195be48f`,
+`P2-issue-74b45e30`, `P2-issue-fa597745`, all describing the same gap from
+a different angle. A wording fix, tried once and measured against a live
+wave, that still produces the same complaint is evidence about the design,
+not about the wording.
+
+`calmhostile` (`scholar_name`, `envoy_parley`) already reads as full
+neutralization to the engine: `hostileNow` is false the instant something
+is calmed, same as dead. A creature the engine no longer considers hostile
+holding a door shut by content-only convention was the actual gap. Every
+guarded passage that can be calmed now treats `calm_<id>` as equivalent to
+however it was previously unlocked, `any`-joined onto the exit's existing
+condition:
+
+- the honour guard (`mg_old_crypts`) and the Vale barrow-wight (`va_crypt`),
+  named in the P1s directly;
+- the Hollowbrook grave-wight (`hb_kingsrest_hall`), same shape, not
+  previously named;
+- all three shared templates with a guardian in the doorway — barrow
+  (wight), camp (captain), chapel (saint-shade) — so the fix reaches every
+  stamp of each (9 + 10 + 13 = 32 places) in one change rather than one
+  region at a time. The fourth guarded template, the tower's watcher, is a
+  riddle gate with no `hostile` field at all — nothing to calm — and is
+  untouched.
+
+Every action that used to be the only way past now also gates on
+`!calm_<id>`: a door already open has nothing left for "slip past" or "the
+rest-rite" to open, and offering them anyway is the kind of option that
+costs nothing, does nothing, and reads as a lie of its own. `test/conditions.test.ts`
+now proves both halves on the honour guard: uncalmed, the rest-rite is
+still there and the door still holds; calmed, neither redundant action is
+offered and `go north` simply walks through.
+
+One proof paid for it. `crowned_hollow#bloodied` kills the barrow-wight
+outright and never touches the calm path, but it does sit in `va_crypt`
+for three attack turns, and the locked exit's `hint` renders on every one
+of them — `scripts/budget.ts` counts that line whether or not the exit
+ever opens by it. Wording added to `hint`/`lockedMsg` on the two named
+rooms pushed `va_crypt`'s screen from 1295 to 1304 and the proof's average
+from 524 to 525.2. Reverted the wording, kept the `any` condition and the
+new stood-down variant text (neither is on this proof's path, since the
+kill sets `npcDead` and the pre-existing first-match variant wins): the
+mechanic doesn't need the hint to say it works, and the ratchet only turns
+down.
