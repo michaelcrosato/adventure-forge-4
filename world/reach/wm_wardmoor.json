@@ -594,7 +594,12 @@
                 ["say", "You talk like someone with nothing to hide and everything to lose by delay. It works better than it should. They wave you past."]
               ],
               [
-                ["addvar", "rep_watch", -1],
+                [
+                  "if",
+                  [["!flag", "wm_checkpoint_talk_failed"]],
+                  [["set", "wm_checkpoint_talk_failed"], ["addvar", "rep_watch", -1]],
+                  []
+                ],
                 ["say", "\"Try that again with a straighter face,\" the nearer one says. Neither of them moves the rope."]
               ]
             ]

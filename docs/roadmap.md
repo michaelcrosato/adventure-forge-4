@@ -3916,3 +3916,135 @@ non-fix for the same underlying reason. `queue/P2-issue-3c4440fb.json` and
 `queue/P2-issue-7f9e043b.json` stay in `done/` on that basis (their move
 predates this write-up but the conclusion independently agrees with it).
 No code changed; `npm run verify` untouched by this entry.
+
+### The crossing-warning refinement and the evidence-nearby hint: both already built, from the same mechanism
+
+Four reports, one underlying theme. `P2-issue-5350baa3` (wave 4, `s98820`) is
+explicit that the Coldpass crossing warning "already does this well" and
+only wants the "16 threads open" count made "clickable/expandable into
+names without spending a turn." It already is, and was before this report
+was filed. `cp_pass`'s `onEnterOnce` (`world/reach/cp_coldpass.json:36-48`)
+fires `questsopen` (`src/engine.ts:1582-1595`), which prints the count and
+"Read them in your status before you cross" — and `status`
+(`src/mcp.ts:175-187`, "Costs no turn — call it any time... e.g. right
+before a major choice") already lists every active quest by name under two
+headings, `The road:` (the throughline, which crosses with you) and
+`Quests:` (side threads, `src/format.ts:338-390`), each carrying a
+`way()`-computed hint (`:364-376`, walking `pathTo` at `src/engine.ts:806`)
+naming the route if the target is in your current hold, "(you are standing
+there)" if it is the room you're in, or "(in <region name>)" if it's
+elsewhere. Checked this isn't just a reading of the code: built a probe
+against `renderStatus` directly (not committed — scratchpad only) and
+confirmed live output. Standing in Wickstead with one of Names for the
+Rite's three pieces found prints `Names for the Rite: Ede's names are
+yours. Two sources left: the parish roll at the chapel, and the headland's
+markers by the Bone Road. (the way there: one east)` — a free, no-turn,
+itemized, located answer, reached through the exact command the warning
+already names.
+
+This is the same shape of finding `docs/roadmap.md:3328-3360` already
+recorded for `P2-issue-58169e05` ("keep surfacing status/look proactively...
+at point-of-no-return rooms like the Pass Gate"), closed there as "already
+does more than the ticket asks for." `5350baa3` asks for a strict subset of
+that (expand on demand, rather than always shown), which the same `status`
+call already covers. The one piece it does *not* cover is flagging *which*
+open threads are "hold-local" versus "persist," beyond the road/side
+grouping status already draws — and that runs into the same wall
+`be79b069`/`fc1a4039` hit before it: the engine has no "which side of this
+gate does this quest's `at` fall on" concept, only "which room" (the
+`questsopen` case's own comment, `:1584-1588`, already declined to guess at
+this for the same reason). Satisfied on the buildable half; the rest is the
+harder ask, next. `queue/P2-issue-5350baa3.json` moved to `done/`.
+
+`be79b069` and `fc1a4039` were already triaged this session
+(`docs/roadmap.md:2715-2734`): both are one report (`s84498`) asking for a
+numeric turn-cost estimate before the crossing; no "turns to resolve a
+quest" concept exists anywhere in the engine; the cheap stand-in (a bare
+count) doesn't answer the question either ticket actually asks; both stayed
+in `queue/` on purpose, "not superseded, not forgotten." Re-checked that
+against the current tree rather than trusting the earlier note: still
+holds. `way()`/`pathTo` solve walking distance in rooms, which has no fixed
+relationship to how much quest content remains — a quest stage can be one
+action or the rest of a forty-turn hold, and nothing in the DSL records
+which. Answering this for real would mean authoring a turn-cost estimate on
+every stage of every quest in the realm (fifteen holds' worth) — a new
+metadata surface, not a content edit, and squarely the "new authored
+per-quest metadata" bar this cluster was told to leave deferred for.
+
+Does a third report change that calculus? `5350baa3` is a genuinely
+separate, independent report (`s98820`) from the one behind
+`be79b069`/`fc1a4039` (`s84498`) — so the general "warn me better before
+this crossing" theme now has two independent sources, not three (the two
+framings of one ask were never two reports, as the earlier triage already
+noted). But the two asks aren't the same size: `5350baa3`'s buildable half
+is done above, and the part of it that *isn't* buildable is
+`be79b069`/`fc1a4039`'s ask restated in miniature. A second independent
+report wanting the same infeasible thing is one more data point, not a
+change in what it would cost to build — corroboration moved from "1" to "2
+independent reports, both wanting a numeric turn estimate specifically,"
+worth recording, but it doesn't turn a realm-wide authoring effort into a
+cheap fix no matter how many times it's asked for. Both
+`queue/P2-issue-be79b069.json` and `queue/P2-issue-fc1a4039.json` stay in
+`queue/`, open, on the same "genuine, not yet built" bar as `3ddba1f3`,
+`5109e8d6` and `f5fa61c0`.
+
+`P2-issue-1e628263.json` ("surface a lightweight 'unresolved evidence/quest
+nearby' hint in the free look/status when standing in a hold that has an
+active but not-yet-found evidence piece") is the same mechanism as
+`5350baa3`, asked from the other direction — and the Wickstead probe above
+already answers it for `status`: the hint is not a separate flag, it's the
+ordinary quest-listing line, already there, already free, already pointing
+at the nearest remaining piece by name and route whenever the authoring
+gives it an `at`. `look` (`src/mcp.ts:161-173`) does not carry this —
+`render()` (`src/format.ts:50-159`, shared by `act` and `look`) shows the
+room, HUD, inventory and menu, never the journal — but it does not need to:
+`status` already covers the identical ground for the identical zero cost,
+and is the tool the realm already tells a player to reach for "any time,"
+not only at a crossing.
+
+Checked how far that coverage actually reaches rather than trusting the two
+holds already sampled. Every hold's evidence-style quest
+(`{hold}_hollow.json`, the quest behind its `statusTracks` tracker) was
+counted for `at` coverage across its stages: `ff_q_sent_for` 9/9,
+`fl_q_names` 7/7, `pw_q_names` 7/7, `sh_q_truce_words` 7/7, `mc_q_prepare`
+5/5, `va_verses` 8/8, and `hb_q_evidence` 8/8 (just fixed under
+`P1-issue-c2b703e1`, `docs/roadmap.md:3722-3807`). Seven of eight already
+carry the pattern this ticket wants, most of them since before this wave.
+One gap: `kw_q_round` ("The Hunt's Unfinished Round",
+`world/reach/kw_hollow.json:501-524`) has `at` on its 0-worked stage
+(`:519-523`) but not its 1-worked or 2-worked stages (`:511-518`) — the same
+missing-middle-stage shape the causeway stone had before its fix. Confirmed
+live with the same probe technique: standing at Hornhallow's muster court
+with one of three ridings worked, `status` prints "One riding is worked.
+Two remain: a covert beaten, a stand held, a line cast — do whichever you
+haven't." with no route, while its sibling quests on the very next lines
+(`The Huntsman's Horn`, `The Old Kings' Hounds`) both carry theirs. Real,
+narrow, and fixable the same way `hb_q_evidence` was — but it is a distinct
+content gap, not what `1e628263` asks for (a general mechanism, which
+already exists and already reaches seven of eight holds), and it is not one
+of this cluster's four tickets. Rather than fold an unrelated content fix
+into this change, flagged it as a follow-up via `spawn_task` instead of
+fixing it inline. `queue/P2-issue-1e628263.json` moved to `done/`: the
+mechanism it wants is already built and already covers the great majority
+of the realm for free.
+
+No engine or content change landed from this entry, so nothing here moved
+the walkthrough — verified anyway, since the claims above lean on exact
+numbers rather than "unchanged": `npm run verify` green (typecheck, full
+test suite, all three worlds validate, both crawls clean). `node --import
+tsx scripts/budget.ts world/reach.json --terse` — avg 439.8699/450, max
+1076/1100, unchanged from before this entry (about 10 characters of average
+headroom over 269 screens — part of why the crossing warning stays a
+pointer to `status` rather than growing an inline list). The status ratchet
+(`test/format.test.ts:291-321`, `AVG_MAX` 3650 / `WORST_MAX` 5650) measured
+fresh rather than assumed from this document's own earlier figures: avg
+3617.13 (~32.9 characters of headroom) and worst 5569 at `mg_hollow_throne`
+(~81 headroom) — both thin enough that any new always-on `status` content
+is a live risk to the ratchet, which is the other half of why "point at
+what already exists" was the right call for `5350baa3` and `1e628263`
+rather than adding new lines to either screen. Two files unrelated to this
+entry (`world/reach/ir_irondowns.json`, `world/reach/wm_wardmoor.json`) were
+already modified in the working tree by other in-flight work before this
+entry was written; left exactly as found. `queue/P2-issue-5350baa3.json`
+and `queue/P2-issue-1e628263.json` moved to `done/`; `queue/P2-issue-be79b069.json`
+and `queue/P2-issue-fc1a4039.json` stay in `queue/`, open.
