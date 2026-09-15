@@ -510,6 +510,18 @@ instead of the game.
     per room and state-independent, which is what makes the free `status`
     screen affordable, so this is a change with a budget consequence rather
     than a line edit.
+13. **A menu number means one thing per room, not one thing per turn.**
+    `menuNumbers`/`actionByNumber` already fixed the page-boundary version of
+    this (a number meaning two things across two pages of the *same* room
+    view); nothing yet fixes the turn-boundary version, where the room's own
+    option list changes because state changed — an enemy dies, an item is
+    used up — and a number a player is holding in their head from the
+    previous turn now names something else. Recorded rather than rushed
+    (2026-09-15 note, below): the honest fix is non-contiguous numbering that
+    survives a turn, which is a state-shape change (something has to
+    remember which slot was whose), and one report doesn't yet justify that
+    size of change against how it might read (gaps in a numbered list are
+    their own confusion).
 
 ## What landed on 2026-09-09, and the one thing it says
 
@@ -1150,3 +1162,38 @@ cost (`abilityCost`) to the same parenthetical, and
 2 left/`. The player who filed this saw the effect half already landed;
 the cost half was already there too, just not in what they quoted. Nothing
 left to fix — superseded, moved to `queue/superseded/` by rename.
+
+### A menu number surviving a turn, not just a page
+
+`P1-issue-d3907169`: "an enemy dies or an item is consumed" and a number a
+player was holding onto from the previous turn now names something else —
+"I once meant to attack but hit 'use dried herbs'." `P2-issue-dd0b35f1`
+asks for the same thing by a proposed fix: pin frequent actions to stable
+numbers.
+
+This reads at first like the bug `menuNumbers`/`actionByNumber` already
+fixed — the comment on `menuNumbers` describes "'use dried herbs' silently
+consumed the item on a page where I meant to pick a different numbered
+option" almost word for word — but it is the adjacent problem, not the
+same one. That fix stabilizes a number **within one room view**, across
+pages of content that isn't changing. This report is about a number
+**across a turn**, where the room's own option list changes because the
+state actually did: `allActions` is rebuilt fresh from current state every
+call, by design (a dead thing's attack option has to disappear, or the
+menu lies), and whatever came after the removed entry shifts down. Reading
+the actual fix (`src/engine.ts`'s `menuNumbers`) confirms it directly — it
+renumbers off `allActions(world, s)` for the state *now*, which has no
+memory of the state a turn ago.
+
+A real fix is non-contiguous numbering that survives a turn: something in
+`State` remembers which number was whose, and a removed option leaves a
+gap rather than closing it. That's a state-shape change, not a line edit —
+it touches determinism (`State` has to stay a plain, hashable, replayable
+value), the crawler and mock player (both index into the list
+positionally), and it trades one confusion (a number changes meaning) for
+a different one (a numbered list with holes in it) that hasn't been
+measured against real players either. One report, its own proposed fix
+unevidenced beyond the report itself, doesn't clear the bar this project
+holds engine changes to. Left in `queue/` rather than superseded — it
+isn't false, it's real and larger than one cycle should attempt on this
+much evidence — and recorded as item 13 in the order above.
