@@ -2613,3 +2613,131 @@ and all. Correct. Not filed; the retraction is the record.
 
 No code or content changed this section — six queue files moved to
 `done/`, nothing else; no verify needed.
+
+### The fresh wave's P2 backlog: eleven asked, eight already true, four left open
+
+The eleven P2s the same wave filed alongside its six P1s, plus one older
+ticket revisited for a reason below, went to two independent
+investigations — each checked every claim against `runs/g1-84497-mu2svd0q.json`
+/ `runs/g1-84498-mu2svd7s.json` and live code rather than trusting report
+text, the same discipline as the P1 pass above. I spot-checked the
+load-bearing claims in both reports against the source directly before
+writing any of this down.
+
+**Iron Downs, the sequel.** `1423c536` ("no signposted route... despite
+two companion quests pointing there") and `b3db44ea` ("surface a route
+hint earlier") are the same report (`s84498`) as the already-closed
+`done/P1-issue-4929c06b.json` — three triage units off one paragraph, not
+three signals. Both companion quests are fully wired, not dialogue-only:
+`wm_q_ring` ("Aldric's Ring", `world/reach/wm_wardmoor.json:1884`) and
+`q_tamsin` ("What the Mine Took", `world/reach/companions.json:5318`) both
+carry an `at` of `ir_company_store`/`ir_south_track`, and `q_tamsin`'s own
+hand-written hint already says "find Cinderhall in the Iron Downs, past
+Thornwold — before Coldpass." The reason neither prints a walked route
+while the player stands in Thornwold is `way()` (`src/format.ts:364-376`):
+it deliberately prints only a region name, never a walked path, once a
+quest's target region differs from the player's own — a fix for a real,
+cited problem (a nine-leg cross-region walk once ate 234 characters on a
+status line) — and `bearingsHere` draws the identical line. Not a bug; a
+documented, deliberate scope cut that both these tickets are, in effect,
+asking to re-open. Both of Iron Downs' unconditional entrances
+(`th_settlement`→north→`th_north_track`→north→`ir_south_track`, confirmed
+ungated at `world/reach/th_thornwold.json:48-58`; `wm_west_road`→west→
+`ir_east_road`) already carry the realm's standard "place lies/waits
+<direction>" desc convention one room short of the junction. Replayed
+`s84498` directly: `th_settlement`'s "go north" was on the menu at turns
+188 and 220; the player chose the dead-end wood both times and never
+returned a third time to take it. The other player in the same wave,
+offered the identical menu, circled back on their third visit and reached
+Iron Downs three turns later — exploration variance, not a broken sign.
+Non-findings; both moved to `done/`.
+
+**The direction-hint sweep.** `775bfe01` ("two stands west, then one
+north" not matching real links) names Captain Vane's Rope Larder hint
+(`world/reach/th_thornwold.json:1651-1657`); walked by hand against the
+live graph (`th_settlement`→west→`th_wood_4_2`→west→`th_wood_3_2`, "Fox
+Crossing"→north→`th_wood_3_1`, "The Rope Larder") — exact match, and the
+`s84497` trace shows the player walking exactly that path and arriving,
+turns 244-247. The check went past the ticket's own example: every
+hand-authored multi-step direction line in the `s84497` trace (five, not
+one — innkeep→Lys, Sergeant Coe→Cal, Vane→Rope Larder, Ness→Flooded
+Quarry, eel-trader→the Eel-Run) checked correct by hand against the room
+graph, zero illegal actions anywhere in 601 turns. `804a253a` ("not
+obvious that 'travel to' and compass directions cover different graphs")
+is already answered, verbatim, by an existing one-time tutorial line
+(`src/engine.ts:3384-3386`) that fires the instant fast travel first
+becomes available — turn 3 in `s84497`'s own trace, before the player
+could have been confused. Non-findings; both moved to `done/` alongside
+`775bfe01`.
+
+**Evidence items, re-checked.** `29c6dca3` asks for an in-fiction hint on
+when collected evidence gets used. `scripts/audit-items.ts` — the house
+tool built for exactly this question — reports 327 items, 238 read by
+something, 89 correctly-signaled keepsakes, 0 broken promises, 0 mute,
+right now. The ticket's own three named examples (curling survey map, the
+causeway-stone/mere's-answer pair, cipher notes) each check out
+individually: the map is an honest keepsake nothing reads; the causeway
+evidence isn't even an item, it's a flag set and consumed in the same
+action that finds it; the cipher notes are read
+(`world/reach/companions.json:4793-4796`) and their hint already says a
+second piece is needed without overclaiming where. Moved to `done/`.
+
+**The skiff-drag ceiling, once more.** `ca46b6d4` asks for a friendlier DC
+ceiling or an earlier warning on escalating retries — the same room, same
+player (`s84498`), as the already-closed `done/P1-issue-02610d63.json`.
+Lowering the ceiling was rejected outright: `escalatedDc`'s natural-20
+floor (`src/engine.ts:1207-1231`) is a documented, deliberate design
+constant. The "warn earlier" half traced clean against `s84498`'s own
+turns 403-406: the ceiling preview (`"raised N by failed tries, and stops
+at {ceiling}"`, `src/engine.ts:3005-3007`) showed on both the 2nd and 3rd
+of the player's three presses, before they walked away at 35% odds rather
+than trying a fourth time — the warning this ticket asks for was already
+shown to this exact player twice. Extending the preview to a check's
+first, unfailed offering (currently gated `tries > 0` on purpose, per its
+own code comment, from an earlier playtest fix) would be a system-wide
+change to every escalating check in the realm, not a minimal one, and one
+player seeing the warning twice and quitting anyway isn't evidence that
+showing it once earlier would have changed anything. Moved to `done/`.
+
+**Hollow Path, read start to finish.** `47755605`/`80205b5a` claim the
+Vale wood's "east" exit doesn't lead where its desc says. Read the full
+chain by hand: Hollow Path's desc names the drowned shrine and watchtower
+as visible "through a gap in the trees" — a horizon view, not a promise
+about the next room — and Wolf Scrape (the real east neighbor, one hop)
+and Tower Shadow (two hops) both keep describing the same landmarks as
+still further on, honestly, until Tower Shadow's own exits resolve the
+fork (east to the watchtower, south to the shrine). Every room in the
+chain agrees with the next; nothing here is inconsistent, and the
+grid-computed adjacency underneath it is the same kind the fuller
+`audit-bearings.ts` sweep already verified elsewhere in the realm.
+Non-finding; moved to `done/`.
+
+**Four left open, on the standing evidence bar.** `d2780f5c`'s "hints
+don't match" half is the same false premise as the sweep above; its other
+half — auto-offering a multi-step "travel to" for a landmark only heard
+named, never visited — is a real, distinct idea, deliberately foreclosed
+today by `knownLandmarks`/`travelAvailable`'s strict `s.visited` gate
+(`src/engine.ts:892-1007`), and single-report. `be79b069` and `fc1a4039`
+are two framings of one ask from one report (`s84498` again: a numeric
+turn-cost estimate before an irreversible crossing) — no "turns to
+resolve a quest" concept exists anywhere in the engine (`way()`/`pathTo`
+only ever solved travel *distance*, a different problem), and the
+cheapest measurable stand-in (a bare open-quest count on `status`) is free
+against the walkthrough ratchet but doesn't actually answer either
+ticket's question, so it wasn't shipped. `3ddba1f3` (the older,
+independently-sourced compass/waypoint-note ticket, seed 717) was
+re-checked directly against the post-router-work tree rather than trusted
+from its last triage: `bearingsHere` still only ever outputs walked legs,
+never a compass bearing, unchanged by anything landed this session. All
+four stay in `queue/`, open, on the same "genuine, single-report, nothing
+built yet" bar as `f5fa61c0`/`5109e8d6` below — not superseded, not
+forgotten.
+
+`P2-issue-5109e8d6` and `P2-issue-f5fa61c0` were checked for new
+corroboration from this wave and found none — nothing this wave filed
+touches either's topic (a missable one-time-offer flag, a HUD
+hollow-count). Left exactly as they were; not re-investigated.
+
+No code or content changed this section — eight queue files moved to
+`done/`, four fresh P2s plus one older one confirmed and left open in
+`queue/`, nothing else; no verify needed.
