@@ -3167,3 +3167,203 @@ else in the realm. Non-finding, same settled shape as wave one's; moved to
 No game code or content changed across these three — four queue tickets
 checked against world data and their own players' traces, all four closed
 as non-findings and moved to `done/`; no verify needed.
+
+### Room paging resets the display, not the number — the danger the ticket describes was already closed
+
+`P1-issue-d8b33576`/`P2-issue-b0833856` (one incident, `s91554`, a bug and its
+paired suggestion) say paginated room menus reset to page 1 on re-entry or
+"returning from a submenu," so a remembered "more in this room" option
+number can silently point to the wrong thing. Built a throwaway repro
+directly on `newState`/`legalActions`/`step` — a synthetic room with 14
+actions, no world file needed — rather than trust the claim's own framing.
+
+Half the mechanical claim holds: `enterRoom` (`src/engine.ts:1620-1622`)
+sets `s.roomPage = 0` unconditionally on every successful `go`/`travelto` —
+"a new room opens on its first page" — so leaving a paged room and walking
+straight back does reset the display; confirmed with the repro (paged to
+2/2, left, returned, back to 1/2). Paging itself is real in this exact run
+too: `s91554` turned pages at `va_crypt`, `va_square`, `wm_parade` and
+`mg_hollow_throne` during play. The other half of the claim doesn't hold:
+`endtalk` (`engine.ts:3205-3208`) and `traveldone` (`:3232-3235`) never
+touch `s.roomPage` at all, since the room itself never changes underneath a
+conversation or a closed travel menu — the same repro held a room at page
+2/2 straight through opening and closing both a `talk` and a `travel`
+submenu without it moving. "Returning from a submenu" resets nothing.
+
+More to the point, neither half actually causes the harm described. A menu
+number has meant a position in the room's *whole* option list, not the page
+showing, since `menuNumbers` (`engine.ts:2424-2427`); a number the current
+page doesn't show still resolves to the same action via `actionByNumber`'s
+whole-list lookup (`:2444-2447`) — and, decisively, in the interface this
+wave's agents actually ran on: `mcp.ts`'s `act` handler (`src/mcp.ts:135-
+148`) tries the currently-displayed page first and falls back to the whole
+list when the number isn't on it, and its own comment names this exact
+scenario, fixed after two wave-six players hit "No action N" typing a
+number they'd read a screen earlier. A remembered number cannot silently
+name the wrong thing; there is no report anywhere of a wrong action being
+taken this way, in this wave or any prior one.
+
+The reset-on-reentry behavior is also not an oversight to fix — it's the
+exact, deliberately named case `test/menu.test.ts:93-102` asserts, "walking
+into a room opens it on its first page," with its own comment: "the hall
+opens where it opened the first time." Making a room remember its own
+last-viewed page would mean reversing that test on the strength of one
+report, and the state-shape change it needs (`roomPage` keyed per room
+rather than one global counter) runs into a second, harder guard:
+`test/statecopy.test.ts:56-71` pins the state-canonicalization hash exactly
+so every receipt any report has ever quoted keeps verifying, and says
+plainly that changing it is "a decision, not a refactor" — spent once
+already, when `roomPage` itself was born. Spending it again to save one
+keypress after leaving and returning to a crowded room, against a danger
+that turns out not to exist, isn't that decision.
+
+Verdict: non-finding on the safety claim (`d8b33576`) — the display reset
+is real but working as designed and tested, and cannot cause a wrong pick.
+The suggestion (`b0833856`) is genuine but its real cost is a receipt-format
+break for a single P2 report solving a problem that doesn't occur —
+considered and declined, not merely under-corroborated, the same shape as
+the skiff-drag ceiling's rejection above. Both moved to `done/`.
+
+### The Parade Ground has five exits, not four, and "go north" is the one the desc names
+
+`P1-issue-3269f0aa` (`s91554`) says "go north" from Highward's Parade Ground
+led back to the Captain-General's Hall rather than onto the moor "as
+expected from the bearings readout" — the same shape of claim `Hollow Path`
+(above) already settled: read the room and the bearing by hand rather than
+assume a mismatch.
+
+`wm_parade`'s authored exits (`world/reach/wm_wardmoor.json:66-71`) are
+unconditional and exactly as reported: south to the gate, west to the
+armoury, east to the barracks, **north to `wm_hall`** — the
+Captain-General's Hall — whose own `south` exit (`:247`) returns the same
+way, an ordinary two-way door, not a loop. The room's own desc (`:62`) says
+so itself: "...the Captain-General's hall north; south is the gate, and a
+track worn pale by boots leads **out** onto the moor" — the moor exit is
+real, but it's a fifth exit, `out`, stitched in at world-gen time by
+`wm_wild.json`'s gen-grid back-link (`cell [2,4]`, `"back": "out"`, line
+17, applied by `src/worldgen.ts:93-106`) rather than authored inline on the
+room — and the room's own prose already names it by its real direction
+word. `scripts/audit-bearings.ts`, the house tool built for exactly this
+claim, finds 0 of 78 `wm`-region legs wrong, `wm_parade` included — the
+full walked sweep, not a hand spot-check.
+
+The bearings action (`wm_bearings`, `:108-114`, "North across the moor,
+then east at the height...") reads a compass for the wider moor's own
+geography, the same kind every bearings macro in the realm gives, not a
+claim about which of the room's own exits to take — the same horizon-vs-
+promise distinction `Hollow Path` turned on. Replayed `s91554`
+(`runs/g1-91554-mu2x2l72.json`) through the real moment: the player read
+the bearing, went north into the Hall, came back south, went north again,
+immediately back south — one genuine wrong guess, corrected in a single
+free step — then "go out" landed them on the moor the very next try. Two
+extra, costless turns, self-corrected before any harm; not evidence of a
+broken or misleading graph.
+
+Non-finding, same rigor and same shape as `Hollow Path`; moved to `done/`.
+
+### The ash-boy's hint: the bug half of the incident `d9ce0768` already traced
+
+`P1-issue-f3d5b35d` is the "bug" unit of the same `s91554` incident
+`P2-issue-d9ce0768` (above, this document) already investigated as a
+"suggestion" — one paragraph in the source report, two triage units, the
+shape this document has named before. Traced it independently against the
+same run (`runs/g1-91554-mu2x2l72.json`) before finding the write-up
+already on record: the same three `mg_ashboy`/`favor` failures (will DC 11,
++3 mod, no escalation — `tp:` checks are exempt, `engine.ts:1222`), the
+same locked-exit hint on `mg_palace_gate`'s own north exit ("the writ, the
+Marshal's escort, the servants' door, or force", `mg_marrowgate.json:366`),
+the same walk to Lord Marshal Tarn (`:2386-2405`) once the player gave up
+and went back the only way `mg_servants_way` (`mg_undercity.json:118-125`)
+opens onto — a dead end with one exit, so the hint isn't merely nearby, it
+is unavoidable on the way out. Confirmed with a literal render one action
+before the player's own locked "go north" attempt: `2 go north (locked: the
+writ, the Marshal's escort, the servants' door, or force)` was already on
+their menu, printed there since their first view of the room.
+
+`f3d5b35d`'s specific claims — "no visible alternate solution hinted at"
+and "only discoverable by wandering to an unrelated location" — are exactly
+what this trace disproves: the hint is visible, and Tarn sits two ordinary
+hops from a room the player had just walked out of, not somewhere
+unrelated. `d9ce0768`'s narrower, correctly-scoped ask — a hint on a
+failing check's *own* text, for the general case where it isn't lucky
+enough to sit next to an already-hinted exit — is real and stays open
+there, on its own single-report bar; nothing here changes that verdict, and
+nothing needs to.
+
+Non-finding on `f3d5b35d`'s own claims; moved to `done/`. (`d9ce0768` is
+untouched — not this ticket, already correctly left in `queue/`.)
+
+### The travel list's cheap win already shipped; what's left is a bigger feature
+
+`P2-issue-39b85b76` (`s91554`) says travel-to-known-place lists get very
+long (30+ entries, several 10-item pages) once a lot is explored, making a
+specific far-off landmark slow to find by name. Checked
+`travelList`/`travelActions` (`src/engine.ts:1046-1131`) for the obvious
+cheap win — sorting — before assuming one was still missing.
+
+It's already done. `byTravelName` (`:1075-1076`) sorts every list this menu
+ever shows, flat or region-drilled, alphabetically by the same display name
+the label prints (article dropped) — landed, per its own comment,
+specifically because "two playtest reports two waves apart" made this exact
+complaint, "so a player can guess which page a name falls on the way a
+phonebook lets them." The menu also already groups by region once known
+landmarks exceed one page (`:1088-1092`), so the top-level screen stayed
+small all through this wave's own trace (`s91554`, e.g. `wm_record_house`:
+5 regions plus "stay here"). The 30-entries case the ticket describes is
+real, but it's one region's *local* travel list (`localTravel`, `:1046-
+1047`) once heavily walked — deliberately ungated, the same comment
+explains why ("made no difference to the cost" to gate it; doing so would
+be "narrowing a gate to hide a price") — sorted the same way, and still
+genuinely long.
+
+The remaining ask, a search or filter, is a real UX idea but a materially
+bigger one: the interface is numbered-menu-only front to back, no free-text
+action anywhere in `Action`'s type (`src/types.ts:502-522`), so "search"
+needs a new interaction primitive, not a content edit. Single report, real,
+not yet justified against that size of change — the same bar this document
+already holds `d2780f5c`'s twin half to, above.
+
+Left in `queue/`, open; not moved.
+
+### The Pass Gate already does what `P2-issue-58169e05` is asking for
+
+`P2-issue-58169e05` (`s91553`) is praise more than a bug report — keep
+surfacing `status`/`look` proactively, e.g. at "other point-of-no-return
+rooms like the Pass Gate." Checked `cp_pass`
+(`world/reach/cp_coldpass.json:36-48`) for what it already does before
+treating this as a gap.
+
+It already does more than the ticket asks for. `cp_pass`'s `onEnterOnce`
+fires for free on first arrival — no `weigh`, no `status` call required —
+printing both a room-authored warning ("Past this gate the holds fall
+behind you. A companion's grief left unfinished there stays unfinished
+unless you walk back for it") and `questsopen` (`:47`), an engine effect
+(`src/engine.ts:1582-1594`) built for exactly this ask: it counts the
+player's open quests and says, explicitly, "Read them in your status before
+you cross" — its own comment names the same motivation this ticket gives,
+a playtester who "named why — 'this is stated once in passing dialogue but
+easy to miss, and irreversible.'" `questsopen` is used nowhere else in the
+realm; `cp_pass` is the one true point-of-no-return it was built for.
+Confirmed live in this ticket's own source run: replaying
+`runs/g1-91553-mu2x2l9e.json` to the player's actual crossing prints
+precisely this — the open-thread count and the "read your status" line —
+automatically, before they went through.
+
+The realm's other genuine point-of-no-return, `mg_hollow_throne`, gets the
+parallel treatment this document already recorded elsewhere today: a free
+"weigh" action, the engine's own generic ending warning, and (item 8's
+residual, above) a quest-stage line trimmed to say the one thing those
+don't. Every true crossing in the realm already gets a tailored, automatic
+nudge toward `status`; there is no point-of-no-return left bare for this
+suggestion to fill.
+
+Satisfied; closed. Moved to `done/`.
+
+Verified across all five tickets above: `npm run -s typecheck` clean,
+`npm run -s test` 331/331, `npm run -s validate` all three worlds still
+win-proven, `scripts/lint-world.ts` clean (all text within budget),
+`scripts/budget.ts world/reach.json` unchanged from its last-recorded
+figures, `npm run -s crawl` 0 over-cap menus on all three worlds. No game
+code or content changed this section — five queue files (`d8b33576`,
+`b0833856`, `3269f0aa`, `f3d5b35d`, `58169e05`) moved to `done/`, one
+(`39b85b76`) confirmed and left open in `queue/`.
