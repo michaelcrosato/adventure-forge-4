@@ -1182,11 +1182,11 @@ test("the company says once that nobody caps it", () => {
   });
   let { state } = newState(world, 1);
   let out = step(world, state, actionByLabel(world, state, "take Lys")!);
-  assert.ok(!out.events.some((e) => e.includes("limits your company")), "one companion is not yet a company");
+  assert.ok(out.events.some((e) => e.includes("No party cap")), out.events.join(" | "));
   out = step(world, out.state, actionByLabel(world, out.state, "take Osk")!);
-  assert.ok(out.events.some((e) => e.includes("Nobody limits your company")), out.events.join(" | "));
+  assert.ok(!out.events.some((e) => e.includes("party cap")), "said once, not with every recruit");
   out = step(world, out.state, actionByLabel(world, out.state, "take Vell")!);
-  assert.ok(!out.events.some((e) => e.includes("limits your company")), "said once, not with every recruit");
+  assert.ok(!out.events.some((e) => e.includes("party cap")), "said once, not with every recruit");
 });
 
 /**

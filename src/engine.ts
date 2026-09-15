@@ -1512,15 +1512,35 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
           if (!s.party.includes(npc)) {
             s.party.push(npc);
             events.push(`${name} joins you.`);
-            // Once, when the company first becomes a company. Wave six, seed
-            // 7664: "Early on it wasn't clear whether the game enforced a
-            // companion-party cap; I kept recruiting (ended with 4) and was
-            // never told if that was a soft or hard limit." There is no cap,
-            // and a fuller company is more of the realm's writing rather than
-            // less — the answer is worth one line.
-            if (s.party.length === 2 && !s.flags["_seenCompany"]) {
+            // Once, at the very first recruit — not the second. Wave six, seed
+            // 7664, first raised it as a cap question ("I kept recruiting
+            // (ended with 4) and was never told if that was a soft or hard
+            // limit"), and it was answered here, but gated at party.length===2:
+            // one companion read as "not yet a company." A later wave, seed
+            // 3499, filed the gap that left: the note still landed only after
+            // a *second* recruit, i.e. "after you've already recruited a
+            // couple," not at the first offer it's most useful before.
+            //
+            // Moving the gate to 1 looked free — it is the same one-time line,
+            // just said earlier — but the walkthrough is the only proven road
+            // that ever recruits two companions; every other ending proof stops
+            // at one, so none of them had ever paid this line's cost. At 1,
+            // all of them do, and three were already sitting exactly on their
+            // test/budget.test.ts ratchet with nothing spare: regent_deposed,
+            // gray_crown, crowned_hollow#bloodied. The full sentence ("Nobody
+            // limits your company: everyone who will come may come, and they
+            // answer more of the road the more of them there are.", 123 chars)
+            // broke all three. Looked for the money elsewhere on those roads
+            // first, the way fast travel's fix did (test/budget.test.ts:45-56)
+            // — nothing redundant to trim there for this — so the line itself
+            // paid for it instead, down to one clause that still answers the
+            // one question asked: is there a cap. 15 chars leaves
+            // regent_deposed, the tightest of the three (271 screens, was
+            // sitting at 451.88 of a 451 ratchet already), 12 characters of
+            // headroom rather than none.
+            if (s.party.length === 1 && !s.flags["_seenCompany"]) {
               setFlag(s, "_seenCompany");
-              events.push("(Nobody limits your company: everyone who will come may come, and they answer more of the road the more of them there are.)");
+              events.push("(No party cap.)");
             }
           }
           s.npcRoom[npc] = s.room;

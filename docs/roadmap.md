@@ -5046,3 +5046,200 @@ its own. `node scripts/fmt-json.mjs world/reach/hb_hollowbrook.json` and
 within budget (the fix adds conditions only, no `say`/text).
 `node --import tsx scripts/budget.ts world/reach.json --terse` — avg
 440.16/450, unchanged. `queue/P1-issue-2af81992.json` moves to `done/`.
+
+### Wave 5's "tell me sooner" cluster: the company-cap note moved to the first recruit, Coldpass's warning got its missing word, and two claims were already answered
+
+Five single-report items, all "the game doesn't surface X early/clearly
+enough." Read each against the actual text before assuming a shared fix;
+they turned out to need three different dispositions.
+
+**`50d10bc2` / `f8e8fbae`** — one report (`s3499`), filed twice: "surface
+the 'recruit every companion' hint at the very first offer" and its
+confusion-framing twin, "it doesn't say so until you've already recruited a
+couple and it surfaces as a passive note." The "passive note" is real and
+exact: `src/engine.ts`'s `party`/`join` case already answers a companion-cap
+question from a past wave (seed 7664, "I kept recruiting (ended with 4) and
+was never told if that was a soft or hard limit") with a one-time line —
+but gated at `s.party.length === 2`, i.e. only after a *second* recruit,
+with `test/party.test.ts:1164-1190` explicitly asserting "one companion is
+not yet a company." `s3499` is the same gap restated: still after the fact,
+just less after than never.
+
+Moved the gate to `=== 1`. This looked free — same one-time line, said
+earlier, no net growth — and `scripts/budget.ts world/reach.json --terse`
+agreed (avg unchanged at the walkthrough). It wasn't: `npm run verify` went
+red on `test/budget.test.ts`'s per-proof ratchet,
+`proofs.regent_deposed`/`proofs.gray_crown`/`proofs.crowned_hollow#bloodied`
+all over. Root cause, confirmed by isolating the change alone against a
+clean `git worktree add --detach` of HEAD (this is a shared tree; two other
+agents' in-flight edits were sitting in it at the time, so isolation
+mattered) plus a standalone replay script reading `world.proofs` directly:
+the walkthrough is the *only* proven road that ever recruits a second
+companion (`test/budget.test.ts:385-386` says so outright), so every other
+ending proof had never once paid this line's cost — and three of them were
+already sitting exactly on their ratchet with nothing spare
+(`regent_deposed` 451.88/451, `gray_crown` 452.51/452,
+`crowned_hollow#bloodied` 523.10/523, all carrying "avg still owed" debt
+from earlier cuts). At `=== 1`, all of them pay it. The full line ("Nobody
+limits your company: everyone who will come may come, and they answer more
+of the road the more of them there are.", 123 chars) broke all three; the
+tightest, `regent_deposed` at 271 screens, had room for about 32 characters
+before its floor ticked over, not 123.
+
+Looked for the money elsewhere on those three roads first, the way fast
+travel's fix did (`test/budget.test.ts:45-56`) — nothing redundant to trim
+on `mg_hollow_throne`, `va_throne` or `va_crypt` for this — so the line
+itself paid for it: cut to `"(No party cap.)"`, 15 chars, empirically
+re-measured (not estimated) against all three proofs directly rather than
+trusted from the arithmetic, which turned out to be slightly off from the
+real per-screen numbers. Final margins: `regent_deposed` 12 characters of
+headroom, `gray_crown` 108, `crowned_hollow#bloodied` 29 — all comfortably
+green rather than exactly on the line. `test/party.test.ts:1164-1190`
+updated to match (asserts the note now fires on the *first* recruit, not
+the second) and reworded its string checks off the trimmed text.
+`npm run verify`: 332/332, all three worlds validate and win-prove, both
+crawls clean (0 over-cap menus). `scripts/budget.ts world/reach.json
+--terse`: avg 439.75/450, max 1076/1100. `queue/P2-issue-50d10bc2.json` and
+`queue/P2-issue-f8e8fbae.json` moved to `done/`.
+
+**`d1633b19`** — "a short reminder near Coldpass that companions' own
+personal arcs, not just generic side quests, get locked out permanently."
+Overlaps `be79b069`/`fc1a4039` (`docs/roadmap.md:3959-3989`, "before the
+crossing, a numeric turn-cost estimate") only in theme, not in size: those
+two ask for a turns-remaining estimate the engine has no concept to build
+(no per-stage turn-cost metadata anywhere in the DSL) and stay open on
+purpose, "genuine, single-report, nothing built yet." `d1633b19` asks for
+something narrower — not an estimate, just that the existing warning's
+referent be unambiguous — and the existing warning already exists:
+`cp_pass`'s `onEnterOnce` (`world/reach/cp_coldpass.json:46`) already fires
+"A companion's grief left unfinished there stays unfinished unless you walk
+back for it" for free on first arrival, before `questsopen`'s open-thread
+count. The word doing the ambiguous work is "grief" — used throughout the
+realm as the mechanical term for a *hold's* hollow ("hollows rested",
+"this hold's grief", fifteen holds' worth of it) far more often than for a
+companion's own backstory, so "a companion's grief" reads, on a first pass
+primed by everything a player has read up to Coldpass, as "a hold's grief
+that a companion tends" rather than "the companion's own unfinished
+story" — exactly the two readings this ticket's "not just generic side
+quests" is trying to tell apart.
+
+Checked whether the realm's own vocabulary already disambiguates this
+anywhere, rather than guessing at a rewrite: it does.
+`world/reach.json:16` (the Act 1 objectives text, shown by `status` from
+turn one, before any hold is even entered) states the identical fact with
+one extra word: "A companion's **own** grief is settled in a hold, and past
+Coldpass it stays as it is." — and separately, `world/reach/companions.json`
+confirms all four companion-arc quests (`q_lys:5266`, `q_osk:5296`,
+`q_tamsin:5318`, `q_vell:5344`) name "before Coldpass" outright in their own
+early-stage text, reachable through the exact command the gate's own
+warning already points to. So the fix the realm's own text already
+demonstrates is the word "own." Added it to both places this exact sentence
+appears — `world/reach/cp_coldpass.json:46` (the Pass Gate) and
+`world/reach/sk_saltkerns.json:103` (the Smugglers'-Stair alternate route
+under the pass, same sentence, same fix, for consistency) — "A companion's
+**own** grief left unfinished there stays unfinished unless you walk back
+for it." +4 characters each, well inside the 220-char `say` budget
+(129→133/220 and 185→189/220; `scripts/lint-world.ts` confirms "all text
+within budget"). No test asserted the old exact string. `queue/P2-issue-
+d1633b19.json` moved to `done/`.
+
+**`58397108`** — "the threshold for 'hollows rested' (bargains count, burns
+don't) versus the separate 'Old Court Evidence'/'Crypts laid to rest'
+sub-trackers wasn't clear until reading status closely." Two claims folded
+into one ticket; they get different answers. The first half — rested vs.
+bargained vs. burned — is the *identical* claim `P2-issue-40797457`
+(`done/`, written up at `docs/roadmap.md:4220-4278`) already investigated
+and judged answered four pre-existing ways, one of them this ticket's own
+"checking status directly": `statusTracks`' exact label
+(`world/reach.json:3533`, "Hollows rested (holds only; a bargain counts)")
+is the very mechanism cited there. Confirmed rather than re-argued; no new
+reasoning needed.
+
+The second half is not the same claim and isn't covered by that write-up:
+confusion between the realm-wide `hollows_rested`/`burned`/`bargained`
+counters and per-hold sub-trackers like "Old Court Evidence"
+(`world/reach/hb_hollow.json:717-728`, Hollowbrook's own evidence-gathering
+progress) or the unrelated cross-hold "Crypts robbed"/"Crypts of the dead
+laid to rest" theme (`world/reach/templates.json:1309-1317`, chapel-looting
+flavor scoring with nothing to do with hollow resolution). Built a direct
+probe rather than reasoning from the schema alone: seeded a state with
+`hb_entered`, one evidence flag, and a nonzero `crypts_robbed`, then called
+`renderStatus` for real. The output stacks all five, unlabeled and
+ungrouped:
+```
+Hollows rested (holds only; a bargain counts): 2/15
+Hollows burned: 1/15
+Hollows bargained: 0/15
+Old Court Evidence: 0/3 (unexplored: the causeway stone, the mere's answer)
+Crypts robbed: 1/4
+```
+A first-time player has no textual cue here that the first three gate
+Coldpass and the ending while the fourth is quest-local prep feeding into
+one of those three, and the fifth is unrelated entirely — three different
+kinds of number in one flat list, sharing "hollow"/"grief"/"rest"
+vocabulary throughout the realm. Real and narrower than `40797457`, not the
+same finding wearing its clothes.
+
+Not a one-clause fix, though. `renderStatus` (`src/format.ts:297-328`)
+walks `world.statusTracks` as one flat, ungrouped array with no section
+concept — closing this honestly means either a new "section" field on the
+statusTrack schema (validator + tests + a render change, the "new DSL op"
+bar `AGENT.md` sets) or relabeling every per-hold evidence tracker across
+eight-plus files for consistent disambiguating language, neither of which
+is a single short clause. Left open, undecided the honest way: no content
+change, `queue/P2-issue-58397108.json` stays in `queue/` (not `done/` —
+the residual claim is real and unbuilt, the same bar this document already
+holds `be79b069`/`fc1a4039`/`3ddba1f3` to).
+
+**`ea62cecc`** — "party regard, standing with factions, and holds rested
+all interact with the ending gating... this only becomes clear via status,
+which the tutorial mentions but doesn't emphasize as essential reading."
+Checked the actual intro/tutorial text first: `renderIntro`
+(`src/format.ts:536-556`) prints `world.intro` plus one dense rules line
+ending "look(s)/status(s): free recap: scene, quests, items, every path —
+no turn," then the class menu. Measured it rather than assumed a rewrite
+was cheap: `renderIntro(world, state, events).text.length` for `reach.json`
+at seed 1 is **1,373 of the `INTRO_CHARS_MAX` 1,400** ratchet
+(`test/budget.test.ts:19,332`) — 27 characters of headroom, nowhere near
+enough for a clause naming three interacting systems.
+
+But the claim's own premise — that this "only becomes clear via status" —
+undersells what `status` already does, and it's reachable from turn one,
+not buried. `world.objectives`' Act 1 stage (`world/reach.json:16`, shown
+by `renderStatus`'s first line before any hold is entered) already states
+companions ("as many as will come... A companion's own grief..."), faction
+standing ("opens and closes doors"), and the hollow threshold ("three
+hollows settled opens the road to Marrowgate") together, in one paragraph,
+for free, no turn spent. The Act 2 stage (`world/reach.json:12`, shown from
+the moment the wider realm opens — typically well under 40 turns in) goes
+further and states the *exact* ending formula this ticket says isn't
+obvious: "the Hollow Throne's rite wants those three, the Vale's king at
+rest, and the first Reeve's confession" — word for word the "3 hollows
+rested + king rested + confession" the ticket asks to be surfaced. Faction
+standing has its own dedicated `statusPaths` section
+(`world/reach.json:3464-3521`) and party regard its own labeled `Party:`
+line, confirmed live in a real `renderStatus` call ("Party: Lys (regard +1,
+hp 10/10)"). Separately, `status`'s own MCP tool description
+(`src/mcp.ts:179`) already tells the *player* — not just the narrative — to
+call it "any time... e.g. right before a major choice."
+
+So the underlying need (learn the gating early, cheaply) is already met,
+through the exact command the intro already names; the literal ask
+(make the intro *itself* say more) hits a hard, near-zero budget wall
+un-related to how big the idea is. Same shape as this session's other
+"already-built, needs pointing at" findings (`40797457`, `5350baa3`,
+`58169e05`, `1e628263`) rather than the "genuinely nothing built yet" shape
+(`be79b069`/`fc1a4039`/`58397108` above). No content change.
+`queue/P2-issue-ea62cecc.json` moved to `done/`.
+
+Only `50d10bc2`/`f8e8fbae` and `d1633b19` changed any file; both verified
+together above and again standalone: `npm run verify` 332/332 green, all
+three worlds validate and win-prove, both crawls clean, 0 over-cap menus.
+`node --import tsx scripts/lint-world.ts world/reach.json` clean ("all text
+within budget"). `node --import tsx scripts/budget.ts world/reach.json
+--terse`: avg 439.75/450, max 1076/1100. Files touched: `src/engine.ts`,
+`test/party.test.ts`, `world/reach/cp_coldpass.json`,
+`world/reach/sk_saltkerns.json`. `58397108` and `ea62cecc` and the
+`50d10bc2`/`f8e8fbae`/`d1633b19` trio account for all five queue items
+this entry covers; `be79b069` and `fc1a4039` were re-read, not
+re-investigated, and stay exactly as `docs/roadmap.md:3959-3989` left them.
