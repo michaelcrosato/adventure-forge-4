@@ -584,7 +584,7 @@
           "if": [["flag", "said_em_wenlock_greet"]],
           "once": true,
           "say": "Four hundred years gone, fire took the old congregation whole. The chapel calls it a tragedy: dry kindling, a bad wind, an unlucky candle. I have never fully believed the wind was to blame.",
-          "fx": [["xp", 2]]
+          "fx": [["set", "em_heard_history"], ["xp", 2]]
         },
         {
           "id": "ironbound",
@@ -625,6 +625,17 @@
           "once": true,
           "say": "You burned it again, my own Church's sin still sitting under that ash. I have no confession left that would matter now. Only the same fire, doing what it has always done here.",
           "fx": [["xp", 1], ["addvar", "rep_church", -1]]
+        },
+        {
+          "id": "em_wenlock_vindicated",
+          "label": "ask if he still doubts the wind",
+          "if": [
+            ["flag", "em_heard_history"],
+            ["any", [["flag", "em_hollow_rested"], ["flag", "em_hollow_bargained"], ["flag", "em_hollow_burned"]]]
+          ],
+          "once": true,
+          "say": "\"The wind.\" Prior Wenlock almost smiles. \"No. I never did believe that, and now I don't have to pretend to.\"",
+          "fx": [["xp", 1]]
         },
         {
           "id": "sv_em_bargained_ask",
