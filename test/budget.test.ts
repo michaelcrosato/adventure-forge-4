@@ -496,16 +496,35 @@ test("a full party never breaks the observation budget, in combat or on a plain 
  * Before the readiness lines were trimmed for item 8 this ran comfortably
  * past 1,100 by hand; measured now at 1,040 and 1,064.
  *
- * What this does NOT cover: the room's own first-visit entry screen, in this
- * same maxed state, is a different and larger problem — 1,344 chars even with
- * no companion and the guard-flanked line withheld, from `onEnterOnce` text,
- * a quest-stage-change notice, the full desc, the Regent's own npc desc, and
- * two item hints (the founding ledger's and the iron crown's, each written
- * for its own screen, not this one) all converging because every one of the
- * throne's roads happens to be open at once — content stacking, the same
- * shape as item 11's unresolved act-gate exposure, not a redundant line to
- * cut. Left unmeasured and unfixed for a future pass; see docs/roadmap.md.
+ * What this does NOT fully cover: the room's own first-visit entry screen, in
+ * this same maxed state, is a different and larger problem — content stacking,
+ * the same shape as item 11's unresolved act-gate exposure, not a screen fixed
+ * by one redundant line. `onEnterOnce` text, a quest-stage-change notice, the
+ * full desc, the Regent's own npc desc, and two item hints (the founding
+ * ledger's and the iron crown's, each written for its own screen, not this
+ * one) all converge because every one of the throne's roads happens to be
+ * open at once, and four of those five are each doing real, distinct work —
+ * gutting any one to make room would cost more than the characters are worth.
+ * One genuine duplicate turned up on a closer look, though: the quest stage
+ * that opens the moment `mg_at_throne` is set used to read "What you do with
+ * the seat is the end of it," which says the same thing the engine's own
+ * `_warnedEnd_` notice already says a line above it ("An ending waits in this
+ * room..."), just in the room's own voice instead of the engine's. Trimmed to
+ * "Choosing here is final" (`world/reach/mg_marrowgate.json`, quest
+ * `mg_throne`'s first stage) — keeps the one thing the engine's line doesn't
+ * say (that the *choice*, not merely the room, is irreversible) and drops the
+ * restatement. 1,300 -> 1,280 with no companion and the guard-flanked line
+ * withheld (the 1,344 this comment previously recorded no longer reproduces
+ * exactly — likely session drift elsewhere on this screen since it was last
+ * measured by hand — 1,300 is this pass's own directly-measured baseline,
+ * not asserted from memory), 1,575 -> 1,555 in the forced state below
+ * (party + flanked). Asserted now, at a named allowance above the real
+ * ceiling rather than left unmeasured — see `THRONE_ENTRY_MAX` below.
  */
+// A known, accepted overage — content stacking, not redundancy, per the
+// comment above. Ratchets down only: lower this if a future pass finds
+// another genuine cut, never raise it to fit new content on this screen.
+const THRONE_ENTRY_MAX = 1555;
 test("the free weigh-the-doors action stays under the ceiling even maxed out (reach)", () => {
   const reach = worlds.find((w) => w.id === "reach");
   assert.ok(reach, "world/reach.json must ship among the worlds under test");
@@ -519,6 +538,9 @@ test("the free weigh-the-doors action stays under the ceiling even maxed out (re
   state.flags["mg_entered"] = true;
   state.flags["mg_admitted"] = true;
   state.flags["free_sworn"] = true; // the company held the stair too — the flanked variant of the Regent's line
+  state.flags["iron_march"] = true; // pre-empt the Ironbound clock's own one-time announcement — real play would have
+  // already crossed hollows_burned>=1 turns before reaching the throne, so the clock firing on this exact step is an
+  // artifact of setting hollows_burned directly rather than a scene a player would ever actually see stacked here
   state.vars["hollows_rested"] = 3;
   state.vars["hollows_burned"] = 3;
   state.vars["hollows_bargained"] = 3;
@@ -530,9 +552,12 @@ test("the free weigh-the-doors action stays under the ceiling even maxed out (re
 
   const enterAction = actionByLabel(reach!, state, "go north");
   assert.ok(enterAction, `mg_first_reeves_tomb must still open north onto the throne`);
-  // The entry screen itself is rendered (to advance state realistically) but
-  // deliberately not asserted on — see the doc comment above.
   let out = step(reach!, state, enterAction!);
+  const entry = render(reach!, out.state, out.events, { full: true });
+  assert.ok(
+    entry.text.length <= THRONE_ENTRY_MAX,
+    `throne entry, maxed state: ${entry.text.length} > ${THRONE_ENTRY_MAX} — the allowance only turns down\n${entry.text}`,
+  );
 
   const weighAction = actionByLabel(reach!, out.state, "weigh the doors of the seat");
   assert.ok(weighAction, `mg_hollow_throne must still offer "weigh the doors of the seat"`);

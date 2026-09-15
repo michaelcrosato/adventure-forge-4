@@ -2741,3 +2741,64 @@ hollow-count). Left exactly as they were; not re-investigated.
 No code or content changed this section — eight queue files moved to
 `done/`, four fresh P2s plus one older one confirmed and left open in
 `queue/`, nothing else; no verify needed.
+
+### Item 8's residual, measured again: one real duplicate, the rest confirmed as stacking
+
+Went back to the one piece of item 8 left "measured, unfixed, and not
+asserted anywhere" — `mg_hollow_throne`'s first-visit entry screen, forced
+to the same maxed state (`test/budget.test.ts`) as the "weigh the doors"
+action already guards. Re-measuring by hand first, rather than trusting the
+1,344 this document had recorded: with no companion and the guard-flanked
+line withheld, the same state now renders 1,300, not 1,344 — close enough
+to be the same finding, not close enough to assert from memory, so this
+pass's own number replaces the old one rather than repeating it.
+
+Went through the five converging pieces the earlier note named looking for
+an actual duplicate, the way item 8's other four cuts were duplicates, not
+just short things that could theoretically be shorter. Four hold up: the
+`onEnterOnce` dialogue is the Regent's first appearance, the desc sets the
+room nothing else does, her npc desc plants the ledger/burn imagery both
+resolution roads pay off, and the two item hints (the founding ledger's,
+the iron crown's) are the same shared strings every other room shows them
+with — cutting any of those here would either lose the only place that says
+it or inconsistently shorten an item's hint everywhere it appears, neither
+of which is what item 8's cuts did. This screen's size is what the original
+note called it: content stacking, not redundancy, and that verdict stands.
+
+The fifth piece wasn't clean, though. The quest stage that opens the moment
+`mg_at_throne` is set read "What you do with the seat is the end of it" —
+and the engine's own generic end-of-room warning, one line above it on the
+same screen, already says "An ending waits in this room. What you have left
+undone elsewhere stays undone." Two mechanisms, the room's voice and the
+engine's, independently telling the player the same fact. Trimmed the quest
+line to "Choosing here is final" (`world/reach/mg_marrowgate.json`, quest
+`mg_throne`) — short enough to drop the restatement, specific enough to
+keep the one thing the engine's line doesn't say, that the choice itself
+is what can't be undone, not merely that the room contains an ending.
+1,300 -> 1,280 with no companion; 1,575 -> 1,555 in the full forced state
+(party + flanked) the existing test already builds. The forced-state test
+itself carried a small measurement bug fixed in the same pass: it never
+pre-set `iron_march`, so forcing `hollows_burned` to 3 directly (rather
+than reaching it through play) made the Ironbound clock fire its one-time
+announcement on this exact step — a scene no real player would ever see
+stacked here, since in genuine play that clock fires turns earlier, the
+first time `hollows_burned` reaches 1. Pre-set now, with a comment saying
+why; the 1,575/1,555 figures above are measured with that fixed.
+
+Still 1,555 against the real 1,100 ceiling on the maxed-party path — this
+was never going to close from one line — so the entry screen is asserted
+now (it was "deliberately not asserted on" before) against a new named
+allowance, `THRONE_ENTRY_MAX = 1555`, the same shape as a `PROOF_BUDGET`
+entry: above the true ceiling, on the record, ratchets down only. Better
+than leaving a known 1,555-character screen to `crawl --worst`'s own blind
+spot (the room is `noTravel`, gated behind the whole Marrowgate admission
+chain — a random walk that reaches it at all renders whatever flags it
+happens to be carrying, never the maximum) where it would stay invisible
+until a proof happened to hit it by accident.
+
+`npm run verify` green: 331 tests, all three worlds still validate (reach's
+walkthrough still wins at 240 turns, untouched by a one-line quest-text
+edit), both crawls clean, 0 over-cap menus. `budget.ts`'s own walkthrough
+average moved 439.53 -> 439.45, a small real improvement from the same
+edit landing on the walkthrough's own path through the stage, separate
+from the forced-state numbers above.
