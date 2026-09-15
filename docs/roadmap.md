@@ -3586,3 +3586,97 @@ Neither doc is loaded by any test or the validator — a docs-only fix, no
 verify needed — but the gap was real: the next region built strictly to
 the old wording would have shipped a bargain path invisible to the one
 place that counts bargains by name.
+
+### The four 2026-09-08 proposals, read cold against what shipped
+
+`docs/superpowers/specs/2026-09-08-a-fate-worth-choosing.md`,
+`2026-09-08-seven-rites.md`, `2026-09-08-standing-and-ranks.md`, and
+`2026-09-08-the-realm-moves.md` — all four still headed `Status: proposed`
+— read in full against the tools and world files they describe, the same
+discipline as the entry above. None of the four claims to be the realm as
+it stands today the way `docs/authoring.md` or `docs/region-brief.md` do:
+this directory's own convention for that is stated explicitly in
+`2026-09-01-rpg-foundations-design.md`'s header — "kept as the design
+record... where it and `world/vale.json` disagree, the world file is the
+truth" — and none of the four claims an exception to it the way
+`2026-09-05-realm-design.md`'s state-contract section does (fixed above,
+because it explicitly is one: "the names are fixed here and nowhere
+else"). So every enumerated list, mechanism, and number in all four was
+checked against the live code for one thing: whether the specific claim,
+not the proposal's fate, would mislead a reader about today. Three came
+back clean. One found something real enough to flag, not fix.
+
+**`a-fate-worth-choosing.md`** shipped close to whole. `audit-fates.ts`
+today prints all three fates at score +25 in all fifteen holds — `0 of 15`
+ranked, the doc's own bar for done — and `reach_bargained` exists, a
+seventh ending gated on `["var","hollows_bargained",">=",3]`
+(`world/reach/mg_marrowgate.json:1149`), both confirmed independently and
+matching `docs/roadmap.md:449-458`'s own account of the same work.
+`hollows_bargained` is real (`world/reach.json:3538`, 22 `addvar` calls
+across 15 files — the same count the entry above measured), which
+falsifies the spec's own line 76-77 ("`hollows_bargained` does not exist
+yet as a var") — but that line is the proposal's justification for adding
+the var, written the week before it landed, not a claim about the present.
+`maxScore` is still 366 (`world/reach.json:21`, `test/engine.test.ts:54-59`)
+— the one number in the doc a reader implementing something adjacent
+might actually still load-bear on — unchanged.
+
+**`seven-rites.md`** named seven holds sharing one three-token rite.
+`node --import tsx scripts/audit-shape.ts world/reach.json --rites`, run
+fresh, shows three of the seven already moved off it — the Meres to
+`witness`, Mootcombe to `order`, the Hearthlands off the shared shape
+entirely — all three named in `docs/roadmap.md:142-168` and `:445-448`,
+which also accounts for the two still in flight (Embermoor, the
+Kingswood). The finding's room and quest-count ranges (43-58 rooms, 6-8
+quests) still match `--rites`'s live output exactly, seven days on.
+
+**`standing-and-ranks.md`** carries the one section of the four built the
+way `realm-design.md`'s state contract is — "the names are fixed here and
+nowhere else" — so it got the same scrutiny that section got. Half of it
+shipped exactly as specified: `world/reach/ranks.json`'s six quest ladders
+use the doc's six faction codes verbatim, and the cross-pressure table's
+numbers are live, checked against a granting scene rather than trusted —
+`world/reach/ir_irondowns.json:911-919` gates `iron_sworn` on `rep_iron >=
+9` and applies `rep_keepers -3`, `rep_church -3`, matching the table's
+`iron_sworn` row and the `sworn (+9)` threshold exactly. The other half of
+the same contract did not ship: `<code>_hunted` (line 132) has zero
+matches anywhere under `world/`, and `statusPaths`
+(`world/reach.json:3464-3520`) still reads the two states — `>= 2`,
+`<= -2` — the doc's own finding named as the problem, not the five named
+states proposed to replace them. Not a docs bug — the spec never claims
+either shipped, and nothing else in the project claims it either — but
+real enough to flag: a region file gated on `["flag", "iron_hunted"]`
+today would be gating on something nothing will ever set, and nothing
+currently says so anywhere but this audit.
+
+**`the-realm-moves.md`** proposed `world.clock` and a `["turn", op, n]`
+condition. Both shipped as described, concatenation-by-file and the
+one-entry-per-turn rule included (`src/engine.ts:1982-1994`;
+`docs/authoring.md` §13, which the spec's own line 115 points at and which
+exists and matches). The march's own schedule did not ship on the
+primitive the spec's example used: `world/reach/ir_irondowns.json:2448-2449`
+carries an entry with the *same id* as the spec's own worked example,
+`iron_march_warned`, but its `if` now reads `["flag","iron_march"],
+["since","iron_march",">=",10],["!flag","iron_march_stopped"]` against the
+spec's own `["flag","iron_march"],["turn",">=",40]` at its own line 86 — a
+different op, a different number, and a guard the spec never had. This is
+exactly the shape of drift the audit brief warned against auto-fixing on
+sight, and correctly: `docs/roadmap.md:428-431` names the switch to
+`since` in the same sentence it says the march landed, and gives the
+reason — an absolute-turn schedule, it says, "drops ten holds in ten
+turns" if the march starts late. Left alone; the honest account already
+lives where a reader would find it.
+
+No prose changed in any of the four specs this pass. Every mismatch that
+looked, on first read, like the `hollows_bargained` or `strikesPerRound`
+bugs above turned out to be a dated finding inside a document that never
+claimed to still be current, or drift `docs/roadmap.md` already narrates
+honestly — which is exactly the distinction this audit's own brief asked
+to be drawn rather than assumed. One thing is flagged above for a human
+rather than fixed: `standing-and-ranks.md`'s `hunted` tier and its
+`statusPaths` redesign are proposed and unbuilt, not shipped and
+undocumented, and deciding whether to build them, drop them from the
+spec, or leave them as the unfinished third of an otherwise-shipped
+proposal is a product call, not a staleness bug. Docs-only pass, nothing
+under `world/`, `src/`, or `test/` touched; markdown checked by eye, no
+`npm run verify` needed.
