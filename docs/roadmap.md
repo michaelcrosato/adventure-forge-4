@@ -487,8 +487,9 @@ instead of the game.
    gold", which was true of the eleven routes measured and false of the
    realm's coin — the debt was never the gold, it was that no Envoy road had
    carried it past something that would kill it.
-10. **A sixteenth hold, last** — and one whose problem is not a grief-hollow
-    at all.
+10. ~~**A sixteenth hold, last**~~ — Longford, and its problem is a toll
+    captain, not a grief-hollow. `hollows_rested/burned/bargained` untouched
+    by design.
 11. **The act gate, which is why three runs saw the same half of the realm.**
     Not a map problem: the region graph is a proper sprawl, 0-4 hops across,
     and six regions appear in all three wave-eight runs while five appear in
@@ -498,18 +499,14 @@ instead of the game.
     into the endgame having seen a quarter of the realm. Unseen content in a
     large world is fine; three runs seeing the *same* unseen half is not. The
     lever is what the gate counts, not where the roads go.
-12. **The router gives the shortest way, not the open one, and never says
-    which.** A stage's `at` prints the walk to it from the same breadth-first
-    search `bearings` uses, and that search crosses gated exits — right for a
-    bearing, which says where a place *is*, and not always right for a route a
-    player is told to follow. `scripts/audit-routes.ts`: of 1,120 routes
-    printed along the walkthrough, 111 cross a shut exit and **80 are shut
-    before the last leg** — sent through a door that is not the objective. All
-    80 are at three doors, one of which is the honour guard's passage that
-    wave nine's stand-down reports were also standing at. `walkFrom` is cached
-    per room and state-independent, which is what makes the free `status`
-    screen affordable, so this is a change with a budget consequence rather
-    than a line edit.
+12. ~~**The router gives the shortest way, not the open one, and never says
+    which.**~~ `pathTo` now tries an open route first (`routeTo(..., true)`)
+    and only falls back to a shut one when no open way exists at all, saying
+    so in `status` when it does. Of the 80 routes `audit-routes.ts` found shut
+    before their last leg, 6 resolve to an open alternative; the other 74 have
+    none — the dungeon really is linear there — and now say so instead of
+    silently crossing a door that was never the objective. `bearingsHere`
+    is untouched: a bearing still says where a place *is*, gates or not.
 13. **A menu number means one thing per room, not one thing per turn.**
     `menuNumbers`/`actionByNumber` already fixed the page-boundary version of
     this (a number meaning two things across two pages of the *same* room
