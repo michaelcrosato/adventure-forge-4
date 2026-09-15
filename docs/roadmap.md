@@ -1871,3 +1871,38 @@ running score, 2,328 characters along the walkthrough), and the cheapest
 possible version of putting one back still costs more than every road but
 two can pay. Left open. `3ddba1f3` and `5109e8d6` were re-checked against
 the current tree on the same pass and neither's reasoning above moved.
+
+### Four small defects, found running the realm's own tools
+
+Not from a report — every audit script run cold against the current tree,
+the same discipline that found `em_watch_castoff` earlier. Three came back
+clean (`audit-abilities`, `audit-bearings` at 0% wrong, `audit-items` at 0
+broken promises); `audit-choices` did not.
+
+**Two dead flags, set and read by nothing, not even their own topic's
+gating.** `em_heard_history` (Prior Wenlock's "the chapel that burned," in
+`world/reach/em_emberfall.json`) and `ff_bell_keeper_bg` (Garth's "why
+he's never pulled it," in `world/reach/ff_folk_b.json`) were each set by
+exactly the topic that reveals them and checked by nothing anywhere in the
+realm — visibility is already handled by `once: true`'s own auto-flag, so
+the custom flag did nothing at all. Both topics stay; both dead `set`s are
+gone. (Wenlock's suspicion — "I have never fully believed the wind was to
+blame" — is in fact vindicated later, in the hold's own rested/bargained/
+burned resolution text: a real hook a future pass could pay off on
+purpose, not a defect this one fixes.)
+
+**Two mistyped vars, silently opted out of a working mechanic.** Eleven
+sites across the realm feed `or_warden_word`, a Warden-only tally read at
+`>=2` by one of the class-flavor epilogue lines in `templates.json`
+("gave the old watch's answer on the stairs and at the fires of the
+Reach"). Two more sites — `world/reach/ff_folk_a.json`'s `ff_warden_writ`
+and `world/reach/mc_folk_a.json`'s `mc_warden_osric` — incremented
+`or_warden_ff_word` and `or_warden_mc_word` instead: real, gated,
+class-specific content, correctly written and reachable, quietly opted
+out of the tally it was supposed to feed by one character of
+region-scoping that the other nine sites don't carry. Renamed to match.
+Neither typo could have shown up in any budget check — this is what
+`audit-choices` is for, and running it cold is what found it.
+
+`npm run verify` green throughout; none of the four touches a label, a
+proof step, or any rendered string a ratchet measures.
