@@ -1059,3 +1059,25 @@ that was free, or unsampled, and therefore unwatched:
   the worst load a flag search could build.
 
 Never weaken it. A change that reads well and replays wrong is not done.
+
+## 2026-09-15 — the queue, resumed
+
+Picking the backlog back up. First item, `P1-issue-2872b769`, claimed
+"get your bearings" hints in Thornwold/Camp Gallows described paths that
+didn't match the real connections. Filed against `de27dd6`, which predates
+the afternoon's bearings overhaul (§ "The afternoon, and three surfaces
+nobody was measuring") — so the question was whether it still reproduces,
+not whether it once did.
+
+`scripts/audit-bearings.ts` says 0 of 293 rooms' "get your bearings" legs
+are wrong, but 7 are prose-only and outside what it can check — Rook's
+directions to the Rope Larder among them, and worth checking by hand since
+they carry a count a player could actually follow. Traced through the real
+engine (`th_settlement` --west--> `th_wood_4_2` --west--> `th_wood_3_2`
+(Fox Crossing) --north--> `th_wood_3_1`, which is the Rope Larder): exactly
+"two stands west of the gate, then one north past Fox Crossing," as both
+copies of the line say. The Muster Ground npc's "Keepers hide west in the
+wood, past five stands, at its far corner" also holds: five wests from the
+gate lands on `th_wood_0_2`, the grid's west edge, which continues on into
+`th_hollow_approach`. Superseded — moved to `queue/superseded/` by rename,
+contents untouched, the way the pagination finding was.
