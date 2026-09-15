@@ -3412,3 +3412,75 @@ noise. Recorded as checked-and-thin rather than left silently unverified;
 a wave with a Scout player, whenever one happens, is worth the same look.
 
 No code or content changed across these two checks; no verify needed.
+
+### Seven for seven: every blind wave this project has ever run picked Scholar
+
+Checking `scholar_read` against real play (above) only used the four most
+recent traces. Widened it to every real playtest-wave trace `runs/`
+still holds — every `g1-*.json` file whose seed is not `7` (that seed is
+`npm run mock`/`measure`'s own fixed fixture, not a blind wave; filtered
+out) — and checked which class each player picked, not just whether one
+ability fired.
+
+    seed 4242    scholar
+    seed 68938   scholar
+    seed 71223   scholar
+    seed 84497   scholar
+    seed 84498   scholar
+    seed 91553   scholar
+    seed 91554   scholar
+
+Seven waves, seven Scholars, zero Wardens, Scouts, or Envoys. Not a
+four-trace coincidence — this project has never once had a blind AI
+playtester pick anything else, in every recorded run that still exists.
+Whatever bugs are specific to Warden's forced-combat routes, Scout's
+grace-heavy checks at scale, or Envoy's talk-economy have had zero blind
+coverage this project's whole history — the class balance work itself
+(this session's DC fix included) has leaned on the deterministic crawler
+and proofs, which do exercise all four, but the *playtest* half of "AI-
+coded, AI-playtested" has effectively been testing one class in a
+four-class game.
+
+Rendered the literal first screen every blind player sees
+(`renderIntro`, seed 1, via `new_game`) rather than guess at what drives
+the pick:
+
+    The barrow on the hill above Last Light has opened, and a gray blight
+    creeps down the Vale of Ash — crops first, then cattle, then the will
+    to stay. Someone must go up and settle the Hollow King, by verse or by
+    crown or by steel. [...]
+    1 be a Warden — [...] steel opens what words cannot (might) [...]
+    2 be a Scout — [...] locks, ledges and carved stone give to careful
+      hands (grace) [...]
+    3 be a Scholar — reads the old tongue outright — verses, ledgers and
+      the dead's own words come easy (wits) [...]
+    4 be an Envoy — [...] doors, coffers and old grudges open to talk
+      (will) [...]
+
+A hypothesis, held as one, not asserted as the finding: the intro's own
+framing ("by verse or by crown or by steel") pre-names two of the four
+specialties, and Scholar's line is the one that keeps going past its own
+match — "verses, ledgers **and the dead's own words**" — landing on a
+phrase that echoes the intro's own grief-and-haunting register (barrow,
+blight, Hollow King) more directly than any other class's line touches
+its own domain. If that is what is happening, it would explain why
+Scholar wins over Warden too, despite "steel" being named in the same
+sentence: thematic resonance with the setting, not raw match to the
+stated solution paths, doing the steering. Menu position doesn't explain
+it either — Scholar sits third of four, neither the primacy nor recency
+slot.
+
+Not fixed, deliberately. This is the realm's very first screen, read by
+every player before anything else exists to correct a bad guess against,
+and the cause above is a plausible reading of one paragraph, not a
+confirmed mechanism — rewriting it on a hypothesis this size, with no way
+to cheaply verify the rewrite actually changes what a future blind wave
+picks, is exactly the "cut on a theory" this document's own habit warns
+against elsewhere. Recorded so the next pass doesn't have to rediscover
+that seven for seven is real: if a future wave (or a deliberate, small
+set of them, watched for class pick alone) still comes back all Scholar
+after this is known, that is the point to act, with evidence of what
+changing the wording actually does rather than a guess about what it
+might.
+
+No code or content changed; a measurement, not a fix.
