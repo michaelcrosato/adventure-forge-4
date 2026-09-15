@@ -1310,3 +1310,54 @@ different ratchet) and six reports at one each don't clear the bar this
 project holds a cross-cutting content change to. Superseded, with the
 attempt and its budget cost on the record so the next pass doesn't retry
 the same shape.
+
+### The prose bearings audit-bearings.ts can't check — checked by hand
+
+Five P2s about wayfinding: `0b662d30` and `76ca71fc` name specific places
+("the Rope Larder, flooded quarry/slag-hound den, Gallows Glade", "the
+Hundred Gallery, the Drowned Nave, the oath-stone") reached wrong off
+hand-written directions; `1cfd3cf4` wants `get your bearings` to match
+traversal 1:1 or say when it's approximate; `1cab03fa` says the "stands"
+unit doesn't reliably equal one room-hop; `3ddba1f3` wants a persistent
+compass note on top of it.
+
+`audit-bearings.ts` already proves the *generated* `["bearings"]` system
+0% wrong (293 rooms, every leg walked through real exits). What it cannot
+check is exactly what these five are about — prose written by hand outside
+that system, seven instances realm-wide by its own count. Swept for all
+of them directly: every string in every world file carrying two or more
+"number (stands?) direction" phrases, plus the single-leg ones a manual
+read had already flagged. Five multi-leg claims, one single-leg:
+
+- Thornwold's "two stands west of the gate, then one north past Fox
+  Crossing" (the Rope Larder, both copies) — walks exactly there.
+- Wardmoor's "Opened Cairn one stand north" and "four stands north of
+  Highward... one east to the Last Cairn, then north" (to the oath-stone)
+  — both correct once "out onto the moor" is read as the implicit first
+  step, which is how the room's own exit is named (`out`, not a compass
+  direction) and how every hand-written hint in this hold already treats
+  it.
+- Fenmarch's eel-trader — "past my landing, one stand west then one
+  south, by the Eel-Run" — walked to the Wayside Shrine, nowhere near a
+  bog-thing. Wrong. The real path (`pathTo`, engine-computed) is out, one
+  south, one west. Fixed to match.
+- The Iron Downs' "three north of the head-frame, then three east" to the
+  flooded quarry (0b662d30's own "slag-hound den") — real path is three
+  north, two east. Off by one. Wrong. Fixed.
+
+Two wrong out of seven checked, both now fixed and reverified (verify
+green). That is a real, if small, error rate specific to hand-authored
+prose — worth knowing, since it says the seven `audit-bearings.ts` already
+flags as unchecked are exactly where an error would hide, and worth a real
+tool if the realm keeps growing hand-written route text; not built now;
+noted as a gap rather than promised as covered.
+
+`1cfd3cf4`, `0b662d30` superseded on the strength of a complete sweep, not
+a sample. `76ca71fc`'s "easy to not think to use bearings" half is the
+same ask as the six-report cluster above and is covered by that entry.
+`1cab03fa` closes with the two fixes as its evidence: "stands" itself was
+never the problem in any of the five multi-leg claims — every one used it
+(or a bare direction) to mean exactly one room-hop — the two real errors
+were in the specific directions given, not the unit. `3ddba1f3`'s compass
+note is a real, separate feature (bearing-angle output, not exit-walking)
+that nothing here builds; left open rather than superseded.
