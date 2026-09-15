@@ -679,7 +679,23 @@
       "onEnterOnce": [
         ["score", 3],
         ["xp", 3],
-        ["say", "However this ends — rite, oath, or fire — it ends here, and it ends once."]
+        ["say", "However this ends — rite, oath, or fire — it ends here, and it ends once."],
+        [
+          "if",
+          [["flag", "th_heard_understory"], ["!flag", "th_verse_known"]],
+          [
+            ["say", "Keeper Rowan's verse still waits unlearned in the Understory. Settle this any other way, and that road closes for good."]
+          ],
+          []
+        ],
+        [
+          "if",
+          [["flag", "th_fenn_told"], ["!flag", "th_pardon_used"]],
+          [
+            ["say", "Fenn's true pardon is still out there, unfound. Settle this any other way, and that road closes for good."]
+          ],
+          []
+        ]
       ],
       "variants": [
         {
