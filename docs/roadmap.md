@@ -1906,3 +1906,96 @@ Neither typo could have shown up in any budget check — this is what
 
 `npm run verify` green throughout; none of the four touches a label, a
 proof step, or any rendered string a ratchet measures.
+
+### A fresh wave, one player, and what ten new issues were actually worth
+
+With the roadmap's own numbered list and the P1/P2 queue both largely
+worked through this session, the next input the repo's own operations call
+for is a new playtest, not more mechanical auditing — `loop/playtest.sh`
+is exactly that step, and it hadn't run at all this session. One player,
+seed 68938, a bounded 300-game-turn budget (half the wave default) rather
+than a full wave: `verdict: stuck` (hit the turn cap, no ending), fun 5,
+clarity 4, cost $10.55. Triage exploded it into 3 P1 bugs and 7 P2
+suggestions/confusions restating the same three findings from different
+angles. Investigated each against the checked-out tree and the player's
+own recorded trace before acting on any of it — a single, uncorroborated
+report is evidence to check, not a fact to implement.
+
+**The Washed Ford's flavor text lied.** `world/reach/fd_fenmarch.json`'s
+`fd_ford_detour` ("backtrack for the long way round") set a flag and said
+"you cross dry" — but the room has one exit, `up`, back the way the
+player came; nothing moves, nothing unlocks. Intentional design (the
+same might/grace/free-fallback triad the Saltkerns use at three other
+hazard crossings), but the free option was the only one of the three that
+claimed a crossing while paying nothing and changing nothing. Fixed: the
+line now says there is no other way and the ford wants paying. One
+string, zero budget cost (off every proof and the walkthrough).
+
+**The Three Verses could stay "active" after the choice that closed it.**
+Real defect, not the one reported, but the shape underneath it. `va_verses`
+(`world/reach/va_barrow.json`) had `start`/`done` but no `failed` — so a
+player who returns the crown, breaks it, forsakes it, or kills the king
+(four of the barrow's six resolutions; only speaking the verses sets
+`va_verses_all`) left the quest with no way to ever close. `status` would
+keep naming the sunken shrine and the old watchtower as the next step
+forever, in a hold whose grief is already settled. Gave it the same
+`failed` clause its sibling quests already use, matching an existing
+pattern used by 34 quests realm-wide.
+
+That fix cost more than expected: two quests (`va_barrow`'s own "Barrow
+Doors" plus the newly-added "Three Verses") can close on the same turn,
+and the shared `Quest closed: X — its asker's wish can no longer be met.`
+event line, unchanged since it was written, pushed `gray_crown`'s worst
+screen 1,097 -> 1,169. Rather than gate the fix or eat the overage,
+trimmed the shared line itself — `src/engine.ts`'s `journalEvents`, the
+one place a change moves every one of those 34 quests at once, the same
+lever `way()`'s formatting was for item 12. `Quest closed: X.`, matching
+`Quest done: X.`'s own terseness exactly; `status`'s free recap already
+just says `Closed: X` with no explanation, so the one-time announcement
+being equally plain is consistent, not a cut corner. `gray_crown` 1,169
+-> 1,089, clear of the real 1,100 with margin. `test/realm.test.ts`'s
+assertion on the old wording updated to match.
+
+**The sunken shrine and old watchtower were never actually unreachable.**
+Both rooms exist, both are ungated, the walkthrough itself stands in
+both, and an earlier blind player (seed 191) found both in ordinary
+play. What this player hit was one specific clue (the innkeeper's
+rumors, the only one of four in-Vale sources that names the locations
+without a direction) and then never returned to the notice board for its
+second reading, which does give one. Cheapest real fix: the innkeeper's
+line now says "east in the wood" — a net-**neutral** rewrite (209
+characters before, 209 after), so it cost nothing on the eleven roads
+that press it. Considered the fuller fix too — a `get your bearings`
+action on Twin Stones, the wood's one busy junction with no wayfinding
+of its own, matching the convention the Hearthlands already use on
+nearly every wilderness cell — and reverted it: `crowned_hollow#bloodied`
+walks a three-wolf hunt straight through that cell across four screens,
+and the added menu line pushed its average 523.10 -> 525.32. That road's
+`va_crypt` max is exempted by design (a fight screen, item 8's own
+carve-out); its average is not, and the ratchet may only turn down.
+Recorded rather than forced: a bearings pass across the Ashwood's other
+fifteen cells is real, affordable-elsewhere work this session didn't do.
+
+**The Fenmarch pacing finding doesn't survive its own trace.** Filed as
+"a single hold (Fenmarch) alone consumed ~100 turns... the game's own
+guidance (a 300-turn ceiling) makes the big ending unreachable in one
+sitting." Replayed the player's own 301-turn trace room by room: Fenmarch
+cost 92 turns, but the Vale — the tutorial hold — cost 137, already the
+documented outlier from three earlier traces (`docs/roadmap.md`, "What
+landed on 2026-09-09"). `audit-shape` puts Fenmarch below the 53-room
+median on every count but items. There is no "300-turn ceiling" anywhere
+in the current build (`world/reach.json`'s intro states no turn figure at
+all); the wave gave this player 600 and they stopped at 301, `stop_reason:
+end_turn`, not cut off. Five straight waves have won the full ending at
+505-640 turns. Not fixed, because there is nothing here to fix: the
+finding misattributes its own evidence, and the ask underneath it — some
+cheap way to tell mid-run whether you're ahead of the arithmetic — is the
+same design-level ask five earlier P2s already lost to the same budget
+argument (`docs/roadmap.md`, "One real bug, and six P2s"). Filed to
+`done/` with this reasoning rather than left to confuse a future pass.
+
+Two P2s stay open, genuinely uninvestigated rather than deferred on
+weighed evidence: a companion's regard crossing its leaving threshold
+from a single large story choice, rather than a run of small ones, may or
+may not trip the existing pre-action warning (`partyLeavesHint`) the same
+way — not checked this pass. `npm run verify` green throughout.

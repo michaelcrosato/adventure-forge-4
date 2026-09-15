@@ -282,7 +282,7 @@ test("the journal starts, advances, completes, or fails on conditions — and ev
   assert.doesNotMatch(quiet.events.join(" "), /Quest/);
   // the other branch fails it
   const sold = step(world, state, actionByLabel(world, state, "sell the ring")!);
-  assert.match(sold.events.join(" "), /Quest closed: The Widow's Ring — its asker's wish can no longer be met\./);
+  assert.match(sold.events.join(" "), /Quest closed: The Widow's Ring\./);
   assert.match(renderStatus(world, sold.state), /Closed: The Widow's Ring/);
 });
 
