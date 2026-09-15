@@ -3484,3 +3484,20 @@ changing the wording actually does rather than a guess about what it
 might.
 
 No code or content changed; a measurement, not a fix.
+
+### The stray `pierce` flag wasn't stray
+
+One of the flags surfaced this session ("worth a look later," `va_hollow_king`
+in `world/reach/va_barrow.json:786`, carrying `pierce: true` despite not
+being `hostile`) turned out not to need one. `pierce` isn't only the
+`horrorHere`/`scholar_name` gate that earlier check read it as — it also
+sets the player's effective armor to 0 against that npc's own attacks
+(`src/engine.ts:1890`, `const armor = def.pierce ? 0 : armorOf(world, s);`),
+independent of the `hostile` flag entirely. The king has real combat stats
+(`hp:16 atk:4 df:13`) and an `onDeath` block, so fighting him is a genuine,
+reachable path, and his own desc already promises exactly this: "Cross him,
+and the cold that answers goes through mail." `pierce: true` is that
+promise kept, not a leftover from copying a hostile template. Correctly
+inert for the one mechanism the earlier check was looking at, correctly
+live for the one it wasn't asked about. Left as is — checked, not a
+finding, and worth recording so it isn't flagged as a loose end twice.
