@@ -1361,3 +1361,26 @@ never the problem in any of the five multi-leg claims — every one used it
 were in the specific directions given, not the unit. `3ddba1f3`'s compass
 note is a real, separate feature (bearing-angle output, not exit-walking)
 that nothing here builds; left open rather than superseded.
+
+### A companion quarrel already shows its odds
+
+`P2-issue-8d096dce` wants odds shown before a companion-mediation will
+check, "similar to how normal skill checks show 'roll X+ on the die'."
+`P2-issue-b9dd9dd4` wants a clear signal for which approach — backing one
+side or mediating — is safer, since failing "cost standing with both
+companions with no warning of the odds beforehand." Both name will, DC~11.
+
+That check exists — every companion-pair quarrel offers a `talk` topic
+like `quarrel_lys_osk_settle_b`, "try to settle the sexton's roll (will)",
+DC 11, that mediates instead of taking a side — and it already previews
+through the same generic path every other check in the realm does. Read
+live, mid-quarrel:
+
+    side with her against the roll-book (Lys +2, Brother Osk -2)
+    try to settle the sexton's roll (will) (DC 11, roll 11+ on the die; a miss costs standing with Lys and Brother Osk)
+
+The DC, the roll target, and which two companions a miss costs are all
+already in the line, and the deterministic "side with" option prints its
+own exact effect right beside it — a direct comparison, not a guess.
+Neither finding's premise survives a live check of the current build.
+Superseded.
