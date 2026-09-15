@@ -159,6 +159,48 @@ const INTRO_CHARS_MAX = 1400;
  * Scout — the two roads that carry a resourced companion of the matching
  * class the whole way, so they were the two expected to move, and did.
  */
+/**
+ * WHAT SCALES AGAINST A CROWD.
+ *
+ * `scripts/audit-fights.ts`'s own finding, quoted in its docstring: every
+ * companion standing with the player swings on the player's turn, but an
+ * aggressive npc's own blow rotates one-for-one among however many stand
+ * there, so a full party multiplied what it dealt by five and divided what
+ * it took by five — 48 of 72 hostiles killed a solo player, 0 of 72 killed
+ * one with 2 or 4 companions. `warden_brace`/`warden_break`, which soften a
+ * blow aimed at the player, were offered 24 times to blind players and
+ * pressed 0, because so little of a fight ever reached the one target they
+ * help. `npcStrike` now lands one extra blow for every two companions
+ * standing (`strikesPerRound`, still always fewer blows than attackers, so a
+ * full party stays safer than fighting alone — the reason to recruit at
+ * all, just not immune to it). Every current death and abandonment path was
+ * proven at party size zero, where the count is unchanged, so nothing here
+ * touches them.
+ *
+ * No proof or the walkthrough had ever swung an attack with more than one
+ * companion standing (`crowned_hollow#bloodied`, the realm's only fight
+ * proof, carries just Lys) — proven instead in `test/party.test.ts` the way
+ * the single-companion rotation always was, with a mini() world sized to
+ * show a two-companion and a four-companion round landing more than one
+ * blow. `reach_at_rest#devoted` walks its four companions past six on-sight
+ * ambushes (two gray boars, a slag-hound, two cutpurses, the Old Crypts'
+ * honour guard) that had never been proven with a crowd behind the player
+ * either, and picks up two extra struck-lines on each: 462.33 -> 464.04.
+ *
+ * Looked for the money first: the Old Crypts' own desc closed with "It
+ * lunges at the first living step, at whoever stands nearest" — restating,
+ * on the exact screen where the guard's own on-sight strike had just landed
+ * three times in the event log two lines above it, what the "(attacks on
+ * sight)" tag already says once. The same "restating itself" shape item 8
+ * found in mg_hollow_throne's npc desc, which said what the engine's own
+ * pierce warning already said on the same screen. Cut, it paid for the
+ * whole of this road's max overage
+ * (1,103 in mg_old_crypts -> back to 1,087 elsewhere) and, since three other
+ * roads pass through the same room, shaved reach_burned, gray_crown and
+ * reach_at_rest#scout too — not enough on its own to cover six screens'
+ * worth of new struck-lines on one road, so the rest is recorded rather
+ * than chased into a trim that would cut something no screen restates.
+ */
 const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // Only the roads that are over, and only in the dimension they are over: an
   // allowance in the other dimension is the real ceiling, so a road cannot
@@ -244,7 +286,7 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // lines on this road, none of them said twice, 19 characters a screen. That
   // is what a four-companion road is for, and it is the one thing here that
   // should not be trimmed to meet a number.
-  "reach:reach_at_rest#devoted": { avg: 462, max: MAX_CHARS_MAX }, // 462.8 the day companion remarks stopped firing on menu navigation (the road needed two more weighings of the throne doors to earn its paired remark honestly), then 460.69 once the reckoning stopped re-explaining what is missing on every press; max cleared 1,130 -> 1,076 cutting mg_hollow_throne (item 8); 461.51 -> 462.33 unstarving scholar_read/scout_hands (above) — the Scholar road, so scholar_read is what moved it (max also moved, 1,076 -> 1,087 em_priory, still clear of the real bar)
+  "reach:reach_at_rest#devoted": { avg: 464, max: MAX_CHARS_MAX }, // 462.8 the day companion remarks stopped firing on menu navigation (the road needed two more weighings of the throne doors to earn its paired remark honestly), then 460.69 once the reckoning stopped re-explaining what is missing on every press; max cleared 1,130 -> 1,076 cutting mg_hollow_throne (item 8); 461.51 -> 462.33 unstarving scholar_read/scout_hands (above) — the Scholar road, so scholar_read is what moved it (max also moved, 1,076 -> 1,087 em_priory, still clear of the real bar); 462.33 -> 464.04 giving the crowd it walks through more than one blow back (above) — max touched 1,103 in mg_old_crypts and came back to 1,087 cutting that room's own restated desc
   // The realm's first proof to land a blow. Measured before this road existed,
   // 125 proven screens offered a fight and 0 were taken — hp, armor, timed
   // conditions, aggression and the down-and-revive path stood unexercised by

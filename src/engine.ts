@@ -1849,32 +1849,57 @@ function harmNpc(world: World, s: State, npcId: string, n: number, events: strin
   }
 }
 
+/**
+ * Blows an aggressive npc lands in one exchange. Solo, exactly one — the
+ * value every death and every fight-abandonment path in this realm was
+ * tuned and proven against, so it stays put at party size zero. A bigger
+ * crowd draws more of the room's attention back: one extra blow for every
+ * two companions standing. `scripts/audit-fights.ts` measured why this
+ * exists: every companion swings on the player's turn with no matching
+ * scale on the other side, so a full party multiplied what it dealt by
+ * five and divided what it took by five, 0 of 72 hostiles ever killing the
+ * player at party size 2 or 4 against 48 of 72 alone — and `warden_brace`/
+ * `warden_break`, which soften a blow aimed at the player, were offered 24
+ * times to blind players and taken 0, because so little of the fight ever
+ * landed on the one target they help. More blows, still exactly one per
+ * two companions rather than one per companion, so a full party is still
+ * safer than fighting alone — the reason to recruit at all — just not
+ * immune.
+ */
+function strikesPerRound(standingCount: number): number {
+  return 1 + Math.floor(standingCount / 2);
+}
+
 function npcStrike(world: World, s: State, npcId: string, events: string[], verb: string): void {
   const def = world.npcs[npcId];
   if (!def?.atk) return;
   // blows rotate between the player and the companions standing with them, in
   // order, with no die involved: the same fight replays the same way
   const standing = standingCompanions(world, s);
-  const nth = s.vars["_strikes"] ?? 0;
-  s.vars["_strikes"] = nth + 1;
-  const pick = nth % (1 + standing.length);
-  if (pick > 0) {
-    companionStruck(world, s, def, standing[pick - 1]!, events, verb);
-    return;
+  const hits = strikesPerRound(standing.length);
+  for (let i = 0; i < hits; i++) {
+    const nth = s.vars["_strikes"] ?? 0;
+    s.vars["_strikes"] = nth + 1;
+    const pick = nth % (1 + standing.length);
+    if (pick > 0) {
+      companionStruck(world, s, def, standing[pick - 1]!, events, verb);
+      continue;
+    }
+    // a condition it carries (e.g. "braced") can sharpen or dull the blow itself
+    const atk = def.atk + npcCondBonus(world, s, npcId, "hit");
+    const armor = def.pierce ? 0 : armorOf(world, s);
+    const taken = Math.max(1, atk - armor);
+    const absorbed = atk - taken;
+    events.push(
+      absorbed > 0
+        ? `${TheName(def.name)} ${verb} — your armor takes ${absorbed} of it.`
+        : def.pierce && armorOf(world, s) > 0
+          ? `${TheName(def.name)} ${verb} — your armor means nothing to it.`
+          : `${TheName(def.name)} ${verb}.`,
+    );
+    applyFx(world, s, [["hp", -taken]], events);
+    if (s.ended) return; // a killing blow ends the fight; no further strikes this round
   }
-  // a condition it carries (e.g. "braced") can sharpen or dull the blow itself
-  const atk = def.atk + npcCondBonus(world, s, npcId, "hit");
-  const armor = def.pierce ? 0 : armorOf(world, s);
-  const taken = Math.max(1, atk - armor);
-  const absorbed = atk - taken;
-  events.push(
-    absorbed > 0
-      ? `${TheName(def.name)} ${verb} — your armor takes ${absorbed} of it.`
-      : def.pierce && armorOf(world, s) > 0
-        ? `${TheName(def.name)} ${verb} — your armor means nothing to it.`
-        : `${TheName(def.name)} ${verb}.`,
-  );
-  applyFx(world, s, [["hp", -taken]], events);
 }
 
 /**

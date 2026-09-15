@@ -2187,3 +2187,66 @@ this one earns the exception honestly, the same standard fast travel's
 three-road bump set.
 
 `npm run verify` green throughout.
+
+### What scales against a crowd
+
+"The bar finally throws a punch" (above) left one line unfinished: **the
+next combat change should be about what scales against a crowd, not about
+what the abilities say.** Every companion standing with the player swings
+on the player's own turn, but an aggressive npc's own blow only ever
+rotated once, one-for-one among however many stood there — `npcStrike`,
+unchanged since the day it was written. A full party multiplied what it
+dealt by five and divided what it took by five: 48 of 72 hostiles killed a
+solo player, 0 of 72 killed one carrying 2 or 4 companions, and
+`warden_brace`/`warden_break` — which soften a blow aimed at the player —
+were offered 24 times to blind players and pressed 0, because so little of
+a fight ever reached the one target they help.
+
+Fixed at the root `audit-fights.ts` named: the hostile now lands one extra
+blow for every two companions standing (`strikesPerRound` in
+`src/engine.ts`, `1 + Math.floor(standing / 2)`), still always fewer blows
+than there are attackers, so a full party stays safer than fighting alone —
+the reason to recruit at all, just not immune to it. Solo, the count is
+unchanged (`1 + floor(0/2) = 1`), so every death and every
+fight-abandonment path already proven at party size zero is untouched.
+Measured again: 2 companions now cost 4hp median instead of 2, put 3 of the
+72 fights' companions on the ground where none went down before, and kill
+the player in 2 of 72 rather than 0; 4 companions stay comfortably safer
+still (median 2 rounds, 2hp lost, 0 killed) — the damage a bigger crowd
+draws is spread thinner across more standing targets in the short fights a
+full party wins, not absent. A full party is not meant to feel like a solo
+one, and does not; it is no longer meant to feel like nothing is in the
+room, and now it doesn't always.
+
+No proof or the walkthrough had ever swung an attack with more than one
+companion standing to begin with — `crowned_hollow#bloodied`, the realm's
+only fight proof, carries just Lys throughout, the same shape of gap
+`ir_hound` and the rest were in quest logic, this time in combat. Proven
+instead the way the single-companion rotation always was: two new cases in
+`test/party.test.ts`, a `mini()` world with two and then four companions
+standing, asserting the exact rotation (who gets hit, in what order, that
+the shared counter keeps advancing round to round rather than resetting)
+rather than just the count.
+
+The realm's own content had already walked into this gap once, unproven:
+`reach_at_rest#devoted` carries its full four-companion company past six
+on-sight ambushes (two gray boars, a slag-hound, two cutpurses, the Old
+Crypts' honour guard), and every one of them now lands three blows instead
+of one — real content, immediately exercising the fix the day it landed.
+It cost the road two struck-lines a screen on those six, 462.33 -> 464.04
+average, and pushed the Old Crypts screen itself to 1,103, over the real
+max. Looked for the money first: that room's own desc closed with "It
+lunges at the first living step, at whoever stands nearest" — restating,
+on the exact screen where the guard's on-sight strike had just landed
+three times in the event log two lines above it, what the "(attacks on
+sight)" tag already says once. The same "restating itself" shape item 8
+found in `mg_hollow_throne`'s npc desc, which said what the engine's own
+pierce warning already said on the same screen — cut, and it paid for the
+whole of the max overage (1,103 -> back to 1,087 elsewhere) and, since
+three other roads pass through the same room, shaved `reach_burned`,
+`gray_crown` and `reach_at_rest#scout` too. Not enough on its own to cover
+six screens' worth of new struck-lines on one road, so the rest —
+462.33 -> 464.04 — is recorded in `test/budget.test.ts`'s ratchet rather
+than chased into a trim that would cut something no screen restates.
+
+`npm run verify` green throughout (329 tests).
