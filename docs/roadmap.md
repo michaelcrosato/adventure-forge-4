@@ -2891,3 +2891,279 @@ pass (this item's own, or whatever next needs the same headroom) can run
 `audit-status-weight.ts` and start from a ranked list instead of a blind
 read, the same way `audit-bearings.ts` now saves the next person from
 re-checking 868 legs by hand.
+
+### A third wave (seeds 91553/91554): Iron Downs a third time, and two checks traced by name
+
+`62936555`/`6362b945`/`f419c621` are one report again — `s91553`'s
+bugs[0]/suggestions[0]/confusions[0], the same "one paragraph, three triage
+units" shape as the second wave's `1423c536`/`b3db44ea` — but a third
+independently-simulated player hitting the same friction, worded more
+sharply this time ("extensive exploration of Thornwold's forest fringes...
+never surfaced an exit"), so it earned a fresh trace rather than the
+standing verdict.
+
+**Iron Downs, a third time.** Replayed `s91553`
+(`runs/g1-91553-mu2x2l9e.json`) turn by turn. The player visited
+`th_settlement` exactly twice — turn 166 (arrival: "get your bearings",
+then "go in" to the muster) and turn 196 (a pass-through: "go west"
+straight into the deep wood) — and on both visits "go north (toward the
+north track)" sat on the menu, unconditional, plainly labelled
+(`th_thornwold.json:146`, no `if` gate on the exit). The player never took
+it and never visited `th_north_track` at all. Instead they spent turns
+197-413 in the deep-wood grid off `th_settlement`'s west exit: 13 of its 22
+cells, including 9 visits to Spoil Verge alone and 3 each to Deer Break and
+Black Thorn Stand — precisely the rooms the ticket names. They finished the
+game to a full win (`reach_at_rest`) without ever setting foot in the Iron
+Downs region.
+
+Checked every wilderness cell the ticket could mean for a false or missing
+promise, not just the three it names, reading the whole `th_wood` grid
+(`th_thornwold.json:2626-2896`; `walls` at 2632, `links` at 2638). None
+misleads: Spoil Verge's "off the Iron Downs... A deer track bends east; the
+wood thickens south" (2652-2653) names only its two real exits — its north
+side is the 5x5 grid's own edge, no cell there, nothing offered. Ridge's
+End (2726), the row's actual dead end, says so outright — "the ridge runs
+out... a long view north over gray spoil-heaps that were never Thornwold's
+own. South the trees close again; west the holloway continues" — a horizon
+view named as one, the same shape as the already-settled Hollow Path
+finding, not a claim of a path. Black Thorn Stand (2754-2755) does have a
+real north exit ("a gap shows north between the thorns") — but it leads to
+`th_understory_root`/"The Black Thorn Gap" (the `links` entry at 2638-2645,
+`dir: north`), a grace/wits-gated entrance to the unrelated Understory Hall
+dungeon, which this player found and explored (3 and 9 visits) — plausibly
+satisfying whatever sent them looking for "a way north" in the first place,
+just not the way they reported missing. No broken or miscommunicated sign
+anywhere in the branch the player exhaustively explored; it simply doesn't
+connect to Iron Downs, and the branch that does (north from the same hub)
+was offered to them plainly, twice, and declined both times — a third
+independent instance of the "exploration variance, not a broken sign" shape
+the first two waves found, on if anything stronger evidence (shown twice
+this time, not once).
+
+Took the "third occurrence" question seriously rather than re-citing the
+old verdict, and went looking for the specific low-cost fix the ticket
+itself points at: does any companion's own dialogue give a direction, not
+just a name, to their home region, and is there realm precedent for that
+shape of hint? There isn't, and it isn't close. Every companion's
+pre-departure "go find your region" quest stage uses the identical
+template, word for word in shape: `q_lys`'s "Ask after Lys's brother at
+Camp Gallows, in Thornwold — before Coldpass" (`companions.json:5292`),
+`q_osk`'s "...then find Fenmarch — before Coldpass" (5314), `q_tamsin`'s
+"...then find Cinderhall in the Iron Downs, past Thornwold — before
+Coldpass" (5339), `q_vell`'s "...then find the Keepers' Hall in Hollowbrook
+— before Coldpass" (5363): region name plus narrative ordering, zero
+compass directions, four for four. Adding "north past the Palisade Gate" to
+Tamsin's line alone would not be the single low-cost sentence it looks
+like; it would be the one companion out of four whose hint suddenly reads
+differently from her siblings', for no in-fiction reason, breaking a clean,
+deliberate, four-instance convention to fix a room this exact player had
+already been shown twice. That is a real cost, not a budget-ratchet one,
+and it is exactly what this pass was asked to check for before proposing
+the edit — found it, and it rules the edit out. No `scripts/budget.ts` run
+needed; no text changed.
+
+Verdict: non-finding, third time, on stronger evidence than either prior
+wave. `P1-issue-62936555.json`, `P2-issue-6362b945.json`,
+`P2-issue-f419c621.json` moved to `done/`.
+
+**The skiff and the robbed mounds.** `a0a6195b` names two actions: "drag
+the skiff free" (already checked twice) and "talk him into leaving" (not
+previously checked by name). The second turned out to matter: despite the
+conversational label, `hb_robber_talk` (`hb_wild.json:382-412`, "The Robbed
+Mounds") is a room action, not a topic — its `kind` is `custom`, so
+`checkSourceId` (`engine.ts:1172-1185`) keys it `act:hb_robber_talk`, not
+`tp:...`. The `tp:` exemption (`engine.ts:1222`) was never in play for this
+check; it was always going to escalate on repeated failure, the same
+documented design as the skiff. So the ticket's framing — DC creep with "no
+in-fiction alternative offered" — doesn't hold up either half, traced
+against `s91553`:
+
+- `fd_free_skiff` (`fd_fenmarch.json:509-537`): offered at DC 14 (turn
+  335), failed at turn 347 (hp-1), and the very next offering (turn 348)
+  already read "raised 1 by failed tries, and stops at 21" — shown
+  correctly, before the second attempt, exactly as designed. Failed again
+  at turn 353 (DC 15 by then), ceiling text updated to "raised 2... stops
+  at 21" at turn 354, and the player then left for Reedholm and never tried
+  it a third time. Two tries, the warning shown both times, then walked
+  away — not a spiral, and (confirmed fresh) the skiff still gates nothing:
+  `fd_ironbound_skiff_freed` is read in exactly one other place in the
+  whole realm (`fd_fenmarch.json:1617`, a flavor variant), no quest.
+- `hb_robber_talk`: one try (turn 414, DC 10, failed — "So close"), and the
+  very next turn (415) the menu already showed the escalated DC (11,
+  "stops at 23") on "talk," DC 10 still unescalated on the neighboring
+  "snatch his spade away (grace)" — and the player picked the grace option
+  instead of retrying talk. That failed too (turn 415), and the turn after
+  (416) the player simply attacked and killed the robber in ordinary combat
+  — a third, always-available option requiring no check at all. Resolved
+  two turns past the first failure, using two of the three in-fiction
+  alternatives the room already offers side by side with the failing one
+  ("take a cut and look away," a no-check bribe, and "snatch his spade
+  away," a separate grace check, both `hb_wild.json:413-448`) — the
+  opposite of "no alternative offered."
+
+`0cb1aaea`'s first half (cap/soften the ceiling) is the same ask `ca46b6d4`
+already settled, on the same `escalatedDc` reasoning
+(`engine.ts:1196-1206`), and this trace gives no new reason to revisit it.
+Its second half — "surface the 'ask a companion for help' option sooner" —
+describes a mechanic that doesn't exist anywhere in the engine or content:
+`checkMod` (`engine.ts:448-452`) sums skill, attribute, perks and
+conditions, never party composition or a companion-assist action, and
+nothing in `world/` is labelled anything like "ask ... for help." (The roll
+breakdowns the trace shows, e.g. "+1 Grave Sense, +1 Iron Will," are
+passive perks already folded into the modifier automatically — closer to
+what the ticket may be picturing than a hidden menu option.) Nothing to
+surface sooner; the feature doesn't exist to surface.
+
+Verdict: both non-findings. `P1-issue-a0a6195b.json`,
+`P2-issue-0cb1aaea.json` moved to `done/`.
+
+**`d9ce0768`, the ash-boy's hint.** The ceiling-preview question ("does
+'stops at N' show before the player gives up") was re-asked for this wave
+and re-confirmed, fresh, above. `d9ce0768` asks something else — a hint
+toward an alternate route after repeated failure on a *repeatable social
+check*, modelled explicitly on the "go X (locked: ...)" pattern. Its likely
+source is named in `s91554`'s own bug report: "the ash-boy's will check to
+slip past the palace gate," Marrowgate — traced against
+`runs/g1-91554-mu2x2l72.json`.
+
+`mg_ashboy`'s `favor` topic (`mg_undercity.json:616-635`) is a real `tp:`
+check (`tp:mg_ashboy:favor`), and the exemption holds under fresh, direct
+observation: failed three times running (turns 509, 510, 511 — rolls of 4,
+7, 5 against DC 11, +3 mod), `checkAttempts` climbing 0→1→2→3, while the
+displayed and rolled DC stayed flat at 11 every time — no "raised" text
+ever appeared, because none should. Watched the number itself not move,
+three times, in this trace, rather than trusting the exemption from its
+code comment alone.
+
+The alternate-route information — "the writ, the Marshal's escort, the
+servants' door, or force" — already exists, as the locked hint on
+`mg_palace_gate`'s own north exit (`mg_marrowgate.json:366`), and in this
+trace it was on screen from the player's first view of that room (turn
+507), before a single failure anywhere. So the concrete instance behind
+this ticket doesn't show the harm the suggestion is worried about: the
+player failed the ash-boy three times, gave up, walked one room back east,
+tried the servants' door once, then headed toward the Regent's Way and
+found Lord Marshal Tarn (`mg_marrowgate.json:2386-2405`, at
+`mg_watch_house`) — the NPC the hint had already named by title — inside 6
+turns, no dead ends. "Only discoverable by wandering to an unrelated
+location" overstates it; the location is the one the hint points at.
+
+That said, the ask itself is real and distinct from the ceiling preview,
+and isn't fully met: the hint lives on the exit, not on the failing check.
+A player who fixates on retrying a topic without walking back to re-read
+the gated room's own menu gets nothing from `mg_ashboy`'s own fail text
+("Try again when you mean it") pointing them anywhere else, and nothing in
+the engine attaches an alternate-route hint to a `tp:` check's own
+repeated-failure branch in general — it works here only because this
+particular check happens to sit one room from an exit that already has a
+hint. A repeatable social check not tied to a locked exit (out of scope to
+survey in this pass) would get no such assist. Building that generally
+would be system-wide work, not a minimal fix, and this is a single,
+uncorroborated report making the ask. Left in `queue/`, open, on the same
+bar as `b3db44ea` above — a real idea, not yet justified, not a
+non-finding.
+
+No code or content changed this section — five queue files moved to
+`done/`, one (`d9ce0768`) confirmed and left open in `queue/`, nothing
+else; no verify needed.
+
+### "Name it" isn't the universal free pass it reads as
+
+`P1-issue-a6bc207d` and its companion suggestion `P2-issue-f73a00c5` called
+the Scholar's "name it" (`scholar_name`) a free, no-roll pacify that
+trivializes "nearly every" armor-useless undead guardian in the realm — gray
+husk, barrow-wight x2, gray sergeant, grave-wight, honour guard, all named
+from one `s91553` report. Checked against the world data and that exact
+player's own trace (`runs/g1-91553-mu2x2l9e.json`) rather than the report's
+list.
+
+No-roll is right; free and universal are not. `scholar_name`
+(`world/reach.json:238-247`) is gated `class scholar` and spends a real,
+displayed resource — `res_scholar`, capped at 2 (`world/reach.json:183`),
+one per use, refilled only by resting; the menu line names what's left, the
+same pattern `test/abilities.test.ts:118` proves for its sibling
+`envoy_press`. Its other gate, `horrorHere`, only reads true where a
+`pierce`-flagged hostile stands (`src/engine.ts:363-364`), and realm-wide
+that's **8** hostiles, every one hand-authored, none of them a stamp:
+barrow-wight (`va_barrow.json`, `hb_wild.json`), grave-wight
+(`hb_hollow.json`), the gray sergeant (`th_thornwold.json`), honour guard
+(`mg_marrowgate.json`), the Lost Sentry (`wm_wild.json`), hound of the hunt
+(`kw_wild.json`), glass-ash wraith (`em_wild.json`). The 32 template-stamped
+guardians the ticket's own "barrow/camp/chapel" framing evokes — `$wight`,
+`$captain`, `$saint_shade` (`world/reach/templates.json:180`, `878`,
+`1162`) — carry no `pierce` field at all, so "name it" never appears on any
+of them; a camp captain is already paid off in gold or slipped past on a
+grace check instead (`templates.json:794-824`), varied and lore-tied by
+template, not by this ability.
+
+The trace settles "nearly every." `scholar_name` fires 4 times in 547 turns
+(actions 156, 290, 521, 673) — both barrow-wights, the gray sergeant, the
+honour guard. The other two of the ticket's six never went through it: the
+gray husk is attacked twice, plainly (actions 88-89) — it carries no
+`pierce`, so "name it" was never on its menu to begin with — and the
+grave-wight is bypassed outright with the Keeper's Key (`hb_wight_key`,
+action 564), never fought or named. A third of the ticket's own examples
+weren't resolved by the option it blames.
+
+The breadth that does exist is on purpose, and recent, not an oversight.
+Sept 9 widened `scholar_name`'s own gate from four conditions to three
+specifically so a Scholar's kit stood on more than 1 screen in 1,760 (above,
+"What landed on 2026-09-09"); this session's own `calm_<id>` passage-unlock
+fix (barrow/camp/chapel, 32 stamps) exists to stop the engine and the door
+from disagreeing about whether a calmed enemy still counts as a threat — a
+fairness fix, not this one, and `f73a00c5` asks to unwind exactly that kind
+of decision on the strength of a report that overcounts its own examples.
+Both non-findings; moved to `done/`.
+
+### Hollow Throne's kneel already gets the two-step warning
+
+`P2-issue-79b78bd8` worried that `mg_hollow_throne`'s four win paths are
+summarized only by the free "weigh the doors" action, so a first-time player
+could stumble into "kneel" — an instant loss — without warning. Checked the
+room itself (`world/reach/mg_marrowgate.json:873-1283`, touched twice
+already today) rather than trust the framing.
+
+`mg_kneel` doesn't end anything on the first press. Its own menu label
+already reads "kneel to the hollow seat (**ends the tale**)" before it's
+chosen; pressing it only sets `mg_kneel_warned` and prints "This is the one
+door here that does not open back... and there is no dawn on the other side
+of it. Kneel again to go through it" (`mg_marrowgate.json:1264-1272`) — the
+loss itself sits behind a second, separately labeled action,
+`mg_kneel_confirm` ("finish kneeling", lines 1274-1280). That's the exact
+warn-then-confirm shape of `va_kneel`/`va_kneel_confirm`
+(`world/reach/va_barrow.json:564-579`), the precedent this session already
+built for the same kind of ending. Underneath both, the engine's own
+generic, automatic warning (`_warnedEnd_`, `src/engine.ts:3398-3404`) fires
+on first entry to any room holding an ending action — `mg_hollow_throne`
+qualifies — printing "An ending waits in this room" before the player can
+act at all, no "weigh" required. "Weigh" adds detail (which win road is
+ready); it was never the only guard standing between a first-time player and
+kneel. Non-finding; moved to `done/`.
+
+### "A hit costs standing" — the same settled question, a different branch
+
+`P2-issue-cfb5bd14` read "a hit costs standing" as backwards — succeeding
+shouldn't cost you — which is worth checking apart from the "fine once
+shown" half of its own complaint (the timing question this ticket itself
+doesn't press). It's the same `costsStandingHint`
+(`src/engine.ts:2333-2348`) wave one closed under "Ambiguous 'costs
+standing, hit or miss' phrasing" (above, line 2592), just its `hitOnly`
+branch instead of the `both` branch that report hit — same function, same
+reasoning, a different one of its three output shapes.
+
+The reasoning is in the call site's own comment: "a miss that costs standing
+or regard is said before the die is thrown... so is a hit that costs it, so
+the warning never reads as 'only a miss'" (`src/engine.ts:3009-3010`) —
+worded that way specifically so a player never assumes success is free.
+Checked against this ticket's own example: `mg_read_founding` ("find the
+founding ledger (wits)", `world/reach/mg_marrowgate.json:466-494`) costs
+`appr_vell` only in the hit branch (line 484) — finding the ledger is what
+exposes Vell's lineage, not failing to find it — so "a hit costs standing
+with Vell" is the only accurate sentence available, and it prints in the
+same pre-roll line as the DC, before the player commits, same as everywhere
+else in the realm. Non-finding, same settled shape as wave one's; moved to
+`done/`.
+
+No game code or content changed across these three — four queue tickets
+checked against world data and their own players' traces, all four closed
+as non-findings and moved to `done/`; no verify needed.
