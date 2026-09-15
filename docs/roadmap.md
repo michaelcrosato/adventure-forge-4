@@ -2381,3 +2381,24 @@ throughout, just this one field left uncustomized. `sh_beacon`'s is now
 "a levy-caller's shade", matching what "the Levies' Beacon" and the
 cavalry gear already scattered around it (`sh_wild.json`) are about.
 `npm run verify` green (no proven road passes through either tower).
+
+**Last item from the same report, and it needed no change at all.**
+`scripts/audit-shape.ts --rites` still names three holds "plain" —
+Hearthlands, Irondowns, Skerrow — and the tool's own docstring already
+warns exactly why that can be misleading: a witness or a trade recorded
+as an ordinary flag reads identically to no rite at all, and an earlier
+attempt to auto-detect trades this way was reverted on purpose after it
+started calling an incidental standing cost a trade too. Read the three
+gates by hand rather than trust the column, the way the docstring asks:
+`hl_rest_hollow` needs `hl_due_paid` *and* `hl_order_known` — a trade
+and a name, gated on flags the seven-rites work already set (`Seven
+rites`, above, was never wrong; the tool just can't see through a flag
+to what set it). `ir_hundred_rest` needs `tamsin_mine_truth` — a
+companion's own arc, not the original collection mechanic at all; Irondowns
+and Skerrow were never among the seven holds that shared it. `sk_rest_fleet`
+needs `sk_verse_known` *and* `sk_lighthouse_lit` — a name and an act left
+undone (a dark lighthouse, relit). Three distinct, already-real rites,
+zero of them boring, all three invisible to `--rites` for the reason its
+own comment names. Nothing to fix in the world; nothing to fix in the
+tool either — it was tried once and correctly reverted. Closes the audit
+sweep this document has been working through since the bearings fix.
