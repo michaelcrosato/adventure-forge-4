@@ -3718,3 +3718,201 @@ The other three were live, unconditional, current-state claims, and needed fixin
 **A wits-DC illustration duplicated in both `docs/authoring.md` §14 and `docs/region-brief.md`, and both copies had drifted — from the realm's growth, but not from *this* growth.** Both said "the hardest wits check [anywhere/in eighteen regions] is DC 12," illustrating why a DC-13 ability gate once shipped dead. `docs/authoring.md` already carries a runnable command for exactly this question (`§14`, right below the claim); running it verbatim today returns **3**, not 0 — three wits checks at DC 14 or 15 exist (`th_thornwold.json`'s `th_hollow_grave`, DC 15; `cp_coldpass.json`'s `cp_scriptorium` and `sk_saltkerns.json`'s `sk_customs_post`, DC 14 each), so the true current ceiling is DC 15. None of the three are in Longford or any of the ten later regions — this drift predates today's session entirely and is unrelated to the region-count fix above; it was only found because the same "grep for the stale number" habit was pointed at a neighboring claim. Fixed differently in each doc: `authoring.md` keeps the anecdote (a real past incident, the same shape as this session's other "the realm shipped X" callouts) but now says plainly that the DC-12 ceiling was true then, gives the measured DC-15 figure as of today, and tells the reader to trust the command over either number. `region-brief.md`'s shorter copy had no command of its own — the actual bug that let both drift silently together — so instead of re-stating a number that will need updating a third time, it now points to `authoring.md` §14 for the worked example and the command, removing the duplicate rather than patching it twice.
 
 Docs-only; nothing under `world/`, `src/`, `test/`, or `loop/` touched. `npm run verify` re-run anyway (331 tests, all three worlds green) since, again, the claims being corrected were about world content.
+
+### "Known places" is working as designed; the causeway stone's quest stage was not
+
+`queue/P1-issue-c2b703e1.json` (wave 4, seed 98820): "the causeway stone" wasn't
+offered among "known places" travel shortcuts until physically discovered, so
+status recap gave only "vague hold-level location" for unfound evidence. Two
+separate mechanisms were in play, and only one of them was actually broken.
+
+The fast-travel menu is not the bug. `docs/authoring.md` §9 (`:230`, `:530-542`)
+and `src/engine.ts` (`:243`, `bearingsHere` `:753-787`) agree, and `test/*`
+enforces it (`ok 330 - the nearest landmark by walking wins, and only the ones
+you have stood in count`): a `landmark` becomes a "known place" only once the
+player has stood in it. That is the whole mechanism, working exactly as
+documented — not this bug.
+
+The real breadcrumb path is a quest stage's `at`, and it does not care whether
+the target is "known." `pathTo` (`src/engine.ts:806-812`) walks the real exit
+graph by BFS to name a room the player has *never seen*, precisely so `status`
+can say "(the way there: two south, then in)" before any landmark is visited
+(`docs/authoring.md:625-638`, `1003`; `src/engine.ts:661-666`, "it walks to
+somewhere the player has *not* been, because that is the case that matters").
+`hb_hollow.json`'s `hb_q_evidence` ("Which King") used this correctly for two
+of its three states — all-found (`at: hb_kingsrest_throne`) and none-found
+(`at: hb_wild_2_0`, the causeway) — but its middle stage, live for the entire
+span between finding the first piece and the last, carried no `at` at all:
+`{ "if": [["var", "hb_evidence_known", ">=", 1]], "text": "The evidence
+doesn't agree with itself yet. Settle on a name, or keep looking." }`. The
+moment a player found any one of the three pieces, `status` stopped giving
+walking directions to the rest — which is exactly the "vague hold-level
+location" the report describes, and matches a report naming the causeway
+specifically: it is whichever piece is *not* the one found first.
+
+`world/reach/va_barrow.json`'s `va_verses` (`:812-859`) is the same
+three-evidence-then-declare-at-the-throne shape and already gets this right:
+every one of the six two-of-three and one-of-three flag combinations has its
+own stage naming the nearest remaining piece and an `at` pointing at it. That
+is the established convention this report's quest was missing, not a request
+for a new mechanism.
+
+Fixed in `world/reach/hb_hollow.json` (`hb_q_evidence`, `:618-664`): the one
+catch-all "found ≥1" stage is now six stages, one per two-of-three and
+one-of-three combination of `hb_evidence_ringditch` / `hb_evidence_causeway`
+/ `hb_evidence_merestone`, each naming the nearest still-missing piece and
+carrying `at` for its room (ring-ditch `hb_wild_1_3`, causeway `hb_wild_2_0`,
+mere-stone `hb_wild_3_3` — confirmed against each spot's own `cell` in
+`world/reach/hb_wild.json` (causeway `:87`, ring-ditch `:573`, mere-stone
+`:688`) and the `<id>_<x>_<y>` convention (`docs/authoring.md:517`)). All
+eight reachable flag states are now covered
+(1 done + 3 two-of-three + 3 one-of-three + 1 none, matching `va_verses`'
+shape); text stays 70-79 chars, well inside the 120-char stage budget
+(`scripts/lint-world.ts:22`). The `statusTracks` "Old Court Evidence" list
+(`hb_hollow.json:717-729`) was left exactly as it was: every hold's evidence
+tracker across the realm (`ff_hollow.json:635`, `fl_hollow.json:401`,
+`kw_hollow.json:563`, `mc_hollow.json:684`, `pw_hollow.json:509`,
+`sh_hollow.json:586`, `va_barrow.json:884`) is a `{flag, label}` checklist
+with no `at` of its own anywhere in the realm — the breadcrumb has only ever
+lived on the quest stage, by design, and that is where this fix put it.
+
+This is **not** the same ask as `queue/P2-issue-d2780f5c.json` — "Make 'get
+your bearings' hints match the actual per-room exit chain exactly, or
+auto-offer a multi-step 'travel to' option for named distant landmarks even
+before they're 'known'" — even though both are wayfinding reports from this
+same wave 4 (P2 from seed 84497 at 15:25, this P1 from seed 98820 at 19:20 —
+the wave's two players, both fun 5/clarity 4, independently) and this P1's own
+wording ("known places") echoes the P2's. P2-d2780f5c names no region and no
+quest; it is a general ask about the fast-travel/
+bearings *mechanism* itself — changing what "known" means, or what `bearings`
+computes — which `scripts/audit-bearings.ts`'s own live run (0% of legs
+"do not lead where they say") suggests is already accurate on the first half
+of its ask, and the second half (pre-discovery fast travel) is a real,
+bigger feature change this session did not make and P2-d2780f5c correctly
+still sits deferred for. This P1's actual cause was narrower and already
+fixable inside the existing DSL with no engine change: one quest's authoring
+had a gap in exactly the mechanism built to answer this. Noted for the
+record, not because the two should merge — they shouldn't, and P2-d2780f5c
+stays open on its own, unrelated terms.
+
+`npm run verify` green after the change (331 tests, all three worlds
+validate, both crawls clean, `reach.json` walkthrough still wins at
+score === maxScore 366). `node --import tsx scripts/lint-world.ts
+world/reach.json` — "all text within budget." `node --import tsx
+scripts/audit-routes.ts world/reach.json` — no new shut-door exposure
+introduced (the pre-existing `va_barrow`/`mg_marrowgate` findings it prints
+are unrelated to this change). `node --import tsx scripts/budget.ts
+world/reach.json --terse` — avg 439.45/max 1076, unchanged from before
+this fix within measurement noise. `queue/P1-issue-c2b703e1.json` moved to
+`done/`.
+
+### Wave 4, two more: an unlabeled "go in" at Wardmoor, and a decision the fallback text muddled into one
+
+Two more wave-4 findings, fixed and verified directly.
+
+**`queue/P1-issue-acb54c29.json`**: "the 'go in' action label was reused
+inconsistently between rooms (e.g. at Wardmoor North Road, 'go in' silently
+routed back to the Record-House instead of entering a new location), causing
+a brief backtrack." `world/reach/wm_wardmoor.json`'s three road rooms (west,
+east, north) each have their own `in` exit to a different building (the
+armoury, the barracks, the record-house), but all three exits rendered as a
+bare, identical "go in" — nothing was actually wired wrong, but a player who
+had just used "go in" at one road to reach a specific building had no way to
+tell, from the label alone, that the next road's "go in" led somewhere else
+entirely rather than back to the place they'd already seen. Fixed by giving
+each exit its own `landmark` field ("the armoury", "the barracks", "the
+record-house" — `wm_wardmoor.json`, the three `north`/`west`/`east` road
+rooms' `in` exits), which the menu renderer already folds into the printed
+label for any exit that carries one, so "go in" becomes "go in (the
+armoury)" etc. with no engine change and no new mechanism, matching how
+every other named exit elsewhere in the realm already disambiguates itself.
+`npm run verify` green (331 tests, all three worlds validate). Landed in
+commit 3df6cdc; `queue/P1-issue-acb54c29.json` moved to `done/`.
+
+**`queue/P2-issue-c545f1aa.json`**: "early on it wasn't obvious that
+'promise to seal the barrow' vs the later throne-side 'seal/leave open'
+choice were two separate decision points with different companion
+consequences — status text implied one decision at the throne." Found in
+`world/reach/va_barrow.json`'s `va_doors` quest (`:790-809`, "The Barrow
+Doors"): its own first stage, reached once the king is settled, already
+states the two-decision structure plainly ("The king is settled. The doors
+are yours to seal or leave open, from the throne."), and its
+`va_promised_seal` stage describes the early promise on its own terms with
+no throne language at all — neither of those was the problem. The
+fallback stage, live for the entire span before either the promise or the
+king's rest, read "The reeve wants the barrow sealed after; the priest
+wants it open. Promise, or don't — you decide at the throne." "You decide
+at the throne" reads naturally as *the promise itself* is what gets decided
+at the throne, collapsing the two decisions the other two stages keep
+separate — exactly this report's confusion, and the one stage of the three
+that actually caused it. Fixed by rephrasing to name the doors as the thing
+waiting at the throne, not "you": "Promise, or don't — the doors wait at
+the throne." Same fact, no longer readable as one decision. 116 chars,
+within the 120-char stage budget (was 112). `node --import tsx
+scripts/lint-world.ts world/reach.json` — all text within budget.
+`node --import tsx scripts/budget.ts world/reach.json --terse` — avg
+439.47/max 1076, unchanged (this stage isn't on the proven walkthrough).
+`npm run verify` green (331 tests, all three worlds validate, `reach.json`
+walkthrough still wins at maxScore 366). `queue/P2-issue-c545f1aa.json`
+moved to `done/`.
+
+Both were originally being handled by background agents alongside the rest
+of wave 4's triage; a container restart mid-session stopped all seven
+agents, and while most of their in-progress, uncommitted work was lost with
+them, `git status` after the restart showed these two had already reached
+disk in a complete, verified state (acb54c29's fix was caught by an earlier
+checkpoint commit, 3df6cdc; c545f1aa's edit was sitting uncommitted but
+intact) — confirmed independently rather than assumed, then documented and
+closed out by hand. The other five agents' work did not survive and is
+being redone.
+
+### `queue/P2-issue-3c4440fb.json` and `7f9e043b.json`: the travel menu's page controls really do drift, and the honest fix costs more than it's worth
+
+A third pair of wave-4 items had already been moved to `done/` before the
+restart killed the agent working them, with no roadmap write-up to explain
+why. Rather than guess at reasoning that didn't survive, re-investigated
+from scratch: `3c4440fb` ("the travel menu's numbered pagination reuses
+option numbers across pages... made it easy to misclick") and `7f9e043b`
+("cap or reorganize the travel-menu pagination so option numbers stay
+stable across pages").
+
+The report is real, not a misreading. `travelActions` (`src/engine.ts:1119-1131`)
+pages a long travel list at `pageSize = MENU_CAP - 2` (`10`, `MENU_CAP` is
+`12`, `src/types.ts:217`) real entries per page, then appends `travelmore`
+and `traveldone` — always last, in that order, but at whatever menu number
+follows however many real entries actually rendered. Every full page (10
+real entries) puts "more places" at #11 and the way out at #12, consistent
+page after page — but the *last* page of a list that doesn't divide evenly
+by 10 is short (`list.slice` on a partial remainder), so on that one page
+"more"/"done" land at whatever number follows the shorter count instead:
+worked example, 23 known landmarks pages as 10 + 10 + 3, and the third
+page's "more"/"done" sit at #4/#5, not #11/#12. A player who has learned
+"11 is more, 12 is done" from browsing the first two pages meets a menu
+where 11 and 12 are simply out of range on the third. This matches the
+report precisely and is confirmed directly from the paging math, not
+inferred from the player's account alone.
+
+Not fixed. The two honest ways to make the *absolute* number stable both
+cost more than this is worth: padding every page to a fixed width so
+"more"/"done" always land on #11/#12 wastes visible menu space with blank,
+unexplained slots on every partial page (worse than the problem — an
+unlabeled gap in a numbered list reads as broken, not merely inconsistent);
+computing page width from the total instead of a flat 10 (so every page of
+a given list is equal-sized) only fixes lists whose length happens to divide
+evenly, and changes `MENU_CAP`-derived pagination behavior shared by every
+other paged list in the engine (conversations, perks) for a fix scoped to
+one menu. What's *already* stable is the relative position — "more" and
+"done" are always the last two entries shown on any page, full or partial —
+so a player reading the label rather than recalling a number from the
+previous page is not actually misled; the report's own "misclick" describes
+acting on a remembered number rather than the label in front of them, which
+is a real rough edge but a different, cheaper-to-tolerate one than a
+genuine number-reuse bug would be. This is the same "long lists are
+awkward to page through" theme `P2-issue-39b85b76` already covers and stays
+deferred for (`docs/roadmap.md:3296`, "The travel list's cheap win already
+shipped; what's left is a bigger feature") — not a new, separately
+actionable bug, and not merged into it structurally, just the same honest
+non-fix for the same underlying reason. `queue/P2-issue-3c4440fb.json` and
+`queue/P2-issue-7f9e043b.json` stay in `done/` on that basis (their move
+predates this write-up but the conclusion independently agrees with it).
+No code changed; `npm run verify` untouched by this entry.
