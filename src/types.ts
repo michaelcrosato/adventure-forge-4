@@ -37,9 +37,11 @@ export type Cond =
   | ["checkHere", string, number] | ["!checkHere", string, number] // a currently-visible room action or npc topic previews a `check` of this skill at dc >= n (see checkHere in engine.ts)
   | ["lowHp"] | ["!lowHp"] // the player's hp is at half or less of maxHp — the same "a fight is going badly" threshold the disengage gate uses
   | ["region", string] | ["!region", string] // the player stands in a room of this region (world.regions' code). A companion's line about a hold, said while you are in that hold.
+  | ["regions", "<" | ">" | "=" | ">=" | "<=", number] // count of distinct regions among the rooms the player has ever visited — breadth, not any one place
   | ["unseenHere"] | ["!unseenHere"] // this region still holds a landmarked place the player has not stood in — the same list `sayunvisited` reads out
   | ["inWild"] | ["!inWild"] // the player stands in a generated wilderness cell (a `gen` grid room), not in an authored interior
-  | ["any", Cond[]]; // passes when at least one of the listed conditions passes (the one OR in an all-of list)
+  | ["any", Cond[]] // passes when at least one of the listed conditions passes (the one OR in an all-of list)
+  | ["all", Cond[]]; // passes when every listed condition passes — an AND nested inside an "any" branch, where the surrounding if-array's own implicit AND cannot reach
 
 // ---------- effects ----------
 export type Fx =

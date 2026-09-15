@@ -262,6 +262,16 @@ function unseenHere(world: World, s: State): string[] {
   });
 }
 
+/** Count of distinct regions among every room the player has ever stood in — breadth, not any one place. */
+function regionsVisited(world: World, s: State): number {
+  const seen = new Set<string>();
+  for (const id of s.visited) {
+    const r = world.rooms[id]?.region;
+    if (r) seen.add(r);
+  }
+  return seen.size;
+}
+
 /**
  * True while the player stands in a generated wilderness cell — ground, not
  * floorboards. Reading the ground is a thing you do on open moor, not in the
@@ -380,6 +390,10 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return world.rooms[s.room]?.region === c[1];
     case "!region":
       return world.rooms[s.room]?.region !== c[1];
+    case "regions": {
+      const v = regionsVisited(world, s);
+      return c[1] === "<" ? v < c[2] : c[1] === ">" ? v > c[2] : c[1] === ">=" ? v >= c[2] : c[1] === "<=" ? v <= c[2] : v === c[2];
+    }
     case "unseenHere":
       return unseenHere(world, s).length > 0;
     case "!unseenHere":
@@ -390,6 +404,8 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return !inWild(world, s);
     case "any":
       return c[1].some((x) => condOk(world, s, x));
+    case "all":
+      return c[1].every((x) => condOk(world, s, x));
   }
 }
 

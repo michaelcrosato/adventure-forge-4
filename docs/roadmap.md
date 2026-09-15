@@ -1608,3 +1608,92 @@ there yet (`test/worldgen.test.ts`, "a back link into a gen region
 processed later throws instead of silently dropping the exit"), so the next
 region whose name sorts early gets a pointed error instead of a validator
 report three steps removed from the cause.
+
+### Item 11: the act gate, and the budget that wouldn't move
+
+Landed the DSL side and reverted the content side. Two new conds ship:
+`["regions", cmp, n]` (the count of distinct regions among every room the
+player has ever stood in — breadth, not any one place) and `["all", Cond[]]`
+(an AND that can sit inside an `any` branch, which the surrounding if-array's
+own implicit AND cannot reach). Both are tested directly against `condOk`
+in `test/engine.test.ts`, independent of any specific gate. The gate itself —
+`cp_pass`'s stair, changed from `hollows_rested>=3` to
+`["all",[["var","hollows_rested",">=",3],["regions",">=",6]]]`, one more
+region than any proof's natural path carries at that point — is not in this
+commit. Here is why, measured rather than asserted, because the reasoning
+cost most of a day and the next person to pick this up should not have to
+re-spend it.
+
+**The shape of the problem, confirmed.** Every proof that reaches the stair
+does so having visited exactly 5 regions (`va,th,ir,sk,cp`) at hollows_rested
+3, save `reach_bargained` (6, one extra hold on its own road) and
+`reach_at_rest#devoted` (7, a deliberately wider road). Raising the bar to 6
+regions is a real, working lever — the engine change is correct and the
+gate change alone validates clean, breaking exactly the walkthrough and six
+proofs that sat at 5, exactly as intended.
+
+**Where it breaks, and why trimming the detour didn't fix it.** Fixing the
+six meant walking each to a sixth region and back before the stair check.
+The cheapest true round trip — live BFS over `legalActions`, not the
+static, gate-blind graph `pathTo` uses — is 6 hops out to Fosterfell's gate
+(`ff_east_road`) and 1 hop back by fast travel (`travel` excludes a
+standing region's own landmarks from its list, so the outbound leg cannot
+be shortened the same way). Every hold's gateway sets a flag that starts a
+quest — surveyed all 18 reachable regions' `_entered`-gated quests, and
+none is exempt — so the detour cannot avoid adding one live "Left undone"
+line to every status screen from that point on. Measured the actual
+`renderStatus` output at the stair (not estimated): one added quest line
+costs 131 characters there — the stage text plus `" (this hold's grief): "`
+and `" (in Fosterfell)"`, both shared formatting, already tuned once (the
+comment on `format.ts`'s `way()` records that pass: "3,924 -> 3,713
+average"). Cutting that stage text from 114 to 47 characters moved the
+walkthrough's status average by 2 characters. The real cost is not the
+line's length: `crawl`'s own per-turn trace shows every screen from
+turn ~210 to the stair sits at 4,900-5,100 characters, nearly 1,300 over
+the 3,650 ceiling on its own, so the 7 turns the detour adds there are not
+neutral — each one is already the most expensive kind of turn in the game,
+with or without a new quest line on it.
+
+**Moving the detour earlier made it worse, not better, and that is the
+real finding.** The same 4-hop round trip run right after leaving the Vale
+(turn ~85, hl reachable from th_east_edge in 2 hops each way) lands on
+screens costing 2,500-3,300 — a third of the late detour's cost per turn.
+Status average still rose, from 3,703 to 3,757, because the traded cost is
+duration: a quest started at turn 85 reads as "Left undone" on every
+status call for the rest of a ~250-turn run, not the ~30 turns it would
+cover started at the stair. Cheap-per-turn and short-lived pull the same
+average in opposite directions, and late-and-short currently wins by a
+smaller margin (52 characters over) than early-and-long loses by (107). Four
+splice attempts, two insertion points, and a from-scratch perk-pick and
+travel-pagination healer (`heal_perkpicks_v2.mjs` in scratch, not
+committed — it detects an unscripted level-up moved earlier by the detour's
+xp, reuses the original script's own later pick for the same level rather
+than inventing one, and inserts the `toward <region>` step travel needs
+once a second region makes its top menu group by region) all confirm the
+same number: every version of "visit one more hold, anywhere, by any
+route" costs 45-110 status-average characters, against a ratchet that had
+6 characters of slack before this item touched it (3,644 measured against
+a 3,650 ceiling, on the commit this item started from).
+
+**What would actually close it, and why none of it belongs in this
+change.** The status ratchet is "may only turn down" by design — trimming
+existing prose to make room for new content is the intended mechanism, not
+a workaround — but closing 45-110 characters of average needs roughly
+450-1,100 raw characters trimmed somewhere (the observed transfer rate is
+about one average-character per ten cut), which means several quest
+stages across several holds, not two. `way()`'s own shared formatting
+(`" (this hold's grief): "`, `" (in X)"`) is the one place a single cut
+would move every journal line at once, and it is also the one place
+already carrying a previous, deliberate optimization pass's comment
+explaining exactly what it costs to touch — the wrong place for a change
+motivated by one gate three files away. That trim is real, future work,
+sized on its own terms; bundling it into an act-gate fix would hide a
+budget-policy decision inside a content-routing one.
+
+**Left in place**: `["regions", cmp, n]` and `["all", Cond[]]` in
+`src/types.ts` / `src/engine.ts` / `src/validate.ts`, tested in
+`test/engine.test.ts`. `cp_pass` still opens on `hollows_rested>=3` alone.
+The next attempt at this item should start from a status-budget trim
+sized to actually clear ~100 characters of average headroom — or from a
+lever that does not cost a new "Left undone" line at all, if one can be
+found — not from re-deriving the numbers above.
