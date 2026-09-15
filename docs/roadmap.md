@@ -1756,3 +1756,104 @@ walkthrough), landed at 3,650.03 average on the first phrasing tried and
 that actually cross something shut) rather than item 11's, which was a new
 quest thread staying in "Left undone" for the rest of the game. The
 difference is why this item closed in one session and the other didn't.
+
+### The queue's last four P2s, and a correction to this document
+
+Four of the seven P2s still open after this session's earlier passes,
+closed or corrected on a fresh, live re-check of every number this
+document had recorded against them.
+
+**A correction first.** The "Four P2s about weighing an irreversible
+choice" entry above left `c1c437de`/`748f4551` open on the strength of
+`cp_south_stair` being "on 9 of 11 proofs that could be simulated
+cleanly." Replayed against the current tree: **`cp_south_stair` is on 2 of
+13 proofs.** The near-universal room approaching the Pass Gate is
+`cp_spine_2_0`, "the Col" (`world/reach/cp_coldpass.json`, the `cp_spine`
+gen grid, cell `[2,0]`) — every first approach to the gate crosses it, 10
+of 13 proofs plus the walkthrough. The verdict the earlier entry reached
+was right; the room it named was wrong. Left as a correction rather than
+a silent edit, per this document's own habit.
+
+**`c1c437de` and `748f4551`, fixed — and not at either room.** A room-based
+warning was never the right shape: different roads approach the gate by
+different doors (the Col for most, `cp_south_stair` for two), so any one
+room's text reaches only the players who happen to walk through it. The
+fix instead edits `quests.main`'s three Coldpass-opening stages
+(`world/reach.json`), which `journalEvents` prints the turn the stage's
+own condition — three hollows rested, the Regent's writ, or the Free
+Companies' passage — first becomes true, wherever the player is standing,
+and which `status` then carries for as long as that stage is current.
+That is "when Coldpass first opens," literally, which satisfies
+`c1c437de`; a player who reads it before ever nearing the gate has it
+earlier than "the outer approach," which satisfies `748f4551` too.
+
+    "Three hollows rested: the pilgrim stair at Coldpass opens for you.
+    Highward's north road leaves from its record-house."          (118)
+    -> "Three hollows rested: the pilgrim stair at Coldpass opens
+    for you — crossing is final."                                  (86)
+
+    "The Regent's writ is yours. Coldpass will let you through to
+    Marrowgate."                                                    (72)
+    -> "The Regent's writ is yours: Coldpass opens — crossing is
+    final."                                                         (63)
+
+    "The Free Companies will take you under the pass, by the
+    Saltkerns caves."                                               (72)
+    -> "The Free Companies take you under the pass — crossing is
+    final."                                                         (63)
+
+Each rewrite is shorter than what it replaces — the Highward pointer and
+the Saltkerns caves name are the words that paid for it, on the same
+"careful cutting" terms as item 8 — so every road's ratchet moved down or
+held flat: `regent_deposed` 451.11 -> 451.07, `reach_burned` 450.37 ->
+450.34, `gray_crown` 451.84 -> 451.81, `reach_at_rest#scout` 450.95 ->
+450.92, `reach_at_rest#devoted` 461.53 -> 461.51. `748f4551` is the same
+finding as `c1c437de` from the same report (`s9913`, `confusions[1]` and
+`suggestions[2]`), so one fix closes both.
+
+**`85e6fcd4`, fixed — this document under-scoped it.** "Genuine, broader
+mechanisms... touching many topics rather than one room" was true of the
+general ask and false of the report's own named case: Keeper Wren telling
+the player "you've not reached Rowan yet" after the player had already
+found and fully talked with Keeper Rowan at the Understory
+(`world/reach/hb_hollowbrook.json`, topic `wren_covenant_pending`, which
+checked only whether the specific errand was settled, never whether Rowan
+had been met at all). The realm already has the convention this needed —
+mutually-exclusive topic variants gated on what the player knows, the
+same shape `lys`'s four "ask after her brother" topics and
+`va_gray_priest`'s three blessing variants already use. Split into two:
+the original text stays for a player who genuinely hasn't found Rowan
+yet, gated additionally on `!flag said_th_rowan_greet`; a new topic,
+`wren_covenant_pending_met`, covers a player who has, gated on that same
+flag. No label a proof or the walkthrough presses (`"tell Wren"` appears
+0 times in `world.walkthrough` or any `world.proofs` entry), so the fix
+costs nothing on any ratchet. Re-file the general "recognizes an answer
+learned anywhere" mechanism separately if it's still wanted — this closes
+only the one topic that stated something false.
+
+**`1c7364d4`, already resolved — moved to `done/`, not newly built.**
+"Add a lightweight on-screen breadcrumb... following multi-hop NPC
+directions through a wilderness area" reads as unmet, but `wildBearing`
+(`src/engine.ts`, landed `c6a1665`, 2026-09-09) already prints a live
+position line — "Black Thorn Stand: one west," updated fresh — on every
+wilderness screen, walking real exits to the nearest landmark the player
+has already stood in. The issue was filed against rev `e166432`, before
+that commit. One honest caveat: `wildBearing` is the way *back* to a
+known place, not a literal step-counter along a direction an NPC gave,
+and it prints nothing where no anchor in the current grid has been
+visited yet — the player's underlying need (confirm progress without
+counting hops by hand) is met; the literal wording of the ask is not.
+
+**`f5fa61c0`, re-measured, still open — so the next pass doesn't retry
+it blind.** The cheapest possible form of this ask — one hud entry,
+`{"var":"hollows_rested","label":" rested"}`, 8 characters, no
+denominator — pushed onto `world.hud` and replayed live: **11 of 13
+roads fail their ratchet**, and three break the hard 1,100-character cap
+outright (`gray_crown` to 1,106, `reach_at_rest#warden` to 1,106,
+`crowned_hollow#bloodied` to 1,304). This matches the entry above almost
+exactly and sharpens it from argument to measurement: the header was
+cleared of an always-present, rarely-changing number once already (the
+running score, 2,328 characters along the walkthrough), and the cheapest
+possible version of putting one back still costs more than every road but
+two can pay. Left open. `3ddba1f3` and `5109e8d6` were re-checked against
+the current tree on the same pass and neither's reasoning above moved.
