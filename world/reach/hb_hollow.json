@@ -639,7 +639,7 @@
     },
     "hb_q_ledger": {
       "name": "Keeper Wren's Trust",
-      "start": [["flag", "said_hb_keeper_wren_greet"]],
+      "start": [["any", [["flag", "said_hb_keeper_wren_greet"], ["flag", "hb_wren_chest_forced"], ["flag", "hb_kingsrest_resolved"]]]],
       "done": [["flag", "hb_keepers_key_found"], ["!flag", "hb_wren_chest_forced"]],
       "stages": [
         {
@@ -669,7 +669,7 @@
     },
     "hb_q_mound_robber": {
       "name": "The Robbed Mounds",
-      "start": [["flag", "said_hb_mound_robber_greet"]],
+      "start": [["any", [["flag", "said_hb_mound_robber_greet"], ["flag", "hb_robber_stopped"], ["flag", "hb_robber_bribed"]]]],
       "done": [["flag", "hb_robber_stopped"]],
       "failed": [["flag", "hb_robber_bribed"]],
       "stages": [

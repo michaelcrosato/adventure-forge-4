@@ -370,6 +370,48 @@ test("th_q_cal starts (and shows failed) even when Cal dies before ever being fo
   assert.equal(status({}), undefined);
 });
 
+/**
+ * A systematic sweep for the same start-side shape th_q_cal had: every quest
+ * realm-wide gated on a `said_<npc>_greet`-style flag, checked against every
+ * other action that sets a flag its own `done`/`failed` reads, for one that
+ * does not require greeting the npc first. Sixteen real instances, across
+ * ten files — each forced with only the foreclosing flag(s), the original
+ * greet-flag deliberately left unset, to prove the widened `start` (not the
+ * pre-existing `done`/`failed`, which were already correct in every case)
+ * is what was missing.
+ */
+test("sixteen more quests start (rather than staying invisible) when their situation resolves without the npc ever being greeted", () => {
+  const world = loadWorld("world/reach.json");
+  const statusOf = (id: string, flags: Record<string, true>, vars?: Record<string, number>) =>
+    journal(world, { ...newState(world, 1).state, flags, ...(vars ? { vars } : {}) }).find((q) => q.id === id)?.status;
+
+  assert.equal(statusOf("ir_hound", { ir_cave1_done: true }), "done");
+  assert.equal(statusOf("hb_q_ledger", { hb_wren_chest_forced: true }), "failed");
+  assert.equal(statusOf("hb_q_ledger", { hb_kingsrest_resolved: true }), "failed");
+  assert.equal(statusOf("hb_q_mound_robber", { hb_robber_bribed: true }), "failed");
+  assert.equal(statusOf("lf_q_nye", { lf_ford_done: true }), "done");
+  assert.equal(statusOf("mg_q_third_bell", { mg_bell_burned: true }), "done");
+  assert.equal(statusOf("sk_q_nets", { sk_nets_sold: true }), "failed");
+  assert.equal(statusOf("wm_q_writ", { regent_writ: true }), "done");
+  assert.equal(statusOf("fl_q_muster", { fl_muster_brokered: true }), "done");
+  // rank_watch/rank_iron already had a failed clause from the earlier
+  // done-side sweep; this proves the still-narrow start that sweep left
+  // behind, forcing the failure flag alone with no greet-flag at all
+  assert.equal(statusOf("rank_watch", { wm_oathsworn: true }), "failed");
+  assert.equal(statusOf("rank_iron", { ir_aldous_gone: true }), "failed");
+  assert.equal(statusOf("ir_hobs_pick", { ir_crick_closure: true }), "done");
+  assert.equal(statusOf("fl_q_stakes", { fl_stakes_pulled: true }), "done");
+  assert.equal(statusOf("me_q_saint", { me_saint_church: true }), "done");
+  assert.equal(statusOf("me_q_ledger", { me_ledger_challenged: true }), "done");
+  // rank_church/rank_free keep their own rep threshold in `start`, untouched
+  assert.equal(statusOf("rank_church", { church_sworn: true }, { rep_church: 5 }), "done");
+  assert.equal(statusOf("rank_free", { free_sworn: true }, { rep_free: 5 }), "done");
+
+  // none of these force it below its own remaining gate: rank_church stays
+  // unstarted below rep_church 5 even with church_sworn somehow forced
+  assert.equal(statusOf("rank_church", { church_sworn: true }, { rep_church: 4 }), undefined);
+});
+
 test("validator: quests need stages with conditions and text", () => {
   const world = questWorld();
   world.quests!["empty"] = { name: "Empty", stages: [] };

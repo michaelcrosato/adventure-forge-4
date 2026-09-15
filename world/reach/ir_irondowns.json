@@ -2726,7 +2726,7 @@
     },
     "ir_hobs_pick": {
       "name": "Hob's Marked Pick",
-      "start": [["flag", "said_ir_crick_greet"]],
+      "start": [["any", [["flag", "said_ir_crick_greet"], ["flag", "ir_crick_closure"]]]],
       "done": [["flag", "ir_crick_closure"]],
       "stages": [
         {
@@ -2748,7 +2748,7 @@
     },
     "ir_hound": {
       "name": "The Slag-Hound",
-      "start": [["flag", "said_ir_ness_greet"]],
+      "start": [["any", [["flag", "said_ir_ness_greet"], ["flag", "ir_cave1_done"], ["npcDead", "ir_cave1_beast"]]]],
       "done": [["any", [["flag", "ir_cave1_done"], ["npcDead", "ir_cave1_beast"]]]],
       "stages": [
         {

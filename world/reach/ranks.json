@@ -2,7 +2,7 @@
   "quests": {
     "rank_watch": {
       "name": "The Watch's Word",
-      "start": [["flag", "said_wm_sgt_rook_duty"]],
+      "start": [["any", [["flag", "said_wm_sgt_rook_duty"], ["flag", "watch_sworn"], ["flag", "wm_oathsworn"]]]],
       "done": [["flag", "watch_sworn"]],
       "failed": [["flag", "wm_oathsworn"], ["!flag", "watch_sworn"]],
       "stages": [
@@ -20,7 +20,7 @@
     },
     "rank_church": {
       "name": "The Prior's Trust",
-      "start": [["var", "rep_church", ">=", 5], ["flag", "said_fd_prior_greet"]],
+      "start": [["var", "rep_church", ">=", 5], ["any", [["flag", "said_fd_prior_greet"], ["flag", "church_sworn"]]]],
       "done": [["flag", "church_sworn"]],
       "stages": [
         {
@@ -37,7 +37,7 @@
     },
     "rank_iron": {
       "name": "Trusted with the Forges",
-      "start": [["flag", "said_ir_aldous_bg_ironbound"]],
+      "start": [["any", [["flag", "said_ir_aldous_bg_ironbound"], ["flag", "iron_sworn"], ["flag", "ir_aldous_gone"]]]],
       "done": [["flag", "iron_sworn"]],
       "failed": [["flag", "ir_aldous_gone"], ["!flag", "iron_sworn"]],
       "stages": [
@@ -55,7 +55,7 @@
     },
     "rank_free": {
       "name": "Trusted with the Road",
-      "start": [["var", "rep_free", ">=", 5], ["flag", "said_th_vane_greet"]],
+      "start": [["var", "rep_free", ">=", 5], ["any", [["flag", "said_th_vane_greet"], ["flag", "free_sworn"]]]],
       "done": [["flag", "free_sworn"]],
       "stages": [
         {

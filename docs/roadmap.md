@@ -2459,3 +2459,70 @@ share the *shape* of risk (an npc who could resolve or leave before ever
 being greeted) without yet being individually traced; left open rather
 than claimed clean, the same honest incompleteness the six-quest sweep
 above already models. `npm run verify` green (330 tests).
+
+### The twenty, traced — sixteen real, eight clean, one already fixed
+
+The full sweep. Every quest realm-wide (24, not twenty) whose `start`
+depends on a `said_<npc>_greet`-style flag, checked by hand: for each one,
+every place anywhere in `world/reach/` that sets a flag its own
+`done`/`failed` reads, and whether reaching it requires greeting the npc
+first. Two sub-shapes turned up:
+
+- **the th_q_cal shape** — the situation resolves through a wholly
+  different room, npc, clock, companion arc, or class action; a player
+  could finish the realm never having a reason to visit this npc at all.
+- **a narrower sibling** — the *same* npc has a later topic in their own
+  menu that does not itself require the greet-chain flag, so picking it
+  first (out of the normal order) triggers the same gap without avoiding
+  the npc at all, just the "who are you" topic specifically.
+
+Sixteen real gaps, both shapes, ten files:
+
+- `ir_hound` — separate from that quest's already-fixed `done`-side bug
+  (above): the cave stamp's non-lethal resolutions still needed
+  `said_ir_ness_greet` on the *start* side, and the Irondowns wild grid has
+  two entrances that never pass through Ness's own room at all.
+- `hb_q_ledger`, `hb_q_mound_robber` — a chest forceable on sight and a
+  robber fought or bribed outright, neither gated on greeting anyone;
+  `hb_q_ledger` doubly so, since `iron_march_burn_hb` is a clock entry
+  that fires from elapsed turns with no player action at all.
+- `lf_q_nye`, `mg_q_third_bell`, `sk_q_nets`, `wm_q_writ`, `fl_q_muster`,
+  `fl_q_stakes`, `ir_hobs_pick`, `me_q_saint`, `me_q_ledger` — each a
+  variant of the same shape: a toll paid, a chapel rite spoken, nets sold
+  to a *different* npc entirely, a writ grantable from two other regions
+  (Cinderhall on any hollow burned, Marrowgate on Crown trust — neither
+  mentions Wardmoor), a Warden's own class order, a scholar's own reading
+  of a shrine or a ledger — all reachable without the greet topic.
+- `rank_watch`, `rank_iron` — the narrow-start half of the exact two rank
+  quests the earlier done-side sweep gave a `failed` clause to
+  (`e1d823d`); that pass widened `done`/`failed` and left `start` exactly
+  as narrow as `th_q_cal`'s was.
+- `rank_church`, `rank_free` — the sibling narrower shape: each npc's own
+  "swear me in" topic already reads the real threshold (`rep_* >= 9`) and
+  nothing else, so a player who reached that standing elsewhere and opens
+  the conversation fresh can pick it as their first topic.
+
+Every fix is the same one line, widening `start` to an `any` of the
+existing greet-flag plus whatever `done`/`failed` already read — nothing
+else touched, because in every one of the sixteen `done`/`failed` and
+every stage were already correct; they just never got the chance to run.
+This shape of fix is asymmetric-safe by construction: the added flags only
+ever become true through the content that already legitimately sets them,
+so widening `start` can make a quest visible when it should be and cannot
+make one visible when it should not be. `test/realm.test.ts` gets one
+combined case forcing each foreclosing flag alone, greet-flag deliberately
+unset, checked against all sixteen; `rank_church`'s own remaining
+threshold is checked separately to confirm the widening didn't loosen it.
+
+Eight checked clean: `cp_q_envoy`, `cp_q_bray`, `hb_q_surveyor`,
+`hl_q_widow`, `ir_wenna`, `lf_q_aldric`, `rank_keepers` all have exactly
+one setter for their relevant flag, and it requires the greet-chain
+directly — no competing path exists. The last, `mg_q_rites_night`, was
+already correctly written this way (`start` already an `any` of the
+watch's own auto-set flag and the novice's greet flag) — a real, live
+example in the shipped realm that the fix pattern itself is sound, found
+rather than assumed.
+
+Measured against all 13 roads and the walkthrough: no number moved; none
+of the sixteen orderings sits on a proven path. `npm run verify` green
+(331 tests).
