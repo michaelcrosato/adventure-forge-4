@@ -3501,3 +3501,54 @@ promise kept, not a leftover from copying a hostile template. Correctly
 inert for the one mechanism the earlier check was looking at, correctly
 live for the one it wasn't asked about. Left as is — checked, not a
 finding, and worth recording so it isn't flagged as a loose end twice.
+
+### The reference docs, read cold against everything landed today
+
+`docs/roadmap.md` is the journal — every number in it is correct for the
+day it was written and stays that way on purpose. `docs/authoring.md`,
+`README.md`, and `scripts/`' own doc-comments are not journals; they
+describe the realm as it stands right now, and today changed the realm
+twice in ways they still described the old shape of. Read cold rather than
+assumed current, since nothing this session had checked them against
+today's own edits yet.
+
+**The escalating-retry section stated the pre-fix behavior as current
+design.** `docs/authoring.md` said escalation "has no ceiling: a check
+retried enough times keeps getting harder, never impossible-in-principle"
+— true of the bug a playtester once reported, false of `escalatedDc`
+(`src/engine.ts`) today, which has capped every escalating check at
+`modifier + 20` for a while now and previews exactly where a check will
+stop once it has failed at least once. Confirmed against the live code
+before touching the prose, the same discipline as every finding above.
+Rewrote the section to describe the cap and its preview; left the
+`scholar_read` code sample's `checkHere` DC at its old value of 11 too —
+updated to 10, matching today's earlier fix elsewhere in this document.
+
+**`scripts/audit-fights.ts` asserted, unconditionally and in its own
+source, that "nothing on the other side scales with the crowd it faces."**
+That was the finding that justified building `strikesPerRound` earlier
+today — true when the tool was written, false of the engine it now
+measures, and the tool kept saying it anyway because the closing summary
+was a hand-written sentence, not a value read back from the fight it had
+just simulated. Exported `strikesPerRound` from `src/engine.ts` (it was
+already there, just not `export`ed) and had the script's own closing
+paragraph compute the real numbers from it — "the hostile strikes back 2
+times at party 2, 3 times at party 4" — instead of asserting a number by
+hand. Live now: `3 companion knockdowns total across every fight above`,
+which could not have been said honestly by the old, hardcoded paragraph
+regardless of what the engine did. Updated `docs/authoring.md`'s own
+quoted numbers to match a fresh run (72 hostiles now, not 68 — four more
+were added since; 4 hp lost at party 2, not 2 — the scaling fix's own
+effect, most visible at the smaller party where one extra blow is the
+biggest relative jump) and its prose to describe the current rule instead
+of the one that predated it.
+
+**One smaller, unrelated staleness caught in the same pass**:
+`README.md`'s file-tree comment still said "313 tests" against the
+current, repeatedly-measured 331. Fixed.
+
+`npm run -s typecheck` clean (the export changes a function's visibility,
+nothing else), `npm run verify` green: 331 tests, all three worlds
+validate unchanged, both crawls clean. No test, validator, or budget
+touched — this section corrects prose and one export keyword, not
+behavior.

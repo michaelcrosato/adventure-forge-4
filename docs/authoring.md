@@ -142,17 +142,26 @@ banter afterwards — a `free` action included: "free" is the turn, not the pric
 
 **Escalating retry.** A failed `check` raises the DC of the next attempt at
 that same room action, ability, topic, or item-use by 1 — the engine's own
-doing, nothing to author. The counter never resets (a success does not clear
-it, and neither does leaving and coming back), and it has no ceiling: a check
-retried enough times keeps getting harder, never impossible-in-principle,
-never a dead end — the player can always try again, or take the region's
-other route (force, craft, words) past the same obstacle instead. The preview
+doing, nothing to author (a topic's check is the one exception; see below).
+The counter never resets (a success does not clear it, and neither does
+leaving and coming back), but it is capped, not open-ended: `escalatedDc`
+(`src/engine.ts`) never raises a check past `modifier + 20`, the highest DC
+a natural 20 can still meet, so a retried check always keeps getting worse
+without ever crossing into mathematically impossible — the one exception is
+a check the author already wrote above that line, a deliberate "not without
+help" the engine leaves exactly as authored, never softened. The preview
 always quotes the number the roll is actually about to use, so a check with
 two failures already logged against it reads `(DC 13, +2 wits: roll 11+ on
 the die)` where a fresh one would have read `(DC 11, +2 wits: roll 9+ on the
 die)` — never the stale, unescalated number (see the `check` case in
 `applyFx` and `oddsHint`, `src/engine.ts`; the history that makes this
-non-negotiable is in the comments above both).
+non-negotiable is in the comments above both). Once a check has failed at
+least once, that same preview also says how far it has climbed and, unless
+the author's own base DC already sat past the cap, exactly where it stops
+(`"raised N by failed tries, and stops at {ceiling}"`) — a blind playtester
+once abandoned a puzzle specifically because the DC read as climbing with
+nothing on screen saying it would ever stop; the cap already existed, only
+the sentence was missing (`oddsHint`'s own comment has the history).
 
 **A conversation does not escalate.** A lock gets harder as you work at it; a
 topic's check reads the DC you wrote, however many times it is asked. Two blind
@@ -803,7 +812,7 @@ The shape that works, one per class, on its own attribute:
 ```json
 "scholar_read": {
   "label": "read it twice",
-  "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["checkHere", "wits", 11]],
+  "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["checkHere", "wits", 10]],
   "fx": [["addvar", "res_scholar", -1], ["cond", "studied", 2], ["say", "You stop hurrying it, and read from the top in the tongue it was written in."]]
 }
 ```
@@ -973,12 +982,14 @@ npx tsx scripts/audit-fights.ts world/reach.json
 
 It puts one fixed build against every hostile that strikes back, at party
 sizes 0, 2 and 4, through the engine's own `step`. The realm currently reads
-7 rounds and 14 hp alone (46 of 68 fights kill the player), 3 rounds and 2 hp
+7 rounds and 14 hp alone (48 of 72 fights kill the player), 3 rounds and 4 hp
 with two companions, 2 rounds and 2 hp with four. Every companion standing
-with you swings on your turn and the enemy's one blow rotates between all of
-you, so a party multiplies what you deal and divides what you take, and
-nothing on the other side scales with the crowd it faces. Write a fight
-knowing which of those two games it will be played in.
+with you swings on your turn, and the hostile strikes back too — one extra
+blow for every two companions standing (`strikesPerRound`, `src/engine.ts`),
+always fewer blows than attackers, so a party is still safer than fighting
+alone, just not immune to losing someone along the way. Write a fight knowing
+which of those two games — solo, or outnumbering a hostile that now notices —
+it will be played in.
 
 And whether the way you point at can actually be walked:
 

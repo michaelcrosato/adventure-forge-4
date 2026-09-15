@@ -1866,7 +1866,7 @@ function harmNpc(world: World, s: State, npcId: string, n: number, events: strin
  * safer than fighting alone — the reason to recruit at all — just not
  * immune.
  */
-function strikesPerRound(standingCount: number): number {
+export function strikesPerRound(standingCount: number): number {
   return 1 + Math.floor(standingCount / 2);
 }
 
