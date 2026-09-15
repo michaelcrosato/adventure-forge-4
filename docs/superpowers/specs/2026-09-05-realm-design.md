@@ -132,7 +132,10 @@ what the Vale remembers.
 
 Names every file may read or write. Anything else stays region-prefixed.
 
-**Vars.** `gold`; `hollows_rested`, `hollows_burned`; reputation `rep_watch`,
+**Vars.** `gold`; `hollows_rested`, `hollows_burned`, `hollows_bargained`
+(a bargained hollow counts toward `hollows_rested` too — it is a third,
+narrower tally for anything that asks specifically how many were bargained,
+not a fourth resolution outside the three); reputation `rep_watch`,
 `rep_church`, `rep_iron`, `rep_free`, `rep_keepers`, `rep_crown`; approval
 `appr_lys`, `appr_osk`, `appr_tamsin`, `appr_vell`. Reputation moves by ±1
 per deed (±2 for a hollow); thresholds at 2 and −2 gate faction content.

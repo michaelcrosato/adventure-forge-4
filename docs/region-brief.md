@@ -67,10 +67,15 @@ Do not edit any other file. Do not commit. Scratch files go under `/tmp`.
 - **The hollow**: an authored site (2–4 rooms) holding the region's
   unrested grief, reachable from the wilderness, its own landmark. It must be
   resolvable three ways, each ending in exactly one of:
-  `["set","<code>_hollow_rested"], ["addvar","hollows_rested",1]` (a rite or
-  a kept bargain), `["set","<code>_hollow_burned"], ["addvar","hollows_burned",1]`
+  `["set","<code>_hollow_rested"], ["addvar","hollows_rested",1]` (a rite),
+  `["set","<code>_hollow_burned"], ["addvar","hollows_burned",1]`
   (fire; quick; the Ironbound way), or `["set","<code>_hollow_bargained"],
-  ["addvar","hollows_rested",1]` (the dead stay, quieter). Each way is a
+  ["addvar","hollows_rested",1], ["addvar","hollows_bargained",1]` (a kept
+  bargain; the dead stay, quieter) — a bargain counts toward `hollows_rested`
+  too (`status` reads it as "holds only; a bargain counts"), but only the
+  matching `addvar` on `hollows_bargained` makes it visible to anything that
+  asks for a bargain specifically, the Hollow Throne's own bargain road
+  included. Each way is a
   force, craft, or words route, and no class is locked out of resting it.
   Each outcome moves two faction vars by ±2 and one or two companion
   approvals by ±1, changes the hollow's rooms (`variants`), changes something

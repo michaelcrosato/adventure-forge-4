@@ -3552,3 +3552,37 @@ nothing else), `npm run verify` green: 331 tests, all three worlds
 validate unchanged, both crawls clean. No test, validator, or budget
 touched — this section corrects prose and one export keyword, not
 behavior.
+
+### A missing var, in the two docs that are supposed to name every one
+
+Kept reading reference material cold rather than trusted. `docs/region-brief.md`
+(the brief a new region's author reads first) and
+`docs/superpowers/specs/2026-09-05-realm-design.md` (the spec it points them
+to for "the state contract — the only non-prefixed names you may read or
+write") both describe hollow resolution as two tracks: `hollows_rested` and
+`hollows_burned`, with a bargain folded into `hollows_rested` and no var of
+its own. The brief's own example said so outright:
+`["set","<code>_hollow_bargained"], ["addvar","hollows_rested",1]`.
+
+The realm has moved past that. `hollows_bargained` is a real, independent
+var today — 22 `addvar` calls across 15 region files, always alongside the
+matching `hollows_rested` increment, not instead of it (confirmed directly
+in `world/reach/fd_hollow.json` before writing any of this down, not
+assumed from the brief's own description). It backs two things neither
+doc named: `mg_hollow_throne`'s bargain road (`["var", "hollows_bargained",
+">=", 3]`) and `status`'s own "Hollows bargained: N/15" line. A region
+written strictly to the old example would set the flag, credit
+`hollows_rested` correctly, and never touch `hollows_bargained` at all —
+its bargain path would work everywhere a player could see, and be invisible
+to the one gate built to count it specifically.
+
+Fixed both: the brief's example now shows the second `addvar` the real
+convention always pairs with the flag, with a line explaining why both
+exist; the spec's state contract now lists `hollows_bargained` alongside
+the other two, with the same one-line explanation so a reader does not
+have to reverse-engineer it from a region file the way this pass did.
+
+Neither doc is loaded by any test or the validator — a docs-only fix, no
+verify needed — but the gap was real: the next region built strictly to
+the old wording would have shipped a bargain path invisible to the one
+place that counts bargains by name.
