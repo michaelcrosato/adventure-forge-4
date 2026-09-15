@@ -6,10 +6,11 @@ green changes. Content is data. Every claim about the game is proven by a
 replay, not asserted.
 
 Two worlds ship today. **The Gray Reach** is the default game: a realm of
-eighteen regions — the Vale of Ash as its first act, fifteen holds each with its own
-unrested grief, a mountain pass, and a capital where the endings wait — with
-companions who judge you, six factions that remember, fast travel between the
-landmarks you have found, and seven endings, every one replay-proven. **The
+nineteen regions — the Vale of Ash as its first act, fifteen holds each with
+its own unrested grief, a toll crossing with a different kind of trouble, a
+mountain pass, and a capital where the endings wait — with companions who
+judge you, six factions that remember, fast travel between the landmarks you
+have found, and seven endings, every one replay-proven. **The
 Vale of Ash** is the compact original it grew from: four classes, perks,
 levels, dice, two factions, a generated wood, and seven endings of its own.
 

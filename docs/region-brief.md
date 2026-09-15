@@ -185,10 +185,12 @@ day's work:
   means your content is off the proven path — which may be exactly right, and
   is never on its own a pass.
 - **Narrowing a gate until an addition stops costing budget is deleting it,
-  done less honestly.** An ability shipped gated on a DC-13 wits check when
-  the hardest wits check in eighteen regions is DC 12: it could never appear
-  for anybody, and the budget read "unchanged" because nothing had been
-  added. Before you gate on anything, count what satisfies it.
+  done less honestly.** An ability once shipped gated on a wits check harder
+  than anything else in the realm asked for: it could never appear for
+  anybody, and the budget read "unchanged" because nothing had been added.
+  Before you gate on anything, count what satisfies it — `docs/authoring.md`
+  §14 has the worked example and the command that checks it fresh, since the
+  realm's own ceiling moves as it grows.
 - **A menu line is the most expensive thing you can add**, because it prints
   on every screen the room renders. The menu is 34.5% of the realm's whole
   budget; prose is 28%.

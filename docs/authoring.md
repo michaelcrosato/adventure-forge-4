@@ -878,10 +878,13 @@ shortcut to reach for elsewhere.
 An ability's cost is paid on every screen it appears on, and the budget (§15)
 is unforgiving, so the tempting move is to narrow the `if` until it stops
 showing up. That is the same move as deleting it, done less honestly: the
-realm shipped a Scholar ability gated on `["checkHere", "wits", 13]` when the
-hardest wits check anywhere in eighteen regions is DC 12, so it could never
-appear for anybody, and the budget was "unchanged" because nothing had been
-added. Before narrowing a gate, count what satisfies it:
+realm once shipped a Scholar ability gated on `["checkHere", "wits", 13]`
+when nothing else in the realm asked for wits above 12 — dead on arrival,
+and the budget was "unchanged" because nothing had been added. The realm has
+grown since, and so has that ceiling: measured today the hardest wits check
+anywhere is DC 15, not 12 (the command below finds it), so the specific
+number in that anecdote is history, not a bar to gate under — count what the
+realm satisfies as it stands, every time, rather than trusting either number:
 
 ```bash
 # does anything in the realm actually offer a wits check this hard?
