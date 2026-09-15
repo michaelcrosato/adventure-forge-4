@@ -1134,3 +1134,19 @@ new stood-down variant text (neither is on this proof's path, since the
 kill sets `npcDead` and the pre-existing first-match variant wins): the
 mechanic doesn't need the hint to say it works, and the ratchet only turns
 down.
+
+### An ability already says what it does
+
+`P1-issue-79a74776` quoted "press him (+4 will, 2 turns)" as a menu option
+offered "with no explanation of what it does or costs beyond the label;
+never safe to try blind." That quote is half of the current line. Abilities
+are global (`world.abilities`), so `envoy_press` renders identically
+wherever its `if` holds — the finding's "various NPC dialogues, e.g. Old
+Watchtower, Wardmoor" is the same one code path everywhere, not several
+that could drift. `oddsHint`'s `ability` branch (`src/engine.ts`) appends
+both the effect (`abilityEffect`, from `world.conditions`) and the pool
+cost (`abilityCost`) to the same parenthetical, and
+`test/abilities.test.ts` pins the full string: `/\+4 will, 2 turns; \d+ of
+2 left/`. The player who filed this saw the effect half already landed;
+the cost half was already there too, just not in what they quoted. Nothing
+left to fix — superseded, moved to `queue/superseded/` by rename.
