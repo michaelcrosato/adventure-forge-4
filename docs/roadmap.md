@@ -7457,3 +7457,49 @@ comment says there must never be one.
 
 `npm run verify`: 351 tests, all three worlds validate and win-prove, both
 crawls clean.
+
+### The first wave nobody chose the class for: a Warden and a Scout both finish
+
+`TF_CLASS=Warden,Scout npm run playtest 2`, seeds 24601/24602, against the
+tree with this session's fixes in it. Both **won**, both receipts replayed
+`verified:true`, at 760 and 728 turns. The traces confirm the pin took:
+`classpick: warden` and `classpick: scout`.
+
+Section 8 of this document called the class claim "the largest unproven
+claim in the repo" and the answer arrived in two parts. The proofs closed
+the *machine* half earlier — of thirteen replay-proofs, three are Warden,
+two Envoy, one Scout. This closes the other half: **no blind player had ever
+picked a Warden or a Scout**, and now two have, and both reached an ending
+without help. The design contract ("every obstacle has a force, a craft, and
+a words route, so no class is ever locked out") has its first evidence from
+someone who did not know it was a contract.
+
+**The anchored rubric earned its keep on its first wave.** Forty-four
+consecutive reports had rated `fun` 5/5 with zero variance, which is why the
+audit called the instrument dead. The first wave run against the anchors
+came back **5 and 4** — the Scout, who filed one bug, took the anchor that
+caps fun at 4 when a P0/P1 is filed and applied it to itself. One wave is
+not a trend, but the scale moved for the first time in a week.
+
+**And the wave's one P1 is a misreport, established by replay rather than by
+argument.** `P1-issue-81dd319d` says taking the headframe lantern showed no
+theft tag, "unlike the consistent pattern elsewhere". Replaying the Scout's
+own trace to the instant of that take: the player is in `ir_headframe`, Ness
+is in `ir_headframe`, Ness is not in the party, and `oddsHint` returns
+`" (Ness is watching: taking it is theft, and Brother Osk, Vell, Tamsin and
+Lys will remember it)"` — the warning fires, names the owner, and names all
+four companions who will hold it against you. Checked the general shape too:
+all 42 owned items in the realm sit in their owner's own room, so there is
+no class of silently-free theft hiding behind this.
+
+`81dd319d` and the two P2s restating it (`4fa7adac`, `5f0cc2d1`) move to
+`done/` as not reproducible. This is the third time a wave's report has been
+contradicted by its own trace, and the reason the replay step exists: a
+report is a witness statement, not a measurement.
+
+The rest of the wave's findings stay in `queue/` for the next cycle — six
+P2s, of which the substantive ones are the multi-step "way there" directions
+not matching the room graph (the wayfinding theme, again, now the single
+most-corroborated complaint in the corpus) and a request that `status` name
+*which* settled griefs count toward `hollows_rested` rather than only the
+tally.
