@@ -6,6 +6,10 @@
 #   loop/playtest.sh 3 --mock     zero-token wiring check (structural mock player)
 #
 # Env: TF_PLAYER_MODEL (claude model id; default = CLI default)
+#      TF_CLASS (pin the class, comma-separated to rotate across the wave, e.g.
+#        TF_CLASS=Warden,Scout. Unset, each player chooses for itself — which is
+#        how every recorded trace came to be a Scholar or an Envoy, leaving the
+#        Warden's and the Scout's gated content unread by any blind player.)
 #      TF_SEED_BASE (default: epoch seconds)
 #      TF_MAX_GAME_TURNS (in-game turn budget told to the player, default 600).
 #        Advisory: the engine has no turn cap, the prompt just tells the player
@@ -82,8 +86,19 @@ EOF
 run_player() {
   local i="$1" seed=$((SEED_BASE + i))
   local out="$WAVE_DIR/player-$i-seed-$seed.json"
-  local prompt
-  prompt="$(sed -e "s/{{SEED}}/$seed/" -e "s/{{MAX_GAME_TURNS}}/$MAX_GAME_TURNS/" loop/player-prompt.md)"
+  local prompt directive=""
+  # Pin the class when asked. Blind players have picked Scholar or Envoy in
+  # every recorded trace and Warden and Scout in none, so half the class-gated
+  # content has never been read by anyone but the crawler and the proofs.
+  # TF_CLASS rotates a comma-separated list across the wave; unset, the player
+  # chooses for itself exactly as before.
+  if [ -n "${TF_CLASS:-}" ]; then
+    local -a pins
+    IFS=',' read -r -a pins <<< "$TF_CLASS"
+    local pin="${pins[$((i % ${#pins[@]}))]}"
+    directive="Play this run as the $pin. At the opening menu choose that class and no other; the rest of the run is yours to play as you see fit."
+  fi
+  prompt="$(sed -e "s/{{SEED}}/$seed/" -e "s/{{MAX_GAME_TURNS}}/$MAX_GAME_TURNS/" -e "s|{{CLASS_DIRECTIVE}}|$directive|" loop/player-prompt.md)"
   echo "  player $i (seed $seed) playing..."
   claude -p "$prompt" \
     --mcp-config "$CFG" --strict-mcp-config \
