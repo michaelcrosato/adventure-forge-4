@@ -1782,6 +1782,12 @@
             "fx": [["addvar", "appr_th_doss", -2]]
           },
           {
+            "id": "r_bargain_kept",
+            "if": [["any", [["flag", "sv_th_bargained_paid"], ["flag", "sv_th_bargained_honored"]]]],
+            "say": "The old toll's settled, out of your purse or the Company's. Vane swore that one before I signed on. Good to know whose word I'm standing behind.",
+            "fx": [["addvar", "appr_th_doss", 2]]
+          },
+          {
             "id": "r_coin",
             "if": [["var", "gold", ">=", 40]],
             "say": "Coin in the purse, none of it spent proving a point to anybody. That's the only virtue I've ever trusted."

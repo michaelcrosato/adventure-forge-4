@@ -7274,3 +7274,232 @@ own line with the generic entry correctly suppressed.
 `scripts/lint-world.ts world/reach.json` reports no npc without a farewell
 and all text within budget. `npm run verify`: 339/339 tests, all three
 worlds validate and win-prove, both crawls clean at 0 over-cap menus.
+
+### The act gate: the lever item 11 names is the wrong one, measured — and the half of it that was fixable
+
+Item 11 ("the act gate, which is why three runs saw the same half of the
+realm") proposes changing **what the Coldpass gate counts**. Measured before
+changing it, and the measurement rules the change out.
+
+The pilgrim stair opens on any of four conditions (`cp_coldpass.json:74-84`):
+`hollows_rested >= 3`, the Keepers' key, the Meres' covenant, or
+`keepers_trusted`. Replaying the walkthrough and all thirteen proofs and
+evaluating all four at the instant each one climbs: **nine routes cross by
+the stair, and all nine open it on `hollows_rested >= 3` — none satisfies any
+other condition.** Eight of the nine sit at exactly 3 rested, and seven sit
+at exactly **5 regions seen of 19**. The proven roads are not merely near the
+threshold; they are the floor of it, on both axes.
+
+So there is no headroom. Any tightening — a higher count, a spread
+requirement, a regions-seen clause — invalidates nine replay-proofs at once,
+each of which would have to be replayed and re-recorded longer than it is
+now. And longer is the one direction that is not available: 78% of long-form
+wins (69 of 89 in `reports/triaged/`) already consume more than 540 of a ~600
+turn budget, and every `stuck` report in the corpus sits on a cap (600, 600,
+600, 600, 628, 650) rather than on a dead end. Players are not failing to
+find the ending; they are running out of turns on the way. Making the
+required road longer to widen it would trade the realm's worst
+player-facing problem for its second-worst.
+
+Item 11 stays open, and this entry is the argument that the lever it names
+should not be pulled as written. The breadth problem is real; the fix has to
+make breadth *pay*, not make the gate *cost*, and that is a design change to
+the endgame economy rather than a condition edit.
+
+**What was fixable, and is fixed.** The same harm has a second half that
+needed no gate change at all. `questsopen` exists for exactly one purpose —
+its own type comment says "for a point of no return, where a warning without
+a number is easy to read past" (`src/types.ts:74`) — and the realm used it in
+exactly one place: `cp_pass`'s `onEnterOnce`. It fired when the player first
+walked into the Pass Gate room, and never again, because `onEnterOnce` fires
+once. The four actions that actually cross — `cp_door_stair`, `cp_door_writ`,
+`cp_door_seal`, `cp_door_cave`, each setting its own `cp_came_by_*` — carried
+no count at all. A player could read "N threads open", leave, play two
+hundred turns, come back and cross on a number that was stale by most of a
+game. That is precisely `queue/P2-issue-fc1a4039`'s complaint: the crossing
+"was flagged as final with a warning to check status, but it wasn't obvious
+beforehand just how many (13) would be permanently orphaned."
+
+The count now fires on the crossing itself, not on entering the room: moved
+out of `onEnterOnce` and into all four crossing actions. Any one playthrough
+still renders it exactly once, so the text budget is unchanged — measured,
+not assumed: `scripts/budget.ts world/reach.json --terse` reads avg 439.7881,
+max 1076, sum 118303 over 269 screens, identical to before, and the
+mock-player's widest screen moved 1389 → 1388. Replaying the walkthrough now
+prints "(11 threads of yours are still open...)" at the moment the stair is
+climbed.
+
+`npm run verify`: 339/339, all three worlds validate and win-prove, both
+crawls clean.
+
+### The intro was the one player-facing string nobody had audited
+
+Every documentation sweep this project has run read `docs/` and `README.md`.
+None read the prose the player actually reads. The intro's third sentence
+said **"The Vale is one hold of eighteen"** — wrong under every reading: the
+realm has 19 regions, of which 15 carry a hollow's grief (`audit-fates.ts`
+lists them: em fd ff fl hb hl ir kw mc me pw sh sk th wm), plus the Vale,
+which makes sixteen. Four other player-facing strings — the objectives and
+three `main` quest stages — already said "fifteen holds" correctly, so the
+game contradicted itself inside the first few minutes, in the first thing
+anyone reads. Now "one hold of sixteen". Checked the rest of the
+player-facing prose for the same class of drift in the same pass: five
+count-claims exist in total and the other four were already right.
+
+### Standing has two rungs and the realm pays it in 267 places
+
+`audit-choices.ts` reports every major standing as inert above its highest
+read, and the numbers are large enough to look like a defect:
+
+    rep_keepers   267 moves  +242 total   nothing reads past >=9   186 deeds wasted
+    rep_church    271 moves  +184 total   nothing reads past >=9   164 deeds wasted
+    rep_watch     246 moves  +182 total   nothing reads past >=9   160 deeds wasted
+    appr_osk      183 moves  +110 total   nothing reads past >=8    98 deeds wasted
+
+Checked whether that ceiling is an accident before treating it as one. It is
+not: scanning every condition in the realm for a `var` read against a
+`rep_*`, **all six factions top out at exactly `>=9`** — the Watch (21
+reads), the Free Companies (38), the Crown (9), the Church (13), the Keepers
+(7), the Ironbound (6). A uniform ceiling across six factions, at the same
+number, is a design, and it is the one item 3 shipped: `trusted` at `>=5`
+and `sworn` at `>=9`, each collected from a named npc in a named hold.
+
+So the finding is not "a number is broken". It is that the realm pays
+standing in 267 places against a ladder with two rungs, and a player who
+keeps doing the Keepers' work past the ninth point is spending deeds on a
+counter nothing will ever read again. That is a question about the reward
+economy — add a third rung, pay standing less freely, or accept that the
+ladder finishes early and let the deeds pay in score and story alone — and
+each answer is a different game. Recorded with the measurement rather than
+resolved: this is the designer's call, not a defect to quietly re-tune, and
+the same reasoning that kept item 11's gate from being tightened on the
+strength of a tool's say-so applies here.
+
+What *is* checkable and is already true: the deeds are not worthless, only
+the counter is. Every one of them still pays score and xp, and most move a
+companion's regard as well; `audit-fates.ts` shows each hold's three fates
+differing in standing and regard rather than in points, which is the
+mechanism working as designed.
+
+### The bar learns to prove a quest can close, and an over-cap screen stops being a number
+
+Two holes the audit named, both closed.
+
+**"86% of quests are unproven" was the wrong reading, and the check that
+closes it says so.** The audit measured that of 140 quests only 14 close on
+the winning walkthrough and ~20 across all thirteen proofs, and called the
+other 120 unproven. `src/validate.ts` now computes, from the empty starting
+state, a least fixpoint of every flag, var, item, npc and companion the
+content can ever reach, and reports any quest whose `done` falls outside it —
+six sound sub-proofs (a flag no chain of gates can reach; a counter no sum of
+raises reaches, with a repeatability rule so a re-runnable `addvar` counts as
+unbounded; foreclosure, where every site that sets what `done` wants also
+sets what it forbids and nothing clears it; direct contradiction; an
+unreachable object; and a dead `any`). It threads the existing `checkFx`
+walk rather than adding a second one, so it sees exactly the effects the
+validator already validates.
+
+**It finds zero unclosable quests, and that number is honest rather than
+disappointing.** The realm's `done` conditions have almost no surface for a
+combination bug: 85 are a single flag, 45 more are a single `any` of flags,
+and exactly two — `hb_q_ledger` and `pw_q_dies` — are conjunctions of more
+than one thing, both hand-verified satisfiable. So the 120 quests no proof
+closes are **unvisited, not impossible**: 114 have none of their `done` flags
+set in any of the fourteen replays. The audit's hole is real and it is a
+route-coverage hole, not a correctness one, and no static check can close it
+— only more proven roads can. Falsified empirically rather than argued:
+every fact the sixteen proven replays across all three worlds actually reach
+(449 flags, peak var values, held items, dead npcs, conditions, party
+members) was re-run as a synthetic `done` — **0 false positives**, ~17ms.
+
+It did find one real thing, from the var-ceiling sub-proof: `npc th_doss
+remark r_appr_pos waits for appr_th_doss to reach 2, but nothing in this
+world can raise it past 0`. Doss is the realm's fifth companion, the only one
+defined outside `companions.json`, and his approval arc was half-built — the
+single write to `appr_th_doss` anywhere was `-2`. His positive line was
+written and could never be earned. Fixed with its missing half, a
+`r_bargain_kept` remark on the bargained flags carrying `+2`.
+
+**Over-cap screens.** `test/budget.test.ts` held every proven road to 1,100
+characters; every screen off those roads was measured, printed and ignored,
+so roughly half the realm could carry any width at all. Measured first: the
+union is ~25 rooms of 936, the tail shallow (most 1,100-1,210) with `va_crypt`
+the outlier at 1,510 under `--deep --sweep`. Four rooms trimmed, all of it
+restatement rather than prose — `va_crypt` announced its hostiles and its
+loot two lines above the engine's own roster and `you notice`, and said the
+wight's grip beats mail four lines under the engine's pierce warning; three
+others introduced an npc the engine introduces itself a line later. 1,248 →
+1,043. `SCREEN_CAP` now lives in `src/crawl.ts`, every over-cap screen is an
+`OVERCAP-SCREEN` finding that exits 1 in both crawl passes `verify` runs, and
+`test/budget.test.ts` asserts the two ceilings are the same constant so they
+cannot drift. The last proof allowance went with it:
+`crowned_hollow#bloodied`'s `max: 1295` — argued in its own comment as a
+fight screen wide by design, which the same room rendering 1,510 off-road
+disproved — is now `MAX_CHARS_MAX`. **Every proven road meets the real
+ceiling; no road has a max allowance left.**
+
+Proved it bites rather than assuming: padding `va_crypt` ~250 characters
+makes `crawl --fork` report `OVERCAP-SCREEN reach: 1 room … va_crypt 1299
+(x18)` and exit 1. Reverted.
+
+Two things deliberately not done, both recorded rather than silenced. The
+mock player's `max 1388` is the `new_game` intro, governed by
+`INTRO_CHARS_MAX` 1400, not an `act` screen — cutting the intro to make that
+number look better would have been gaming a misread. Re-running the mock
+policy per turn found the genuine one hiding behind it, a 1,101 act screen in
+`hb_keepers_hall` on a Warden state no crawl mode reaches; that is 1,095 now.
+And `--deep` stays informational, with eight rooms still over under
+`--deep --fork` (worst `va_throne` 1,351) written into the code as the work
+queue: those are content *stacking* — an ending's prose, two companions'
+answers, a departure and four journal lines on one turn, none said twice —
+not restatement, so none of it was cut. There is no allowlist, and the
+comment says there must never be one.
+
+`npm run verify`: 351 tests, all three worlds validate and win-prove, both
+crawls clean.
+
+### The first wave nobody chose the class for: a Warden and a Scout both finish
+
+`TF_CLASS=Warden,Scout npm run playtest 2`, seeds 24601/24602, against the
+tree with this session's fixes in it. Both **won**, both receipts replayed
+`verified:true`, at 760 and 728 turns. The traces confirm the pin took:
+`classpick: warden` and `classpick: scout`.
+
+Section 8 of this document called the class claim "the largest unproven
+claim in the repo" and the answer arrived in two parts. The proofs closed
+the *machine* half earlier — of thirteen replay-proofs, three are Warden,
+two Envoy, one Scout. This closes the other half: **no blind player had ever
+picked a Warden or a Scout**, and now two have, and both reached an ending
+without help. The design contract ("every obstacle has a force, a craft, and
+a words route, so no class is ever locked out") has its first evidence from
+someone who did not know it was a contract.
+
+**The anchored rubric earned its keep on its first wave.** Forty-four
+consecutive reports had rated `fun` 5/5 with zero variance, which is why the
+audit called the instrument dead. The first wave run against the anchors
+came back **5 and 4** — the Scout, who filed one bug, took the anchor that
+caps fun at 4 when a P0/P1 is filed and applied it to itself. One wave is
+not a trend, but the scale moved for the first time in a week.
+
+**And the wave's one P1 is a misreport, established by replay rather than by
+argument.** `P1-issue-81dd319d` says taking the headframe lantern showed no
+theft tag, "unlike the consistent pattern elsewhere". Replaying the Scout's
+own trace to the instant of that take: the player is in `ir_headframe`, Ness
+is in `ir_headframe`, Ness is not in the party, and `oddsHint` returns
+`" (Ness is watching: taking it is theft, and Brother Osk, Vell, Tamsin and
+Lys will remember it)"` — the warning fires, names the owner, and names all
+four companions who will hold it against you. Checked the general shape too:
+all 42 owned items in the realm sit in their owner's own room, so there is
+no class of silently-free theft hiding behind this.
+
+`81dd319d` and the two P2s restating it (`4fa7adac`, `5f0cc2d1`) move to
+`done/` as not reproducible. This is the third time a wave's report has been
+contradicted by its own trace, and the reason the replay step exists: a
+report is a witness statement, not a measurement.
+
+The rest of the wave's findings stay in `queue/` for the next cycle — six
+P2s, of which the substantive ones are the multi-step "way there" directions
+not matching the room graph (the wayfinding theme, again, now the single
+most-corroborated complaint in the corpus) and a request that `status` name
+*which* settled griefs count toward `hollows_rested` rather than only the
+tally.

@@ -298,7 +298,7 @@
     },
     "va_crypt": {
       "name": "Barrow Crypt",
-      "desc": "Low vaults and stone boxes, the air gone sour and the mold black instead of green. Blight-rats scatter between the boxes. A mail shirt is draped over one box. A barrow-wight blocks the north passage, drawn up out of the same rot.",
+      "desc": "Low vaults and stone boxes, the air gone sour and the mold black instead of green. A barrow-wight blocks the north passage.",
       "brief": "Low vaults, air gone sour.",
       "region": "va",
       "exits": {
@@ -310,15 +310,12 @@
           "hint": "defeat it, slip past it (grace), or go around"
         }
       },
-      "onEnterOnce": [
-        ["xp", 2],
-        ["say", "Whoever wore this mail last never got clear of the barrow. The blight pools thickest right here."]
-      ],
+      "onEnterOnce": [["xp", 2], ["say", "Whoever wore this mail last never got clear of the barrow."]],
       "variants": [
         { "if": [["npcDead", "va_barrow_wight"]], "brief": "Low vaults. The wight is rag and bone." },
         {
           "if": [["any", [["flag", "va_wight_passed"], ["flag", "calm_va_barrow_wight"]]], ["!npcDead", "va_barrow_wight"]],
-          "desc": "Low vaults and stone boxes, the air gone sour and the mold black instead of green. Blight-rats scatter between the boxes. A mail shirt is draped over one box. The wight stands off the passage now, north clear.",
+          "desc": "Low vaults and stone boxes, the air gone sour and the mold black instead of green. The wight stands off the passage now, north clear.",
           "brief": "Low vaults. The wight stands off the passage."
         }
       ],
@@ -660,7 +657,7 @@
         ["say", "The wight comes apart into rag and bone. Among the scraps, a ward-token of cold iron, the kind hung over a door to keep grief from walking in."]
       ],
       "pierce": true,
-      "desc": "Rot-slowed but its reach is not. The chill in its grip finds skin through any mail you carry."
+      "desc": "Rot-slowed but its reach is not."
     },
     "va_steward_shade": {
       "name": "steward's shade",

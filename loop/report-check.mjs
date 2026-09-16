@@ -101,6 +101,22 @@ if (errs.length) {
   process.exit(1);
 }
 
+// A rating that cannot go down cannot tell anyone anything, and both of these
+// saturated: every report for over a week rated fun 5, and the scales carried
+// no anchors to rate against. The anchors live in loop/player-prompt.md, which
+// also states the two rules below — a 5 means "I would change nothing here",
+// and a player who just filed a confusion or a P1 has said otherwise. Warned,
+// never rejected: a rating quarrel is not worth discarding a 600-turn run, and
+// the warning is what makes the drift visible in the wave log.
+{
+  const confusions = Array.isArray(report.confusions) ? report.confusions.length : 0;
+  const serious = (report.bugs ?? []).filter((b) => b && (b.sev === "P0" || b.sev === "P1")).length;
+  if (confusions && report.clarity === 5)
+    console.error(`WARN: clarity 5 alongside ${confusions} confusion(s) — the anchors put that at 4 or less`);
+  if (serious && report.fun === 5)
+    console.error(`WARN: fun 5 alongside ${serious} P0/P1 bug(s) — the anchors put that at 4 or less`);
+}
+
 // Verify the receipt against the recorded trace, by replay. The trace's seed
 // must also match the seed this player was assigned — a receipt from some other
 // session in runs/ does not count.

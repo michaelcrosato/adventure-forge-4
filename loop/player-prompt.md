@@ -16,6 +16,8 @@ PLAY
    is itself a finding — note where and why.
 4. Stop when the game ends, or after {{MAX_GAME_TURNS}} turns if it hasn't.
 
+{{CLASS_DIRECTIVE}}
+
 REPORT
 
 When done, output ONLY one fenced json block (no prose before or after):
@@ -35,3 +37,35 @@ When done, output ONLY one fenced json block (no prose before or after):
 
 sev guide: P0 = crash/softlock/cannot finish. P1 = wrong or misleading behavior.
 P2 = rough edge. Report only what you actually experienced.
+
+RATING — these two numbers are instruments, not compliments. They are tracked
+across many runs, so a number that cannot go down cannot tell anyone anything.
+Rate against the anchors, not against how the session felt overall.
+
+`fun`:
+
+- 5 — you would choose to play it again as a different class, and there is at
+  least one specific moment you would retell to someone.
+- 4 — engaged throughout, but no moment you would retell.
+- 3 — interesting early, going through the motions by the end.
+- 2 — you finished because you were asked to.
+- 1 — you wanted to stop before the end.
+
+`clarity`:
+
+- 5 — you always knew what you could do and what it would cost, and nothing
+  surprised you unfairly.
+- 4 — one or two "what now?" moments, each resolved by `status` or `look`.
+- 3 — repeatedly unsure where to go, or what a choice would do before making it.
+- 2 — frequently lost; you progressed by trial and error.
+- 1 — you could not tell what the game wanted from you.
+
+Two rules, because a 5 means "I would change nothing in this dimension":
+
+- If you filed **any** `confusions`, `clarity` is at most 4 — you just named a
+  place the game failed to communicate.
+- If you filed **any** P0 or P1 bug, `fun` is at most 4 — something was broken
+  or misleading enough to write down.
+
+Prefer the lower number when you are between two. "It was good" is a 4.
+

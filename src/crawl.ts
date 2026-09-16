@@ -9,6 +9,10 @@
  *   HOLE      the rendered turn or status contains "undefined", "null", "NaN",
  *             or "[object Object]" — a missing content field the validator's
  *             reference checks cannot see, printed as-is to the player
+ *   OVERCAP   a room offering more of its own options than MENU_CAP — and, as
+ *             OVERCAP-SCREEN, a rendered screen wider than SCREEN_CAP. Both
+ *             are detailed below, and both are findings at the depth
+ *             `npm run verify` runs and printed diagnostics under `--deep`
  * Also replays the walkthrough and prints coverage (rooms seen, endings seen),
  * plus two numbers in every summary line:
  *
@@ -27,9 +31,10 @@
  *                     the only mode that reaches real endings, where every
  *                     other mode has only ever reached "dead". In
  *                     `npm run verify`, which prints each mode's live count.
- *   --worst           print the widest screen it found, not just its size —
- *                     the number says where and not why, and the text is
- *                     already in hand
+ *   --worst           print the screens, not just their sizes — every screen
+ *                     over SCREEN_CAP when any is over, otherwise the widest
+ *                     one found. The number says where and not why, and the
+ *                     crawler already had the text in hand
  *   --deep            400 walks of 300 steps, or forks every fifth step of
  *                     80: the widest coverage any mode reaches, in about 90
  *                     seconds with --fork. A diagnostic, not part of verify.
@@ -56,14 +61,20 @@
  *                   yet a finding, since the default depth this crawl (and
  *                   `npm run verify`) runs at is clean.
  *   biggest screen  the largest response a walk rendered, as a player would
- *                   see it. `test/budget.test.ts` holds each world to 1100
- *                   characters along its proven walkthrough only, so nothing
- *                   measures a screen off it. `world/vale.json` is clean at
- *                   this crawl's default depth (worst 1071, `crypt`) but
- *                   `world/reach.json` is not (1104 in `hb_keepers_hall`,
- *                   and two of its ending proofs already render 1107 and
- *                   1148) — so this one stays a number, not a finding, until
- *                   reach's screens are brought under the ceiling too.
+ *                   see it, and now also a FINDING when it is over SCREEN_CAP
+ *                   — the same 1,100 `test/budget.test.ts` holds every proven
+ *                   road to, imported from here so the two ceilings cannot
+ *                   drift (that file asserts SCREEN_CAP === MAX_CHARS_MAX).
+ *
+ *                   This was a printed number for a long time, and printed is
+ *                   how it stayed broken: the budget test walks the proven
+ *                   walkthrough and the ending proofs, so the ~476 rooms no
+ *                   proven road renders were measured by nothing, and a walk
+ *                   that rendered 1,248 characters in `va_crypt` said so in
+ *                   the summary line and exited 0. Every screen over the cap
+ *                   is reported, not just the widest — one is rarely alone,
+ *                   and the worst room says nothing about whether the next
+ *                   four sit at 1,099.
  *
  * Exit 0 = green. `--replay <trace.json>` re-runs a recorded session and
  * prints its receipt (used to verify playtest reports).
@@ -76,6 +87,15 @@ import { loadWorld, replayWalkthrough } from "./validate.ts";
 import type { Action, State, Trace, World } from "./types.ts";
 
 const HOLE = /\b(?:undefined|null|NaN|\[object Object\])\b/;
+
+/**
+ * The per-screen ceiling, in characters — the same 1,100 `test/budget.test.ts`
+ * holds every proven road to, and the number AGENT.md states absolutely. It
+ * lives here rather than there because the crawler is the only thing that ever
+ * sees a screen OFF a proven road, and that test asserts this constant equals
+ * its own MAX_CHARS_MAX so the two can never drift apart.
+ */
+export const SCREEN_CAP = 1100;
 
 /**
  * Rooms allowed to offer more than MENU_CAP, and how many — a named list of
@@ -144,6 +164,8 @@ export type CrawlResult = {
   steps: number;
   worst: { chars: number; room: string; turn: number; text: string };
   overCap: { count: number; worstN: number; room: string; menu: string };
+  /** every room that rendered a screen wider than SCREEN_CAP, worst render kept */
+  over: Map<string, { chars: number; turn: number; text: string; hits: number }>;
 };
 const emptyResult = (): CrawlResult => ({
   findings: [],
@@ -152,6 +174,7 @@ const emptyResult = (): CrawlResult => ({
   steps: 0,
   worst: { chars: 0, room: "", turn: 0, text: "" },
   overCap: { count: 0, worstN: 0, room: "", menu: "" },
+  over: new Map(),
 });
 
 /**
@@ -220,6 +243,17 @@ function walkFrom(world: World, start: State, seed: number, maxSteps: number, sw
       // the long desc only the first time this walk reached the room
       const asPlayed = firstHere ? full : render(world, state, out.events, {}).text;
       if (asPlayed.length > r.worst.chars) r.worst = { chars: asPlayed.length, room: state.room, turn: state.turn, text: asPlayed };
+      // ...and every screen over the ceiling, not just the single widest one:
+      // "biggest screen 1248" says one room is over and nothing about whether
+      // the next four are at 1,247. Worst render per room, with a hit count.
+      if (asPlayed.length > SCREEN_CAP) {
+        const prev = r.over.get(state.room);
+        if (!prev) r.over.set(state.room, { chars: asPlayed.length, turn: state.turn, text: asPlayed, hits: 1 });
+        else {
+          prev.hits++;
+          if (asPlayed.length > prev.chars) { prev.chars = asPlayed.length; prev.turn = state.turn; prev.text = asPlayed; }
+        }
+      }
     }
   }
 }
@@ -278,6 +312,23 @@ export function crawlForks(world: World, every: number, forkSteps: number, sweep
   return r;
 }
 
+/**
+ * Every screen a walk rendered wider than SCREEN_CAP, as one finding — or null
+ * when the run was clean. Exported so the promotion itself is testable: a
+ * finding that only exists inside the CLI block is a finding nothing can prove
+ * still fires.
+ */
+export function overCapReport(worldId: string, r: CrawlResult): string | null {
+  if (!r.over.size) return null;
+  const rooms = [...r.over].sort((a, b) => b[1].chars - a[1].chars);
+  const screens = [...r.over.values()].reduce((n, o) => n + o.hits, 0);
+  return (
+    `OVERCAP-SCREEN ${worldId}: ${rooms.length} room${rooms.length === 1 ? "" : "s"} rendered a screen over ${SCREEN_CAP} (${screens} screen${screens === 1 ? "" : "s"} in all)\n      ` +
+    rooms.map(([room, o]) => `${room} ${o.chars}${o.hits > 1 ? ` (x${o.hits})` : ""}`).join(", ") +
+    `\n      re-run with --worst to read them`
+  );
+}
+
 export function replayTrace(world: World, trace: Trace): string {
   let { state } = newState(world, trace.seed);
   for (const a of trace.actions) state = step(world, state, a).state;
@@ -318,10 +369,34 @@ if (process.argv[1]?.endsWith("crawl.ts")) {
     // `npm run verify` actually runs, and the one every shipped world is
     // clean at. `--deep` still turns up a rare, deep `throne` combination in
     // `world/vale.json` (see header), so it stays a diagnostic run: informing,
-    // never failing, until that is closed too. biggest-screen stays a printed
-    // number at every depth until reach's off-walkthrough screens are also
-    // brought under 1100.
+    // never failing, until that is closed too. Screen width follows the same
+    // rule now, one line down.
     if (r.overCap.count && !deep) r.findings.push(`OVERCAP ${world.id}: ${r.overCap.count} steps over cap, worst ${r.overCap.worstN} in ${r.overCap.room}\n      ${r.overCap.menu}`);
+    // A screen over SCREEN_CAP is a FINDING at the depth `npm run verify` runs,
+    // which is what this change is for: `va_crypt` rendered 1,248 characters off
+    // every proven road for as long as this was a printed number, and 476 rooms
+    // no proven road renders could carry anything at all.
+    //
+    // `--deep` keeps it informational, the same nuance and for the same reason
+    // as over-cap menus above: the deeper modes still turn up screens nobody has
+    // brought down yet, and a diagnostic that is permanently red teaches people
+    // to stop running it. At the time this landed, with va_crypt, mg_watch_house_cells,
+    // fd_drowned_nave and hb_keepers_hall cut, `--deep --fork` still reads
+    // va_throne 1351, th_hollow_glade 1207, mg_old_crypts 1156, mc_orchards_2_3
+    // 1144, va_crypt 1141, kw_saint_chapel_nave 1127, mc_orchards_4_3 1116 and
+    // hl_fields_3_1 1107, and `--deep --sweep` 18 rooms of its own (worst 1329,
+    // hb_toll_fire). Every one that was read is content stacking on a single
+    // turn — va_throne's 1351 is an ending's own prose, two companions' answers,
+    // a departure and four journal lines all landing together, none of them said
+    // twice — which is the shape item 8 in the order describes. That is the list to
+    // work down; there is no allowlist here and there must never be one, because
+    // a named exception is how an over-cap screen stops being a finding at the
+    // depth that matters too.
+    const overMsg = overCapReport(world.id, r);
+    if (overMsg) {
+      if (deep) console.log(`  … ${overMsg}\n      (deep: printed, not a finding — see the comment in crawl.ts)`);
+      else r.findings.push(overMsg);
+    }
     const rooms = Object.keys(world.rooms).length;
     console.log(
       `crawl ${world.id}${fork ? " (forked off the proven routes)" : sweep ? " (sweeping)" : ""}: ${fork ? "" : `${walks} walks, `}${r.steps} steps, ${Date.now() - t0}ms | rooms ${r.roomsSeen.size}/${rooms} | endings seen: ${[...r.endingsSeen].join(",") || "none"} | biggest screen ${r.worst.chars} (${r.worst.room || "-"}) | over-cap menus ${r.overCap.count}${r.overCap.count ? ` (worst ${r.overCap.worstN} in ${r.overCap.room})` : ""} | walkthrough: ${wt.error ?? `win in ${wt.turns}t`}`,
@@ -331,8 +406,15 @@ if (process.argv[1]?.endsWith("crawl.ts")) {
     // that number starts otherwise begins with guessing at the state that
     // produced it. The crawler already had the text in hand.
     if (args.includes("--worst") && r.worst.text) {
-      console.log(`\n  --- the widest screen: ${r.worst.chars} chars in ${r.worst.room} on turn ${r.worst.turn} ---`);
-      for (const line of r.worst.text.split("\n")) console.log(`  ${line}`);
+      // every over-cap screen when there are any, since one is rarely alone and
+      // "the widest" alone hides whether the rest are at 1,099 or 1,098
+      const show = r.over.size
+        ? [...r.over].sort((a, b) => b[1].chars - a[1].chars).map(([room, o]) => ({ room, ...o }))
+        : [{ room: r.worst.room, chars: r.worst.chars, turn: r.worst.turn, text: r.worst.text, hits: 1 }];
+      for (const o of show) {
+        console.log(`\n  --- ${o.chars} chars in ${o.room} on turn ${o.turn}${o.hits > 1 ? ` (${o.hits} such screens)` : ""} ---`);
+        for (const line of o.text.split("\n")) console.log(`  ${line}`);
+      }
       console.log();
     }
     if (r.findings.length) {
