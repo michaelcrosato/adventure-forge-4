@@ -7274,3 +7274,74 @@ own line with the generic entry correctly suppressed.
 `scripts/lint-world.ts world/reach.json` reports no npc without a farewell
 and all text within budget. `npm run verify`: 339/339 tests, all three
 worlds validate and win-prove, both crawls clean at 0 over-cap menus.
+
+### The act gate: the lever item 11 names is the wrong one, measured — and the half of it that was fixable
+
+Item 11 ("the act gate, which is why three runs saw the same half of the
+realm") proposes changing **what the Coldpass gate counts**. Measured before
+changing it, and the measurement rules the change out.
+
+The pilgrim stair opens on any of four conditions (`cp_coldpass.json:74-84`):
+`hollows_rested >= 3`, the Keepers' key, the Meres' covenant, or
+`keepers_trusted`. Replaying the walkthrough and all thirteen proofs and
+evaluating all four at the instant each one climbs: **nine routes cross by
+the stair, and all nine open it on `hollows_rested >= 3` — none satisfies any
+other condition.** Eight of the nine sit at exactly 3 rested, and seven sit
+at exactly **5 regions seen of 19**. The proven roads are not merely near the
+threshold; they are the floor of it, on both axes.
+
+So there is no headroom. Any tightening — a higher count, a spread
+requirement, a regions-seen clause — invalidates nine replay-proofs at once,
+each of which would have to be replayed and re-recorded longer than it is
+now. And longer is the one direction that is not available: 78% of long-form
+wins (69 of 89 in `reports/triaged/`) already consume more than 540 of a ~600
+turn budget, and every `stuck` report in the corpus sits on a cap (600, 600,
+600, 600, 628, 650) rather than on a dead end. Players are not failing to
+find the ending; they are running out of turns on the way. Making the
+required road longer to widen it would trade the realm's worst
+player-facing problem for its second-worst.
+
+Item 11 stays open, and this entry is the argument that the lever it names
+should not be pulled as written. The breadth problem is real; the fix has to
+make breadth *pay*, not make the gate *cost*, and that is a design change to
+the endgame economy rather than a condition edit.
+
+**What was fixable, and is fixed.** The same harm has a second half that
+needed no gate change at all. `questsopen` exists for exactly one purpose —
+its own type comment says "for a point of no return, where a warning without
+a number is easy to read past" (`src/types.ts:74`) — and the realm used it in
+exactly one place: `cp_pass`'s `onEnterOnce`. It fired when the player first
+walked into the Pass Gate room, and never again, because `onEnterOnce` fires
+once. The four actions that actually cross — `cp_door_stair`, `cp_door_writ`,
+`cp_door_seal`, `cp_door_cave`, each setting its own `cp_came_by_*` — carried
+no count at all. A player could read "N threads open", leave, play two
+hundred turns, come back and cross on a number that was stale by most of a
+game. That is precisely `queue/P2-issue-fc1a4039`'s complaint: the crossing
+"was flagged as final with a warning to check status, but it wasn't obvious
+beforehand just how many (13) would be permanently orphaned."
+
+The count now fires on the crossing itself, not on entering the room: moved
+out of `onEnterOnce` and into all four crossing actions. Any one playthrough
+still renders it exactly once, so the text budget is unchanged — measured,
+not assumed: `scripts/budget.ts world/reach.json --terse` reads avg 439.7881,
+max 1076, sum 118303 over 269 screens, identical to before, and the
+mock-player's widest screen moved 1389 → 1388. Replaying the walkthrough now
+prints "(11 threads of yours are still open...)" at the moment the stair is
+climbed.
+
+`npm run verify`: 339/339, all three worlds validate and win-prove, both
+crawls clean.
+
+### The intro was the one player-facing string nobody had audited
+
+Every documentation sweep this project has run read `docs/` and `README.md`.
+None read the prose the player actually reads. The intro's third sentence
+said **"The Vale is one hold of eighteen"** — wrong under every reading: the
+realm has 19 regions, of which 15 carry a hollow's grief (`audit-fates.ts`
+lists them: em fd ff fl hb hl ir kw mc me pw sh sk th wm), plus the Vale,
+which makes sixteen. Four other player-facing strings — the objectives and
+three `main` quest stages — already said "fifteen holds" correctly, so the
+game contradicted itself inside the first few minutes, in the first thing
+anyone reads. Now "one hold of sixteen". Checked the rest of the
+player-facing prose for the same class of drift in the same pass: five
+count-claims exist in total and the other four were already right.
