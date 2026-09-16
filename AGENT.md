@@ -7,7 +7,8 @@ bar owns the truth. Freedom in design, honesty in verification.
 
 `npm run verify` = typecheck + tests + world validator + crawler, twice — once
 walking at random and once forked off the proven routes, which is the pass
-that sees the realm behind its own gates (145 rooms against 438). It must be
+that sees the realm behind its own gates (about half of it, against a sixth
+at random; verify prints both counts, which grow with the realm). It must be
 green before any cycle lands. Never weaken it: no deleting/disabling tests, no
 loosening the observation budget (test/budget.test.ts), no editing loop/ or
 this file. The driver reverts any cycle that tries.

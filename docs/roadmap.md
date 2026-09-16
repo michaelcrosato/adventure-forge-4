@@ -7225,3 +7225,52 @@ two-pass search and must not move quietly.
 `npm run verify` after all six: 339/339 tests, all three worlds validate
 and win-prove clean, both crawls and both forked crawls clean at 0 over-cap
 menus, mock and measure complete. `npx tsc --noEmit` clean.
+
+### AGENT.md's crawl figures, and the five conversations that had no way to say goodbye
+
+Two follow-ups from the pre-merge review above, both left open there for
+the reason each is recorded here.
+
+**The charter's own number had drifted twice.** `AGENT.md` described the
+forked crawl as "the pass that sees the realm behind its own gates (145
+rooms against 438)". Live: 149 against 460, and both halves had been wrong
+since before Longford landed. The file forbids editing itself — and
+`loop/dev.sh:75` enforces that by reverting any cycle whose diff touches
+`AGENT.md` or `loop/`, which is why a self-directed cycle could not have
+corrected it and why the docs sweep above correctly left it alone. Nothing
+in `npm run verify` or CI enforces the rule, so the guard is specifically
+against an agent rewriting its own charter unasked; a human asking for the
+fix is the case it was never meant to stop. Rewritten as a ratio rather
+than a count ("about half of it, against a sixth at random"), since the
+absolute pair has now gone stale twice and `verify` prints the live figures
+on every run anyway.
+
+**Five conversation npcs ended with the engine's generic line.**
+`scripts/lint-world.ts:78` flags any npc with `dialogue: true` and no topic
+carrying `end: true`; `sk_tavernkeep`, `th_bray`, `th_coe`,
+`wm_quartermaster` and `wm_corporal_fenn` had between nine and twelve
+topics each and no farewell among them, so `docs/authoring.md`'s rule
+("give every conversation-mode npc a farewell") had drifted in content
+rather than in the doc. Not a bar failure — the engine falls back to the
+plain `end conversation` entry, which is why this never went red — but
+five of the realm's talkers parted from the player in the engine's voice
+instead of their own.
+
+Each got a `bye` topic in the house shape (`id`/`label`/`say`/`end`, the
+label a phrase for disengaging, the say one short parting line), written to
+the voice its own topics already establish: Otts barely talks and warns
+about the reef fog, Bray does not look up from the ledger, Coe names the
+tree that groans without wind, the quartermaster is still counting, and
+Fenn says not to answer the boots in the mist. Checked the two the file
+addresses in the third person and matched them — Coe and the quartermaster
+are both "she" in their own lines, which a farewell written from the id
+alone would have got wrong.
+
+Confirmed before writing that none of the five appears in the walkthrough
+or any of the thirteen proofs, so no budget ratchet could move; a farewell
+also *replaces* the generic exit rather than adding an entry, so no menu
+grew. Rendered all five conversations afterwards: each now closes on its
+own line with the generic entry correctly suppressed.
+`scripts/lint-world.ts world/reach.json` reports no npc without a farewell
+and all text within budget. `npm run verify`: 339/339 tests, all three
+worlds validate and win-prove, both crawls clean at 0 over-cap menus.
