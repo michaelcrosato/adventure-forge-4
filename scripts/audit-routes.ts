@@ -103,15 +103,28 @@ const look = (): void => {
 };
 
 look();
+// Same replay shape as validate.ts, crawl.ts and the other audit scripts: a
+// repeat checks its `until` before the first press, not after, so a step whose
+// condition already holds presses nothing. And a label that isn't on the menu
+// is a desync between this tool and the world it is measuring — said out loud,
+// since a measuring tool's blind spot is worse than no tool at all.
+const press = (label: string): boolean => {
+  const a = actionByLabel(world, state, label);
+  if (!a) {
+    console.error(`desync: "${label}" is not on the menu at ${state.room} (t${state.turn}) — the walkthrough and this replay have parted ways`);
+    return false;
+  }
+  state = step(world, state, a).state as State;
+  look();
+  return true;
+};
 for (const step_ of world.walkthrough) {
-  const label = typeof step_ === "string" ? step_ : step_.repeat;
-  let k = 0;
-  do {
-    const a = actionByLabel(world, state, label);
-    if (!a) break;
-    state = step(world, state, a).state as State;
-    look();
-  } while (typeof step_ !== "string" && !condOk(world, state, step_.until) && ++k < step_.max && !state.ended);
+  if (typeof step_ === "string") {
+    if (!press(step_)) break;
+  } else {
+    let k = 0;
+    while (!condOk(world, state, step_.until) && k++ < step_.max && !state.ended) if (!press(step_.repeat)) break;
+  }
   if (state.ended) break;
 }
 

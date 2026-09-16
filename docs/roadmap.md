@@ -7123,3 +7123,105 @@ exercise it, a real blind spot rather than mere extra effort. This
 fix removes the one part of the original ask (reaching a *known* landmark
 quickly) that a content-shaped change could actually solve; the
 literal-search part was never the load-bearing complaint in either report.
+
+### A pre-merge review of the branch's own source, and the six things it found
+
+Before merging this branch to `main`, its TypeScript was read cold against
+the contract in `AGENT.md` — `world/**` and this file were skipped, since
+the validator, 338 tests, both crawls and the budget ratchets already cover
+them and were green. Hand-written logic is what nothing else was checking.
+Six findings, all fixed here; each was reproduced before being believed.
+
+**A test asserting a guarantee this branch had deleted.**
+`test/engine.test.ts` carried `test("score is clamped to maxScore")`,
+asserting `score <= maxScore` after the lighthouse walkthrough. The clamp
+came off deliberately earlier in this session (`src/engine.ts`'s `score`
+case is `Math.max(0, …)` now, with its own reasoning above it: `maxScore`
+is what one route pays, and three blind players hit it and played on for
+two hundred turns earning nothing). The test went on passing for an
+unrelated reason — `src/validate.ts` independently requires that
+walkthrough to land *exactly* on `maxScore`, so `<=` cannot fail — while
+its name advertised a contract the engine no longer honours. Proved
+vacuous directly: a world with `maxScore: 5` and one `["score", 100]`
+action yields 100, unclamped. Rewritten to assert what is actually true
+(no ceiling above `maxScore`, a floor at zero), which makes it fail if
+either half regresses. The display half of this was already covered in
+`test/party.test.ts`; the mechanical half was covered by nothing.
+
+**Two type comments describing designs that were reverted.** `src/types.ts`
+still documented `["score", number]` as "clamped 0..maxScore" (same root
+cause as above), and `World.clock` as "Root-only, like `walkthrough` — a
+part file carrying it is a load error." The second is contradicted by
+`src/validate.ts`, which puts `clock` in `LIST_FIELDS` and carries its own
+comment explaining why: it was root-only for exactly one commit, which
+"would have made one author the owner of every scheduled event in an
+eighteen-region realm." A region author reading the type would have pushed
+their scheduled event into the root file by hand, rebuilding the single-
+owner shape the validator changed the design to avoid. Both corrected to
+match the code.
+
+**A `--prefix` filter that filtered nothing.** `scripts/audit-choices.ts`'s
+standings table read
+`.filter((v) => v !== "gold" && want(v) === (only ? prefixOf(v) === only : true))`.
+With `--prefix` set, `want(v)` *is* `prefixOf(v) === only`, so the whole
+comparison is `X === X` — always true. Confirmed by running it: a
+`--prefix th` audit listed `kw_`, `hb_`, `va_`, `ff_`, `mc_`, `pw_`, `fl_`
+and `sh_` tallies at an author who had asked for Thornwold. The rest of
+the script already filters correctly with a bare `want(flag)`; this line
+now matches it, and the table's `if (tracked.length)` guard means a region
+that moves no tallies of its own prints nothing rather than an empty header.
+
+**A doc comment severed by an unrelated block.** In `src/format.ts` the
+`failedChecks` comment began, broke mid-sentence at "…has no other way
+to", and resumed twenty-five lines later at "recall that later" — the
+whole `Standing:` JSDoc and its code wedged between the two halves. A
+merge artifact; rejoined with the code it describes.
+
+**A measuring tool that dropped its inputs silently.**
+`scripts/audit-play.ts` returns `null` from `read()` for any trace that
+fails to parse or lacks `seed`/`actions`, then drops those with a
+`.filter()`. Only a *total* failure said anything. Five traces of which
+three were malformed would print coverage percentages over the surviving
+two with no hint that it had. It now says what it skipped, in the spirit
+`scripts/audit-fates.ts` already states outright: a blind spot in a
+measuring tool is worse than no tool, because it is a green bar over the
+thing you were checking.
+
+**The last menu branch still deciding precedence for itself.**
+`roomMenu` resolves `ended → class phase → pending perk → conversation →
+travel`; `allActions` checked `inTravelMode` ahead of all of them.
+`talkShowing` exists precisely because the talk branch had this bug, and
+its comment says why both callers now share one predicate rather than each
+deciding for itself — travel was the branch that never got the same
+treatment. With a perk pending and the travel menu open, the screen offers
+a perk while `allActions` hands back travel options: `menuNumbers` emits 0
+for the shown option, `actionByNumber` rejects it by construction, and
+every visible option is illegal. Nothing in today's grammar reaches that
+state — travel actions are all in `BROWSING`, so no turn is spent and no
+level can land mid-menu — so this is a latent fix, not a live one. Added
+`travelShowing` as `talkShowing`'s sibling, wired into both callers, plus
+a regression test in `test/menu.test.ts` that was checked the only way a
+new test is worth anything: it fails with the fix reverted and passes with
+it in. A guard that holds only by an argument about what cannot happen is
+one clock entry away from being wrong.
+
+**Considered and deliberately not changed.** `test/budget.test.ts`'s proof
+ratchet compares `Math.floor(avg) > budget.avg`, so a road can drift up to
+0.99 characters a screen unseen. That floor turns out to be load-bearing
+rather than sloppy: several roads sit fractionally *above* their own
+integer (`reach_at_rest#devoted` at 464.04 against 464, `gray_crown` at
+452.7 against 452), so the table's integers mean "must stay under the next
+rung." Comparing exactly would fail four proofs on the spot, and storing
+the measured fraction for each would make three Node majors' worth of ICU
+have to agree to the decimal. Documented the semantics in place instead of
+moving the bar on the eve of a merge. Also left alone: the `do/while`
+replay shape in two audit scripts was corrected to the `while` shape every
+other replayer in the repo uses (checking `until` before the first press,
+and reporting a missing label instead of ending the step in silence) —
+verified byte-identical output from both scripts before and after, since
+`audit-routes.ts`'s numbers are the stated justification for `pathTo`'s
+two-pass search and must not move quietly.
+
+`npm run verify` after all six: 339/339 tests, all three worlds validate
+and win-prove clean, both crawls and both forked crawls clean at 0 over-cap
+menus, mock and measure complete. `npx tsc --noEmit` clean.

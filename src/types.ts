@@ -48,7 +48,7 @@ export type Fx =
   | ["say", string]
   | ["set", string] // set flag
   | ["clear", string]
-  | ["score", number] // add (clamped 0..maxScore)
+  | ["score", number] // add (floored at 0; no ceiling — maxScore is what one route pays, not a cap)
   | ["hp", number] // delta (clamped 0..maxHp); reaching 0 => the engine's "dead" lose ending
   | ["move", string, string] // item -> "inv" | "nowhere" | "here" (the player's room) | roomId
   | ["goto", string] // move player (fires room entry)
@@ -455,8 +455,10 @@ export type World = {
    * conditions have ticked. Checked in file order; the first entry whose
    * `if` passes (and is not already spent) fires and the rest wait for a
    * later turn — at most one entry fires per turn, which is what keeps a
-   * turn's clock line to at most one sentence, never a digest. Root-only,
-   * like `walkthrough` — a part file carrying it is a load error.
+   * turn's clock line to at most one sentence, never a digest. A part file
+   * may carry its own entries: a scheduled event belongs to the place it
+   * moves, so entries concatenate in file order (and file order is priority
+   * order), with a duplicate id across parts a load error.
    */
   clock?: ClockEntry[];
   /** Extra counters shown compactly in the per-turn status line (e.g. gold). */

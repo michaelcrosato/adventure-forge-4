@@ -69,15 +69,26 @@ const note = () => {
   }
 };
 note();
+// Same replay shape as validate.ts, crawl.ts and audit-routes.ts: a repeat
+// checks its `until` before the first press, and a label that isn't on the menu
+// is reported rather than quietly ending the step.
+const press = (label: string): boolean => {
+  const a = actionByLabel(world, state, label);
+  if (!a) {
+    console.error(`desync: "${label}" is not on the menu at ${state.room} (t${state.turn}) — the walkthrough and this replay have parted ways`);
+    return false;
+  }
+  state = step(world, state, a).state;
+  note();
+  return true;
+};
 for (const w of world.walkthrough ?? []) {
-  const label = typeof w === "string" ? w : w.repeat;
-  let k = 0;
-  do {
-    const a = actionByLabel(world, state, label);
-    if (!a) break;
-    state = step(world, state, a).state;
-    note();
-  } while (typeof w !== "string" && !condOk(world, state, w.until) && ++k < w.max && !state.ended);
+  if (typeof w === "string") {
+    if (!press(w)) break;
+  } else {
+    let k = 0;
+    while (!condOk(world, state, w.until) && k++ < w.max && !state.ended) if (!press(w.repeat)) break;
+  }
   if (state.ended) break;
 }
 

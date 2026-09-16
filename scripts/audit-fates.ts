@@ -173,10 +173,10 @@ console.log(
         `fates now have a seat: reach_at_rest wants three holds rested, reach_burned three burned, reach_bargained\n` +
         `three bargained, and each is proven by a route that actually does it. The open question is no longer\n` +
         `whether a fate has a reader but whether a player can tell, before choosing, what it will cost them.\n\n` +
-        `And whether they can find it at all. Seven holds put their grief in the journal the moment you cross\n` +
-        `into the region; five wait until you have stood in one particular room, and three until one other flag\n` +
-        `is set. Wave eight's seed 9901 walked the Hearthlands, finished two of its side quests, and left\n` +
-        `reporting the hold had no grief site — it has one, at the threshing floor, behind a flag set by\n` +
-        `entering the barn doors and nothing else. A fate nobody can find is not a choice either.`,
+        `And whether they can find it at all. Every hold above now puts its grief in the journal the moment you\n` +
+        `cross into the region. They did not always: seven did, five waited until you had stood in one particular\n` +
+        `room, and three on some other flag. Wave eight's seed 9901 walked the Hearthlands, finished two of its\n` +
+        `side quests, and left reporting the hold had no grief site — it had one, at the threshing floor, behind a\n` +
+        `flag set by entering the barn doors and nothing else. A fate nobody can find is not a choice either.`,
 );
 process.exit(0);

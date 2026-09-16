@@ -2514,7 +2514,7 @@ export function actionByNumber(world: World, s: State, n: number): Action | unde
  * `roomMenu`'s talk branch pages for display — see `talkList`.
  */
 export function allActions(world: World, s: State): Action[] {
-  if (inTravelMode(world, s)) {
+  if (travelShowing(world, s)) {
     const list = travelList(world, s);
     return travelPaging(list) ? [...list, { kind: "travelmore" }, { kind: "traveldone" }] : [...list, { kind: "traveldone" }];
   }
@@ -2574,6 +2574,25 @@ function talkShowing(world: World, s: State): boolean {
   if (s.ended || inClassPhase(world, s)) return false;
   if (s.perkPicks > 0 && eligiblePerks(world, s).length) return false;
   return inTalkMode(world, s);
+}
+
+/**
+ * Travel's half of the same predicate, and the last branch that was still
+ * deciding for itself. `roomMenu` reaches travel only after `ended`, the class
+ * phase, a pending perk and an open conversation have each had their turn;
+ * `allActions` checked `inTravelMode` ahead of all of them. Nothing in today's
+ * grammar opens that gap — every travel action is in `BROWSING`, so no turn is
+ * spent and no level can land mid-menu, and `travelto` clears `travelMenu`
+ * before `enterRoom` runs any fx — so this changes no reachable state. It is
+ * here because the talk bug above was this exact shape, and a guard that holds
+ * only by an argument about what cannot happen is one clock entry away from
+ * being wrong.
+ */
+function travelShowing(world: World, s: State): boolean {
+  if (s.ended || inClassPhase(world, s)) return false;
+  if (s.perkPicks > 0 && eligiblePerks(world, s).length) return false;
+  if (inTalkMode(world, s)) return false; // a conversation wins, exactly as in roomMenu
+  return inTravelMode(world, s);
 }
 
 /**
@@ -2652,7 +2671,7 @@ function roomMenu(world: World, s: State): { all: Action[]; ways: number } {
     return whole([...out, ...outro]);
   }
   // the travel menu: destinations (or regions), and the way out of it
-  if (inTravelMode(world, s)) return whole(travelActions(world, s));
+  if (travelShowing(world, s)) return whole(travelActions(world, s));
   // the company list: the companions to speak with, and the way out of it
   if (inCompanyMode(world, s)) return whole([...companyHere(world, s).map((npc): Action => ({ kind: "talkto", npc })), { kind: "companydone" }]);
   const out: Action[] = [];

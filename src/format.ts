@@ -457,9 +457,6 @@ export function renderStatus(world: World, s: State): string {
       });
     lines.push(`Conditions: ${conds.join("; ")}`);
   }
-  // A check that has cost a retry is worth surfacing somewhere: the odds
-  // preview already shows the raised DC on the room/topic itself, but a
-  // player who has walked away from one (or three) has no other way to
   /**
    * Where the player stands with each faction, and the rank they hold.
    *
@@ -486,6 +483,9 @@ export function renderStatus(world: World, s: State): string {
       return `${f.name} ${f.n > 0 ? "+" : ""}${f.n}${rank}`;
     });
   if (standing.length) lines.push(`Standing: ${standing.join(", ")}`);
+  // A check that has cost a retry is worth surfacing somewhere: the odds
+  // preview already shows the raised DC on the room/topic itself, but a
+  // player who has walked away from one (or three) has no other way to
   // recall that later. Worst-tried first; past FAILED_CHECKS_MAX, a plain
   // count for the rest rather than a line that grows without bound.
   const tried = failedChecks(world, s);

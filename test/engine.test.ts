@@ -184,9 +184,30 @@ test("healing reports its actual effect, same as damage and score do", () => {
   assert.doesNotMatch(noop.events.join(" "), /\(hp/);
 });
 
-test("score is clamped to maxScore", () => {
-  const a = playWalkthrough(1);
-  assert.ok(a.state.score <= world.maxScore);
+/**
+ * Score has a floor and no ceiling. It was clamped to `maxScore` once; the
+ * clamp came off because `maxScore` is what one whole route pays, not what
+ * the realm holds, and three blind players hit it and played on for two
+ * hundred turns earning nothing. The floor stayed: a penalty cannot drive a
+ * tally negative. The old test here asserted `score <= maxScore` under the
+ * name "score is clamped to maxScore" — true of the walkthrough for an
+ * unrelated reason (`validate.ts` requires it to land exactly on `maxScore`),
+ * so it went on passing after the contract it named was deleted.
+ */
+test("score has no ceiling above maxScore, and a floor at zero", () => {
+  const mini: World = {
+    id: "m", title: "M", intro: "x", start: "a", hp: 10, maxScore: 5,
+    rooms: { a: { name: "A", desc: "A.", actions: [
+      { id: "big", label: "earn far past the route's pay", fx: [["score", 100]] },
+      { id: "fine", label: "lose more than you hold", fx: [["score", -1000]] },
+    ] } },
+    items: {}, npcs: {}, walkthrough: [],
+  };
+  let { state } = newState(mini, 1);
+  state = step(mini, state, { kind: "custom", room: "a", id: "big" }).state;
+  assert.equal(state.score, 100, "score passes maxScore rather than stopping at it");
+  state = step(mini, state, { kind: "custom", room: "a", id: "fine" }).state;
+  assert.equal(state.score, 0, "and bottoms out at zero rather than going negative");
 });
 
 /**

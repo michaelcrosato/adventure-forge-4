@@ -355,3 +355,39 @@ test("a conversation number read on one page still names the same topic from ano
   const out = step(world, state, a!);
   assert.match(out.events.join(" "), /About topic 0\./, "and pressing it asks that topic, not a different one");
 });
+
+/**
+ * What `step` will judge legal and what the screen shows are the same list, in
+ * every menu. `roomMenu` reaches its travel branch only after `ended`, the
+ * class phase, a pending perk and an open conversation have each had their
+ * turn; `allActions` used to check travel ahead of all of them, so a perk
+ * pending while the travel menu was open made the two disagree — the screen
+ * offering a perk that `actionByNumber` could not name, and every number it
+ * did name illegal. Unreachable through today's grammar (travel spends no
+ * turn, so no level lands mid-menu), which is exactly why it wanted a test:
+ * nothing else would notice if a later clock entry made it reachable.
+ */
+test("a perk pending while the travel menu is open: what step judges legal is what the screen shows", () => {
+  const world = {
+    id: "trav", title: "trav", intro: "Two known places.", start: "a", hp: 10, maxScore: 1,
+    regions: { vale: { name: "the Vale" } },
+    perks: { keen: { name: "Keen", desc: "A sharp eye." } },
+    rooms: {
+      a: { name: "A", desc: "A.", landmark: "the A", region: "vale", exits: { east: { to: "b" } } },
+      b: { name: "B", desc: "B.", landmark: "the B", region: "vale", exits: { west: { to: "a" } } },
+    },
+    items: {}, npcs: {}, walkthrough: [],
+  } as unknown as World;
+  let { state } = newState(world, 1);
+  state = step(world, state, actionByLabel(world, state, "go east")!).state;
+  const open = actionByLabel(world, state, "travel to a known place");
+  assert.ok(open, `travel is offered once somewhere else is known, saw: ${legalActions(world, state).map((a) => actionLabel(world, a, state)).join(" | ")}`);
+  state = step(world, state, open!).state;
+  assert.ok(state.travelMenu !== null, "sanity: the travel menu is open");
+
+  const pending: State = { ...state, perkPicks: 1 };
+  const shown = legalActions(world, pending).map((a) => actionLabel(world, a, pending));
+  const judged = allActions(world, pending).map((a) => actionLabel(world, a, pending));
+  assert.deepEqual(judged, shown, "allActions and legalActions agree on what is on offer");
+  for (const n of menuNumbers(world, pending)) assert.ok(n >= 1, `every number offered is pressable, got ${n}`);
+});

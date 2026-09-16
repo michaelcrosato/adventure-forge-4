@@ -604,6 +604,12 @@ for (const world of worlds) {
       const worst = sizes.reduce((a, b) => (b.chars > a.chars ? b : a), sizes[0]!);
       // unlisted roads are held to the real ceiling; the table is the exceptions
       const budget = PROOF_BUDGET[`${world.id}:${key}`] ?? { avg: AVG_CHARS_MAX, max: MAX_CHARS_MAX };
+      // floored, so a table entry of 464 means "under 465", not "under 464.00":
+      // several roads sit fractionally above their own number (devoted 464.04,
+      // gray_crown 452.7) and the integer is the rung they must not climb past.
+      // The cost is that sub-one-character-per-screen growth does not trip this;
+      // tightening it means storing the measured fraction for every entry, which
+      // three Node majors' worth of ICU would then have to agree on to the decimal.
       if (Math.floor(avg) > budget.avg) over.push(`proofs.${key}: avg ${avg.toFixed(1)} > ${budget.avg}`);
       if (worst.chars > budget.max) over.push(`proofs.${key}: max ${worst.chars} in ${worst.room} > ${budget.max}`);
     }
