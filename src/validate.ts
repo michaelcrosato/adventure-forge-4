@@ -136,6 +136,18 @@ export function validateWorld(world: World): string[] {
   // a check name is valid if it is a world skill or one of the four attributes
   const checkNameOk = (n: string) => n in (world.skills ?? {}) || attrSet.has(n);
 
+  /**
+   * The value a `["var", v, op, n]` read waits for a counter to *climb* to, if
+   * any. The high side only: the mirror for a floor (`<=`, `<`) is the same
+   * argument run downwards, and is deliberately not made here — the realm's one
+   * such gate is a companion's leaving threshold, and refusing to load a world
+   * over it would be asking a design question, not reporting a bug.
+   */
+  const waitsFor = (c: Cond): number | undefined => {
+    if (c[0] !== "var" || typeof c[3] !== "number") return undefined;
+    return c[2] === ">=" || c[2] === "=" ? c[3] : c[2] === ">" ? c[3] + 1 : undefined;
+  };
+
   const checkConds = (where: string, cs?: Cond[]) => {
     for (const c of cs ?? []) {
       // collected as the existing walk passes, so "what does this world read"
@@ -143,7 +155,7 @@ export function validateWorld(world: World): string[] {
       // places a hand-written second walker forgets (companion remarks were
       // where the first draft of this check found nothing but its own blind spot)
       if (c[0] === "flag" || c[0] === "!flag" || c[0] === "since") flagReads.push({ name: String(c[1]), where });
-      else if (c[0] === "var") varReads.push({ name: String(c[1]), where });
+      else if (c[0] === "var") varReads.push({ name: String(c[1]), where, need: waitsFor(c) });
       if (!COND_OPS.has(c[0])) err(`${where}: unknown cond op ${String(c[0])}`);
       else if ((c[0] === "has" || c[0] === "!has") && !itemOk(c[1])) err(`${where}: unknown item ${c[1]}`);
       else if ((c[0] === "npcDead" || c[0] === "!npcDead" || c[0] === "inParty" || c[0] === "!inParty") && !npcOk(c[1])) err(`${where}: unknown npc ${c[1]}`);
@@ -193,9 +205,48 @@ export function validateWorld(world: World): string[] {
   const flagWrites = new Set<string>();
   const varWrites = new Set<string>(Object.keys(world.resources ?? {}));
   const flagReads: { name: string; where: string }[] = [];
-  const varReads: { name: string; where: string }[] = [];
+  /** `need` is the value a `>=`/`>`/`=` read waits for — see "gates no play can open". */
+  const varReads: { name: string; where: string; need?: number }[] = [];
   const endIds = new Set<string>(); // every ending the content can reach
-  const checkFx = (where: string, fxs?: Fx[]) => {
+  /**
+   * Where an effect stands, for the closability analysis below: `guard` is what
+   * must hold for it to run (its owner's `if`, plus every enclosing `["if", …]`
+   * it sits inside), and `pre` is what it has already set by the time it runs
+   * (the `set`s before it on its own path, plus a `once` owner's auto-flag,
+   * which the engine writes before the effects). Threaded through checkFx so
+   * the analysis sees exactly the effects the validator already walks.
+   */
+  type Ctx = { guard: Cond[]; pre: Set<string> };
+  const ROOT_CTX: Ctx = { guard: [], pre: new Set() };
+  const flagSites = new Map<string, Ctx[]>(); // flag -> every place content sets it
+  const flagClears = new Set<string>(); // flags content takes back, so they are not monotone
+  const varAdds = new Map<string, { n: number; bars: string[] }[]>(); // `bars`: flags whose absence this site needs and whose presence it leaves behind
+  const varSets = new Map<string, number[]>();
+  const condsOnPlayer = new Set<string>();
+  const condsOnNpcs = new Set<string>();
+  const partyJoins = new Set<string>();
+  const itemsToInv = new Set<string>();
+  const itemsPlaced = new Set<string>(); // moved into a room, where `take` can reach them
+  const canDie = new Set<string>(); // npcs some effect kills outright ("*": any hostile)
+  const site = (f: string, ctx: Ctx) => {
+    const l = flagSites.get(f);
+    if (l) l.push(ctx);
+    else flagSites.set(f, [ctx]);
+  };
+  /** The context of an owner's own effects: its `if`, and the auto-flag a `once` owner carries. */
+  const owned = (iff?: Cond[], auto?: string): Ctx => {
+    const guard: Cond[] = [...(iff ?? [])];
+    const pre = new Set<string>();
+    if (auto) {
+      site(auto, { guard: [...guard], pre: new Set() });
+      guard.push(["!flag", auto]);
+      pre.add(auto);
+    }
+    return { guard, pre };
+  };
+  const checkFx = (where: string, fxs?: Fx[], ctx: Ctx = ROOT_CTX) => {
+    const pre = new Set(ctx.pre);
+    const inner: Ctx = { guard: ctx.guard, pre };
     for (const fx of fxs ?? []) {
       const op = fx[0];
       // `set` only. Clearing a flag nothing ever sets leaves the gate that reads
@@ -204,6 +255,31 @@ export function validateWorld(world: World): string[] {
       // as a key defeated it.
       if (op === "set") flagWrites.add(String(fx[1]));
       else if (op === "setvar" || op === "addvar") varWrites.add(String(fx[1]));
+      // the same walk, recorded for the closability analysis: where each flag
+      // is set and under what, what each var can be moved by, and which items,
+      // npcs, conditions and companions the world can ever reach at all
+      if (op === "set") {
+        site(String(fx[1]), { guard: ctx.guard, pre: new Set(pre) });
+        pre.add(String(fx[1]));
+      } else if (op === "clear") flagClears.add(String(fx[1]));
+      else if (op === "addvar") {
+        const bars = ctx.guard.filter((c) => c[0] === "!flag" && pre.has(String(c[1]))).map((c) => String(c[1]));
+        const l = varAdds.get(String(fx[1]));
+        if (l) l.push({ n: Number(fx[2]), bars });
+        else varAdds.set(String(fx[1]), [{ n: Number(fx[2]), bars }]);
+      } else if (op === "setvar") {
+        const l = varSets.get(String(fx[1]));
+        if (l) l.push(Number(fx[2]));
+        else varSets.set(String(fx[1]), [Number(fx[2])]);
+      } else if (op === "cond") condsOnPlayer.add(String(fx[1]));
+      else if (op === "npccond") condsOnNpcs.add(String(fx[2]));
+      else if (op === "condhostile") condsOnNpcs.add(String(fx[1]));
+      else if (op === "party" && fx[2] === "join") partyJoins.add(String(fx[1]));
+      else if (op === "move") {
+        if (fx[2] === "inv") itemsToInv.add(String(fx[1]));
+        else if (fx[2] !== "nowhere") itemsPlaced.add(String(fx[1]));
+      } else if (op === "slay" || op === "harm") canDie.add(String(fx[1]));
+      else if (op === "harmhostile") canDie.add("*");
       if (!FX_OPS.has(op)) { err(`${where}: unknown fx op ${String(op)}`); continue; }
       if (op === "move" && !itemOk(fx[1])) err(`${where}: unknown item ${fx[1]}`);
       if (op === "move" && !moveOk(fx[2])) err(`${where}: bad location ${fx[2]}`);
@@ -237,20 +313,23 @@ export function validateWorld(world: World): string[] {
       }
       if (op === "if") {
         checkConds(`${where}.if`, fx[1]);
-        checkFx(`${where}.if.then`, fx[2]);
-        checkFx(`${where}.if.else`, fx[3]);
+        // the then-branch runs only where the branch's own conditions hold too;
+        // the else-branch's "not all of them" is a disjunction the analysis
+        // below has no use for, so it carries the surrounding guard unchanged
+        checkFx(`${where}.if.then`, fx[2], { guard: [...ctx.guard, ...(fx[1] ?? [])], pre });
+        checkFx(`${where}.if.else`, fx[3], inner);
       }
       if (op === "perk" && !perkOk(fx[1])) err(`${where}: unknown perk ${fx[1]}`);
       if (op === "end") endIds.add(fx[2]);
       if (op === "check") {
         if (!checkNameOk(fx[1])) err(`${where}: unknown skill ${fx[1]}`);
-        checkFx(`${where}.check.ok`, fx[3]);
-        checkFx(`${where}.check.fail`, fx[4]);
+        checkFx(`${where}.check.ok`, fx[3], inner);
+        checkFx(`${where}.check.fail`, fx[4], inner);
       }
       if (op === "chance") {
         if (typeof fx[1] !== "number" || fx[1] < 0 || fx[1] > 100) err(`${where}: chance must be 0..100, got ${String(fx[1])}`);
-        checkFx(`${where}.chance.ok`, fx[2]);
-        checkFx(`${where}.chance.fail`, fx[3]);
+        checkFx(`${where}.chance.ok`, fx[2], inner);
+        checkFx(`${where}.chance.fail`, fx[3], inner);
       }
       if (op === "party") {
         if (!npcOk(fx[1])) err(`${where}: unknown npc ${fx[1]}`);
@@ -343,7 +422,7 @@ export function validateWorld(world: World): string[] {
     if (ab.free !== undefined && typeof ab.free !== "boolean") err(`ability ${aid}: "free" must be a boolean`);
     if (ab.if !== undefined && !Array.isArray(ab.if)) err(`ability ${aid}: "if" must be an array`);
     checkConds(`ability ${aid} if`, ab.if);
-    checkFx(`ability ${aid} fx`, ab.fx);
+    checkFx(`ability ${aid} fx`, ab.fx, owned(ab.if, ab.once ? `did_${aid}` : undefined));
     // An ability's price is an ordinary var by design (§14), but the menu can
     // only read it as a price if `world.resources` declares it: `abilityCost`
     // looks the pool up there to say "spends 1 of 2" before the option is
@@ -387,7 +466,7 @@ export function validateWorld(world: World): string[] {
       if (entry?.once !== undefined && typeof entry.once !== "boolean") err(`${where}: "once" must be a boolean`);
       if (entry?.if !== undefined && !Array.isArray(entry.if)) err(`${where}: "if" must be an array`);
       checkConds(`${where} if`, entry?.if);
-      checkFx(`${where} fx`, entry?.fx);
+      checkFx(`${where} fx`, entry?.fx, owned(entry?.if, entry?.once ? `clocked_${entry.id}` : undefined));
     }
   }
 
@@ -504,7 +583,7 @@ export function validateWorld(world: World): string[] {
     checkFx(`room ${rid} onEnterOnce`, room.onEnterOnce);
     for (const a of room.actions ?? []) {
       checkConds(`room ${rid} action ${a.id}`, a.if);
-      checkFx(`room ${rid} action ${a.id}`, a.fx);
+      checkFx(`room ${rid} action ${a.id}`, a.fx, owned(a.if, a.once ? `did_${a.id}` : undefined));
     }
     for (const [i, v] of (room.variants ?? []).entries()) {
       need(`room ${rid} variant ${i}`, v, [["if", "array"]]);
@@ -522,7 +601,7 @@ export function validateWorld(world: World): string[] {
     for (const u of item.use ?? []) {
       if (u.target && !itemOk(u.target) && !npcOk(u.target)) err(`item ${iid} use: unknown target ${u.target}`);
       checkConds(`item ${iid} use`, u.if);
-      checkFx(`item ${iid} use`, u.fx);
+      checkFx(`item ${iid} use`, u.fx, owned(u.if));
     }
   }
   for (const [nid, npc] of Object.entries(world.npcs)) {
@@ -530,11 +609,11 @@ export function validateWorld(world: World): string[] {
     checkFx(`npc ${nid} onDeath`, npc.onDeath);
     for (const t of npc.topics ?? []) {
       checkConds(`npc ${nid} topic ${t.id}`, t.if);
-      checkFx(`npc ${nid} topic ${t.id}`, t.fx);
+      checkFx(`npc ${nid} topic ${t.id}`, t.fx, owned(t.if, t.once ? `said_${nid}_${t.id}` : undefined));
     }
     for (const r of npc.companion?.remarks ?? []) {
       checkConds(`npc ${nid} remark ${r.id}`, r.if);
-      if (r.fx) checkFx(`npc ${nid} remark ${r.id}`, r.fx);
+      if (r.fx) checkFx(`npc ${nid} remark ${r.id}`, r.fx, owned(r.if, `remarked_${nid}_${r.id}`));
     }
     for (const [i, l] of (npc.companion?.leaves ?? []).entries()) checkConds(`npc ${nid} leaves ${i}`, l.if);
   }
@@ -588,6 +667,175 @@ export function validateWorld(world: World): string[] {
     if (varWrites.has(r.name) || engineWritesVar(r.name) || saidOnce.has(r.name)) continue;
     saidOnce.add(r.name);
     err(`${r.where}: reads var ${r.name}, which nothing in this world ever writes — it will always be zero`);
+  }
+
+  // ---------- gates no play can open ----------
+  /**
+   * A quest whose `done` no state can satisfy — the next class of bug after a
+   * gate with no key. There, a flag has no writer at all; here every part is
+   * writable and the *combination* is not: a threshold above everything the
+   * world can add, a flag whose only setters stand behind a door this same
+   * condition holds shut, a chain of gates that bottoms out in one of those.
+   * The realm has paid for 23 of these by hand (docs/roadmap.md, "foreclosure")
+   * and nothing in the bar could see the 24th.
+   *
+   * The whole analysis is one-sided on purpose: it only ever says "this can
+   * never happen", and every step over-approximates what play can reach, so a
+   * quest it accuses is one it can demonstrate. Conditions it does not model
+   * (`turn`, `class`, `region`, a skill check, where the player is standing)
+   * read as satisfiable; a flag with no content `set` at all is the engine's
+   * to write and reads as reachable; a var the engine moves has no ceiling.
+   * The only leverage it takes is monotonicity — a flag no `clear` ever takes
+   * back stays set once set — which is what makes "A is never set without X"
+   * and "this counter never passes M" claims about the whole run rather than
+   * about one moment.
+   */
+  /**
+   * A flag the engine can set by a route this walk never sees — a `calm`, a
+   * theft, a companion going down, one of the engine's own notices. Nothing
+   * below may claim anything about those. The four families `owned` does
+   * record (`did_`, `said_`, `clocked_`, `remarked_`) are this analysis's to
+   * reason about: it knows the condition each of them waits on.
+   */
+  const engineSetsUnseen = (f: string): boolean => {
+    if (!engineWritesFlag(f)) return false;
+    const pre = f.slice(0, Math.max(0, f.indexOf("_")));
+    return pre !== "did" && pre !== "said" && pre !== "clocked" && pre !== "remarked";
+  };
+  const alwaysWithMemo = new Map<string, Set<string>>();
+  /** Flags that are set every time `f` is — by the same effect list, or required to reach it. */
+  const alwaysWith = (f: string): Set<string> => {
+    const memo = alwaysWithMemo.get(f);
+    if (memo) return memo;
+    if (engineSetsUnseen(f)) { alwaysWithMemo.set(f, new Set()); return alwaysWithMemo.get(f)!; }
+    let shared: Set<string> | null = null;
+    for (const s of flagSites.get(f) ?? []) {
+      const here = new Set<string>(s.pre);
+      for (const g of s.guard) if (g[0] === "flag") here.add(String(g[1]));
+      here.delete(f);
+      shared = shared === null ? here : new Set([...shared].filter((x: string) => here.has(x)));
+    }
+    // a flag the world takes back again says nothing about later states
+    const out = new Set([...(shared ?? [])].filter((x) => !flagClears.has(x)));
+    alwaysWithMemo.set(f, out);
+    return out;
+  };
+  /** The most this var can ever read, or null when nothing bounds it. */
+  const varCeilingMemo = new Map<string, number | null>();
+  const varCeiling = (v: string): number | null => {
+    if (varCeilingMemo.has(v)) return varCeilingMemo.get(v)!;
+    let ceiling: number | null = Math.max(0, world.resources?.[v] ?? 0);
+    if (engineWritesVar(v)) ceiling = null; // thefts and its kin are the engine's, not the content's
+    else {
+      for (const n of varSets.get(v) ?? []) ceiling = Math.max(ceiling!, n);
+      for (const a of varAdds.get(v) ?? []) {
+        if (a.n <= 0) continue;
+        // a raise that can run twice can run any number of times
+        if (!a.bars.some((b) => !flagClears.has(b))) { ceiling = null; break; }
+        ceiling! += a.n;
+      }
+    }
+    varCeilingMemo.set(v, ceiling);
+    return ceiling;
+  };
+  const startingItems = new Set<string>();
+  for (const cls of Object.values(world.classes ?? {})) for (const id of cls.items ?? []) startingItems.add(id);
+  const reachableFlags = new Set<string>();
+  /** Why this condition can never hold, or null when it might. */
+  const never = (c: Cond): string | null => {
+    switch (c[0]) {
+      case "flag":
+      case "since": {
+        const f = String(c[1]);
+        // no content `set` at all is the "gate with no key" case above, or an
+        // engine-written flag; either way not this check's to claim
+        if (!flagSites.has(f) || reachableFlags.has(f) || engineSetsUnseen(f)) return null;
+        return `nothing that sets ${f} can ever run`;
+      }
+      case "var": {
+        const need = waitsFor(c), ceiling = varCeiling(String(c[1]));
+        if (need === undefined || ceiling === null || ceiling >= need) return null;
+        return `${c[1]} can never pass ${ceiling}, and this waits for ${need}`;
+      }
+      case "has": {
+        const it = world.items[String(c[1])];
+        if (!it || it.loc === "inv" || startingItems.has(String(c[1])) || itemsToInv.has(String(c[1]))) return null;
+        if (it.takeable && (it.loc !== "nowhere" || itemsPlaced.has(String(c[1])))) return null;
+        return `${c[1]} can never reach the inventory`;
+      }
+      case "npcDead": {
+        const n = world.npcs[String(c[1])];
+        if (!n || n.hp !== undefined || canDie.has(String(c[1])) || canDie.has("*")) return null;
+        return `${c[1]} has no hp and nothing slays or harms it, so it can never be dead`;
+      }
+      case "cond":
+        return condsOnPlayer.has(String(c[1])) ? null : `nothing ever puts ${c[1]} on the player`;
+      case "npccond":
+        return condsOnNpcs.has(String(c[2])) ? null : `nothing ever puts ${c[2]} on an npc`;
+      case "inParty":
+        return partyJoins.has(String(c[1])) ? null : `${c[1]} never joins the party`;
+      case "any": {
+        // a malformed or empty list is checkConds' error to report, not this one's
+        if (!Array.isArray(c[1]) || !c[1].length) return null;
+        const why = (c[1] as Cond[]).map(never);
+        if (why.some((w) => w === null)) return null;
+        return `none of its alternatives can hold (${why.join("; ")})`;
+      }
+      case "all":
+        return Array.isArray(c[1]) ? neverAll(c[1] as Cond[]) : null;
+      default:
+        return null; // everything else: assume play can get there
+    }
+  };
+  /** Why these conditions can never hold *together*, or null when they might. */
+  const neverAll = (cs: Cond[]): string | null => {
+    const yes = new Set<string>(), no = new Set<string>(), held = new Set<string>(), unheld = new Set<string>();
+    const classes = new Set<string>();
+    for (const c of cs) {
+      if (c[0] === "flag") yes.add(String(c[1]));
+      else if (c[0] === "!flag") no.add(String(c[1]));
+      else if (c[0] === "has") held.add(String(c[1]));
+      else if (c[0] === "!has") unheld.add(String(c[1]));
+      else if (c[0] === "class") classes.add(String(c[1]));
+    }
+    for (const f of yes) if (no.has(f)) return `it asks for flag ${f} and for its absence at once`;
+    for (const i of held) if (unheld.has(i)) return `it asks to hold ${i} and not to hold it at once`;
+    if (classes.size > 1) return `it asks for class ${[...classes].sort().join(" and class ")} at once`;
+    // the foreclosure shape: the only ways to the flag it wants all set the
+    // flag it wants unset, and nothing ever takes that one back
+    for (const f of yes) for (const x of no) if (alwaysWith(f).has(x)) return `${f} is never set without also setting ${x}, which this forbids`;
+    for (const c of cs) { const why = never(c); if (why) return why; }
+    return null;
+  };
+  // What content can ever set, by the smallest fixpoint: a flag is reachable
+  // once some effect that sets it stands behind conditions that can hold, and
+  // those conditions may name flags reached on an earlier pass. Starting empty
+  // and only ever growing is what makes the leftovers a proof and not a guess.
+  for (let grew = true; grew; ) {
+    grew = false;
+    for (const [f, sites] of flagSites) {
+      if (reachableFlags.has(f)) continue;
+      if (sites.some((s) => neverAll(s.guard) === null)) { reachableFlags.add(f); grew = true; }
+    }
+  }
+  // A counter that never climbs to what a gate waits for. This is the "reads
+  // with no writer" check one turn further on: the writer exists, and only ever
+  // moves the number the wrong way, or not far enough. Found `appr_th_doss`,
+  // whose one and only write in the whole realm is `["addvar", …, -2]`.
+  const saidCeiling = new Set<string>();
+  for (const r of varReads) {
+    if (r.need === undefined || !varWrites.has(r.name) || saidCeiling.has(r.name)) continue;
+    const ceiling = varCeiling(r.name);
+    if (ceiling === null || ceiling >= r.need) continue;
+    saidCeiling.add(r.name);
+    err(`${r.where}: waits for var ${r.name} to reach ${r.need}, but nothing in this world can raise it past ${ceiling} — a threshold no play can cross`);
+  }
+  // A quest nothing can close. `start` and the stage lines are the author's to
+  // write as narrowly as they like; `done` is the promise that the thread ends.
+  for (const [qid, q] of Object.entries(world.quests ?? {})) {
+    if (!q.done?.length) continue;
+    const why = neverAll(q.done);
+    if (why) err(`quest ${qid}: nothing can ever satisfy its done — ${why}`);
   }
 
   // ---------- reachability ----------

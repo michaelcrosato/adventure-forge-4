@@ -7380,3 +7380,80 @@ the counter is. Every one of them still pays score and xp, and most move a
 companion's regard as well; `audit-fates.ts` shows each hold's three fates
 differing in standing and regard rather than in points, which is the
 mechanism working as designed.
+
+### The bar learns to prove a quest can close, and an over-cap screen stops being a number
+
+Two holes the audit named, both closed.
+
+**"86% of quests are unproven" was the wrong reading, and the check that
+closes it says so.** The audit measured that of 140 quests only 14 close on
+the winning walkthrough and ~20 across all thirteen proofs, and called the
+other 120 unproven. `src/validate.ts` now computes, from the empty starting
+state, a least fixpoint of every flag, var, item, npc and companion the
+content can ever reach, and reports any quest whose `done` falls outside it —
+six sound sub-proofs (a flag no chain of gates can reach; a counter no sum of
+raises reaches, with a repeatability rule so a re-runnable `addvar` counts as
+unbounded; foreclosure, where every site that sets what `done` wants also
+sets what it forbids and nothing clears it; direct contradiction; an
+unreachable object; and a dead `any`). It threads the existing `checkFx`
+walk rather than adding a second one, so it sees exactly the effects the
+validator already validates.
+
+**It finds zero unclosable quests, and that number is honest rather than
+disappointing.** The realm's `done` conditions have almost no surface for a
+combination bug: 85 are a single flag, 45 more are a single `any` of flags,
+and exactly two — `hb_q_ledger` and `pw_q_dies` — are conjunctions of more
+than one thing, both hand-verified satisfiable. So the 120 quests no proof
+closes are **unvisited, not impossible**: 114 have none of their `done` flags
+set in any of the fourteen replays. The audit's hole is real and it is a
+route-coverage hole, not a correctness one, and no static check can close it
+— only more proven roads can. Falsified empirically rather than argued:
+every fact the sixteen proven replays across all three worlds actually reach
+(449 flags, peak var values, held items, dead npcs, conditions, party
+members) was re-run as a synthetic `done` — **0 false positives**, ~17ms.
+
+It did find one real thing, from the var-ceiling sub-proof: `npc th_doss
+remark r_appr_pos waits for appr_th_doss to reach 2, but nothing in this
+world can raise it past 0`. Doss is the realm's fifth companion, the only one
+defined outside `companions.json`, and his approval arc was half-built — the
+single write to `appr_th_doss` anywhere was `-2`. His positive line was
+written and could never be earned. Fixed with its missing half, a
+`r_bargain_kept` remark on the bargained flags carrying `+2`.
+
+**Over-cap screens.** `test/budget.test.ts` held every proven road to 1,100
+characters; every screen off those roads was measured, printed and ignored,
+so roughly half the realm could carry any width at all. Measured first: the
+union is ~25 rooms of 936, the tail shallow (most 1,100-1,210) with `va_crypt`
+the outlier at 1,510 under `--deep --sweep`. Four rooms trimmed, all of it
+restatement rather than prose — `va_crypt` announced its hostiles and its
+loot two lines above the engine's own roster and `you notice`, and said the
+wight's grip beats mail four lines under the engine's pierce warning; three
+others introduced an npc the engine introduces itself a line later. 1,248 →
+1,043. `SCREEN_CAP` now lives in `src/crawl.ts`, every over-cap screen is an
+`OVERCAP-SCREEN` finding that exits 1 in both crawl passes `verify` runs, and
+`test/budget.test.ts` asserts the two ceilings are the same constant so they
+cannot drift. The last proof allowance went with it:
+`crowned_hollow#bloodied`'s `max: 1295` — argued in its own comment as a
+fight screen wide by design, which the same room rendering 1,510 off-road
+disproved — is now `MAX_CHARS_MAX`. **Every proven road meets the real
+ceiling; no road has a max allowance left.**
+
+Proved it bites rather than assuming: padding `va_crypt` ~250 characters
+makes `crawl --fork` report `OVERCAP-SCREEN reach: 1 room … va_crypt 1299
+(x18)` and exit 1. Reverted.
+
+Two things deliberately not done, both recorded rather than silenced. The
+mock player's `max 1388` is the `new_game` intro, governed by
+`INTRO_CHARS_MAX` 1400, not an `act` screen — cutting the intro to make that
+number look better would have been gaming a misread. Re-running the mock
+policy per turn found the genuine one hiding behind it, a 1,101 act screen in
+`hb_keepers_hall` on a Warden state no crawl mode reaches; that is 1,095 now.
+And `--deep` stays informational, with eight rooms still over under
+`--deep --fork` (worst `va_throne` 1,351) written into the code as the work
+queue: those are content *stacking* — an ending's prose, two companions'
+answers, a departure and four journal lines on one turn, none said twice —
+not restatement, so none of it was cut. There is no allowlist, and the
+comment says there must never be one.
+
+`npm run verify`: 351 tests, all three worlds validate and win-prove, both
+crawls clean.

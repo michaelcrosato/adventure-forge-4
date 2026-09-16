@@ -8,6 +8,7 @@ import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { crawl, overCapReport, SCREEN_CAP } from "../src/crawl.ts";
 import { actionByLabel, condOk, inClassPhase, inPerkPickPhase, newState, step } from "../src/engine.ts";
 import { render, renderIntro } from "../src/format.ts";
 import { loadWorld } from "../src/validate.ts";
@@ -31,10 +32,13 @@ const INTRO_CHARS_MAX = 1400;
  *
  * Each entry is that road as it stands, and **may only ever go down**. Raising
  * one to make a change fit is the single thing this test exists to stop. The
- * target for all of them is AVG_CHARS_MAX and MAX_CHARS_MAX; the one room
- * still standing in the way is va_crypt, a fight screen kept at width by
- * design (see the comment on crowned_hollow#bloodied, below). mg_hollow_throne,
- * va_throne, th_wood_3_1 and mc_north_road are all cut down to size.
+ * target for all of them is AVG_CHARS_MAX and MAX_CHARS_MAX, and as of the
+ * change that made an over-cap screen a crawler FINDING rather than a printed
+ * number, **every road meets MAX_CHARS_MAX**: va_crypt, the last one over,
+ * came down 1,295 -> 1,090 and its allowance is gone (see the comment on
+ * crowned_hollow#bloodied, below). mg_hollow_throne, va_throne, th_wood_3_1
+ * and mc_north_road were cut down to size before it. What is still owed to the
+ * real bar is averages, and nothing else.
  *
  * Per-road on purpose, and a road not listed here is held to the real bar. One
  * shared "worst of all roads" number would let a new road quietly license
@@ -298,11 +302,74 @@ const PROOF_BUDGET: Record<string, { avg: number; max: number }> = {
   // screen is not padding: the player's roll, the companion's roll, the
   // retaliation, and a menu carrying several combat abilities at once all
   // print together, on a road no proof had ever rendered before. The worst
-  // screen (1,295, va_crypt) is that room's first-visit description — two
-  // hostiles introduced, the "armor useless" warning, and a ten-line menu —
-  // paid once, by the first road to ever open that door.
-  "reach:crowned_hollow#bloodied": { avg: 523, max: 1295 }, // avg 524.5 -> 523.1 as a side effect of cutting va_throne for item 8 (this road passes through it on the way to va_crypt); max is va_crypt's own first-visit fight screen and untouched, by design — see the comment above
+  // screen was va_crypt's first-visit description at 1,295 — two hostiles
+  // introduced, the "armor useless" warning, and a ten-line menu — and this
+  // comment used to argue it was a fight screen kept at width by design.
+  //
+  // That argument was wrong, and the crawler is what showed it. The same room
+  // rendered 1,248 off every proven road and 1,510 under `--deep --sweep`, so
+  // the width was never a fight being paid for once; it was four restatements
+  // stacking on one entry screen, every one of them a line that screen already
+  // said somewhere else. The desc announced the blight-rats and the mail shirt
+  // two lines above the engine's own hostile roster and its "you notice mail
+  // shirt here"; it called the wight "drawn up out of the same rot" one line
+  // above the roster's own "Rot-slowed"; the wight's npc desc said its grip
+  // "finds skin through any mail you carry" four lines under the engine's
+  // pierce warning, which says "mail and shield count for nothing against it";
+  // and the room's one-time entry line closed with "The blight pools thickest
+  // right here", which is the desc's "the air gone sour and the mold black
+  // instead of green" said twice. The fight, both hostiles, the menu, the
+  // pierce warning and the entry beat are all untouched — 1,295 -> 1,090.
+  "reach:crowned_hollow#bloodied": { avg: 519, max: MAX_CHARS_MAX }, // avg 524.5 -> 523.1 as a side effect of cutting va_throne for item 8 (this road passes through it on the way to va_crypt), then 523.1 -> 519.7 cutting va_crypt's four restatements (above); max 1,295 -> 1,090, so the allowance is gone and this road is held to the real ceiling — only its average is still owed
 };
+
+/**
+ * The crawler is the only thing in this project that ever measures a screen a
+ * proven road never renders, and it now FAILS on one over the ceiling. Two
+ * copies of "1100" is how that quietly becomes two different ceilings: lower
+ * this file's and the crawler keeps waving screens through, lower the
+ * crawler's and this file stops noticing. They are asserted equal instead, so
+ * the off-road bar can only ever be the same bar.
+ */
+test("the crawler holds off-road screens to this file's ceiling, not one of its own", () => {
+  assert.equal(SCREEN_CAP, MAX_CHARS_MAX, "src/crawl.ts SCREEN_CAP and MAX_CHARS_MAX must be the same number");
+});
+
+/**
+ * ...and that it actually goes red, on a screen no proven road renders.
+ *
+ * The crawler measured the widest screen it found for a long time and then
+ * printed it, so `world/reach.json` could (and did) carry 1,248 characters in
+ * `va_crypt` with `npm run verify` green. Pinned on a two-room world here,
+ * because the thing being tested is the promotion from number to finding, and
+ * the day reach's own screens are all under the cap is the day nothing else
+ * would notice the promotion being undone.
+ */
+test("a screen over the ceiling is a crawler finding, not a printed number", () => {
+  const world: World = {
+    id: "wide", title: "W", intro: "x", start: "a", hp: 5, maxScore: 0,
+    rooms: {
+      a: { name: "A", desc: "A bare room.", exits: { east: { to: "b" } } },
+      b: { name: "B", desc: "Stone on stone. ".repeat(90), exits: { west: { to: "a" } } },
+    },
+    items: {},
+    npcs: {},
+    walkthrough: [],
+  };
+  const r = crawl(world, 1, 3);
+  const over = r.over.get("b");
+  assert.ok(over, `b's first-sight screen should have been recorded as over ${SCREEN_CAP}`);
+  assert.ok(over!.chars > SCREEN_CAP, `b rendered ${over!.chars}, expected over ${SCREEN_CAP}`);
+  const msg = overCapReport(world.id, r);
+  assert.ok(msg?.startsWith("OVERCAP-SCREEN wide:"), `expected a finding, got ${msg}`);
+  assert.match(msg!, /\bb \d+/, "the finding names the room and its size");
+});
+
+test("a world whose screens all fit reports no over-cap finding at all", () => {
+  const world = loadWorld(fileURLToPath(new URL("../world/lighthouse.json", import.meta.url)));
+  const r = crawl(world, 8, 40);
+  assert.equal(overCapReport(world.id, r), null, `lighthouse went over ${SCREEN_CAP}: ${overCapReport(world.id, r)}`);
+});
 
 const dir = fileURLToPath(new URL("../world", import.meta.url));
 const worlds: World[] = readdirSync(dir)

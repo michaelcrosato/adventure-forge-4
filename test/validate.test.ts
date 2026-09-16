@@ -47,7 +47,7 @@ test("rejects authored records missing a field the engine prints or dispatches o
 });
 
 // ---------- ending proofs ----------
-import type { World } from "../src/types.ts";
+import type { Cond, World } from "../src/types.ts";
 
 const twoEndings = (proofs?: World["proofs"]): World => ({
   id: "p",
@@ -275,4 +275,177 @@ test("a chance's success branch is searched for a line that repeats forever", ()
 test("a labelled proof is coverage for its own ending", () => {
   // the only witness for `gave_in` carries a label; it is still a proof of it
   assert.deepEqual(validateWorld(twoEndings({ "gave_in#slow": ["give in"] })), []);
+});
+
+// ---------- gates no play can open ----------
+/**
+ * The next class of bug after a gate with no key: every part of a `done` is
+ * writable and the *combination* is not. The realm has paid for 23 of these by
+ * hand (docs/roadmap.md, "foreclosure") — a stage asking for a flag whose only
+ * door is shut by the same stage, a counter asked to pass a number nothing can
+ * add up to — and until this check the bar could not see the 24th.
+ *
+ * The analysis only ever claims impossibility, so the pairs below matter more
+ * than the hits: each broken case is followed by the legitimate one a letter
+ * away, because a false alarm that reds a green build on real content is worse
+ * than no check at all.
+ */
+const quest = (w: World, done: Cond[]): World => {
+  w.quests = { q: { name: "Q", done, stages: [{ if: [], text: "on it" }] } };
+  return w;
+};
+const closable = (w: World) => validateWorld(w).filter((e) => e.includes("quest q") || e.includes("no play can cross"));
+
+test("a done waiting for a counter nothing can raise that far is unclosable", () => {
+  const w = ok();
+  // one name to learn, taken once — the quest asks for three
+  w.rooms["a"]!.actions!.push({ id: "learn", label: "learn a name", once: true, fx: [["addvar", "names", 1]] });
+  const errs = closable(quest(w, [["var", "names", ">=", 3]]));
+  assert.ok(errs.some((e) => e.includes("names can never pass 1")), errs.join("\n") || "loaded clean");
+
+  // the same counter with a second source, and it adds up
+  w.rooms["a"]!.actions!.push({ id: "learn2", label: "learn another", once: true, fx: [["addvar", "names", 2]] });
+  assert.deepEqual(closable(w), []);
+});
+
+test("a raise that can run twice puts no ceiling on anything", () => {
+  const w = ok();
+  // no `once`, no flag barring a second go: the counter is unbounded, and the
+  // check must not guess otherwise however high the threshold
+  w.rooms["a"]!.actions!.push({ id: "dig", label: "dig", fx: [["addvar", "coin", 1]] });
+  assert.deepEqual(closable(quest(w, [["var", "coin", ">=", 99]])), []);
+
+  // the realm's own shape, and the one a careless ceiling would red: the Vale's
+  // `coffer_press` counts failures inside a `check`'s fail branch and opens on
+  // the third. One site, adding 1, read at >= 3 — and entirely legitimate,
+  // because the topic that carries it can be picked again.
+  const retry = ok();
+  retry.rooms["a"]!.actions!.push({
+    id: "press",
+    label: "press her again",
+    if: [["!flag", "coffer_opened"]],
+    fx: [["check", "will", 11, [["set", "coffer_opened"]], [
+      ["addvar", "tries", 1],
+      ["if", [["var", "tries", ">=", 3]], [["set", "coffer_opened"]], [["say", "Not yet."]]],
+    ]]],
+  });
+  assert.deepEqual(closable(quest(retry, [["flag", "coffer_opened"]])), []);
+});
+
+test("a counter only ever lowered is a threshold no play can cross, wherever it is read", () => {
+  // found for real: `appr_th_doss`, whose one and only write in the whole realm
+  // is `["addvar", "appr_th_doss", -2]` — Doss carried a line for approving of
+  // you that nothing could ever earn.
+  const w = ok();
+  w.rooms["a"]!.actions!.push({ id: "renege", label: "renege", once: true, fx: [["addvar", "appr_doss", -2]] });
+  w.rooms["a"]!.actions!.push({ id: "nod", label: "nod along", if: [["var", "appr_doss", ">=", 2]], fx: [["say", "He nods."]] });
+  const errs = validateWorld(w);
+  assert.ok(errs.some((e) => e.includes("appr_doss") && e.includes("raise it past 0")), errs.join("\n") || "loaded clean");
+});
+
+test("a done that forbids the only door to itself is unclosable", () => {
+  const w = ok();
+  // the chest is the only way to the key, and forcing it is the only way in
+  w.rooms["a"]!.actions!.push({ id: "force", label: "force the chest", once: true, fx: [["set", "chest_forced"], ["set", "key_found"]] });
+  const errs = closable(quest(w, [["flag", "key_found"], ["!flag", "chest_forced"]]));
+  assert.ok(
+    errs.some((e) => e.includes("key_found is never set without also setting chest_forced")),
+    errs.join("\n") || "loaded clean",
+  );
+
+  // ask the keeper instead and the same `done` is honest content — this is the
+  // shape `hb_q_ledger` really has, and it must stay green
+  w.rooms["a"]!.actions!.push({ id: "ask", label: "ask the keeper", once: true, fx: [["set", "key_found"]] });
+  assert.deepEqual(closable(w), []);
+});
+
+test("a flag whose every door needs a flag behind that door is unclosable", () => {
+  const w = ok();
+  // both flags have a writer, so "a gate with no key" stays quiet; neither can
+  // ever be first, which only a fixpoint from the empty state can see
+  w.rooms["a"]!.actions!.push({ id: "open", label: "open the way", if: [["flag", "invited"]], fx: [["set", "welcomed"]] });
+  w.rooms["a"]!.actions!.push({ id: "invite", label: "ask to be invited", if: [["flag", "welcomed"]], fx: [["set", "invited"]] });
+  const errs = closable(quest(w, [["flag", "welcomed"]]));
+  assert.ok(errs.some((e) => e.includes("nothing that sets welcomed can ever run")), errs.join("\n") || "loaded clean");
+
+  // give the chain a first step and it is ordinary gated content
+  w.rooms["a"]!.actions!.push({ id: "knock", label: "knock", once: true, fx: [["set", "invited"]] });
+  assert.deepEqual(closable(w), []);
+});
+
+test("a done asking for what the world holds nothing to reach", () => {
+  for (const [what, put, done, says] of [
+    [
+      "an npc with no hp that nothing slays or harms",
+      (w: World) => { w.npcs = { ghost: { name: "Ghost", room: "a" } }; },
+      [["npcDead", "ghost"]],
+      "can never be dead",
+    ],
+    [
+      "an item no hand can ever hold",
+      (w: World) => { w.items = { relic: { name: "relic", loc: "nowhere" } }; },
+      [["has", "relic"]],
+      "can never reach the inventory",
+    ],
+    [
+      "a timed condition nothing ever applies",
+      (w: World) => { w.conditions = { blessed: { name: "blessed" } }; },
+      [["cond", "blessed"]],
+      "nothing ever puts blessed on the player",
+    ],
+    [
+      "a companion nothing ever calls into the party",
+      (w: World) => { w.npcs = { lys: { name: "Lys", room: "a", companion: {} } }; },
+      [["inParty", "lys"]],
+      "never joins the party",
+    ],
+  ] as [string, (w: World) => void, Cond[], string][]) {
+    const w = ok();
+    put(w);
+    const errs = closable(quest(w, done));
+    assert.ok(errs.some((e) => e.includes(says)), `${what}: ${errs.join(" | ") || "loaded clean"}`);
+  }
+});
+
+test("each of those closes once the world provides the way", () => {
+  const w = ok();
+  w.npcs = { ghost: { name: "Ghost", room: "a" }, lys: { name: "Lys", room: "a", companion: {} } };
+  w.items = { relic: { name: "relic", loc: "nowhere" } };
+  w.conditions = { blessed: { name: "blessed" } };
+  w.rooms["a"]!.actions!.push({
+    id: "rite",
+    label: "say the rite",
+    once: true,
+    fx: [["slay", "ghost"], ["move", "relic", "inv"], ["cond", "blessed", 5], ["party", "lys", "join"]],
+  });
+  assert.deepEqual(
+    closable(quest(w, [["npcDead", "ghost"], ["has", "relic"], ["cond", "blessed"], ["inParty", "lys"]])),
+    [],
+  );
+});
+
+test("a done with one good alternative is closable, however dead the others are", () => {
+  const w = ok();
+  w.npcs = { ghost: { name: "Ghost", room: "a" } }; // unkillable
+  w.rooms["a"]!.actions!.push({ id: "settle", label: "settle it", once: true, fx: [["set", "laid_to_rest"]] });
+  assert.deepEqual(closable(quest(w, [["any", [["flag", "laid_to_rest"], ["npcDead", "ghost"]]]])), []);
+  // and with every alternative dead it is not
+  const dead = ok();
+  dead.npcs = { ghost: { name: "Ghost", room: "a" } };
+  dead.items = { relic: { name: "relic", loc: "nowhere" } };
+  assert.ok(
+    closable(quest(dead, [["any", [["npcDead", "ghost"], ["has", "relic"]]]])).some((e) => e.includes("none of its alternatives")),
+  );
+});
+
+test("the engine's own flags are outside what this can claim", () => {
+  // `calm_<npc>` is written by the `calm` effect, which is not a `set` and
+  // carries none of the flags the explicit one happens to carry. Reasoning
+  // "calm_wolf is never set without spooked" off the authored half alone would
+  // red a green build on content that works.
+  const w = ok();
+  w.npcs = { wolf: { name: "wolf", room: "a", hp: 4, atk: 1, df: 10 } };
+  w.rooms["a"]!.actions!.push({ id: "scare", label: "scare it off", once: true, fx: [["set", "spooked"], ["set", "calm_wolf"]] });
+  w.rooms["a"]!.actions!.push({ id: "name", label: "name it", once: true, fx: [["calm", "wolf"]] });
+  assert.deepEqual(closable(quest(w, [["flag", "calm_wolf"], ["!flag", "spooked"]])), []);
 });
