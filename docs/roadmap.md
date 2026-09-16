@@ -7033,3 +7033,93 @@ in-flight work before this entry was written; left exactly as found.
 `queue/P2-issue-2f3d20ac.json`, `queue/P2-issue-d9caff0e.json`,
 `queue/P2-issue-dc7b6f14.json` and `queue/P2-issue-1ccc55c0.json` all moved
 to `done/`.
+
+### `P2-issue-39b85b76`/`P2-issue-1f61ce96`'s real root cause, found by mapping the mechanism instead of re-triaging the report
+
+With wave 7 closed, both playtest processing (wave 8, launched next) and a
+dedicated investigation into the twice-deferred travel-search ask ran in
+parallel. `39b85b76` ("long list, slow to find a specific far-off landmark
+by name alone") and its second corroboration `1f61ce96` (`:6242-6295`
+above) were both formally reaffirmed as deferred on the reasoning that the
+remaining ask needs "a new interaction primitive, not a content edit" —
+true of literal free-text search, and still true. But neither write-up
+asked *why* the per-region travel list actually reaches 30+ entries before
+concluding a fix was out of reach. This entry does.
+
+`travelList`'s region-drilled branch (`src/engine.ts:1100-1111`, before
+this fix) fed `localTravel`'s whole output — every room stood in, landmark
+or not — through one `byTravelName` sort, merging a handful of actual
+landmarks in with dozens of plain, unlabeled rooms. That breadth is
+deliberate and correct (`:1042-1049`'s own comment: an earlier attempt to
+gate it on region size was reverted as "narrowing a gate to hide a price"
+— it exists to fix a *different*, earlier complaint, backtracking through
+mapped multi-room areas). The bug was never the breadth; it was searching
+a landmark by name through a list that made no distinction between "the
+mill" and "the third room after the mill."
+
+Measured directly against the real, fully-merged `world/reach.json`
+(`loadWorld`, matching what `verify` validates): 164 of 936 rooms carry a
+`landmark` field. Per-region landmark counts run 2 (`lf`) to 13 (`me`) —
+only `me` exceeds the flat top-level list's 11-landmark threshold
+(`MENU_CAP - 1`, `:1092`) — while per-region *room* counts run 31 (`lf`)
+to 58 (`sh`), up to 6 pages and 5 "more places" clicks to reach a landmark
+alphabetized behind two dozen plain rooms. The canonical walkthrough
+alone, well before its turn-240 win, already stands 22 rooms deep in two
+single regions (`va`, `sk`) — three pages each — so this is not a
+theoretical worst case; a thorough playtester plausibly hits it directly.
+
+**Fix** (`src/engine.ts`, `travelList`'s else branch): partition
+`localTravel`'s result by landmark status before sorting — landmarks
+first (alphabetical), then plain rooms (alphabetical) — instead of one
+merged alphabetical sort. No new `Action` variant, no `State` field, no
+validator rule, no crawler or mock-player change: the DSL and every
+consumer of it are untouched. With the fix, 18 of 19 regions fit every
+landmark on page one (zero "more" clicks to reach any of them, down from
+up to 5); only `me`'s 13 landmarks still need one extra page.
+
+Confirmed the change is genuinely free rather than merely untested: full
+`npm run verify` after the fix is unchanged in every load-bearing way —
+338/338 tests (337 plus one new regression test), all three worlds
+validate and win-prove clean (the Reach walkthrough still wins in exactly
+240 turns — `actionByLabel` already resolves by label against the
+unpaged list regardless of page or order, the same guarantee
+`P1-issue-05f453ff`'s whole-list-numbering fix established), both crawls
+clean at 0 over-cap menus, both mock-player sessions complete.
+`scripts/lint-world.ts world/reach.json` — all text within budget.
+`scripts/budget.ts world/reach.json --terse` — avg 439.7881/450 (was
+439.7509), max 1076/1100 (unchanged), a sub-0.04-average shift from a few
+walkthrough screens landing on a differently-populated page, nowhere near
+either ceiling.
+
+Added `test/realm.test.ts`: a dedicated case giving a plain room the name
+that would sort alphabetically first and a landmark the name that would
+sort last, proving the partition holds rather than merely happening to
+match the old merged order (the existing test at `:87-102` couldn't
+distinguish the two, since its one landmark already sorted before its
+plain rooms by coincidence).
+
+Also confirmed, independently, this session's own earlier claim about
+`byTravelName`'s reach: it sorts both destination leaf-lists (the flat
+top-level list and now this partitioned region list) but *not*
+`travelRegions`'s own region-picker list, which is left in incidental
+`world.regions` key order rather than alphabetized by display name
+(`hb` "Hollowbrook" lists before `hl` "Hearthlands"). Left alone
+deliberately: region lists rarely page (worst case 19 regions, 2 pages),
+sorting the picker would flip `test/realm.test.ts:145-162`'s expected
+order and needs its own test update for a benefit smaller than this
+entry's actual fix, and neither `39b85b76` nor `1f61ce96` complained about
+region-picker order at all — a separate, much lower-priority polish item,
+not folded into this fix.
+
+Free-text search itself remains out of scope, now for a sharper,
+confirmed reason than "no primitive exists": `src/mcp.ts`'s `act` tool
+contract (`:116-156`) is strictly `{s, a: <number>}`, and `src/crawl.ts`'s
+`walkFrom` (`:188-189`) and `loop/mock-player.mjs` (`:82-99`) both assume
+a finite, indexable action pool with no concept of typed text at all —
+adding it would change the wire protocol every consumer speaks, not just
+add a new closed-DSL primitive, and would leave the harness `verify`
+depends on (`npm run mock`/`npm run measure`) structurally unable to
+exercise it, a real blind spot rather than mere extra effort. This
+fix removes the one part of the original ask (reaching a *known* landmark
+quickly) that a content-shaped change could actually solve; the
+literal-search part was never the load-bearing complaint in either report.

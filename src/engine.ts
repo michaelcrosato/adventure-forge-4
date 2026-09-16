@@ -1106,9 +1106,16 @@ function travelList(world: World, s: State): Action[] {
     // the realm still goes landmark to landmark — you know the way to the mill
     // road — but inside a region you have mapped, you can go back to anywhere
     // you have been.
-    list = localTravel(world, s, s.travelMenu ?? "")
-      .sort((a, b) => byTravelName(world, a, b))
-      .map((id): Action => ({ kind: "travelto", room: id }));
+    //
+    // Landmarks first, then plain rooms — not merged into one alphabetical
+    // list. A heavily-walked region can hold dozens of plain rooms alongside
+    // a handful of landmarks, and two further playtest reports, two waves
+    // apart, said reaching a known landmark by name took several blind
+    // "more places" clicks. Partitioned, a landmark search never has to page
+    // past plain rooms to find it.
+    const here = localTravel(world, s, s.travelMenu ?? "");
+    const byLandmark = (want: boolean) => here.filter((id) => !!world.rooms[id]?.landmark === want).sort((a, b) => byTravelName(world, a, b));
+    list = [...byLandmark(true), ...byLandmark(false)].map((id): Action => ({ kind: "travelto", room: id }));
   }
   return list;
 }

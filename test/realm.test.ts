@@ -102,6 +102,33 @@ test("travel inside a mapped region reaches plain rooms, and names them by name 
 });
 
 /**
+ * A heavily-walked region can hold dozens of plain rooms alongside a
+ * handful of landmarks; two playtest reports, two waves apart, said
+ * reaching a known landmark by name took several blind "more places"
+ * clicks. Partitioning by landmark status, not merging into one
+ * alphabetical list, means a landmark search never has to page past plain
+ * rooms to find it — proven here by giving the plain room the name that
+ * would sort first.
+ */
+test("travel inside a mapped region lists landmarks before plain rooms, even when a plain room's name would otherwise sort first", () => {
+  const world = line(3, () => "vale");
+  world.regions = { vale: { name: "the Vale" } };
+  world.rooms["r0"]!.name = "Aardvark Den";
+  delete world.rooms["r0"]!.landmark; // sorts first alphabetically, but is not a landmark
+  world.rooms["r1"]!.landmark = "Zeta Spire"; // sorts last alphabetically, but is a landmark
+  let { state } = newState(world, 1);
+  state = doLabel(world, state, "go east");
+  state = doLabel(world, state, "go east"); // r0 -> r1 -> r2, standing in all three
+  state = doLabel(world, state, "travel to a known place");
+  state = doLabel(world, state, "toward the Vale");
+  assert.deepEqual(
+    labels(world, state),
+    ["to Zeta Spire", "to Aardvark Den", "back"],
+    "the landmark leads even though the plain room's name would sort first",
+  );
+});
+
+/**
  * `region` — where you are, not what you carry.
  *
  * A hold's arrival was authored as a chain of `if inParty` says inside one
