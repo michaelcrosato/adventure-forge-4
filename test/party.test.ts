@@ -369,7 +369,7 @@ test("the menu says when an action settles a hold's grief or a miss costs standi
   world.factions = { rep_church: "the Gray Church" };
   assert.match(renderMenu(world, state).text, /a miss costs standing with the Gray Church/);
   world.rooms["a"]!.actions!.push({ id: "vow", label: "swear the vow", fx: [["set", "x_hollow_bargained"], ["addvar", "hollows_rested", 1]] });
-  assert.match(renderMenu(world, state).text, /swear the vow \(settles this hold's grief: a bargain: quieter, not rested\)/);
+  assert.match(renderMenu(world, state).text, /swear the vow \(settles this hold's grief: a bargain: quieter, but it counts\)/);
   const unmet = step(world, state, actionByLabel(world, state, "snub the hunter")!);
   assert.doesNotMatch(unmet.events.join(" "), /Lys/, "a companion never met is not named: her existence is not news yet");
   state.visited.push("b"); // met her at her camp
@@ -408,7 +408,13 @@ test("blows rotate onto standing companions; one struck to nothing falls back, s
   out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!); // the player again
   out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!);
   assert.match(out.events.join(" "), /Lys goes down, and crawls clear of the fight/);
+  assert.match(
+    out.events.join(" "),
+    /Nobody dies of it\./,
+    "the first knockdown ever says outright that it isn't permanent",
+  );
   assert.equal(out.state.flags["down_lys"], true);
+  assert.equal(out.state.flags["down_explained"], true);
   assert.equal(out.state.flags["fell_lys"], true, "the fall is remembered after she is back up");
   assert.match(renderStatus(world, out.state), /Party: Lys \(regard 0, hp 1\/4, down\)/);
   const idle = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!);
@@ -417,6 +423,65 @@ test("blows rotate onto standing companions; one struck to nothing falls back, s
   assert.match(back.events.join(" "), /Lys is back on their feet, shaken\./);
   assert.equal(back.state.npcHp["lys"], 2, "up again at half strength");
   assert.ok(!back.state.flags["down_lys"]);
+});
+
+test("the 'nobody dies of it' reassurance is told once per playthrough, not on every knockdown", () => {
+  const world = company();
+  world.npcs["lys"]!.hp = 4;
+  let { state } = newState(world, 1);
+  state = doLabel(world, state, "ask Lys: come with me");
+  state = doLabel(world, state, "go east");
+  state = { ...state, flags: { ...state.flags, down_explained: true } }; // already explained once, earlier in this playthrough
+  let out = step(world, state, actionByLabel(world, state, "attack troll with sword")!); // player
+  out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!); // Lys staggers
+  out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!); // player again
+  out = step(world, out.state, actionByLabel(world, out.state, "attack troll with sword")!); // Lys goes down
+  assert.match(out.events.join(" "), /Lys goes down, and crawls clear of the fight/);
+  assert.doesNotMatch(out.events.join(" "), /Nobody dies of it/, "already explained once; not repeated");
+});
+
+test("two standing companions draw two blows back in a round, not one", () => {
+  const world = mini({
+    npcs: { ...companions(2), troll: { name: "troll", room: "a", hostile: true, hp: 1000, atk: 2, df: 1 } },
+  });
+  let { state } = newState(world, 1);
+  state = { ...state, party: ["lys", "osk"] };
+  const hp0 = state.hp;
+  const out = step(world, state, actionByLabel(world, state, "attack troll with bare hands")!);
+  const hits = out.events.filter((e) => /strikes back/.test(e));
+  assert.equal(hits.length, 2, out.events.join(" | "));
+  assert.match(hits[0]!, /^The troll strikes back\.$/, "the player is still one of the targets, same as solo");
+  assert.match(hits[1]!, /strikes back at Lys/);
+  assert.equal(hp0 - out.state.hp, 2);
+  assert.equal(out.state.npcHp["lys"], 6);
+  assert.equal(out.state.npcHp["osk"], 8, "not this round's second target");
+});
+
+test("a full party of four draws three blows back, and the rotation keeps advancing round to round", () => {
+  const world = mini({
+    npcs: { ...companions(4), troll: { name: "troll", room: "a", hostile: true, hp: 1000, atk: 2, df: 1 } },
+  });
+  let { state } = newState(world, 1);
+  state = { ...state, party: ["lys", "osk", "tamsin", "vell"] };
+  const hp0 = state.hp;
+
+  let out = step(world, state, actionByLabel(world, state, "attack troll with bare hands")!);
+  let hits = out.events.filter((e) => /strikes back/.test(e));
+  assert.equal(hits.length, 3, out.events.join(" | "));
+  assert.match(hits[0]!, /^The troll strikes back\.$/);
+  assert.match(hits[1]!, /strikes back at Lys/);
+  assert.match(hits[2]!, /strikes back at Osk/);
+  assert.equal(hp0 - out.state.hp, 2);
+  assert.equal(out.state.npcHp["tamsin"], 8, "not reached this round");
+
+  // the shared counter keeps advancing rather than resetting each round: it
+  // is Tamsin's and Vell's turn next, then the player's again
+  out = step(world, out.state, actionByLabel(world, out.state, "attack troll with bare hands")!);
+  hits = out.events.filter((e) => /strikes back/.test(e));
+  assert.equal(hits.length, 3, out.events.join(" | "));
+  assert.match(hits[0]!, /strikes back at Tamsin/);
+  assert.match(hits[1]!, /strikes back at Vell/);
+  assert.match(hits[2]!, /^The troll strikes back\.$/);
 });
 
 test("a remark can carry effects: a companion who speaks their mind can also think less of you", () => {
@@ -1066,6 +1131,57 @@ test("an option that makes a companion walk out says so, and a dismissal does no
   assert.doesNotMatch(oddsHint(world, alone, { kind: "custom", room: "a", id: "swear" } as Action), /walks out/);
 });
 
+/**
+ * Wave ten's report: "Vell hit 'near leaving' at -2 after one story choice;
+ * the status screen was the only place this surfaced." The Oath-Ground fix
+ * above closed the scripted half — a `["party", id, "leave"]` sitting in the
+ * same fx as the regard drop. This is the other half: a plain `addvar
+ * appr_vell` that crosses Vell's own `leaves` floor with no departure
+ * scripted anywhere in the action at all. `partyRemarks` would send Vell off
+ * the very next turn regardless; the preview should say so before the turn
+ * is spent, not after.
+ */
+test("a regard drop that crosses a companion's own leaving floor says so, with no departure scripted anywhere", () => {
+  const world = mini({
+    npcs: {
+      vell: {
+        name: "Vell",
+        room: "a",
+        companion: { leaves: [{ if: [["var", "appr_vell", "<", -1]], say: "Enough." }] },
+      },
+      osk: { name: "Brother Osk", room: "a", companion: {} },
+    },
+    rooms: {
+      a: {
+        name: "A",
+        desc: "Room A.",
+        actions: [
+          // no ["party", ..., "leave"] anywhere — the floor alone does it
+          { id: "choice", label: "make the choice", fx: [["addvar", "appr_vell", -2]] },
+          { id: "small", label: "a smaller cost", fx: [["addvar", "appr_vell", -1]] },
+          { id: "already_low", label: "one more push", fx: [["addvar", "appr_vell", -1]] },
+        ],
+      },
+    },
+  });
+  let { state } = newState(world, 1);
+  state = { ...state, party: ["vell", "osk"] };
+  const hint = (id: string) => oddsHint(world, state, { kind: "custom", room: "a", id } as Action);
+
+  assert.match(hint("choice"), /Vell -2; Vell walks out\)$/, hint("choice"));
+  // -1 alone (appr_vell 0 -> -1) does not cross the < -1 floor
+  assert.match(hint("small"), /Vell -1\)$/, hint("small"));
+  assert.doesNotMatch(hint("small"), /walks out/, hint("small"));
+
+  // already at the floor: the fx that follows is not what sends them off, so it says nothing new
+  const atFloor = { ...state, vars: { ...state.vars, appr_vell: -2 } };
+  assert.doesNotMatch(
+    oddsHint(world, atFloor, { kind: "custom", room: "a", id: "already_low" } as Action),
+    /walks out/,
+    "already leaving regardless of this fx is not the same warning as this fx being the cause",
+  );
+});
+
 test("the company says once that nobody caps it", () => {
   const world = mini({
     npcs: {
@@ -1087,11 +1203,11 @@ test("the company says once that nobody caps it", () => {
   });
   let { state } = newState(world, 1);
   let out = step(world, state, actionByLabel(world, state, "take Lys")!);
-  assert.ok(!out.events.some((e) => e.includes("limits your company")), "one companion is not yet a company");
+  assert.ok(out.events.some((e) => e.includes("No party cap")), out.events.join(" | "));
   out = step(world, out.state, actionByLabel(world, out.state, "take Osk")!);
-  assert.ok(out.events.some((e) => e.includes("Nobody limits your company")), out.events.join(" | "));
+  assert.ok(!out.events.some((e) => e.includes("party cap")), "said once, not with every recruit");
   out = step(world, out.state, actionByLabel(world, out.state, "take Vell")!);
-  assert.ok(!out.events.some((e) => e.includes("limits your company")), "said once, not with every recruit");
+  assert.ok(!out.events.some((e) => e.includes("party cap")), "said once, not with every recruit");
 });
 
 /**

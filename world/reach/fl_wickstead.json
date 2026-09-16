@@ -1122,7 +1122,7 @@
     },
     "fl_q_stakes": {
       "name": "The Surveyor's Stakes",
-      "start": [["flag", "said_fl_pell_greet"]],
+      "start": [["any", [["flag", "said_fl_pell_greet"], ["flag", "fl_stakes_held"], ["flag", "fl_stakes_pulled"], ["flag", "fl_stakes_brokered"]]]],
       "done": [["any", [["flag", "fl_stakes_held"], ["flag", "fl_stakes_pulled"], ["flag", "fl_stakes_brokered"]]]],
       "stages": [
         {
@@ -1134,7 +1134,7 @@
     },
     "fl_q_muster": {
       "name": "The Muster in the Barn",
-      "start": [["flag", "said_fl_dace_greet"]],
+      "start": [["any", [["flag", "said_fl_dace_greet"], ["flag", "fl_muster_broken"], ["flag", "fl_muster_joined"], ["flag", "fl_muster_ignored"], ["flag", "fl_muster_brokered"]]]],
       "done": [
         [
           "any",

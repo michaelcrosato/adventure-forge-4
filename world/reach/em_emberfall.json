@@ -627,6 +627,17 @@
           "fx": [["xp", 1], ["addvar", "rep_church", -1]]
         },
         {
+          "id": "em_wenlock_vindicated",
+          "label": "ask if he still doubts the wind",
+          "if": [
+            ["flag", "em_heard_history"],
+            ["any", [["flag", "em_hollow_rested"], ["flag", "em_hollow_bargained"], ["flag", "em_hollow_burned"]]]
+          ],
+          "once": true,
+          "say": "\"The wind.\" Prior Wenlock almost smiles. \"No. I never did believe that, and now I don't have to pretend to.\"",
+          "fx": [["xp", 1]]
+        },
+        {
           "id": "sv_em_bargained_ask",
           "label": "word from the mother-house",
           "if": [["flag", "em_hollow_bargained"], ["!flag", "sv_em_bargained_asked"]],

@@ -106,6 +106,16 @@
             "say": "So this is the city that started all of it. Doesn't look like much, for the weight it's carrying."
           },
           {
+            "id": "r_lf_entered",
+            "if": [["flag", "lf_entered"], ["region", "lf"]],
+            "say": "Longford. Another toll, another captain who forgot the road belongs to more than him."
+          },
+          {
+            "id": "r_lf_ford_bought",
+            "if": [["flag", "lf_ford_bought"]],
+            "say": "Paid, not fought. Cheaper than a grave, and the toll's honest now. I can live with honest."
+          },
+          {
             "id": "r_hollows3",
             "if": [["var", "hollows_rested", ">=", 3]],
             "say": "Three hollows quiet now, and none of them by fire. That's a road I can walk without flinching."
@@ -1524,6 +1534,16 @@
             "say": "Marrowgate. Four hundred years of unrested grief, and a throne built right on top of it. Lord."
           },
           {
+            "id": "r_lf_entered",
+            "if": [["flag", "lf_entered"], ["region", "lf"]],
+            "say": "A crossing with a toll-board instead of a shrine. Longford's grief doesn't even pretend to be holy."
+          },
+          {
+            "id": "r_lf_ford_freed",
+            "if": [["flag", "lf_ford_freed"]],
+            "say": "His own writ, read back to him. That's closer to a rite than most rites manage."
+          },
+          {
             "id": "r_hollows3",
             "if": [["var", "hollows_rested", ">=", 3]],
             "say": "Three doors opened properly now, three graces given air. More good than I've managed in a year of trying."
@@ -2803,6 +2823,16 @@
             "say": "Marrowgate. Big walls, soft hands, near as I can tell. We'll see if that holds up."
           },
           {
+            "id": "r_lf_entered",
+            "if": [["flag", "lf_entered"], ["region", "lf"]],
+            "say": "A rail across a river. Someone's been charging for water that was never his to charge for."
+          },
+          {
+            "id": "r_lf_ford_broken",
+            "if": [["flag", "lf_ford_broken"]],
+            "say": "Good. Some arguments only end one way, and I'm glad you picked that way."
+          },
+          {
             "id": "r_hollows3",
             "if": [["var", "hollows_rested", ">=", 3]],
             "say": "Three hollows settled without burning a one of them. Didn't think that was the harder road. Turns out it was."
@@ -4064,6 +4094,16 @@
           },
           { "id": "r_mg_entered", "if": [["flag", "mg_entered"], ["region", "mg"]], "say": "Marrowgate." },
           {
+            "id": "r_lf_entered",
+            "if": [["flag", "lf_entered"], ["region", "lf"]],
+            "say": "A toll-camp with a Crown seal on it. I'd wager the seal says less than the captain claims it does."
+          },
+          {
+            "id": "r_lf_ford_freed",
+            "if": [["flag", "lf_ford_freed"]],
+            "say": "A keeping-fee grant, decades old, still true. Paper outlasts a captain's nerve every time."
+          },
+          {
             "id": "r_hollows3",
             "if": [["var", "hollows_rested", ">=", 3]],
             "say": "Three rites completed properly, three records worth keeping. I'm almost tempted to write this down as it happens, for once."
@@ -5239,12 +5279,12 @@
         },
         {
           "if": [["flag", "lys_brother_found"]],
-          "text": "He's alive and found. What happens next in Thornwold isn't yours to force."
+          "text": "He's alive and found. What happens next in Thornwold isn't yours to force — before Coldpass."
         },
         {
           "if": [["flag", "th_entered"]],
           "at": "th_muster",
-          "text": "You're at Camp Gallows. Ask at the muster ground, the cook-fire, and the scout line."
+          "text": "You're at Camp Gallows. Ask at the muster ground, the cook-fire, and the scout line — before Coldpass."
         },
         {
           "if": [],
@@ -5261,11 +5301,11 @@
       "stages": [
         {
           "if": [["flag", "osk_family_found"]],
-          "text": "His family is found in the drowned nave. What happens next in Fenmarch isn't yours to force."
+          "text": "His family is found in the drowned nave. What happens next in Fenmarch isn't yours to force — before Coldpass."
         },
         {
           "if": [["flag", "fd_entered"]],
-          "text": "You're in Fenmarch. Ask after Osk's family at the drowned nave, near Reedholm.",
+          "text": "You're in Fenmarch. Ask after Osk's family at the drowned nave, near Reedholm — before Coldpass.",
           "at": "fd_nave_approach"
         },
         {
@@ -5287,11 +5327,11 @@
         },
         {
           "if": [["flag", "tamsin_mine_truth"]],
-          "text": "She knows the truth about the collapse. What she does with it in Cinderhall is hers to choose."
+          "text": "She knows the truth about the collapse. What she does with it in Cinderhall is hers to choose — before Coldpass."
         },
         {
           "if": [["flag", "ir_entered"]],
-          "text": "You're in the Iron Downs. Ask after the collapsed mine at Cinderhall.",
+          "text": "You're in the Iron Downs. Ask after the collapsed mine at Cinderhall — before Coldpass.",
           "at": "ir_tally_gate"
         },
         {
@@ -5309,12 +5349,12 @@
       "stages": [
         {
           "if": [["flag", "hb_entered"]],
-          "text": "You're in Hollowbrook. Ask after the Keepers' Hall and the ledger it holds.",
+          "text": "You're in Hollowbrook. Ask after the Keepers' Hall and the ledger it holds — before Coldpass.",
           "at": "hb_keepers_hall"
         },
         {
           "if": [["flag", "said_vell_bg_marrowgate"]],
-          "text": "Vell goes quiet at the name Marrowgate. The Keepers' Hall in Hollowbrook might hold why.",
+          "text": "Vell goes quiet at the name Marrowgate. The Keepers' Hall in Hollowbrook might hold why — before Coldpass.",
           "at": "hb_keepers_hall"
         },
         {

@@ -366,9 +366,13 @@ export function renderStatus(world: World, s: State): string {
       const here = world.rooms[s.room]?.region;
       const there = world.rooms[x.at]?.region;
       if (here && there && here !== there) return ` (in ${world.regions?.[there]?.name ?? there})`;
-      const legs = pathTo(world, s, x.at);
-      if (legs === null) return ""; // nothing said rather than something wrong
-      return legs === "" ? " (you are standing there)" : ` (the way there: ${legs})`;
+      const route = pathTo(world, s, x.at);
+      if (route === null) return ""; // nothing said rather than something wrong
+      if (route.text === "") return " (you are standing there)";
+      // most routes crossing a shut exit do so on the last leg — the door IS
+      // the objective, not a wrong turn — so this only fires when pathTo's
+      // own open-first pass found no way around an earlier one
+      return route.blocked ? ` (the way there, shut: ${route.text})` : ` (the way there: ${route.text})`;
     };
     // the road (quests marked main) reads first, apart from the side threads
     const road = active.filter((x) => world.quests?.[x.id]?.main);
@@ -453,9 +457,6 @@ export function renderStatus(world: World, s: State): string {
       });
     lines.push(`Conditions: ${conds.join("; ")}`);
   }
-  // A check that has cost a retry is worth surfacing somewhere: the odds
-  // preview already shows the raised DC on the room/topic itself, but a
-  // player who has walked away from one (or three) has no other way to
   /**
    * Where the player stands with each faction, and the rank they hold.
    *
@@ -482,6 +483,9 @@ export function renderStatus(world: World, s: State): string {
       return `${f.name} ${f.n > 0 ? "+" : ""}${f.n}${rank}`;
     });
   if (standing.length) lines.push(`Standing: ${standing.join(", ")}`);
+  // A check that has cost a retry is worth surfacing somewhere: the odds
+  // preview already shows the raised DC on the room/topic itself, but a
+  // player who has walked away from one (or three) has no other way to
   // recall that later. Worst-tried first; past FAILED_CHECKS_MAX, a plain
   // count for the rest rather than a line that grows without bound.
   const tried = failedChecks(world, s);

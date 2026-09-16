@@ -92,11 +92,18 @@ function expandRegion(world: World, g: GenDef): void {
     from.exits![link.dir] = ex;
     if (link.back) {
       const target = world.rooms[link.to];
-      if (target) {
-        target.exits ??= {};
-        if (target.exits[link.back]) throw new Error(`gen ${g.id}: back link overwrites exit ${link.back} on ${link.to}`);
-        target.exits[link.back] = { to: cellId(g, x, y) };
-      }
+      // an authored room always exists by now (files merge before any gen
+      // expands); a gen-grid room only exists once its own region has
+      // expanded, so a link declared from the wrong side of two gen regions
+      // (the earlier-processed one reaching into the later one) silently lost
+      // its back-exit here rather than erroring — the room stayed technically
+      // valid but unreachable from that side. Fail loudly instead: declare
+      // the link from the later-processed region's own file, reaching back
+      // into the one already expanded.
+      if (!target) throw new Error(`gen ${g.id}: back link ${link.back} targets ${link.to}, which does not exist yet — declare this link from ${link.to}'s own region instead`);
+      target.exits ??= {};
+      if (target.exits[link.back]) throw new Error(`gen ${g.id}: back link overwrites exit ${link.back} on ${link.to}`);
+      target.exits[link.back] = { to: cellId(g, x, y) };
     }
   }
 

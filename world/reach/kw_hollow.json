@@ -509,12 +509,34 @@
           "at": "kw_muster_court"
         },
         {
-          "if": [["var", "kw_ridings_worked", ">=", 2]],
-          "text": "Two ridings are worked. Whichever's left waits untouched, out in the wood — the brake, the thicket, or the crossing."
+          "if": [["flag", "kw_riding_beat"], ["flag", "kw_riding_stand"], ["!flag", "kw_riding_cast"]],
+          "text": "Brake and thicket are worked. One left: the crossing cast.",
+          "at": "kw_ridings_1_3"
         },
         {
-          "if": [["var", "kw_ridings_worked", ">=", 1]],
-          "text": "One riding is worked. Two remain: a covert beaten, a stand held, a line cast — do whichever you haven't."
+          "if": [["flag", "kw_riding_beat"], ["flag", "kw_riding_cast"], ["!flag", "kw_riding_stand"]],
+          "text": "Brake and crossing are worked. One left: the thicket stood.",
+          "at": "kw_ridings_5_0"
+        },
+        {
+          "if": [["flag", "kw_riding_stand"], ["flag", "kw_riding_cast"], ["!flag", "kw_riding_beat"]],
+          "text": "Thicket and crossing are worked. One left: the brake beaten.",
+          "at": "kw_ridings_1_2"
+        },
+        {
+          "if": [["flag", "kw_riding_beat"], ["!flag", "kw_riding_stand"], ["!flag", "kw_riding_cast"]],
+          "text": "Brake beaten. Two remain: the thicket stood, then the crossing cast.",
+          "at": "kw_ridings_5_0"
+        },
+        {
+          "if": [["flag", "kw_riding_stand"], ["!flag", "kw_riding_beat"], ["!flag", "kw_riding_cast"]],
+          "text": "Thicket stood. Two remain: the brake beaten, then the crossing cast.",
+          "at": "kw_ridings_1_2"
+        },
+        {
+          "if": [["flag", "kw_riding_cast"], ["!flag", "kw_riding_beat"], ["!flag", "kw_riding_stand"]],
+          "text": "Crossing cast. Two remain: the brake beaten, then the thicket stood.",
+          "at": "kw_ridings_1_2"
         },
         {
           "if": [],

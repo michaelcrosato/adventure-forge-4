@@ -12,7 +12,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { actionByNumber, actionLabel, allActions, legalActions, menuLoad, menuNumbers, newState, step } from "../src/engine.ts";
+import { actionByLabel, actionByNumber, actionLabel, allActions, legalActions, menuLoad, menuNumbers, newState, step } from "../src/engine.ts";
 import { render } from "../src/format.ts";
 import { MENU_CAP } from "../src/types.ts";
 import type { Action, State, World } from "../src/types.ts";
@@ -266,4 +266,128 @@ test("the first crowded room says once that the numbers hold across its pages", 
   assert.ok(back.events.some((e) => e.includes("turns the page")), back.events.join(" | "));
   const again = step(world, back.state, pick(world, back.state, "more in this room"));
   assert.ok(!again.events.some((e) => e.includes("turns the page")), "said once, not on every page turn");
+});
+
+/**
+ * A conversation with more topics than the menu holds — the talk-mode twin of
+ * "an option keeps its number on whatever page it is showing" above.
+ *
+ * queue/P1-issue-4839330e.json ("a page-2 option list caused an unintended
+ * [wrong pick] instead of the intended dialogue pick"): unlike a room, a
+ * conversation still pages *itself* inside `roomMenu`, and `allActions` used
+ * to fall through to that same paged result for talk mode — so a page-2
+ * conversation numbered its own topics from 1, and a number that meant one
+ * topic on page 1 silently meant a different one on page 2. `talkList` gives
+ * conversations the same whole-list numbering rooms and travel already have.
+ */
+const chatty = (n: number): World =>
+  ({
+    id: "chat",
+    title: "chat",
+    intro: "An elder with a great deal to say.",
+    start: "hall",
+    hp: 10,
+    maxScore: 1,
+    rooms: { hall: { name: "The Hall", desc: "An elder waits.", exits: {} } },
+    items: {},
+    npcs: {
+      elder: {
+        name: "elder",
+        room: "hall",
+        dialogue: true,
+        topics: [
+          ...Array.from({ length: n }, (_, i) => ({ id: `t${i}`, label: `topic ${i}`, say: `About topic ${i}.` })),
+          { id: "bye", label: "farewell", say: "Go well.", end: true },
+        ],
+      },
+    },
+    walkthrough: [],
+  }) as unknown as World;
+
+test("a conversation topic keeps its number on whatever page it is showing", () => {
+  const world = chatty(24); // 24 topics + farewell, well past MENU_CAP
+  let { state } = newState(world, 1);
+  state = step(world, state, actionByLabel(world, state, "talk to elder")!).state;
+  const numbered = (s: State) => {
+    const acts = legalActions(world, s), nums = menuNumbers(world, s);
+    return new Map(acts.map((a, i) => [actionLabel(world, a, s), nums[i]!]));
+  };
+  const page1 = numbered(state);
+  assert.equal(page1.get("farewell"), 26, "the farewell sits one past every topic, not just this page's");
+  const talkmoreLabel = [...page1.keys()].find((l) => l !== "farewell" && !l.startsWith("topic"));
+  assert.equal(page1.get(talkmoreLabel!), 25, "\"more to ask\" sits right after every real topic");
+
+  state = step(world, state, actionByLabel(world, state, talkmoreLabel!)!).state;
+  const page2 = numbered(state);
+  assert.equal(page2.get("farewell"), 26, "the farewell keeps its number on page 2 too");
+  assert.equal(page2.get(talkmoreLabel!), 25, "so does \"more to ask\"");
+
+  // no label ever carries two different numbers, nor two labels one number
+  const seen = new Map<string, number>();
+  for (const page of [page1, page2])
+    for (const [label, n] of page) {
+      const had = seen.get(label);
+      if (had !== undefined) assert.equal(n, had, `"${label}" carried ${had} and then ${n}`);
+      seen.set(label, n);
+    }
+  const byNumber = new Map<number, string>();
+  for (const [label, n] of seen) {
+    const had = byNumber.get(n);
+    assert.ok(had === undefined || had === label, `number ${n} meant "${had}" and also "${label}"`);
+    byNumber.set(n, label);
+  }
+});
+
+test("a conversation number read on one page still names the same topic from another", () => {
+  const world = chatty(24);
+  let { state } = newState(world, 1);
+  state = step(world, state, actionByLabel(world, state, "talk to elder")!).state;
+  const onPageOne = new Map(legalActions(world, state).map((a, i) => [actionLabel(world, a, state), menuNumbers(world, state)[i]!]));
+  const topic0Number = onPageOne.get("topic 0")!;
+  const talkmoreLabel = [...onPageOne.keys()].find((l) => l !== "farewell" && !l.startsWith("topic"))!;
+
+  state = step(world, state, actionByLabel(world, state, talkmoreLabel)!).state;
+  assert.ok(!legalActions(world, state).some((a) => actionLabel(world, a, state) === "topic 0"), "sanity: page two is not showing it");
+
+  const a = actionByNumber(world, state, topic0Number);
+  assert.ok(a, `number ${topic0Number} still names something from page one`);
+  assert.equal(actionLabel(world, a!, state), "topic 0");
+  const out = step(world, state, a!);
+  assert.match(out.events.join(" "), /About topic 0\./, "and pressing it asks that topic, not a different one");
+});
+
+/**
+ * What `step` will judge legal and what the screen shows are the same list, in
+ * every menu. `roomMenu` reaches its travel branch only after `ended`, the
+ * class phase, a pending perk and an open conversation have each had their
+ * turn; `allActions` used to check travel ahead of all of them, so a perk
+ * pending while the travel menu was open made the two disagree — the screen
+ * offering a perk that `actionByNumber` could not name, and every number it
+ * did name illegal. Unreachable through today's grammar (travel spends no
+ * turn, so no level lands mid-menu), which is exactly why it wanted a test:
+ * nothing else would notice if a later clock entry made it reachable.
+ */
+test("a perk pending while the travel menu is open: what step judges legal is what the screen shows", () => {
+  const world = {
+    id: "trav", title: "trav", intro: "Two known places.", start: "a", hp: 10, maxScore: 1,
+    regions: { vale: { name: "the Vale" } },
+    perks: { keen: { name: "Keen", desc: "A sharp eye." } },
+    rooms: {
+      a: { name: "A", desc: "A.", landmark: "the A", region: "vale", exits: { east: { to: "b" } } },
+      b: { name: "B", desc: "B.", landmark: "the B", region: "vale", exits: { west: { to: "a" } } },
+    },
+    items: {}, npcs: {}, walkthrough: [],
+  } as unknown as World;
+  let { state } = newState(world, 1);
+  state = step(world, state, actionByLabel(world, state, "go east")!).state;
+  const open = actionByLabel(world, state, "travel to a known place");
+  assert.ok(open, `travel is offered once somewhere else is known, saw: ${legalActions(world, state).map((a) => actionLabel(world, a, state)).join(" | ")}`);
+  state = step(world, state, open!).state;
+  assert.ok(state.travelMenu !== null, "sanity: the travel menu is open");
+
+  const pending: State = { ...state, perkPicks: 1 };
+  const shown = legalActions(world, pending).map((a) => actionLabel(world, a, pending));
+  const judged = allActions(world, pending).map((a) => actionLabel(world, a, pending));
+  assert.deepEqual(judged, shown, "allActions and legalActions agree on what is on offer");
+  for (const n of menuNumbers(world, pending)) assert.ok(n >= 1, `every number offered is pressable, got ${n}`);
 });

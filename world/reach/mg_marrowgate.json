@@ -779,16 +779,16 @@
     },
     "mg_old_crypts": {
       "name": "The Old Crypts",
-      "desc": "The crypts of the kings before the Reeves, robbed to the bone. A shape in gray mail stands where the gray runs thickest: the first Reeve's honour guard, four hundred years at his post. It lunges at the first living step, at whoever stands nearest.",
+      "desc": "The crypts of the kings before the Reeves, robbed to the bone. A shape in gray mail stands where the gray runs thickest: the first Reeve's honour guard, four hundred years at his post.",
       "brief": "Robbed crypts. The honour guard.",
       "region": "mg",
       "exits": {
         "south": { "to": "mg_cistern" },
         "north": {
           "to": "mg_first_reeves_tomb",
-          "if": [["flag", "mg_guard_passed"]],
-          "lockedMsg": "The honour guard bars the way north. Kill it, slip past it, or turn back.",
-          "hint": "kill it, or slip past it (grace)"
+          "if": [["any", [["flag", "mg_guard_passed"], ["flag", "calm_mg_hollow_guard"]]]],
+          "lockedMsg": "The honour guard bars the way north. Kill it, calm it, speak the old rest-rite (will), or slip past it (grace).",
+          "hint": "kill it, calm it, speak the rest-rite (will), or slip past it (grace)"
         }
       },
       "onEnterOnce": [["xp", 3]],
@@ -802,13 +802,18 @@
           "if": [["flag", "mg_guard_passed"], ["!npcDead", "mg_hollow_guard"]],
           "desc": "The crypts of the kings before the Reeves, robbed to the bone. The honour guard has gone back to its post in the dark, facing the way you did not come. The way north is open.",
           "brief": "Robbed crypts. The guard stands aside."
+        },
+        {
+          "if": [["flag", "calm_mg_hollow_guard"], ["!flag", "mg_guard_passed"], ["!npcDead", "mg_hollow_guard"]],
+          "desc": "The crypts of the kings before the Reeves, robbed to the bone. The honour guard stands exactly where it always has, gray mail unmoving — calmed, not moved, and no longer minded to stop you. The way north is open.",
+          "brief": "Robbed crypts. The guard stands down, unmoving."
         }
       ],
       "actions": [
         {
           "id": "mg_slip_guard",
           "label": "slip past the guard — fail costs 2hp",
-          "if": [["!flag", "mg_guard_passed"], ["!npcDead", "mg_hollow_guard"]],
+          "if": [["!flag", "mg_guard_passed"], ["!flag", "calm_mg_hollow_guard"], ["!npcDead", "mg_hollow_guard"]],
           "fx": [
             [
               "check",
@@ -827,7 +832,7 @@
         {
           "id": "mg_guard_will",
           "label": "speak the old rest-rite at it (will)",
-          "if": [["!flag", "mg_guard_passed"], ["!npcDead", "mg_hollow_guard"]],
+          "if": [["!flag", "mg_guard_passed"], ["!flag", "calm_mg_hollow_guard"], ["!npcDead", "mg_hollow_guard"]],
           "fx": [
             [
               "check",
@@ -839,16 +844,7 @@
                 ["xp", 3],
                 ["say", "You don't run and you don't reach for a blade. You speak the old rest-rite instead, the one every honour guard was sworn under before it forgot everything else. Something in it remembers enough to stand down."]
               ],
-              [
-                [
-                  "if",
-                  [["flag", "calm_mg_hollow_guard"]],
-                  [
-                    ["say", "Whatever's left of it doesn't remember rites anymore. It doesn't come for you either; it only holds the way north, the way it has for four hundred years."]
-                  ],
-                  [["say", "Whatever's left of it doesn't remember rites anymore, only orders. It comes for you regardless."]]
-                ]
-              ]
+              [["say", "Whatever's left of it doesn't remember rites anymore, only orders. It comes for you regardless."]]
             ]
           ]
         }
@@ -876,7 +872,7 @@
     },
     "mg_hollow_throne": {
       "name": "The Hollow Throne",
-      "desc": "A throne room under the throne room: the true seat of the Reach, cut from one gray stone and empty at the heart, where a crown was meant to sit and never did. The gray comes up out of that hollow. Everything that grieves in the Reach is fed from here.",
+      "desc": "A throne room under the throne room: the true seat of the Reach, one gray stone, empty at the heart where a crown was meant to sit and never did. Everything that grieves in the Reach comes up out of that hollow.",
       "brief": "The gray stone seat, hollow at the heart.",
       "region": "mg",
       "exits": { "south": { "to": "mg_first_reeves_tomb" } },
@@ -916,38 +912,38 @@
                 [
                   "if",
                   [["var", "hollows_rested", ">=", 3], ["flag", "va_king_rested"], ["flag", "mg_reeve_confessed"]],
-                  [["say", "The rite stands ready: three hollows rested, the Vale's king at rest, his confession said."]],
+                  [["say", "The rite is ready: three hollows rested, the Vale's king at rest, his confession said."]],
                   []
                 ],
                 [
                   "if",
                   [["var", "hollows_rested", "<", 3]],
-                  [["say", "The rite still wants more hollows rested — three, and you are short of it."]],
+                  [["say", "The rite wants three hollows rested."]],
                   []
                 ],
                 [
                   "if",
                   [["!flag", "va_king_rested"]],
-                  [["say", "The rite still wants the Vale's king truly at rest, not merely settled another way."]],
+                  [["say", "The rite wants the Vale's king truly at rest, not merely settled another way."]],
                   []
                 ],
                 [
                   "if",
                   [["!flag", "mg_reeve_confessed"]],
-                  [["say", "The rite still wants the first Reeve's own confession, down in his tomb."]],
+                  [["say", "The rite wants the first Reeve's confession, down in his tomb."]],
                   []
                 ],
                 [
                   "if",
                   [["var", "hollows_burned", ">=", 3]],
-                  [["say", "The burn road stands ready: three holds already gone to the torch."]],
-                  [["say", "The burn road still wants more holds burned — three, and you are short of it."]]
+                  [["say", "The burn road is ready: three holds already gone to the torch."]],
+                  [["say", "The burn road wants three holds burned."]]
                 ],
                 [
                   "if",
                   [["var", "hollows_bargained", ">=", 3]],
-                  [["say", "The bargain road stands ready: three holds already bargained with, and kept to."]],
-                  [["say", "The bargain road still wants more holds bargained — three, and you are short of it."]]
+                  [["say", "The bargain road is ready: three holds already bargained with, and kept to."]],
+                  [["say", "The bargain road wants three holds bargained."]]
                 ],
                 [
                   "if",
@@ -969,9 +965,9 @@
                       ]
                     ]
                   ],
-                  [["say", "The oil is yours, one cask or the other — enough to burn the seat clean."]],
+                  [["say", "The oil is yours: enough to burn the seat clean."]],
                   [
-                    ["say", "No oil yet: any Ironbound cask will do — Cinderhall keeps them, so do the lay-brothers in the holds — and the palace has its own."]
+                    ["say", "No oil yet: any Ironbound cask will do — Cinderhall, the holds' lay-brothers, and the palace all keep one."]
                   ]
                 ],
                 [
@@ -980,12 +976,12 @@
                     ["has", "mg_founding_ledger"],
                     ["any", [["var", "rep_watch", ">=", 2], ["var", "rep_church", ">=", 2], ["var", "rep_free", ">=", 2]]]
                   ],
-                  [["say", "The ledger is yours, and someone trusts you enough to hear it read aloud."]],
+                  [["say", "The ledger is yours, trusted enough to be read aloud."]],
                   [
                     [
                       "if",
                       [["!has", "mg_founding_ledger"]],
-                      [["say", "You do not carry the founding ledger — it is chained in the Hall of Ledgers."]],
+                      [["say", "You do not carry the founding ledger, chained in the Hall of Ledgers."]],
                       []
                     ],
                     [
@@ -997,7 +993,7 @@
                         ["var", "rep_free", "<", 2]
                       ],
                       [
-                        ["say", "You have the ledger, but no one trusts you enough yet — Watch, Church, or Companies, to standing 2."]
+                        ["say", "You have the ledger, but need standing 2 with Watch, Church, or Companies."]
                       ],
                       []
                     ]
@@ -1006,8 +1002,8 @@
                 [
                   "if",
                   [["has", "va_crown"]],
-                  [["say", "The crown is yours to wear, if you dare the seat."]],
-                  [["say", "You do not carry the Vale's crown."]]
+                  [["say", "The crown is yours, if you dare the seat."]],
+                  [["say", "You lack the Vale's crown."]]
                 ],
                 ["set", "mg_weighed_seat"]
               ],
@@ -1016,19 +1012,19 @@
                 [
                   "if",
                   [["var", "hollows_rested", ">=", 3], ["flag", "va_king_rested"], ["flag", "mg_reeve_confessed"]],
-                  [["say", "The rite stands ready: three hollows rested, the Vale's king at rest, his confession said."]],
+                  [["say", "The rite is ready: three hollows rested, the Vale's king at rest, his confession said."]],
                   []
                 ],
                 [
                   "if",
                   [["var", "hollows_burned", ">=", 3]],
-                  [["say", "The burn road stands ready: three holds already gone to the torch."]],
+                  [["say", "The burn road is ready: three holds already gone to the torch."]],
                   []
                 ],
                 [
                   "if",
                   [["var", "hollows_bargained", ">=", 3]],
-                  [["say", "The bargain road stands ready: three holds already bargained with, and kept to."]],
+                  [["say", "The bargain road is ready: three holds already bargained with, and kept to."]],
                   []
                 ],
                 [
@@ -1051,7 +1047,7 @@
                       ]
                     ]
                   ],
-                  [["say", "The oil is yours, one cask or the other — enough to burn the seat clean."]],
+                  [["say", "The oil is yours: enough to burn the seat clean."]],
                   []
                 ],
                 [
@@ -1060,10 +1056,10 @@
                     ["has", "mg_founding_ledger"],
                     ["any", [["var", "rep_watch", ">=", 2], ["var", "rep_church", ">=", 2], ["var", "rep_free", ">=", 2]]]
                   ],
-                  [["say", "The ledger is yours, and someone trusts you enough to hear it read aloud."]],
+                  [["say", "The ledger is yours, trusted enough to be read aloud."]],
                   []
                 ],
-                ["if", [["has", "va_crown"]], [["say", "The crown is yours to wear, if you dare the seat."]], []]
+                ["if", [["has", "va_crown"]], [["say", "The crown is yours, if you dare the seat."]], []]
               ]
             ]
           ],
@@ -1144,7 +1140,7 @@
             ["if", [["has", "mc_cinder_oil"]], [["move", "mc_cinder_oil", "nowhere"]], []],
             ["if", [["has", "ff_cinder_oil"]], [["move", "ff_cinder_oil", "nowhere"]], []],
             ["if", [["has", "mg_ironbound_oil"]], [["move", "mg_ironbound_oil", "nowhere"]], []],
-            ["end", "win", "reach_burned", "Hold after hold has already gone to the torch; this is only the last of them. You break the casks over the seat and put fire to it. The gray burns like fat. When it is done there is nothing under Marrowgate to grieve, and nothing anywhere in the Reach that remembers its dead. The living call that peace. Most of them mean it."]
+            ["end", "win", "reach_burned", "Hold after hold has gone to the torch; this is only the last. You break the casks over the seat and put fire to it. The gray burns like fat. When it is done, nothing under Marrowgate grieves, and the Reach remembers no dead. The living call that peace. Most mean it."]
           ]
         },
         {
@@ -1207,7 +1203,7 @@
                 ["end", "win", "regent_deposed", "You read the first Reeve's own hand aloud, and it's your own company that comes out of the smugglers' cut first, knives and a grin you taught them. The Regent leaves Marrowgate in a barrel-cart, alive, which was the bargain. The Free Companies hold the palace for a season and then, to everyone's surprise, hold an election."]
               ],
               [
-                ["end", "win", "regent_deposed", "You read the first Reeve's own hand aloud, and Quill's people come out of the smugglers' cut with knives and a grin. The Regent leaves Marrowgate in a barrel-cart, alive, which was the bargain. The Free Companies hold the palace for a season and then, to everyone's surprise, hold an election."]
+                ["end", "win", "regent_deposed", "You read the first Reeve's own hand aloud, and Quill's people come out of the smugglers' cut with knives and a grin. The Regent leaves Marrowgate in a barrel-cart, alive, as bargained. The Free Companies hold the palace, then, to everyone's surprise, hold an election."]
               ]
             ]
           ]
@@ -1632,7 +1628,7 @@
       "hp": 8,
       "atk": 2,
       "df": 12,
-      "desc": "Fifty, gray-eyed, a woman who has read every ledger in the hall and burned none of them.",
+      "desc": "Fifty, gray-eyed; has read every ledger in the hall and burned none.",
       "onDeath": [
         ["set", "mg_throne_resolved"],
         ["set", "mg_regent_dead"],
@@ -4392,7 +4388,7 @@
       "stages": [
         {
           "if": [["flag", "mg_at_throne"]],
-          "text": "The Hollow Throne is found. What you do with the seat is the end of it.",
+          "text": "Choosing here is final.",
           "at": "mg_hollow_throne"
         },
         {

@@ -6,10 +6,11 @@ green changes. Content is data. Every claim about the game is proven by a
 replay, not asserted.
 
 Two worlds ship today. **The Gray Reach** is the default game: a realm of
-eighteen regions — the Vale of Ash as its first act, fifteen holds each with its own
-unrested grief, a mountain pass, and a capital where the endings wait — with
-companions who judge you, six factions that remember, fast travel between the
-landmarks you have found, and seven endings, every one replay-proven. **The
+nineteen regions — the Vale of Ash as its first act, fifteen holds each with
+its own unrested grief, a toll crossing with a different kind of trouble, a
+mountain pass, and a capital where the endings wait — with companions who
+judge you, six factions that remember, fast travel between the landmarks you
+have found, and seven endings, every one replay-proven. **The
 Vale of Ash** is the compact original it grew from: four classes, perks,
 levels, dice, two factions, a generated wood, and seven endings of its own.
 
@@ -63,9 +64,9 @@ reeve is here
 ```
 
 The agent answers `act(s, 6)`. That is the whole interface. Along the proven
-Vale walkthrough an `act` response averages ~450 chars (~120 tokens) and a
-whole 34-turn session is ~18k chars (~4.7k tokens) of game text.
-`npm run measure` prints the live numbers.
+Vale walkthrough an `act` response averages ~380 chars (~100 tokens) and a
+whole 42-turn session is ~16k chars (~4.3k tokens) of game text.
+`TF_WORLD=world/vale.json npm run measure` prints the live numbers.
 
 ## The game systems
 
@@ -125,8 +126,9 @@ whole 34-turn session is ~18k chars (~4.7k tokens) of game text.
 `npm run verify` (~85s) enforces:
 
 - **Typecheck** — strict, no unchecked indexing.
-- **Tests** (313) — determinism (same seed = byte-identical run, and an engine
-  core that provably never reads the clock), the character layer,
+- **Tests** (`npm test` prints the count) — determinism (same seed =
+  byte-identical run, and an engine core that provably never reads the
+  clock), the character layer,
   conversations and companions, travel and the journal, templates and
   stamps, worlds in parts, worldgen scale, triage promotion rules, the fleet
   driver and its report honesty check, content rules the shipped worlds must
@@ -212,11 +214,11 @@ src/player.ts     direct-API fleet lane
 src/triage.ts     reports -> atomic corroborated issues
 src/play.ts       human CLI
 world/reach.json  The Gray Reach (the default game): root, classes, perks, quests, walkthrough, proofs
-world/reach/      its parts — the Vale rebuilt, companions, templates, and seventeen more regions
+world/reach/      its parts — the Vale rebuilt, companions, templates, and eighteen more regions
 world/vale.json   The Vale of Ash, the original compact world
 world/lighthouse.json  the small regression world
 scripts/          author tools: lint, choice audit, walk, stubs, land, fmt
-test/             313 tests, including the token budget and determinism rules
+test/             the suite, including the token budget and determinism rules (`npm test` prints the count)
 loop/             playtest wave, dev cycle, mock player, report checker
 queue/ done/      the one inbox (issues) and its archive
 docs/             design specs, the authoring guide, review findings

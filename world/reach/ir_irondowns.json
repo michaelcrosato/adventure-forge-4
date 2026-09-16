@@ -23,6 +23,7 @@
         ]
       ],
       "actions": [
+        { "id": "ir_east_bearings", "label": "get your bearings", "fx": [["bearings"]], "free": true },
         {
           "id": "ir_sworn_waymark_east",
           "label": "mark the east road, chapterhouse-fashion",
@@ -61,6 +62,7 @@
         ]
       ],
       "actions": [
+        { "id": "ir_south_bearings", "label": "get your bearings", "fx": [["bearings"]], "free": true },
         {
           "id": "ir_sworn_waymark_south",
           "label": "mark the south track, iron-fashion",
@@ -400,7 +402,8 @@
           "id": "ir_bearings",
           "label": "get your bearings from the head-frame",
           "fx": [
-            ["say", "From up here the downs lie open: the Old Cairn out to the north-west, the flooded quarry north-east with the slag-hound's den in it, and the Hundred Gallery beyond both."], ["bearings"]
+            ["say", "From up here the downs lie open: the Old Cairn out to the north-west, the flooded quarry north-east with the slag-hound's den in it, and the Hundred Gallery beyond both."],
+            ["bearings"]
           ],
           "free": true
         }
@@ -1636,7 +1639,7 @@
           "label": "the trouble on the downs",
           "if": [["flag", "said_ir_ness_bg_hall"]],
           "once": true,
-          "say": "There's a slag-hound working the downs — three north of the head-frame, then three east, where the ground opens into the flooded quarry. Deal with it and the hall won't forget the favor.",
+          "say": "There's a slag-hound working the downs — three north of the head-frame, then two east, where the ground opens into the flooded quarry. Deal with it and the hall won't forget the favor.",
           "fx": [["xp", 2]]
         },
         {
@@ -2717,15 +2720,12 @@
           "if": [["var", "hollows_burned", "=", 1]],
           "text": "One hollow burned so far. The Ironbound will write the writ once two have burned."
         },
-        {
-          "if": [],
-          "text": "The Regent's writ opens Coldpass: Highward's envoy writes it for one hollow burned, or two honest services to the Watch."
-        }
+        { "if": [], "text": "Highward's envoy writes it for one hollow burned, or two honest services to the Watch." }
       ]
     },
     "ir_hobs_pick": {
       "name": "Hob's Marked Pick",
-      "start": [["flag", "said_ir_crick_greet"]],
+      "start": [["any", [["flag", "said_ir_crick_greet"], ["flag", "ir_crick_closure"]]]],
       "done": [["flag", "ir_crick_closure"]],
       "stages": [
         {
@@ -2747,8 +2747,8 @@
     },
     "ir_hound": {
       "name": "The Slag-Hound",
-      "start": [["flag", "said_ir_ness_greet"]],
-      "done": [["npcDead", "ir_cave1_beast"]],
+      "start": [["any", [["flag", "said_ir_ness_greet"], ["flag", "ir_cave1_done"], ["npcDead", "ir_cave1_beast"]]]],
+      "done": [["any", [["flag", "ir_cave1_done"], ["npcDead", "ir_cave1_beast"]]]],
       "stages": [
         {
           "if": [["npcDead", "ir_slaghound"], ["!npcDead", "ir_cave1_beast"]],

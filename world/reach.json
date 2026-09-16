@@ -228,7 +228,7 @@
     },
     "scout_hands": {
       "label": "steady your hands",
-      "if": [["class", "scout"], ["var", "res_scout", ">=", 1], ["checkHere", "grace", 11]],
+      "if": [["class", "scout"], ["var", "res_scout", ">=", 1], ["checkHere", "grace", 10]],
       "fx": [
         ["addvar", "res_scout", -1],
         ["cond", "steadied", 2],
@@ -247,7 +247,7 @@
     },
     "scholar_read": {
       "label": "read it twice",
-      "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["checkHere", "wits", 11]],
+      "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["checkHere", "wits", 10]],
       "fx": [
         ["addvar", "res_scholar", -1],
         ["cond", "studied", 2],
@@ -283,17 +283,17 @@
         },
         {
           "if": [["flag", "act2_open"], ["var", "hollows_rested", ">=", 3]],
-          "text": "Three hollows rested: the pilgrim stair at Coldpass opens for you. Highward's north road leaves from its record-house.",
+          "text": "Three hollows rested: the pilgrim stair at Coldpass opens for you — crossing is final.",
           "at": "cp_pass"
         },
         {
           "if": [["flag", "act2_open"], ["flag", "regent_writ"]],
-          "text": "The Regent's writ is yours. Coldpass will let you through to Marrowgate.",
+          "text": "The Regent's writ is yours: Coldpass opens — crossing is final.",
           "at": "cp_pass"
         },
         {
           "if": [["flag", "act2_open"], ["flag", "free_passage"]],
-          "text": "The Free Companies will take you under the pass, by the Saltkerns caves.",
+          "text": "The Free Companies take you under the pass — crossing is final.",
           "at": "cp_pass"
         },
         {

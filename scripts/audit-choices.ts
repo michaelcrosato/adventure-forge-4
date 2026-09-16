@@ -249,7 +249,7 @@ if (forgotten.length) {
  */
 console.log();
 const tracked = [...new Set([...varMoves.keys(), ...varReads.keys()])]
-  .filter((v) => v !== "gold" && want(v) === (only ? prefixOf(v) === only : true))
+  .filter((v) => v !== "gold" && want(v))
   .map((v) => {
     const m = varMoves.get(v) ?? { ups: 0, upSum: 0, downs: 0, downSum: 0, sets: 0 };
     const th = [...(varThresholds.get(v)?.keys() ?? [])];

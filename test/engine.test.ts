@@ -184,9 +184,30 @@ test("healing reports its actual effect, same as damage and score do", () => {
   assert.doesNotMatch(noop.events.join(" "), /\(hp/);
 });
 
-test("score is clamped to maxScore", () => {
-  const a = playWalkthrough(1);
-  assert.ok(a.state.score <= world.maxScore);
+/**
+ * Score has a floor and no ceiling. It was clamped to `maxScore` once; the
+ * clamp came off because `maxScore` is what one whole route pays, not what
+ * the realm holds, and three blind players hit it and played on for two
+ * hundred turns earning nothing. The floor stayed: a penalty cannot drive a
+ * tally negative. The old test here asserted `score <= maxScore` under the
+ * name "score is clamped to maxScore" — true of the walkthrough for an
+ * unrelated reason (`validate.ts` requires it to land exactly on `maxScore`),
+ * so it went on passing after the contract it named was deleted.
+ */
+test("score has no ceiling above maxScore, and a floor at zero", () => {
+  const mini: World = {
+    id: "m", title: "M", intro: "x", start: "a", hp: 10, maxScore: 5,
+    rooms: { a: { name: "A", desc: "A.", actions: [
+      { id: "big", label: "earn far past the route's pay", fx: [["score", 100]] },
+      { id: "fine", label: "lose more than you hold", fx: [["score", -1000]] },
+    ] } },
+    items: {}, npcs: {}, walkthrough: [],
+  };
+  let { state } = newState(mini, 1);
+  state = step(mini, state, { kind: "custom", room: "a", id: "big" }).state;
+  assert.equal(state.score, 100, "score passes maxScore rather than stopping at it");
+  state = step(mini, state, { kind: "custom", room: "a", id: "fine" }).state;
+  assert.equal(state.score, 0, "and bottoms out at zero rather than going negative");
 });
 
 /**
@@ -232,4 +253,61 @@ test("a use-hint rides the first few new places and then goes quiet", () => {
   // and walking back through places already seen does not age it further
   const back = { ...state, visited: state.visited.slice(0, 3) } as State;
   assert.match(oddsHint(world, back, { kind: "use", item: "crown" } as Action, { itemHints: true }), /a throne/);
+});
+
+test("regions counts distinct regions among rooms ever visited, not rooms visited", () => {
+  const world = {
+    id: "m",
+    title: "M",
+    intro: "x",
+    start: "a1",
+    hp: 10,
+    maxScore: 5,
+    rooms: {
+      a1: { name: "A1", desc: "A1.", region: "a", exits: { east: { to: "a2" } } },
+      a2: { name: "A2", desc: "A2.", region: "a", exits: { east: { to: "b1" } } },
+      b1: { name: "B1", desc: "B1.", region: "b", exits: {} },
+    },
+    items: {},
+    npcs: {},
+    walkthrough: [],
+  } as unknown as World;
+  let { state } = newState(world, 1);
+  assert.equal(condOk(world, state, ["regions", ">=", 1]), true, "the start room already counts");
+  assert.equal(condOk(world, state, ["regions", ">=", 2]), false, "one region seen so far");
+  state = step(world, state, { kind: "go", dir: "east" }).state; // a1 -> a2, same region
+  assert.equal(condOk(world, state, ["regions", ">=", 2]), false, "a second room in the same region is not a second region");
+  state = step(world, state, { kind: "go", dir: "east" }).state; // a2 -> b1, new region
+  assert.equal(condOk(world, state, ["regions", ">=", 2]), true);
+  assert.equal(condOk(world, state, ["regions", "=", 2]), true);
+  assert.equal(condOk(world, state, ["regions", ">=", 3]), false);
+});
+
+test("all passes only when every listed condition does, including nested inside an any", () => {
+  const world = {
+    id: "m",
+    title: "M",
+    intro: "x",
+    start: "a",
+    hp: 10,
+    maxScore: 5,
+    rooms: { a: { name: "A", desc: "A.", exits: {} } },
+    items: {},
+    npcs: {},
+    walkthrough: [],
+  } as unknown as World;
+  let { state } = newState(world, 1);
+  state = { ...state, flags: { lit: true }, vars: { gold: 5 } };
+  assert.equal(condOk(world, state, ["all", [["flag", "lit"], ["var", "gold", ">=", 5]]]), true);
+  assert.equal(condOk(world, state, ["all", [["flag", "lit"], ["var", "gold", ">=", 6]]]), false, "one failing member fails the whole group");
+  // the shape this exists for: an AND that only needs to hold as one branch of
+  // an OR, which the surrounding if-array's own implicit AND cannot express
+  assert.equal(
+    condOk(world, state, ["any", [["all", [["flag", "lit"], ["var", "gold", ">=", 5]]], ["flag", "never_set"]]]),
+    true,
+  );
+  assert.equal(
+    condOk(world, state, ["any", [["all", [["flag", "lit"], ["var", "gold", ">=", 6]]], ["flag", "never_set"]]]),
+    false,
+  );
 });

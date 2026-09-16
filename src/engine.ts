@@ -262,6 +262,16 @@ function unseenHere(world: World, s: State): string[] {
   });
 }
 
+/** Count of distinct regions among every room the player has ever stood in — breadth, not any one place. */
+function regionsVisited(world: World, s: State): number {
+  const seen = new Set<string>();
+  for (const id of s.visited) {
+    const r = world.rooms[id]?.region;
+    if (r) seen.add(r);
+  }
+  return seen.size;
+}
+
 /**
  * True while the player stands in a generated wilderness cell — ground, not
  * floorboards. Reading the ground is a thing you do on open moor, not in the
@@ -380,6 +390,10 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return world.rooms[s.room]?.region === c[1];
     case "!region":
       return world.rooms[s.room]?.region !== c[1];
+    case "regions": {
+      const v = regionsVisited(world, s);
+      return c[1] === "<" ? v < c[2] : c[1] === ">" ? v > c[2] : c[1] === ">=" ? v >= c[2] : c[1] === "<=" ? v <= c[2] : v === c[2];
+    }
     case "unseenHere":
       return unseenHere(world, s).length > 0;
     case "!unseenHere":
@@ -390,6 +404,8 @@ export function condOk(world: World, s: State, c: Cond): boolean {
       return !inWild(world, s);
     case "any":
       return c[1].some((x) => condOk(world, s, x));
+    case "all":
+      return c[1].every((x) => condOk(world, s, x));
   }
 }
 
@@ -605,7 +621,7 @@ function journalEvents(world: World, before: State, after: State, events: string
     // together, or its end came first) was never the player's to finish: no announcement
     if (!p && (q.status === "done" || q.status === "failed")) continue;
     if (q.status === "done") events.push(`Quest done: ${q.name}.`);
-    else if (q.status === "failed") events.push(`Quest closed: ${q.name} — its asker's wish can no longer be met.`);
+    else if (q.status === "failed") events.push(`Quest closed: ${q.name}.`);
     else if (q.text) events.push(`Quest — ${q.name}: ${q.text}`);
   }
 }
@@ -770,17 +786,47 @@ export function bearingsHere(world: World, s: State): string {
   return `${world.regions?.[region]?.bearing ?? "As the ground runs"}: ${parts.join("; ")}.`;
 }
 
-export function pathTo(world: World, s: State, target: string): string | null {
-  if (target === s.room) return "";
+/**
+ * A route the player is told to follow (a quest stage's `at`), not a bearing
+ * that just says where a place is. `audit-routes.ts` found 80 of 1,120 routes
+ * along the walkthrough crossing a shut exit before the last leg — sent
+ * through a door that is not the objective, which costs the walk back. A
+ * shut LAST leg is the design (the door is the objective); this only avoids
+ * the ones that are not.
+ *
+ * Two passes: gates respected first, so a currently-open way is preferred
+ * when one exists (all three doors `audit-routes.ts` found have one — a
+ * second, ungated entrance to the room on the other side, though most of the
+ * time it is itself behind another gate this early and the open pass finds
+ * nothing better). Only when no open way exists at all does it fall back to
+ * the gate-blind search `bearingsHere` also uses, which can always answer
+ * with *some* route — `blocked` says which pass answered, so `way()` can
+ * still tell the player when the printed walk is not, in fact, walkable yet.
+ */
+export function pathTo(world: World, s: State, target: string): { text: string; blocked: boolean } | null {
+  if (target === s.room) return { text: "", blocked: false };
   if (!world.rooms[target]) return null;
+  const open = routeTo(world, s, target, true);
+  const from = open ?? routeTo(world, s, target, false);
+  return from && { text: legsOf(from, s.room, target), blocked: !open };
+}
+
+/**
+ * The predecessor map `pathTo` walks — exported past `pathTo`'s own
+ * formatted string so `audit-routes.ts` can inspect which pass answered
+ * (gates respected, or the gate-blind fallback) and which exact legs a
+ * route crosses, rather than re-parsing prose back into directions.
+ */
+export function routeTo(world: World, s: State, target: string, respectGates: boolean): Map<string, [string, string]> | null {
   const from = new Map<string, [string, string]>();
   const queue = [s.room];
   for (let head = 0; head < queue.length; head++) {
     const at = queue[head]!;
     for (const [dir, ex] of Object.entries(world.rooms[at]?.exits ?? {})) {
+      if (respectGates && ex.if && !condsOk(world, s, ex.if)) continue;
       if (from.has(ex.to) || ex.to === s.room) continue;
       from.set(ex.to, [at, dir]);
-      if (ex.to === target) return legsOf(from, s.room, target);
+      if (ex.to === target) return from;
       queue.push(ex.to);
     }
   }
@@ -1008,6 +1054,28 @@ function localTravel(world: World, s: State, region: string): string[] {
 const regionName = (world: World, region: string): string => world.regions?.[region]?.name ?? region;
 
 /**
+ * A room's travel name, article dropped, for sorting a destination list —
+ * the same string `actionLabel`'s `travelto` case prints, so the order on
+ * screen matches the order a player would guess by reading the label.
+ */
+const travelSortName = (world: World, id: string): string => {
+  const r = world.rooms[id];
+  return (r?.landmark ?? r?.name ?? id).replace(/^the /i, "");
+};
+
+/**
+ * Alphabetical, not visit order. A travel list used to read in the order a
+ * place was first stood in — an accident of `s.visited`, not a choice — so
+ * two playtest reports two waves apart called the groupings inconsistent
+ * and said reaching a known, far-off place took several blind "more places"
+ * clicks. Sorted, a player can guess which page a name falls on the way a
+ * phonebook lets them, instead of paging through the whole list once to
+ * learn where discovery order put it.
+ */
+const byTravelName = (world: World, a: string, b: string): number =>
+  travelSortName(world, a).localeCompare(travelSortName(world, b));
+
+/**
  * The whole travel list, before paging: the destinations (or regions) this
  * screen is offering. Split out from `travelActions` because `travelMore` has
  * to count what is NOT showing, and asking the paged function for a total gave
@@ -1020,7 +1088,7 @@ function travelList(world: World, s: State): Action[] {
   if (s.travelMenu === "") {
     list =
       known.length <= MENU_CAP - 1
-        ? known.map((id): Action => ({ kind: "travelto", room: id }))
+        ? [...known].sort((a, b) => byTravelName(world, a, b)).map((id): Action => ({ kind: "travelto", room: id }))
         : travelRegions(world, s).map((r): Action => ({ kind: "travelregion", region: r }));
     // and the way back into the region you are standing in, when you have
     // walked more of it than its landmarks — the short list above cannot name
@@ -1038,16 +1106,28 @@ function travelList(world: World, s: State): Action[] {
     // the realm still goes landmark to landmark — you know the way to the mill
     // road — but inside a region you have mapped, you can go back to anywhere
     // you have been.
-    list = localTravel(world, s, s.travelMenu ?? "").map((id): Action => ({ kind: "travelto", room: id }));
+    //
+    // Landmarks first, then plain rooms — not merged into one alphabetical
+    // list. A heavily-walked region can hold dozens of plain rooms alongside
+    // a handful of landmarks, and two further playtest reports, two waves
+    // apart, said reaching a known landmark by name took several blind
+    // "more places" clicks. Partitioned, a landmark search never has to page
+    // past plain rooms to find it.
+    const here = localTravel(world, s, s.travelMenu ?? "");
+    const byLandmark = (want: boolean) => here.filter((id) => !!world.rooms[id]?.landmark === want).sort((a, b) => byTravelName(world, a, b));
+    list = [...byLandmark(true), ...byLandmark(false)].map((id): Action => ({ kind: "travelto", room: id }));
   }
   return list;
 }
+
+/** Whether a travel list needs to page — shared so `allActions` agrees with `travelActions` on when "more places" exists at all. */
+const travelPaging = (list: Action[]): boolean => list.length + 1 > MENU_CAP;
 
 function travelActions(world: World, s: State): Action[] {
   const list = travelList(world, s);
   // a list that has grown past the cap turns pages, like a long conversation:
   // "more places" (free, wrapping) and the way out stay on every page
-  const paging = list.length + 1 > MENU_CAP;
+  const paging = travelPaging(list);
   const pageSize = MENU_CAP - 2;
   const pages = paging ? Math.ceil(list.length / pageSize) : 1;
   const page = paging ? s.travelPage % pages : 0;
@@ -1439,15 +1519,35 @@ function applyFx(world: World, s: State, fxs: Fx[], events: string[], sourceId?:
           if (!s.party.includes(npc)) {
             s.party.push(npc);
             events.push(`${name} joins you.`);
-            // Once, when the company first becomes a company. Wave six, seed
-            // 7664: "Early on it wasn't clear whether the game enforced a
-            // companion-party cap; I kept recruiting (ended with 4) and was
-            // never told if that was a soft or hard limit." There is no cap,
-            // and a fuller company is more of the realm's writing rather than
-            // less — the answer is worth one line.
-            if (s.party.length === 2 && !s.flags["_seenCompany"]) {
+            // Once, at the very first recruit — not the second. Wave six, seed
+            // 7664, first raised it as a cap question ("I kept recruiting
+            // (ended with 4) and was never told if that was a soft or hard
+            // limit"), and it was answered here, but gated at party.length===2:
+            // one companion read as "not yet a company." A later wave, seed
+            // 3499, filed the gap that left: the note still landed only after
+            // a *second* recruit, i.e. "after you've already recruited a
+            // couple," not at the first offer it's most useful before.
+            //
+            // Moving the gate to 1 looked free — it is the same one-time line,
+            // just said earlier — but the walkthrough is the only proven road
+            // that ever recruits two companions; every other ending proof stops
+            // at one, so none of them had ever paid this line's cost. At 1,
+            // all of them do, and three were already sitting exactly on their
+            // test/budget.test.ts ratchet with nothing spare: regent_deposed,
+            // gray_crown, crowned_hollow#bloodied. The full sentence ("Nobody
+            // limits your company: everyone who will come may come, and they
+            // answer more of the road the more of them there are.", 123 chars)
+            // broke all three. Looked for the money elsewhere on those roads
+            // first, the way fast travel's fix did (test/budget.test.ts:45-56)
+            // — nothing redundant to trim there for this — so the line itself
+            // paid for it instead, down to one clause that still answers the
+            // one question asked: is there a cap. 15 chars leaves
+            // regent_deposed, the tightest of the three (271 screens, was
+            // sitting at 451.88 of a 451 ratchet already), 12 characters of
+            // headroom rather than none.
+            if (s.party.length === 1 && !s.flags["_seenCompany"]) {
               setFlag(s, "_seenCompany");
-              events.push("(Nobody limits your company: everyone who will come may come, and they answer more of the road the more of them there are.)");
+              events.push("(No party cap.)");
             }
           }
           s.npcRoom[npc] = s.room;
@@ -1645,10 +1745,18 @@ function companionStruck(world: World, s: State, def: NpcDef, id: string, events
   const max = c.hp ?? 1;
   const hp = (s.npcHp[id] ?? max) - (def.atk ?? 1);
   if (hp <= 0) {
+    // a player who has never seen this before has no way to know a downed
+    // companion recovers rather than dies — told once, the first time it
+    // ever happens to anyone in the party, not on every knockdown after
+    const firstDown = !s.flags["down_explained"];
     s.npcHp[id] = 1;
     setFlag(s, `down_${id}`);
     setFlag(s, `fell_${id}`); // stays set: a remark or an epilogue line can recall the day they went down
-    events.push(`${TheName(def.name)} ${verb} at ${c.name} — ${c.name} goes down, and crawls clear of the fight.`);
+    if (firstDown) setFlag(s, "down_explained");
+    events.push(
+      `${TheName(def.name)} ${verb} at ${c.name} — ${c.name} goes down, and crawls clear of the fight.` +
+        (firstDown ? " Nobody dies of it." : ""),
+    );
     return;
   }
   s.npcHp[id] = hp;
@@ -1776,32 +1884,57 @@ function harmNpc(world: World, s: State, npcId: string, n: number, events: strin
   }
 }
 
+/**
+ * Blows an aggressive npc lands in one exchange. Solo, exactly one — the
+ * value every death and every fight-abandonment path in this realm was
+ * tuned and proven against, so it stays put at party size zero. A bigger
+ * crowd draws more of the room's attention back: one extra blow for every
+ * two companions standing. `scripts/audit-fights.ts` measured why this
+ * exists: every companion swings on the player's turn with no matching
+ * scale on the other side, so a full party multiplied what it dealt by
+ * five and divided what it took by five, 0 of 72 hostiles ever killing the
+ * player at party size 2 or 4 against 48 of 72 alone — and `warden_brace`/
+ * `warden_break`, which soften a blow aimed at the player, were offered 24
+ * times to blind players and taken 0, because so little of the fight ever
+ * landed on the one target they help. More blows, still exactly one per
+ * two companions rather than one per companion, so a full party is still
+ * safer than fighting alone — the reason to recruit at all — just not
+ * immune.
+ */
+export function strikesPerRound(standingCount: number): number {
+  return 1 + Math.floor(standingCount / 2);
+}
+
 function npcStrike(world: World, s: State, npcId: string, events: string[], verb: string): void {
   const def = world.npcs[npcId];
   if (!def?.atk) return;
   // blows rotate between the player and the companions standing with them, in
   // order, with no die involved: the same fight replays the same way
   const standing = standingCompanions(world, s);
-  const nth = s.vars["_strikes"] ?? 0;
-  s.vars["_strikes"] = nth + 1;
-  const pick = nth % (1 + standing.length);
-  if (pick > 0) {
-    companionStruck(world, s, def, standing[pick - 1]!, events, verb);
-    return;
+  const hits = strikesPerRound(standing.length);
+  for (let i = 0; i < hits; i++) {
+    const nth = s.vars["_strikes"] ?? 0;
+    s.vars["_strikes"] = nth + 1;
+    const pick = nth % (1 + standing.length);
+    if (pick > 0) {
+      companionStruck(world, s, def, standing[pick - 1]!, events, verb);
+      continue;
+    }
+    // a condition it carries (e.g. "braced") can sharpen or dull the blow itself
+    const atk = def.atk + npcCondBonus(world, s, npcId, "hit");
+    const armor = def.pierce ? 0 : armorOf(world, s);
+    const taken = Math.max(1, atk - armor);
+    const absorbed = atk - taken;
+    events.push(
+      absorbed > 0
+        ? `${TheName(def.name)} ${verb} — your armor takes ${absorbed} of it.`
+        : def.pierce && armorOf(world, s) > 0
+          ? `${TheName(def.name)} ${verb} — your armor means nothing to it.`
+          : `${TheName(def.name)} ${verb}.`,
+    );
+    applyFx(world, s, [["hp", -taken]], events);
+    if (s.ended) return; // a killing blow ends the fight; no further strikes this round
   }
-  // a condition it carries (e.g. "braced") can sharpen or dull the blow itself
-  const atk = def.atk + npcCondBonus(world, s, npcId, "hit");
-  const armor = def.pierce ? 0 : armorOf(world, s);
-  const taken = Math.max(1, atk - armor);
-  const absorbed = atk - taken;
-  events.push(
-    absorbed > 0
-      ? `${TheName(def.name)} ${verb} — your armor takes ${absorbed} of it.`
-      : def.pierce && armorOf(world, s) > 0
-        ? `${TheName(def.name)} ${verb} — your armor means nothing to it.`
-        : `${TheName(def.name)} ${verb}.`,
-  );
-  applyFx(world, s, [["hp", -taken]], events);
 }
 
 /**
@@ -2041,7 +2174,7 @@ function hollowRoute(fxs: Fx[] | undefined): string | null {
   for (const fx of fxs ?? []) {
     if (fx[0] === "set") {
       const m = /_hollow_(rested|bargained|burned)$/.exec(fx[1]);
-      if (m) return m[1] === "rested" ? "rests it" : m[1] === "bargained" ? "a bargain: quieter, not rested" : "burns it";
+      if (m) return m[1] === "rested" ? "rests it" : m[1] === "bargained" ? "a bargain: quieter, but it counts" : "burns it";
     }
     if (fx[0] === "addvar" && fx[1] === "hollows_burned") tally = "burns it";
     if (fx[0] === "addvar" && fx[1] === "hollows_rested" && !tally) tally = "rests it";
@@ -2115,12 +2248,33 @@ function standingAtRisk(world: World, s: State, fxs: Fx[] | undefined): string[]
  * — which is what reaches this one: the departure sits behind `if inParty vell`.
  * A departure behind a die (`check`, `chance`) is deliberately not previewed:
  * this line is a fact about the choice, not a guess about the roll.
+ *
+ * That closed the scripted half. A second report found the other half: "Vell
+ * hit 'near leaving' at -2 after one story choice... the status screen was
+ * the only place this surfaced." Nothing here scripted Vell's departure —
+ * `partyRemarks` walks every companion's own `leaves` list each turn and
+ * sends them off the moment it reads true, which is how a plain `addvar
+ * appr_vell -2` can end a party membership with no `["party", "vell",
+ * "leave"]` anywhere in the fx that caused it. Same fact-not-a-guess
+ * standard as above: the delta is deterministic the instant the fx is
+ * chosen, so it is checked against each present companion's own floor, not
+ * simulated by re-running the turn.
  */
 function partyLeaves(world: World, s: State, fxs: Fx[] | undefined): string[] {
   const out: string[] = [];
   for (const fx of fxs ?? []) {
     if (fx[0] === "party" && fx[2] === "leave" && s.party.includes(fx[1])) out.push(fx[1]);
     if (fx[0] === "if") out.push(...partyLeaves(world, s, (condsOk(world, s, fx[1]) ? fx[2] : fx[3]) ?? []));
+  }
+  const deltas = new Map<string, number>();
+  for (const [, apprVar, delta] of regardMoves(world, s, fxs ?? [])) deltas.set(apprVar, (deltas.get(apprVar) ?? 0) + delta);
+  for (const [apprVar, delta] of deltas) {
+    const id = apprVar.slice(5);
+    if (out.includes(id) || !s.party.includes(id)) continue;
+    const leaves = world.npcs[id]?.companion?.leaves;
+    if (!leaves?.length || leaves.some((l) => condsOk(world, s, l.if))) continue; // already about to walk regardless of this fx
+    const after: State = { ...s, vars: { ...s.vars, [apprVar]: (s.vars[apprVar] ?? 0) + delta } };
+    if (leaves.some((l) => condsOk(world, after, l.if))) out.push(id);
   }
   return out;
 }
@@ -2297,10 +2451,11 @@ export function legalActions(world: World, s: State): Action[] {
  * options carry the same number wherever they are showing — page two starts at
  * 10 or 13 or wherever page one stopped. A number means one thing per room.
  *
- * (The conversation and travel menus page by their own older rules and still
- * number from 1. Neither has been reported, and both replace the list rather
- * than keeping a sticky head, so a number there at least means one thing per
- * page. Worth the same treatment when one of them is.)
+ * (The conversation and travel menus page by their own older rules — they
+ * replace the list on every page rather than keeping a sticky head — but both
+ * now number off their own whole list too, `travelList` and `talkList`
+ * respectively, so a number means one thing per conversation or per travel
+ * list, not merely per page of one.)
  */
 export function menuNumbers(world: World, s: State): number[] {
   const all = allActions(world, s).map(canon);
@@ -2318,9 +2473,13 @@ export function menuNumbers(world: World, s: State): number[] {
  * judged against `allActions`, every page of it, so this only says out loud
  * what the engine already allowed.
  *
- * A conversation and a travel list page by their own older rules and number
- * from 1 per page, so `allActions` holds only the page showing there and a
- * number off it correctly resolves to nothing.
+ * A conversation and a travel list both page by their own older rules, but
+ * both now get the same whole-list numbering treatment as an ordinary room —
+ * see `allActions`, `talkList`, `travelList`. A P1 report (`queue/P1-issue-
+ * 4839330e.json`, "a page-2 option list caused an unintended [pick]") named
+ * Captain Vane's Tent, the one conversation in the shipped realm long enough
+ * to page (25 topics) — direct proof this was live, not merely theoretical;
+ * see `talkList`'s comment for the mechanism.
  */
 export function actionByNumber(world: World, s: State, n: number): Action | undefined {
   if (!Number.isInteger(n) || n < 1) return undefined;
@@ -2333,8 +2492,33 @@ export function actionByNumber(world: World, s: State, n: number): Action | unde
  * what `step` and `actionByLabel` judge an action against: turning a page
  * changes what you can see, never what you could do, so a walkthrough written
  * before a room grew crowded keeps working.
+ *
+ * Travel used to be the one list still numbered by the page showing rather
+ * than the whole list — `roomMenu`'s travel branch hands `legalActions` an
+ * already-paged result, `whole()`'d so `pageRoom` leaves it alone, and this
+ * function used to return that same paged result back out. A P1 later
+ * ("Travel-to-known-place menus... require several 'more places' clicks to
+ * reach a specific far-away location, even though the destination is already
+ * known"), sorting the list alphabetically (so a page could be guessed
+ * rather than hunted) surfaced the gap the `menuNumbers` comment had already
+ * flagged as worth fixing: sort or no sort, a label on page 2 was simply
+ * absent from `allActions` while page 1 showed, so `actionByLabel` — and a
+ * walkthrough step written when the same name sat on page 1 — found nothing.
+ * `travelList` is the fix: the whole list, unpaged, the same one `travelActions`
+ * pages for display. `legalActions` (via `roomMenu`) still shows one page at
+ * a time; `menuNumbers` numbers off this full list now, so a number under a
+ * travel destination means the same thing on every page, exactly like a room.
+ *
+ * A conversation got the same treatment later still, for the same reason:
+ * `talkList` is a conversation's whole topic list, unpaged, the same shape
+ * `roomMenu`'s talk branch pages for display — see `talkList`.
  */
 export function allActions(world: World, s: State): Action[] {
+  if (travelShowing(world, s)) {
+    const list = travelList(world, s);
+    return travelPaging(list) ? [...list, { kind: "travelmore" }, { kind: "traveldone" }] : [...list, { kind: "traveldone" }];
+  }
+  if (talkShowing(world, s)) return talkList(world, s, s.talking!);
   const { all, ways } = withMenuMemo(() => roomMenu(world, s));
   return roomPages(all, ways) ? [...all, { kind: "roommore" }] : all;
 }
@@ -2370,6 +2554,98 @@ function withMenuMemo<T>(build: () => T): T {
   }
 }
 
+/**
+ * True exactly when `roomMenu` would show the open conversation's own topics
+ * — `inTalkMode` alone is not enough, because a level gained mid-conversation
+ * (a topic's `fx` granting xp) leaves `s.talking` set while the perk it
+ * unlocked still has to be spent first, and `roomMenu` rightly shows *that*
+ * menu instead until it is (`s.perkPicks`, checked ahead of talk mode there).
+ * `allActions` needs the identical precedence — it very nearly didn't get it:
+ * the fix for numbering a conversation off its whole list very nearly shipped
+ * checking `inTalkMode` on its own, which would have made a level gained from
+ * a topic's `fx` (the walkthrough does this at the gray priest, va_chapel)
+ * hand back the *conversation's* topic list from `allActions` while
+ * `legalActions` was already showing the perk menu — the two disagreeing
+ * about what was legal is exactly the failure mode this whole fix exists to
+ * remove, so both now call this one predicate rather than each deciding for
+ * itself.
+ */
+function talkShowing(world: World, s: State): boolean {
+  if (s.ended || inClassPhase(world, s)) return false;
+  if (s.perkPicks > 0 && eligiblePerks(world, s).length) return false;
+  return inTalkMode(world, s);
+}
+
+/**
+ * Travel's half of the same predicate, and the last branch that was still
+ * deciding for itself. `roomMenu` reaches travel only after `ended`, the class
+ * phase, a pending perk and an open conversation have each had their turn;
+ * `allActions` checked `inTravelMode` ahead of all of them. Nothing in today's
+ * grammar opens that gap — every travel action is in `BROWSING`, so no turn is
+ * spent and no level can land mid-menu, and `travelto` clears `travelMenu`
+ * before `enterRoom` runs any fx — so this changes no reachable state. It is
+ * here because the talk bug above was this exact shape, and a guard that holds
+ * only by an argument about what cannot happen is one clock entry away from
+ * being wrong.
+ */
+function travelShowing(world: World, s: State): boolean {
+  if (s.ended || inClassPhase(world, s)) return false;
+  if (s.perkPicks > 0 && eligiblePerks(world, s).length) return false;
+  if (inTalkMode(world, s)) return false; // a conversation wins, exactly as in roomMenu
+  return inTravelMode(world, s);
+}
+
+/**
+ * The shape of an open conversation's menu — everything but which page is
+ * showing — shared by `roomMenu` (which slices `rest` to the current page for
+ * display) and `talkList` (which does not slice, for numbering; see there).
+ * Keeping this in one place means the two can never quietly drift apart on
+ * what counts as "the way out" or when a conversation pages at all.
+ */
+function talkMenuParts(world: World, s: State, npc: string) {
+  // a line that sends a companion away goes last, never in the slot the
+  // player has been pressing to carry the conversation on
+  // ... and so does a line that commits you to something (`commits: true`), so
+  // a menu that shrinks as questions are answered never slides a betrayal into
+  // the number the player has been pressing
+  const late = (t: TopicDef) => Number(partsWays(t) || !!t.commits);
+  const topics = visibleTopics(world, s, npc).sort((a, b) => late(a) - late(b));
+  // a farewell line (a topic with `end`) is the way out; the plain "end
+  // conversation" only appears when the npc offers none
+  const ends = topics.filter((t) => t.end);
+  const rest = topics.filter((t) => !t.end);
+  const outro: Action[] = ends.length ? ends.map((t): Action => ({ kind: "talk", npc, topic: t.id })) : [{ kind: "endtalk" }];
+  // a conversation that has grown past the cap turns pages: the farewell stays
+  // on every page, and "more to ask" (free) turns to the next
+  const paging = rest.length + outro.length > MENU_CAP;
+  const pageSize = Math.max(1, MENU_CAP - outro.length - 1);
+  const pages = paging ? Math.ceil(rest.length / pageSize) : 1;
+  return { rest, outro, paging, pageSize, pages };
+}
+
+/**
+ * Every topic a conversation offers, whichever page is showing — the
+ * conversation's half of what `allActions` numbers off, exactly as
+ * `travelList` is travel's. Before this, `allActions` had no talk-mode branch
+ * of its own and fell through to `roomMenu`, which — for a conversation —
+ * already returns only the *current page's* topics (`roomMenu` pages a
+ * conversation itself, unlike a room, which pageRoom pages from outside): a
+ * number was being handed out fresh from 1 on every page, so the same number
+ * meant a different topic depending which page happened to be showing, and a
+ * number read on page 1 was simply wrong, not merely absent, once the
+ * conversation had turned to page 2. Numbering off this whole list instead —
+ * every topic plus "more to ask" in its one fixed slot before the farewell —
+ * fixes it the same way `allActions`'s room and travel branches already were:
+ * a number means one topic for as long as the conversation's shape doesn't
+ * change, on whichever page you turn to read it.
+ */
+function talkList(world: World, s: State, npc: string): Action[] {
+  const { rest, outro, paging } = talkMenuParts(world, s, npc);
+  const out: Action[] = rest.map((t): Action => ({ kind: "talk", npc, topic: t.id }));
+  if (paging) out.push({ kind: "talkmore" });
+  return [...out, ...outro];
+}
+
 function roomMenu(world: World, s: State): { all: Action[]; ways: number } {
   // The menus below are not a room's own: each already holds itself within the
   // cap (a conversation and a travel list turn their own pages), so none of
@@ -2385,25 +2661,9 @@ function roomMenu(world: World, s: State): { all: Action[]; ways: number } {
     if (picks.length) return whole(picks.slice(0, MENU_CAP).map((id) => ({ kind: "perkpick", id })));
   }
   // an open conversation: only its topics, and the way out of it
-  if (inTalkMode(world, s)) {
+  if (talkShowing(world, s)) {
     const npc = s.talking!;
-    // a line that sends a companion away goes last, never in the slot the
-    // player has been pressing to carry the conversation on
-    // ... and so does a line that commits you to something (`commits: true`), so
-    // a menu that shrinks as questions are answered never slides a betrayal into
-    // the number the player has been pressing
-    const late = (t: TopicDef) => Number(partsWays(t) || !!t.commits);
-    const topics = visibleTopics(world, s, npc).sort((a, b) => late(a) - late(b));
-    // a farewell line (a topic with `end`) is the way out; the plain "end
-    // conversation" only appears when the npc offers none
-    const ends = topics.filter((t) => t.end);
-    const rest = topics.filter((t) => !t.end);
-    const outro: Action[] = ends.length ? ends.map((t): Action => ({ kind: "talk", npc, topic: t.id })) : [{ kind: "endtalk" }];
-    // a conversation that has grown past the cap turns pages: the farewell stays
-    // on every page, and "more to ask" (free) turns to the next
-    const paging = rest.length + outro.length > MENU_CAP;
-    const pageSize = Math.max(1, MENU_CAP - outro.length - 1);
-    const pages = paging ? Math.ceil(rest.length / pageSize) : 1;
+    const { rest, outro, paging, pageSize, pages } = talkMenuParts(world, s, npc);
     const page = paging ? s.talkPage % pages : 0;
     const shown = paging ? rest.slice(page * pageSize, (page + 1) * pageSize) : rest;
     const out: Action[] = shown.map((t): Action => ({ kind: "talk", npc, topic: t.id }));
@@ -2411,7 +2671,7 @@ function roomMenu(world: World, s: State): { all: Action[]; ways: number } {
     return whole([...out, ...outro]);
   }
   // the travel menu: destinations (or regions), and the way out of it
-  if (inTravelMode(world, s)) return whole(travelActions(world, s));
+  if (travelShowing(world, s)) return whole(travelActions(world, s));
   // the company list: the companions to speak with, and the way out of it
   if (inCompanyMode(world, s)) return whole([...companyHere(world, s).map((npc): Action => ({ kind: "talkto", npc })), { kind: "companydone" }]);
   const out: Action[] = [];

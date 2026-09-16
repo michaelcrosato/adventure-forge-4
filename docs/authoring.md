@@ -10,7 +10,7 @@ A world is one root file, plus part files it `include`s:
 
 ```json
 { "id": "reach", "title": "The Gray Reach", "intro": "...", "start": "va_gate",
-  "hp": 10, "maxScore": 250,
+  "hp": 10, "maxScore": 366,
   "include": ["reach/*.json"],
   "classes": {...}, "perks": {...}, "regions": {...}, "hud": [...],
   "rooms": {}, "items": {}, "npcs": {},
@@ -22,16 +22,16 @@ A **part file** is a slice of the same world. It may carry only:
 - records that merge by id — `rooms`, `items`, `npcs`, `classes`, `perks`,
   `conditions`, `regions`, `quests`, `proofs`, `templates`, `skills`. Two
   files defining the same id is a load error that names both files.
-- lists that concatenate — `gen`, `stamps`, `epilogue`, `statusTracks`,
-  `statusPaths`, `hud`.
+- lists that concatenate — `gen`, `stamps`, `epilogue`, `clock`,
+  `statusTracks`, `statusPaths`, `hud`.
 A path may name a `var`; its value then prints after the text ("the Watch:
 neither friend nor foe (+1)"), so a standing that moved without changing its
 label still reads as having moved. `status` shows each companion's regard from
 the day they join, and "near leaving" once it reaches −2.
 
 Root-only fields (`id`, `title`, `intro`, `objectives`, `start`, `hp`,
-`maxScore`, `walkthrough`, `progress`, `clock`) in a part are a load error.
-Anything else at the top level is too.
+`maxScore`, `walkthrough`, `progress`, `include`, `abilities`, `resources`)
+in a part are a load error. Anything else at the top level is too.
 
 Load order: root, then parts in `include` order (globs sort by file name);
 then `gen` regions expand into rooms; then `stamps` expand templates into
@@ -142,17 +142,26 @@ banter afterwards — a `free` action included: "free" is the turn, not the pric
 
 **Escalating retry.** A failed `check` raises the DC of the next attempt at
 that same room action, ability, topic, or item-use by 1 — the engine's own
-doing, nothing to author. The counter never resets (a success does not clear
-it, and neither does leaving and coming back), and it has no ceiling: a check
-retried enough times keeps getting harder, never impossible-in-principle,
-never a dead end — the player can always try again, or take the region's
-other route (force, craft, words) past the same obstacle instead. The preview
+doing, nothing to author (a topic's check is the one exception; see below).
+The counter never resets (a success does not clear it, and neither does
+leaving and coming back), but it is capped, not open-ended: `escalatedDc`
+(`src/engine.ts`) never raises a check past `modifier + 20`, the highest DC
+a natural 20 can still meet, so a retried check always keeps getting worse
+without ever crossing into mathematically impossible — the one exception is
+a check the author already wrote above that line, a deliberate "not without
+help" the engine leaves exactly as authored, never softened. The preview
 always quotes the number the roll is actually about to use, so a check with
 two failures already logged against it reads `(DC 13, +2 wits: roll 11+ on
 the die)` where a fresh one would have read `(DC 11, +2 wits: roll 9+ on the
 die)` — never the stale, unescalated number (see the `check` case in
 `applyFx` and `oddsHint`, `src/engine.ts`; the history that makes this
-non-negotiable is in the comments above both).
+non-negotiable is in the comments above both). Once a check has failed at
+least once, that same preview also says how far it has climbed and, unless
+the author's own base DC already sat past the cap, exactly where it stops
+(`"raised N by failed tries, and stops at {ceiling}"`) — a blind playtester
+once abandoned a puzzle specifically because the DC read as climbing with
+nothing on screen saying it would ever stop; the cap already existed, only
+the sentence was missing (`oddsHint`'s own comment has the history).
 
 **A conversation does not escalate.** A lock gets harder as you work at it; a
 topic's check reads the DC you wrote, however many times it is asked. Two blind
@@ -528,9 +537,9 @@ left and its hint, under "Conditions:".
   breadth-first through your actual exits, because the first version printed
   the coordinate offset and a player rightly reported that a quarter of those
   cannot be walked in a straight line — **your walls are why**. Roughly one
-  landmark per six cells is right: the realm runs 77 across 445 cells. Too few
-  and there is nothing to steer by; too many and the anchor changes under the
-  player's feet mid-leg.
+  landmark per six cells is right (`lint-world.ts`'s `lmk` column counts what
+  each region carries). Too few and there is nothing to steer by; too many and
+  the anchor changes under the player's feet mid-leg.
 - **Never write a direction by hand.** The realm carried 286 hand-written
   "get your bearings" actions — "As the fell runs, Slatefold is 4 south and 1
   east, then down. The bound-stone: 6 south." — 286 separate chances to be
@@ -576,8 +585,9 @@ it standing somewhere.
   stamp's `vars`; every var the template lists is required.
 - `at` may be an authored room or a generated cell; stamps expand after
   regions. Stamped rooms inherit the host's `region`. `entranceLandmark`
-  makes the copy's entrance a fast-travel destination by that name (it counts
-  toward the region's 11).
+  makes the copy's entrance a fast-travel destination by that name, like any
+  authored `landmark` — and like them it is not capped, because the region's
+  own travel list turns pages (§5).
 - Shared templates (barrow, cave, tower, mine, camp, chapel, hut) live in
   `templates.json`; a region may add its own. Use 3–5 stamps per region.
   Give each copy a distinct `NAME` and a distinct inhabitant; vary which
@@ -657,7 +667,7 @@ it standing somewhere.
   and that is correct rather than broken. Marrowgate is entered only by four
   `["goto", "mg_south_gate"]` effects on the Pass Gate — a deliberate point of
   no return — so no chain of `exits` reaches its 45 rooms from the Vale, and
-  `pathTo` answers `null` for all thirteen `at`s that name one. From inside the
+  `pathTo` answers `null` for all fifteen `at`s that name one. From inside the
   gate every one of them walks ("one north, then one west, then two down, then
   three north" to the Hollow Throne), which is the only side a player can be on
   while those quests are open. So check an `at` from a room on its own side of
@@ -687,7 +697,8 @@ menu labels that replays (seed 1) to exactly that ending. The root
 `walkthrough` must replay to a **win with score === maxScore** — which is what
 `maxScore` means: **what one whole route pays**, not a ceiling. Score is not
 clamped to it (a realm authors far more than one route's worth; the Gray Reach
-authors 7,608 points across 1,395 sites), so a player who sees more of the
+authors many times its 366, as `lint-world.ts`'s per-region score column adds
+up), so a player who sees more of the
 realm keeps being paid for it, and `status` says what the number means rather
 than dividing by it. Labels are the
 canonical text without the display hints: `go east`, `talk to Prior Halm`,
@@ -702,9 +713,9 @@ To record labels instead of writing them: play with `npm run turn -- new 1`,
 ## 13. The world clock
 
 Nothing in the world moves unless the player does — until `world.clock`.
-It is a **root-only** list of scheduled effects, evaluated once per **spent**
-turn, after the player's action, the world's aggressive pass, and conditions
-have ticked:
+It is a list of scheduled effects, evaluated once per **spent** turn, after
+the player's action, the world's aggressive pass, and conditions have ticked
+(a part file may carry its own entries — see the last bullet below):
 
 ```json
 "clock": [
@@ -773,8 +784,8 @@ to any one place — a class's active kit.
 
 `world.abilities` is a root-mergeable-by-id record like `perks` and
 `conditions` **in storage shape**, but root-**only** in where it may be
-authored: a part file carrying `abilities` is a load error, like `clock`
-(§13), so a class's whole kit lives in one place. Fields, closed like every
+authored: a part file carrying `abilities` is a load error, like `resources`
+below, so a class's whole kit lives in one place. Fields, closed like every
 DSL shape:
 
 | field | does |
@@ -803,7 +814,7 @@ The shape that works, one per class, on its own attribute:
 ```json
 "scholar_read": {
   "label": "read it twice",
-  "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["checkHere", "wits", 11]],
+  "if": [["class", "scholar"], ["var", "res_scholar", ">=", 1], ["checkHere", "wits", 10]],
   "fx": [["addvar", "res_scholar", -1], ["cond", "studied", 2], ["say", "You stop hurrying it, and read from the top in the tongue it was written in."]]
 }
 ```
@@ -816,8 +827,8 @@ offered where it matters instead of everywhere.
 **Read a share against the right denominator.** `npx tsx
 scripts/audit-abilities.ts world/reach.json` prints, per ability, how many
 screens each clause of its `if` held on across the walkthrough and every proof
-— and the fight count beside it, because an ability on 1.6% of a class's
-screens is on 41% of that road's fights, which is a working ability and not a
+— and the fight count beside it, because an ability on 1.2% of a class's
+screens is on 29% of that road's fights, which is a working ability and not a
 broken one. It is the tool that separates "never chosen" from "never shown"
 from "its class was never played". **Do not gate an ability on a conjunction
 you have not measured**: `scholar_name` wanted a horror in the room AND a
@@ -869,10 +880,13 @@ shortcut to reach for elsewhere.
 An ability's cost is paid on every screen it appears on, and the budget (§15)
 is unforgiving, so the tempting move is to narrow the `if` until it stops
 showing up. That is the same move as deleting it, done less honestly: the
-realm shipped a Scholar ability gated on `["checkHere", "wits", 13]` when the
-hardest wits check anywhere in eighteen regions is DC 12, so it could never
-appear for anybody, and the budget was "unchanged" because nothing had been
-added. Before narrowing a gate, count what satisfies it:
+realm once shipped a Scholar ability gated on `["checkHere", "wits", 13]`
+when nothing else in the realm asked for wits above 12 — dead on arrival,
+and the budget was "unchanged" because nothing had been added. The realm has
+grown since, and so has that ceiling: measured today the hardest wits check
+anywhere is DC 15, not 12 (the command below finds it), so the specific
+number in that anecdote is history, not a bar to gate under — count what the
+realm satisfies as it stands, every time, rather than trusting either number:
 
 ```bash
 # does anything in the realm actually offer a wits check this hard?
@@ -922,8 +936,8 @@ along the walkthrough exceeds 450 characters or any single one exceeds 1100.
 
 ```bash
 npm run validate world/reach.json   # every reference, every proof, the menu cap, every gate's key
-npm run crawl -- world/reach.json --fork      # 438 rooms, six endings, gates open
-npm run crawl -- world/reach.json --sweep     # 268 rooms, wandering toward the unseen
+npm run crawl -- world/reach.json --fork      # the most rooms, and the only mode that reaches real endings
+npm run crawl -- world/reach.json --sweep     # fewer, wandering toward the unseen
 npm run crawl world/reach.json      # random walks: crashes, empty menus, "undefined" holes
 npm run test                        # budget, content rules, determinism
 ```
@@ -957,13 +971,13 @@ in the tide; a small thing to keep". What a player cannot forgive is not being
 able to tell which is which, so the tool separates the honest keepsakes (a
 `hint` that reads as one) from the two kinds that are wrong: an item whose
 hint **promises** a use nothing ever asks for, and one with no hint at all.
-The realm currently runs 230 of 321 read, wielded, worn or carried for light,
-87 honest keepsakes, four broken promises and nothing mute. **The cheap fix
-for a silent item is a hint, not a use.** A hint that names a real place is
-counted as a promise too, because naming a room is telling the player to take
-the thing there — one of the four is a false positive that names a place in
-order to say the thing is finished, which is why this prints candidates to
-read rather than a verdict.
+The realm currently carries neither: everything it does not read, wield, wear
+or burn for light is an honest keepsake, and the command above prints the
+tally. **The cheap fix for a silent item is a hint, not a use.** A hint that
+names a real place is counted as a promise too, because naming a room is
+telling the player to take the thing there — and a hint may name one in order
+to say the thing is finished, which is why this prints candidates to read
+rather than a verdict.
 
 And what a fight costs, before you write another one:
 
@@ -973,12 +987,14 @@ npx tsx scripts/audit-fights.ts world/reach.json
 
 It puts one fixed build against every hostile that strikes back, at party
 sizes 0, 2 and 4, through the engine's own `step`. The realm currently reads
-7 rounds and 14 hp alone (46 of 68 fights kill the player), 3 rounds and 2 hp
+7 rounds and 14 hp alone (48 of 72 fights kill the player), 3 rounds and 4 hp
 with two companions, 2 rounds and 2 hp with four. Every companion standing
-with you swings on your turn and the enemy's one blow rotates between all of
-you, so a party multiplies what you deal and divides what you take, and
-nothing on the other side scales with the crowd it faces. Write a fight
-knowing which of those two games it will be played in.
+with you swings on your turn, and the hostile strikes back too — one extra
+blow for every two companions standing (`strikesPerRound`, `src/engine.ts`),
+always fewer blows than attackers, so a party is still safer than fighting
+alone, just not immune to losing someone along the way. Write a fight knowing
+which of those two games — solo, or outnumbering a hostile that now notices —
+it will be played in.
 
 And whether the way you point at can actually be walked:
 
@@ -1002,5 +1018,5 @@ shut before the last leg, all of them at three doors (the barrow doors, the
 honour guard's passage under Marrowgate, and the pilgrim's door). Wave nine
 reported this as bearings that "didn't match the actual room-to-room
 connections" — every leg leads exactly where it says, which `audit-bearings`
-confirms across all 293 rooms that offer them; what the player hit was a shut
-door mid-route.
+confirms by walking every leg in the realm (0 wrong); what the player hit was
+a shut door mid-route.

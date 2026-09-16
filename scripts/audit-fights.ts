@@ -8,20 +8,26 @@
  * and their two combat abilities 0 times out of 24 offers. The reports say
  * fights are fine. The traces say the tactical layer inside them is decorative.
  *
- * The reason is structural, and it is worth seeing in numbers rather than
- * arguing about: **every companion standing with you takes a swing on your
- * turn, and the enemy's one blow rotates between all of you.** A party of four
- * therefore multiplies what you deal by five and divides what you take by
- * five. Nothing on the other side scales with the crowd it faces.
+ * This tool is why: every companion standing with you takes a swing on your
+ * turn, and the enemy's blows used to rotate one at a time no matter how big
+ * the crowd was — a party of four multiplied what it dealt by five and
+ * divided what it took by five, 0 of 72 hostiles ever killing the player at
+ * party size 2 or 4 against 48 of 72 alone. Fixed since: `strikesPerRound`
+ * (`src/engine.ts`) now gives a hostile one extra blow for every two
+ * companions standing, still fewer blows than attackers always, so a full
+ * party stays safer than solo — the reason to recruit at all — without being
+ * immune. The numbers below are measured after that fix, not before it.
  *
  * So: put one fixed player build against every hostile in the realm, at party
  * sizes 0, 2 and 4, and print the rounds it takes and the hp it costs. No
  * arithmetic is re-derived here — it runs the engine's own `step`, so a change
- * to the rules changes these numbers.
+ * to the rules changes these numbers, and the closing summary imports the
+ * real `strikesPerRound` rather than restating its formula by hand, so it
+ * cannot say something the engine no longer does.
  *
  *   npx tsx scripts/audit-fights.ts world/reach.json [--terse]
  */
-import { legalActions, newState, step } from "../src/engine.ts";
+import { legalActions, newState, step, strikesPerRound } from "../src/engine.ts";
 import { loadWorld } from "../src/validate.ts";
 import type { Action, State } from "../src/types.ts";
 
@@ -107,8 +113,9 @@ for (const [i, n] of SIZES.entries())
       `${bySize[i]!.down} companions struck down, ${bySize[i]!.died} of ${rows.length} fights killed the player`,
   );
 console.log(
-  `\nEvery companion standing with you swings on your turn, and the enemy's one blow rotates between all of you.\n` +
-    `That is ${1 + COMPANIONS.slice(0, 4).length} attacks a round against one, and one blow in ${1 + COMPANIONS.slice(0, 4).length} landing on you. Nothing on the other side\n` +
-    `scales with the crowd it faces, which is why a full party has never lost a companion and why an ability\n` +
-    `that spends a charge to soften one blow in five has been offered 24 times and taken none.`,
+  `\nEvery companion standing with you swings on your turn; the hostile strikes back ` +
+    `${SIZES.filter((n) => n > 0).map((n) => `${strikesPerRound(n)} time${strikesPerRound(n) === 1 ? "" : "s"} at party ${n}`).join(", ")}\n` +
+    `(\`strikesPerRound\`, src/engine.ts: one extra blow per two companions standing) — always fewer blows than\n` +
+    `attackers, so a bigger party stays safer than fighting alone without being immune: ${bySize.reduce((a, b) => a + b.down, 0)} companion knockdown${bySize.reduce((a, b) => a + b.down, 0) === 1 ? "" : "s"}\n` +
+    `total across every fight above, none of them at party 0 where there is no companion standing to knock down.`,
 );

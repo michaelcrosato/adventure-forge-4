@@ -117,7 +117,7 @@ Confirm that sessions start and complete the structural check.
 After fix 5, confirm that `npm run measure` completes the walkthrough.
 
 **Applied.** The expected surface is `act, look, new_game, status`; a missing or extra tool still fails.
-`npm run mock` completes a 200-step random walk, and `npm run measure` replays the Vale walkthrough over the real server to a full-score win (`vale.7.34.100.king_at_rest`), the Lighthouse one likewise.
+`npm run mock` completes a random walk (400 steps by default — `MAX_STEPS` in `loop/mock-player.mjs`, not 200), and `npm run measure` follows the shipped walkthrough of the server's own default world over the real server. That default has since moved from Vale to Reach (`src/mcp.ts` and `loop/mock-player.mjs` both resolve `TF_WORLD` to `world/reach.json`). Measured directly at `--seed 1` — the seed `world.proofs` is actually validated against — Reach's walkthrough reaches a full-score win, `reach_at_rest` at 366/366 (`reach.1.240.366.reach_at_rest…`); Lighthouse still reaches its own full-score win the same way, `beacon_lit` at 55/55, unchanged. (At the tool's own default seed, 7 — not 1 — Reach's walkthrough now ends `dead` instead: a fixed action sequence meeting dice it was never proven against, not a regression in this fix.)
 
 ## 5. P2: Match walkthrough labels when the menu includes display hints
 
@@ -218,9 +218,9 @@ Share this selection or pass the resolved path explicitly.
 **Acceptance check:** With `TF_WORLD` unset, confirm that the report hash equals the Vale file hash.
 With `TF_WORLD=world/lighthouse.json`, confirm that it equals the Lighthouse file hash.
 
-**Applied.** `loop/report-check.mjs` defaults to `world/vale.json` like the server.
-`loop/playtest.sh` resolves `TF_WORLD` once (absolute, default Vale), exports it for the checker, and passes it explicitly in the generated MCP config's `env`, so the server cannot be started on a different world than the one hashed.
-Checked by hand: the filed hash equals the Vale file hash with `TF_WORLD` unset and the Lighthouse hash with the override.
+**Applied.** `loop/report-check.mjs` defaults to the same world as the server, matching it by construction, not coincidence — true at the time of this fix for `world/vale.json`, and true today for `world/reach.json`, which is what both now default `TF_WORLD` to (`src/mcp.ts`, `loop/report-check.mjs`).
+`loop/playtest.sh` resolves `TF_WORLD` once (absolute, default Reach today), exports it for the checker, and passes it explicitly in the generated MCP config's `env`, so the server cannot be started on a different world than the one hashed.
+Checked by hand at the time: the filed hash equalled the Vale file hash with `TF_WORLD` unset and the Lighthouse hash with the override; the same check today would compare against the Reach file hash instead.
 The same wave now also lets MCP-lane players call the free `status` tool, which the server had offered but the prompt and allow-list did not.
 
 ## Verification recorded during the review

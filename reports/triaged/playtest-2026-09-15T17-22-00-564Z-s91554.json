@@ -1,0 +1,44 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 559,
+  "receipt": "reach.91554.559.560.reach_at_rest.c4a4948d",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "Paginated room menus (p1/2, p2/2) reset to page 1 every time you re-enter the room or return from a submenu, so a remembered 'more in this room' option number can silently point to the wrong page.",
+      "where": "e.g. The Hollow Throne, The Oath-Ground — Circle, Barrow Crypt"
+    },
+    {
+      "sev": "P2",
+      "what": "Directional exits are sometimes non-obviously asymmetric/looping (e.g. 'go north' from the Parade Ground led back to the Captain-General's Hall rather than onto the moor as expected from the bearings readout).",
+      "where": "Highward — Parade Ground"
+    },
+    {
+      "sev": "P2",
+      "what": "A gated NPC check (the ash-boy's will check to slip past the palace gate) had no visible alternate solution hinted at when it kept failing; the actual solution (Lord Marshal's escort token) was only discoverable by wandering to an unrelated location.",
+      "where": "Marrowgate — The Servants' Way / Palace Gate"
+    }
+  ],
+  "confusions": [
+    "It's not always clear before a 'read/find the true record' action that it will cost standing with a specific companion (e.g. finding the founding ledger via wits at the Hall of Ledgers, or resolving the oath-stone) until the option text is already shown — fine once shown, but the framing 'a hit costs standing' reads oddly (succeeding costs you something) and took a moment to parse.",
+    "Travel-to-known-place lists get very long (30+ entries across multiple 10-item pages) once you've explored a lot, making it slow to find a specific far-off landmark by name alone."
+  ],
+  "suggestions": [
+    "Keep 'more in this room' menu pagination stable/remembered per visit instead of resetting to page 1.",
+    "When a repeatable social check keeps failing, surface a hint after 2-3 tries pointing at an alternate route (the way 'go in (locked: ...)' messages already do for physical obstacles).",
+    "Add a search/filter to the travel-to-known-place list once it exceeds ~15 entries."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-15T17-22-00-564Z",
+  "seed": 91554,
+  "build": {
+    "rev": "f2dd51e",
+    "world": "00901427"
+  },
+  "cost_usd": 26.843894000000017,
+  "verified": true
+}

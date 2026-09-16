@@ -46,14 +46,15 @@ alone, and never by kindness alone.
    [sk Saltkerns] ─────── coast road ──────┘
 ```
 
-Nine regions, nine two-letter codes — the realm as first drawn. Nine more
+Nine regions, nine two-letter codes — the realm as first drawn. Ten more
 were added after it shipped, each with its own code, its own paragraph at the
 end of this file, and its own gateways on to two neighbours: Emberfall (`em`),
 the Fallows (`fl`), the Meres (`me`), the Hearthlands (`hl`), the Kingswood
-(`kw`), the Shieldings (`sh`), Pennywell (`pw`), Mootcombe (`mc`) and
-Fosterfell (`ff`) — eighteen in all. Every id in a region file carries its
-code. Neighbors connect through **gateway rooms** with fixed ids; each region
-defines its own gateway room and the exit pointing at the neighbor's gateway.
+(`kw`), the Shieldings (`sh`), Pennywell (`pw`), Mootcombe (`mc`),
+Fosterfell (`ff`) and Longford (`lf`) — nineteen in all. Every id in a
+region file carries its code. Neighbors connect through **gateway rooms**
+with fixed ids; each region defines its own gateway room and the exit
+pointing at the neighbor's gateway.
 A later region hooks on through a neighbour's wilderness grid instead, by
 adding a `link` to that grid's cell; both sides introduce the hold they lead
 into, once, whichever road the player comes in by.
@@ -132,7 +133,10 @@ what the Vale remembers.
 
 Names every file may read or write. Anything else stays region-prefixed.
 
-**Vars.** `gold`; `hollows_rested`, `hollows_burned`; reputation `rep_watch`,
+**Vars.** `gold`; `hollows_rested`, `hollows_burned`, `hollows_bargained`
+(a bargained hollow counts toward `hollows_rested` too — it is a third,
+narrower tally for anything that asks specifically how many were bargained,
+not a fourth resolution outside the three); reputation `rep_watch`,
 `rep_church`, `rep_iron`, `rep_free`, `rep_keepers`, `rep_crown`; approval
 `appr_lys`, `appr_osk`, `appr_tamsin`, `appr_vell`. Reputation moves by ±1
 per deed (±2 for a hollow); thresholds at 2 and −2 gate faction content.
@@ -423,6 +427,23 @@ hermit), a tall child that walks the fells with a slate; every companion has
 a word on entering and on how it went. It hooks on to the Kingswood's
 Boundary Holly and Coldpass' Old Switchback, and both cells introduce the
 hold they lead into.
+
+**Longford** (the nineteenth region, `lf`, a toll crossing on the Lastwater
+between Pennywell and the Shieldings): the last free ford, until Captain
+Voss barred it with a rail and a toll he keeps doubling. Alone among the
+regions, its crisis is deliberately not a grief-hollow: `hollows_rested`,
+`hollows_burned` and `hollows_bargained` are untouched here, so Coldpass's
+three-hollow gate reads exactly as it did before this hold existed. The
+toll is broken — the rail broken or Voss killed outright (Tamsin +1);
+bought off, paid or talked down (Lys +1); or freed with proof the toll was
+never his, the keeping-fee grant from Nan's strong-box or his own writ
+pressed out of him with Corporal Nye backing the confrontation (Vell +1,
+Brother Osk +1). Freeing it scores highest and asks the most legwork, the
+same incentive the fifteen hollows give resting over burning. Five quests,
+31 rooms, 10 npcs, 7 epilogue lines, three stamps (a cave, a hut, and the
+Broken Oar Chapel); every companion has a word on entering and on how it
+went. It hooks on to Pennywell's north bank and the Shieldings' west bank,
+both declared from the neighbor's side.
 
 **The company in the newest holds** (after the twelfth round): the three
 holds added last — the Hearthlands, the Kingswood and the Shieldings — get

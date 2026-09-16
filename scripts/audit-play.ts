@@ -140,6 +140,11 @@ if (!rows.length) {
   console.error(`none of ${traces.length} file(s) is a trace (a trace carries "seed" and "actions" — runs/playtest/ holds session metadata, not traces)`);
   process.exit(2);
 }
+// Say what was dropped. Every count below is "of the traces that parsed", and a
+// coverage figure quietly measured over two of five runs is a green bar over the
+// thing you were checking for.
+if (rows.length < traces.length)
+  console.error(`note: ${traces.length - rows.length} of ${traces.length} file(s) unreadable or not a trace; everything below covers the ${rows.length} that parsed\n`);
 
 const roomTotal = Object.keys(world.rooms).length;
 const regionTotal = new Set(Object.values(world.rooms).map((r) => r.region).filter(Boolean)).size;

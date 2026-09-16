@@ -14,22 +14,25 @@
  *
  * Four ways to walk it, and coverage is why there is more than one:
  *
- *   (default)         60 uniform random walks from turn zero. 145 of the
- *                     Reach's 905 rooms. The right instrument for a bad
- *                     *state*: it wanders into combinations nobody authored.
+ *   (default)         60 uniform random walks from turn zero — the smallest
+ *                     share of the Reach of any mode here. The right
+ *                     instrument for a bad *state*: it wanders into
+ *                     combinations nobody authored.
  *   --sweep           the same walks, biased toward somewhere they have not
- *                     been. 268 rooms for the same 13 seconds.
+ *                     been. Most of a random walk's rooms again for the same
+ *                     13 seconds, and a little under twice its reach.
  *   --fork            walks forked off the proven routes every twelfth step,
- *                     so the gates those routes opened stay open. **438
- *                     rooms in 20 seconds**, and the only mode that reaches
- *                     real endings — six of them at --deep, where every other
- *                     mode has only ever reached "dead". In `npm run verify`.
+ *                     so the gates those routes opened stay open. **Half the
+ *                     realm in 20 seconds** — three times a random walk — and
+ *                     the only mode that reaches real endings, where every
+ *                     other mode has only ever reached "dead". In
+ *                     `npm run verify`, which prints each mode's live count.
  *   --worst           print the widest screen it found, not just its size —
  *                     the number says where and not why, and the text is
  *                     already in hand
  *   --deep            400 walks of 300 steps, or forks every fifth step of
- *                     80: 541 rooms in 87 seconds with --fork. A diagnostic,
- *                     not part of verify.
+ *                     80: the widest coverage any mode reaches, in about 90
+ *                     seconds with --fork. A diagnostic, not part of verify.
  *
  * A room the sweeping walk cannot reach is usually behind a gate — a locked
  * door, a flag, an item, a landmark you must have stood in before travel will

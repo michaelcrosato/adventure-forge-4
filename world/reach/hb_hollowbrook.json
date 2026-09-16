@@ -1165,9 +1165,22 @@
             ["flag", "hb_asked_rowan"],
             ["!flag", "rb_hb_th_verse"],
             ["!flag", "rb_hb_th_token"],
-            ["!flag", "rb_hb_th_refused"]
+            ["!flag", "rb_hb_th_refused"],
+            ["!flag", "said_th_rowan_greet"]
           ],
           "say": "Wren only nods. \"She'll keep,\" she says. \"Or she won't. Either way, no sense hurrying grief.\""
+        },
+        {
+          "id": "wren_covenant_pending_met",
+          "label": "tell Wren you've found Rowan",
+          "if": [
+            ["flag", "hb_asked_rowan"],
+            ["!flag", "rb_hb_th_verse"],
+            ["!flag", "rb_hb_th_token"],
+            ["!flag", "rb_hb_th_refused"],
+            ["flag", "said_th_rowan_greet"]
+          ],
+          "say": "Wren nods. \"You've met her, then. Whatever she says when you raise it, I'll hear it eventually.\""
         },
         {
           "id": "hb_crypts_robbed",
@@ -1471,6 +1484,12 @@
       "name": "Two Keepers, One Covenant",
       "start": [["flag", "hb_asked_rowan"]],
       "done": [["any", [["flag", "rb_hb_th_verse"], ["flag", "rb_hb_th_token"], ["flag", "rb_hb_th_refused"]]]],
+      "failed": [
+        ["flag", "th_hollow_done"],
+        ["!flag", "rb_hb_th_verse"],
+        ["!flag", "rb_hb_th_token"],
+        ["!flag", "rb_hb_th_refused"]
+      ],
       "stages": [
         {
           "if": [["flag", "th_entered"]],

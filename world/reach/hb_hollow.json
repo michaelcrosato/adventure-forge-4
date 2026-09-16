@@ -115,17 +115,24 @@
         "out": { "to": "hb_kingsrest_mouth" },
         "in": {
           "to": "hb_kingsrest_throne",
-          "if": [["flag", "hb_wights_passed"]],
+          "if": [["any", [["flag", "hb_wights_passed"], ["flag", "calm_hb_grave_wight"]]]],
           "lockedMsg": "The grave-wight bars the passage, patient as stone.",
-          "hint": "defeat it, slip past it (grace), or face it down (will)"
+          "hint": "defeat it, calm it, slip past it (grace), or face it down (will)"
         }
       },
-      "variants": [{ "if": [["flag", "hb_wights_passed"]], "brief": "The cold hall. The passage stands open now." }],
+      "variants": [
+        { "if": [["flag", "hb_wights_passed"]], "brief": "The cold hall. The passage stands open now." },
+        {
+          "if": [["flag", "calm_hb_grave_wight"], ["!flag", "hb_wights_passed"]],
+          "desc": "A long hall, cold enough to see your own breath. Old shields hang from the walls, rusted to lace. The grave-wight still stands square in the passage, stood down now and no longer minded to stop you.",
+          "brief": "The cold hall. The grave-wight stands down."
+        }
+      ],
       "actions": [
         {
           "id": "hb_slip_wight",
           "label": "slip past it — a fail costs 1hp (grace)",
-          "if": [["!flag", "hb_wights_passed"], ["!npcDead", "hb_grave_wight"]],
+          "if": [["!flag", "hb_wights_passed"], ["!flag", "calm_hb_grave_wight"], ["!npcDead", "hb_grave_wight"]],
           "fx": [
             [
               "check",
@@ -143,7 +150,7 @@
         {
           "id": "hb_face_wight",
           "label": "stand fast and face it down (will)",
-          "if": [["!flag", "hb_wights_passed"], ["!npcDead", "hb_grave_wight"]],
+          "if": [["!flag", "hb_wights_passed"], ["!flag", "calm_hb_grave_wight"], ["!npcDead", "hb_grave_wight"]],
           "fx": [
             [
               "check",
@@ -561,9 +568,7 @@
     "hb_q_kingsrest": {
       "name": "The Kings' Rest",
       "start": [["flag", "hb_entered"]],
-      "done": [
-        ["any", [["flag", "hb_hollow_rested"], ["flag", "hb_hollow_bargained"], ["flag", "hb_hollow_burned"]]]
-      ],
+      "done": [["any", [["flag", "hb_hollow_rested"], ["flag", "hb_hollow_bargained"], ["flag", "hb_hollow_burned"]]]],
       "stages": [
         {
           "if": [["!flag", "hb_found_kingsrest"]],
@@ -618,12 +623,38 @@
       "stages": [
         {
           "if": [["var", "hb_evidence_known", ">=", 3]],
-          "text": "You have every piece. Settle on a name at the great mound, and speak it.",
+          "text": "You have every piece, and they do not all agree. Settle on a name at the great mound, and speak it.",
           "at": "hb_kingsrest_throne"
         },
         {
-          "if": [["var", "hb_evidence_known", ">=", 1]],
-          "text": "The evidence doesn't agree with itself yet. Settle on a name, or keep looking."
+          "if": [["flag", "hb_evidence_ringditch"], ["flag", "hb_evidence_causeway"], ["!flag", "hb_evidence_merestone"]],
+          "text": "The causeway and the ring-ditch agree. One piece left: what the mere might say.",
+          "at": "hb_wild_3_3"
+        },
+        {
+          "if": [["flag", "hb_evidence_ringditch"], ["flag", "hb_evidence_merestone"], ["!flag", "hb_evidence_causeway"]],
+          "text": "The ring-ditch and the mere do not agree. One piece left: the causeway stone.",
+          "at": "hb_wild_2_0"
+        },
+        {
+          "if": [["flag", "hb_evidence_causeway"], ["flag", "hb_evidence_merestone"], ["!flag", "hb_evidence_ringditch"]],
+          "text": "The causeway and the mere do not agree. One piece left: the ring-ditch's roll.",
+          "at": "hb_wild_1_3"
+        },
+        {
+          "if": [["flag", "hb_evidence_ringditch"], ["!flag", "hb_evidence_causeway"], ["!flag", "hb_evidence_merestone"]],
+          "text": "The ring-ditch's roll is yours. Two more: the causeway first, then the mere.",
+          "at": "hb_wild_2_0"
+        },
+        {
+          "if": [["flag", "hb_evidence_causeway"], ["!flag", "hb_evidence_ringditch"], ["!flag", "hb_evidence_merestone"]],
+          "text": "The causeway stone is yours. Two more: the ring-ditch first, then the mere.",
+          "at": "hb_wild_1_3"
+        },
+        {
+          "if": [["flag", "hb_evidence_merestone"], ["!flag", "hb_evidence_causeway"], ["!flag", "hb_evidence_ringditch"]],
+          "text": "The mere's answer is yours. Two more: the causeway first, then the ring-ditch.",
+          "at": "hb_wild_2_0"
         },
         {
           "if": [],
@@ -634,7 +665,12 @@
     },
     "hb_q_ledger": {
       "name": "Keeper Wren's Trust",
-      "start": [["flag", "said_hb_keeper_wren_greet"]],
+      "start": [
+        [
+          "any",
+          [["flag", "said_hb_keeper_wren_greet"], ["flag", "hb_wren_chest_forced"], ["flag", "hb_kingsrest_resolved"]]
+        ]
+      ],
       "done": [["flag", "hb_keepers_key_found"], ["!flag", "hb_wren_chest_forced"]],
       "stages": [
         {
@@ -664,7 +700,9 @@
     },
     "hb_q_mound_robber": {
       "name": "The Robbed Mounds",
-      "start": [["flag", "said_hb_mound_robber_greet"]],
+      "start": [
+        ["any", [["flag", "said_hb_mound_robber_greet"], ["flag", "hb_robber_stopped"], ["flag", "hb_robber_bribed"]]]
+      ],
       "done": [["flag", "hb_robber_stopped"]],
       "failed": [["flag", "hb_robber_bribed"]],
       "stages": [

@@ -1,0 +1,487 @@
+{
+  "rooms": {
+    "lf_tollgate": {
+      "name": "Longford — the toll rail",
+      "desc": "A barred rail spans the ford-road, iron-strapped and new enough to shine. Crown tents stand behind it in neat rows, and Captain Voss waits at the rail, already naming a toll before you've said a word.",
+      "brief": "The toll rail, and Captain Voss waiting.",
+      "region": "lf",
+      "landmark": "the toll rail",
+      "npcs": ["lf_voss"],
+      "onEnterOnce": [["xp", 1]],
+      "exits": {
+        "across": { "to": "lf_landing" },
+        "in": {
+          "to": "lf_far_bank",
+          "if": [["flag", "lf_ford_done"]],
+          "lockedMsg": "Voss and his rail stand between you and the road beyond.",
+          "hint": "force, bargain, or expose the captain's toll first"
+        }
+      },
+      "variants": [
+        {
+          "if": [["flag", "lf_ford_broken"]],
+          "brief": "The rail, broken open. Voss is gone.",
+          "desc": "The rail hangs open on a bent hinge, and Voss is gone from his own camp — off wherever a captain goes once the rail he held stops holding anything."
+        },
+        {
+          "if": [["flag", "lf_ford_bought"]],
+          "brief": "The rail stands. A fixed toll, kept.",
+          "desc": "The rail still bars the road, but Voss keeps to the fixed sum now, posted plain beside it, and doesn't pad the figure when he names it."
+        },
+        {
+          "if": [["flag", "lf_ford_freed"]],
+          "brief": "The rail, open, under a Watch guard.",
+          "desc": "The rail stands open under a Watch guard, and Voss stands with it, waiting on an escort to Highward to answer for a writ he never read aloud."
+        }
+      ],
+      "actions": [
+        {
+          "id": "lf_weigh_rail",
+          "label": "weigh what this toll is really asking",
+          "free": true,
+          "once": true,
+          "if": [["!flag", "lf_ford_done"]],
+          "fx": [
+            ["xp", 1],
+            ["say", "Break the rail and it's down for good, but Voss remembers who broke it. Buy him off and the toll lives on, fairer. Prove him a liar and it's his own Crown that ends it."]
+          ]
+        },
+        {
+          "id": "lf_break_rail",
+          "label": "break the rail apart (might)",
+          "if": [["!flag", "lf_ford_done"]],
+          "fx": [
+            [
+              "check",
+              "might",
+              10,
+              [
+                ["set", "lf_ford_done"],
+                ["set", "lf_ford_broken"],
+                ["score", 15],
+                ["xp", 8],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "rep_free", 2],
+                ["addvar", "appr_tamsin", 1],
+                ["say", "The iron strap gives before the hinge does, and then both go. Voss doesn't reach for a blade — he reaches for someone still willing to stop you, and doesn't find one."]
+              ],
+              [
+                ["say", "The rail holds, iron-strapped tighter than it looks. Voss watches you fail to break it with something close to satisfaction."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "lf_pay_toll",
+          "label": "buy him a standing cut (gold)",
+          "if": [["!flag", "lf_ford_done"], ["var", "gold", ">=", 8]],
+          "fx": [
+            ["addvar", "gold", -8],
+            ["set", "lf_ford_done"],
+            ["set", "lf_ford_bought"],
+            ["score", 20],
+            ["xp", 8],
+            ["addvar", "rep_crown", 2],
+            ["addvar", "rep_free", -2],
+            ["addvar", "appr_lys", 1],
+            ["say", "Voss weighs the coin, names a fixed sum for the board, and has it lettered before you're back across. Not free. Not what it was, either."]
+          ]
+        }
+      ]
+    },
+    "lf_far_bank": {
+      "name": "Longford — the far bank",
+      "desc": "The road opens out past the rail, wagon-ruts worn deep by traffic that never used to have to ask permission. Whatever Voss's toll paid for, this stretch of road looks no different for it.",
+      "brief": "The road, past the rail at last.",
+      "region": "lf",
+      "onEnterOnce": [["xp", 1]],
+      "exits": { "out": { "to": "lf_tollgate" } },
+      "variants": [
+        {
+          "if": [["flag", "lf_ford_broken"]],
+          "brief": "The far road, quiet, the camp abandoned.",
+          "desc": "The road opens out past the rail. Voss's tents stand half-struck, abandoned in a hurry, and nobody has come to finish breaking camp."
+        },
+        {
+          "if": [["flag", "lf_ford_freed"]],
+          "brief": "The far road, the camp packing to leave.",
+          "desc": "The road opens out past the rail. Voss's men strike camp under a Watch officer's eye, in no rush and in no position to argue about the pace."
+        }
+      ],
+      "actions": [
+        {
+          "id": "lf_far_bank_search",
+          "label": "search the tent-line",
+          "free": true,
+          "once": true,
+          "if": [["flag", "lf_ford_done"]],
+          "fx": [
+            ["xp", 2],
+            ["score", 2],
+            ["addvar", "gold", 4],
+            ["say", "A camp strongbox, unlocked, forgotten in whatever order sent everyone moving. Four coin left in it, and a ledger nobody will miss now."]
+          ]
+        }
+      ]
+    }
+  },
+  "items": {
+    "lf_keeping_grant": {
+      "name": "the keeping-fee grant",
+      "loc": "nowhere",
+      "hint": "a sealed Crown grant, genuine, naming the ford a free crossing kept at the Crown's own expense"
+    }
+  },
+  "npcs": {
+    "lf_voss": {
+      "name": "Captain Voss",
+      "room": "lf_tollgate",
+      "dialogue": true,
+      "hostile": true,
+      "hp": 10,
+      "atk": 3,
+      "df": 11,
+      "desc": "Crown-commissioned, or was, and wears the rail behind him like it proves the difference.",
+      "onDeath": [
+        ["set", "lf_ford_done"],
+        ["set", "lf_ford_broken"],
+        ["score", 15],
+        ["xp", 8],
+        ["addvar", "rep_crown", -2],
+        ["addvar", "rep_free", 2],
+        ["addvar", "appr_tamsin", 1],
+        ["say", "Voss goes down at his own rail, and the toll dies with him. Nobody left at the tent-line moves to collect it after."]
+      ],
+      "topics": [
+        {
+          "id": "demand",
+          "label": "what's the toll",
+          "once": true,
+          "say": "Everyone crossing at Longford pays the captain's toll. Coin's simplest. I've had worse offered, and taken it.",
+          "fx": [["xp", 1]]
+        },
+        {
+          "id": "writ",
+          "label": "whether he has the right to it",
+          "if": [["flag", "lf_writ_hint"], ["!flag", "lf_ford_done"]],
+          "once": true,
+          "say": "\"I've a Crown seal and a rail, and that's writ enough for anyone standing where you're standing.\" He says it fast, the way a man does when the actual words of the actual grant aren't the ones he wants read aloud.",
+          "fx": [["set", "lf_writ_seen"], ["xp", 2], ["score", 2]]
+        },
+        {
+          "id": "talk",
+          "label": "talk the toll down (will)",
+          "if": [["!flag", "lf_ford_done"]],
+          "say": "Go on, then. Make your case.",
+          "fx": [
+            [
+              "check",
+              "will",
+              11,
+              [
+                ["set", "lf_ford_done"],
+                ["set", "lf_ford_bought"],
+                ["score", 20],
+                ["xp", 8],
+                ["addvar", "rep_crown", 2],
+                ["addvar", "rep_free", -2],
+                ["addvar", "appr_lys", 1],
+                ["say", "You talk him down from a toll he can't defend to one he can. \"Fixed sum,\" he says, like it was his idea. \"Posted plain. No more doubling it.\""]
+              ],
+              [["say", "He hears you out and doesn't move a figure. \"Fair's a word,\" he says. \"Coin's a number.\""]]
+            ]
+          ]
+        },
+        {
+          "id": "confront_grant",
+          "label": "confront him with the grant (wits)",
+          "if": [["!flag", "lf_ford_done"], ["has", "lf_keeping_grant"], ["!flag", "lf_nye_will_back"]],
+          "say": "You lay the keeping-grant flat on the rail-post, where his own toll-board stands.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              8,
+              [
+                ["set", "lf_ford_done"],
+                ["set", "lf_ford_freed"],
+                ["score", 25],
+                ["xp", 8],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "rep_watch", 2],
+                ["addvar", "appr_vell", 1],
+                ["addvar", "appr_osk", 1],
+                ["say", "He reads it twice, the color going out of his argument along with his face, and doesn't reach for the rail again."]
+              ],
+              [
+                ["say", "He reads it, hands it back, and says it proves nothing a stranger's owed an answer for. He's wrong about the paper, and knows it."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "confront_grant_backed",
+          "label": "confront him, Nye backing (wits)",
+          "if": [["!flag", "lf_ford_done"], ["has", "lf_keeping_grant"], ["flag", "lf_nye_will_back"]],
+          "say": "You lay the keeping-grant flat on the rail-post, and Corporal Nye steps up beside you to read it too.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              6,
+              [
+                ["set", "lf_ford_done"],
+                ["set", "lf_ford_freed"],
+                ["score", 25],
+                ["xp", 8],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "rep_watch", 2],
+                ["addvar", "appr_vell", 1],
+                ["addvar", "appr_osk", 1],
+                ["say", "Voss reads it once, sees Nye already writing, and doesn't waste breath arguing with two witnesses and a Crown seal at once."]
+              ],
+              [
+                ["say", "He reads it, hands it back, and says it proves nothing — with Nye standing right there watching him say it."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "confront_writ",
+          "label": "press him on his own writ (wits)",
+          "if": [
+            ["!flag", "lf_ford_done"],
+            ["!has", "lf_keeping_grant"],
+            ["flag", "lf_writ_seen"],
+            ["!flag", "lf_nye_will_back"]
+          ],
+          "say": "You say back to him, word for word, the keeping-fee terms he let slip and didn't mean to.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              11,
+              [
+                ["set", "lf_ford_done"],
+                ["set", "lf_ford_freed"],
+                ["score", 25],
+                ["xp", 8],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "rep_watch", 2],
+                ["addvar", "appr_vell", 1],
+                ["addvar", "appr_osk", 1],
+                ["say", "He can't unsay his own writ back to himself. Something in his face gives out before the rest of him agrees to it."]
+              ],
+              [
+                ["say", "\"Words,\" he says. \"Yours against a Crown seal.\" He's not wrong yet, and you don't have enough to make him wrong."]
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "confront_writ_backed",
+          "label": "press his writ, Nye backing (wits)",
+          "if": [
+            ["!flag", "lf_ford_done"],
+            ["!has", "lf_keeping_grant"],
+            ["flag", "lf_writ_seen"],
+            ["flag", "lf_nye_will_back"]
+          ],
+          "say": "You say back to him, word for word, the keeping-fee terms he let slip — with Corporal Nye there to hear it too.",
+          "fx": [
+            [
+              "check",
+              "wits",
+              9,
+              [
+                ["set", "lf_ford_done"],
+                ["set", "lf_ford_freed"],
+                ["score", 25],
+                ["xp", 8],
+                ["addvar", "rep_crown", -2],
+                ["addvar", "rep_watch", 2],
+                ["addvar", "appr_vell", 1],
+                ["addvar", "appr_osk", 1],
+                ["say", "He can't unsay his own writ back to himself, not with the Watch already writing it down."]
+              ],
+              [["say", "\"Words,\" he says. \"Yours against a Crown seal.\" Nye's pen stops. Not yet, it says."]]
+            ]
+          ]
+        },
+        {
+          "id": "bye",
+          "label": "step back from the rail",
+          "say": "He doesn't watch you go. He's already naming a toll to whoever's next.",
+          "end": true
+        }
+      ]
+    }
+  },
+  "quests": {
+    "lf_q_ford": {
+      "name": "The Toll at Longford",
+      "main": true,
+      "start": [["flag", "lf_entered"]],
+      "done": [["flag", "lf_ford_done"]],
+      "stages": [
+        {
+          "if": [["flag", "lf_ford_freed"]],
+          "text": "Voss answers for his own writ now. The ford stands free, and everyone crossing it knows why."
+        },
+        {
+          "if": [["flag", "lf_ford_bought"]],
+          "text": "The toll's fixed now, posted plain — not free, but fair, and Voss keeps to it."
+        },
+        { "if": [["flag", "lf_ford_broken"]], "text": "The rail's down. Voss doesn't hold this crossing anymore." },
+        {
+          "if": [["any", [["has", "lf_keeping_grant"], ["flag", "lf_writ_seen"]]]],
+          "text": "You have proof enough to call the captain's toll a lie to his face — or force the rail, or buy him off.",
+          "at": "lf_tollgate"
+        },
+        {
+          "if": [],
+          "text": "A Crown captain charges what the road will bear at Longford. Force him, buy him off, or prove his toll's a lie.",
+          "at": "lf_tollgate"
+        }
+      ]
+    },
+    "lf_q_writ": {
+      "name": "The Keeping-Fee Grant",
+      "start": [["flag", "lf_writ_hint"]],
+      "done": [["any", [["has", "lf_keeping_grant"], ["flag", "lf_writ_seen"]]]],
+      "failed": [["flag", "lf_ford_done"], ["!has", "lf_keeping_grant"], ["!flag", "lf_writ_seen"]],
+      "stages": [
+        {
+          "if": [["any", [["has", "lf_keeping_grant"], ["flag", "lf_writ_seen"]]]],
+          "text": "You have proof enough that Voss's toll was never his to charge. Take it to him.",
+          "at": "lf_tollgate"
+        },
+        {
+          "if": [["flag", "lf_box_hint"]],
+          "text": "Nan's grandmother kept a keeping-fee grant once, under the ferry-house floor — if Voss's men never found it.",
+          "at": "lf_ferry_house"
+        },
+        {
+          "if": [["flag", "lf_writ_hint"]],
+          "text": "Marren doubts the true terms of Voss's toll are on his public board. Ask Nan, or press the captain on it himself.",
+          "at": "lf_row"
+        },
+        {
+          "if": [["flag", "lf_heard_toll_history"]],
+          "text": "Marren says the toll's doubled twice since she first crossed. Press her on whether he had any right to raise it.",
+          "at": "lf_row"
+        },
+        {
+          "if": [],
+          "text": "Something about the captain's toll doesn't square with a fair one. Marren at Rowan's Cross might know why.",
+          "at": "lf_row"
+        }
+      ]
+    },
+    "lf_q_nye": {
+      "name": "The Corporal's Feeling",
+      "start": [["any", [["flag", "said_lf_nye_greet"], ["flag", "lf_ford_done"]]]],
+      "done": [["flag", "lf_ford_done"]],
+      "stages": [
+        {
+          "if": [["flag", "lf_ford_done"]],
+          "text": "Nye wrote it up plain, whatever happened at the rail. An honest report, for once — he could get used to it."
+        },
+        {
+          "if": [["flag", "lf_nye_will_back"]],
+          "text": "Nye will carry real proof to Highward himself, or stand behind you while you do. Bring him to the rail.",
+          "at": "lf_tollgate"
+        },
+        {
+          "if": [["flag", "lf_heard_nye_hint"]],
+          "text": "Nye suspects the captain's stretched his writ, but a feeling doesn't move anyone. He'd need proof.",
+          "at": "lf_watchpost"
+        },
+        {
+          "if": [],
+          "text": "Corporal Nye keeps the road at Longford, and keeps his own counsel about the captain across the water.",
+          "at": "lf_watchpost"
+        }
+      ]
+    },
+    "lf_q_aldric": {
+      "name": "A Month's Grace",
+      "start": [["flag", "said_lf_aldric_greet"]],
+      "done": [["flag", "lf_aldric_crossed"]],
+      "stages": [
+        {
+          "if": [["flag", "lf_aldric_crossed"]],
+          "text": "Aldric's gone on, three days of grace left and a clear road under him. He'll make the rite window."
+        },
+        {
+          "if": [["flag", "said_lf_aldric_greet"]],
+          "text": "Aldric is carrying his sister's ashes to the Broken Oar Chapel, and the toll is eating what little grace he has left.",
+          "at": "lf_row"
+        },
+        {
+          "if": [],
+          "text": "An old man waits at Rowan's Cross with a shrine-token worn smooth by thumbing.",
+          "at": "lf_row"
+        }
+      ]
+    },
+    "lf_q_nan": {
+      "name": "Thirty Years On the Water",
+      "start": [["flag", "lf_heard_nan_hint"]],
+      "done": [["flag", "lf_nan_closure"]],
+      "stages": [
+        {
+          "if": [["flag", "lf_nan_closure"]],
+          "text": "Nan says it plain: the years don't come back, but the next thirty go to somebody. That'll do, she says."
+        },
+        {
+          "if": [["flag", "said_lf_nan_greet"]],
+          "text": "Nan ran this crossing free thirty years before Voss's rail. She's still waiting on the water to need her again.",
+          "at": "lf_ferry_house"
+        },
+        {
+          "if": [],
+          "text": "Eda mentions a ferrywoman put out of work by the captain's toll. She might talk, at the old ferry house.",
+          "at": "lf_inn"
+        }
+      ]
+    }
+  },
+  "epilogue": [
+    {
+      "if": [["flag", "lf_ford_broken"]],
+      "text": "The rail at Longford came down by force, and stayed down. Voss doesn't hold the crossing anymore.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "lf_ford_bought"]],
+      "text": "Longford's toll is fixed now, posted plain, and Voss keeps to the number he agreed to.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "lf_ford_freed"]],
+      "text": "Voss answered for his own writ at Longford, and the ford runs free both ways again.",
+      "weight": 2
+    },
+    {
+      "if": [["flag", "lf_entered"], ["!flag", "lf_ford_done"]],
+      "text": "The rail still stands at Longford, and Voss still names what he pleases to cross it.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "lf_aldric_crossed"]],
+      "text": "Aldric made the rite window with three days to spare, his sister's ashes carried to the Broken Oar Chapel at last.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "lf_nan_closure"]],
+      "text": "Nan didn't get thirty years back. She got the next thirty handed to somebody else, and called that enough.",
+      "weight": 1
+    },
+    {
+      "if": [["flag", "lf_shallows_known"]],
+      "text": "Someone found the old dry-season shallows above Longford, the crossing Voss's rail never thought to watch.",
+      "weight": 1
+    }
+  ]
+}

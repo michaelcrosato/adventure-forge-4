@@ -11,12 +11,63 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { condOk, newState } from "../src/engine.ts";
 import { loadWorld } from "../src/validate.ts";
+import type { Fx } from "../src/types.ts";
 
 const path = fileURLToPath(new URL("../world/reach.json", import.meta.url));
 
 test("the Gray Reach's text stays inside the style budget (scripts/lint-world.ts)", () => {
   const out = execFileSync(process.execPath, ["--import", "tsx", "scripts/lint-world.ts", path], { encoding: "utf8" });
   assert.match(out, /all text within budget/);
+});
+
+/**
+ * A wave-seven blind playtester lost track of 'dried herbs' and blamed its
+ * disappearance on a later, unrelated 'use bitter forest bark' — plausible
+ * enough to investigate as a copy-paste id mixup: one item's `use` effects
+ * accidentally moving a DIFFERENT item's id (queue/P1-issue-6f775398). It
+ * wasn't — va_herbs2's and th_bitter_bark's `use` fx each only ever name
+ * their own id — but this generalizes the check across every item the realm
+ * ships, so a future copy-paste of a `use` block can't silently reintroduce
+ * that exact shape of bug: an item's own `use` may `move` only itself
+ * (consuming or relocating it) or its declared `target` (the item or npc it
+ * interacts with), never some third, unrelated item.
+ *
+ * The disappearance itself traces to something real but different: `move`
+ * out of `inv` prints nothing, unlike the pickup side's "X: obtained.", so a
+ * consumable used hundreds of turns earlier — described only by its own
+ * unremarked flavor line, "Bitter, but they ease the ache." next to the
+ * bark's own "Bitter as the name promises..." — is easy to lose track of
+ * over a 500+ turn run. A generic "X: gone." fix was built and measured
+ * twice (once on every `move` out of inv, once scoped to just the `use`
+ * action) and both broke test/budget.test.ts's PROOF_BUDGET ratchet on
+ * several roads: some spend several items in one already-at-ceiling ending
+ * screen (mg_hollow_throne, va_throne), others simply run long enough that
+ * one short added line tips an already-fought-down average past its floor
+ * (regent_deposed, reach_burned, gray_crown, reach_at_rest#warden/#scout).
+ * Neither shipped — the ratchet may only turn down. This test is the part of
+ * the investigation's finding that costs nothing to keep proving true.
+ */
+test("an item's own use effects never move a different item (the shape the dried-herbs report worried about)", () => {
+  const world = loadWorld(path);
+  const collectMoveTargets = (fx: Fx[] | undefined, acc: Set<string>): void => {
+    for (const f of fx ?? []) {
+      if (f[0] === "move") acc.add(f[1]);
+      if (f[0] === "if") {
+        collectMoveTargets(f[2], acc);
+        collectMoveTargets(f[3], acc);
+      }
+    }
+  };
+  const violations: string[] = [];
+  for (const [itemId, item] of Object.entries(world.items)) {
+    for (const use of item.use ?? []) {
+      const moved = new Set<string>();
+      collectMoveTargets(use.fx, moved);
+      const allowed = new Set([itemId, ...(use.target ? [use.target] : [])]);
+      for (const m of moved) if (!allowed.has(m)) violations.push(`${itemId} (target=${use.target ?? "none"}) moves unrelated item ${m}`);
+    }
+  }
+  assert.deepEqual(violations, [], violations.join("\n"));
 });
 
 /**

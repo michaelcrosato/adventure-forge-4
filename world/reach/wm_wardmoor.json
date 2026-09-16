@@ -27,6 +27,7 @@
         ]
       ],
       "actions": [
+        { "id": "wm_south_bearings", "label": "get your bearings", "fx": [["bearings"]], "free": true },
         {
           "id": "wm_gate_notice_1",
           "label": "read the watch-roster by the gate",
@@ -342,7 +343,7 @@
       "landmark": "Wardmoor west road",
       "exits": {
         "west": { "to": "ir_east_road" },
-        "in": { "to": "wm_armoury" },
+        "in": { "to": "wm_armoury", "landmark": "the armoury" },
         "south": { "to": "wm_peddler_stop", "sideTrip": true, "landmark": "a peddler's stop" }
       },
       "onEnterOnce": [
@@ -355,7 +356,8 @@
           ],
           []
         ]
-      ]
+      ],
+      "actions": [{ "id": "wm_west_bearings", "label": "get your bearings", "fx": [["bearings"]], "free": true }]
     },
     "wm_east_road": {
       "name": "Wardmoor — East Road",
@@ -365,7 +367,7 @@
       "landmark": "Wardmoor east road",
       "exits": {
         "east": { "to": "hb_west_road" },
-        "in": { "to": "wm_barracks" },
+        "in": { "to": "wm_barracks", "landmark": "the barracks" },
         "south": { "to": "wm_courier_hollow", "sideTrip": true, "landmark": "a hurt courier" }
       },
       "onEnterOnce": [
@@ -378,7 +380,8 @@
           ],
           []
         ]
-      ]
+      ],
+      "actions": [{ "id": "wm_east_bearings", "label": "get your bearings", "fx": [["bearings"]], "free": true }]
     },
     "wm_north_road": {
       "name": "Wardmoor — North Road",
@@ -388,7 +391,7 @@
       "landmark": "the north road to Coldpass",
       "exits": {
         "north": { "to": "cp_south_stair" },
-        "in": { "to": "wm_record_house" },
+        "in": { "to": "wm_record_house", "landmark": "the record-house" },
         "east": { "to": "wm_checkpoint", "sideTrip": true, "landmark": "a Watch checkpoint" }
       },
       "onEnterOnce": [
@@ -401,7 +404,8 @@
           ],
           []
         ]
-      ]
+      ],
+      "actions": [{ "id": "wm_north_bearings", "label": "get your bearings", "fx": [["bearings"]], "free": true }]
     },
     "wm_peddler_stop": {
       "name": "The Peddler's Stop",
@@ -594,7 +598,12 @@
                 ["say", "You talk like someone with nothing to hide and everything to lose by delay. It works better than it should. They wave you past."]
               ],
               [
-                ["addvar", "rep_watch", -1],
+                [
+                  "if",
+                  [["!flag", "wm_checkpoint_talk_failed"]],
+                  [["set", "wm_checkpoint_talk_failed"], ["addvar", "rep_watch", -1]],
+                  []
+                ],
                 ["say", "\"Try that again with a straighter face,\" the nearer one says. Neither of them moves the rope."]
               ]
             ]
@@ -1056,6 +1065,7 @@
           "fx": [
             ["score", 6],
             ["xp", 3],
+            ["move", "wm_ir_keepsake", "nowhere"],
             [
               "if",
               [["flag", "rb_wm_ir_forced"]],
@@ -1069,7 +1079,7 @@
               "if",
               [["flag", "rb_wm_ir_cleared"]],
               [
-                ["say", "\"The debt was paid all along, and Mirren's own ledger says so.\" Fenn's jaw sets. \"Wish I'd known that before the guilt.\""],
+                ["say", "\"The debt was paid all along, and Mirren's own ledger says so.\" Fenn's jaw sets. \"Wish I'd known that before the guilt.\" He takes the ring from you without another word."],
                 ["addvar", "appr_tamsin", 1]
               ],
               []
@@ -1343,7 +1353,7 @@
           "id": "writ",
           "label": "ask for the Regent's writ",
           "if": [["!flag", "regent_writ"], ["!flag", "said_wm_envoy_writ_no"]],
-          "say": "Burn a hollow clean for the Ironbound, or earn this Watch's trust — two honest services, its standing at +2 — and I'll write you passage to Marrowgate myself. Have you done either yet?",
+          "say": "Burn a hollow clean for the Ironbound, or earn this Watch's trust — two honest services, its standing at +2 — and I'll write you passage to Marrowgate myself. Have you done either yet? (Either way, the Ironbound march.)",
           "fx": [
             [
               "if",

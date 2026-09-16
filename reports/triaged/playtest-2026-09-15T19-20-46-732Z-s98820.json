@@ -1,0 +1,40 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 596,
+  "receipt": "reach.98820.596.609.reach_at_rest.9eabfb35",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "The 'go in' action label was reused inconsistently between rooms (e.g. at Wardmoor North Road, 'go in' silently routed back to the Record-House instead of entering a new location), causing a brief backtrack.",
+      "where": "Wardmoor — North Road"
+    },
+    {
+      "sev": "P2",
+      "what": "Some evidence/quest hints (e.g. 'the causeway stone') weren't listed among 'known places' travel shortcuts until physically discovered, so status recap couldn't give exact walking directions to unfound pieces, only vague hold-level location.",
+      "where": "Hollowbrook / Old Court Evidence tracking"
+    }
+  ],
+  "confusions": [
+    "Early on it wasn't obvious that 'promise to seal the barrow' vs the later throne-side 'seal/leave open' choice were two separate decision points with different companion consequences — status text implied one decision at the throne.",
+    "The distinction between 'rested', 'bargained', and 'burned' hollows for the Coldpass/Hollow Throne gating wasn't crystal clear until checking status directly; the in-scene text sometimes just said 'settles this hold's grief' without specifying which category it counted as."
+  ],
+  "suggestions": [
+    "Show the numeric relationship (e.g. 'DC 9, need 8+') consistently in every check prompt, which it mostly already does — keep this, it's excellent for a blind player.",
+    "Surface a lightweight 'unresolved evidence/quest nearby' hint in the free look/status when standing in a hold that has an active but not-yet-found evidence piece.",
+    "Make 'go in' labels room-specific/unique rather than reusable so travel intent is unambiguous.",
+    "Consider flagging, right before a Coldpass-style 'crossing is final' choice, a compact list of exactly which open threads are hold-local vs which persist (it already does this well, just make the '16 threads open' count clickable/expandable into names without spending a turn)."
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-15T19-20-46-732Z",
+  "seed": 98820,
+  "build": {
+    "rev": "9b03554",
+    "world": "00901427"
+  },
+  "cost_usd": 29.879118400000014,
+  "verified": true
+}

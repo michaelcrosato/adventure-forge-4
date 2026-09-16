@@ -99,7 +99,7 @@
             ["set", "va_barrow_gapped"],
             ["xp", 2],
             ["move", "va_keeper_token", "inv"],
-            ["say", "Right where the tally said: the stone lifts, and the gap beneath is worn smooth by years of someone's knees. Wedged in it, a worn half-token."]
+            ["say", "Right where the tally said: the stone lifts and a gap opens beneath — no need for the priest's blessing. Wedged in it, a worn half-token."]
           ]
         },
         {
@@ -305,7 +305,7 @@
         "up": { "to": "va_antechamber" },
         "north": {
           "to": "va_throne",
-          "if": [["flag", "va_wight_passed"]],
+          "if": [["any", [["flag", "va_wight_passed"], ["flag", "calm_va_barrow_wight"]]]],
           "lockedMsg": "The wight bars the way north. Fight it, slip past it, or go up and around through the hall of verses.",
           "hint": "defeat it, slip past it (grace), or go around"
         }
@@ -314,12 +314,19 @@
         ["xp", 2],
         ["say", "Whoever wore this mail last never got clear of the barrow. The blight pools thickest right here."]
       ],
-      "variants": [{ "if": [["npcDead", "va_barrow_wight"]], "brief": "Low vaults. The wight is rag and bone." }],
+      "variants": [
+        { "if": [["npcDead", "va_barrow_wight"]], "brief": "Low vaults. The wight is rag and bone." },
+        {
+          "if": [["any", [["flag", "va_wight_passed"], ["flag", "calm_va_barrow_wight"]]], ["!npcDead", "va_barrow_wight"]],
+          "desc": "Low vaults and stone boxes, the air gone sour and the mold black instead of green. Blight-rats scatter between the boxes. A mail shirt is draped over one box. The wight stands off the passage now, north clear.",
+          "brief": "Low vaults. The wight stands off the passage."
+        }
+      ],
       "actions": [
         {
           "id": "va_slip_past",
           "label": "slip past the wight — a fail costs 1hp",
-          "if": [["!flag", "va_wight_passed"], ["!npcDead", "va_barrow_wight"]],
+          "if": [["!flag", "va_wight_passed"], ["!flag", "calm_va_barrow_wight"], ["!npcDead", "va_barrow_wight"]],
           "fx": [
             [
               "check",
@@ -338,7 +345,7 @@
     },
     "va_throne": {
       "name": "Throne of the Barrow",
-      "desc": "The Hollow King sits on a stone seat worn smooth by hands not his own. Where a crown should be, only dust. Cold air gutters your light. South: the crypt. Down: the hall of verses.",
+      "desc": "The Hollow King sits on a stone seat worn smooth by hands not his own. Where a crown should be, only dust. Cold air gutters your light.",
       "brief": "The stone seat.",
       "region": "va",
       "exits": {
@@ -427,8 +434,8 @@
             ["addvar", "appr_vell", 1],
             ["addvar", "appr_osk", 1],
             ["npcgo", "va_hollow_king", null],
-            ["say", "You set the crown in his hands and speak the three verses over him. He listens with the crown where it belongs, and something settles in his face that four centuries could not. He lies down. The doors await your word."],
-            ["say", "(The crown stays in the Vale now; the gray seat in Marrowgate will have none to wear.)"]
+            ["say", "You set the crown in his hands and speak the three verses. He listens with it where it belongs, and something settles in his face that four centuries could not. He lies down."],
+            ["say", "(The crown stays in the Vale for good; you won't be able to sit Marrowgate's gray seat wearing it.)"]
           ]
         },
         {
@@ -486,7 +493,7 @@
             ["addvar", "appr_osk", -2],
             ["addvar", "appr_lys", -1],
             ["addvar", "appr_vell", 1],
-            ["say", "You keep the crown and turn for the stairs, leaving him exactly as you found him. He does not call after you. The gray in the Vale will not lift. Marrowgate will hear that the crown is loose in the world."]
+            ["say", "You keep the crown and turn for the stairs, leaving him exactly as you found him. The gray in the Vale will not lift. Marrowgate will hear that the crown is loose in the world."]
           ]
         },
         {
@@ -683,7 +690,7 @@
       "hp": 16,
       "atk": 4,
       "df": 13,
-      "desc": "A king the shape of grief, sitting very still. Cross him, and the cold that answers goes through mail like it was never there.",
+      "desc": "A king the shape of grief, sitting very still. Cross him, and the cold that answers goes through mail.",
       "onDeath": [
         ["score", 25],
         ["xp", 8],
@@ -797,7 +804,7 @@
         },
         {
           "if": [],
-          "text": "The reeve wants the barrow sealed after; the priest wants it open. Promise, or don't — you decide at the throne.",
+          "text": "The reeve wants it sealed; the priest wants it open — see him first if you want both. The doors wait at the throne.",
           "at": "va_throne"
         }
       ]
@@ -806,6 +813,7 @@
       "name": "The Three Verses",
       "start": [["flag", "va_notice_2"]],
       "done": [["flag", "va_verses_all"]],
+      "failed": [["flag", "va_king_resolved"], ["!flag", "va_verses_all"]],
       "stages": [
         {
           "if": [["var", "va_verses_known", "=", 3]],

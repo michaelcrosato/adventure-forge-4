@@ -1,0 +1,42 @@
+{
+  "verdict": "won",
+  "fun": 5,
+  "clarity": 4,
+  "turns": 522,
+  "receipt": "reach.11044.522.526.reach_at_rest.cd08804f",
+  "bugs": [
+    {
+      "sev": "P2",
+      "what": "Item list sometimes silently drops consumables (e.g. 'dried herbs' vanished from inventory after an unrelated 'use bitter forest bark' action without a clear consumption message tied to it)",
+      "where": "The Drying Racks, Fenmarch"
+    },
+    {
+      "sev": "P2",
+      "what": "Menu numbering shifts turn-to-turn as new options/items appear, so a remembered menu number can silently map to a different action next turn if not re-read carefully",
+      "where": "general UI, most rooms"
+    }
+  ],
+  "confusions": [
+    "Early on it's unclear that 'weigh what this grief asks (free)' exists at every grief-site and reveals all resolution paths — I discovered this pattern late and could have used it more systematically from the start",
+    "The relationship between 'promise the reeve' and 'ask the priest's blessing' (order matters, but only revealed via an NPC hint at the inn) wasn't signposted in the quest text itself",
+    "It's not obvious until deep into Act 2 that crossing into Coldpass/Marrowgate permanently locks out unfinished companion quests (Tamsin's mine grief never got closed) — the warning appears only at the Pass Gate itself, one step before the point of no return",
+    "Numeric evidence puzzles (mere-stone vs ring-ditch vs causeway for 'Which King') gave conflicting answers 2-vs-1 with no in-fiction confirmation of which was authoritative until the naming succeeded"
+  ],
+  "suggestions": [
+    "Surface the 'weigh what this grief asks' free hint automatically the first time a player enters any grief-location, rather than requiring them to discover the menu option",
+    "Add an earlier, softer warning (e.g. at the first companion recruitment) that companion personal quests must be resolved before crossing into Act 3, not just at the final gate",
+    "Let 'status' flag which open quests will become permanently unavailable soon, not just list them as open",
+    "Consider a brief recap of who said what evidence when multiple conflicting clues feed one decision, so the player isn't relying purely on memory of scattered dialogue"
+  ],
+  "schema": 1,
+  "kind": "playtest",
+  "lane": "mcp",
+  "ts": "2026-09-15T22-54-15-584Z",
+  "seed": 11044,
+  "build": {
+    "rev": "bf108bf",
+    "world": "8bacaa39"
+  },
+  "cost_usd": 22.730403,
+  "verified": true
+}

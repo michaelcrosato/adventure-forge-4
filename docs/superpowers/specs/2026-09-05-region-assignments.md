@@ -63,8 +63,10 @@ gateway ids are fixed; the neighbor's gateway must exist (or be stubbed in
 - **Settlement:** Highward, the Watch's fortress-town — the south gate, the
   parade, the barracks (rest), the armoury (trade: shields, mail), the
   Captain-General's hall, the record-house.
-- **Gateways:** `wm_south_gate` → `va_north_road` (exit `south`; gated
-  `["flag","act2_open"]` with lockedMsg about blighted holds);
+- **Gateways:** `wm_south_gate` → `va_north_road` (exit `south`, open — the
+  `["flag","act2_open"]` gate and its lockedMsg about blighted holds sit on
+  that same room's `in` exit into Highward itself, `wm_parade`, not on the
+  road back to the Vale; confirmed in `world/reach/wm_wardmoor.json`);
   `wm_west_road` → `ir_east_road` (exit `west`); `wm_east_road` →
   `hb_west_road` (exit `east`); `wm_north_road` → `cp_south_stair` (exit
   `north`).

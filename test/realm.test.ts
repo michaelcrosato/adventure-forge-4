@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { actionByLabel, actionLabel, bearingsHere, condOk, inTravelMode, journal, legalActions, newState, oddsHint, pathTo, roomView, step, travelAvailable } from "../src/engine.ts";
 import { render, renderStatus } from "../src/format.ts";
-import { validateWorld } from "../src/validate.ts";
+import { loadWorld, validateWorld } from "../src/validate.ts";
 import { EPILOGUE_CAP, MENU_CAP } from "../src/types.ts";
 import type { RoomDef, State, World } from "../src/types.ts";
 
@@ -99,6 +99,33 @@ test("travel inside a mapped region reaches plain rooms, and names them by name 
   assert.equal(out.state.room, "r1");
   assert.match(out.events.join(" "), /You travel to Room 1\./);
   assert.doesNotMatch(out.events.join(" "), /\br1\b/, "a room id must never reach the player");
+});
+
+/**
+ * A heavily-walked region can hold dozens of plain rooms alongside a
+ * handful of landmarks; two playtest reports, two waves apart, said
+ * reaching a known landmark by name took several blind "more places"
+ * clicks. Partitioning by landmark status, not merging into one
+ * alphabetical list, means a landmark search never has to page past plain
+ * rooms to find it — proven here by giving the plain room the name that
+ * would sort first.
+ */
+test("travel inside a mapped region lists landmarks before plain rooms, even when a plain room's name would otherwise sort first", () => {
+  const world = line(3, () => "vale");
+  world.regions = { vale: { name: "the Vale" } };
+  world.rooms["r0"]!.name = "Aardvark Den";
+  delete world.rooms["r0"]!.landmark; // sorts first alphabetically, but is not a landmark
+  world.rooms["r1"]!.landmark = "Zeta Spire"; // sorts last alphabetically, but is a landmark
+  let { state } = newState(world, 1);
+  state = doLabel(world, state, "go east");
+  state = doLabel(world, state, "go east"); // r0 -> r1 -> r2, standing in all three
+  state = doLabel(world, state, "travel to a known place");
+  state = doLabel(world, state, "toward the Vale");
+  assert.deepEqual(
+    labels(world, state),
+    ["to Zeta Spire", "to Aardvark Den", "back"],
+    "the landmark leads even though the plain room's name would sort first",
+  );
 });
 
 /**
@@ -282,8 +309,165 @@ test("the journal starts, advances, completes, or fails on conditions — and ev
   assert.doesNotMatch(quiet.events.join(" "), /Quest/);
   // the other branch fails it
   const sold = step(world, state, actionByLabel(world, state, "sell the ring")!);
-  assert.match(sold.events.join(" "), /Quest closed: The Widow's Ring — its asker's wish can no longer be met\./);
+  assert.match(sold.events.join(" "), /Quest closed: The Widow's Ring\./);
   assert.match(renderStatus(world, sold.state), /Closed: The Widow's Ring/);
+});
+
+/**
+ * Five real quests, found by the same shape as va_verses (item 8's follow-up
+ * session): `done` satisfied by only some of several mutually-exclusive ways
+ * the underlying situation resolves, no `failed` for the rest, so status kept
+ * naming a next step that had already become impossible. Each check forces
+ * only the flags that name the killer condition — the reachability of those
+ * flags is a content fact, checked by hand against the actual actions that
+ * set them, not by replaying a route to them here.
+ */
+test("five quests close instead of staying active forever when their asker's situation resolves without them", () => {
+  const world = loadWorld("world/reach.json");
+  const status = (id: string) => journal(world, { ...newState(world, 1).state, flags: forced }).find((q) => q.id === id)?.status;
+  let forced: Record<string, true>;
+
+  // rank_watch: swearing the first Reeve's oath at the stone (wm_oathsworn)
+  // forecloses the Watch's own commission — the Captain-General refuses it
+  // outright ("I won't put my seal on the first Reeve's") and watch_sworn
+  // can never be set.
+  forced = { said_wm_sgt_rook_duty: true, wm_oathsworn: true };
+  assert.equal(status("rank_watch"), "failed");
+
+  // me_q_dams: the Ironbound's own march (iron_march_burn_me) can burn the
+  // Meres' hall without the player ever choosing what happens to the dams —
+  // me_hollow_burned sets with none of the three dam outcomes.
+  forced = { me_entered: true, me_hollow_burned: true };
+  assert.equal(status("me_q_dams"), "failed");
+  // the player's own burn (which sets me_dams_blown in the same fx) still completes it
+  forced = { me_entered: true, me_hollow_burned: true, me_dams_blown: true };
+  assert.equal(status("me_q_dams"), "done");
+
+  // rank_iron: exposing, cornering, denouncing, or killing Aldous (all four
+  // set ir_aldous_gone) removes him from the world before he can swear
+  // iron_sworn — a companion arc (Tamsin's mine) can strand a rank quest.
+  forced = { said_ir_aldous_bg_ironbound: true, ir_aldous_gone: true };
+  assert.equal(status("rank_iron"), "failed");
+
+  // ir_hound: the cave template's own non-lethal resolutions (slip past it,
+  // trace its spoor, feed it the carcass) all set the stamp's $done and move
+  // the beast out of the world — npcDead never becomes true, so a bare
+  // `done: [npcDead ir_cave1_beast]` could never close. kw_q_hounds already
+  // has the right shape (`any` with the stamp's own done flag); this mirrors it.
+  forced = { said_ir_ness_greet: true, ir_cave1_done: true };
+  assert.equal(status("ir_hound"), "done");
+
+  // fd_q_bog: earning either the Watch's or the Crown's trust (a mainstream
+  // mid-game milestone, and rank_watch's own stage-1 condition) permanently
+  // stops the bog-thing from ever spawning again — the only source of the
+  // hide the bounty needs. A player who reaches that trust without having
+  // met the creature first (the common case, at an 8%-a-cell spawn roll)
+  // finds the bounty forever unpayable.
+  forced = { fd_bog_bounty: true, watch_trusted: true };
+  assert.equal(status("fd_q_bog"), "failed");
+  // already holding the hide (or having already killed it) still pays it
+  forced = { fd_bog_bounty: true, watch_trusted: true, fd_bog_paid: true };
+  assert.equal(status("fd_q_bog"), "done");
+});
+
+/**
+ * The same shape one level earlier: not a `done` a foreclosed situation can
+ * never satisfy, but a `start` a foreclosed situation can never trigger, so
+ * the quest never appears at all — not even as failed, its own `failed`
+ * flag notwithstanding. th_q_cal started only on `lys_brother_found`, set
+ * exclusively by meeting Cal at the scout line; burning Thornwold's hollow
+ * (th_burn, gated only on carrying the oil, nothing Cal-related) can kill
+ * him first — th_cal_dead and lys_brother_lost/buried, never found — and
+ * the quest was invisible forever, ready-made stage text for exactly that
+ * outcome sitting unreachable in its own `stages` array.
+ */
+test("th_q_cal starts (and shows failed) even when Cal dies before ever being found", () => {
+  const world = loadWorld("world/reach.json");
+  const status = (flags: Record<string, true>) =>
+    journal(world, { ...newState(world, 1).state, flags }).find((q) => q.id === "th_q_cal")?.status;
+
+  assert.equal(status({ th_cal_dead: true, lys_brother_lost: true }), "failed");
+  assert.equal(status({ th_cal_dead: true, lys_brother_buried: true }), "failed");
+
+  // meeting him first still starts it the original way
+  assert.equal(status({ lys_brother_found: true }), "active");
+  assert.equal(status({ lys_brother_found: true, lys_brother_home: true }), "done");
+
+  // neither has happened yet: correctly not started at all
+  assert.equal(status({}), undefined);
+});
+
+/**
+ * A systematic sweep for the same start-side shape th_q_cal had: every quest
+ * realm-wide gated on a `said_<npc>_greet`-style flag, checked against every
+ * other action that sets a flag its own `done`/`failed` reads, for one that
+ * does not require greeting the npc first. Sixteen real instances, across
+ * ten files — each forced with only the foreclosing flag(s), the original
+ * greet-flag deliberately left unset, to prove the widened `start` (not the
+ * pre-existing `done`/`failed`, which were already correct in every case)
+ * is what was missing.
+ */
+test("sixteen more quests start (rather than staying invisible) when their situation resolves without the npc ever being greeted", () => {
+  const world = loadWorld("world/reach.json");
+  const statusOf = (id: string, flags: Record<string, true>, vars?: Record<string, number>) =>
+    journal(world, { ...newState(world, 1).state, flags, ...(vars ? { vars } : {}) }).find((q) => q.id === id)?.status;
+
+  assert.equal(statusOf("ir_hound", { ir_cave1_done: true }), "done");
+  assert.equal(statusOf("hb_q_ledger", { hb_wren_chest_forced: true }), "failed");
+  assert.equal(statusOf("hb_q_ledger", { hb_kingsrest_resolved: true }), "failed");
+  assert.equal(statusOf("hb_q_mound_robber", { hb_robber_bribed: true }), "failed");
+  assert.equal(statusOf("lf_q_nye", { lf_ford_done: true }), "done");
+  assert.equal(statusOf("mg_q_third_bell", { mg_bell_burned: true }), "done");
+  assert.equal(statusOf("sk_q_nets", { sk_nets_sold: true }), "failed");
+  assert.equal(statusOf("wm_q_writ", { regent_writ: true }), "done");
+  assert.equal(statusOf("fl_q_muster", { fl_muster_brokered: true }), "done");
+  // rank_watch/rank_iron already had a failed clause from the earlier
+  // done-side sweep; this proves the still-narrow start that sweep left
+  // behind, forcing the failure flag alone with no greet-flag at all
+  assert.equal(statusOf("rank_watch", { wm_oathsworn: true }), "failed");
+  assert.equal(statusOf("rank_iron", { ir_aldous_gone: true }), "failed");
+  assert.equal(statusOf("ir_hobs_pick", { ir_crick_closure: true }), "done");
+  assert.equal(statusOf("fl_q_stakes", { fl_stakes_pulled: true }), "done");
+  assert.equal(statusOf("me_q_saint", { me_saint_church: true }), "done");
+  assert.equal(statusOf("me_q_ledger", { me_ledger_challenged: true }), "done");
+  // rank_church/rank_free keep their own rep threshold in `start`, untouched
+  assert.equal(statusOf("rank_church", { church_sworn: true }, { rep_church: 5 }), "done");
+  assert.equal(statusOf("rank_free", { free_sworn: true }, { rep_free: 5 }), "done");
+
+  // none of these force it below its own remaining gate: rank_church stays
+  // unstarted below rep_church 5 even with church_sworn somehow forced
+  assert.equal(statusOf("rank_church", { church_sworn: true }, { rep_church: 4 }), undefined);
+});
+
+/**
+ * A third sibling for the "settle the grief and the quest never closes"
+ * shape (wave 5, corroboration 1): `hb_q_covenant` ("Two Keepers, One
+ * Covenant") sends the player from Hollowbrook to Keeper Rowan in
+ * Thornwold's Understory, and its `done` only ever sets through her own
+ * dialogue (`rb_hb_th_verse`/`_token`/`_refused`). Thornwold's own
+ * `th_q_understory` and `th_q_pardon` (same file) already treat
+ * `th_hollow_done` as the point past which their own unmet `done` flag
+ * counts as failed; `hb_q_covenant` was the one Rowan-anchored quest that
+ * never got the same clause, so resolving the glade any way but through
+ * her — reading the hanged names, the Great Rite, the rest-oath, the
+ * bargain, the burn — left it "active" and pointing at her hall forever.
+ */
+test("hb_q_covenant closes like its Thornwold siblings when the glade is settled without Rowan's answer", () => {
+  const world = loadWorld("world/reach.json");
+  const statusOf = (flags: Record<string, true>) =>
+    journal(world, { ...newState(world, 1).state, flags }).find((q) => q.id === "hb_q_covenant")?.status;
+
+  // the report's own path: asked Wren, then read the names cut into the tree
+  assert.equal(statusOf({ hb_asked_rowan: true, th_hollow_done: true, th_hollow_rested: true }), "failed");
+  // every other way to settle the glade without Rowan forecloses it the same way
+  assert.equal(statusOf({ hb_asked_rowan: true, th_hollow_done: true, th_hollow_burned: true }), "failed");
+  assert.equal(statusOf({ hb_asked_rowan: true, th_hollow_done: true, th_hollow_bargained: true }), "failed");
+  // reaching Rowan first (any of her three answers) still completes it normally
+  assert.equal(statusOf({ hb_asked_rowan: true, rb_hb_th_verse: true }), "done");
+  assert.equal(statusOf({ hb_asked_rowan: true, rb_hb_th_token: true }), "done");
+  assert.equal(statusOf({ hb_asked_rowan: true, rb_hb_th_refused: true }), "done");
+  // still in progress, glade untouched: correctly active, not failed
+  assert.equal(statusOf({ hb_asked_rowan: true, th_entered: true }), "active");
 });
 
 test("validator: quests need stages with conditions and text", () => {
@@ -520,19 +704,24 @@ test("pathTo walks the real exits, folds a straight run into one leg, and gives 
   world.rooms["attic"] = { name: "Attic", desc: "Up top.", exits: { south: { to: "r0" } } };
   world.rooms["cellar"] = { name: "Cellar", desc: "No way in." }; // reachable from nowhere
   const { state } = newState(world, 1);
-  assert.equal(pathTo(world, state, "r3"), "three east", "three steps the same way are one leg");
-  assert.equal(pathTo(world, state, "attic"), "one north");
-  assert.equal(pathTo(world, state, "r0"), "", "standing there already");
+  assert.deepEqual(pathTo(world, state, "r3"), { text: "three east", blocked: false }, "three steps the same way are one leg");
+  assert.deepEqual(pathTo(world, state, "attic"), { text: "one north", blocked: false });
+  assert.deepEqual(pathTo(world, state, "r0"), { text: "", blocked: false }, "standing there already");
   assert.equal(pathTo(world, state, "cellar"), null, "no chain of exits reaches it");
   assert.equal(pathTo(world, state, "nowhere_at_all"), null, "and a room that does not exist is not a route either");
   // two legs: east along the line, then north at the end
   world.rooms["r4"]!.exits!["north"] = { to: "roof" };
   world.rooms["roof"] = { name: "Roof", desc: "Sky.", exits: { south: { to: "r4" } } };
-  assert.equal(pathTo(world, state, "roof"), "four east, then one north");
-  // a locked door is still the way: the door is the quest, and pretending the
-  // place is unreachable would be the same lie the old directions told
+  assert.deepEqual(pathTo(world, state, "roof"), { text: "four east, then one north", blocked: false });
+  // a locked door is still the way when nothing else reaches the target: the
+  // door is the quest, and pretending the place is unreachable would be the
+  // same lie the old directions told — but now it says so, so a player is
+  // not surprised the printed walk does not open on its own
   world.rooms["r0"]!.exits!["east"] = { to: "r1", if: [["flag", "never"]], hint: "the door is barred" };
-  assert.equal(pathTo(world, state, "r3"), "three east");
+  assert.deepEqual(pathTo(world, state, "r3"), { text: "three east", blocked: true });
+  // ...but a way around a shut door is preferred over crossing it, when one exists
+  world.rooms["attic"]!.exits!["east"] = { to: "r1" }; // attic now offers a second, ungated way into r1
+  assert.deepEqual(pathTo(world, state, "r3"), { text: "one north, then three east", blocked: false });
 });
 
 test("a quest stage with a destination carries the way there into the status check", () => {
@@ -567,6 +756,22 @@ test("a quest stage with a destination carries the way there into the status che
   const bad = line(2);
   bad.quests = { q: { name: "Q", stages: [{ if: [], text: "t", at: "r7" }] } };
   assert.ok(validateWorld(bad).some((e) => e.includes("at names no room (r7)")), validateWorld(bad).join("\n"));
+});
+
+test("the way there says when it crosses a shut door, and stays quiet when it does not have to", () => {
+  const world = line(4);
+  world.quests = {
+    q: { name: "The Sunk Chapel", start: [], done: [["flag", "found"]], stages: [{ if: [], text: "Something sings under the water.", at: "r3" }] },
+  };
+  // r0's only way forward is gated: the printed route has nowhere else to go
+  world.rooms["r0"]!.exits!["east"] = { to: "r1", if: [["flag", "never"]] };
+  const { state } = newState(world, 1);
+  assert.match(renderStatus(world, state), /\(the way there, shut: three east\)/);
+
+  // an ungated second way into r1 exists: pathTo prefers it, and the note drops
+  world.rooms["r0"]!.exits!["north"] = { to: "attic" };
+  world.rooms["attic"] = { name: "Attic", desc: "Up top.", exits: { east: { to: "r1" } } };
+  assert.match(renderStatus(world, state), /\(the way there: one north, then three east\)/);
 });
 
 /**

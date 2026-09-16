@@ -37,16 +37,18 @@ export type Cond =
   | ["checkHere", string, number] | ["!checkHere", string, number] // a currently-visible room action or npc topic previews a `check` of this skill at dc >= n (see checkHere in engine.ts)
   | ["lowHp"] | ["!lowHp"] // the player's hp is at half or less of maxHp — the same "a fight is going badly" threshold the disengage gate uses
   | ["region", string] | ["!region", string] // the player stands in a room of this region (world.regions' code). A companion's line about a hold, said while you are in that hold.
+  | ["regions", "<" | ">" | "=" | ">=" | "<=", number] // count of distinct regions among the rooms the player has ever visited — breadth, not any one place
   | ["unseenHere"] | ["!unseenHere"] // this region still holds a landmarked place the player has not stood in — the same list `sayunvisited` reads out
   | ["inWild"] | ["!inWild"] // the player stands in a generated wilderness cell (a `gen` grid room), not in an authored interior
-  | ["any", Cond[]]; // passes when at least one of the listed conditions passes (the one OR in an all-of list)
+  | ["any", Cond[]] // passes when at least one of the listed conditions passes (the one OR in an all-of list)
+  | ["all", Cond[]]; // passes when every listed condition passes — an AND nested inside an "any" branch, where the surrounding if-array's own implicit AND cannot reach
 
 // ---------- effects ----------
 export type Fx =
   | ["say", string]
   | ["set", string] // set flag
   | ["clear", string]
-  | ["score", number] // add (clamped 0..maxScore)
+  | ["score", number] // add (floored at 0; no ceiling — maxScore is what one route pays, not a cap)
   | ["hp", number] // delta (clamped 0..maxHp); reaching 0 => the engine's "dead" lose ending
   | ["move", string, string] // item -> "inv" | "nowhere" | "here" (the player's room) | roomId
   | ["goto", string] // move player (fires room entry)
@@ -453,8 +455,10 @@ export type World = {
    * conditions have ticked. Checked in file order; the first entry whose
    * `if` passes (and is not already spent) fires and the rest wait for a
    * later turn — at most one entry fires per turn, which is what keeps a
-   * turn's clock line to at most one sentence, never a digest. Root-only,
-   * like `walkthrough` — a part file carrying it is a load error.
+   * turn's clock line to at most one sentence, never a digest. A part file
+   * may carry its own entries: a scheduled event belongs to the place it
+   * moves, so entries concatenate in file order (and file order is priority
+   * order), with a duplicate id across parts a load error.
    */
   clock?: ClockEntry[];
   /** Extra counters shown compactly in the per-turn status line (e.g. gold). */

@@ -67,15 +67,23 @@ Do not edit any other file. Do not commit. Scratch files go under `/tmp`.
 - **The hollow**: an authored site (2–4 rooms) holding the region's
   unrested grief, reachable from the wilderness, its own landmark. It must be
   resolvable three ways, each ending in exactly one of:
-  `["set","<code>_hollow_rested"], ["addvar","hollows_rested",1]` (a rite or
-  a kept bargain), `["set","<code>_hollow_burned"], ["addvar","hollows_burned",1]`
+  `["set","<code>_hollow_rested"], ["addvar","hollows_rested",1]` (a rite),
+  `["set","<code>_hollow_burned"], ["addvar","hollows_burned",1]`
   (fire; quick; the Ironbound way), or `["set","<code>_hollow_bargained"],
-  ["addvar","hollows_rested",1]` (the dead stay, quieter). Each way is a
+  ["addvar","hollows_rested",1], ["addvar","hollows_bargained",1]` (a kept
+  bargain; the dead stay, quieter) — a bargain counts toward `hollows_rested`
+  too (`status` reads it as "holds only; a bargain counts"), but only the
+  matching `addvar` on `hollows_bargained` makes it visible to anything that
+  asks for a bargain specifically, the Hollow Throne's own bargain road
+  included. Each way is a
   force, craft, or words route, and no class is locked out of resting it.
   Each outcome moves two faction vars by ±2 and one or two companion
   approvals by ±1, changes the hollow's rooms (`variants`), changes something
-  in the settlement (a variant, an npc line), and adds an epilogue line. Score
-  25 for resting, 20 for bargaining, 15 for burning; xp 8.
+  in the settlement (a variant, an npc line), and adds an epilogue line. All
+  three pay score 25 and xp 8 — a fate that pays less for the same deed is not
+  a choice, and `test/content.test.ts` fails a hold that ranks its three by
+  score. What a fate costs instead is standing, regard, and which ending reads
+  it.
 - **4–6 quests** (`quests`), each with 3–5 stages most-advanced-first, a
   `start`, a `done`, and where sensible a `failed`. At least two must have
   two or more resolutions with different flags and consequences, and at least
@@ -99,15 +107,15 @@ Both were measured across the eighteen finished regions on 2026-09-08. Neither
 is a matter of taste; both are the difference between a place and a corridor.
 
 **Every room owes the player a choice.** Not a good one, not a big one — but
-something other than which way to walk. Across the realm, 220 of 905 rooms
-(24%) offer no action, no one to speak to, and nothing to take. They are the
-best-written rooms in the game and they are corridors. The split is by
-authoring age, not design: the regions written last sit at 4-7% bare, the
+something other than which way to walk. On that day 220 of 905 rooms (24%)
+offered no action, no one to speak to, and nothing to take. They were the
+best-written rooms in the game and they were corridors. The split was by
+authoring age, not design: the regions written last sat at 4-7% bare, the
 ones written first at 44-60%. **Count it per class, not once.** An action gated on one class is not an
 action for the other three, so a room whose only content is a Scout's find is
 a corridor to a Warden — the class-blind figure is the optimistic one. Across
-the realm the blind count is 94 and the per-class counts are 124 to 141, and
-the gap is entirely made of class-gated finds. Filling a room for everybody
+the realm today the blind count is 12 and the per-class counts are 29 to 41,
+and the gap is entirely made of class-gated finds. Filling a room for everybody
 beats filling it for a quarter of players; where you do gate, gate four ways.
 
 **Your region ships under 15%, for every class.** Check it:
@@ -138,9 +146,10 @@ are effectively the same sentence; a stamped place matching its own template
 is expected and counted separately. Run it before you hand in.
 
 **A number you move must be read back at the height it can reach.** The realm
-moves faction standing in about twelve hundred places and reads it at six
-thresholds, all of them `>= 2`, so a player who has done fourteen things for
-the Barrow-Keepers meets the same doors as one who has done two. Every
+moves faction standing in about twelve hundred places and now reads it with
+height, up to `trusted` at `>= 5` and `sworn` at `>= 9`. It did not always:
+while every threshold was `>= 2`, a player who had done fourteen things for
+the Barrow-Keepers met the same doors as one who had done two. Every
 `addvar` you write is a promise. Before you hand in:
 
 ```bash
@@ -180,10 +189,12 @@ day's work:
   means your content is off the proven path — which may be exactly right, and
   is never on its own a pass.
 - **Narrowing a gate until an addition stops costing budget is deleting it,
-  done less honestly.** An ability shipped gated on a DC-13 wits check when
-  the hardest wits check in eighteen regions is DC 12: it could never appear
-  for anybody, and the budget read "unchanged" because nothing had been
-  added. Before you gate on anything, count what satisfies it.
+  done less honestly.** An ability once shipped gated on a wits check harder
+  than anything else in the realm asked for: it could never appear for
+  anybody, and the budget read "unchanged" because nothing had been added.
+  Before you gate on anything, count what satisfies it — `docs/authoring.md`
+  §14 has the worked example and the command that checks it fresh, since the
+  realm's own ceiling moves as it grows.
 - **A menu line is the most expensive thing you can add**, because it prints
   on every screen the room renders. The menu is 34.5% of the realm's whole
   budget; prose is 28%.
@@ -208,7 +219,7 @@ node --import tsx scripts/lint-world.ts world/reach.json    # text budgets, per-
 node --import tsx scripts/audit-shape.ts world/reach.json --prefix <code>    # bare rooms, the shape of the hold
 node --import tsx scripts/audit-choices.ts world/reach.json --prefix <code>  # what is read back, and what is forgotten
 node --import tsx scripts/audit-echo.ts world/reach.json --prefix <code>     # sentences the realm has already written once
-node --import tsx scripts/audit-bearings.ts world/reach.json --prefix <code>  # walks your wilderness bearings; they are wrong more often than not
+node --import tsx scripts/audit-bearings.ts world/reach.json --prefix <code>  # walks your wilderness bearings, computed macro or hand-authored alike
 ```
 
 Run them from the repo root. Fix every line that names one of your ids. If
