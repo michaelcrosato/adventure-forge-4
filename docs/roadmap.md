@@ -7345,3 +7345,38 @@ game contradicted itself inside the first few minutes, in the first thing
 anyone reads. Now "one hold of sixteen". Checked the rest of the
 player-facing prose for the same class of drift in the same pass: five
 count-claims exist in total and the other four were already right.
+
+### Standing has two rungs and the realm pays it in 267 places
+
+`audit-choices.ts` reports every major standing as inert above its highest
+read, and the numbers are large enough to look like a defect:
+
+    rep_keepers   267 moves  +242 total   nothing reads past >=9   186 deeds wasted
+    rep_church    271 moves  +184 total   nothing reads past >=9   164 deeds wasted
+    rep_watch     246 moves  +182 total   nothing reads past >=9   160 deeds wasted
+    appr_osk      183 moves  +110 total   nothing reads past >=8    98 deeds wasted
+
+Checked whether that ceiling is an accident before treating it as one. It is
+not: scanning every condition in the realm for a `var` read against a
+`rep_*`, **all six factions top out at exactly `>=9`** — the Watch (21
+reads), the Free Companies (38), the Crown (9), the Church (13), the Keepers
+(7), the Ironbound (6). A uniform ceiling across six factions, at the same
+number, is a design, and it is the one item 3 shipped: `trusted` at `>=5`
+and `sworn` at `>=9`, each collected from a named npc in a named hold.
+
+So the finding is not "a number is broken". It is that the realm pays
+standing in 267 places against a ladder with two rungs, and a player who
+keeps doing the Keepers' work past the ninth point is spending deeds on a
+counter nothing will ever read again. That is a question about the reward
+economy — add a third rung, pay standing less freely, or accept that the
+ladder finishes early and let the deeds pay in score and story alone — and
+each answer is a different game. Recorded with the measurement rather than
+resolved: this is the designer's call, not a defect to quietly re-tune, and
+the same reasoning that kept item 11's gate from being tightened on the
+strength of a tool's say-so applies here.
+
+What *is* checkable and is already true: the deeds are not worthless, only
+the counter is. Every one of them still pays score and xp, and most move a
+companion's regard as well; `audit-fates.ts` shows each hold's three fates
+differing in standing and regard rather than in points, which is the
+mechanism working as designed.
